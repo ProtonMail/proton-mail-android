@@ -1,0 +1,162 @@
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+         xmlns:tools="http://schemas.android.com/tools"
+         android:id="@+id/tabHost"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         tools:context=".TokenActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"/>
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp">
+            <ScrollView
+                android:id="@+id/contactsFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <ch.protonmail.tokenautocomplete.example.ContactsCompletionView
+                        android:id="@+id/searchView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/token_ac_email_prompt"
+                        android:imeOptions="actionDone"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="16sp"
+                        android:lineSpacingExtra="1dp"
+                        android:nextFocusDown="@+id/editText"
+                        android:inputType="text|textNoSuggestions|textMultiLine"
+                        android:focusableInTouchMode="true" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/lastEvent"
+                        android:layout_below="@+id/searchView"
+                        android:layout_alignLeft="@+id/searchView"
+                        android:layout_marginTop="20dp" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editText"
+                        android:layout_below="@+id/lastEvent"
+                        android:text="test focus loss" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Remove last token"
+                        android:id="@+id/removeButton"
+                        android:layout_below="@+id/editText"
+                        android:layout_centerHorizontal="true" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add random token"
+                        android:id="@+id/addButton"
+                        android:layout_below="@id/removeButton"
+                        android:layout_centerHorizontal="true" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/tokens"
+                        android:layout_below="@id/addButton"
+                        android:layout_alignLeft="@id/lastEvent"
+                        android:layout_marginTop="10dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/textValue"
+                        android:layout_below="@id/tokens"
+                        android:layout_alignLeft="@id/lastEvent"
+                        android:layout_marginTop="10dp" />
+
+                </RelativeLayout>
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/hashtagsFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="24sp"
+                        android:text="WARNING: the TagTokenizer is in Alpha and very likely to change behavior."/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Username/hashtag compose view"/>
+
+                    <ch.protonmail.tokenautocomplete.example.TagCompletionView
+                        android:id="@+id/composeView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="16sp"
+                        android:lineSpacingExtra="1dp"
+                        android:inputType="text|textNoSuggestions|textMultiLine"
+                        android:focusableInTouchMode="true" />
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editText2"
+                        android:text="test focus loss" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:id="@+id/composedValue"
+                        android:layout_marginTop="10dp" />
+                </LinearLayout>
+            </ScrollView>
+        </FrameLayout>
+    </LinearLayout>
+</TabHost>
+

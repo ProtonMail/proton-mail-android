@@ -1,0 +1,106 @@
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="36dp">
+
+    <ImageView
+        android:id="@+id/attachment_specific_icon"
+        android:layout_width="25dp"
+        android:layout_height="30dp"
+        android:layout_margin="4dp"
+        android:background="@android:color/transparent"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:tint="@color/icon_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/mail_attachment_jpeg" />
+
+    <TextView
+        android:id="@+id/attachment_modifier"
+        android:layout_width="18dp"
+        android:layout_height="12dp"
+        android:orientation="horizontal"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/attachment_specific_icon"
+        app:layout_constraintEnd_toEndOf="@+id/attachment_specific_icon"
+        tools:text="M" />
+
+    <ProgressBar
+        android:id="@+id/attachment_download_progress"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/attachment_specific_icon"
+        app:layout_constraintStart_toEndOf="@+id/attachment_specific_icon"
+        app:layout_constraintTop_toTopOf="@+id/attachment_specific_icon"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/attachment_name"
+        style="@style/AttachmentText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/attachment_specific_icon"
+        app:layout_constraintEnd_toStartOf="@+id/attachment_size"
+        app:layout_constraintStart_toEndOf="@+id/attachment_download_progress"
+        app:layout_constraintTop_toTopOf="@+id/attachment_specific_icon"
+        tools:text="Grandma holiday 2005.jpg" />
+
+    <TextView
+        android:id="@+id/attachment_size"
+        style="@style/AttachmentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/attachment_name"
+        app:layout_constraintEnd_toStartOf="@+id/download_button"
+        app:layout_constraintTop_toTopOf="@+id/attachment_name"
+        tools:text="(13 MB)" />
+
+    <ImageView
+        android:id="@+id/download_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/mail_download"
+        app:layout_constraintBottom_toBottomOf="@+id/attachment_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/attachment_size" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,193 @@
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ch.protonmail.android.views.CustomFontTextView
+                android:id="@+id/labels_dialog_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/fields_default_space_medium"
+                android:layout_marginTop="@dimen/fields_default_space_medium"
+                android:text="@string/label_add_new"
+                android:textColor="@color/switch_settings_item"
+                android:paddingEnd="@dimen/fields_default_space_medium"
+                android:paddingLeft="@dimen/fields_default_space_medium"
+                android:paddingRight="@dimen/fields_default_space_medium"
+                android:paddingStart="@dimen/fields_default_space_medium"
+                app:fontName="Roboto-Regular.ttf" />
+
+            <RelativeLayout
+                android:id="@+id/add_label_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/fields_default_space_medium"
+                android:paddingLeft="@dimen/fields_default_space_medium"
+                android:paddingRight="@dimen/fields_default_space_medium"
+                android:paddingStart="@dimen/fields_default_space_medium">
+
+                <ch.protonmail.android.views.CustomFontEditText
+                    android:id="@+id/label_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/new_label_edittext"
+                    android:hint="@string/label_name"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textCursorDrawable="@null"
+                    android:paddingBottom="0dp"
+                    android:paddingTop="0dp"
+                    android:textColorHint="@color/fog_gray"
+                    android:textSize="@dimen/h4" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/label_color_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fields_default_space_large"
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/fields_default_space_medium"
+                android:paddingLeft="@dimen/fields_default_space_medium"
+                android:paddingRight="@dimen/fields_default_space_medium"
+                android:paddingStart="@dimen/fields_default_space_medium"
+                android:visibility="gone">
+
+                <ch.protonmail.android.views.CustomFontTextView
+                    android:id="@+id/labels_colors_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/fields_default_space_medium"
+                    android:layout_marginTop="@dimen/fields_default_space_medium"
+                    android:text="@string/choose_label_color"
+                    android:textColor="@color/switch_settings_item"
+                    app:fontName="Roboto-Regular.ttf" />
+
+                <GridView
+                    android:id="@+id/labels_grid_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin_small"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin_small"
+                    android:layout_marginTop="@dimen/fields_default_space_large"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:listSelector="@android:color/transparent"
+                    android:numColumns="5"
+                    android:scrollbars="none"
+                    android:verticalSpacing="@dimen/fields_default_space" />
+
+                <ch.protonmail.android.views.CustomFontButton
+                    android:id="@+id/save_new_label"
+                    style="@style/SettingsButtonBlue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/fields_default_space_medium"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:paddingEnd="@dimen/fields_default_space"
+                    android:paddingLeft="@dimen/fields_default_space"
+                    android:paddingRight="@dimen/fields_default_space"
+                    android:paddingStart="@dimen/fields_default_space"
+                    android:text="@string/save_new_label"
+                    app:fontName="Roboto-Light.ttf" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/labels_list_view_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/fields_default_space"
+                android:layout_marginTop="@dimen/spacing">
+
+                <ch.protonmail.android.views.CustomFontTextView
+                    android:id="@+id/available_labels_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/fields_default_space_medium"
+                    android:text="@string/available_labels"
+                    android:paddingEnd="@dimen/fields_default_space_medium"
+                    android:paddingLeft="@dimen/fields_default_space_medium"
+                    android:paddingRight="@dimen/fields_default_space_medium"
+                    android:paddingStart="@dimen/fields_default_space_medium"
+                    android:textColor="@color/switch_settings_item"
+                    app:fontName="Roboto-Regular.ttf" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/labels_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/available_labels_title"
+                    android:divider="@color/iron_gray"
+                    android:dividerHeight="1px"
+                    android:paddingTop="0dp" />
+
+                <ch.protonmail.android.views.CustomFontTextView
+                    android:id="@+id/no_labels"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/fields_default_space_large"
+                    android:layout_below="@id/available_labels_title"
+                    android:layout_marginStart="@dimen/fields_default_space_large"
+                    android:text="@string/no_labels"
+                    android:textColor="@color/iron_gray"
+                    android:textSize="@dimen/h4"
+                    android:visibility="gone"
+                    app:fontName="Roboto-Regular.ttf" />
+
+                <ch.protonmail.android.views.CustomFontButton
+                    android:id="@+id/delete_labels"
+                    style="@style/SettingsButtonBlue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_below="@id/labels_recycler_view"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:maxLines="1"
+                    android:paddingEnd="@dimen/fields_default_space_large"
+                    android:paddingLeft="@dimen/fields_default_space_large"
+                    android:paddingRight="@dimen/fields_default_space_large"
+                    android:paddingStart="@dimen/fields_default_space_large"
+                    android:layout_marginBottom="@dimen/fields_default_space"
+                    android:text="@string/delete_selected"
+                    app:fontName="Roboto-Regular.ttf" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

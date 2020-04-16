@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources>
+    <attr name="fontName" format="string" />
+    <attr name="keyValue" format="string" />
+    <declare-styleable name="ScrimInsetsView">
+        <attr name="pmInsetForeground" format="reference|color" />
+    </declare-styleable>
+    <declare-styleable name="MessageActionButton">
+        <attr name="actionType" format="enum">
+            <enum name="reply" value="0" />
+            <enum name="replyAll" value="1" />
+            <enum name="forward" value="2" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="ThreeStateCheckBox">
+        <attr name="label" format="string" />
+        <attr name="state" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="CustomFont">
+        <attr name="fontName" />
+    </declare-styleable>
+    <declare-styleable name="PINValue">
+        <attr name="keyValue" />
+    </declare-styleable>
+    <declare-styleable name="LoadContentButton">
+        <attr name="text" format="string" />
+    </declare-styleable>
+
+
+    <declare-styleable name="SquareFloatingButtonView">
+        <attr name="fabType" format="enum">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="roundedSquare" value="2" />
+        </attr>
+        <attr name="fabSizes" format="enum">
+            <enum name="normal" value="10" />
+            <enum name="mini" value="11" />
+        </attr>
+        <attr name="fabText" format="string" />
+        <attr name="fabTextAllCaps" format="boolean" />
+        <attr name="fabTextColor" format="color" />
+        <attr name="fabElevation" format="dimension" />
+        <attr name="fabColor" format="color" />
+        <attr name="fabIcon" format="integer" />
+        <attr name="fabIconColor" format="color" />
+        <attr name="fabIconPosition" format="enum">
+            <enum name="start" value="30" />
+            <enum name="top" value="31" />
+            <enum name="end" value="32" />
+            <enum name="bottom" value="33" />
+        </attr>
+        <attr name="fabMenuStyle" format="enum">
+            <enum name="popUp" value="20" />
+            <enum name="popDown" value="21" />
+            <enum name="popRight" value="22" />
+            <enum name="popLeft" value="23" />
+        </attr>
+        <attr name="fabMenuGravity">
+            <flag name="start" value="0" />
+            <flag name="end" value="1" />
+            <flag name="bottom" value="2" />
+            <flag name="top" value="4" />
+            <flag name="center_horizontal" value="8" />
+            <flag name="center_vertical" value="16" />
+            <flag name="center" value="31" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="AvatarImageBehavior">
+        <attr name="finalYPosition" format="dimension" />
+        <attr name="startXPosition" format="dimension" />
+        <attr name="startToolbarPosition" format="dimension" />
+        <attr name="startHeight" format="dimension" />
+        <attr name="finalHeight" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ContactAvatarView">
+        <attr name="contactInitials" format="string" />
+        <attr name="contactInitialsAllCaps" format="boolean" />
+        <attr name="contactInitialsColor" format="color" />
+        <attr name="contactInitialsBackground" format="reference" />
+        <attr name="contactPhoto" format="integer" />
+        <attr name="contactPhotoCornerRadius" format="float" type="dimen"/>
+        <attr name="avatarType" format="enum">
+        <enum name="initials" value="0" />
+        <enum name="photo" value="1" />
+    </attr>
+    </declare-styleable>
+
+    <declare-styleable name="SettingsDefaultItemView">
+        <attr name="settingsHeading" format="string" />
+        <attr name="settingsValue" format="string" />
+        <attr name="settingType" format="enum">
+            <enum name="info" value="0" />
+            <enum name="drill" value="1" />
+            <enum name="button" value="2" />
+            <enum name="toggle" value="3" />
+            <enum name="spinner" value="4" />
+            <enum name="edit" value="5" />
+            <enum name="toggle_n_edit" value="6" />
+        </attr>
+        <attr name="hasValue" format="boolean" />
+        <attr name="settingsHint" format="string" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,465 @@
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:clipChildren="false"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context=".activities.composeMessage.ComposeMessageActivity">
+
+    <LinearLayout
+        android:id="@+id/compose_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar" />
+
+        <FrameLayout
+            android:id="@+id/layout_no_connectivity_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <FrameLayout
+                    android:id="@+id/scroll_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/scroll_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/message_fields"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TableLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TableRow
+                                    android:id="@+id/addresses_spinner_container"
+                                    android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="@dimen/message_spacing_small"
+                                        android:layout_marginLeft="@dimen/message_spacing"
+                                        android:layout_marginRight="@dimen/message_spacing_small"
+                                        android:layout_marginStart="@dimen/message_spacing"
+                                        android:gravity="center_vertical"
+                                        android:clickable="true"
+                                        android:minHeight="@dimen/compose_message_section_height"
+                                        android:text="@string/from_prefix"
+                                        android:textColor="@color/iron_gray_70" />
+
+                                    <Spinner
+                                        android:id="@+id/addresses_spinner"
+                                        android:layout_width="0dp"
+                                        android:layout_height="@dimen/compose_message_section_height"
+                                        android:layout_weight="1" />
+                                </TableRow>
+
+                                <View
+                                    android:id="@+id/to_row_divider"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/divider_height"
+                                    android:background="@color/fog_gray"
+                                    android:orientation="horizontal" />
+
+                                <TableRow android:gravity="center_vertical">
+
+                                    <TextView
+                                        android:id="@+id/to"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="@dimen/message_spacing_small"
+                                        android:layout_marginLeft="@dimen/message_spacing"
+                                        android:layout_marginRight="@dimen/message_spacing_small"
+                                        android:layout_marginStart="@dimen/message_spacing"
+                                        android:gravity="center_vertical"
+                                        android:minHeight="@dimen/compose_message_section_height"
+                                        android:text="@string/to"
+                                        android:textColor="@color/iron_gray_70" />
+
+                                    <ch.protonmail.android.views.MessageRecipientView
+                                        android:id="@+id/to_recipients"
+                                        style="@style/MessageRecipientView"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="@dimen/message_spacing_small"
+                                        android:layout_marginRight="@dimen/message_spacing_small"
+                                        android:layout_weight="1"
+                                        android:focusable="true"
+                                        android:focusableInTouchMode="true"
+                                        android:minHeight="@dimen/compose_message_section_height"
+                                        android:textCursorDrawable="@null" />
+
+                                    <ImageButton
+                                        android:id="@+id/show_additional_rows"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/compose_message_button_selector"
+                                        android:contentDescription="@null"
+                                        android:paddingLeft="@dimen/message_spacing"
+                                        android:paddingRight="@dimen/message_spacing"
+                                        android:src="@drawable/plus_compose" />
+
+                                </TableRow>
+
+                                <LinearLayout
+                                    android:id="@+id/cc_row_divider"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/divider_height"
+                                    android:background="@color/fog_gray"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone" />
+
+                                <TableRow
+                                    android:id="@+id/cc_row"
+                                    android:layout_width="match_parent"
+                                    android:gravity="center_vertical"
+                                    android:visibility="gone">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="@dimen/message_spacing_small"
+                                        android:layout_marginLeft="@dimen/message_spacing"
+                                        android:layout_marginRight="@dimen/message_spacing_small"
+                                        android:layout_marginStart="@dimen/message_spacing"
+                                        android:gravity="center_vertical"
+                                        android:minHeight="@dimen/compose_message_section_height"
+                                        android:text="@string/cc"
+                                        android:textColor="@color/iron_gray_70" />
+
+                                    <ch.protonmail.android.views.MessageRecipientView
+                                        android:id="@+id/cc_recipients"
+                                        style="@style/MessageRecipientView"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginRight="@dimen/message_spacing"
+                                        android:layout_weight="1"
+                                        android:minHeight="@dimen/compose_message_section_height"
+                                        android:textCursorDrawable="@null" />
+
+                                </TableRow>
+
+                                <LinearLayout
+                                    android:id="@+id/bcc_row_divider"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/divider_height"
+                                    android:background="@color/fog_gray"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone" />
+
+                                <TableRow
+                                    android:id="@+id/bcc_row"
+                                    android:layout_width="match_parent"
+                                    android:gravity="center_vertical"
+                                    android:visibility="gone">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginEnd="@dimen/message_spacing_small"
+                                        android:layout_marginLeft="@dimen/message_spacing"
+                                        android:layout_marginRight="@dimen/message_spacing_small"
+                                        android:layout_marginStart="@dimen/message_spacing"
+                                        android:gravity="center_vertical"
+                                        android:minHeight="@dimen/compose_message_section_height"
+                                        android:text="@string/bcc"
+                                        android:textColor="@color/iron_gray_70" />
+
+                                    <ch.protonmail.android.views.MessageRecipientView
+                                        android:id="@+id/bcc_recipients"
+                                        style="@style/MessageRecipientView"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginRight="@dimen/message_spacing"
+                                        android:layout_weight="1"
+                                        android:minHeight="@dimen/compose_message_section_height"
+                                        android:textCursorDrawable="@null" />
+
+                                </TableRow>
+
+                            </TableLayout>
+
+                            <include layout="@layout/horizontal_divider" />
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/compose_message_section_height">
+
+                                <EditText
+                                    android:id="@+id/message_title"
+                                    style="@style/MessageRecipientView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="@dimen/message_spacing"
+                                    android:layout_marginRight="@dimen/message_spacing"
+                                    android:hint="@string/subject"
+                                    android:imeOptions="actionNext"
+                                    android:inputType="textCapSentences"
+                                    android:minHeight="@dimen/compose_message_section_height" />
+
+                            </FrameLayout>
+
+                            <include layout="@layout/horizontal_divider" />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/compose_message_section_height">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <ch.protonmail.android.views.MessagePasswordButton
+                                        android:id="@+id/set_message_password"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/compose_message_button_selector"
+                                        android:contentDescription="@null"
+                                        android:scaleType="center"
+                                        android:src="@drawable/encrypted_compose_level_list" />
+
+                                    <View
+                                        android:layout_width="@dimen/divider_width"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/fog_gray" />
+
+                                    <ImageButton
+                                        android:id="@+id/set_message_expiration"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/compose_message_button_selector"
+                                        android:contentDescription="@null"
+                                        android:scaleType="center"
+                                        android:src="@drawable/expiration_compose_level_list" />
+
+                                    <View
+                                        android:layout_width="@dimen/divider_width"
+                                        android:layout_height="match_parent"
+                                        android:background="@color/fog_gray" />
+
+                                    <LinearLayout
+                                        android:id="@+id/add_attachments"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/compose_message_button_selector"
+                                        android:gravity="center"
+                                        android:orientation="horizontal">
+
+                                        <ImageView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:contentDescription="@null"
+                                            android:scaleType="center"
+                                            android:src="@drawable/compose_attachment" />
+
+                                        <TextView
+                                            android:id="@+id/attachment_count"
+                                            style="@style/ComposeMessageAttachmentCount"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="2dp"
+                                            android:layout_marginStart="5dp" />
+
+                                        <TextView
+                                            android:id="@+id/attachment_sync"
+                                            style="@style/ComposeMessageAttachmentCount"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="2dp"
+                                            android:layout_marginStart="5dp"
+                                            android:text="@string/sync_short"
+                                            android:textSize="@dimen/h6"
+                                            android:visibility="gone" />
+
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <ch.protonmail.android.views.MessageExpirationView
+                                    android:id="@+id/message_expiration_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/white"
+                                    android:visibility="gone" />
+
+                            </RelativeLayout>
+
+
+                            <include layout="@layout/horizontal_divider" />
+
+                        </LinearLayout>
+
+                        <ch.protonmail.android.views.ComposeEditText
+                            android:id="@+id/message_body"
+                            style="@style/ComposeMessageBodyText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginEnd="@dimen/message_spacing"
+                            android:layout_marginLeft="@dimen/message_spacing"
+                            android:layout_marginRight="@dimen/message_spacing"
+                            android:layout_marginStart="@dimen/message_spacing"
+                            android:layout_marginTop="10dp"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:hint="@string/compose"
+                            android:paddingBottom="4dp" />
+
+                        <LinearLayout
+                            android:id="@+id/respond_inline_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingBottom="10dp">
+
+                            <Button
+                                android:id="@+id/button_respond_inline"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="right|center_vertical"
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginRight="10dp"
+                                android:background="@android:color/transparent"
+                                android:gravity="right|center_vertical"
+                                android:padding="2dp"
+                                android:text="@string/respond_inline"
+                                android:textAllCaps="true"
+                                android:textColor="@color/deep_blue"
+                                android:visibility="gone" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginBottom="10dp"
+                                android:background="@color/fog_gray" />
+
+                            <TextView
+                                android:id="@+id/quoted_header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/message_spacing"
+                                android:layout_marginLeft="@dimen/message_spacing"
+                                android:layout_marginRight="@dimen/message_spacing"
+                                android:textSize="@dimen/h4" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/message_web_view_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="@dimen/message_spacing"
+                            android:layout_marginEnd="@dimen/message_spacing"
+                            android:layout_marginLeft="@dimen/message_spacing"
+                            android:layout_marginRight="@dimen/message_spacing"
+                            android:layout_marginStart="@dimen/message_spacing"
+                            android:orientation="horizontal"
+                            android:visibility="gone">
+                            <!-- add webview through code use application context to avoid memory leaks -->
+                            <!-- https://code.google.com/p/android/issues/detail?id=9375 -->
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/dummy_keyboard"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            android:background="@android:color/transparent"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white_55"
+                        android:clickable="true"
+                        android:visibility="gone">
+
+                        <ProgressBar
+                            android:id="@+id/progress_spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:indeterminate="true" />
+
+                    </FrameLayout>
+                </FrameLayout>
+            </ScrollView>
+
+            <FrameLayout
+                android:id="@+id/human_verification"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white_55"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:id="@+id/fragment_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </FrameLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/shadow_height"
+        android:layout_below="@id/compose_view"
+        android:background="@drawable/actionbar_shadow" />
+
+    <View
+        android:orientation="vertical"
+        android:id="@+id/screenProtector"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true" />
+</RelativeLayout>

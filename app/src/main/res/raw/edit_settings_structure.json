@@ -1,0 +1,126 @@
+[
+  [
+    {
+      "setting_id": "display_name",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "edit"
+    },
+    {
+      "setting_id": "signature",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle_n_edit"
+    },
+    {
+      "setting_id": "mobile_signature",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle_n_edit"
+    }
+  ],
+  [
+    {
+      "setting_id": "auto_download_messages",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "drill"
+    },
+    {
+      "setting_id": "background_refresh",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "drill"
+    },
+    {
+      "setting_id": "show_remote_images",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": false,
+      "setting_type": "toggle"
+    },
+    {
+      "setting_id": "show_embedded_images",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": false,
+      "setting_type": "toggle"
+    },
+    {
+      "setting_id": "prevent_screenshots",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": false,
+      "setting_type": "toggle"
+    },
+    {
+      "setting_id": "link_confirmation",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": false,
+      "setting_type": "toggle"
+    }
+  ],
+  [
+    {
+      "setting_id": "labels_manager",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": false,
+      "setting_type": "drill"
+    },
+    {
+      "setting_id": "folders_manager",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": false,
+      "setting_type": "drill"
+    }
+  ],
+  [
+    {
+      "setting_id": "swipe_from_left",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "drill"
+    },
+    {
+      "setting_id": "swipe_from_right",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "drill"
+    }
+  ],
+  [
+    {
+      "setting_id": "extended_notification",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    },
+    {
+      "setting_id": "notification_settings",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": false,
+      "setting_type": "drill"
+    }
+  ],
+  [
+    {
+      "setting_id": "combined_contacts",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    }
+  ]
+]

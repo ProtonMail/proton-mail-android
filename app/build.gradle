@@ -1,0 +1,301 @@
+import Plugin
+import Project
+
+apply plugin: Plugin.android_application.id
+apply plugin: Plugin.kotlin_android.id
+apply plugin: Plugin.kapt.id
+apply plugin: Plugin.kotlin_android_extensions.id
+apply plugin: Plugin.hugo.id
+apply plugin: Plugin.sentry.id
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+def databaseVersion = 1
+
+detekt {
+    failFast = false
+    config = files("$projectDir/config/detekt/detekt.yml")
+
+    reports {
+        xml {
+            enabled = false
+        }
+        html {
+            enabled = false
+        }
+        txt {
+            enabled = false
+        }
+        custom {
+            reportId = "DetektQualityOutputReport"
+            destination = file("build/reports/detekt.json")
+        }
+    }
+}
+configurations {
+    detekt
+}
+
+dependencies {
+    // region libs
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':gopenpgp')
+    implementation files('libs/commons-email-1.3.jar')
+    implementation files('libs/mail.jar')
+    implementation files('libs/mail-additional.jar')
+    implementation files('libs/mail-activation.jar')
+
+    implementation files('libs/Proton-core_0.2.15.aar')
+    // endregion
+
+    // region Android
+    implementation LibAndroid.get.annotations
+    implementation LibAndroid.get.appcompat
+    implementation LibAndroid.get.biometric
+    implementation LibAndroid.get.constraintLayout
+    implementation LibAndroid.get.ktx
+    implementation LibAndroid.get.material
+    implementation LibAndroid.get.paging
+    implementation LibAndroid.get.work
+
+    // region Lifecycle
+    implementation LibAndroid.get.lifecycle_extensions // TODO for some weird reason, after updating WorkManager '2.0.1' -> '2.1.0-beta01' `ViewModelProviders` is not resolved anymore, but we don't really need this dependency, since we already have 'runtime', 'livedata-ktx' and 'viewmodel-ktx'
+    implementation LibAndroid.get.lifecycle_runtime
+    implementation LibAndroid.get.lifecycle_liveData
+    implementation LibAndroid.get.lifecycle_viewModel
+    // endregion
+
+    // region Room
+    implementation LibAndroid.get.room_runtime
+    implementation LibAndroid.get.room_ktx
+    implementation LibAndroid.get.room_rxJava
+    kapt LibAndroid.get.room_compiler
+    // endregion
+
+    // endregion
+
+    //region Dagger
+    implementation Lib.dagger_android
+    implementation Lib.dagger_androidSupport
+    kapt Lib.dagger_compiler
+    kapt Lib.dagger_androidProcessor
+    //endregion
+
+    // region Kotlin
+    implementation Lib.kotlin
+    implementation Lib.reflect
+    implementation Lib.coroutines_android
+    // endregion
+
+    //region Retrofit and OkHttp
+    implementation Lib.retrofit
+    implementation Lib.retrofit_gson
+    implementation Lib.retrofit_rxJava
+    implementation Lib.okHttp_loggingInterceptor
+    //endregion
+
+    // region RxJava
+    implementation Lib.rxJava_android
+    implementation Lib.rxRelay
+    // endregion
+
+    // region Others
+    implementation Lib.butterKnife
+    kapt Lib.butterKnife_compiler
+    implementation Lib.gson
+    implementation Lib.hugo_annotations
+    implementation Lib.stetho
+    implementation Lib.trustKit
+    implementation Lib.viewStateStore
+    implementation Lib.viewStateStore_paging
+    implementation Lib.timber
+    implementation Lib.sentry
+    // implementation project(Module.tokenAutoComplete)
+    implementation "com.splitwise:tokenautocomplete:2.0.8"
+    // endregion
+
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
+    configurations.all {
+        exclude group: 'com.android.support', module: 'support-v13'
+    }
+
+    detekt 'io.gitlab.arturbosch.detekt:detekt-cli:1.5.0'
+    detektPlugins 'pm.algirdas.detekt:codeanalysis:0.2.2'
+    detektPlugins 'io.gitlab.arturbosch.detekt:detekt-formatting:1.5.0'
+
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.media:media:1.1.0-alpha04'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.squareup:otto:1.3.8'
+    implementation 'com.birbit:android-priority-jobqueue:2.0.1'
+    implementation 'com.google.android.gms:play-services-gcm:17.0.0'
+    implementation 'com.atlassian.commonmark:commonmark:0.13.0'
+    implementation 'org.apache.commons:commons-lang3:3.4'
+    implementation 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
+    implementation 'org.jsoup:jsoup:1.8.3'
+    //    implementation 'com.commonsware.cwac:wakeful:1.1.0'
+    implementation 'com.badoo.mobile:android-weak-handler:1.0'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.wdullaer:materialdatetimepicker:3.2.2'
+    implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.9.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
+    implementation('com.googlecode.ez-vcard:ez-vcard:0.10.3') {
+        // hCard functionality not needed
+        exclude group: 'org.jsoup'
+        exclude group: 'org.freemarker'
+        // jCard functionality not needed
+        exclude group: 'com.fasterxml.jackson.core'
+    }
+    implementation 'com.google.android.gms:play-services-safetynet:17.0.0'
+    implementation 'io.sentry:sentry-android:1.7.22'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0-alpha04'
+
+    implementation 'com.github.clans:fab:1.6.4'
+
+    testImplementation project(Module.testAndroid)
+    androidTestImplementation project(Module.testAndroidInstrumented)
+}
+
+file("$rootDir/privateConfig/private.properties").withReader {
+    Properties props = new Properties()
+    props.load(it)
+    project.ext.privateProperties = props
+}
+
+android {
+    compileSdkVersion Project.targetSdk
+    buildToolsVersion '28.0.3'
+    useLibrary 'org.apache.http.legacy'
+
+    flavorDimensions 'default'
+
+    defaultConfig {
+        applicationId "ch.protonmail.android"
+        minSdkVersion Project.minSdk
+        targetSdkVersion Project.targetSdk
+        versionCode = 717 // jenkinsBuildNumber.toInteger()
+        versionName = "1.13.4"
+
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+
+
+        buildConfigField "String", "SENTRY_DNS_1", "\"${privateProperties.sentryDNS_1}\""
+        buildConfigField "String", "SENTRY_DNS_2", "\"${privateProperties.sentryDNS_2}\""
+        buildConfigField "String", "SAFETY_NET_API_KEY", "\"${privateProperties.safetyNet_apiKey}\""
+        buildConfigField "String", "B_ENDPOINT_URL", "\"${privateProperties.b_endpointUrl}\""
+        buildConfigField "String", "D_ENDPOINT_URL", "\"${privateProperties.d_endpointUrl}\""
+        buildConfigField "String", "H_ENDPOINT_URL", "\"${privateProperties.h_endpointUrl}\""
+        buildConfigField "String", "PM_CLIENT_SECRET", "\"${privateProperties.pm_clientSecret}\""
+
+        buildConfigField "boolean", "LOGOUT_WHEN_UPDATE", "false" // master key
+        buildConfigField "boolean", "LOGOUT_EVERY_PREVIOUS_VERSION", "false"
+        buildConfigField "int[]", "LOGOUT_PREVIOUS_VERSIONS", "{}"
+        buildConfigField "int", "SETTINGS_UPDATED_VERSION", "${versionCode}"
+        buildConfigField "boolean", "FETCH_FULL_CONTACTS", "true"
+        buildConfigField "boolean", "CLEAR_MESSAGES_TABLE", "false"
+        buildConfigField "boolean", "FETCH_USER_INFO", "true"
+        buildConfigField "boolean", "REREGISTER_FOR_PUSH", "true"
+        buildConfigField "boolean", "REFETCH_MAIL_SETTINGS", "true"
+        buildConfigField "boolean", "MIGRATE_TO_1_12_3", "false"
+        buildConfigField "boolean", "MIGRATE_TO_703", "false"
+        buildConfigField "boolean", "MIGRATE_MULTI_USER", "true"
+        buildConfigField "int", "MIGRATE_MULTI_USER_MIN_VERSION", "652"
+        buildConfigField "int", "ROOM_DB_VERSION", "${databaseVersion}"
+        buildConfigField "boolean", "MIGRATE_VALUES_TO_USER_SPECIFIC_SHARED_PREFERENCES", "true"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../privateConfig/keystore/ProtonMail.keystore")
+            storePassword privateProperties.keyStorePassword
+            keyAlias "ProtonMail"
+            keyPassword privateProperties.keyStoreKeyPassword
+        }
+    }
+
+    productFlavors {
+        playstore {
+            applicationId "ch.protonmail.android"
+        }
+        beta {
+            applicationId "ch.protonmail.android.beta"
+        }
+    }
+
+    buildTypes {
+        all {
+            project.ext.set('archivesBaseName', 'ProtonMail-Android-' + android.defaultConfig.versionName)
+            multiDexKeepProguard file('multidex-proguard.pro')
+        }
+        debug {
+            minifyEnabled false
+            multiDexKeepProguard file('multidex-proguard.pro')
+        }
+        releasePlayStore {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            multiDexKeepProguard file('multidex-proguard.pro')
+            signingConfig signingConfigs.release
+        }
+        releaseBeta {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            multiDexKeepProguard file('multidex-proguard.pro')
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lintOptions {
+        disable 'InvalidPackage', 'MissingTranslation', 'ExtraTranslation'
+    }
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets', 'src/main/assets/']
+//            res.srcDirs = ['src/main/res', 'src/main/res/raw']
+            jni.srcDirs = []
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/LICENSE-notice.md'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/rxjava.properties'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+sentry {
+    // Disables or enables the automatic configuration of proguard
+    // for Sentry.  This injects a default config for proguard so
+    // you don't need to do it manually.
+    autoProguardConfig true
+
+    // Enables or disables the automatic upload of mapping files
+    // during a build.  If you disable this you'll need to manually
+    // upload the mapping files with sentry-cli when you do a release.
+    autoUpload true
+}
+

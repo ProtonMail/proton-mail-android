@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rowWrapper"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/contact_list_item_height"
+    android:paddingStart="@dimen/contact_list_item_horizontal_padding"
+    android:paddingEnd="@dimen/contact_list_item_horizontal_padding"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal">
+
+    <!-- Write -->
+    <ImageButton
+        android:id="@+id/writeButton"
+        android:layout_width="@dimen/contact_list_item_icon_size"
+        android:layout_height="@dimen/contact_list_item_icon_size"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:tint="@color/contact_action"
+        app:srcCompat="@drawable/ic_paper_plane"
+        tools:ignore="ContentDescription" />
+
+    <!-- Icon -->
+    <FrameLayout
+        android:id="@+id/contactIconContainer"
+        android:layout_width="@dimen/contact_list_item_icon_size"
+        android:layout_height="@dimen/contact_list_item_icon_size"
+        android:layout_centerVertical="true">
+
+        <!-- Letter -->
+        <TextView
+            android:id="@+id/contactIconLetter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_circle"
+            android:gravity="center"
+            android:maxEms="2"
+            android:maxLines="1"
+            android:minLines="1"
+            android:padding="@dimen/fields_default_space_small_minus"
+            android:textColor="@color/rain_gray"
+            android:textSize="26sp"
+            tools:text="L" />
+
+        <!-- Image -->
+        <ImageButton
+            android:id="@+id/contactIcon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/label_color_circle"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/fab_ic_contact_groups"
+            tools:ignore="ContentDescription" />
+
+    </FrameLayout>
+
+    <!-- Body -->
+    <LinearLayout
+        android:id="@+id/contact_data_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_toStartOf="@id/writeButton"
+        android:layout_toEndOf="@id/contactIconContainer"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/contact_list_item_horizontal_padding"
+        android:paddingTop="@dimen/fields_default_space"
+        android:paddingEnd="@dimen/contact_list_item_horizontal_padding"
+        android:paddingBottom="@dimen/fields_default_space">
+
+        <!-- First line -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Name -->
+            <TextView
+                style="@style/App.Text.Subhead"
+                android:id="@+id/contact_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/fields_default_space_small"
+                tools:text="@tools:sample/full_names" />
+
+            <!-- Local contact icon -->
+            <ImageView
+                android:id="@+id/local_contact_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_contact_mail"
+                android:tint="@color/iron_gray_70"
+                android:visibility="gone"
+                tools:ignore="ContentDescription"
+                tools:visibility="visible" />
+
+            <!-- Labels -->
+            <LinearLayout
+                android:id="@+id/labels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|top"
+                android:layout_marginStart="10dp"
+                android:gravity="end|top"
+                android:orientation="horizontal"
+                android:padding="0dp" />
+
+        </LinearLayout>
+
+        <!-- Second line -->
+        <TextView
+            style="@style/App.Text.Caption"
+            android:id="@+id/contact_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            tools:text="@tools:sample/lorem"/>
+
+    </LinearLayout>
+</RelativeLayout>

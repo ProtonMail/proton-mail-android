@@ -1,0 +1,636 @@
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/dark_purple</item>
+        <item name="colorPrimaryDark">@color/dark_purple</item>
+        <item name="colorAccent">@color/dark_purple</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+        <item name="android:checkboxStyle">@style/CustomCheckBox</item>
+        <item name="android:colorBackground">@color/white</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColorHint">@color/ice_gray</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/deep_blue</item>
+        <item name="android:actionModeBackground">@color/deep_blue</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="colorControlNormal">@color/dark_purple</item>
+        <item name="colorControlActivated">@color/dark_purple</item>
+        <item name="colorControlHighlight">@color/dark_purple</item>
+        <item name="android:autoCompleteTextViewStyle">@style/PMAutoCompleteView</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="textAppearanceSearchResultTitle"></item>
+    </style>
+
+    <style name="AppTheme" parent="AppTheme.Base" />
+
+    <style name="AppTheme.Immersive" parent="AppTheme.Base">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="ToolbarStyle">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlHighlight">#3fff</item>
+    </style>
+
+    <style name="ToolbarStyle.White" parent="ToolbarStyle">
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorControlNormal">@color/black</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/red_orange</item>
+    </style>
+
+    <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
+        <item name="background">@color/dark_purple</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.Light.SearchView">
+        <item name="searchIcon">@drawable/ic_menu_search</item>
+    </style>
+
+    <style name="LoginButton" parent="android:Widget.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white_85</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:background">@drawable/login_button_selector</item>
+    </style>
+
+    <style name="SignupButton" parent="android:Widget.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white_85</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="SettingsButton" parent="android:Widget.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/settings_button_selector</item>
+    </style>
+
+    <style name="SettingsButtonBlue" parent="SettingsButton">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/settings_button_blue_selector</item>
+    </style>
+
+    <style name="LoginEditText" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">@dimen/h5</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:background">@drawable/login_edittext</item>
+    </style>
+
+    <style name="LoginEditText.Border.Grey" parent="LoginEditText">
+        <item name="android:textColor">@color/rain_gray</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:background">@drawable/login_input_background</item>
+    </style>
+
+    <style name="LoginEditText.Inverted" parent="LoginEditText">
+        <item name="android:textColor">@color/new_purple</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:background">@drawable/login_edittext_inverted</item>
+    </style>
+
+    <style name="ContactsTextView" parent="LoginEditText">
+        <item name="android:textColor">@color/new_purple</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:background">@drawable/textview_contacts</item>
+    </style>
+
+    <style name="LoginEditText.NoBg" parent="LoginEditText">
+        <item name="android:textColor">@color/new_purple</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="LoginEditText.Gray" parent="LoginEditText">
+        <item name="android:textColor">@color/new_purple</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:background">@drawable/new_label_edittext</item>
+    </style>
+
+    <style name="LoginEditText.Inverted.Margin" parent="LoginEditText.Inverted">
+        <item name="android:layout_marginLeft">@dimen/fields_default_space</item>
+        <item name="android:layout_marginRight">@dimen/fields_default_space</item>
+    </style>
+
+    <style name="SignatureEditText" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/rain_gray</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:background">@drawable/edit_signature_background</item>
+    </style>
+
+    <style name="DisplayNameEditText" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/rain_gray</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:background">@drawable/new_label_edittext</item>
+    </style>
+
+    <style name="LabelEditText" parent="LoginEditText">
+
+    </style>
+
+    <style name="DrawerItemText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+
+    <style name="DrawerNameText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="DrawerNameText.Black" parent="DrawerNameText">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="DrawerNameText.Red" parent="DrawerNameText">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="DrawerEmailAddressText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/h6</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="DrawerEmailAddressText.Black" parent="DrawerEmailAddressText">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="DrawerEmailAddressText.Red" parent="DrawerEmailAddressText">
+        <item name="android:textColor">@color/red</item>
+    </style>
+
+    <style name="DrawerItemNotification">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@drawable/nav_drawer_notification_background</item>
+    </style>
+
+    <style name="MessagePrimaryText">
+        <item name="android:textColor">@color/rain_gray</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="MessagePrimaryText_Read" parent="MessagePrimaryText">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="MessagePrimaryText_Unread" parent="MessagePrimaryText">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="MessageSecondaryText">
+        <item name="android:textColor">@color/iron_gray</item>
+        <item name="android:textSize">@dimen/h6</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="MessageSecondaryText_Read" parent="MessageSecondaryText">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="MessageSecondaryText_Unread" parent="MessageSecondaryText">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="NoMessagesText">
+        <item name="android:textColor">@color/rain_gray</item>
+        <item name="android:textSize">@dimen/h4</item>
+    </style>
+
+    <style name="MessageTitleText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/dark_purple</item>
+        <item name="android:textSize">@dimen/h2</item>
+    </style>
+
+    <style name="MessageSenderPrefixText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/prefix_gray</item>
+        <item name="android:textSize">@dimen/h6</item>
+    </style>
+
+    <style name="MessageNameText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h6</item>
+    </style>
+
+    <style name="MessageEmailText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/prefix_gray</item>
+        <item name="android:textSize">@dimen/h6</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="MessageAttachmentCount">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/iron_gray</item>
+        <!-- Set to dp to ensure it doesn't grow larger than the attachment icon that it is positioned with -->
+        <item name="android:textSize" tools:ignore="SpUsage">12dp</item>
+    </style>
+
+    <style name="MessageShortDateText">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/ice_gray</item>
+        <item name="android:textSize">@dimen/h6</item>
+    </style>
+
+    <style name="MessageToggleDetailsText">
+        <item name="android:textColor">@color/icon_purple</item>
+        <item name="android:textSize">@dimen/h6</item>
+    </style>
+
+    <style name="MessageDetailsTextBase">
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="MessageDetailsPrefixText" parent="MessageDetailsTextBase">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:textColor">@color/ice_gray</item>
+    </style>
+
+    <style name="MessageDetailedDateText" parent="MessageDetailsTextBase">
+        <item name="android:textColor">@color/ice_gray</item>
+    </style>
+
+    <style name="ComposeMessagePrefixText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_height">@dimen/compose_message_section_height</item>
+        <item name="android:paddingLeft">@dimen/message_spacing</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:textColor">@color/chateau_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="ComposeMessageEditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/lead_gray</item>
+        <item name="android:textColorHint">@color/chateau_gray</item>
+    </style>
+
+    <style name="ComposeMessageSubjectText" parent="ComposeMessageEditText">
+        <item name="android:inputType">textEmailSubject</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="ComposeMessageBodyText" parent="ComposeMessageEditText">
+        <item name="android:gravity">top</item>
+        <item name="android:inputType">textMultiLine|textLongMessage|textCapSentences</item>
+        <item name="android:textSize">@dimen/h4</item>
+    </style>
+
+    <style name="ComposeMessageAttachmentCount">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/icon_purple</item>
+        <!-- Set to dp to ensure it doesn't grow larger than the attachment icon that it is positioned with -->
+        <item name="android:textSize" tools:ignore="SpUsage">16dp</item>
+    </style>
+
+    <style name="MessagePasswordEditTextBase" parent="@android:style/Widget.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/message_spacing</item>
+        <item name="android:paddingRight">@dimen/message_spacing</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/lead_gray</item>
+        <item name="android:textColorHint">@color/chateau_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="MessagePasswordEditText" parent="MessagePasswordEditTextBase">
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:inputType">textPassword</item>
+    </style>
+
+    <style name="MessagePasswordHintEditText" parent="MessagePasswordEditTextBase">
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:inputType">textCapSentences</item>
+    </style>
+
+    <style name="MessagePasswordEditText.Dialog" parent="MessagePasswordEditText">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@drawable/login_edittext_inverted</item>
+        <item name="android:layout_marginLeft">@dimen/fields_default_space</item>
+        <item name="android:layout_marginRight">@dimen/fields_default_space</item>
+        <item name="android:layout_marginTop">@dimen/fields_default_space_small</item>
+        <item name="android:layout_marginBottom">@dimen/fields_default_space_small</item>
+    </style>
+
+    <style name="MessageExpirationText">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/message_spacing</item>
+        <item name="android:paddingRight">@dimen/message_spacing</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/lead_gray</item>
+        <item name="android:textColorHint">@color/chateau_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="MessageRecipientBase">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="MessageRecipientView" parent="MessageRecipientBase">
+        <item name="android:background">@null</item>
+        <item name="android:inputType">text|textNoSuggestions|textMultiLine</item>
+        <item name="android:textColor">@color/lead_gray</item>
+    </style>
+
+    <style name="MessageRecipientToken" parent="MessageRecipientBase">
+        <item name="android:background">@drawable/message_recipient_token_bg_selector</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:textColor">@color/message_recipient_token_text_color</item>
+    </style>
+
+    <style name="MessageRecipientListBaseText">
+        <item name="android:textColor">@color/rain_gray</item>
+    </style>
+
+    <style name="MessageRecipientListPrimaryText" parent="MessageRecipientListBaseText">
+        <item name="android:textSize">@dimen/h4</item>
+    </style>
+
+    <style name="MessageRecipientListSecondaryText" parent="MessageRecipientListBaseText">
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="ActionButtonText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="AttachmentText">
+        <item name="android:ellipsize">middle</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="ReportBugsEditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@null</item>
+        <item name="android:gravity">top</item>
+        <item name="android:inputType">textMultiLine|textLongMessage|textCapSentences</item>
+        <item name="android:textColor">@color/lead_gray</item>
+        <item name="android:textColorHint">@color/chateau_gray</item>
+        <item name="android:textSize">@dimen/h4</item>
+    </style>
+
+    <style name="SettingsItem">
+        <item name="android:background">@drawable/settings_item_selector</item>
+        <item name="android:clickable">true</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/message_spacing</item>
+    </style>
+
+    <style name="SettingsItemPadding">
+        <item name="android:background">@drawable/settings_item_selector</item>
+        <item name="android:clickable">true</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/message_spacing</item>
+        <item name="android:layout_marginLeft">@dimen/fields_default_space</item>
+        <item name="android:layout_marginRight">@dimen/fields_default_space_small</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="SettingsHeadingText">
+        <item name="android:textColor">@color/lead_gray</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="fontName">Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="SettingsSubHeaderText">
+        <item name="android:textColor">@color/iron_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="SettingsText">
+        <item name="android:textColor">@color/chateau_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+    </style>
+
+    <style name="SettingsTextHeader">
+        <item name="android:layout_marginLeft">@dimen/fields_default_space_medium</item>
+        <item name="android:layout_marginTop">@dimen/fields_default_space_medium</item>
+        <item name="android:layout_marginBottom">@dimen/fields_default_space_medium</item>
+        <item name="fontName">Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="CustomCheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/custom_checkbox</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:drawableLeft">@android:color/transparent</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textSize">@dimen/h5</item>
+
+    </style>
+
+    <style name="EditContactTheme" parent="AppTheme">
+        <item name="colorAccent">@color/water_blue</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/zoom_in</item>
+        <item name="android:windowExitAnimation">@null</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <style name="AppTheme.Dialog.Labels" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/labels_dialog_bg</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
+    <style name="PMAutoCompleteView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+    </style>
+
+    <style name="PopupTheme" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateAlwaysHidden</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="colorAccent">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomKeyboardButton">
+        <item name="android:textSize">30dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/keyboard_button_selector</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="fontName">Roboto-Light.ttf</item>
+    </style>
+
+    <style name="CustomKeyboardButton.Arrow.Right" parent="CustomKeyboardButton">
+        <item name="android:background">@drawable/keyboard_button_arrow_selector</item>
+        <item name="android:src">@drawable/ic_arrow_forward_white</item>
+    </style>
+    <style name="CustomKeyboardButton.Arrow.Left" parent="CustomKeyboardButton">
+        <item name="android:background">@drawable/keyboard_button_arrow_selector</item>
+        <item name="android:src">@drawable/ic_arrow_back_white</item>
+    </style>
+    <style name="SwitchSettings" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/switch_settings_item</item>
+        <item name="colorSwitchThumbNormal">#C3C3C3</item>
+        <item name="android:colorForeground">@color/chateau_gray</item>
+    </style>
+    <style name="RepeatDay">
+        <item name="android:textColor">@color/dark_purple_statusbar</item>
+        <item name="android:textSize">@dimen/h4</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:background">@drawable/repeat_day_unselected_background</item>
+    </style>
+
+    <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@android:color/white</item>
+        <item name="tabIndicatorHeight">3dp</item>
+        <item name="tabBackground">?attr/selectableItemBackground</item>
+        <item name="tabSelectedTextColor">@android:color/white</item>
+    </style>
+
+    <style name="CustomSearchView" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">#CACACA</item>
+        <item name="android:textSize">@dimen/h3</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:drawableStart">@drawable/ic_menu_search</item>
+        <item name="android:drawableLeft">@drawable/ic_menu_search</item>
+        <item name="android:drawablePadding">@dimen/fields_default_space_small</item>
+        <item name="android:background">@drawable/search_edittext_shape</item>
+    </style>
+
+    <style name="CollapsedAppBar" >
+        <item name="android:textSize">@dimen/h1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily" tools:ignore="NewApi">@fonts/Roboto-Thin.ttf</item>
+    </style>
+
+    <style name="SpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/spinner_bg</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="ContactOptionButton" parent="android:Widget.Button">
+        <item name="android:textColor">@color/new_purple</item>
+        <item name="android:textColorHint">@color/name_gray</item>
+        <item name="android:textSize">@dimen/h5</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="Widget.Support.CoordinatorLayout" parent="android:Widget">
+        <item name="statusBarBackground">@android:color/transparent</item>
+    </style>
+
+    <!-- Text Appearance -->
+    <style name="App.Text.Caption" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">@color/iron_gray</item>
+    </style>
+
+    <style name="App.Text.Medium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/new_purple_dark</item>
+        <item name="android:fontFamily">Roboto-Regular.ttf</item>
+    </style>
+
+    <style name="App.Text.Headline" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@color/rain_gray</item>
+    </style>
+
+    <style name="App.Text.Subhead" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textColor">@color/rain_gray</item>
+    </style>
+
+    <style name="App.Text.Subtitle" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/new_purple</item>
+        <item name="android:fontFamily">Roboto-Thin.ttf</item>
+    </style>
+
+    <style name="App.Text.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/new_purple_dark</item>
+    </style>
+</resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:layoutDirection="rtl">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/fields_default_space_small"
+        android:paddingEnd="@dimen/fields_default_space_small"
+        tools:ignore="RtlSymmetry">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/btnOptionType">
+
+            <ch.protonmail.android.views.CustomFontTextView
+                android:id="@+id/optionIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|start"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/fields_default_space_small_minus"
+                android:paddingEnd="@dimen/fields_default_space_small_minus"
+                android:textColor="@color/contact_heading"
+                android:textSize="16sp"
+                app:fontName="contacts_icons.ttf"
+                tools:text="Adr"/>
+
+            <TextView
+                android:id="@+id/optionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:textColor="@color/contact_heading"
+                android:textSize="16sp"
+                tools:text="Address" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnOptionType"
+            android:layout_width="@dimen/fields_default_space_medium"
+            android:layout_height="@dimen/fields_default_space_medium"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/triangle_down"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fields_default_space_medium"
+        android:layout_marginEnd="@dimen/fields_default_space_small"
+        android:layout_marginBottom="@dimen/fields_default_space">
+
+        <ImageButton
+            android:id="@+id/btn_minus"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_circle_minus" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/btn_minus">
+
+            <ch.protonmail.android.views.CustomFontTextView
+                android:id="@+id/address_full_combined"
+                style="@style/LoginEditText.NoBg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingBottom="@dimen/fields_default_space_small"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textAlignment="viewStart"
+                app:fontName="Roboto-Bold.ttf" />
+
+            <include layout="@layout/contact_address_detailed" />
+        </FrameLayout>
+    </RelativeLayout>
+</LinearLayout>

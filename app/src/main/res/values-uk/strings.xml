@@ -1,0 +1,1122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="protonmail">ProtonMail</string>
+    <string name="encrypted_emails">Зашифрована пошта</string>
+    <string name="secure_email_swiss">Безпечна пошта, <br/>
+із Швейцарії</string>
+    <string name="decrypt_mailbox">Розшифрувати <b>пошту</b></string>
+    <string name="decrypt">Розшифрувати</string>
+    <string name="user_sign_in">Логін користувача</string>
+    <string name="two_factor_sign_in">Двофакторна аутентифікація</string>
+    <string name="sign_in">Увійти</string>
+    <string name="sign_out">Вийти</string>
+    <string name="sign_out_question">Ви справді бажаєте вийти?</string>
+    <string name="remember_me_on_device">Запам\'ятати мене на цьому пристрої</string>
+    <string name="show_password">Показати пароль</string>
+    <string name="username">Ім\'я користувача</string>
+    <string name="password">Пароль</string>
+    <string name="login_password">Логін пароль</string>
+    <string name="mailbox_password">Пароль поштової скриньки</string>
+    <string name="two_factor_code">Двухфакторний код</string>
+    <string name="processing_request">Ваш запит знаходиться на обробці</string>
+    <!-- should check for html tag -->
+    <string name="need_account_sign_up">Потрібен акаунт? Зареєструйся.</string>
+    <string name="need_to_be_logged_in">Ви не авторизовані!</string>
+    <string name="forgot_password">Забули пароль?</string>
+    <string name="reset_mailbox_password">СКИНУТИ ПАРОЛЬ ПОШТОВОЇ СКРИНЬКИ</string>
+    <string name="forgot_mailbox_password">Щоб скинути пароль поштової скриньки, будь ласка, використовуйте веб-версію ProtonMail на protonmail.com</string>
+    <!-- Toast messages -->
+    <string name="error_chrome_disabled">Неможливо завантажити вміст. Будь ласка, увімкніть Chrome</string>
+    <string name="error_chrome_not_found">Неможливо завантажити вміст. Будь ласка, встановіть Chrome</string>
+    <string name="messages_load_failure">Не вдалося отримати повідомлення</string>
+    <string name="message_details_load_failure">Не вдалося отримати інформацію про повідомлення</string>
+    <string name="no_more_messages">Більше повідомлень немає</string>
+    <string name="mailbox_login_failure">Не вдалося увійти до поштової скриньки</string>
+    <string name="login_failure">Не вдалося увійти</string>
+    <string name="invalid_server_proof">Неприпустиме підтвердження сервера</string>
+    <string name="invalid_credentials">Невірні облікові дані</string>
+    <string name="invalid_mailbox_password">Неприпустимий пароль поштової скриньки</string>
+    <string name="not_signed_up">Ви не зареєстровані в програмі ProtonMail Android Beta</string>
+    <string name="no_network">Немає мережі</string>
+    <string name="no_network_queued">Немає мережі, повідомлення в черзі на відправку </string>
+    <string name="update_app_title">Необхідне оновлення</string>
+    <string name="update_app">Програму ProtonMail не можна використовувати, поки вона не буде оновлена</string>
+    <string name="api_offline_title">ProtonMail API офлайн</string>
+    <string name="api_offline">На жаль, ProtonMail зараз не працює, перевірте поточний статус робіт в нашому твіттері: https://twitter.com/protonmail</string>
+    <string name="cannot_open">Не вдалося відкрити файл</string>
+    <string name="downloaded_attachment">Завантажено %s</string>
+    <string name="edit_contact_validation">Будь ласка, введіть дійсну адресу електронної пошти та ім\'я</string>
+    <string name="contact_saved">Контакт збережено</string>
+    <string name="contact_saved_offline">Контакт збережений і буде синхронізований, коли з\'єднання з інтернетом буде доступно</string>
+    <string name="contact_exist">Така адреса поштової скиньки вже існує</string>
+    <string name="invalid_email">Неприпустима адреса електронної пошти</string>
+    <string name="duplicate_email">Email address is a duplicate</string>
+    <string name="invalid_code">Код не дійсний</string>
+    <string name="message_drafted">Не вдалося відправити повідомлення. Ваші повідомлення збережені в папці Чернетки</string>
+    <string name="message_drafted_reason">не існує %s. \nНе може доставити лист.</string>
+    <string name="open_drawer">Відкрити</string>
+    <string name="close_drawer">Закрити</string>
+    <string name="inbox_option">ВХІДНІ</string>
+    <string name="starred_option">ПОЗНАЧЕНІ</string>
+    <string name="drafts_option">ЧЕРНЕТКИ</string>
+    <string name="sent_option">ВІДПРАВЛЕНІ</string>
+    <string name="archive_option">АРХІВ</string>
+    <string name="trash_option">КОШИК</string>
+    <string name="spam_option">СПАМ</string>
+    <string name="contacts_option">КОНТАКТИ</string>
+    <string name="settings_option">НАЛАШТУВАННЯ</string>
+    <string name="report_bugs_option">ПОВІДОМИТИ ПРО ПОМИЛКУ</string>
+    <string name="signout_option">ВИЙТИ</string>
+    <string name="inbox">Вхідні</string>
+    <string name="starred">Вибрані</string>
+    <string name="drafts">Чернетки</string>
+    <string name="sent">Відправлені</string>
+    <string name="archive">Архів</string>
+    <string name="trash">Кошик</string>
+    <string name="spam">Спам</string>
+    <string name="contacts">Контакти</string>
+    <string name="contact_groups">Групи контактів</string>
+    <string name="search_contacts">Пошук контактів</string>
+    <string name="fetching_contacts">Отримання контактів Protonmail-а...</string>
+    <string name="fetching_contacts_success">Contacts refreshed successfully</string>
+    <string name="fetching_contacts_failure">Unable to refresh contacts</string>
+    <string name="search">Пошук</string>
+    <string name="search_messages">Пошук повідомлень</string>
+    <string name="no_search_results">Нічого не знайдено</string>
+    <string name="compose">Створити</string>
+    <string name="compose_message">Написати повідомлення</string>
+    <string name="empty_folder">Спорожнити папку</string>
+    <string name="view_headers">View Headers</string>
+    <string name="message_headers">Message Header</string>
+    <string name="delete_message">Видалити повідомлення</string>
+    <string name="delete_messages">Видалити повідомлення</string>
+    <string name="add_label">Додати мітку</string>
+    <string name="add_star">До обраного</string>
+    <string name="remove_star">Видалити з обраного</string>
+    <string name="mark_read">Позначити як прочитане</string>
+    <string name="mark_unread">Позначити як непрочитане</string>
+    <string name="move_to_archive">Перемістити до архіву</string>
+    <string name="move_to_trash">Перемістити у Кошик</string>
+    <string name="move_to_spam">Перемістити у Спам</string>
+    <string name="move_to_inbox">Перемiстити до вхiдних</string>
+    <string name="move_message_to_trash">Видалити повідомлення?</string>
+    <string name="are_you_sure_empty">Ви дійсно бажаєте видалити всі повідомлення з цієї папки?</string>
+    <string name="send">Надіслати</string>
+    <string name="selected">Вибрані</string>
+    <string name="no_messages">Повідомлень немає</string>
+    <string name="no_labels">Ярлики відсутні</string>
+    <string name="to">Кому</string>
+    <string name="cc">Копія</string>
+    <string name="bcc">Прихована копія</string>
+    <string name="to_prefix">Кому:</string>
+    <string name="cc_prefix">Копія:</string>
+    <string name="bcc_prefix">Прихована копія:</string>
+    <string name="from_prefix">Від:</string>
+    <string name="date_prefix">Дата:</string>
+    <string name="expiration_time_prefix">Закінчується через</string>
+    <string name="view_details">ПОДРОБИЦІ</string>
+    <string name="hide_details">ПРИХОВАТИ ПОДРОБИЦІ</string>
+    <string name="download">ЗАВАНТАЖИТИ</string>
+    <string name="reply">Відповісти</string>
+    <string name="reply_all">Відповісти всім</string>
+    <string name="forward">Переслати</string>
+    <string name="subject">Тема</string>
+    <string name="email_subject">Email subject</string>
+    <string name="define_message_password">Пароль повідомлення</string>
+    <string name="confirm_message_password">Підтвердити пароль</string>
+    <string name="define_password_hint">Вкажіть підказку (необов\'язково)</string>
+    <string name="message_passwords_do_not_match">Паролі для входу не збігаються</string>
+    <string name="message_mailbox_passwords_do_not_match">Паролі від поштової скриньки не збігаються</string>
+    <string name="eo_passwords_do_not_match">Паролі не співпадають</string>
+    <string name="define_expiration_period">Визначте період терміну дії</string>
+    <string name="set_message_expiration">Встановити термін дії для повідомлення </string>
+    <string name="days">Дні</string>
+    <string name="hours">Години</string>
+    <string name="max_labels_exceeded">Повідомлення%1$s не може мати більш %2$d ярликів.</string>
+    <string name="max_labels_selected">%dДозволено мати максимум ярликів</string>
+    <string name="max_attachments_reached">Maximum attachments per message has been reached</string>
+    <plurals name="hours_string">
+        <item quantity="one">%d година</item>
+        <item quantity="few">%d години</item>
+        <item quantity="many">%d hours</item>
+        <item quantity="other">%d годин</item>
+    </plurals>
+    <plurals name="days_string">
+        <item quantity="one">% день</item>
+        <item quantity="few">% дні</item>
+        <item quantity="many">%d days</item>
+        <item quantity="other">% днів</item>
+    </plurals>
+    <plurals name="minutes_string">
+        <item quantity="one">%d хвилина</item>
+        <item quantity="few">%d хвилини</item>
+        <item quantity="many">%d minutes</item>
+        <item quantity="other">%d хвилин</item>
+    </plurals>
+    <plurals name="attachments">
+        <item quantity="one">Одне вкладення</item>
+        <item quantity="few">%d вкладення</item>
+        <item quantity="many">%d Attachments</item>
+        <item quantity="other">%d вкладень</item>
+    </plurals>
+    <plurals name="attachments_non_descriptive">
+        <item quantity="one">\u0020 1 вкладення</item>
+        <item quantity="few">\u0020 %d вкладення</item>
+        <item quantity="many">\u0020 %d Attachments</item>
+        <item quantity="other">\u0020 %d вкладень</item>
+    </plurals>
+    <string name="add_attachment">Додати вкладення</string>
+    <string name="select_file">Виберіть файл</string>
+    <string name="attach_file">Прикріпити файл</string>
+    <string name="take_photo">Зробити фото</string>
+    <string name="problem_taking_photo">Сталася помилка при збереженні зображення</string>
+    <string name="problem_selecting_file">Виникла проблема з додаванням файла.</string>
+    <string name="add_contact">Додати контакт</string>
+    <string name="delete_contact">Видалити %s з контактів?</string>
+    <string name="sync_contact">Синхронізувати %s з web-програмою?</string>
+    <string name="confirm">Підтвердити</string>
+    <string name="confirm_destructive_action">Are you sure? This cannot be undone.</string>
+    <string name="create">Створити</string>
+    <string name="name">Ім\'я</string>
+    <string name="email">Електронна пошта</string>
+    <string name="email_address">Адрес електронної пошти</string>
+    <string name="phone">Номер телефону</string>
+    <string name="save">Зберегти</string>
+    <string name="add">Додати</string>
+    <string name="syncing_messages">Синхронізація...</string>
+    <string name="sync">Синхронізувати контакти</string>
+    <string name="save_message_as_draft">Зберегти повідомлення як чернетку?</string>
+    <string name="no_subject">Надіслати повідомлення без теми?</string>
+    <string name="yes">Так</string>
+    <string name="no">Ні</string>
+    <string name="okay">Ок</string>
+    <string name="report_bugs">Повідомити про помилку</string>
+    <string name="send_report">Send report</string>
+    <string name="bug_title">Заголовок</string>
+    <string name="bug_description">Опис помилки</string>
+    <string name="sending_report">Sending report...</string>
+    <string name="received_report">Звіт отримано</string>
+    <string name="not_received_report">Звіт не отримано</string>
+    <string name="not_received_report_offline">Offline! Report will be submitted when online</string>
+    <string name="forward_prefix">Переслати:</string>
+    <string name="original_message_divider">---Вихідне повідомлення--</string>
+    <string name="invalid_email_address">Адреса \'%s\' введена невірно</string>
+    <string name="no_recipients_specified">Будь ласка, вкажіть принаймні одного отримувача</string>
+    <string name="no_password_specified">Термін дії можна встановити тільки на повністю зашифровані повідомлення. Будь ласка, вкажіть пароль для одержувачів поза ProtonMail.</string>
+    <string name="attachment_limit">Межа для вкладень - %1$s. Цілком може бути вкладено %2$s.</string>
+    <string name="sending_message">Повідомлення надсилається...</string>
+    <string name="sending_message_offline">Поза мережею, поставлено в чергу на відправку...</string>
+    <string name="mailbox_password_changed">Пароль поштової скриньки змінено</string>
+    <string name="go_to_mailbox_login">Перейти в розділ авторизації для введення оновленого пароля для пошти?</string>
+    <string name="go_to_inbox">Перейти до вхідних</string>
+    <string name="message_sent">Повідомлення відправленно</string>
+    <string name="message_failed">Помилка відправки повідомлення</string>
+    <string name="storage_limit">Ліміт простору</string>
+    <string name="storage_limit_warning">Storage limit is approaching</string>
+    <string name="do_not_show_again">Не показувати знову</string>
+    <string name="edit_settings">Редагувати параметри</string>
+    <string name="save_settings">Зберегти налаштування</string>
+    <string name="share">Share</string>
+    <string name="settings_saved">Нові налаштування збережено</string>
+    <string name="settings_not_saved_password"> Параметри не збережені - невірний пароль для входу</string>
+    <string name="settings_not_saved_email"> Параметри не збережені - неправильна адреса ел. пошти для повідомлень</string>
+    <string name="save_settings_question">Зберегти налаштування?</string>
+    <string name="enter">Увійти</string>
+    <string name="cancel">Скасувати</string>
+    <string name="close">Закрити</string>
+    <string name="passwords">Менеджер гасел</string>
+    <string name="change_password">Змінити пароль</string>
+    <string name="change_login_password">Змінити пароль для входу</string>
+    <string name="change_mailbox_password">Змінити пароль поштової скриньки</string>
+    <string name="eo_password_title">Встановити пароль</string>
+    <string name="eo_password_subtitle">Встановити пароль для шифрування цього повідомлення для Користувачів поза ProtonMail</string>
+    <string name="eo_password_more_info">Отримати більше інформації</string>
+    <string name="old_login_password">Current Login Password</string>
+    <string name="new_login_password">Новий пароль</string>
+    <string name="confirm_new_login_password">Підтвердити новий пароль</string>
+    <string name="old_mailbox_password">Чинний пароль поштової скриньки</string>
+    <string name="new_mailbox_password">Новий пароль поштової скриньки</string>
+    <string name="confirm_new_mailbox_password">Підтвердити новий пароль поштової скриньки</string>
+    <string name="no_attachments">0 вкладень</string>
+    <string name="num_attachments">%d вкладень</string>
+    <string name="new_passwords_not_valid">Введено неправильні дані</string>
+    <string name="new_passwords_do_not_match">New passwords did not match</string>
+    <string name="new_login_password_saved">Новий пароль для входу збережено</string>
+    <string name="new_mailbox_password_saved">Новий пароль від поштової скриньки збережений</string>
+    <string name="could_not_change_password">Пароль не може бути змінений</string>
+    <string name="auto_logout_option_settings">Налаштувати виходу</string>
+    <string name="pin_lock_option_settings">Налаштування блокування програми</string>
+    <string name="pin_lock_after">Блокувати після</string>
+    <string name="lock_the_app">Заблокувати додаток</string>
+    <string name="no_sound_or_vibrate">Без вібрації, без звуку</string>
+    <string name="sound">Звук без вібрації</string>
+    <string name="vibration">Вібрація без звуку</string>
+    <string name="both_sound_and_vibration">Вібрація та звук</string>
+    <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are notallowed</string>
+    <string name="cont">Продовжити</string>
+    <string name="email_verification_code">Ми надішлемо код підтвердження на адресу електронної пошти, вказану вище.</string>
+    <string name="sms_verification_code">Ми відправимо код на вказаний вище номер телефону.</string>
+    <string name="send_verification_code">Надіслати код підтвердження</string>
+    <string name="resend_verification_code">Надіслати повторно</string>
+    <string name="enter_verification_code">Введіть перевірковий код</string>
+    <string name="verify">Перевірити</string>
+    <string name="reply_prefix_on">Увімкнено</string>
+    <string name="create_new_account">Створити нову обліковку</string>
+    <string name="setup_new_account">Налаштувати Вашу обліковку</string>
+    <string name="create_account">Створити обліковку</string>
+    <string name="create_passwords">Встановити гасло</string>
+    <string name="sign_up">Зареєструватися</string>
+    <string name="caps_username">Ім\'я користувача</string>
+    <string name="caps_login_password">Гасло</string>
+    <string name="caps_two_factor">Код двофакторної автентифікації</string>
+    <string name="caps_confirm_password">Підтвердити гасло</string>
+    <string name="caps_confirm_mailbox_password">Підтвердити гасло поштової скриньки</string>
+    <string name="caps_optional_notification_email">Е-ПОШТА ДЛЯ ВІДНОВЛЕННЯ ГАСЛА (НЕОБОВ\'ЯЗКОВО)</string>
+    <string name="caps_optional">* НЕОБОВ\'ЯЗКОВО</string>
+    <string name="update_me_for_new_features">Повідомляйте мене про нові можливості</string>
+    <string name="create_mailbox_password">Задати гасло</string>
+    <string name="confirm_mailbox_password">Підтвердити гасло поштової скриньки</string>
+    <string name="password_note"><b>Примітка:</b> Це використовується для шифрування і розшифровки повідомлень.
+         Не загубіть це гасло, ми не можемо його відновити. Якщо ви втратили ваше гасло, ви не зможете читати ваші листи.</string>
+    <string name="username_note"><b>Примітка:</b> Ім\'я користувача – це також ваша ProtonMail адреса</string>
+    <string name="terms_and_conditions">By using ProtonMail, you agree to our\n
+        <a href="https://protonmail.com/terms-and-conditions">terms and conditions</a> and <a href="https://protonmail.com/privacy-policy">privacy policy</a></string>
+    <string name="human_verification">Перевірка \"Я не робот\"</string>
+    <string name="human_verification_subtitle">To prevent abuse of ProtonMail,\nwe need to verify that you are human.</string>
+    <string name="select_options">Будь ласка, виберіть один з варіантів:</string>
+    <string name="no_verification_methods_found">Не знайдено способів перевірки</string>
+    <string name="email_verification">Підтвердження адреси е-пошти</string>
+    <string name="phone_verification">Телефон для підтвердження</string>
+    <string name="existing_email_address">Введіть чинну адресу е-пошти</string>
+    <string name="phone_number">Уведіть номер телефону</string>
+    <string name="encryption_setup">Параметри шифрування</string>
+    <string name="high_security">Велика безпека (2048 бітів)</string>
+    <string name="current_standard">Чинний стандарт</string>
+    <string name="extreme_security">Найбільша безпека (4096 бітів)</string>
+    <string name="highest_security">Доступний найвищий рівень шифрування.<b> Може забрати кілька хвилин для налаштування.</b></string>
+    <string name="generate_keypair">Згенерувати ключову пару</string>
+    <string name="labels_title_apply">Застосувати Мітки</string>
+    <string name="labels_title_add">Додати мітку</string>
+    <string name="labels_title">Мітки</string>
+    <string name="labels_create">Додати мітку</string>
+    <string name="label_name">Назва мітки</string>
+    <string name="label_name_empty">Label must have a name</string>
+    <string name="label_name_duplicate">Така назва мітки вже є</string>
+    <string name="label_created">Мітку створено</string>
+    <string name="label_invalid">Мітку не додано через погане ім\'я.</string>
+    <string name="undo">Скасувати</string>
+    <string name="customize_swipe_actions">Налаштувати дії на відрухи</string>
+    <string name="message_details_swipe_info">You can return to the mailbox screen by
+        swiping left to right and move current message to TRASH by swiping right to left</string>
+    <string name="composing_message_scroll_info">You can scroll the composing panel up or down by scrolling the very right edge of the composing panel</string>
+    <string name="message_can_not_edit">Can not reply/forward, this message isn\'t sent yet</string>
+    <string name="label_apply">Застосувати</string>
+    <string name="label_delete">Стерти</string>
+    <string name="label_add">Додати</string>
+    <string name="no_browser_found">Щоб закіничти цю дію, будь ласка встановіть бравзер</string>
+    <string name="no_application_found">Не знайдено застосунку для обробки цієї дії</string>
+    <string name="no_application_found_or_link_invalid">No app found to handle this action or invalid URL</string>
+    <string name="also_archive">Ще й в архів</string>
+    <string name="label_deleted">Мітку стерто</string>
+    <string name="label_deleted_error">Виникла помилка під час стирання мітки</string>
+    <string name="respond_inline">Respond in-line</string>
+    <string name="no_connectivity_detected">Під\'\'днання не виявлено...</string>
+    <string name="no_connectivity_message_not_downloaded">Не виявлено під\'єднання...
+        \nЛист не звантажено</string>
+    <string name="connectivity_arrived">Під\'єднано</string>
+    <string name="connectivity_checking">Перевірка під\'єднання...</string>
+    <string name="sync_short">Синхр.</string>
+    <string name="draft_attachments_uploading">Чернетку все ще вивантажувано...</string>
+    <string name="draft_label_attachments_uploading">uploading attachments…</string>
+    <string name="draft_label_message_uploading">sending message…</string>
+    <string name="attachment_failed">Вивантаження вкладення для цього листа зазнало невдачі </string>
+    <string name="attachment_failed_new">Attachment Upload Failed for message %1$s %2$s</string>
+    <string name="attaching_photo_failed">Прикріплення світлини зазнало невдачі</string>
+    <string name="empty_message">Порожнє повідомлення</string>
+    <string name="dismiss">Відхилити</string>
+    <string name="new_message_arrived">New message!</string>
+    <string name="please_choose_color">Будь ласка оберіть колір</string>
+    <string name="display_images">Показати зображення</string>
+    <string name="retry">Повторити</string>
+    <string name="saving_failed_no_conn">Saving failed, no connection</string>
+    <string name="can_not_create_account_while_beta">У бета-версії створення обліковки вимкнено</string>
+    <string name="changing_mailbox_password_disabled_while_beta">У бета-версії зміну гасла поштової скриньки вимкнено</string>
+    <string name="username_is_available">%s доступно!</string>
+    <string name="username_is_not_available">%s НЕ доступно!</string>
+    <string name="congratulation">Вітаємо!</string>
+    <string name="new_account_ready">Ваш нова захищена обліковка\nе-пошти вже готова.</string>
+    <string name="optional_email_note">Не обов\'язкова адерса е-пошти для відновлення дозволяє Вам
+        скинути вхідне гасло, якщо Ви його забудете.</string>
+    <string name="optional_display_name">Коли ви надсилаєте е-лист, це ім\'я
+        відображається в полі відправника.</string>
+    <string name="error_captcha_not_valid">Не дійсний</string>
+    <string name="close_engagement">закрити тур</string>
+    <string name="engagement_title_welcome">Ласкаво просимо до ProtonMail-а!</string>
+    <string name="engagement_title_swipe">Дії на швидкі відрухи</string>
+    <string name="engagement_title_labels">Керування мітками</string>
+    <string name="engagement_title_encryption">Наскрізне шифрування</string>
+    <string name="engagement_title_expire">Самознищувальні листи</string>
+    <string name="engagement_title_help">Допомога й підтримка</string>
+    <string name="engagement_title_support_protonmail">Підтримати ProtonMail</string>
+    <string name="engagement_subtitle_welcome">Вашу нову зашифровану обліковку вже налаштовано, і вона готова відправляти та отримувати шифровані листи.</string>
+    <string name="engagement_subtitle_swipe">Ви можете налаштувати жести відрухами в налаштуваннях застосунку ProtonMail.</string>
+    <string name="engagement_subtitle_labels">Create and add Labels to organize your inbox. Press and hold down on a message for all options.</string>
+    <string name="engagement_subtitle_encryption">Your inbox is now protected with end-to-end encryption. To automatically send secure emails to your contacts, invite them to use ProtonMail!  You can also manually encrypt messages to them if they don\'t use ProtonMail.</string>
+    <string name="engagement_subtitle_expire">Messages you send can be set to auto delete after a certain time period.</string>
+    <string name="engagement_subtitle_help">You can get help and support at protonmail.com/support. Bugs can also be reported with the app.</string>
+    <string name="engagement_subtitle_support_protonmail">ProtonMail не продає рекламу чи зловживає вашою
+        конфіденційністю. Ваша підтримка наріжна для збереження ProtonMail-а. Ви можете перейти на
+        платну обліковку чи пожертвувати на підтримку ProtonMail-а.</string>
+    <string name="attachment_exists">Attachment already attached</string>
+    <string name="sending_email_success">Код підтвердження надіслано</string>
+    <string name="sending_email_failed">Не вдалося надіслати перевірковий код</string>
+    <string name="password_required">Enter your login password to make this change</string>
+    <string name="password_not_valid">Введено неприпустиме гасло</string>
+    <string name="send_code_wait">Please wait %d seconds to click again</string>
+    <string name="eo_password_not_completed">Гасло листа не завершене.</string>
+    <string name="delinquency_title">Access to this account is disabled due to non-payment</string>
+    <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through protonmail.com to pay your unpaid invoice.</string>
+    <string name="direct_disabled_subtitle">Mobile signups are temporarily disabled. Please try again later, or try signing up at <a href="https://protonmail.com">protonmail.com</a> using a desktop or laptop computer.</string>
+    <string name="downloading">Завантаження...</string>
+    <string name="cant_download_attachment">Не вдається звантажити вкладення</string>
+    <string name="auto_logout">Автовихід</string>
+    <string-array name="auto_logout_options_array">
+        <item>Immediately</item>
+        <item>5 хв бездіяльності</item>
+        <item>15 хв бездіяльності</item>
+        <item>1 год бездіяльності</item>
+        <item>24 год бездіяльності</item>
+    </string-array>
+    <string-array name="pin_options_array">
+        <item>Змінити PIN-код</item>
+        <item>Змінити час очікування PIN-а</item>
+    </string-array>
+    <string name="delete_label_confirmation_title">Delete selected labels?</string>
+    <string name="delete_folder_confirmation_title">Delete selected folders?</string>
+    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b></string>
+    <string name="enter_pin">Введіть PIN-код для розблокування вашої теки \"Вхідні\"</string>
+    <string name="enter_pin_message_details">Введіть PIN-код щоб відімкнути ваш лист</string>
+    <string name="enter_current_pin">Введіть Ваш чинний PIN</string>
+    <string name="hint_pin">PIN-код</string>
+    <string name="pin_subtitle_create">Створити PIN-код тут</string>
+    <string name="pin_subtitle_create_new">Створити НОВИЙ PIN-код тут</string>
+    <string name="pin_subtitle_confirm">Підтвердьте свій PIN тут</string>
+    <string name="pin_subtitle_confirm_new">Підтвердьте свій НОВИЙ PIN тут</string>
+    <string name="forgot_pin">Забули PIN?</string>
+    <string name="pin_invalid">PIN is invalid, enter correct 4 digit PIN</string>
+    <string name="pin_confirmation_not_match">PIN підтвердження не підходить</string>
+    <string name="pin_not_match">PIN-коди не збігаються</string>
+    <string name="new_pin_saved">Новий PIN-код збережено</string>
+    <string name="pin_settings">Налаштування PIN-кода</string>
+    <string name="next">далі</string>
+    <string name="back">назад</string>
+    <string name="new_emails">%d нових листів</string>
+    <string name="attachment_download_success">%s успішно завантажено до файлового менеджера</string>
+    <string name="attachment_download_failed">%s не вдалося завантажити належним чином</string>
+    <string name="sender_changed">Щоб змінити адресу відправника, будь ласка, видаліть усі вкладення.</string>
+    <string name="ringtone">Мелодія</string>
+    <string name="ringtone_selected">Мелодія:</string>
+    <string name="notification_option">%1$s\nМелодія: %2$s</string>
+    <string name="ringtone_invalid">Ringtone selection returned an invalid value</string>
+    <string name="ringtone_no_default">Impossible to load a default Ringtone</string>
+    <string name="select_tone">Оберіть сигнал для повідомлень</string>
+    <string name="copy_link">Копіювати посилання</string>
+    <string name="share_link">Поділитись посиланням</string>
+    <string name="attachment_delete_failed">Стирання %s вкладень не вдалося</string>
+    <string name="sync_attachments">Синхронізуємо вкладення</string>
+    <string name="processing_attachment">Обробка вкладення</string>
+    <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Do you want to continue?</string>
+    <string name="hyperlink_confirmation_checkbox_text">Don\'t ask again</string>
+    <string name="none">Немає</string>
+    <string name="changes_affected_after_closing">Changes will be affected after closing the app</string>
+    <plurals name="incorrect_pin_remaining_attempts">
+        <item quantity="one">Хибний PIN, %d спроба лишилась</item>
+        <item quantity="few">Хибний PIN, %d спроби лишилось</item>
+        <item quantity="many">Incorrect PIN, %d attempts remaining</item>
+        <item quantity="other">Хибний PIN, %d спроб лишилось</item>
+    </plurals>
+    <plurals name="incorrect_pin_remaining_attempts_wipe">
+        <item quantity="one">%d спроба до витирання захищених даних!</item>
+        <item quantity="few">%d спроби до витирання захищених даних!</item>
+        <item quantity="many">%d attempts until secure data wipe!</item>
+        <item quantity="other">%d спроб до витирання захищених даних!</item>
+    </plurals>
+    <string name="done">Готово</string>
+    <string name="logout">Вихiд</string>
+    <string name="logout_question">Впевнені, що хочете вийти?</string>
+    <string name="logout_question_next_account">Are you sure you want to logout with current account and proceed using %s?</string>
+    <string name="upselling">Оновлення/пожертвувати</string>
+    <string name="upselling_title">ProtonMail is free and open source</string>
+    <string name="upselling_subtitle">We need your support to continue protecting privacy and improving ProtonMail</string>
+    <string name="upselling_donate_title">Пожертва</string>
+    <string name="upselling_upgrade_title">Підвищітись до ProtonMail Plus</string>
+    <string name="upselling_donate_subtitle">Ваш внесок допоможе нам збільшити спроможності ProtonMail-а та продовжити розвивати його як вільний програмний продукт з відкритим початковим кодом. Лише завдяки підтримці спільноті ми можемо продовжувати надавати ProtonMail людям у всьому світі.</string>
+    <string name="upselling_upgrade_subtitle">Your subscription upgrade will help us add
+    capacity and continue to develop ProtonMail as free and open source. It is only through the
+    support of the community that we are able to continue providing ProtonMail to people around
+    the world.</string>
+    <string name="upgrade_donate">Оновлення/пожертвувати</string>
+    <string name="upselling_donate_pick_amount">Виберіть суму пожертви або введіть будь-яку суму</string>
+    <string name="amount_5">5€</string>
+    <string name="amount_15">15€</string>
+    <string name="amount_50">50€</string>
+    <string name="amount_100">100€</string>
+    <string name="donation_amount">Вкажіть суму пожертви</string>
+    <string name="donate">Пожертва</string>
+    <string name="donate_paypal_bitcoin">Пожертва через PayPal чи Bitcoin</string>
+    <string name="upgrade_line1">Все включене в наш вільний план</string>
+    <string name="upgrade_line2">5 ГБ сховища</string>
+    <string name="upgrade_line3">Використовуйте свій власний домен</string>
+    <string name="upgrade_line4">До 5 псевдонімів</string>
+    <string name="upgrade_line5">Пріоритетна служба підтримки</string>
+    <string name="upgrade_plus_price">4€</string>
+    <string name="per_month">/ місяць</string>
+    <string name="upgrade">Покращити</string>
+    <string name="payment_options">Варіант сплати</string>
+    <string name="other_plans">Для планів з більшим сховищем, оновлюйтесь через
+    веб інтерфейс е-пошти ProtonMail.</string>
+    <string name="upgrade_paid_user">Thank you for being a paid user!</string>
+    <string name="select_account_type">Виберіть тип своєї обліковки</string>
+    <string name="select_account_type_subtitle">ProtonMail is a free service
+    for the public good. You can help support online privacy by selecting a paid account.</string>
+    <string name="plan_free_with_price">БЕЗКОШТОВНО</string>
+    <string name="plan_plus_with_price">PLUS %s/місяць</string>
+    <string name="plan_visionary_with_price">VISIONARY %s/місяць</string>
+    <string name="plan_business_with_price">BUSINESS %s/місяць</string>
+    <string name="plan_free_title">Базова обліковка з обмеженими можливостями</string>
+    <string name="plan_plus_title">Безпечна електронна пошта з прогресивними функціями</string>
+    <string name="plan_visionary_title">Особливі облікові записи для наших прибічників</string>
+    <string name="plan_business_title">Особливі облікові записи для наших прибічників</string>
+    <string name="plan_plus_line2">Надсилайте до 1000 листiв на день</string>
+    <string name="plan_plus_line3">Мітки та користувацькі фільтри</string>
+    <string name="plan_plus_line4">Надіслати зашифрованого листа зовнішнім одержувачам</string>
+    <string name="plan_plus_line7">Пріоритетна служба підтримки</string>
+    <string name="plan_free_line1">500 МБ сховища</string>
+    <string name="plan_free_line2">150 листiв на добу</string>
+    <string name="plan_free_line22">%d листiв на добу</string>
+    <string name="plan_free_line3">20 міток</string>
+    <string name="plan_free_line4">Користувацькі домени: не підтримуються</string>
+    <string name="plan_free_line5">1 адреса</string>
+    <string name="plan_free_line6">Підримка клієнтів: обмежена</string>
+    <string name="plan_visio_line2">Жодних обмежень надсилання листів</string>
+    <string name="plan_visio_line3">Ранній доступ до нових функцій</string>
+    <string name="plan_visio_line6">Допоможіть обрати нові функції за допомогою опитувань для Visionary-користувачів</string>
+    <string name="plan_business_line1">найближчим часом для організацій, щоб користуватись шифрованою е-поштою!</string>
+    <string name="currency_duration">Валюта й Тривалість</string>
+    <string name="credit_card_name">Name on credit/debit card</string>
+    <string name="zip_code">Postal code</string>
+    <string name="card_number">Номер картки</string>
+    <string name="billing_information">Платіжна інформація</string>
+    <string name="billing_upgrade_thanks">Upgrade successful! Thank you for the support!</string>
+    <string name="country">Країна</string>
+    <string name="cvc">CVC</string>
+    <string name="terms_and_conditions_billing">By clicking Submit, you agree
+    to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s terms and conditions</a></string>
+    <string name="submit">Надіслати</string>
+    <string name="currency">Валюта</string>
+    <string name="plan_duration">Платіжний Цикл</string>
+    <string name="duration_annual_line1">Щорічний план <font color="#C3E129"> Заощадити 20%</font></string>
+    <string name="duration_annual_line2">%s на місяць</string>
+    <string name="per_month_text_only">на місяць</string>
+    <string name="per_year_text_only">на рік</string>
+    <string name="duration_annual_line3">Нараховано як %s/рік</string>
+    <string name="duration_annual_line4">Нараховано %s/місяць</string>
+    <string name="duration_monthly_line1">Місячний план</string>
+    <string name="duration_monthly_line2">%s на місяць</string>
+    <string name="duration_monthly_line3">Заощадити 20%</string>
+    <string name="set_cont">Установити &amp; Продовжити</string>
+    <string name="payment_error">Помилка сплати</string>
+    <string name="error">Помилка</string>
+    <string name="try_another_card">Спробуйте іншу картку</string>
+    <string name="try_another_paypal">Pay with PayPal</string>
+    <string name="try_another_payment_method">Try another</string>
+    <string name="submit_paypal">Check out with PayPal</string>
+    <string name="picker_card">Credit/debit card</string>
+    <string name="picker_paypal">PayPal</string>
+    <string name="paypal_disclaimer">You will need to login to your PayPal account to complete this transaction. We will open new browser window with PayPal for you.</string>
+    <string name="payment_picker_disclaimer">Please select payment type</string>
+    <string name="payment_success_title">Payment Success!</string>
+    <string name="payment_success_text">We are now upgrading your account, please wait a moment. Thank you for your support!</string>
+    <string name="donation_success_title">Donation Success!</string>
+    <string name="donation_success_text">Your support is essential to keeping ProtonMail running. Thank you for supporting internet privacy!</string>
+    <string name="create_free_account">Create free account</string>
+    <string name="storage_gb">%d ГБ сховища</string>
+    <string name="storage_mb">%d МБ сховища</string>
+    <string name="max_addresses">До %d поштових псевдонімів</string>
+    <string name="inline_prefix">[Inline]</string>
+    <string name="inline_header">%d вбудованих зображень</string>
+    <string name="select">Обрати</string>
+    <string name="change_currency">Змінити валюту</string>
+    <string name="switch_billing_monthly">Перейти на місячну</string>
+    <string name="switch_billing_yearly">Перейти на річну</string>
+    <string name="warning">Засторога</string>
+    <string name="empty_recovery_email_question">Попередження: Ви не вказали резервну адресу е-пошти, тож відновлення обліковки є неможливим, якщо ви забудете гасло. Продовжити без резервної адреси е-пошти?</string>
+    <string name="card_details_title">%1$s (*** %2$s)</string>
+    <string name="card_details_subtitle">Дата завершення: %s</string>
+    <string name="payment_methods">Способи сплати</string>
+    <string name="payment_approval_activity">Payment Method Approval</string>
+    <string name="payment_approval_success">Payment method has been approved</string>
+    <string name="payment_approval_unknown_error_description">An error occurred while trying to verify your payment method. Please try again or switch to another card.</string>
+    <string name="payment_approval_cancel_error_description">Payment method verification cancelled. Please try again or switch to another card.</string>
+    <string name="payment_approval_consumed_error_description">Payment method already used for this payment. Please check status of your subscription.</string>
+    <string name="no_payment_methods">У вас немає збережених методiв сплати.</string>
+    <string name="edit_payment_methods">Будь ласка увійти в систему через protonmail.com для редагування платіжної інформації.</string>
+    <string name="no_permission_contacts">Немає дозволу передивлятись контакти</string>
+    <string name="message_not_loaded">Лист не завантажено</string>
+    <string name="signature_on">Підпис ввімкнено</string>
+    <string name="signature_text">Текст підпису</string>
+    <string name="please_use_webapp_pass_change">Please use our web app  &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; using a desktop or laptop computer in order to complete this action.</string>
+    <string name="available_addresses">Доступні адреси</string>
+    <string name="inactive_addresses">Вимкнені адреси</string>
+    <string name="not_set">Не задано</string>
+    <string name="edit_notification_email">Змінити пошту для відновлення доступу</string>
+    <string name="available_swipe_actions">Доступні дії</string>
+    <string name="no_available_addresses">У вас немає доступних адрес</string>
+    <string name="no_inactive_addresses">У вас немає вимкнених адрес</string>
+    <string name="label_add_new">Додати нову мітку</string>
+    <string name="available_labels">Доступні мітки</string>
+    <string name="choose_label_color">Оберіть колір для мітки</string>
+    <string name="save_new_label">Зберегти нову мітку</string>
+    <string name="delete_selected">Стерти вибране</string>
+    <string name="pin_not_activated">PIN не активовано</string>
+    <string name="available_options">Доступні параметри</string>
+    <string name="current_recovery_email">Чинна поштова адреса для відновлення</string>
+    <string name="change_recovery_email">Змінити адресу е-пошти для відновлення</string>
+    <string name="new_recovery_email">Нова е-пошта для відновлення</string>
+    <string name="confirm_new_recovery_email">Підтвердити нову е-пошту для відновлення</string>
+    <string name="recovery_emails_invalid">Адреса е-пошти не підходить або неправильно написана</string>
+    <string name="authenticate">Автентифікація</string>
+    <string name="background_sync_subtitle">Якщо цю функцію ввімкнено, застосунок синхронізуватиметься з сервером у тлі. Вимкнення цієї функції вимкне й \"пуш\" сповіщення.</string>
+    <string-array name="notification_options">
+        <item>Немає вібрації чи звуку</item>
+        <item>Звук без вібрації</item>
+        <item>Вібрація без звуку</item>
+        <item>Вібрація та звук</item>
+    </string-array>
+    <string-array name="account_type_names">
+        <item>Безкоштовно</item>
+        <item>Plus</item>
+        <item>Visionary</item>
+        <item>Професійний</item>
+    </string-array>
+    <plurals name="custom_domains">
+        <item quantity="one">Use your own domain (ex: john@smith.com)</item>
+        <item quantity="few">Support for up to %d domains</item>
+        <item quantity="many">Support for up to %d domains</item>
+        <item quantity="other">Support for up to %d domains</item>
+    </plurals>
+    <string-array name="months_array">
+        <item>ММ</item>
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+    <string name="contacts_groups">Групи</string>
+    <string name="phone_contact">Контакт з телефону</string>
+    <string name="contact_details_display_name">Name</string>
+    <string name="contact_details">Контактні дані</string>
+    <string name="email_type_home">Головна</string>
+    <string name="email_type_work">Робота</string>
+    <string name="option_type_custom">Новий тип</string>
+    <string name="type_title">Виберіть тип</string>
+    <string name="no_permission_storage">Нема дозволу на доступ до сховища</string>
+    <string name="message_drafted_error_server">Надсилання листа не вдалося. %s</string>
+    <string name="sync_local_contacts">Upload to ProtonMail</string>
+    <string name="please_select_only_phone_contacts">Будь ласка, оберіть лише контакти з телефона</string>
+    <string name="contact_vcard_hint_email">Впишіть е-пошту</string>
+    <string name="contact_vcard_hint_phone">Введіть номер телефону</string>
+    <string name="contact_vcard_hint_address">Введіть адресу</string>
+    <string name="contact_vcard_hint_other">Введіть дані</string>
+    <string name="contact_vcard_hint_note">Введіть примітку</string>
+    <string name="contact_vcard_phone">Телефон</string>
+    <string name="contact_vcard_address">Адреса</string>
+    <string name="contact_vcard_new_row_email">додати адреси е-пошти</string>
+    <string name="contact_vcard_new_row_phone">додати номер телефону</string>
+    <string name="contact_vcard_new_row_address">додати адресу</string>
+    <string name="contact_vcard_new_row_other">додати інформацію</string>
+    <string name="contact_vcard_new_row_custom">додати власне поле</string>
+    <string name="vcard_other_option_org">Організація</string>
+    <string name="vcard_other_option_title">Заголовок</string>
+    <string name="vcard_other_option_nickname">Псевдонім</string>
+    <string name="vcard_other_option_birthday">День народження</string>
+    <string name="vcard_other_option_anniversary">Anniversary</string>
+    <string name="vcard_other_option_gender">Gender</string>
+    <string name="vcard_other_option_role">Role</string>
+    <string name="vcard_other_option_url">URL</string>
+    <string name="sync_question">Синхронізувати контакти?</string>
+    <string name="sync_question_subtitle">Це синхронізує контакти на Вашому телефоні з контактами на ProtonMail-і. Відтак ви зможете бачити ці контакти на іншому вашому пристрої через ProtonMail.</string>
+    <string name="convert_contact">Перетворити контакт</string>
+    <string name="upload_contacts">Вивантажити контакти</string>
+    <string name="encrypted_data">Зашифровані дані</string>
+    <string name="upgrade_encrypted_contact">Будь ласка, підвищіть свій план щоб користуватись зашифрованою інофромацією про контакти.</string>
+    <string name="empty_encrypted_data">Зашифровані дані контакта порожні.</string>
+    <string name="uploading_contacts">Вивантаження контактів &#8230;</string>
+    <string name="error_encrypted_data">Помилка під час отримання зашифрованої інформації про контакт.</string>
+    <string-array name="vcard_option_phone">
+        <item>Phone</item>
+        <item>Mobile</item>
+        <item>Робота</item>
+        <item>Fax</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="vcard_option_email">
+        <item>Email</item>
+        <item>Personal</item>
+        <item>Work</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="vcard_option_address">
+        <item>Address</item>
+        <item>Personal</item>
+        <item>Work</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="vcard_option_other">
+        <item>@string/vcard_other_option_org</item>
+        <item>@string/vcard_other_option_anniversary</item>
+        <item>@string/vcard_other_option_birthday</item>
+        <item>@string/vcard_other_option_gender</item>
+        <item>@string/vcard_other_option_nickname</item>
+        <item>@string/vcard_other_option_role</item>
+        <item>@string/vcard_other_option_title</item>
+        <item>@string/vcard_other_option_url</item>
+    </string-array>
+    <string name="logged_out">Ви вийшли</string>
+    <string name="logged_out_description">Ви вийшли. Будь ласка, увійдіть знов.</string>
+    <string name="verification_needed">Потрібно перевірити</string>
+    <string name="verification_needed_description">З міркувань безпеки, будь ласка підтвердьте, що ви не робот.</string>
+    <string name="verification_needed_description_notification">Будь ласка, підтвердіть, що ви людина перш ніж слати цього листа: %s</string>
+    <string name="message_drafted_verification_needed">Message not sent - verification required. Your messages are saved in drafts folder.</string>
+    <string name="error_message_zip_code_invalid">Error: Postal Code invalid</string>
+    <string name="error_message_cvc_invalid">Помилка: Неприпустимий CVC</string>
+    <string name="error_message_card_name_invalid">Помилка: Неприпустиме ім\'я картки</string>
+    <string name="error_message_select_country">Будь ласка, виберіть країну</string>
+    <string name="error_message_exp_date_invalid">Помилка: Хибний строк дії</string>
+    <string name="error_message_exp_date_past">Error: Expiration date is invalid</string>
+    <string name="error_message_card_number_invalid">Помилка: Неприпустимий номер картки</string>
+    <string name="print_error">Помилка друку</string>
+    <string name="download_error">Помилка звантаження</string>
+    <string name="download_complete">Звантаження завершено</string>
+    <string name="download_in_progress">Звантаження триває</string>
+    <string name="expires_in">\tНе буде чинною у %s</string>
+    <string name="unsaved_changes_title">Незбережені зміни</string>
+    <string name="unsaved_changes_subtitle">Виявлено незбереженні записи у формі. Ви дійсно бажаєте скасувати їх?</string>
+    <string name="discard">Відхилити</string>
+    <string name="keep_editing">Продовжити редагування</string>
+    <string name="request_timeout">Request timed out, please try again</string>
+    <string name="add_folder">Додати теку</string>
+    <string name="no_folders">Немає тек</string>
+    <string name="folders_title_move">Перенести листи до</string>
+    <string name="move">Перемістити</string>
+    <string name="folders_manager">Менеджер тек</string>
+    <string name="folder_add_new">Додати нову теку</string>
+    <string name="folder_name">Ім\'я теки</string>
+    <string name="available_folders">Доступні теки</string>
+    <string name="choose_folder_color">Оберіть колір для теки</string>
+    <string name="folder_created">Теку створено</string>
+    <string name="folder_invalid">Теку не додано через погане ім\'я.</string>
+    <string name="folder_deleted">Теку стерто</string>
+    <string name="folder_deleted_error">Виникла помилка під час стирання теки</string>
+    <string name="save_new_folder">Зберегти нову теку</string>
+    <string name="create_new_folder">Створити теку</string>
+    <string name="all_mail">Уся пошта</string>
+    <string name="allmail_option">УСЯ ПОШТА</string>
+    <string name="empty_emails">Нема е-листів</string>
+    <string name="empty_email_list">No email address</string>
+    <string name="no_contacts">Немає контактів</string>
+    <string name="sender_name_address">%1$s &lt; %2$s &gt; пише:</string>
+    <string name="update_label">Оновити мітку</string>
+    <string name="folder_name_empty">Folder must have a name</string>
+    <string name="max_labels_in_message">%1$s повідомлення не може мати більше %2$d міток.</string>
+    <string name="delete">Стерти</string>
+    <string name="subject_copied">Subject copied to clipboard</string>
+    <string name="details_copied">Деталі скопійовано до буферу обміну</string>
+    <string name="saving">Збереження...</string>
+    <string name="update_folder">Оновити теку</string>
+    <string name="spam_score_100">This email seems to be from a ProtonMail address but came from outside our system and failed our authentication requirements. It may be spoofed or improperly forwarded!</string>
+    <string name="spam_score_101">This email has failed its domain\'s authentication requirements. It may be spoofed or improperly forwarded!</string>
+    <string name="spam_score_102">This message may be a phishing attempt. Please check the sender and contents to make sure they are legitimate. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">LEARN MORE</a></string>
+    <string name="print_from_template">Від: %s</string>
+    <string name="print_to_template">Кому: %s; &#160;</string>
+    <string name="print_cc_template">Копія: %s; &#160;</string>
+    <string name="print_bcc_template">Прихована копія: %s; &#160;</string>
+    <string name="contacts_invalid_type">Неприпустимий тип</string>
+    <string name="signature_error">Помилка підтвердження</string>
+    <string name="signature_error_desc">Verification of this content\'s signature failed</string>
+    <string name="decryption_error">Помилка розшифрування</string>
+    <string name="decryption_error_desc">Decryption of this content failed</string>
+    <string name="address">Адреса: </string>
+    <string name="address_street">Вулиця</string>
+    <string name="address_city">Місто</string>
+    <string name="address_region">Округа (штат чи область)</string>
+    <string name="address_postcode">Поштовий індекс</string>
+    <string name="address_country">Країна</string>
+    <string name="recheck_delinquency">Перевірити знову</string>
+    <string name="close_app">Закрити застосунок</string>
+    <string name="empty_subject">(No Subject)</string>
+    <string name="contacts_unknown">Unknown</string>
+    <string name="expand_collapse">Exp/Col</string>
+    <string name="learn_more"><u>Learn More</u></string>
+    <string name="info">Info</string>
+    <string name="error_can_not_send_from_this_address">Upgrade to a paid plan to send from your %s address.</string>
+    <string name="digital_signature_verified">Digital signature verified</string>
+    <string name="encrypted_and_digital_signature_verified">Encrypted and digital signature verified</string>
+    <string name="email_empty">Email address is missing</string>
+    <string name="edit_contact_details">Edit Contact Details</string>
+    <string name="encrypted_contact_details">Encrypted Contact Details</string>
+    <string name="edit_contact_toolbar_title">Edit %s</string>
+    <string name="convert_question">Upload local contacts</string>
+    <string name="convert_question_subtitle">This will upload the local contacts on your device to your ProtonMail contacts directory. You will then be able to access these contacts on your other devices through ProtonMail.</string>
+    <string name="refresh_contacts">Refresh</string>
+    <string name="upload">Upload</string>
+    <string name="invalid_email_some_contacts">Email address is not valid for some of your contacts</string>
+    <string name="protonmail_contacts">ProtonMail Contacts</string>
+    <string name="device_contacts">Device Contacts</string>
+    <string name="print_date_template">Date: %s</string>
+    <string name="print_attachment_template">Attachment: %s; &#160;</string>
+    <string name="pm_me_changed">Sending messages from @pm.me address is a paid feature. Your message will be sent from your default address %s</string>
+    <string name="pm_me_can_not_be_default">Upgrade to a paid plan to be able to set your %s address as default</string>
+    <string name="dont_remind_again">Don\'t remind me again</string>
+    <string name="load_embedded_images">Load embedded images</string>
+    <string name="remove_password">Remove Password</string>
+    <string name="remove_password_question">Remove Password?</string>
+    <string name="attachment_storage_value_current">Currently selected: %dMB</string>
+    <string name="attachment_storage_value_current_unlimited">Currently selected: Unlimited</string>
+    <string name="attachment_offline_max_storage">Sets the maximum amount storage space ProtonMail can use on your mobile device.</string>
+    <string name="load_embedded_images_failed_no_network">Embedded images loading failed. Please check your network connection.</string>
+    <string name="load_embedded_images_failed">Embedded images loading failed.</string>
+    <string name="attachment_storage_unlimited">%.2fMB of Unlimited</string>
+    <string name="unlimited">Unlimited</string>
+    <string name="local_storage_cleared">Local storage cleared</string>
+    <string name="local_storage_clear">Clear Local Storage</string>
+    <string name="recipient_popup_compose_to">Compose to</string>
+    <string name="recipient_popup_copy_address">Copy address</string>
+    <string name="recipient_popup_see_details">See contact details</string>
+    <string name="send_with_untrusted_key_title">Do you want to send with an untrusted key?</string>
+    <string name="send_with_untrusted_key_message">You have enabled Address Verification with Trusted Keys for %s, but no active encryption keys have been trusted.</string>
+    <string name="resign_contact_title">Do you want to re-sign the contact?</string>
+    <string name="resign_contact_message">The verification of %s has failed: the contact is not signed correctly. You must re-sign the contact in order to send a message to this address or edit the contact. This can also happen when you have recovered your password and reset your keys.</string>
+    <!-- Sender locks -->
+    <string name="sender_lock_unencrypted">Unencrypted message</string>
+    <string name="sender_lock_zero_access">Stored with zero access encryption</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_end_to_end">Sent by you with end-to-end encryption</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_autoresponder">Sent by ProtonMail with zero access encryption</string>
+    <string name="sender_lock_verification_failed">Sender verification failed</string>
+    <string name="sender_lock_pgp_encrypted">PGP-encrypted message</string>
+    <string name="sender_lock_pgp_verified">PGP-signed message from verified address</string>
+    <string name="sender_lock_pgp_encrypted_verified">PGP-encrypted message from verified address</string>
+    <string name="sender_lock_pgp_signed_verified_sender">PGP-signed message from verified address</string>
+    <!-- External PGP signed-only message that was encrypted by the BE -->
+    <string name="sender_lock_internal">End-to-end encrypted message</string>
+    <string name="sender_lock_internal_verified">End-to-end encrypted message from verified address</string>
+    <!-- Composer locks -->
+    <string name="composer_lock_internal">End-to-end encrypted</string>
+    <string name="composer_lock_internal_pinned">End-to-end encrypted to verified address</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-encrypted</string>
+    <string name="composer_lock_pgp_signed">PGP-signed</string>
+    <string name="recipient_not_found_and_removed">Recipient could not be found: %s and it has been removed</string>
+    <string name="recipient_error_and_removed">An error occurred while retrieving recipient information and the recipient has been removed: %s</string>
+    <string name="send_anyway">Send anyway</string>
+    <string name="expiration_error_title">You enabled message expiration, but not all recipients support this.</string>
+    <string name="expiration_error_add_msg_password">Please add a message password for the following recipients:</string>
+    <string name="expiration_error_disable_pgp_sending">Please disable PGP sending to enable expiration for the following recipients:</string>
+    <string name="expiration_error_proceed">Tap send anyway to send without expiration to these recipients.</string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a></string>
+    <string name="no_items_found">No items found</string>
+    <string name="channel_name_attachments">Attachments</string>
+    <string name="channel_description_attachments">Informs about attachment download status</string>
+    <string name="channel_name_emails">Emails</string>
+    <string name="channel_description_emails">Incoming email notifications</string>
+    <string name="channel_name_account">Account</string>
+    <string name="channel_description_account">Account status</string>
+    <string name="channel_name_ongoing_operations">Ongoing operations</string>
+    <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
+		message download on background</string>
+    <string name="checking_mailbox">Checking mailbox</string>
+    <string name="report_phishing">Report phishing</string>
+    <string name="print">Print</string>
+    <string name="phishing_dialog_title">Confirm phishing report</string>
+    <string name="phishing_dialog_message">Reporting a message as a phishing attempt will send the
+		message to us, so we can analyze it and improve our filters. This means that we will be able
+		to see the contents of the message in full.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Report sent. Message moved to spam.</string>
+    <string name="report_send">Report is sent</string>
+    <string name="cannot_send_report_send">Cannot send report</string>
+    <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
+    <!-- Contact Groups Strings -->
+    <string name="email_default">Email Default</string>
+    <string name="email_private">Email Private</string>
+    <string name="phone_private">Phone Private</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="contact_display_name">\ue91c Display Name</string>
+    <string name="add_new_email">\ue914 Add Email Address</string>
+    <string name="no_groups">No Groups</string>
+    <string name="contact_vcard_note">Нотатка</string>
+    <string name="edit_contact">Edit Contact</string>
+    <string name="create_contact_group">Create Contact Group</string>
+    <string name="edit_contact_group">Edit Contact Group</string>
+    <string name="contact_groups_add_addresses">Add Addresses</string>
+    <string name="contact_groups_manage_addresses">Manage Addresses</string>
+    <string name="contact_group_display_name">\ue91a Display Name</string>
+    <string name="contact_group_groups_icon">\ue91a </string>
+    <string name="contact_add_addr_to_group">Add address to groups</string>
+    <string name="title_activity_address_chooser">Manage Addresses</string>
+    <string name="title_activity_account_manager">Manage Accounts</string>
+    <string name="title_activity_connect_account">Connect Account</string>
+    <string name="account_manager_add_account">Add Account</string>
+    <string name="account_manager_remove_all_accounts">Removing all accounts</string>
+    <string name="account_manager_note">You can be simultaneously logged into an unlimited number of paid ProtonMail accounts and one free account.</string>
+    <string name="account_manager_remove_all">Remove all accounts</string>
+    <string name="account_manager_logout">Logout</string>
+    <string name="account_manager_login">Login</string>
+    <string name="manage_accounts_user_loggedout">%s (logged out)</string>
+    <string name="manage_accounts_user_primary">%s (primary)</string>
+    <string name="account_manager_remove">Remove</string>
+    <string name="connect_account_login_title">Login to your ProtonMail account</string>
+    <string name="default_error_message">Error occurred</string>
+    <string name="no_contact_groups">No contact groups</string>
+    <string name="search_contacts_inside_group">Search for contacts inside group</string>
+    <string name="contact_group_toolbar_title">%s (%s)</string>
+    <plurals name="contact_group_members">
+        <item quantity="one">%d Member</item>
+        <item quantity="few">%d Members</item>
+        <item quantity="many">%d Members</item>
+        <item quantity="other">%d Members</item>
+    </plurals>
+    <string name="groups">Groups</string>
+    <string name="tab_contacts">Contacts (%d)</string>
+    <string name="tab_contact_groups">Groups (%d)</string>
+    <string name="contact_group_saved">Group saved</string>
+    <string name="no_recipients">No Recipients</string>
+    <string name="contact_group_selected">%d Selected</string>
+    <string name="contact_group_deleted">Group Deleted</string>
+    <string name="paid_plan_needed">Please upgrade to a paid plan for these premium features</string>
+    <string name="composer_group_count">%1$s (%2$d Members)</string>
+    <string name="composer_group_count_of">%1$s (%2$d/%3$d Members)</string>
+    <string name="address_successful_update">Address successfully updated</string>
+    <plurals name="are_you_sure_delete_group">
+        <item quantity="one">Are you sure you want to delete this group?</item>
+        <item quantity="few">Are you sure you want to delete the selected groups?</item>
+        <item quantity="many">Are you sure you want to delete the selected groups?</item>
+        <item quantity="other">Are you sure you want to delete the selected groups?</item>
+    </plurals>
+    <plurals name="group_deleted">
+        <item quantity="one">Group Deleted</item>
+        <item quantity="few">Groups Deleted</item>
+        <item quantity="many">Groups Deleted</item>
+        <item quantity="other">Groups Deleted</item>
+    </plurals>
+    <plurals name="are_you_sure_delete_contact">
+        <item quantity="one">Are you sure you want to delete this contact?</item>
+        <item quantity="few">Are you sure you want to delete the selected contacts?</item>
+        <item quantity="many">Are you sure you want to delete the selected contacts?</item>
+        <item quantity="other">Are you sure you want to delete the selected contacts?</item>
+    </plurals>
+    <string name="members">Members</string>
+    <string name="max_emails_in_group_title">Max emails per group reached</string>
+    <string name="max_emails_in_group_subtitle">You have reached maximum number of emails per group (%1$d). Please remove %2$d items.</string>
+    <string name="select_deselect_all">Select All</string>
+    <string name="contact_group_name_hint">Choose a group name</string>
+    <string name="contact_group_change_color">Change color</string>
+    <string name="fab_add_contact">Add new contact</string>
+    <string name="fab_add_contact_group">Add new contact group</string>
+    <string name="contacts_add_photo_title">Add Photo</string>
+    <string name="contacts_add_photo_select_gallery">Select From Gallery</string>
+    <string name="contacts_add_photo_select_camera">Capture From Camera</string>
+    <string name="save_group_validation_error">Please provide a group name</string>
+    <!-- region Storage Limit Reached -->
+    <string name="storage_limit_alert">Storage limit reached. Unable to send or receive emails.
+        Press to learn more.</string>
+    <string name="storage_limit_warning_title">Warning</string>
+    <string name="storage_limit_reached_text">You have reached 100% of your storage capacity. You
+        won’t be able to send or receive emails unless you permanently delete some emails or purchase more
+        storage.</string>
+    <string name="storage_limit_approaching_text">You have reached 90% of your storage capacity.
+        Consider freeing up some space or purchasing more storage before you run out of capacity.</string>
+    <string name="storage_limit_do_not_remind">DO NOT REMIND ME</string>
+    <!-- endregion -->
+    <string name="need_permissions_title">Permissions</string>
+    <string name="need_storage_permissions_text">In order to add attachments you need to allow
+        access to storage.</string>
+    <string name="need_phone_permissions_text">In order to call this contact you need to allow
+        access to Phone.</string>
+    <string name="push_notifications_alert_title">Push notifications alert</string>
+    <string name="push_notifications_alert_subtitle">Push notifications for ProtonMail do not work without updated Google Play services.</string>
+    <string name="app_locked">App locked</string>
+    <string name="please_use_fingerprint">Please use your fingerprint to unlock the app.</string>
+    <string name="use_pin_instead">Use PIN instead</string>
+    <string name="undisclosed_recipients">Undisclosed Recipients</string>
+    <string name="could_not_delete_attachment">Attachment cannot be removed while uploading</string>
+    <string name="manage_accounts">Manage accounts</string>
+    <!-- region Settings -->
+    <string name="settings">Налаштування</string>
+    <string name="account_settings">Account settings</string>
+    <!-- region Acc Settings -->
+    <string name="account">Account</string>
+    <string name="subscription">Підписка</string>
+    <string name="plan_and_user">Тариф</string>
+    <string name="plan">Тариф</string>
+    <string name="payment_method">Спосіб сплати</string>
+    <string name="password_manager">Password management</string>
+    <string name="recovery_email">Recovery email</string>
+    <string name="storage">Mailbox size</string>
+    <string name="storage_used">%1$s / %2$s</string>
+    <string name="addresses">Addresses</string>
+    <string name="default_mail_address">Default email address</string>
+    <string name="default_address">Default address</string>
+    <string name="display_name_n_signature">Display name &amp; signature</string>
+    <string name="display_name">Display name</string>
+    <string name="edit_display_name">Редагувати показуване ім\'я</string>
+    <string name="signature">Підпис</string>
+    <string name="edit_signature">Enable signature</string>
+    <string name="mobile_signature">Mobile signature</string>
+    <string name="edit_mobile_signature">Enable mobile signature</string>
+    <string name="default_mobile_signature">Надіслано з ProtonMail mobile</string>
+    <string name="plus_account_required_mobile_signature">Потрібен ProtonMail Plus щоб редагувати мобільний підпис</string>
+    <string name="mobile_signature_is_premium">Changing the Mobile Signature is allowed to Paid users only</string>
+    <!-- region Snooze Settings -->
+    <string name="snooze_header">Snooze</string>
+    <string name="notifications_snooze">Затримка сповіщень</string>
+    <string name="notifications_snooze_finishing">Сповіщення відновляться за $s хв</string>
+    <string name="snooze_notifications">Притримати сповіщення</string>
+    <string name="snooze_notifications_adjust">Налаштувати</string>
+    <string name="notifications_snoozed">Сповіщення затримано</string>
+    <string name="notifications_snooze_scheduled">Заплановано</string>
+    <string name="notifications_snooze_scheduled_settings">Налаштування запланованих затримок</string>
+    <string name="notifications_snooze_current_status">Статус</string>
+    <string name="snooze_start_time">Час початку:</string>
+    <string name="snooze_end_time">Час закінчення:</string>
+    <string name="snooze_repeat">Повторити:</string>
+    <plurals name="quick_snooze_resume_min">
+        <item quantity="one">Сповіщення відновляться за 1 хв</item>
+        <item quantity="few">Сповіщення відновляться за %d хв</item>
+        <item quantity="many">Notifications will resume in %d mins</item>
+        <item quantity="other">Сповіщення відновляться за %d хв</item>
+    </plurals>
+    <string name="quick_snooze_resume_hours">Сповіщення відновляться за %1$d годин та %2$d хв</string>
+    <string name="minutes">Хвилин</string>
+    <string name="set_custom_quick_snooze">Вказати власне значення для затримки</string>
+    <string name="turn_off">Вимкнути</string>
+    <string name="snooze_will_repeat">Затримка повторюватиметься</string>
+    <string name="quick_and_scheduled_enabled">Швидка затримка й Запланована затримка увімкнені</string>
+    <string name="quick_only_enabled">Швидку затримку увімкнено</string>
+    <string name="scheduled_only_enabled">Заплановану затримку увімкнено</string>
+    <string name="quick_and_scheduled_disabled">Швидка затримка й Запланована затримка вимкнені</string>
+    <string name="scheduled_snooze_on">Заплановане (увімк)</string>
+    <string name="scheduled_snooze_off">Заплановане (вимк)</string>
+    <!-- endregion -->
+    <string name="mailbox">Mailbox</string>
+    <string name="privacy">Privacy</string>
+    <string name="auto_download_messages_title_short">Автоматичне звантаження</string>
+    <string name="auto_download_messages_title">Авто-звантажити листи</string>
+    <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
+    <string name="settings_background_sync">Синхронізація у тлі</string>
+    <string name="settings_auto_show_images">Auto Show Remote Images</string>
+    <string name="settings_auto_show_embedded_images">Auto Show Embedded Images</string>
+    <string name="settings_prevent_taking_screenshots">Запобігти створення зняток</string>
+    <string name="hyperlink_confirmation">Request link confirmation</string>
+    <string name="labels_and_folders">Labels &amp; Folders </string>
+    <string name="labels_manage">Labels manager</string>
+    <string name="folders_manage">Folders manager</string>
+    <string name="swiping_gesture">Swiping gesture</string>
+    <string name="swipe_action_left">Swipe left to right</string>
+    <string name="swipe_action_right">Swipe right to left</string>
+    <!-- region Swipe Actions -->
+    <string name="swipe_action_chooser_title">Вибрати дію на відрух</string>
+    <string name="swipe_action_trash">Message moved to trash</string>
+    <string name="swipe_action_trash_short">Moved to trash</string>
+    <string name="swipe_action_star">Позначення повідомлення оновлена</string>
+    <string name="swipe_action_spam">Лист позначено як спам</string>
+    <string name="swipe_action_archive">Лист кинуто у архів</string>
+    <string name="swipe_action_mark_read">Message marked as read</string>
+    <plurals name="action_move_to_trash">
+        <item quantity="one">Message moved to trash</item>
+        <item quantity="few">Messages moved to trash</item>
+        <item quantity="many">Messages moved to trash</item>
+        <item quantity="other">Messages moved to trash</item>
+    </plurals>
+    <plurals name="action_move_to_spam">
+        <item quantity="one">Message marked as spam</item>
+        <item quantity="few">Messages marked as spam</item>
+        <item quantity="many">Messages marked as spam</item>
+        <item quantity="other">Messages marked as spam</item>
+    </plurals>
+    <plurals name="action_move_to_archive">
+        <item quantity="one">Message archived</item>
+        <item quantity="few">Messages archived</item>
+        <item quantity="many">Messages archived</item>
+        <item quantity="other">Messages archived</item>
+    </plurals>
+    <!-- endregion -->
+    <string name="local_storage">Local storage limit</string>
+    <string name="storage_value">%1$d MB (%2$.2f MB used)</string>
+    <!-- endregion -->
+    <string name="app_settings">App Settings</string>
+    <!-- region App Settings -->
+    <string name="push_notifications">Push Notifications</string>
+    <string name="extended_notifications">Extended Notifications</string>
+    <string name="extended_notifications_description">Turn this feature on to see the sender\nof the emails in the push notifications.</string>
+    <string name="notification_settings">Налаштування сповіщень</string>
+    <string name="auto_lock">Auto-lock</string>
+    <string name="auto_lock_app">Auto-lock app</string>
+    <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
+    <string name="change_pin_code">Change PIN code</string>
+    <string name="auto_lock_timer">Auto-lock timer</string>
+    <string name="unlock_with_fingerprint">Unlock with fingerprint</string>
+    <string name="app_language">App Language</string>
+    <string name="custom_language_dialog_title">Select App Language</string>
+    <string name="auto_detect">Auto-detect</string>
+    <string name="combined_contacts">Combined Contacts</string>
+    <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
+    <string name="local_cache_management">Local Cache Management</string>
+    <string name="cache_cleared">Локальний кеш оновлено</string>
+    <string name="empty_cache">Empty Cache</string>
+    <!-- endregion -->
+    <string name="enabled">Увімкнено</string>
+    <string name="disabled">Вимкнено</string>
+    <string name="app_info">App Information</string>
+    <string name="app_version">App version</string>
+    <!-- endregion -->
+    <!-- region Multi Account -->
+    <string name="primary_account">Primary Account</string>
+    <string name="make_primary_account">Make %s your Primary Account?</string>
+    <string name="logout_account_question">Logout %s?</string>
+    <string name="remove_account_question">Remove %s?</string>
+    <string name="signed_in_with">Signed in with %s</string>
+    <string name="signed_in_with_logged_out_from">Logged out from %1$s and signed in with %2$s</string>
+    <string name="connect_account_limit_title">Limit reached</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to paid account.</string>
+    <string name="switch_accounts_question">Switch account?</string>
+    <string name="switch_to_account">Switch to %s</string>
+    <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
+    <!-- endregion -->
+</resources>

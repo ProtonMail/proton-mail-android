@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources>
+    <!-- the actual values of the vCard phone types -->
+    <string-array name="vcard_option_phone_val">
+        <item></item>
+        <!-- Phone -->
+        <item>Мобильный</item>
+        <item>Рабочий</item>
+        <item>Факс</item>
+        <item>x-Другой</item>
+    </string-array>
+    <!-- the actual values of the vCard email types -->
+    <string-array name="vcard_option_email_val">
+        <item></item>
+        <!-- Email -->
+        <item>Домашний</item>
+        <item>Рабочий</item>
+        <item>x-Другая</item>
+    </string-array>
+    <!-- the actual values of the vCard address type -->
+    <string-array name="vcard_option_address_val">
+        <item></item>
+        <!-- Address -->
+        <item>Личный</item>
+        <item>Рабочий</item>
+        <item>x-Другой</item>
+    </string-array>
+</resources>

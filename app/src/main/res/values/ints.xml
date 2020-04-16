@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources>
+    <integer-array name="auto_logout_values">
+        <item>600</item>
+        <item>300000</item>
+        <item>900000</item>
+        <item>3600000</item>
+        <item>86400000</item>
+    </integer-array>
+
+    <!-- new 4 -->
+    <integer-array name="quick_snooze_values_int">
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>240</item>
+        <item>480</item>
+        <item>720</item>
+    </integer-array>
+
+    <integer-array name="max_labels_per_plan">
+        <item>3</item>
+        <item>200</item>
+        <item>10000</item>
+        <item>10000</item>
+    </integer-array>
+
+    <integer-array name="max_folders_per_plan">
+        <item>3</item>
+        <item>200</item>
+        <item>10000</item>
+        <item>10000</item>
+    </integer-array>
+</resources>

@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ * 
+ * This file is part of ProtonMail.
+ * 
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+package ch.protonmail.android.events;
+
+import ch.protonmail.android.api.models.ResponseBody;
+import ch.protonmail.android.api.models.User;
+
+public class ConnectAccountLoginEvent extends ResponseBody {
+    private final AuthStatus mStatus;
+    private final String mKeySalt;
+    private final boolean mRedirectToSetup;
+    private final User mUser;
+    private final String mDomainName;
+
+    public ConnectAccountLoginEvent(AuthStatus status, String keySalt, boolean redirectToSetup, User user, String domainName) {
+        this.mStatus = status;
+        this.mKeySalt = keySalt;
+        this.mRedirectToSetup = redirectToSetup;
+        this.mUser = user;
+        this.mDomainName = domainName;
+    }
+
+    public AuthStatus getStatus() {
+        return mStatus;
+    }
+
+    public String getKeySalt() {
+        return mKeySalt;
+    }
+
+    public boolean isRedirectToSetup() {
+        return mRedirectToSetup;
+    }
+
+    public User getUser() {
+        return mUser;
+    }
+
+    public String getDomainName() {
+        return mDomainName;
+    }
+}

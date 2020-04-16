@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingEnd="0dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="0dp"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <ch.protonmail.android.views.CustomFontTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fields_default_space_large"
+        android:paddingEnd="@dimen/fields_default_space_small"
+        android:paddingLeft="@dimen/fields_default_space_small_plus"
+        android:paddingRight="@dimen/fields_default_space_small"
+        android:paddingStart="@dimen/fields_default_space_small_plus"
+        android:text="@string/type_title"
+        android:textSize="@dimen/h3"
+        app:fontName="Roboto-Bold.ttf" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="22dp"
+        android:paddingRight="22dp"
+        android:paddingLeft="0dp"
+        android:paddingStart="0dp">
+
+        <LinearLayout
+            android:id="@+id/standard_option_types"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+        <!--<android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/option_type_custom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/standard_option_types"
+            android:layout_marginTop="@dimen/fields_default_space" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/option_type_custom"
+            android:layout_below="@id/standard_option_types"
+            android:layout_marginTop="@dimen/fields_default_space"
+            android:layout_toEndOf="@id/option_type_custom"
+            android:layout_toRightOf="@id/option_type_custom">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+            <ch.protonmail.android.views.CustomFontEditText
+                android:id="@+id/option_type_custom_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/login_edittext_inverted"
+                android:gravity="center_vertical"
+                android:hint="@string/option_type_custom"
+                android:paddingLeft="4dp"
+                android:paddingStart="4dp"
+                android:paddingRight="0dp"
+                android:paddingEnd="0dp"
+                android:paddingTop="0dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/iron_gray"
+                android:textSize="@dimen/h5" />
+
+        </RelativeLayout>-->
+    </RelativeLayout>
+</LinearLayout>

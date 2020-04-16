@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground">
+
+    <ch.protonmail.android.views.CustomFontTextView
+        android:id="@+id/pgpIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/fields_default_space_medium"
+        android:layout_marginLeft="@dimen/fields_default_space_medium"
+        android:layout_marginTop="@dimen/fields_default_space_medium"
+        android:layout_marginEnd="@dimen/fields_default_space_small"
+        android:layout_marginRight="@dimen/fields_default_space_small"
+        android:gravity="center"
+        android:maxLines="1"
+        android:minWidth="@dimen/fab_icon_size"
+        android:minLines="1"
+        android:paddingTop="@dimen/fields_default_space_small_plus"
+        android:textSize="@dimen/h1"
+        android:visibility="invisible" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/check"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/fields_default_space_small"
+        android:layout_marginLeft="@dimen/fields_default_space_small"
+        android:layout_marginTop="@dimen/fields_default_space_medium"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:gravity="center"
+        app:buttonTint="@color/new_purple" />
+
+    <ch.protonmail.android.views.CustomFontTextView
+        android:id="@+id/recipient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/fields_default_space_medium"
+        android:layout_toStartOf="@id/check"
+        android:layout_toLeftOf="@id/check"
+        android:layout_toEndOf="@id/pgpIcon"
+        android:layout_toRightOf="@id/pgpIcon"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textColor="@color/black_lighter"
+        android:textSize="@dimen/h3" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentTop="true"
+        android:background="#D9DADB" />
+
+</RelativeLayout>

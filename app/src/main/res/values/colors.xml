@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources>
+
+    <color name="colorPrimary">#4F4F60</color>
+    <color name="colorPrimaryDark">#333341</color>
+    <color name="colorAccent">#9199cb</color>
+
+    <!-- Monochromatic Blues -->
+    <color name="glacier_blue">#FCFEFF</color>
+    <color name="dark_glacier_blue">#E3E5E6</color>
+    <color name="ultramarine_blue">#354B5E</color>
+    <color name="dark_ultramarine_blue">#273744</color>
+    <color name="dark_ultramarine_blue_50">#80273744</color>
+    <color name="deep_blue">#475F77</color>
+    <color name="ocean_blue">#384C5F</color>
+    <color name="jazz_blue">#6789AB</color>
+    <color name="dark_jazz_blue">#587592</color>
+    <color name="lake_blue">#5C7A99</color>
+    <color name="sky_blue">#143B82</color>
+    <color name="water_blue">#85B1DE</color>
+    <color name="black">#000000</color>
+
+    <color name="icon_background">#515060</color>
+
+    <!-- new color scheme -->
+    <color name="dark_purple">#4F4F60</color>
+    <color name="dark_purple_statusbar">#333341</color>
+    <color name="message_divider_gray">#DADEE8</color>
+    <color name="message_action_gray">#EBEDF2</color>
+    <color name="prefix_gray">#C0C4CE</color>
+    <color name="name_gray">#838897</color>
+    <color name="field_hint_purple">#797989</color>
+    <color name="location_gray">#D9DADC</color>
+    <color name="placeholder_gray">#E5E5E5</color>
+
+    <!-- lock and unlock -->
+    <color name="icon_purple">#9397cd</color>
+    <color name="icon_gray">#c2c2cc</color>
+    <color name="icon_green">#139717</color>
+    <color name="icon_warning">#ffa500</color>
+
+    <!-- Grays -->
+    <color name="white">@android:color/white</color>
+    <color name="white_pressed">#CECECE</color>
+    <color name="white_30">#4DFFFFFF</color>
+    <color name="white_55">#8CFFFFFF</color>
+    <color name="white_85">#D9FFFFFF</color>
+    <color name="silver_gray">#E8EBED</color>
+    <color name="read_message_gray">#F2F3F7</color>
+    <color name="dark_silver_gray">#CFD2D4</color>
+    <color name="fog_gray">#C9CED4</color>
+    <color name="iron_gray">#808487</color>
+    <color name="iron_gray_15">#26808487</color>
+    <color name="iron_gray_70">#B3808487</color>
+    <color name="rain_gray">#383A3B</color>
+    <color name="rain_gray_50">#CF383A3B</color>
+    <color name="ice_gray">#999DA1</color>
+    <color name="lead_gray">#4F4F4F</color>
+    <color name="chateau_gray">#A4A6A7</color>
+    <color name="black_trans80">#CC000000</color>
+    <color name="black_lighter">#454545</color>
+
+    <color name="red">#BF0000</color>
+    <color name="red_orange">#EA644C</color>
+    <color name="green">#A2C276</color>
+    <color name="blue">#7569D1</color>
+    <color name="yellow">#EDCF54</color>
+    <color name="labels_dialog_bg">@color/white</color>
+
+    <!-- login -->
+    <color name="new_purple">#9199cb</color>
+    <color name="new_purple_dark">#656FAC</color>
+
+    <!-- nav drawer -->
+    <color name="nav_drawer_divider">#838197</color>
+    <color name="nav_drawer_divider_bold">#838197</color>
+
+    <!-- upselling -->
+    <color name="upgrade_section">#9497CE</color>
+    <color name="lime">#C3E129</color>
+
+    <!-- edit settings screens-->
+    <color name="edit_settings_background">#E2E6E9</color>
+    <color name="switch_background">#41404E</color>
+
+    <!-- account types -->
+    <color name="professional">#D4B46E</color>
+    <color name="visionary">#5EDEFB</color>
+    <color name="plus">@color/lime</color>
+    <color name="free">@color/upgrade_section</color>
+
+    <color name="switch_settings_item">#9199CA</color>
+    <color name="switch_settings_item_highlight">#656FAB</color>
+    <color name="alias_inactive">#828282</color>
+    <color name="contact_encrypted_data">#FAFAFA</color>
+    <color name="edit_contact">#757575</color>
+    <array name="account_type_colors">
+        <item>@color/free</item>
+        <item>@color/plus</item>
+        <item>@color/visionary</item>
+        <item>@color/professional</item>
+    </array>
+
+    <!-- signature verification -->
+    <color name="signature_error">#EC6446</color>
+
+    <!-- contacts -->
+    <color name="contact_action">@color/new_purple_dark</color>
+    <color name="contact_heading">@color/dark_purple_statusbar</color>
+    <color name="contact_data">@color/black</color>
+
+	<!--lights-->
+	<color name="light_indicator">#6A6A9C</color>
+
+    <color name="warning">@color/red_orange</color>
+
+    <!-- labels -->
+    <color name="label_color_1">#7272A7</color>
+    <color name="label_color_2">#CF5858</color>
+    <color name="label_color_3">#C26CC7</color>
+    <color name="label_color_4">#7569D1</color>
+    <color name="label_color_5">#69A9D1</color>
+    <color name="label_color_6">#5EC7B7</color>
+    <color name="label_color_7">#72BB75</color>
+    <color name="label_color_8">#C3D261</color>
+    <color name="label_color_9">#E6C04C</color>
+    <color name="label_color_10">#E6984C</color>
+    <color name="label_color_11">#8989AC</color>
+    <color name="label_color_12">#CF7E7E</color>
+    <color name="label_color_13">#C793CA</color>
+    <color name="label_color_14">#9B94D1</color>
+    <color name="label_color_15">#A8C4D5</color>
+    <color name="label_color_16">#97C9C1</color>
+    <color name="label_color_17">#9DB99F</color>
+    <color name="label_color_18">#C6CD97</color>
+    <color name="label_color_19">#E7D292</color>
+    <color name="label_color_20">#DFB286</color>
+    <color name="label_buttons">#9497ce</color>
+
+    <array name="label_colors">
+        <item>@color/label_color_1</item>
+        <item>@color/label_color_2</item>
+        <item>@color/label_color_3</item>
+        <item>@color/label_color_4</item>
+        <item>@color/label_color_5</item>
+        <item>@color/label_color_6</item>
+        <item>@color/label_color_7</item>
+        <item>@color/label_color_8</item>
+        <item>@color/label_color_9</item>
+        <item>@color/label_color_10</item>
+        <item>@color/label_color_11</item>
+        <item>@color/label_color_12</item>
+        <item>@color/label_color_13</item>
+        <item>@color/label_color_14</item>
+        <item>@color/label_color_15</item>
+        <item>@color/label_color_16</item>
+        <item>@color/label_color_17</item>
+        <item>@color/label_color_18</item>
+        <item>@color/label_color_19</item>
+        <item>@color/label_color_20</item>
+    </array>
+
+
+    //custom fab
+    <color name="colorFabText">#F5F5F5</color>
+    <color name="colorFabIcon">#F5F5F5</color>
+    <color name="colorShadowStart">#5e5e5e</color>
+    <color name="colorShadowEnd">#c7c7c7</color>
+    <color name="selectable_color">#e7e5fb</color>
+
+    <color name="hyperlink_color">#0000EE</color>
+
+</resources>

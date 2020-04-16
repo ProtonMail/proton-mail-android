@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools">
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/messageShortenedDetails"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:visibility="visible"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:visibility="gone">
+
+		<TextView
+			android:id="@+id/message_sender_prefix"
+			style="@style/MessageSenderPrefixText"
+			android:layout_width="wrap_content"
+			android:layout_height="0dp"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentStart="true"
+			android:text="@string/from_prefix"
+			app:layout_constraintBottom_toBottomOf="@+id/shortenedSenderView"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintTop_toTopOf="parent"/>
+		<ch.protonmail.android.views.messageDetails.MessageDetailsRecipientView
+			android:id="@+id/shortenedSenderView"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_alignParentEnd="true"
+			android:layout_alignParentRight="true"
+			android:layout_marginLeft="4dp"
+			android:layout_marginStart="4dp"
+			android:layout_toEndOf="@id/message_sender_prefix"
+			android:layout_toRightOf="@id/message_sender_prefix"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toEndOf="@+id/message_sender_prefix"/>
+
+		<TextView
+			android:id="@+id/message_recipients_prefix"
+			style="@style/MessageSenderPrefixText"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:text="@string/to_prefix"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toStartOf="@+id/shortenedSenderView"
+			app:layout_constraintStart_toStartOf="@+id/message_sender_prefix"
+			app:layout_constraintTop_toBottomOf="@+id/shortenedSenderView"/>
+
+		<TextView
+			android:id="@+id/shortenedRecipientsTextView"
+			style="@style/MessageNameText"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:ellipsize="end"
+			android:lines="1"
+			android:maxLines="1"
+			android:singleLine="true"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="@+id/shortenedSenderView"
+			app:layout_constraintTop_toBottomOf="@+id/shortenedSenderView"
+			tools:text="@tools:sample/full_names"/>
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<TableLayout
+		android:id="@+id/messageExpandedDetails"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:shrinkColumns="0"
+		android:stretchColumns="1"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:visibility="visible">
+
+		<TableRow
+			android:id="@+id/message_sender_email"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<TextView
+				style="@style/MessageSenderPrefixText"
+				android:layout_marginEnd="@dimen/activity_horizontal_margin_xsmall"
+				android:layout_marginRight="@dimen/activity_horizontal_margin_xsmall"
+				android:text="@string/from_prefix"/>
+
+			<ch.protonmail.android.views.messageDetails.MessageDetailsRecipientView
+				android:id="@+id/expandedSenderView"
+				style="@style/MessageNameText"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+
+			/>
+		</TableRow>
+
+		<TableRow
+			android:id="@+id/toTableRow"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<TextView
+				style="@style/MessageSenderPrefixText"
+				android:layout_marginEnd="@dimen/activity_horizontal_margin_xsmall"
+				android:layout_marginRight="@dimen/activity_horizontal_margin_xsmall"
+				android:text="@string/to_prefix"/>
+
+			<LinearLayout
+				android:id="@+id/toLinearLayout"
+				style="@style/MessageNameText"
+				android:orientation="vertical"/>
+
+		</TableRow>
+
+		<TableRow
+			android:id="@+id/ccTableRow"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<TextView
+				style="@style/MessageSenderPrefixText"
+				android:layout_marginEnd="@dimen/activity_horizontal_margin_xsmall"
+				android:layout_marginRight="@dimen/activity_horizontal_margin_xsmall"
+				android:text="@string/cc_prefix"/>
+
+			<LinearLayout
+				android:id="@+id/ccLinearLayout"
+				style="@style/MessageNameText"
+				android:orientation="vertical"/>
+
+		</TableRow>
+
+		<TableRow
+			android:id="@+id/bccTableRow"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/message_spacing">
+
+			<TextView
+				style="@style/MessageSenderPrefixText"
+				android:layout_marginEnd="@dimen/activity_horizontal_margin_xsmall"
+				android:layout_marginRight="@dimen/activity_horizontal_margin_xsmall"
+				android:text="@string/bcc_prefix"/>
+
+			<LinearLayout
+				android:id="@+id/bccLinearLayout"
+				style="@style/MessageNameText"
+				android:orientation="vertical"/>
+
+		</TableRow>
+
+		<TableRow
+			android:id="@+id/date_row"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/message_spacing"
+			android:layout_marginTop="@dimen/fields_default_space_small">
+
+			<TextView
+				style="@style/MessageSenderPrefixText"
+				android:layout_marginEnd="@dimen/activity_horizontal_margin_xsmall"
+				android:layout_marginRight="@dimen/activity_horizontal_margin_xsmall"
+				android:text="@string/date_prefix"/>
+
+			<TextView
+				android:id="@+id/detailedDateTextView"
+				style="@style/MessageNameText"
+				tools:text="@tools:sample/date/mmddyy"
+			/>
+
+		</TableRow>
+	</TableLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

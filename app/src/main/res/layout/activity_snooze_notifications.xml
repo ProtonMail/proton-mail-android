@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_marginBottom="@dimen/fields_default_space"
+                android:background="@color/switch_background"
+                android:orientation="horizontal"
+                android:paddingEnd="@dimen/view_padding"
+                android:paddingLeft="@dimen/view_padding"
+                android:paddingRight="@dimen/view_padding"
+                android:paddingStart="@dimen/view_padding">
+
+                <ch.protonmail.android.views.CustomFontTextView
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/notifications_snooze_scheduled"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/h4"
+                    app:fontName="Roboto-Light.ttf" />
+
+                <Switch
+                    android:id="@+id/notificationSnoozeScheduledSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:gravity="right|center_vertical"
+                    android:padding="0dp"
+                    android:theme="@style/SwitchSettings" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notifications_snooze_status_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/header"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fields_default_space_medium"
+                    android:layout_marginLeft="@dimen/view_padding"
+                    android:layout_marginRight="@dimen/fields_default_space_medium"
+                    android:layout_marginStart="@dimen/view_padding"
+                    android:orientation="vertical">
+
+                    <ch.protonmail.android.views.CustomFontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/fields_default_space_medium"
+                        android:layout_marginTop="@dimen/fields_default_space_large"
+                        android:text="@string/notifications_snooze_current_status"
+                        android:textColor="@color/switch_settings_item"
+                        app:fontName="Roboto-Regular.ttf" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fields_default_space_large"
+                    android:layout_marginLeft="@dimen/view_padding_large"
+                    android:layout_marginRight="@dimen/fields_default_space_large"
+                    android:layout_marginStart="@dimen/view_padding_large"
+                    android:orientation="vertical">
+
+                    <ch.protonmail.android.views.CustomFontTextView
+                        android:id="@+id/notificationsSnoozeCurrentStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/notifications_snoozed"
+                        android:textColor="@color/iron_gray"
+                        android:textSize="@dimen/h5"
+                        app:fontName="Roboto-Light.ttf" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/notificationsSnoozeScheduledContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/notifications_snooze_status_container"
+                android:layout_marginTop="@dimen/view_padding"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <ch.protonmail.android.views.CustomFontTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/fields_default_space_medium"
+                        android:layout_marginEnd="@dimen/fields_default_space_medium"
+                        android:layout_marginLeft="@dimen/view_padding"
+                        android:layout_marginRight="@dimen/fields_default_space_medium"
+                        android:layout_marginStart="@dimen/view_padding"
+                        android:layout_marginTop="@dimen/fields_default_space_large"
+                        android:text="@string/notifications_snooze_scheduled_settings"
+                        android:textColor="@color/switch_settings_item"
+                        app:fontName="Roboto-Regular.ttf" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fields_default_space_large"
+                    android:layout_marginLeft="@dimen/view_padding_large"
+                    android:layout_marginRight="@dimen/fields_default_space_large"
+                    android:layout_marginStart="@dimen/view_padding_large"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:id="@+id/snooze_start_time_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:minHeight="50dp">
+
+                        <ch.protonmail.android.views.CustomFontTextView
+                            android:id="@+id/snoozeStartTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="22:00"
+                            android:tint="@color/iron_gray" />
+
+                        <ch.protonmail.android.views.CustomFontTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/snoozeStartTime"
+                            android:gravity="left|center_vertical"
+                            android:text="@string/snooze_start_time"
+                            android:textColor="@color/iron_gray" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/snooze_end_time_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:minHeight="50dp">
+
+                        <ch.protonmail.android.views.CustomFontTextView
+                            android:id="@+id/snoozeEndTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="08:00"
+                            android:tint="@color/iron_gray" />
+
+                        <ch.protonmail.android.views.CustomFontTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/snoozeEndTime"
+                            android:gravity="left|center_vertical"
+                            android:text="@string/snooze_end_time"
+                            android:textColor="@color/iron_gray" />
+
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/snooze_repeat_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="50dp">
+
+                            <ch.protonmail.android.views.CustomFontTextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:layout_gravity="center_vertical"
+                                android:text="@string/snooze_repeat"
+                                android:textColor="@color/iron_gray" />
+
+                            <ch.protonmail.android.views.CustomFontTextView
+                                android:id="@+id/repeatingDaysLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="end"
+                                android:layout_gravity="center_vertical"
+                                android:tint="@color/iron_gray" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/repeating_days"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/fields_default_space"
+                            android:orientation="horizontal">
+
+                            <ch.protonmail.android.views.SnoozeRepeatDayView
+                                android:id="@id/monday"
+                                style="@style/RepeatDay"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:gravity="center"
+                                android:textSize="@dimen/h6" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" >
+                            </Space>
+
+                            <ch.protonmail.android.views.SnoozeRepeatDayView
+                                android:id="@id/tuesday"
+                                style="@style/RepeatDay"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:gravity="center"
+                                android:textSize="@dimen/h6" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" >
+                            </Space>
+
+                            <ch.protonmail.android.views.SnoozeRepeatDayView
+                                android:id="@id/wednesday"
+                                style="@style/RepeatDay"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:gravity="center"
+                                android:textSize="@dimen/h6" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" >
+                            </Space>
+
+                            <ch.protonmail.android.views.SnoozeRepeatDayView
+                                android:id="@id/thursday"
+                                style="@style/RepeatDay"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:gravity="center"
+                                android:textSize="@dimen/h6" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" >
+                            </Space>
+
+                            <ch.protonmail.android.views.SnoozeRepeatDayView
+                                android:id="@id/friday"
+                                style="@style/RepeatDay"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:gravity="center"
+                                android:textSize="@dimen/h6" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" >
+                            </Space>
+
+                            <ch.protonmail.android.views.SnoozeRepeatDayView
+                                android:id="@id/saturday"
+                                style="@style/RepeatDay"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:gravity="center"
+                                android:textSize="@dimen/h6" />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" >
+                            </Space>
+
+                            <ch.protonmail.android.views.SnoozeRepeatDayView
+                                android:id="@id/sunday"
+                                style="@style/RepeatDay"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:gravity="center"
+                                android:textSize="@dimen/h6" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>

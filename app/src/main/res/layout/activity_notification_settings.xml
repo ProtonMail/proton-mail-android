@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:animateLayoutChanges="true">
+
+        <ch.protonmail.android.views.CustomFontTextView
+            android:id="@+id/title_notifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fields_default_space_medium"
+            android:layout_marginEnd="@dimen/view_padding"
+            android:layout_marginLeft="@dimen/view_padding"
+            android:layout_marginRight="@dimen/view_padding"
+            android:layout_marginStart="@dimen/view_padding"
+            android:layout_marginTop="@dimen/fields_default_space_large"
+            android:text="@string/available_options"
+            android:textColor="@color/switch_settings_item"
+            app:fontName="Roboto-Regular.ttf" />
+
+        <RelativeLayout
+            android:id="@+id/ringtone_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fields_default_space_xlarge"
+            android:clickable="false"
+            android:padding="@dimen/message_spacing">
+
+            <ch.protonmail.android.views.CustomFontButton
+                android:id="@+id/ringtone_settings"
+                style="@style/SettingsButtonBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="2dp"
+                android:paddingEnd="@dimen/fields_default_space"
+                android:paddingLeft="@dimen/fields_default_space"
+                android:paddingRight="@dimen/fields_default_space"
+                android:paddingStart="@dimen/fields_default_space"
+                android:text="@string/ringtone"
+                app:fontName="Roboto-Regular.ttf" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/ringtone_settings"
+                android:layout_toStartOf="@id/ringtone_settings"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingEnd="@dimen/view_padding"
+                android:paddingLeft="@dimen/view_padding"
+                android:paddingRight="@dimen/view_padding"
+                android:paddingStart="@dimen/view_padding">
+
+                <ch.protonmail.android.views.CustomFontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fields_default_space_small"
+                    android:layout_marginRight="@dimen/fields_default_space_small"
+                    android:orientation="vertical"
+                    android:text="@string/ringtone_selected"
+                    android:textSize="@dimen/h3"
+                    app:fontName="Roboto-Light.ttf" />
+
+                <ch.protonmail.android.views.CustomFontTextView
+                    android:id="@+id/ringtone_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:textSize="@dimen/h3"
+                    android:maxLines="2"
+                    app:fontName="Roboto-Bold.ttf" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RadioGroup
+            android:id="@+id/notification_radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</LinearLayout>

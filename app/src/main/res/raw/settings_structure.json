@@ -1,0 +1,63 @@
+[
+  {
+    "setting_id": "account_settings",
+    "is_section": true
+  },
+  {
+    "setting_id": "account",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": true,
+    "setting_type": "drill"
+  },
+  {
+    "setting_id": "app_settings",
+    "is_section": true
+  },
+  {
+    "setting_id": "push_notification",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": false,
+    "setting_type": "drill"
+  },
+  {
+    "setting_id": "auto_lock",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": true,
+    "setting_type": "drill"
+  },
+  {
+    "setting_id": "app_language",
+    "is_section": false,
+    "setting_value": "English",
+    "setting_hasValue": true,
+    "setting_type": "drill"
+  },
+  {
+    "setting_id": "combined_contacts",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": true,
+    "setting_type": "drill"
+  },
+  {
+    "setting_id": "app_local_cache",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": false,
+    "setting_type": "button"
+  },
+  {
+    "setting_id": "app_information",
+    "is_section": true
+  },
+  {
+    "setting_id": "app_version",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": true,
+    "setting_type": "info"
+  }
+]

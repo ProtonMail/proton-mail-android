@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources>
+    <string name="action_notification" translatable="false">ch.protonmail.android</string>
+    <string name="notification_action_archive" translatable="false">protonmail_notif_action_archive</string>
+    <string name="notification_action_delete" translatable="false">protonmail_notif_action_delete</string>
+    <string name="notification_action_trash" translatable="false">protonmail_notif_action_trash</string>
+    <string name="notification_action_verify" translatable="false">protonmail_notif_action_verify</string>
+</resources>

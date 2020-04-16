@@ -1,0 +1,12 @@
+// App
+include ':app'
+
+// crypto library
+include ':gopenpgp'
+
+// TokenAutoComplete library
+include ':tokenAutoComplete:tokenAutoComplete-lib'
+include ':tokenAutoComplete:tokenAutoComplete-example' // Comment for exclude it from the main project
+
+// Tests
+include ':sharedTest:testKotlin', ':sharedTest:testAndroid', ':sharedTest:testAndroidInstrumented'

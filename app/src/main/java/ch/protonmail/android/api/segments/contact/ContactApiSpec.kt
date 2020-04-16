@@ -1,0 +1,60 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ * 
+ * This file is part of ProtonMail.
+ * 
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+package ch.protonmail.android.api.segments.contact
+
+import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
+import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
+import java.io.IOException
+
+interface ContactApiSpec {
+
+    @Throws(IOException::class)
+    fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse?
+
+    @Throws(IOException::class)
+    fun fetchContactEmails(pageSize : Int) : List<ContactEmailsResponseV2?>
+
+    @Throws(IOException::class)
+    fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>
+
+    @Throws(IOException::class)
+    fun fetchContactDetails(contactId: String): FullContactDetailsResponse?
+
+    @Throws(Exception::class)
+    fun fetchContactDetails(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?>
+
+    @Throws(IOException::class)
+    fun createContact(body: CreateContact): ContactResponse?
+
+    @Throws(IOException::class)
+    fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse?
+
+    @Throws(IOException::class)
+    fun deleteContact(contactIds: IDList) : Single<DeleteContactResponse>
+
+    @Throws(IOException::class)
+    fun labelContacts(labelContactsBody: LabelContactsBody): Completable
+
+    @Throws(IOException::class)
+    fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable
+}

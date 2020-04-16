@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/address_detailed_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ch.protonmail.android.views.CustomFontTextView
+            style="@style/LoginEditText.NoBg"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="@string/address_street"
+            android:textColor="@color/contact_heading"
+            android:textSize="13sp"
+            app:fontName="Roboto-Light.ttf" />
+
+        <ch.protonmail.android.views.CustomFontEditText
+            android:id="@+id/address_street"
+            style="@style/LoginEditText.Inverted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/fields_default_space_small"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:fontName="Roboto-Regular.ttf" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ch.protonmail.android.views.CustomFontTextView
+            style="@style/LoginEditText.NoBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="@string/address_city"
+            android:textColor="@color/contact_heading"
+            android:textSize="13sp"
+            app:fontName="Roboto-Light.ttf" />
+
+        <ch.protonmail.android.views.CustomFontEditText
+            android:id="@+id/address_city"
+            style="@style/LoginEditText.Inverted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/fields_default_space_small"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:fontName="Roboto-Regular.ttf" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fields_default_space_small"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/fields_default_space_small">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ch.protonmail.android.views.CustomFontTextView
+                style="@style/LoginEditText.NoBg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/address_region"
+                android:textColor="@color/contact_heading"
+                android:textSize="13sp"
+                app:fontName="Roboto-Light.ttf" />
+
+            <ch.protonmail.android.views.CustomFontEditText
+                android:id="@+id/address_region"
+                style="@style/LoginEditText.Inverted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:fontName="Roboto-Regular.ttf" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ch.protonmail.android.views.CustomFontTextView
+                style="@style/LoginEditText.NoBg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:text="@string/address_postcode"
+                android:textColor="@color/contact_heading"
+                android:textSize="13sp"
+                app:fontName="Roboto-Light.ttf" />
+
+            <ch.protonmail.android.views.CustomFontEditText
+                android:id="@+id/address_postcode"
+                style="@style/LoginEditText.Inverted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:fontName="Roboto-Regular.ttf" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ch.protonmail.android.views.CustomFontTextView
+            style="@style/LoginEditText.NoBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:text="@string/address_country"
+            android:textColor="@color/contact_heading"
+            android:textSize="13sp"
+            app:fontName="Roboto-Light.ttf" />
+
+        <ch.protonmail.android.views.CustomFontEditText
+            android:id="@+id/address_country"
+            style="@style/LoginEditText.Inverted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/fields_default_space_small"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:fontName="Roboto-Regular.ttf" />
+    </LinearLayout>
+</LinearLayout>

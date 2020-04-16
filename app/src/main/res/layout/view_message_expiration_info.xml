@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+											 xmlns:app="http://schemas.android.com/apk/res-auto"
+											 android:layout_width="match_parent"
+											 android:layout_height="wrap_content"
+											 xmlns:tools="http://schemas.android.com/tools"
+											 android:background="@color/message_action_gray"
+>
+
+	<TextView
+		android:id="@+id/expiration_icon"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:contentDescription="@null"
+		android:paddingBottom="6dp"
+		android:paddingLeft="16dp"
+		android:paddingTop="6dp"
+		android:text="@string/expiration_icon"
+		android:textColor="@color/icon_purple"
+		android:textSize="@dimen/abc_text_size_large_material"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="C"/>
+
+	<TextView
+		android:id="@+id/expiration_time"
+		style="@style/MessageDetailedDateText"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:layout_marginLeft="8dp"
+		android:layout_marginStart="8dp"
+		android:fontFamily="sans-serif-italic"
+		android:paddingBottom="6dp"
+		android:paddingTop="6dp"
+		android:textColor="@color/icon_purple"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toEndOf="@+id/expiration_icon"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="Expires in 27 days 22 hours 58 minutes"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,161 @@
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settingsItemWrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerVertical="true">
+
+    <LinearLayout
+        android:id="@+id/headingContainer"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:duplicateParentState="true"
+        android:gravity="start|center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ch.protonmail.android.views.CustomFontTextView
+            android:id="@+id/headingText"
+            style="@style/SettingsHeadingText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true" />
+
+        <ch.protonmail.android.views.CustomFontTextView
+            android:id="@+id/valueText"
+            style="@style/SettingsText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:orientation="vertical"
+            app:fontName="Roboto-Light.ttf" />
+
+        <Spinner
+            android:id="@+id/timeoutSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:clickable="false"
+            android:duplicateParentState="true"
+            android:visibility="gone" />
+
+
+        <ch.protonmail.android.views.CustomFontEditText
+            android:id="@+id/editText"
+            style="@style/SignatureEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fields_default_space"
+            android:clickable="true"
+            android:duplicateParentState="true"
+            android:focusable="true"
+            android:gravity="top"
+            android:textCursorDrawable="@drawable/cursor_black"
+            android:visibility="gone"
+            app:fontName="Roboto-Regular.ttf" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonsContainer"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:duplicateParentState="true"
+        android:gravity="end|center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="@+id/guideline_01"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/actionSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:duplicateParentState="true"
+            android:theme="@style/SwitchSettings"
+            android:visibility="visible" />
+
+        <ch.protonmail.android.views.CustomFontButton
+            android:id="@+id/clearCacheButton"
+            style="@style/SettingsButtonBlue"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="2dp"
+            android:duplicateParentState="true"
+            android:maxLines="1"
+            android:paddingStart="@dimen/fields_default_space"
+            android:paddingLeft="@dimen/fields_default_space"
+            android:paddingEnd="@dimen/fields_default_space"
+            android:paddingRight="@dimen/fields_default_space"
+            android:text="@string/empty_cache"
+            android:textAllCaps="true"
+            android:visibility="gone"
+            app:fontName="Roboto-Regular.ttf" />
+
+        <ImageView
+            android:id="@+id/openArrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:duplicateParentState="true"
+            android:src="@drawable/ic_keyboard_arrow_right_white"
+            android:tint="@color/iron_gray"
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,1055 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="protonmail">ProtonMail</string>
+    <string name="encrypted_emails">暗号化されたメール</string>
+    <string name="secure_email_swiss">スイスに拠点を置く<br/>セキュアな電子メール</string>
+    <string name="decrypt_mailbox"><b>メールボックス</b> を復号</string>
+    <string name="decrypt">復号</string>
+    <string name="user_sign_in">ユーザーログイン</string>
+    <string name="two_factor_sign_in">2要素認証</string>
+    <string name="sign_in">サインイン</string>
+    <string name="sign_out">サインアウト</string>
+    <string name="sign_out_question">サインアウトしてよろしいですか？</string>
+    <string name="remember_me_on_device">ログイン情報をこのデバイスに記憶</string>
+    <string name="show_password">パスワードを表示</string>
+    <string name="username">ユーザー名</string>
+    <string name="password">パスワード</string>
+    <string name="login_password">ログイン パスワード</string>
+    <string name="mailbox_password">メールボックスのパスワード</string>
+    <string name="two_factor_code">２要素コード</string>
+    <string name="processing_request">リクエストは処理中です</string>
+    <!-- should check for html tag -->
+    <string name="need_account_sign_up">アカウントが必要ですか？登録してください。</string>
+    <string name="need_to_be_logged_in">ログインしていません。</string>
+    <string name="forgot_password">パスワードを忘れましたか？</string>
+    <string name="reset_mailbox_password">メールボックスのパスワードをリセットします。</string>
+    <string name="forgot_mailbox_password">メールボックスのパスワードをリセットするには、protonmail.com で ProtonMailのweb版を使用してください。</string>
+    <!-- Toast messages -->
+    <string name="error_chrome_disabled">コンテンツを読み込むことができません。 Chromeを有効にしてください</string>
+    <string name="error_chrome_not_found">コンテンツを読み込むことができません。 Chromeをインストールしてください</string>
+    <string name="messages_load_failure">メッセージを回復できません。</string>
+    <string name="message_details_load_failure">メッセージの詳細を回復できません。</string>
+    <string name="no_more_messages">これ以上メールはありません。</string>
+    <string name="mailbox_login_failure">メールボックスへのログインに失敗しました。</string>
+    <string name="login_failure">ログインに失敗しました。</string>
+    <string name="invalid_server_proof">無効なサーバ証明</string>
+    <string name="invalid_credentials">無効なログイン認証情報</string>
+    <string name="invalid_mailbox_password">無効なメールボックスのパスワード</string>
+    <string name="not_signed_up">ProtonMail Android ベータ版にサインアップしていません。</string>
+    <string name="no_network">ネットワーク接続がありません。</string>
+    <string name="no_network_queued">ネットワークに接続がありません。メッセージは処理待ちです。</string>
+    <string name="update_app_title">アップデートが必要です。</string>
+    <string name="update_app">アップデートされるまで、Protonmailアプリを使用ことはできません。</string>
+    <string name="api_offline_title">Protonmail APIはオフラインです。</string>
+    <string name="api_offline">ProtonMailは現在オフラインです。Https://protonstatus.com または https://twitter.com/protonmail で現在の状態を確認してください。</string>
+    <string name="cannot_open">ファイルを開くことができません。</string>
+    <string name="downloaded_attachment">%sをダウンロード。</string>
+    <string name="edit_contact_validation">有効な名前とメールアドレスを入力してください。</string>
+    <string name="contact_saved">連絡先を保存しました。</string>
+    <string name="contact_saved_offline">連絡先が保存されました。接続が使用可能なときに同期します。</string>
+    <string name="contact_exist">連絡先メールアドレスは既に存在しています。</string>
+    <string name="invalid_email">メールアドレスが無効です。</string>
+    <string name="duplicate_email">メール アドレスが重複しています。</string>
+    <string name="invalid_code">コードが有効ではありません。</string>
+    <string name="message_drafted">メッセージの送信に失敗しました。あなたのメッセージは、下書きフォルダーに保存されます。</string>
+    <string name="message_drafted_reason">%s は存在しません。 \n メールを配信できません。</string>
+    <string name="open_drawer">開く</string>
+    <string name="close_drawer">閉じる</string>
+    <string name="inbox_option">受信箱</string>
+    <string name="starred_option">星付き</string>
+    <string name="drafts_option">下書き</string>
+    <string name="sent_option">送信済み</string>
+    <string name="archive_option">アーカイブ</string>
+    <string name="trash_option">ごみ箱</string>
+    <string name="spam_option">迷惑メール</string>
+    <string name="contacts_option">連絡先</string>
+    <string name="settings_option">設定</string>
+    <string name="report_bugs_option">バグの報告</string>
+    <string name="signout_option">サインアウト</string>
+    <string name="inbox">受信箱</string>
+    <string name="starred">星付き</string>
+    <string name="drafts">下書き</string>
+    <string name="sent">送信済み</string>
+    <string name="archive">アーカイブ</string>
+    <string name="trash">ごみ箱</string>
+    <string name="spam">迷惑メール</string>
+    <string name="contacts">連絡先</string>
+    <string name="contact_groups">連絡先グループ</string>
+    <string name="search_contacts">連絡先の検索</string>
+    <string name="fetching_contacts">Protonmailの連絡先を取得しています...</string>
+    <string name="fetching_contacts_success">連絡先が正常に更新されました。</string>
+    <string name="fetching_contacts_failure">連絡先を更新できません。</string>
+    <string name="search">検索</string>
+    <string name="search_messages">メッセージの検索</string>
+    <string name="no_search_results">検索結果はありません。</string>
+    <string name="compose">新規作成</string>
+    <string name="compose_message">メッセージの作成</string>
+    <string name="empty_folder">フォルダを空にする</string>
+    <string name="view_headers">ヘッダを表示</string>
+    <string name="message_headers">メッセージのヘッダー</string>
+    <string name="delete_message">メッセージを削除</string>
+    <string name="delete_messages">メッセージを削除</string>
+    <string name="add_label">ラベルの追加</string>
+    <string name="add_star">星印を付ける</string>
+    <string name="remove_star">星印をはずす</string>
+    <string name="mark_read">既読にする</string>
+    <string name="mark_unread">未読に戻す</string>
+    <string name="move_to_archive">アーカイブに移動</string>
+    <string name="move_to_trash">ごみ箱に移動</string>
+    <string name="move_to_spam">迷惑メールに移動</string>
+    <string name="move_to_inbox">受信箱に移動</string>
+    <string name="move_message_to_trash">メッセージをごみ箱に移動しますか。</string>
+    <string name="are_you_sure_empty">このフォルダー内の全てのメッセージを削除してよろしいですか？</string>
+    <string name="send">送信</string>
+    <string name="selected">選択済</string>
+    <string name="no_messages">メッセージはありません。</string>
+    <string name="no_labels">ラベルはありません。</string>
+    <string name="to">宛先　</string>
+    <string name="cc">Cc</string>
+    <string name="bcc">Bcc</string>
+    <string name="to_prefix">宛先：</string>
+    <string name="cc_prefix">Cc：</string>
+    <string name="bcc_prefix">Bcc：</string>
+    <string name="from_prefix">差出人</string>
+    <string name="date_prefix">日付：</string>
+    <string name="expiration_time_prefix">有効期限</string>
+    <string name="view_details">詳細</string>
+    <string name="hide_details">詳細を隠す</string>
+    <string name="download">ダウンロード</string>
+    <string name="reply">返信</string>
+    <string name="reply_all">全員に返信</string>
+    <string name="forward">転送</string>
+    <string name="subject">件名</string>
+    <string name="email_subject">メールの件名</string>
+    <string name="define_message_password">メッセージのパスワード</string>
+    <string name="confirm_message_password">パスワードの確認</string>
+    <string name="define_password_hint">パスワードのヒント（省略可）</string>
+    <string name="message_passwords_do_not_match">ログインパスワードが一致しません。</string>
+    <string name="message_mailbox_passwords_do_not_match">メールボックスのパスワードが一致しません</string>
+    <string name="eo_passwords_do_not_match">パスワードが一致しません。</string>
+    <string name="define_expiration_period">有効期限を決めてください。</string>
+    <string name="set_message_expiration">メッセージの有効期限の設定</string>
+    <string name="days">日</string>
+    <string name="hours">時間</string>
+    <string name="max_labels_exceeded">メッセージ %1$s は %2$d ラベル以上を持つことはできません。</string>
+    <string name="max_labels_selected">%d ラベルが許容された最大です。</string>
+    <string name="max_attachments_reached">メッセージあたりの添付ファイルの最大に達しています。</string>
+    <plurals name="hours_string">
+        <item quantity="other">%d 時間</item>
+    </plurals>
+    <plurals name="days_string">
+        <item quantity="other">%d 日</item>
+    </plurals>
+    <plurals name="minutes_string">
+        <item quantity="other">%d 分</item>
+    </plurals>
+    <plurals name="attachments">
+        <item quantity="other">%d 添付ファイル</item>
+    </plurals>
+    <plurals name="attachments_non_descriptive">
+        <item quantity="other">\u0020 %d 添付ファイル</item>
+    </plurals>
+    <string name="add_attachment">添付ファイルの追加</string>
+    <string name="select_file">ファイルを選択</string>
+    <string name="attach_file">ファイルを添付</string>
+    <string name="take_photo">写真を撮影</string>
+    <string name="problem_taking_photo">写真撮影に問題がありました。</string>
+    <string name="problem_selecting_file">選択したファイルの追加で問題がありました。</string>
+    <string name="add_contact">連絡先を追加する</string>
+    <string name="delete_contact">連絡先から %s を削除しますか。</string>
+    <string name="sync_contact">Web アプリで %s を同期しますか？</string>
+    <string name="confirm">確認</string>
+    <string name="confirm_destructive_action">元には戻せませんが、本当によろしいですか？</string>
+    <string name="create">作成</string>
+    <string name="name">名前</string>
+    <string name="email">電子メール</string>
+    <string name="email_address">メールアドレス</string>
+    <string name="phone">電話番号</string>
+    <string name="save">保存</string>
+    <string name="add">追加</string>
+    <string name="syncing_messages">同期中...</string>
+    <string name="sync">連絡先を同期</string>
+    <string name="save_message_as_draft">下書きとしてメッセージを保存しますか。</string>
+    <string name="no_subject">件名なしでメッセージを送りますか。</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="okay">OK</string>
+    <string name="report_bugs">バグの報告</string>
+    <string name="send_report">レポートを送信</string>
+    <string name="bug_title">タイトル</string>
+    <string name="bug_description">バグの説明</string>
+    <string name="sending_report">レポートを送信しています...</string>
+    <string name="received_report">レポートは受信されました。</string>
+    <string name="not_received_report">レポートが受信されていません。</string>
+    <string name="not_received_report_offline">オフラインです。オンラインになった時にレポートが提出されます。</string>
+    <string name="forward_prefix">Fw:</string>
+    <string name="original_message_divider">---元のメッセージ---</string>
+    <string name="invalid_email_address">\'%s\' のアドレスは無効です。</string>
+    <string name="no_recipients_specified">少なくとも 1 人の受信者を追加してください。</string>
+    <string name="no_password_specified">有効期限は、完全に暗号化されたメッセージに対してのみ設定できます。非 ProtonMail受信者のためのパスワードを設定してください。</string>
+    <string name="attachment_limit">添付ファイルは、%1$s に制限されています。添付ファイルの合計は、%2$s になります。</string>
+    <string name="sending_message">メッセージを送信しています...</string>
+    <string name="sending_message_offline">オフラインです。後で送信されます。</string>
+    <string name="mailbox_password_changed">メールボックスのパスワードが変更されました。</string>
+    <string name="go_to_mailbox_login">更新されたメールボックスのパスワードを入力するために、メールボックスへのログインに進みますか。</string>
+    <string name="go_to_inbox">受信箱に移動</string>
+    <string name="message_sent">メッセージが送信されました。</string>
+    <string name="message_failed">メッセージ送信の失敗</string>
+    <string name="storage_limit">ストレージの上限</string>
+    <string name="storage_limit_warning">ストレージの上限に近づいています。</string>
+    <string name="do_not_show_again">次回から表示しない。</string>
+    <string name="edit_settings">設定を編集</string>
+    <string name="save_settings">設定を保存</string>
+    <string name="share">共有</string>
+    <string name="settings_saved">新しい設定を保存しました。</string>
+    <string name="settings_not_saved_password"> 設定を保存できません。ログインパスワードが間違っています。</string>
+    <string name="settings_not_saved_email"> 設定を保存できません。通知メールが無効です。</string>
+    <string name="save_settings_question">設定を保存しますか。</string>
+    <string name="enter">入力</string>
+    <string name="cancel">キャンセル</string>
+    <string name="close">閉じる</string>
+    <string name="passwords">パスワード管理</string>
+    <string name="change_password">パスワードの変更</string>
+    <string name="change_login_password">ログインパスワードを変更</string>
+    <string name="change_mailbox_password">メールボックスのパスワードを変更</string>
+    <string name="eo_password_title">パスワードの設定</string>
+    <string name="eo_password_subtitle">非ProtonMailユーザー宛メッセージの暗号化パスワードを設定して下さい。</string>
+    <string name="eo_password_more_info">詳細情報を入手</string>
+    <string name="old_login_password">現在のログインパスワード</string>
+    <string name="new_login_password">新しいパスワード</string>
+    <string name="confirm_new_login_password">新しいパスワードの確認</string>
+    <string name="old_mailbox_password">現在のメールボックスのパスワード</string>
+    <string name="new_mailbox_password">新しいメールボックスのパスワード</string>
+    <string name="confirm_new_mailbox_password">新しいメールボックスのパスワードの確認</string>
+    <string name="no_attachments">添付ファイルはありません。</string>
+    <string name="num_attachments">添付ファイル数%d </string>
+    <string name="new_passwords_not_valid">無効な入力</string>
+    <string name="new_passwords_do_not_match">新しいパスワードが一致しません。</string>
+    <string name="new_login_password_saved">新しいログインパスワードが保存されました。</string>
+    <string name="new_mailbox_password_saved">新しいメールボックスパスワードが保存されました。</string>
+    <string name="could_not_change_password">パスワードを変更できませんでした。</string>
+    <string name="auto_logout_option_settings">自動ログアウトのオプション</string>
+    <string name="pin_lock_option_settings">アプリケーションのオプションをロック</string>
+    <string name="pin_lock_after">以下の場合にアプリをロックする</string>
+    <string name="lock_the_app">アプリをロック</string>
+    <string name="no_sound_or_vibrate">バイブと音を共に切る</string>
+    <string name="sound">音のみ、バイブ無し</string>
+    <string name="vibration">バイブのみ、音無し</string>
+    <string name="both_sound_and_vibration">バイブと音</string>
+    <string name="display_name_banned_chars">無効な表示名です。\' &gt;\'および、\' &lt;\'は利用できません。</string>
+    <string name="cont">続行</string>
+    <string name="email_verification_code">上記のメールアドレスに検証コードを送ります。</string>
+    <string name="sms_verification_code">上記の電話番号に検証コードを送りします。</string>
+    <string name="send_verification_code">検証コードを送信します。</string>
+    <string name="resend_verification_code">再送信</string>
+    <string name="enter_verification_code">検証コードを入力</string>
+    <string name="verify">検証</string>
+    <string name="reply_prefix_on">　</string>
+    <string name="create_new_account">新しいアカウントを作成</string>
+    <string name="setup_new_account">アカウントの設定</string>
+    <string name="create_account">アカウントの作成\nR190316</string>
+    <string name="create_passwords">パスワードの設定</string>
+    <string name="sign_up">サインアップ</string>
+    <string name="caps_username">ユーザー名</string>
+    <string name="caps_login_password">パスワード</string>
+    <string name="caps_two_factor">２要素コード</string>
+    <string name="caps_confirm_password">パスワードの確認</string>
+    <string name="caps_confirm_mailbox_password">メールボックスのパスワードを確認</string>
+    <string name="caps_optional_notification_email">パスワード再設定用のメール （省略可）</string>
+    <string name="caps_optional">* 任意</string>
+    <string name="update_me_for_new_features">新機能に関する最新情報を受け取る</string>
+    <string name="create_mailbox_password">パスワードを作成</string>
+    <string name="confirm_mailbox_password">メールボックスのパスワードを確認</string>
+    <string name="password_note"><b>注意:</b>これはメッセージの暗号化と復号に使用されます。
+        このパスワードを失くした場合、回復することはできず、あなたの電子メールを読めなくなります。</string>
+    <string name="username_note"><b>注意:</b>ユーザー名はProtonMailアドレスにも使用されます。</string>
+    <string name="terms_and_conditions">ProtonMailを使用することによって、あなたは\n<a href="https://protonmail.com/terms-and-conditions"> 利用規約</a> と <a href="https://protonmail.com/privacy-policy"> プライバシー ポリシー</a> に同意したことになります。</string>
+    <string name="human_verification">人間であることの確認</string>
+    <string name="human_verification_subtitle">ProtonMailの乱用を防ぐために、\nあなたが人間であることを検証する必要があります。</string>
+    <string name="select_options">次のオプションのいずれかを選択してください。</string>
+    <string name="no_verification_methods_found">検証方法がみつかりません。</string>
+    <string name="email_verification">メールによる検証</string>
+    <string name="phone_verification">電話による検証</string>
+    <string name="existing_email_address">既存のメールアドレスを入力してください。</string>
+    <string name="phone_number">電話番号を入力してください。</string>
+    <string name="encryption_setup">暗号化のセットアップ</string>
+    <string name="high_security">高レベルのセキュリティ (2048 ビット)</string>
+    <string name="current_standard">現在の標準</string>
+    <string name="extreme_security">極めて高レベルのセキュリティ (4096 ビット)</string>
+    <string name="highest_security">利用可能な最高レベルの暗号強度。<b>セットアップには数分かかることがあります。</b></string>
+    <string name="generate_keypair">鍵のペアを作成</string>
+    <string name="labels_title_apply">ラベルの適用</string>
+    <string name="labels_title_add">ラベルの追加</string>
+    <string name="labels_title">ラベル</string>
+    <string name="labels_create">ラベルの追加</string>
+    <string name="label_name">ラベル名</string>
+    <string name="label_name_empty">ラベル名が必要です</string>
+    <string name="label_name_duplicate">このラベル名は既に存在します。</string>
+    <string name="label_created">ラベルが作成されました。</string>
+    <string name="label_invalid">無効な名前ではラベルを追加できせん。</string>
+    <string name="undo">取り消し</string>
+    <string name="customize_swipe_actions">スワイプ時のアクションを設定</string>
+    <string name="message_details_swipe_info">左から右にスワイプしてメールボックス画面に戻り、右から左にスワイプして現在のメッセージをごみ箱に移動することができます。</string>
+    <string name="composing_message_scroll_info">作成パネルの右端をスクロールして作成パネルを上下にスクロールすることができます。</string>
+    <string name="message_can_not_edit">返信/転送ができません。このメッセージはまだ送信されていません。</string>
+    <string name="label_apply">適用</string>
+    <string name="label_delete">削除</string>
+    <string name="label_add">追加</string>
+    <string name="no_browser_found">このアクションを完了するためにブラウザーのアプリをインストールしてください。</string>
+    <string name="no_application_found">この操作を行うアプリが見つかりませんでした。</string>
+    <string name="no_application_found_or_link_invalid">このアクションを処理するアプリが見つかりませんでした。あるいは無効なURLです。</string>
+    <string name="also_archive">アーカイブも行う</string>
+    <string name="label_deleted">ラベルが削除されました。</string>
+    <string name="label_deleted_error">ラベル削除中のエラー</string>
+    <string name="respond_inline">インラインで返信</string>
+    <string name="no_connectivity_detected">接続が検出できません...</string>
+    <string name="no_connectivity_message_not_downloaded">接続検出できません...
+        \nメッセージはダウンロードされませんでした。</string>
+    <string name="connectivity_arrived">接続されています。</string>
+    <string name="connectivity_checking">接続を確認しています...</string>
+    <string name="sync_short">同期</string>
+    <string name="draft_attachments_uploading">下書きがまだアップロード中です...</string>
+    <string name="draft_label_attachments_uploading">添付ファイルをアップロードしています…</string>
+    <string name="draft_label_message_uploading">メッセージを送信しています…</string>
+    <string name="attachment_failed">メッセージの添付ファイルのアップロードに失敗しました。 </string>
+    <string name="attachment_failed_new">メッセージ %1$s %2$s の添付ファイルのアップロードに失敗しました。</string>
+    <string name="attaching_photo_failed">写真の添付に失敗しました。</string>
+    <string name="empty_message">空のメッセージ</string>
+    <string name="dismiss">却下</string>
+    <string name="new_message_arrived">新着メッセージあり</string>
+    <string name="please_choose_color">色を選択してください。</string>
+    <string name="display_images">画像を表示</string>
+    <string name="retry">再試行</string>
+    <string name="saving_failed_no_conn">保存に失敗しました。接続がありません。</string>
+    <string name="can_not_create_account_while_beta">ベータ版でのアカウント作成はできません。</string>
+    <string name="changing_mailbox_password_disabled_while_beta">ベータ版ではメールボックスのパスワード変更はできません。</string>
+    <string name="username_is_available">%s が利用可能です。</string>
+    <string name="username_is_not_available">%s は利用できません。</string>
+    <string name="congratulation">おめでとうございます！</string>
+    <string name="new_account_ready">新しいセキュリティで保護された新しい電子メール\nアカウント
+ができました。</string>
+    <string name="optional_email_note">ログインパスワードを忘れた場合、オプションの回復用のメールアドレスによってリセットすることができます。</string>
+    <string name="optional_display_name">メールを送信する際に、これが送信者フィールドに表示される名前になります。</string>
+    <string name="error_captcha_not_valid">無効</string>
+    <string name="close_engagement">ツアーを閉じる</string>
+    <string name="engagement_title_welcome">ProtonMailへようこそ</string>
+    <string name="engagement_title_swipe">クイックスワイプ操作</string>
+    <string name="engagement_title_labels">ラベルの管理</string>
+    <string name="engagement_title_encryption">端末相互間の暗号化</string>
+    <string name="engagement_title_expire">有効期限付きメッセージ</string>
+    <string name="engagement_title_help">ヘルプ&amp; サポート</string>
+    <string name="engagement_title_support_protonmail">ProtonMail をサポート</string>
+    <string name="engagement_subtitle_welcome">新しい暗号化された電子メールアカウントが設定され、暗号化されたメッセージを送受信する準備ができました。</string>
+    <string name="engagement_subtitle_swipe">ProtonMailアプリの設定で、スワイプ操作をカスタマイズできます。</string>
+    <string name="engagement_subtitle_labels">受信箱を整理するラベルの作成や追加ができます。全てのオプションに対してメッセージ上で下にスワイプしてください。</string>
+    <string name="engagement_subtitle_encryption">受信箱は、端末相互間で暗号保護されています。保護された電子メールを自動的に送信するためには、送信相手にProtonMail を使用するように招待してください。送信相手がProtonMailを使用しない場合には、メッセージを手動で暗号化することもできます。</string>
+    <string name="engagement_subtitle_expire">送信メッセージが一定時間後に自動的に削除されるように設定できます。</string>
+    <string name="engagement_subtitle_help">protonmail.com/supportでヘルプとサポートが受けられます。バグの報告はアプリ内からも行えます。</string>
+    <string name="engagement_subtitle_support_protonmail">ProtonMailは広告の販売や個人情報の乱用を行いません。ProtonMailを維持するためには、あなたからのご支援が不可欠です。有料アカウントへのアップグレードや寄付によりProtonMailをご支援いただくことができます。</string>
+    <string name="attachment_exists">既に添付されている添付ファイル</string>
+    <string name="sending_email_success">検証コードを送信しました。</string>
+    <string name="sending_email_failed">検証コードの送信に失敗しました。</string>
+    <string name="password_required">この変更をするためには、ログインパスワードを入力してください。</string>
+    <string name="password_not_valid">入力したパスワードが正しくありません。</string>
+    <string name="send_code_wait">%d 秒待ってからもう一度クリックしてください。</string>
+    <string name="eo_password_not_completed">メッセージのパスワードが不完全です。</string>
+    <string name="delinquency_title">このアカウントへのアクセスは不払いのため無効になっています。</string>
+    <string name="delinquency_subtitle">このアカウントへのアクセスは不払いのため無効化されています。未払い分を支払うには、 protonmail.comからサインインしてください。</string>
+    <string name="direct_disabled_subtitle">モバイルからのご登録は一時的にご利用できません。後ほど再度お試し頂くか、デスクトップまたはノートパソコンで <a href="https://protonmail.com"> protonmail.com</a> がらご登録をお願いします。</string>
+    <string name="downloading">ダウンロード中...</string>
+    <string name="cant_download_attachment">添付ファイルをダウンロードできません。</string>
+    <string name="auto_logout">自動ログアウト</string>
+    <string-array name="auto_logout_options_array">
+        <item>アプリを閉じた場合</item>
+        <item>5分間、操作がない場合</item>
+        <item>15分間、操作がない場合</item>
+        <item>1時間、操作がない場合</item>
+        <item>24時間、操作がない場合</item>
+    </string-array>
+    <string-array name="pin_options_array">
+        <item>PINを変更</item>
+        <item>PINのタイムアウト期間の変更</item>
+    </string-array>
+    <string name="delete_label_confirmation_title">選択したラベルを削除してよろしいですか？</string>
+    <string name="delete_folder_confirmation_title">選択したフォルダを削除してよろしいですか？</string>
+    <string name="delete_label_confirmation_message">ここに含まれている電子メールは、<b>全てのメール</b>から閲覧できます。</string>
+    <string name="enter_pin">受信箱のロックを解除するPINコードを入力してください。</string>
+    <string name="enter_pin_message_details">メッセージのロックを解除するPINコードを入力してください。</string>
+    <string name="enter_current_pin">現在のPINコードを入力してください。</string>
+    <string name="hint_pin">PINコード</string>
+    <string name="pin_subtitle_create">PINを作成してください</string>
+    <string name="pin_subtitle_create_new">新しいPINを作成してください</string>
+    <string name="pin_subtitle_confirm">PINを確認</string>
+    <string name="pin_subtitle_confirm_new">新しいPINを確認してください</string>
+    <string name="forgot_pin">PINコードを忘れましたか？</string>
+    <string name="pin_invalid">無効なPINコードです。4桁の正しいPINコードを入力してください。</string>
+    <string name="pin_confirmation_not_match">確認用のPINコードが一致しません。</string>
+    <string name="pin_not_match">PINコードが一致しません。</string>
+    <string name="new_pin_saved">新しいPINが保存されました。</string>
+    <string name="pin_settings">PINの設定</string>
+    <string name="next">次へ</string>
+    <string name="back">戻る</string>
+    <string name="new_emails">%d 新しいメール</string>
+    <string name="attachment_download_success">%s は正常にファイルマネージャーにダウンロードされました。</string>
+    <string name="attachment_download_failed">%s のダウンロードに失敗しました。</string>
+    <string name="sender_changed">送信者のアドレスを変更するには、添付ファイルを削除してください。</string>
+    <string name="ringtone">着信音</string>
+    <string name="ringtone_selected">着信音：</string>
+    <string name="notification_option">%1$s\n着信音： %2$s</string>
+    <string name="ringtone_invalid">着信音の選択が無効な値を返しました</string>
+    <string name="ringtone_no_default">デフォルトの着信音をロードすることはできません</string>
+    <string name="select_tone">音を選ぶ</string>
+    <string name="copy_link">リンクをコピーする</string>
+    <string name="share_link">リンクを共有する</string>
+    <string name="attachment_delete_failed">%s の添付ファイルの削除に失敗しました。</string>
+    <string name="sync_attachments">添付ファイルを同期しています...</string>
+    <string name="processing_attachment">添付ファイルの処理中</string>
+    <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
+    <string name="hyperlink_confirmation_checkbox_text">今後表示しない</string>
+    <string name="none">なし</string>
+    <string name="changes_affected_after_closing">アプリを閉じた後に変更が反映されます。</string>
+    <plurals name="incorrect_pin_remaining_attempts">
+        <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
+    </plurals>
+    <plurals name="incorrect_pin_remaining_attempts_wipe">
+        <item quantity="other">完全なデータ抹消まで残り%d回です。</item>
+    </plurals>
+    <string name="done">完了</string>
+    <string name="logout">ログアウト</string>
+    <string name="logout_question">本当にログアウトしてよろしいですか？</string>
+    <string name="logout_question_next_account">現在のアカウントでログアウトして、％s を使用して続行してよろしいですか？</string>
+    <string name="upselling">アップグレード/寄付</string>
+    <string name="upselling_title">ProtonMailはフリーでオープンソースです。</string>
+    <string name="upselling_subtitle">プライバシーを保護しProtonMailを改良し続けるために、私たちはあなたのご支援を必要としています。</string>
+    <string name="upselling_donate_title">寄付</string>
+    <string name="upselling_upgrade_title">ProtonMail PLUSプランにアップグレードする。</string>
+    <string name="upselling_donate_subtitle">あなたの寄付は、フリーのオープンソースソフトウェアとしてProtonMailの開発を続けることに役立てられます。私たちが世界中の人々にProtonMailのサービスを提供し続けることができるのは、コミュニティのご支援があってこそなのです。</string>
+    <string name="upselling_upgrade_subtitle">サブスクリプションのアップグレードは、フリーのオープンソースソフトウェアとしてProtonMailの開発を続けるのに役立てられます。私たちが世界中の人々 に ProtonMailを提供し続けることができるのは、コミュニティのご支援があってこそなのです。</string>
+    <string name="upgrade_donate">アップグレード/寄付</string>
+    <string name="upselling_donate_pick_amount">寄付金額の選択または、任意の金額を入力してください。</string>
+    <string name="amount_5">5 €</string>
+    <string name="amount_15">15 €</string>
+    <string name="amount_50">50 €</string>
+    <string name="amount_100">100 €</string>
+    <string name="donation_amount">寄付金額を入力してください</string>
+    <string name="donate">寄付</string>
+    <string name="donate_paypal_bitcoin">ビットコインまたはPayPal経由で寄付します。</string>
+    <string name="upgrade_line1">無料のプランに含まれるものすべて</string>
+    <string name="upgrade_line2">5GBのストレージ</string>
+    <string name="upgrade_line3">独自ドメインを使用</string>
+    <string name="upgrade_line4">最大 5 個までのエイリアス</string>
+    <string name="upgrade_line5">優先カスタマーサポート</string>
+    <string name="upgrade_plus_price">4 €</string>
+    <string name="per_month">/月</string>
+    <string name="upgrade">アップグレード</string>
+    <string name="payment_options">支払いオプション</string>
+    <string name="other_plans">より容量の大きなストレージをもつプランは、ProtonMailウェブメールのインターフェイスからアップグレードできます。</string>
+    <string name="upgrade_paid_user">有料プランのご契約ありがとうございます。</string>
+    <string name="select_account_type">アカウントの種類を選択</string>
+    <string name="select_account_type_subtitle">ProtonMailは公共の利益のための無料サービスです。有料アカウントを選択することオンラインプライバシーを支援することができます。</string>
+    <string name="plan_free_with_price">無料</string>
+    <string name="plan_plus_with_price">PLUS %s/月</string>
+    <string name="plan_visionary_with_price">VISIONARY %s/月</string>
+    <string name="plan_business_with_price">BUSINESS %s/月</string>
+    <string name="plan_free_title">機能限定の基本アカウント</string>
+    <string name="plan_plus_title">高度な機能とセキュリティで保護された電子メール</string>
+    <string name="plan_visionary_title">サポーターのための特別アカウント</string>
+    <string name="plan_business_title">サポーターのための特別アカウント</string>
+    <string name="plan_plus_line2">1 日あたり最大 1000 件まで送信</string>
+    <string name="plan_plus_line3">ラベルおよびカスタムフィルター</string>
+    <string name="plan_plus_line4">外部の受信者宛への暗号化されたメッセージの送信</string>
+    <string name="plan_plus_line7">優先カスタマーサポート</string>
+    <string name="plan_free_line1">500MBのストレージ</string>
+    <string name="plan_free_line2">1 日あたり最大 150 件まで送信</string>
+    <string name="plan_free_line22">1 日あたり %d メッセージ</string>
+    <string name="plan_free_line3">20ラベル</string>
+    <string name="plan_free_line4">独自ドメイン: サポートされていません。</string>
+    <string name="plan_free_line5">1 アドレス</string>
+    <string name="plan_free_line6">カスタマー サポート: 制限があります。</string>
+    <string name="plan_visio_line2">送信制限なし</string>
+    <string name="plan_visio_line3">新機能の早期公開</string>
+    <string name="plan_visio_line6">VISIONARYプランでは、新機能への投票ができます。</string>
+    <string name="plan_business_line1">近日中に組織で暗号化されたメールを使えるようになります。</string>
+    <string name="currency_duration">通貨 &amp; 期間</string>
+    <string name="credit_card_name">クレジット／デビットカードの名義人</string>
+    <string name="zip_code">郵便番号</string>
+    <string name="card_number">クレジットカード番号</string>
+    <string name="billing_information">請求書情報</string>
+    <string name="billing_upgrade_thanks">アップグレードが成功しました。ご支援ありがとうございます。</string>
+    <string name="country">国名</string>
+    <string name="cvc">セキュリティコード（CVC）</string>
+    <string name="terms_and_conditions_billing">「送信」をクリックすることにより、あなたは以下の規約に同意したことになります。\n<a href="https://protonmail.com/terms-and-conditions">ProtonMailの利用規約</a></string>
+    <string name="submit">送信</string>
+    <string name="currency">通貨</string>
+    <string name="plan_duration">請求期間</string>
+    <string name="duration_annual_line1">年間プラン <font color="#C3E129"> 20% 割引</font></string>
+    <string name="duration_annual_line2">1 ヶ月あたり %s</string>
+    <string name="per_month_text_only">1 ヶ月あたり</string>
+    <string name="per_year_text_only">年あたり</string>
+    <string name="duration_annual_line3">年額%sが請求されました。</string>
+    <string name="duration_annual_line4">月額%sが請求されました。</string>
+    <string name="duration_monthly_line1">月額プラン</string>
+    <string name="duration_monthly_line2">1 ヶ月あたり %s</string>
+    <string name="duration_monthly_line3">20% 割引</string>
+    <string name="set_cont">設定 &amp; 続行</string>
+    <string name="payment_error">決済エラー</string>
+    <string name="error">エラー</string>
+    <string name="try_another_card">別のカードを試す</string>
+    <string name="try_another_paypal">PayPalで支払う</string>
+    <string name="try_another_payment_method">別を試す</string>
+    <string name="submit_paypal">PayPalで支払う</string>
+    <string name="picker_card">クレジット／デビットカード</string>
+    <string name="picker_paypal">PayPal</string>
+    <string name="paypal_disclaimer">この取引を完了するには、PayPalアカウントにログインする必要があります。 PayPalで新しいブラウザウィンドウが開きます。</string>
+    <string name="payment_picker_disclaimer">支払い方法を選択してください。</string>
+    <string name="payment_success_title">支払いが正常に完了しました。</string>
+    <string name="payment_success_text">アカウントをアップグレードしています、しばらくお待ちください。支援していただきありがとうございます。</string>
+    <string name="donation_success_title">寄付が完了しました。</string>
+    <string name="donation_success_text">私たちがProtonMailの開発を続けるためには、あなたの支援が不可欠です。インターネット上でのプライバシー保護のために支援していただきありがとうございます。</string>
+    <string name="create_free_account">無料アカウントを作成する</string>
+    <string name="storage_gb">%d GBのストレージ</string>
+    <string name="storage_mb">%d MBのストレージ</string>
+    <string name="max_addresses">最大 %d の別名メールアドレス</string>
+    <string name="inline_prefix">[Inline]</string>
+    <string name="inline_header">%d 埋め込み画像</string>
+    <string name="select">選択</string>
+    <string name="change_currency">通貨を変更</string>
+    <string name="switch_billing_monthly">毎月に切り替える</string>
+    <string name="switch_billing_yearly">年間に切り替える</string>
+    <string name="warning">警告</string>
+    <string name="empty_recovery_email_question">警告: 回復用のメールが設定されていません。パスワードを忘れた場合、アカウントの復旧はできません。回復用のメールなしで続行しますか。</string>
+    <string name="card_details_title">%1$s (* * * %2$s)</string>
+    <string name="card_details_subtitle">有効期限 %s</string>
+    <string name="payment_methods">支払い方法</string>
+    <string name="payment_approval_activity">支払方法の承認</string>
+    <string name="payment_approval_success">支払方法は承認されています。</string>
+    <string name="payment_approval_unknown_error_description">お支払い方法の確認中にエラーが発生しました。 再度試すか、別のカードに切り替えてください。</string>
+    <string name="payment_approval_cancel_error_description">支払い方法の確認がキャンセルされました。 再度試すか、別のカードに切り替えてください。</string>
+    <string name="payment_approval_consumed_error_description">この支払い方法は既に使用されています。 サブスクリプションのステータスを確認してください。</string>
+    <string name="no_payment_methods">支払い方法が登録されていません。</string>
+    <string name="edit_payment_methods">支払い方法を編集するには protonmail.comからログインしてください。</string>
+    <string name="no_permission_contacts">連絡先の読み取り許可がありません。</string>
+    <string name="message_not_loaded">メッセージが読み込まれていません。</string>
+    <string name="signature_on">署名の利用</string>
+    <string name="signature_text">署名のテキスト</string>
+    <string name="please_use_webapp_pass_change">この操作を完了するには、デスクトップまたはラップトップ コンピューターからWebアプリ &lt; href =\"https://protonmail.com\"&gt; protonmail.com &lt;/a &gt; 。を使用してください。</string>
+    <string name="available_addresses">使用可能なアドレス</string>
+    <string name="inactive_addresses">無効になっているアドレス</string>
+    <string name="not_set">未設定</string>
+    <string name="edit_notification_email">回復用メールアドレスの編集</string>
+    <string name="available_swipe_actions">利用可能なアクション</string>
+    <string name="no_available_addresses">利用可能なアドレスがありません。</string>
+    <string name="no_inactive_addresses">無効になっているアドレスはありません。</string>
+    <string name="label_add_new">新しいラベルの追加</string>
+    <string name="available_labels">利用可能なラベル</string>
+    <string name="choose_label_color">ラベル色の選択</string>
+    <string name="save_new_label">新しいラベルを保存</string>
+    <string name="delete_selected">選択項目を削除</string>
+    <string name="pin_not_activated">PINが有効化されていません。</string>
+    <string name="available_options">使用可能なオプション</string>
+    <string name="current_recovery_email">現在の回復用のメールアドレス</string>
+    <string name="change_recovery_email">回復用のメールアドレスの変更</string>
+    <string name="new_recovery_email">新しい回復用メールアドレス</string>
+    <string name="confirm_new_recovery_email">新しい回復用メールアドレスの確認</string>
+    <string name="recovery_emails_invalid">メール アドレスが一致しないか、有効ではありません。</string>
+    <string name="authenticate">認証</string>
+    <string name="background_sync_subtitle">このオプションが有効な場合は、アプリはバックグラウンドでサーバーと同期します。この機能を無効にすると、プッシュ通知が無効になります。</string>
+    <string-array name="notification_options">
+        <item>振動と音、共に切る</item>
+        <item>音のみ、振動無し</item>
+        <item>振動のみ、音無し</item>
+        <item>振動と音</item>
+    </string-array>
+    <string-array name="account_type_names">
+        <item>無料</item>
+        <item>PLUS</item>
+        <item>VISIONARY</item>
+        <item>PROFESSIONAL</item>
+    </string-array>
+    <plurals name="custom_domains">
+        <item quantity="other">独自ドメインの使用（例：john@smith. com）
+%d ドメインまでのサポート</item>
+    </plurals>
+    <string-array name="months_array">
+        <item>月</item>
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+    <string name="contacts_groups">グループ</string>
+    <string name="phone_contact">電話連絡先</string>
+    <string name="contact_details_display_name">名前</string>
+    <string name="contact_details">連絡先の詳細</string>
+    <string name="email_type_home">自宅</string>
+    <string name="email_type_work">職場</string>
+    <string name="option_type_custom">新しい種類</string>
+    <string name="type_title">種類を選択</string>
+    <string name="no_permission_storage">ストレージの許可がありません。</string>
+    <string name="message_drafted_error_server">メッセージの送信に失敗しました。%s</string>
+    <string name="sync_local_contacts">ProtonMailにアップロード</string>
+    <string name="please_select_only_phone_contacts">ローカルの電話連絡先だけを選択してください。</string>
+    <string name="contact_vcard_hint_email">メールアドレスを入力してください</string>
+    <string name="contact_vcard_hint_phone">電話番号を入力してください</string>
+    <string name="contact_vcard_hint_address">住所を入力してください</string>
+    <string name="contact_vcard_hint_other">情報を入力してください</string>
+    <string name="contact_vcard_hint_note">メモ内容を入力してください</string>
+    <string name="contact_vcard_phone">電話</string>
+    <string name="contact_vcard_address">住所</string>
+    <string name="contact_vcard_new_row_email">メールアドレスの追加</string>
+    <string name="contact_vcard_new_row_phone">電話番号の追加</string>
+    <string name="contact_vcard_new_row_address">住所の追加</string>
+    <string name="contact_vcard_new_row_other">情報の追加</string>
+    <string name="contact_vcard_new_row_custom">カスタムフィールドの追加</string>
+    <string name="vcard_other_option_org">組織</string>
+    <string name="vcard_other_option_title">肩書き</string>
+    <string name="vcard_other_option_nickname">ニックネーム</string>
+    <string name="vcard_other_option_birthday">誕生日</string>
+    <string name="vcard_other_option_anniversary">記念日</string>
+    <string name="vcard_other_option_gender">性別</string>
+    <string name="vcard_other_option_role">役割</string>
+    <string name="vcard_other_option_url">URL</string>
+    <string name="sync_question">連絡先を同期しますか。</string>
+    <string name="sync_question_subtitle">ProtonMailの連絡先ディレクトリに、あなたのデバイス上のローカルの連絡先を同期します。この操作により、ProtonMailを介して他のデバイスからこれらの連絡先にアクセスすることができるようになります。</string>
+    <string name="convert_contact">連絡先を変換</string>
+    <string name="upload_contacts">連絡先をアップロード</string>
+    <string name="encrypted_data">暗号化されたデータ</string>
+    <string name="upgrade_encrypted_contact">暗号化された連絡先情報を使用するにはアップグレードしてください。</string>
+    <string name="empty_encrypted_data">暗号化された連絡先情報を空にする。</string>
+    <string name="uploading_contacts">連絡先をアップロード中 &#8230;</string>
+    <string name="error_encrypted_data">暗号化された連絡先情報の取得中のエラー</string>
+    <string-array name="vcard_option_phone">
+        <item>電話</item>
+        <item>モバイル</item>
+        <item>職場</item>
+        <item>Fax</item>
+        <item>その他</item>
+    </string-array>
+    <string-array name="vcard_option_email">
+        <item>電子メール</item>
+        <item>個人</item>
+        <item>職場</item>
+        <item>その他</item>
+    </string-array>
+    <string-array name="vcard_option_address">
+        <item>住所</item>
+        <item>個人</item>
+        <item>職場</item>
+        <item>その他</item>
+    </string-array>
+    <string-array name="vcard_option_other">
+        <item>@string/vcard_other_option_org</item>
+        <item>@string/vcard_other_option_anniversary</item>
+        <item>@string/vcard_other_option_birthday</item>
+        <item>@string/vcard_other_option_gender</item>
+        <item>@string/vcard_other_option_nickname</item>
+        <item>@string/vcard_other_option_role</item>
+        <item>@string/vcard_other_option_title</item>
+        <item>@string/vcard_other_option_url</item>
+    </string-array>
+    <string name="logged_out">ログアウトしました。</string>
+    <string name="logged_out_description">ログアウトされています。もう一度ログインをしてください。</string>
+    <string name="verification_needed">検証が必要です。</string>
+    <string name="verification_needed_description">セキュリティ上の理由から、あなたがロボットではないことを立証してください。</string>
+    <string name="verification_needed_description_notification">このメッセージを送信する前に、あなたが人間であることを立証してください：%s</string>
+    <string name="message_drafted_verification_needed">検証が必要なため、メッセージが送信されませんでした。メッセージは、下書きフォルダーに保存されました。</string>
+    <string name="error_message_zip_code_invalid">エラー：郵便番号が無効です。</string>
+    <string name="error_message_cvc_invalid">エラー：CVC 番号が無効です。</string>
+    <string name="error_message_card_name_invalid">エラー：カード名が無効です。</string>
+    <string name="error_message_select_country">国名を選んでください。</string>
+    <string name="error_message_exp_date_invalid">エラー：無効な有効期限です。</string>
+    <string name="error_message_exp_date_past">エラー：無効な有効期限です。</string>
+    <string name="error_message_card_number_invalid">エラー：カード番号が無効です。</string>
+    <string name="print_error">印刷エラー</string>
+    <string name="download_error">ダウンロードエラー</string>
+    <string name="download_complete">ダウンロード完了</string>
+    <string name="download_in_progress">ダウンロードが進行中</string>
+    <string name="expires_in">%s で期限切れ</string>
+    <string name="unsaved_changes_title">変更が保存されていません</string>
+    <string name="unsaved_changes_subtitle">フォーム内に保存されていない項目があります。本当に破棄してよろしいですか。</string>
+    <string name="discard">破棄</string>
+    <string name="keep_editing">編集を続ける</string>
+    <string name="request_timeout">リクエストが時間切れになりました。もう一度やり直してください。</string>
+    <string name="add_folder">フォルダの追加</string>
+    <string name="no_folders">フォルダーがありません。</string>
+    <string name="folders_title_move">メッセージを以下に移動</string>
+    <string name="move">移動</string>
+    <string name="folders_manager">フォルダー管理</string>
+    <string name="folder_add_new">新しいフォルダーの追加</string>
+    <string name="folder_name">フォルダー名</string>
+    <string name="available_folders">利用可能なフォルダー</string>
+    <string name="choose_folder_color">フォルダー色の選択</string>
+    <string name="folder_created">フォルダーを作成しました。</string>
+    <string name="folder_invalid">フォルダー名が無効なため、作成できません。</string>
+    <string name="folder_deleted">フォルダを削除しました。</string>
+    <string name="folder_deleted_error">フォルダー削除中のエラー</string>
+    <string name="save_new_folder">新しいフォルダーを保存</string>
+    <string name="create_new_folder">フォルダを作成</string>
+    <string name="all_mail">全てのメール</string>
+    <string name="allmail_option">全てのメール</string>
+    <string name="empty_emails">メールがありません。</string>
+    <string name="empty_email_list">メールアドレスがありません。</string>
+    <string name="no_contacts">連絡先がありません。</string>
+    <string name="sender_name_address">%1$sに&lt; %2$s &gt; が送信</string>
+    <string name="update_label">ラベルを更新</string>
+    <string name="folder_name_empty">フォルダーには名前が必要です。</string>
+    <string name="max_labels_in_message">メッセージ %1$s は %2$d ラベル以上を持つことはできません。</string>
+    <string name="delete">削除</string>
+    <string name="subject_copied">件名をクリップボードにコピーしました</string>
+    <string name="details_copied">クリップボードへのコピーの詳細</string>
+    <string name="saving">保存中...</string>
+    <string name="update_folder">フォルダーを更新</string>
+    <string name="spam_score_100">このメールはProtonMailのアドレスが送信元になっていますが、外部から送信されたもので認証に失敗しています。不適切に転送されたものか、なりすましの恐れがあります。</string>
+    <string name="spam_score_101">メールのドメイン認証に失敗しました。このメールは不適切に転送されたものか、なりすましの恐れがあります。</string>
+    <string name="spam_score_102">このメッセージは、フィッシングの恐れがあります。送信者と内容を疑い、正当なものかどうかを確認してください。 <a href="https://protonmail.com/blog/prevent-phishing-attacks/">より詳しく</a></string>
+    <string name="print_from_template">差出人：%s</string>
+    <string name="print_to_template">宛先：%s; &#160;</string>
+    <string name="print_cc_template">CC：%s;&#160;</string>
+    <string name="print_bcc_template">BCC：%s;&#160;</string>
+    <string name="contacts_invalid_type">無効なタイプ</string>
+    <string name="signature_error">検証エラー</string>
+    <string name="signature_error_desc">このコンテンツの署名の検証に失敗しました。</string>
+    <string name="decryption_error">復号エラー</string>
+    <string name="decryption_error_desc">コンテンツの復号に失敗しました。</string>
+    <string name="address">アドレス：</string>
+    <string name="address_street">番地</string>
+    <string name="address_city">市町村</string>
+    <string name="address_region">都道府県</string>
+    <string name="address_postcode">郵便番号</string>
+    <string name="address_country">国名</string>
+    <string name="recheck_delinquency">もう一度確認</string>
+    <string name="close_app">アプリを終了</string>
+    <string name="empty_subject">(件名なし)</string>
+    <string name="contacts_unknown">不明</string>
+    <string name="expand_collapse">伸張/収縮</string>
+    <string name="learn_more"><u>更に詳しく</u></string>
+    <string name="info">情報</string>
+    <string name="error_can_not_send_from_this_address">あなたの %s アドレスから送信するには有料プランへのアップグレードが必要です。</string>
+    <string name="digital_signature_verified">デジタル署名が検証されました。</string>
+    <string name="encrypted_and_digital_signature_verified">暗号化とデジタル署名が検証されました。</string>
+    <string name="email_empty">メールアドレスがありません。</string>
+    <string name="edit_contact_details">連絡先の詳細を編集</string>
+    <string name="encrypted_contact_details">暗号化された連絡先の詳細</string>
+    <string name="edit_contact_toolbar_title">%sを編集</string>
+    <string name="convert_question">ローカルの連絡先をアップロード</string>
+    <string name="convert_question_subtitle">これで、あなたのデバイスのローカル連絡先があなたのProtonMail連絡先ディレクトリにアップロードされます。 ProtonMailを使用して、他のデバイスの連絡先にアクセスできます。</string>
+    <string name="refresh_contacts">再読み込み</string>
+    <string name="upload">アップロード</string>
+    <string name="invalid_email_some_contacts">一部の連絡先でメールアドレスが有効ではありません。</string>
+    <string name="protonmail_contacts">ProtonMailの連絡先</string>
+    <string name="device_contacts">デバイスの連絡先</string>
+    <string name="print_date_template">日付： %s</string>
+    <string name="print_attachment_template">添付ファイル： %s; &#160;</string>
+    <string name="pm_me_changed">\@pm.meアドレスからのメッセージ送信は有料の機能です。メッセージは既定アドレスの%sから送信されます。</string>
+    <string name="pm_me_can_not_be_default">%s のアドレスを既定にするためには有料プランにアップグレードしてください。</string>
+    <string name="dont_remind_again">今後このメッセージを表示しない</string>
+    <string name="load_embedded_images">埋め込み画像を読み込む</string>
+    <string name="remove_password">パスワードを削除</string>
+    <string name="remove_password_question">パスワードを削除しますか？</string>
+    <string name="attachment_storage_value_current">現在の選択：%dMB</string>
+    <string name="attachment_storage_value_current_unlimited">現在の選択：無制限</string>
+    <string name="attachment_offline_max_storage">モバイル端末でProtonMailが使用できるストレージの最大容量を設定してください。</string>
+    <string name="load_embedded_images_failed_no_network">埋め込み画像の読み込みに失敗しました。ネットワーク接続を確認してください。</string>
+    <string name="load_embedded_images_failed">埋め込み画像の読み込みに失敗しました。</string>
+    <string name="attachment_storage_unlimited">%.2fMB / 無制限</string>
+    <string name="unlimited">無制限</string>
+    <string name="local_storage_cleared">ストレージを消去しました</string>
+    <string name="local_storage_clear">ストレージのクリア</string>
+    <string name="recipient_popup_compose_to">このアドレス宛に新規作成</string>
+    <string name="recipient_popup_copy_address">アドレスをコピー</string>
+    <string name="recipient_popup_see_details">連絡先の詳細を表示</string>
+    <string name="send_with_untrusted_key_title">信頼していない鍵を送信しますか？</string>
+    <string name="send_with_untrusted_key_message">信頼できる鍵によるアドレス検証が%sに対して有効になっていますが、信頼済みの有効な鍵がありません。</string>
+    <string name="resign_contact_title">この連絡先に再署名しますか？</string>
+    <string name="resign_contact_message">%sの検証に失敗しました：連絡先が正しく署名されていません。メッセージを送信するためには再署名するか編集する必要があります。このメッセージはパスワードの復旧や鍵のリセットをした場合に表示されることがあります。</string>
+    <!-- Sender locks -->
+    <string name="sender_lock_unencrypted">暗号化されていないメッセージ</string>
+    <string name="sender_lock_zero_access">暗号化されずに送受信されたメッセージ</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_end_to_end">端末相互間の暗号化による送信</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_autoresponder">ProtonMailによってゼロアクセス暗号化で送信済み</string>
+    <string name="sender_lock_verification_failed">送信者検証の失敗</string>
+    <string name="sender_lock_pgp_encrypted">PGPで暗号化されたメッセージ（署名なし）</string>
+    <string name="sender_lock_pgp_verified">検証済みアドレスからのPGP署名付きメッセージ（暗号化なし）</string>
+    <string name="sender_lock_pgp_encrypted_verified">検証済みアドレスからのPGP暗号化メッセージ</string>
+    <string name="sender_lock_pgp_signed_verified_sender">検証済みアドレスからのPGP署名付きメッセージ（暗号化なし）</string>
+    <!-- External PGP signed-only message that was encrypted by the BE -->
+    <string name="sender_lock_internal">端末相互間で暗号化されたメッセージ</string>
+    <string name="sender_lock_internal_verified">検証済みアドレスからの端末相互間の暗号化によるメッセージ</string>
+    <!-- Composer locks -->
+    <string name="composer_lock_internal">端末相互間の暗号化済み</string>
+    <string name="composer_lock_internal_pinned">検証済みアドレスへの端末相互間の暗号化による送信</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP暗号化のみ（署名なし）</string>
+    <string name="composer_lock_pgp_signed">PGP署名のみ（暗号化なし）</string>
+    <string name="recipient_not_found_and_removed">宛先が見つかりません：%sは削除されています</string>
+    <string name="recipient_error_and_removed">宛先の情報の受信中に問題が発生しました。宛先が削除されています：%s</string>
+    <string name="send_anyway">このまま送信</string>
+    <string name="expiration_error_title">メッセージの有効期限を有効にしましたが、全ての宛先でこの機能が利用できるわけではありません。</string>
+    <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください：</string>
+    <string name="expiration_error_disable_pgp_sending">次の宛先に対しての期限付きPGP送信を無効にしてください：</string>
+    <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">より詳しく</a></string>
+    <string name="no_items_found">アイテムが見つかりませんでした。</string>
+    <string name="channel_name_attachments">添付ファイル</string>
+    <string name="channel_description_attachments">添付ファイルのダウンロード状態を知らせる</string>
+    <string name="channel_name_emails">メール</string>
+    <string name="channel_description_emails">受信メールの通知</string>
+    <string name="channel_name_account">アカウント</string>
+    <string name="channel_description_account">アカウントの状態</string>
+    <string name="channel_name_ongoing_operations">実行中の操作</string>
+    <string name="channel_description_ongoing_operations">バックグラウンドでのダウンロードのような、実行中の操作を表示する</string>
+    <string name="checking_mailbox">受信箱を確認しています</string>
+    <string name="report_phishing">フィッシングを報告</string>
+    <string name="print">印刷</string>
+    <string name="phishing_dialog_title">フィッシング報告の確認</string>
+    <string name="phishing_dialog_message">フィッシングの試みとして報告することは、フィルターの改善と解析に役立ちます。これは我々が内容の全てを閲覧できることを意味します。</string>
+    <string name="phishing_report_send_message_moved_to_spam">レポートを送信し、メッセージを迷惑メールに移動しました。</string>
+    <string name="report_send">レポートが送信されました</string>
+    <string name="cannot_send_report_send">レポートを送信できません</string>
+    <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
+    <!-- Contact Groups Strings -->
+    <string name="email_default">既定のメールアドレス</string>
+    <string name="email_private">私用のメールアドレス</string>
+    <string name="phone_private">私用の電話</string>
+    <string name="add_photo">写真を追加</string>
+    <string name="contact_display_name">\ue91c 表示名</string>
+    <string name="add_new_email">\ue914 メールアドレスを追加する</string>
+    <string name="no_groups">グループはありません。</string>
+    <string name="contact_vcard_note">メモ</string>
+    <string name="edit_contact">連絡先の編集</string>
+    <string name="create_contact_group">連絡先グループの作成</string>
+    <string name="edit_contact_group">連絡先グループの編集</string>
+    <string name="contact_groups_add_addresses">アドレスを追加</string>
+    <string name="contact_groups_manage_addresses">メンバーの管理</string>
+    <string name="contact_group_display_name">\ue91a 表示名</string>
+    <string name="contact_group_groups_icon">\ue91a </string>
+    <string name="contact_add_addr_to_group">アドレスをグループへ追加</string>
+    <string name="title_activity_address_chooser">メンバーの管理</string>
+    <string name="title_activity_account_manager">アカウントの管理</string>
+    <string name="title_activity_connect_account">アカウントに接続</string>
+    <string name="account_manager_add_account">アカウントの追加</string>
+    <string name="account_manager_remove_all_accounts">全てのアカウントを削除中</string>
+    <string name="account_manager_note">無制限の数の有料ProtonMailアカウントと1つの無料アカウントに同時にログインできます。</string>
+    <string name="account_manager_remove_all">全てのアカウントを削除</string>
+    <string name="account_manager_logout">ログアウト</string>
+    <string name="account_manager_login">ログイン</string>
+    <string name="manage_accounts_user_loggedout">%s (ログアウト済み)</string>
+    <string name="manage_accounts_user_primary">%s (現在ログイン中)</string>
+    <string name="account_manager_remove">削除</string>
+    <string name="connect_account_login_title">ProtonMailアカウントにログイン</string>
+    <string name="default_error_message">エラーが発生しました</string>
+    <string name="no_contact_groups">連絡先グループはありません</string>
+    <string name="search_contacts_inside_group">グループ内の連絡先を検索する</string>
+    <string name="contact_group_toolbar_title">%s (%s)</string>
+    <plurals name="contact_group_members">
+        <item quantity="other">%d メンバー</item>
+    </plurals>
+    <string name="groups">グループ</string>
+    <string name="tab_contacts">連絡先 (%d)</string>
+    <string name="tab_contact_groups">グループ (%d)</string>
+    <string name="contact_group_saved">グループを保存しました</string>
+    <string name="no_recipients">宛先がありません</string>
+    <string name="contact_group_selected">%d 件選択中</string>
+    <string name="contact_group_deleted">グループを削除しました</string>
+    <string name="paid_plan_needed">これらの機能を使うためには有料プランにアップグレードしてください。</string>
+    <string name="composer_group_count">%1$s (%2$d メンバー)</string>
+    <string name="composer_group_count_of">%1$s (%2$d/%3$d メンバー)</string>
+    <string name="address_successful_update">アドレスが正常に更新されました。</string>
+    <plurals name="are_you_sure_delete_group">
+        <item quantity="other">選択したグループを削除してよろしいですか？</item>
+    </plurals>
+    <plurals name="group_deleted">
+        <item quantity="other">グループを削除しました</item>
+    </plurals>
+    <plurals name="are_you_sure_delete_contact">
+        <item quantity="other">選択された連絡先を削除してよろしいですか？</item>
+    </plurals>
+    <string name="members">メンバー</string>
+    <string name="max_emails_in_group_title">グループに設定できる、宛先の上限に達しました。</string>
+    <string name="max_emails_in_group_subtitle">グループ当たりの最大受信数(%1$d) に達しました。%2$d アイテムを削除してください。</string>
+    <string name="select_deselect_all">全て選択</string>
+    <string name="contact_group_name_hint">グループ名を入力してください</string>
+    <string name="contact_group_change_color">色の変更</string>
+    <string name="fab_add_contact">新しい連絡先を追加</string>
+    <string name="fab_add_contact_group">新しい連絡先グループを追加</string>
+    <string name="contacts_add_photo_title">写真を追加</string>
+    <string name="contacts_add_photo_select_gallery">ギャラリーから選択</string>
+    <string name="contacts_add_photo_select_camera">カメラで撮影</string>
+    <string name="save_group_validation_error">グループ名を入力してください</string>
+    <!-- region Storage Limit Reached -->
+    <string name="storage_limit_alert">ストレージの上限に達したため、メールの送受信ができなくなります。
+詳細は「より詳しく」を押してください。</string>
+    <string name="storage_limit_warning_title">警告</string>
+    <string name="storage_limit_reached_text">ストレージ容量の100%に達しました。容量を空けるか、ストレージを購入するまでメールの送受信ができなくなります。</string>
+    <string name="storage_limit_approaching_text">ストレージ容量の90%に達しました。容量を空けるか、ストレージの追加購入を検討してください。</string>
+    <string name="storage_limit_do_not_remind">通知しない</string>
+    <!-- endregion -->
+    <string name="need_permissions_title">アクセス許可</string>
+    <string name="need_storage_permissions_text">添付ファイルを追加するためには、ストレージへのアクセスを許可する必要があります。</string>
+    <string name="need_phone_permissions_text">この連絡先に電話をかけるためには、携帯電話へのアクセスを許可する必要があります。</string>
+    <string name="push_notifications_alert_title">プッシュ通知警告</string>
+    <string name="push_notifications_alert_subtitle">ProtonMailのプッシュ通知は、更新されたGoogle Playサービスがないと機能しません。</string>
+    <string name="app_locked">アプリはロックされています。</string>
+    <string name="please_use_fingerprint">指紋認証でロックを解除してください。</string>
+    <string name="use_pin_instead">代わりにPINを使用する</string>
+    <string name="undisclosed_recipients">非公開の宛先</string>
+    <string name="could_not_delete_attachment">アップロード中に添付ファイルを削除することはできません。</string>
+    <string name="manage_accounts">アカウントの管理</string>
+    <!-- region Settings -->
+    <string name="settings">設定</string>
+    <string name="account_settings">アカウントの設定</string>
+    <!-- region Acc Settings -->
+    <string name="account">アカウント</string>
+    <string name="subscription">サブスクリプション</string>
+    <string name="plan_and_user">プラン</string>
+    <string name="plan">プラン</string>
+    <string name="payment_method">支払い方法</string>
+    <string name="password_manager">パスワード管理</string>
+    <string name="recovery_email">回復用のメールアドレス</string>
+    <string name="storage">メールボックスの容量</string>
+    <string name="storage_used">%1$s / %2$s</string>
+    <string name="addresses">アドレス</string>
+    <string name="default_mail_address">既定のメールアドレス</string>
+    <string name="default_address">既定のアドレス</string>
+    <string name="display_name_n_signature">表示名と署名</string>
+    <string name="display_name">表示名</string>
+    <string name="edit_display_name">表示名の編集</string>
+    <string name="signature">署名</string>
+    <string name="edit_signature">署名を有効にする</string>
+    <string name="mobile_signature">モバイル署名</string>
+    <string name="edit_mobile_signature">モバイル署名を有効にする</string>
+    <string name="default_mobile_signature">ProtonMailモバイルから送信</string>
+    <string name="plus_account_required_mobile_signature">モバイル署名を編集するには、ProtonMail PLUSプラン以上のご契約が必要です。</string>
+    <string name="mobile_signature_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
+    <!-- region Snooze Settings -->
+    <string name="snooze_header">休止</string>
+    <string name="notifications_snooze">通知の休止</string>
+    <string name="notifications_snooze_finishing">通知は、$s 分で再開されます。</string>
+    <string name="snooze_notifications">通知を休止</string>
+    <string name="snooze_notifications_adjust">調整</string>
+    <string name="notifications_snoozed">通知は休止中です</string>
+    <string name="notifications_snooze_scheduled">計画休止</string>
+    <string name="notifications_snooze_scheduled_settings">休止計画の設定</string>
+    <string name="notifications_snooze_current_status">状態</string>
+    <string name="snooze_start_time">開始時刻：</string>
+    <string name="snooze_end_time">終了時刻：</string>
+    <string name="snooze_repeat">繰り返し：</string>
+    <plurals name="quick_snooze_resume_min">
+        <item quantity="other">通知は、%d分後に再開されます。</item>
+    </plurals>
+    <string name="quick_snooze_resume_hours">通知は、%1$d時間 %2$d分後に再開されます。</string>
+    <string name="minutes">分</string>
+    <string name="set_custom_quick_snooze">休止時間の設定</string>
+    <string name="turn_off">通知を再開する</string>
+    <string name="snooze_will_repeat">休止を繰り返します</string>
+    <string name="quick_and_scheduled_enabled">クイック休止と計画休止が有効です。</string>
+    <string name="quick_only_enabled">クイック休止が有効です。</string>
+    <string name="scheduled_only_enabled">計画休止が有効です。</string>
+    <string name="quick_and_scheduled_disabled">クイック休止と計画休止が無効です。</string>
+    <string name="scheduled_snooze_on">計画休止（ON）</string>
+    <string name="scheduled_snooze_off">計画休止（OFF）</string>
+    <!-- endregion -->
+    <string name="mailbox">受信箱</string>
+    <string name="privacy">プライバシー</string>
+    <string name="auto_download_messages_title_short">自動ダウンロード</string>
+    <string name="auto_download_messages_title">メッセージの自動ダウンロード</string>
+    <string name="auto_download_messages_subtitle">このオプションが有効な場合、メールを受信するたびに、本文が自動的にダウンロードされます（より多くの通信量を消費します）。 このオプションが無効な場合、メールを開いたときにのみ本文がダウンロードされます。 （注：どちらのオプションでも、キャッシュをクリアするかログアウトすると、オフライン中にメッセージ本文を読むことができなくなります。）</string>
+    <string name="settings_background_sync">バックグラウンド同期</string>
+    <string name="settings_auto_show_images">外部画像の自動表示</string>
+    <string name="settings_auto_show_embedded_images">埋め込み画像の自動表示</string>
+    <string name="settings_prevent_taking_screenshots">画面撮影の防止</string>
+    <string name="hyperlink_confirmation">リンク先を開くときに確認する</string>
+    <string name="labels_and_folders">ラベルとフォルダー</string>
+    <string name="labels_manage">ラベルの管理</string>
+    <string name="folders_manage">フォルダーの管理</string>
+    <string name="swiping_gesture">スワイプ操作</string>
+    <string name="swipe_action_left">左から右へのスワイプ</string>
+    <string name="swipe_action_right">右から左へのスワイプ</string>
+    <!-- region Swipe Actions -->
+    <string name="swipe_action_chooser_title">スワイプ操作時のアクション選択</string>
+    <string name="swipe_action_trash">メッセージをごみ箱に移動する</string>
+    <string name="swipe_action_trash_short">ごみ箱に移動しました</string>
+    <string name="swipe_action_star">メッセージへの星印の付け外し</string>
+    <string name="swipe_action_spam">メッセージを迷惑メールとする</string>
+    <string name="swipe_action_archive">メッセージをアーカイブする</string>
+    <string name="swipe_action_mark_read">メッセージを既読にする</string>
+    <plurals name="action_move_to_trash">
+        <item quantity="other">メッセージをごみ箱に移動する</item>
+    </plurals>
+    <plurals name="action_move_to_spam">
+        <item quantity="other">メッセージを迷惑メールとする</item>
+    </plurals>
+    <plurals name="action_move_to_archive">
+        <item quantity="other">メッセージをアーカイブしました。</item>
+    </plurals>
+    <!-- endregion -->
+    <string name="local_storage">ストレージ容量の上限</string>
+    <string name="storage_value">%1$d MB (%2$.2f MB 使用中)</string>
+    <!-- endregion -->
+    <string name="app_settings">設定</string>
+    <!-- region App Settings -->
+    <string name="push_notifications">プッシュ通知</string>
+    <string name="extended_notifications">拡張通知</string>
+    <string name="extended_notifications_description">この機能を有効にするとメールの送信者をプッシュ通知します。</string>
+    <string name="notification_settings">通知の設定</string>
+    <string name="auto_lock">自動ロック</string>
+    <string name="auto_lock_app">自動ロックの利用</string>
+    <string name="auto_lock_description">この機能を有効にするとアプリは自動でロックされます。PINコードまたは指紋認証を使用してロックを解除できます。</string>
+    <string name="change_pin_code">PINコードを変更する</string>
+    <string name="auto_lock_timer">自動ロックまでの時間</string>
+    <string name="unlock_with_fingerprint">指紋認証によるロック解除</string>
+    <string name="app_language">言語の設定</string>
+    <string name="custom_language_dialog_title">アプリの言語を選択してください</string>
+    <string name="auto_detect">自動検出</string>
+    <string name="combined_contacts">連絡先の相互利用</string>
+    <string name="turn_combined_contacts_on">この機能を有効化すると、ログイン済みのアカウントの連絡先を、メールアドレスの自動補完に利用可能になります。</string>
+    <string name="local_cache_management">端末のキャッシュ管理</string>
+    <string name="cache_cleared">端末のキャッシュが更新されました。</string>
+    <string name="empty_cache">キャッシュの削除</string>
+    <!-- endregion -->
+    <string name="enabled">有効</string>
+    <string name="disabled">無効</string>
+    <string name="app_info">アプリの情報</string>
+    <string name="app_version">アプリのバージョン</string>
+    <!-- endregion -->
+    <!-- region Multi Account -->
+    <string name="primary_account">既定のアカウント</string>
+    <string name="make_primary_account">%sを既定のアカウントにしてよろしいですか？</string>
+    <string name="logout_account_question">%s からログアウトしてよろしいですか？</string>
+    <string name="remove_account_question">%s を削除してよろしいですか？</string>
+    <string name="signed_in_with">%s にログイン</string>
+    <string name="signed_in_with_logged_out_from">%1$s からログアウトし %2$s にログイン</string>
+    <string name="connect_account_limit_title">アカウントのご利用限度に達しました。</string>
+    <string name="connect_account_limit_subtitle">複数の無料プランのProtonMailアカウントを追加することはできません。追加できる無料プランのProtonMailアカウントは1つだけです。他の無料プランのアカウントからログアウトするか、無料プランのアカウントのいずれかを有料プランにアップグレードしてください。</string>
+    <string name="switch_accounts_question">アカウントを切り替えますか？</string>
+    <string name="switch_to_account">%s に切り替える。</string>
+    <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
+    <!-- endregion -->
+</resources>

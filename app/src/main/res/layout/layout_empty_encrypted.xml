@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/white_85"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_horizontal_margin_large">
+
+    <ch.protonmail.android.views.CustomFontButton
+        android:id="@+id/add_contact_details"
+        style="@style/SettingsButtonBlue"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/fields_default_space_large"
+        android:maxLines="1"
+        android:paddingEnd="@dimen/fields_default_space_medium"
+        android:paddingLeft="@dimen/fields_default_space_medium"
+        android:paddingRight="@dimen/fields_default_space_medium"
+        android:paddingStart="@dimen/fields_default_space_medium"
+        android:text="@string/add_contact_details"
+        android:textAllCaps="true"
+        app:fontName="Roboto-Regular.ttf" />
+
+</LinearLayout>

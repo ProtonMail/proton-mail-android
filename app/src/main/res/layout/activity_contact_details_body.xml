@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".contacts.ContactsActivity">
+
+    <!-- Phone button -->
+    <ImageButton
+        android:id="@+id/fabPhone"
+        android:layout_width="@dimen/fab_size_mini"
+        android:layout_height="@dimen/fab_size_mini"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:background="@drawable/fab_circle_bg"
+        android:padding="@dimen/fields_default_space_small_plus"
+        app:backgroundTint="@color/fog_gray"
+        app:layout_constraintEnd_toStartOf="@+id/fabMail"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fabMail"
+        app:srcCompat="@drawable/ic_contact_phone" />
+
+    <!-- Main button -->
+    <ImageButton
+        android:id="@+id/fabMail"
+        android:layout_width="@dimen/fab_size_mini"
+        android:layout_height="@dimen/fab_size_mini"
+        android:layout_margin="@dimen/fab_margin"
+        android:background="@drawable/fab_circle_bg"
+        android:padding="@dimen/fields_default_space_small_plus"
+        app:backgroundTint="@color/fog_gray"
+        app:layout_constraintEnd_toStartOf="@+id/fabWeb"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fabPhone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_contact_email" />
+
+    <!-- Web button -->
+    <ImageButton
+        android:id="@+id/fabWeb"
+        android:layout_width="@dimen/fab_size_mini"
+        android:layout_height="@dimen/fab_size_mini"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:background="@drawable/fab_circle_bg"
+        android:padding="@dimen/fields_default_space_small_plus"
+        app:backgroundTint="@color/fog_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fabMail"
+        app:layout_constraintTop_toTopOf="@+id/fabMail"
+        app:srcCompat="@drawable/ic_contact_website" />
+
+    <Space
+        android:id="@+id/contactDetailsBodyTopSpacer"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/fab_margin"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fabMail" />
+
+    <!-- Top barrier -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/contactDetailsBodyTopBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="contactDetailsBodyTopSpacer" />
+
+    <!-- Top divider -->
+    <View
+        android:id="@+id/contactDetailsBodyTopDivider"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:background="@color/placeholder_gray"
+        app:layout_constraintBottom_toBottomOf="@id/contactDetailsBodyTopBarrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/contactDetailsBodyTopBarrier" />
+
+    <!-- Middle border -->
+    <View
+        android:id="@+id/top_panel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/contactDetailsBodyTopBarrier" />
+
+    <!-- Middle error -->
+    <ViewStub
+        android:id="@+id/top_panel_verification_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/top_panel_verification_error"
+        android:layout="@layout/contacts_error_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contactDetailsBodyTopDivider" />
+
+    <!-- Middle container -->
+    <ch.protonmail.android.views.VCardLinearLayout
+        android:id="@+id/emailAddressesContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_panel_verification_error" />
+
+    <!-- Middle barrier -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/contactDetailsBodyMiddleBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="emailAddressesContainer" />
+
+    <!-- Encrypted contact title -->
+    <TextView
+        android:id="@+id/encryptedContactTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/placeholder_gray"
+        android:paddingLeft="@dimen/contact_details_encrypted_info_separator_side_padding"
+        android:paddingTop="@dimen/contact_details_encrypted_info_separator_topbottom_padding"
+        android:paddingRight="@dimen/contact_details_encrypted_info_separator_side_padding"
+        android:paddingBottom="@dimen/contact_details_encrypted_info_separator_topbottom_padding"
+        android:text="@string/encrypted_contact_details"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contactDetailsBodyMiddleBarrier" />
+
+    <!-- Bottom verification error -->
+    <ViewStub
+        android:id="@+id/bottom_panel_verification_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/bottom_panel_verification_error"
+        android:layout="@layout/contacts_error_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/encryptedContactTitle" />
+
+    <!-- Bottom container -->
+    <LinearLayout
+        android:id="@+id/encryptedDataContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/fields_default_space"
+        android:paddingBottom="@dimen/fields_default_space"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bottom_panel_verification_error" />
+
+    <!-- Bottom encrypted update -->
+    <ViewStub
+        android:id="@+id/upgradeEncryptedStub"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/upgradeEncryptedStub"
+        android:layout="@layout/layout_upgrade_encrypted"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/encryptedDataContainer" />
+
+    <!-- Bottom encrypted error -->
+    <ViewStub
+        android:id="@+id/errorEncryptedStub"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/errorEncryptedStub"
+        android:layout="@layout/layout_error_encrypted"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upgradeEncryptedStub" />
+
+    <!-- Bottom group -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/cardViewBottomPart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="bottom_panel_verification_error,errorEncryptedStub,upgradeEncryptedStub,encryptedDataContainer,encryptedContactTitle" />
+
+    <!-- Bottom encrypted empty -->
+    <ViewStub
+        android:id="@+id/emptyEncryptedStub"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:inflatedId="@+id/emptyEncryptedStub"
+        android:layout="@layout/layout_empty_encrypted"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/errorEncryptedStub" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

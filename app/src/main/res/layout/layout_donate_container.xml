@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:layoutDirection="rtl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/fields_default_space_medium">
+
+        <ch.protonmail.android.views.CustomFontTextView
+            app:fontName="Roboto-Light.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|start"
+            android:paddingBottom="5dp"
+            android:text="@string/upselling_donate_subtitle"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="@dimen/h5"
+            android:textAlignment="viewStart"/>
+
+        <ch.protonmail.android.views.CustomFontTextView
+            app:fontName="Roboto-Bold.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fields_default_space"
+            android:layout_marginTop="@dimen/fields_default_space"
+            android:gravity="center_vertical|start"
+            android:paddingBottom="5dp"
+            android:text="@string/upselling_donate_pick_amount"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="@dimen/h5"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ch.protonmail.android.views.CustomFontButton
+                android:id="@+id/amount_5"
+                app:fontName="Roboto-Light.ttf"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="@dimen/fields_default_space"
+                android:layout_weight="1"
+                android:background="@drawable/donate_button_selector"
+                android:paddingStart="@dimen/fields_default_space"
+                android:paddingEnd="@dimen/fields_default_space"
+                android:text="@string/amount_5"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/h3" />
+
+            <ch.protonmail.android.views.CustomFontButton
+                android:id="@+id/amount_15"
+                app:fontName="Roboto-Light.ttf"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="@dimen/fields_default_space"
+                android:layout_weight="1"
+                android:background="@drawable/donate_button_selector"
+                android:paddingStart="@dimen/fields_default_space"
+                android:paddingEnd="@dimen/fields_default_space"
+                android:text="@string/amount_15"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/h3" />
+
+            <ch.protonmail.android.views.CustomFontButton
+                android:id="@+id/amount_50"
+                app:fontName="Roboto-Light.ttf"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_marginEnd="@dimen/fields_default_space"
+                android:layout_weight="1"
+                android:background="@drawable/donate_button_selector"
+                android:paddingStart="@dimen/fields_default_space"
+                android:paddingEnd="@dimen/fields_default_space"
+                android:text="@string/amount_50"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/h3" />
+
+            <ch.protonmail.android.views.CustomFontButton
+                android:id="@+id/amount_100"
+                app:fontName="Roboto-Light.ttf"
+                android:layout_width="0dp"
+                android:layout_height="42dp"
+                android:layout_weight="1"
+                android:background="@drawable/donate_button_selector"
+                android:paddingStart="@dimen/fields_default_space"
+                android:paddingEnd="@dimen/fields_default_space"
+                android:text="@string/amount_100"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/h3" />
+        </LinearLayout>
+
+        <ch.protonmail.android.views.CustomFontEditText
+            android:id="@+id/custom_amount"
+            style="@style/LoginEditText.Inverted"
+            app:fontName="Roboto-Light.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/fields_default_space_large"
+            android:hint="@string/donation_amount"
+            android:inputType="number"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:singleLine="true"
+            android:textAlignment="viewStart"
+            android:textCursorDrawable="@null" />
+
+        <ch.protonmail.android.views.CustomFontButton
+            android:id="@+id/donate"
+            app:fontName="Roboto-Light.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="@dimen/fields_default_space_large"
+            android:background="@drawable/login_button_selector_inverted"
+            android:paddingEnd="@dimen/fields_default_space_large"
+            android:paddingLeft="@dimen/fields_default_space_large"
+            android:paddingRight="@dimen/fields_default_space_large"
+            android:paddingStart="@dimen/fields_default_space_large"
+            android:text="@string/donate"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/h3" />
+
+        <ch.protonmail.android.views.CustomFontTextView
+            android:id="@+id/donate_paypal"
+            app:fontName="Roboto-Light.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/fields_default_space_medium"
+            android:gravity="center_horizontal"
+            android:text="@string/donate_paypal_bitcoin"
+            android:textColor="@color/new_purple_dark"
+            android:textSize="@dimen/h4" />
+    </LinearLayout>
+</ScrollView>

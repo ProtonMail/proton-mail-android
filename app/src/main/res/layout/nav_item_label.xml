@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="48dp"
+	android:gravity="center_vertical"
+	android:paddingBottom="@dimen/fields_default_space_small"
+	android:paddingEnd="@dimen/fields_default_space_large"
+	android:paddingLeft="@dimen/fields_default_space_large"
+	android:paddingRight="@dimen/fields_default_space_medium"
+	android:paddingStart="@dimen/fields_default_space_large"
+	android:paddingTop="@dimen/fields_default_space_small"
+	android:orientation="horizontal">
+
+	<ImageView
+		android:id="@+id/label_icon"
+		android:layout_width="20dp"
+		android:layout_height="20dp"
+		android:layout_marginBottom="8dp"
+		android:layout_marginTop="8dp"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:src="@drawable/ic_menu_label"
+		tools:tint="#d50000"/>
+
+	<TextView
+		android:id="@+id/label_name"
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="8dp"
+		android:ellipsize="end"
+		android:gravity="start|center_vertical"
+		android:paddingLeft="@dimen/fields_default_space"
+		android:paddingRight="@dimen/fields_default_space"
+		android:singleLine="true"
+		android:textColor="@color/white"
+		android:textSize="@dimen/h4"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toStartOf="@+id/notifications"
+		app:layout_constraintStart_toEndOf="@+id/label_icon"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="Important stuff"
+		tools:textColor="#808080"/>
+	<TextView
+		android:id="@+id/notifications"
+		style="@style/DrawerItemNotification"
+		android:layout_width="28dp"
+		android:layout_height="28dp"
+		android:layout_marginBottom="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginRight="8dp"
+		android:layout_marginTop="8dp"
+		android:gravity="center"
+		android:textSize="@dimen/h6"
+		android:visibility="gone"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintTop_toTopOf="parent"
+		tools:text="5"
+		tools:visibility="visible"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,1038 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ * 
+ * This file is part of ProtonMail.
+ * 
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+package ch.protonmail.android.api.services;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
+import androidx.core.app.ProtonJobIntentService;
+
+import com.birbit.android.jobqueue.JobManager;
+import com.google.android.gms.safetynet.SafetyNet;
+import com.proton.gopenpgp.crypto.ClearTextMessage;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import ch.protonmail.android.api.AccountManager;
+import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.TokenManager;
+import ch.protonmail.android.api.models.KeySalts;
+import ch.protonmail.android.api.models.Keys;
+import ch.protonmail.android.api.models.KeysSetupBody;
+import ch.protonmail.android.api.models.LoginInfoResponse;
+import ch.protonmail.android.api.models.LoginResponse;
+import ch.protonmail.android.api.models.MailSettings;
+import ch.protonmail.android.api.models.MailSettingsResponse;
+import ch.protonmail.android.api.models.ModulusResponse;
+import ch.protonmail.android.api.models.PasswordVerifier;
+import ch.protonmail.android.api.models.TwoFABody;
+import ch.protonmail.android.api.models.TwoFAResponse;
+import ch.protonmail.android.api.models.User;
+import ch.protonmail.android.api.models.UserInfo;
+import ch.protonmail.android.api.models.UserSettings;
+import ch.protonmail.android.api.models.UserSettingsResponse;
+import ch.protonmail.android.api.models.address.Address;
+import ch.protonmail.android.api.models.address.AddressKeyActivationWorker;
+import ch.protonmail.android.api.models.address.AddressPrivateKey;
+import ch.protonmail.android.api.models.address.AddressSetupBody;
+import ch.protonmail.android.api.models.address.AddressSetupResponse;
+import ch.protonmail.android.api.models.address.AddressesResponse;
+import ch.protonmail.android.api.models.address.SignedKeyList;
+import ch.protonmail.android.api.models.requests.UpgradePasswordBody;
+import ch.protonmail.android.api.segments.BaseApiKt;
+import ch.protonmail.android.api.segments.event.AlarmReceiver;
+import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.core.QueueNetworkUtil;
+import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.events.AddressSetupEvent;
+import ch.protonmail.android.events.AuthStatus;
+import ch.protonmail.android.events.ConnectAccountLoginEvent;
+import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent;
+import ch.protonmail.android.events.CreateUserEvent;
+import ch.protonmail.android.events.ForceUpgradeEvent;
+import ch.protonmail.android.events.KeysSetupEvent;
+import ch.protonmail.android.events.Login2FAEvent;
+import ch.protonmail.android.events.LoginEvent;
+import ch.protonmail.android.events.LoginInfoEvent;
+import ch.protonmail.android.events.MailboxLoginEvent;
+import ch.protonmail.android.events.user.UserSettingsEvent;
+import ch.protonmail.android.jobs.OnFirstLoginJob;
+import ch.protonmail.android.utils.AppUtil;
+import ch.protonmail.android.utils.ConstantTime;
+import ch.protonmail.android.utils.Logger;
+import ch.protonmail.android.utils.PasswordUtils;
+import ch.protonmail.android.utils.SRPClient;
+import ch.protonmail.android.utils.crypto.KeyType;
+import ch.protonmail.android.utils.crypto.OpenPGP;
+import kotlin.Unit;
+import kotlin.text.Charsets;
+import timber.log.Timber;
+
+import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+public class LoginService extends ProtonJobIntentService {
+    private static final String TAG_LOGIN_SERVICE = "LoginService";
+
+    private static final String ACTION_CREATE_USER = "ACTION_CREATE_USER";
+    private static final String ACTION_GENERATE_KEYS = "ACTION_GENERATE_KEYS";
+    private static final String ACTION_LOGIN = "ACTION_LOGIN";
+    private static final String ACTION_2FA = "ACTION_2FA";
+    private static final String ACTION_LOGIN_INFO = "ACTION_LOGIN_INFO";
+    private static final String ACTION_MAILBOX_LOGIN = "ACTION_MAILBOX_LOGIN";
+    private static final String ACTION_SETUP_ADDRESS = "ACTION_SETUP_ADDRESS";
+    private static final String ACTION_SETUP_KEYS = "ACTION_SETUP_KEYS";
+    private static final String ACTION_CONNECT_ACCOUNT_LOGIN = "ACTION_CONNECT_ACCOUNT_LOGIN";
+    private static final String ACTION_CONNECT_ACCOUNT_MAILBOX_LOGIN = "ACTION_CONNECT_ACCOUNT_MAILBOX_LOGIN";
+    private static final String ACTION_FETCH_USER_DETAILS = "ACTION_FETCH_USER_DETAILS";
+
+    private static final String EXTRA_KEY_SALT = "key_salt";
+    private static final String EXTRA_CURRENT_PRIMARY = "current_primary";
+
+    // Parameters for ACTION_LOGIN
+    private static final String EXTRA_USERNAME = "username";
+    private static final String EXTRA_PASSWORD = "password";
+    private static final String EXTRA_TWO_FACTOR = "two_factor";
+    private static final String EXTRA_LOGIN_INFO_RESPONSE = "login_info_response";
+    private static final String EXTRA_LOGIN_RESPONSE = "login_response";
+    private static final String EXTRA_FALLBACK_AUTH_VERSION = "fallback_auth_version";
+    private static final String EXTRA_BITS = "bits";
+    private static final String EXTRA_SIGNUP = "signup";
+    private static final String EXTRA_CONNECTING = "connecting";
+
+    // Parameters for ACTION_MAILBOX_LOGIN
+    private static final String EXTRA_MAILBOX_PASSWORD = "mailbox_password";
+
+    // Parameters for ACTION_CREATE_USER
+    private static final String EXTRA_UPDATE_ME = "update_me";
+    private static final String EXTRA_DOMAIN = "domain";
+    private static final String EXTRA_TOKEN = "token";
+    private static final String EXTRA_TOKEN_TYPE = "token_type";
+
+    // Parameters for ACTION_SETUP_ADDRESS
+    private static final String EXTRA_ADDRESS_DOMAIN = "address_domain";
+
+    // Parameters for ACTION_SETUP_KEYS
+    private static final String EXTRA_ADDRESS_ID = "address_id";
+
+    @Inject
+    UserManager userManager;
+    @Inject
+    OpenPGP openPGP;
+    @Inject
+    ProtonMailApi api;
+    @Inject
+    JobManager jobManager;
+    @Inject
+    QueueNetworkUtil networkUtils;
+
+    private TokenManager tokenManager;
+
+    public LoginService() {
+        ProtonMailApplication.getApplication().getAppComponent().inject(this);
+    }
+
+    @Override
+    protected void onHandleWork(@NonNull Intent intent) {
+        final String action = intent.getAction();
+        Log.d("PMTAG", "LoginService action = " + action);
+        if (ACTION_LOGIN.equals(action)) {
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
+            final LoginInfoResponse infoResponse = intent.getParcelableExtra(EXTRA_LOGIN_INFO_RESPONSE);
+            final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
+            final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
+            handleLogin(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, infoResponse, fallbackAuthVersion, signUp);
+        } else if (ACTION_2FA.equals(action)) {
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
+            final String twoFactor = intent.getStringExtra(EXTRA_TWO_FACTOR);
+            final LoginInfoResponse infoResponse = intent.getParcelableExtra(EXTRA_LOGIN_INFO_RESPONSE);
+            final LoginResponse loginResponse = intent.getParcelableExtra(EXTRA_LOGIN_RESPONSE);
+            final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
+            final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
+            final boolean isConnecting = intent.getBooleanExtra(EXTRA_CONNECTING, false);
+            handle2FA(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, twoFactor, infoResponse, loginResponse, fallbackAuthVersion, signUp, isConnecting);
+        } else if (ACTION_LOGIN_INFO.equals(action)) {
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
+            final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
+            handleLoginInfo(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, fallbackAuthVersion);
+        } else if (ACTION_MAILBOX_LOGIN.equals(action)) {
+            final String mailboxPassword = intent.getStringExtra(EXTRA_MAILBOX_PASSWORD);
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final String keySalt = intent.getStringExtra(EXTRA_KEY_SALT);
+            final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
+            handleMailboxLogin(username, mailboxPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, keySalt, signUp);
+        } else if (ACTION_GENERATE_KEYS.equals(action)) {
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final int bits = intent.getIntExtra(EXTRA_BITS, Constants.HIGH_SECURITY_BITS);
+            String domain = intent.getStringExtra(EXTRA_DOMAIN);
+            final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
+            if (TextUtils.isEmpty(password)) {
+                return;
+            }
+            //default domain is protonmail.com, later we may let the user pick .com/.ch or even a custom domain
+            if (TextUtils.isEmpty(domain)) {
+                domain = Constants.MAIL_DOMAIN_COM;
+            }
+            final String keySalt = openPGP.createNewKeySalt();
+            final byte[] generatedMailboxPassword;
+            try {
+                generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, password.getBytes(Charsets.UTF_8));
+                String privateKey = openPGP.generateKey(username, domain, generatedMailboxPassword, KeyType.RSA, bits);
+                if (TextUtils.isEmpty(userManager.getUsername())) {
+                    userManager.saveKeySalt(keySalt, username);
+                    userManager.saveMailboxPassword(generatedMailboxPassword, username);
+                } else {
+                    userManager.saveKeySalt(keySalt);
+                    userManager.saveMailboxPassword(generatedMailboxPassword);
+                }
+                userManager.setPrivateKey(privateKey);
+            } catch (Exception e) {
+                Logger.doLogException(e);
+            }
+
+        } else if (ACTION_CREATE_USER.equals(action)) {
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
+            final String token = intent.getStringExtra(EXTRA_TOKEN);
+            final Constants.TokenType tokenType = (Constants.TokenType) intent.getSerializableExtra(EXTRA_TOKEN_TYPE);
+            final boolean updateMe = intent.getBooleanExtra(EXTRA_UPDATE_ME, false);
+
+            handleCreateUser(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, updateMe, tokenType, token);
+        } else if (ACTION_SETUP_ADDRESS.equals(action)) {
+            String domain = intent.getStringExtra(EXTRA_ADDRESS_DOMAIN);
+            //default domain is protonmail.com, later we may let the user pick .com/.ch or even a custom domain
+            if (TextUtils.isEmpty(domain)) {
+                domain = Constants.MAIL_DOMAIN_COM;
+            }
+            handleAddressSetup(domain);
+        } else if (ACTION_SETUP_KEYS.equals(action)) {
+            final String addressId = intent.getStringExtra(EXTRA_ADDRESS_ID);
+            final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
+
+            handleKeysSetup(addressId, password.getBytes(Charsets.UTF_8));
+        } else if (ACTION_CONNECT_ACCOUNT_LOGIN.equals(action)) {
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
+            final LoginInfoResponse infoResponse = intent.getParcelableExtra(EXTRA_LOGIN_INFO_RESPONSE);
+            final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
+            connectAccountLogin(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, infoResponse, fallbackAuthVersion);
+        } else if (ACTION_CONNECT_ACCOUNT_MAILBOX_LOGIN.equals(action)) {
+            final String mailboxPassword = intent.getStringExtra(EXTRA_MAILBOX_PASSWORD);
+            final String username = intent.getStringExtra(EXTRA_USERNAME);
+            final String keySalt = intent.getStringExtra(EXTRA_KEY_SALT);
+            final String currentPrimary = intent.getStringExtra(EXTRA_CURRENT_PRIMARY);
+            connectAccountMailboxLogin(username, currentPrimary, mailboxPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, keySalt);
+        } else if (ACTION_FETCH_USER_DETAILS.equals(action)) {
+            handleFetchUserDetails();
+        }
+    }
+
+    public static void fetchUserDetails() {
+        final Context context = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(context, LoginService.class);
+        intent.setAction(ACTION_FETCH_USER_DETAILS);
+        JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startGenerateKeys(final String username, final String domain, final byte[] password, final int bits) {
+        final Context context = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(context, LoginService.class);
+        intent.setAction(ACTION_GENERATE_KEYS);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_BITS, bits);
+        intent.putExtra(EXTRA_DOMAIN, domain);
+        intent.putExtra(EXTRA_PASSWORD, new String(password)); /*TODO passphrase*/
+        JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startCreateUser(final String username, final byte[] password, final boolean updateMe, final Constants.TokenType tokenType, final String token) {
+        final Context context = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(context, LoginService.class);
+        intent.setAction(ACTION_CREATE_USER);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_PASSWORD, new String(password) /*TODO passphrase*/);
+        intent.putExtra(EXTRA_UPDATE_ME, updateMe);
+        intent.putExtra(EXTRA_TOKEN, token);
+        intent.putExtra(EXTRA_TOKEN_TYPE, tokenType);
+        JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startInfo(final String username, final byte[] password, final int fallbackAuthVersion) {
+        final Context context = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(context, LoginService.class);
+        intent.setAction(ACTION_LOGIN_INFO);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_PASSWORD, new String(password) /*TODO passphrase*/);
+        intent.putExtra(EXTRA_FALLBACK_AUTH_VERSION, fallbackAuthVersion);
+        JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void start2FA(String username, byte[] password, String twoFactor, final LoginInfoResponse infoResponse,
+                                final LoginResponse loginResponse, final int fallbackAuthVersion, final boolean signUp, final boolean isConnecting) {
+        final Context context = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(context, LoginService.class);
+        intent.setAction(ACTION_2FA);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_PASSWORD, new String(password)/*TODO passphrase*/);
+        intent.putExtra(EXTRA_TWO_FACTOR, twoFactor);
+        intent.putExtra(EXTRA_LOGIN_INFO_RESPONSE, infoResponse);
+        intent.putExtra(EXTRA_LOGIN_RESPONSE, loginResponse);
+        intent.putExtra(EXTRA_FALLBACK_AUTH_VERSION, fallbackAuthVersion);
+        intent.putExtra(EXTRA_SIGNUP, signUp);
+        intent.putExtra(EXTRA_CONNECTING, isConnecting);
+        JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startLogin(String username, byte[] password, final LoginInfoResponse infoResponse, final int fallbackAuthVersion, final boolean signUp) {
+        final Context context = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(context, LoginService.class);
+        intent.setAction(ACTION_LOGIN);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_PASSWORD, new String(password) /*TODO passphrase*/);
+        intent.putExtra(EXTRA_LOGIN_INFO_RESPONSE, infoResponse);
+        intent.putExtra(EXTRA_FALLBACK_AUTH_VERSION, fallbackAuthVersion);
+        intent.putExtra(EXTRA_SIGNUP, signUp);
+        JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startMailboxLogin(String username, String mailboxPassword, String keySalt, boolean signUp) {
+        final ProtonMailApplication app = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(app, LoginService.class);
+        intent.setAction(ACTION_MAILBOX_LOGIN);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_MAILBOX_PASSWORD, mailboxPassword);
+        intent.putExtra(EXTRA_KEY_SALT, keySalt);
+        intent.putExtra(EXTRA_SIGNUP, signUp);
+        JobIntentService.enqueueWork(app, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startSetupAddress(final String domain) {
+        final ProtonMailApplication app = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(app, LoginService.class);
+        intent.setAction(ACTION_SETUP_ADDRESS);
+        intent.putExtra(EXTRA_ADDRESS_DOMAIN, domain);
+        JobIntentService.enqueueWork(app, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startSetupKeys(final String addressId, final byte[] password) {
+        final ProtonMailApplication app = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(app, LoginService.class);
+        intent.setAction(ACTION_SETUP_KEYS);
+        intent.putExtra(EXTRA_ADDRESS_ID, addressId);
+        intent.putExtra(EXTRA_PASSWORD, new String(password) /*TODO passphrase*/);
+        JobIntentService.enqueueWork(app, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startConnectAccount(String username, byte[] password, String twoFactor, final LoginInfoResponse infoResponse, final int fallbackAuthVersion) {
+        final Context context = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(context, LoginService.class);
+        intent.setAction(ACTION_CONNECT_ACCOUNT_LOGIN);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_PASSWORD, new String(password) /*TODO passphrase*/);
+        intent.putExtra(EXTRA_TWO_FACTOR, twoFactor);
+        intent.putExtra(EXTRA_LOGIN_INFO_RESPONSE, infoResponse);
+        intent.putExtra(EXTRA_FALLBACK_AUTH_VERSION, fallbackAuthVersion);
+        JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    public static void startConnectAccountMailboxLogin(String username, String currentPrimary, String mailboxPassword, String keySalt) {
+        final ProtonMailApplication app = ProtonMailApplication.getApplication();
+        final Intent intent = new Intent(app, LoginService.class);
+        intent.setAction(ACTION_CONNECT_ACCOUNT_MAILBOX_LOGIN);
+        intent.putExtra(EXTRA_USERNAME, username);
+        intent.putExtra(EXTRA_MAILBOX_PASSWORD, mailboxPassword);
+        intent.putExtra(EXTRA_KEY_SALT, keySalt);
+        intent.putExtra(EXTRA_CURRENT_PRIMARY, currentPrimary);
+        JobIntentService.enqueueWork(app, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
+    }
+
+    private void handleFetchUserDetails() {
+        try {
+            UserInfo userInfo = api.fetchUserInfo();
+            UserSettingsResponse userSettingsResponse = api.fetchUserSettings();
+            MailSettingsResponse mailSettingsResponse = api.fetchMailSettings();
+            AddressesResponse addressesResponse = api.fetchAddresses();
+            MailSettings mailSettings = mailSettingsResponse.getMailSettings();
+            mailSettings.setUsername(userInfo.getUser().getName());
+            UserSettings userSettings = userSettingsResponse.getUserSettings();
+            userSettings.setUsername(userInfo.getUser().getName());
+            userManager.setUserInfo(userInfo, mailSettings, userSettings, addressesResponse.getAddresses());
+            AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addressesResponse.getAddresses(), userManager.getUsername());
+            AppUtil.postEventOnUi(new UserSettingsEvent(userSettingsResponse.getUserSettings()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleCreateUser(final String username, final byte[] password, final boolean updateMe, final Constants.TokenType tokenType, final String token) {
+        AuthStatus status = AuthStatus.FAILED;
+        if (networkUtils.isConnected(this)) {
+            // TODO: handle payment token type
+            try {
+                final ModulusResponse modulus = api.randomModulus();
+                sendSafetyNetRequest(username, password, modulus, updateMe, tokenType.getTokenTypeValue(), token);
+            } catch (Exception e) {
+                e.printStackTrace();
+                AppUtil.postEventOnUi(new CreateUserEvent(status, null));
+            }
+        } else {
+            status = AuthStatus.NO_NETWORK;
+            AppUtil.postEventOnUi(new CreateUserEvent(status, null));
+        }
+    }
+
+    private void handleLoginInfo(final String username, final byte[] password, final int fallbackAuthVersion) {
+        AuthStatus status = AuthStatus.FAILED;
+        LoginInfoResponse infoResponse = null;
+        try {
+            if (networkUtils.isConnected(this)) {
+                infoResponse = api.loginInfoForAuthentication(username);
+                boolean foundErrorCode = AppUtil.checkForErrorCodes(infoResponse.getCode(), infoResponse.getError());
+                if (foundErrorCode) {
+                    status = AuthStatus.UPDATE;
+                } else {
+                    status = AuthStatus.SUCCESS;
+                }
+            } else {
+                status = AuthStatus.NO_NETWORK;
+            }
+        } catch (Exception e) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, e);
+        }
+        AppUtil.postEventOnUi(new LoginInfoEvent(status, infoResponse, username, password, fallbackAuthVersion));
+    }
+
+    public static SRPClient.Proofs srpProofsForInfo(final String username, final byte[] password, final LoginInfoResponse infoResponse, final int fallbackAuthVersion) throws NoSuchAlgorithmException {
+        int authVersion = infoResponse.getAuthVersion();
+        if (authVersion == 0) {
+            authVersion = fallbackAuthVersion;
+        }
+
+        if (authVersion <= 2) {
+            return null;
+        }
+
+        final byte[] modulus;
+        try {
+            modulus = Base64.decode(new ClearTextMessage(infoResponse.getModulus()).getData(), Base64.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        final byte[] hashedPassword = PasswordUtils.hashPassword(authVersion, password, username, Base64.decode(infoResponse.getSalt(), Base64.DEFAULT), modulus);
+
+        return SRPClient.generateProofs(2048, modulus, Base64.decode(infoResponse.getServerEphemeral(), Base64.DEFAULT), hashedPassword);
+    }
+
+    private void handleLogin(final String username, final byte[] password, final LoginInfoResponse infoResponse, final int fallbackAuthVersion, final boolean signUp) {
+        LoginHelperData loginHelperData = new LoginHelperData();
+        try {
+            if (networkUtils.isConnected(this)) {
+                final SRPClient.Proofs proofs = srpProofsForInfo(username, password, infoResponse, fallbackAuthVersion);
+                if (proofs != null) {
+                    LoginResponse loginResponse = api.login(username, infoResponse.getSRPSession(), proofs.clientEphemeral, proofs.clientProof);
+                    boolean foundErrorCode = AppUtil.checkForErrorCodes(loginResponse.getCode(), loginResponse.getError());
+                    if (!foundErrorCode && loginResponse.isValid() && ConstantTime.isEqual(proofs.expectedServerProof, Base64.decode(loginResponse.getServerProof(), Base64.DEFAULT))) {
+                        // handling valid login response
+                        userManager.setUsernameAndReload(username);
+                        tokenManager = userManager.getTokenManager(username);
+                        tokenManager.handleLogin(loginResponse);
+                        if (loginResponse.getTwoFA().getEnabled() == 0) {
+                            loginHelperData = handleSuccessLogin(loginResponse, username, password, infoResponse, signUp, false, null);
+                        } else {
+                            AppUtil.postEventOnUi(new Login2FAEvent(loginHelperData.status, infoResponse, username, password, loginResponse, fallbackAuthVersion));
+                            return;
+                        }
+                    } else if (foundErrorCode || !loginResponse.isValid()) {
+                        loginHelperData.status = AuthStatus.INVALID_CREDENTIAL;
+                    } else if (!ConstantTime.isEqual(proofs.expectedServerProof, Base64.decode(loginResponse.getServerProof(), Base64.DEFAULT))) {
+                        loginHelperData.status = AuthStatus.INVALID_SERVER_PROOF;
+                    }
+                }
+            } else {
+                loginHelperData.status = AuthStatus.NO_NETWORK;
+            }
+        } catch (Exception e) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, "error while login", e);
+            loginHelperData.status = AuthStatus.FAILED;
+        }
+
+        handleAfterLogin(infoResponse, loginHelperData, username, password, fallbackAuthVersion);
+    }
+
+    private void handle2FA(final String username, final byte[] password, final String twoFactor,
+                           final LoginInfoResponse infoResponse, final LoginResponse loginResponse,
+                           final int fallbackAuthVersion, final boolean signUp, final boolean isConnecting) {
+        TwoFAResponse response = api.twoFactor(new TwoFABody(twoFactor));
+        if (response.getCode() == 1000) {
+            userManager.setUsernameAndReload(username);
+            tokenManager = userManager.getTokenManager(username);
+            tokenManager.handleLogin(loginResponse);
+            tokenManager.setScope(response.getScope());
+
+            if (isConnecting) {
+                LoginHelperData loginHelperData = handleSuccessLogin(loginResponse, username, password, infoResponse, false, true, null);
+                handleAfterConnect(infoResponse, loginHelperData, username, password, 4);
+            } else {
+                LoginHelperData loginHelperData = handleSuccessLogin(loginResponse, username, password, infoResponse, signUp, false, null);
+                handleAfterLogin(infoResponse, loginHelperData, username, password, 4);
+            }
+        } else {
+            AppUtil.postEventOnUi(new Login2FAEvent(AuthStatus.FAILED, infoResponse, username, password, loginResponse, fallbackAuthVersion));
+        }
+    }
+
+    private void handleMailboxLogin(final String username, final byte[] mailboxPassword, final String keySalt, final boolean signUp) {
+        byte[] generatedMailboxPassword = null;
+        try {
+            generatedMailboxPassword = getGeneratedMailboxPassword(mailboxPassword, keySalt);
+        } catch (UnsupportedEncodingException e) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, e);
+            AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
+        }
+        try {
+            if (networkUtils.isConnected(this)) {
+                tokenManager = userManager.getTokenManager(username);
+
+                boolean checkPassphrase = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), generatedMailboxPassword);
+                if (!checkPassphrase) {
+                    AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
+                } else {
+                    UserInfo userInfo = api.fetchUserInfo();
+                    UserSettingsResponse userSettings = api.fetchUserSettings();
+                    MailSettingsResponse mailSettings = api.fetchMailSettings();
+                    AddressesResponse addresses = api.fetchAddresses();
+                    String message = userInfo.getError();
+                    boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
+                    if (!foundErrorCode) {
+                        userManager.setLoggedIn(true);
+                        userManager.saveMailboxPassword(generatedMailboxPassword, username);
+                        userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
+                        AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
+                        AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
+                        if (!signUp) {
+                            if (networkUtils.isConnected(this) && userManager.isLoggedIn() && userManager.accessTokenExists()) {
+                                AlarmReceiver alarmReceiver = new AlarmReceiver();
+                                alarmReceiver.setAlarm(ProtonMailApplication.getApplication());
+                            }
+                            if (userManager.isFirstLogin()) {
+                                jobManager.start();
+                                jobManager.addJob(new OnFirstLoginJob(true));
+                                userManager.firstLoginDone();
+                            }
+                        }
+                    }
+                }
+            } else {
+                doOfflineMailboxLogin(generatedMailboxPassword, username);
+            }
+        } catch (Exception error) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, error);
+            AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.NOT_SIGNED_UP));
+            doOfflineMailboxLogin(generatedMailboxPassword, username);
+        }
+    }
+
+    private void connectAccountLogin(final String username, final byte[] password, final LoginInfoResponse infoResponse, final int fallbackAuthVersion) {
+        // TODO: abstract the same code from login method
+        LoginHelperData loginHelperData = new LoginHelperData();
+
+        try {
+            if (networkUtils.isConnected(this)) {
+                final SRPClient.Proofs proofs = srpProofsForInfo(username, password, infoResponse, fallbackAuthVersion);
+                if (proofs != null) {
+                    String currentPrimary = userManager.getUsername();
+                    LoginResponse loginResponse = api.login(username, infoResponse.getSRPSession(), proofs.clientEphemeral, proofs.clientProof); //, twoFactor);
+                    boolean foundErrorCode = AppUtil.checkForErrorCodes(loginResponse.getCode(), loginResponse.getError());
+                    if (!foundErrorCode && loginResponse.isValid() && ConstantTime.isEqual(proofs.expectedServerProof, Base64.decode(loginResponse.getServerProof(), Base64.DEFAULT))) {
+
+                        // handling valid login response
+                        userManager.setUsernameAndReload(username);
+                        tokenManager = userManager.getTokenManager(username);
+                        tokenManager.handleLogin(loginResponse);
+                        if (loginResponse.getTwoFA().getEnabled() == 0) {
+                            loginHelperData = handleSuccessLogin(loginResponse, username, password, infoResponse, false, true, currentPrimary);
+                        } else {
+                            AppUtil.postEventOnUi(new Login2FAEvent(loginHelperData.status, infoResponse, username, password, loginResponse, fallbackAuthVersion));
+                            return;
+                        }
+                    } else if (foundErrorCode || !loginResponse.isValid()) {
+                        loginHelperData.status = AuthStatus.INVALID_CREDENTIAL;
+                    } else if (!ConstantTime.isEqual(proofs.expectedServerProof, Base64.decode(loginResponse.getServerProof(), Base64.DEFAULT))) {
+                        loginHelperData.status = AuthStatus.INVALID_SERVER_PROOF;
+                    }
+                }
+            } else {
+                loginHelperData.status = AuthStatus.NO_NETWORK;
+            }
+        } catch (Exception e) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, "error while login", e);
+            loginHelperData.status = AuthStatus.FAILED;
+        }
+
+        handleAfterConnect(infoResponse, loginHelperData, username, password, fallbackAuthVersion);
+    }
+
+    private void connectAccountMailboxLogin(final String username, final String currentPrimary, final byte[] mailboxPassword, final String keySalt) {
+        // TODO: abstract the same code from mailbox login method
+        byte[] generatedMailboxPassword = null;
+        try {
+            generatedMailboxPassword = getGeneratedMailboxPassword(mailboxPassword, keySalt);
+        } catch (UnsupportedEncodingException e) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, e);
+            AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
+        }
+
+        try {
+            AppUtil.clearTasks(jobManager);
+            if (networkUtils.isConnected(this)) {
+                tokenManager = userManager.getTokenManager(username);
+                boolean checkPassphrase = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), generatedMailboxPassword);
+                if (!checkPassphrase) {
+                    AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
+                } else {
+                    userManager.setUsernameAndReload(username);
+                    UserInfo userInfo = api.fetchUserInfo();
+                    if (!userManager.canConnectAccount() && !userInfo.getUser().isPaidUser()) {
+                        userManager.logoutAccount(username);
+                        if (!TextUtils.isEmpty(currentPrimary)) {
+                            userManager.setUsernameAndReload(currentPrimary);
+                        } else {
+                            userManager.setUsernameAndReload(userManager.getUsername());
+                        }
+                        AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.CANT_CONNECT));
+                        return;
+                    }
+
+                    UserSettingsResponse userSettings = api.fetchUserSettings();
+                    MailSettingsResponse mailSettings = api.fetchMailSettings();
+                    AddressesResponse addresses = api.fetchAddresses();
+                    String message = userInfo.getError();
+                    boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
+                    if (!foundErrorCode) {
+                        AccountManager.Companion.getInstance(this).onSuccessfulLogin(username);
+                        userManager.saveMailboxPassword(generatedMailboxPassword, username);
+                        userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
+                        AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
+                        AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.SUCCESS));
+                        jobManager.start();
+                        jobManager.addJob(new OnFirstLoginJob(true));
+                        userManager.firstLoginDone();
+                    }
+                }
+            } else {
+                doOfflineMailboxLogin(generatedMailboxPassword, username);
+            }
+        } catch (Exception error) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, error);
+            AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.NOT_SIGNED_UP));
+            doOfflineMailboxLogin(generatedMailboxPassword, username);
+        }
+    }
+
+    private void handleAddressSetup(String domain) {
+        AuthStatus status = AuthStatus.FAILED;
+        AddressSetupResponse response = null;
+        try {
+            if (networkUtils.isConnected(this)) {
+                response = api.setupAddress(new AddressSetupBody(domain));
+                boolean foundErrorCode = AppUtil.checkForErrorCodes(response.getCode(), response.getError());
+                if (foundErrorCode) {
+                    status = AuthStatus.UPDATE;
+                } else {
+                    status = AuthStatus.SUCCESS;
+                }
+            } else {
+                status = AuthStatus.NO_NETWORK;
+            }
+        } catch (Exception e) {
+            Logger.doLogException(e);
+        }
+        AppUtil.postEventOnUi(new AddressSetupEvent(status, response));
+    }
+
+    // region support functions
+    private void handleAfterConnect(LoginInfoResponse infoResponse, LoginHelperData loginHelperData, String username, byte[] password, int fallbackAuthVersion) {
+        if (infoResponse == null || loginHelperData.status == AuthStatus.FAILED) {
+            userManager.logoutAccount(username);
+            AppUtil.postEventOnUi(new ConnectAccountLoginEvent(AuthStatus.FAILED, null, loginHelperData.redirectToSetup, loginHelperData.user, null));
+            return;
+        }
+        if (infoResponse.getAuthVersion() == 0 && loginHelperData.status.equals(AuthStatus.INVALID_CREDENTIAL) && fallbackAuthVersion != 0) {
+            final int newFallback;
+            if (fallbackAuthVersion == 2 && !PasswordUtils.cleanUserName(username).equals(username.toLowerCase())) {
+                newFallback = 1;
+            } else {
+                newFallback = 0;
+            }
+
+            startInfo(username, password, newFallback);
+        } else {
+            if (loginHelperData.postLoginEvent) {
+                AppUtil.postEventOnUi(new ConnectAccountLoginEvent(loginHelperData.status, loginHelperData.keySalt, loginHelperData.redirectToSetup, loginHelperData.user, loginHelperData.domainName));
+            }
+        }
+    }
+
+    private void handleAfterLogin(LoginInfoResponse infoResponse, LoginHelperData loginHelperData, String username, byte[] password, int fallbackAuthVersion) {
+        if (infoResponse == null || (loginHelperData.status == AuthStatus.FAILED && loginHelperData.postLoginEvent)) {
+            if (loginHelperData.redirectToSetup) {
+                try {
+                    AddressesResponse addressResponse = api.fetchAddresses();
+                    User user = loginHelperData.user;
+                    AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, loginHelperData.keySalt, loginHelperData.redirectToSetup,
+                            user, username, loginHelperData.domainName, addressResponse.getAddresses()));
+                } catch (Exception e) {
+                    // FIXME:
+                }
+            } else {
+                AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, null, false, null, username, null, null));
+                userManager.logoutOffline();
+            }
+            return;
+        }
+        if (infoResponse.getAuthVersion() == 0 && loginHelperData.status.equals(AuthStatus.INVALID_CREDENTIAL) && fallbackAuthVersion != 0) {
+            final int newFallback;
+            if (fallbackAuthVersion == 2 && !PasswordUtils.cleanUserName(username).equals(username.toLowerCase())) {
+                newFallback = 1;
+            } else {
+                newFallback = 0;
+            }
+
+            startInfo(username, password, newFallback);
+        } else if (loginHelperData.postLoginEvent) {
+            AppUtil.postEventOnUi(new LoginEvent(loginHelperData.status, loginHelperData.keySalt, loginHelperData.redirectToSetup, loginHelperData.user, username, loginHelperData.domainName, null));
+        }
+    }
+
+    private LoginHelperData handleSuccessLogin(LoginResponse loginResponse, final String username,
+                                               final byte[] password, final LoginInfoResponse infoResponse,
+                                               final boolean signUp, final boolean isConnecting, final String currentPrimary) {
+        AuthStatus status;
+        boolean redirectToSetup = false;
+        User user = null;
+        String domainName = null;
+        String keySalt = null;
+
+        try {
+            status = AuthStatus.SUCCESS;
+            keySalt = loginResponse.getKeySalt();
+
+            if (keySalt == null) { // new response doesn't contain salt
+                UserInfo userInfo = api.fetchUserInfo();
+                KeySalts keySalts = api.fetchKeySalts();
+
+                String primaryKeyId = null;
+                for (Keys key : userInfo.getUser().getKeys()) {
+                    if (key.isPrimary()) {
+                        primaryKeyId = key.getID();
+                        tokenManager.setEncPrivateKey(key.getPrivateKey()); // it's needed for verification later
+                        break;
+                    }
+                }
+
+                if (primaryKeyId != null) {
+                    for (KeySalts.KeySalt ks : keySalts.keySalts) {
+                        if (primaryKeyId.equals(ks.keyId)) {
+                            keySalt = ks.keySalt;
+                            break;
+                        }
+                    }
+                }
+
+                if (userInfo.getUser().getKeys() == null || userInfo.getUser().getKeys().size() == 0) {
+                    redirectToSetup = true;
+                }
+            } else { // old response with key and salt
+                if (TextUtils.isEmpty(loginResponse.getPrivateKey())) {
+                    redirectToSetup = true;
+                }
+            }
+
+            if (infoResponse.getAuthVersion() < PasswordUtils.CURRENT_AUTH_VERSION) {
+                final ModulusResponse modulus = api.randomModulus();
+                String generatedMailboxPassword = null;
+                try {
+                    generatedMailboxPassword = new String(getGeneratedMailboxPassword(password, keySalt));
+                } catch (UnsupportedEncodingException e) {
+                    Logger.doLogException(TAG_LOGIN_SERVICE, e);
+                }
+                api.upgradeLoginPassword(new UpgradePasswordBody(PasswordVerifier.calculate(password, modulus)));
+                tokenManager.clearAccessToken();
+            }
+
+            if (redirectToSetup && !signUp) {
+                status = AuthStatus.FAILED;
+                UserInfo userInfo = api.fetchUserInfo();
+                UserSettingsResponse userSettingsResp = api.fetchUserSettings();
+                MailSettingsResponse mailSettingsResp = api.fetchMailSettings();
+                AddressesResponse addressesResponse = api.fetchAddresses();
+                user = userInfo.getUser();
+                userManager.setUserSettings(userSettingsResp.getUserSettings());
+                userManager.setMailSettings(mailSettingsResp.getMailSettings());
+                domainName = getDomainName(addressesResponse.getAddresses());
+            }
+
+            if (isConnecting) {
+                if (loginResponse.getPasswordMode() == Constants.PasswordMode.SINGLE && !TextUtils.isEmpty(keySalt)) {
+                    connectAccountMailboxLogin(username, currentPrimary, password, keySalt);
+                    return new LoginHelperData(status, keySalt, redirectToSetup, user, domainName, false);
+                }
+            } else {
+                if (signUp || (loginResponse.getPasswordMode() == Constants.PasswordMode.SINGLE && !TextUtils.isEmpty(keySalt))) {
+                    if (signUp) {
+                        if (TextUtils.isEmpty(tokenManager.getEncPrivateKey())) {
+                            tokenManager.setEncPrivateKey(userManager.getPrivateKey());
+                        }
+                        handleMailboxLogin(username, password, keySalt != null ? keySalt : userManager.getKeySalt(), true);
+                    } else {
+                        handleMailboxLogin(username, password, keySalt, false);
+                    }
+                    return new LoginHelperData(status, keySalt, redirectToSetup, user, domainName, false);
+                }
+            }
+
+            // endregion
+        } catch (Exception e) {
+            Logger.doLogException(TAG_LOGIN_SERVICE, "error while login", e);
+            status = AuthStatus.FAILED;
+        }
+
+        return new LoginHelperData(status, keySalt, redirectToSetup, user, domainName);
+    }
+
+    private void handleKeysSetup(String addressId, byte[] password) {
+        AuthStatus status = AuthStatus.FAILED;
+        try {
+            final ModulusResponse newModulus = api.randomModulus();
+            final PasswordVerifier verifier = PasswordVerifier.calculate(password, newModulus);
+            final String keySalt = userManager.getKeySalt();
+            final String privateKey = userManager.getPrivateKey();
+
+            AddressPrivateKey addressPrivateKey = new AddressPrivateKey(addressId, privateKey);
+            addressPrivateKey.setSignedKeyList(generateSignedKeyList(privateKey));
+            List<AddressPrivateKey> addressPrivateKeys = new ArrayList<>();
+            addressPrivateKeys.add(addressPrivateKey);
+            KeysSetupBody keysSetupBody = new KeysSetupBody(privateKey, keySalt, addressPrivateKeys, verifier.AuthVersion, verifier.ModulusID, verifier.Salt, verifier.SRPVerifier);
+            UserInfo response = api.setupKeys(keysSetupBody);
+            boolean foundErrorCode = AppUtil.checkForErrorCodes(response.getCode(), response.getError()) || response.getCode() != Constants.RESPONSE_CODE_OK;
+            if (foundErrorCode) {
+                status = AuthStatus.FAILED;
+            } else {
+                status = AuthStatus.SUCCESS;
+                UserInfo userInfo = api.fetchUserInfo();
+                UserSettingsResponse userSettings = api.fetchUserSettings();
+                MailSettingsResponse mailSettings = api.fetchMailSettings();
+                AddressesResponse addressesResponse = api.fetchAddresses();
+                User user = userInfo.getUser();
+                userManager.setUserSettings(userSettings.getUserSettings());
+                userManager.setMailSettings(mailSettings.getMailSettings());
+                user.setAddresses(addressesResponse.getAddresses());
+                user.setUsername(user.getName());
+                userManager.setUser(user);
+            }
+            AppUtil.postEventOnUi(new KeysSetupEvent(status, response));
+            return;
+        } catch (Exception e) {
+            Logger.doLogException(e);
+        }
+        AppUtil.postEventOnUi(new KeysSetupEvent(status, null));
+    }
+
+    private SignedKeyList generateSignedKeyList(String key) throws Exception {
+        String keyFingerprint = openPGP.getFingerprint(key);
+        String keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", \"Primary\": 1, \"Flags\": 3}]"; // one-element JSON list
+        String signedKeyList = openPGP.signTextDetached(keyList, key, userManager.getMailboxPassword());
+        return new SignedKeyList(keyList, signedKeyList);
+    }
+
+    /**
+     * @param keySalt if empty, we don't salt MailboxPassword and return it as is
+     */
+    private byte[] getGeneratedMailboxPassword(byte[] mailboxPassword, String keySalt) throws UnsupportedEncodingException {
+        if (!TextUtils.isEmpty(keySalt)) {
+            return openPGP.generateMailboxPassword(keySalt, mailboxPassword);
+        } else {
+            return mailboxPassword;
+        }
+    }
+
+    private void doOfflineMailboxLogin(byte[] mailboxPassword, String username) {
+        User user = userManager.getUser();
+        String addressId = null;
+        try {
+            addressId = user.getAddressId();
+        } catch (NullPointerException e) {
+            // noop
+        }
+        if (TextUtils.isEmpty(addressId) || !userManager.isLoggedIn()) {
+            AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.NO_NETWORK));
+        } else {
+            final boolean isPwdOk = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), mailboxPassword);
+            if (!isPwdOk) {
+                AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
+            } else {
+                userManager.setUsernameAndReload(username);
+                AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
+            }
+        }
+    }
+
+    private String getDomainName(List<Address> addressList) {
+        if (addressList != null && addressList.size() > 0) {
+            Address address = addressList.get(0);
+            if (address != null) {
+                String email = address.getEmail();
+                return email.substring(email.indexOf("@") + 1);
+            }
+        }
+        return null;
+    }
+// endregion
+
+    static class LoginHelperData {
+        AuthStatus status = AuthStatus.FAILED;
+        String keySalt = null;
+        boolean redirectToSetup = false;
+        User user = null;
+        String domainName = null;
+        boolean postLoginEvent = true;
+
+        LoginHelperData() {
+        }
+
+        LoginHelperData(AuthStatus status, String keySalt, boolean redirectToSetup, User user, String domainName) {
+            this(status, keySalt, redirectToSetup, user, domainName, true);
+        }
+
+        LoginHelperData(AuthStatus status, String keySalt, boolean redirectToSetup, User user, String domainName, boolean postLoginEvent) {
+            this.status = status;
+            this.keySalt = keySalt;
+            this.redirectToSetup = redirectToSetup;
+            this.user = user;
+            this.domainName = domainName;
+            this.postLoginEvent = postLoginEvent;
+        }
+    }
+
+    private void sendSafetyNetRequest(String username, byte[] password, ModulusResponse modulus, Boolean updateMe, String tokenType, String token) {
+
+        String timestamp = System.currentTimeMillis() + "";
+        MessageDigest digester = null;
+        try {
+            digester = MessageDigest.getInstance("SHA-256");
+            digester.update((username + timestamp).getBytes(StandardCharsets.UTF_8));
+        } catch (NoSuchAlgorithmException e) {
+            Timber.e(e);
+        }
+        Activity activity = ProtonMailApplication.getApplication().getCurrentActivity();
+
+        byte[] nonce = digester != null ? digester.digest() : new byte[0];
+
+        // TODO: api key should be retrieved from server for future versions
+        SafetyNet.getClient(this).attest(nonce, new String(Base64.decode(SAFETY_NET_API_KEY, Base64.NO_WRAP), UTF_8))
+                .addOnSuccessListener(activity, response -> {
+                    // Indicates communication with the service was successful.
+                    String jwsResult = response.getJwsResult();
+
+                    new CheckDeviceVerification(api, username, password, modulus, updateMe, tokenType, token, timestamp, jwsResult).execute();
+                })
+                .addOnFailureListener(activity, e -> {
+                    // An error occurred while communicating with the service.
+                    new CheckDeviceVerification(api, username, password, modulus, updateMe, tokenType, token, timestamp, "").execute();
+
+                    // An error with the Google Play services API contains some
+                    // or
+                    // A different, unknown type of error occurred.
+
+                });
+    }
+
+
+    private static class CheckDeviceVerification extends AsyncTask<Unit, Unit, UserInfo> {
+        private final ProtonMailApi api;
+        private final String username;
+        private final byte[] password;
+        private final ModulusResponse modulus;
+        private final Boolean updateMe;
+        private final String tokenType;
+        private final String token;
+        private final String timestamp;
+        private final String jwsResult;
+
+        CheckDeviceVerification(ProtonMailApi api, String username, byte[] password, ModulusResponse modulus, Boolean updateMe, String tokenType, String token, String timestamp, String jwsResult) {
+            this.api = api;
+            this.username = username;
+            this.password = password;
+            this.modulus = modulus;
+            this.updateMe = updateMe;
+            this.tokenType = tokenType;
+            this.token = token;
+            this.timestamp = timestamp;
+            this.jwsResult = jwsResult;
+        }
+
+        @Override
+        protected UserInfo doInBackground(Unit... units) {
+            UserInfo userInfo = new UserInfo();
+            try {
+                userInfo = api.createUser(username, PasswordVerifier.calculate(password, modulus), updateMe, tokenType, token, timestamp, jwsResult);
+            } catch (Exception e) {
+                e.printStackTrace();
+                AppUtil.postEventOnUi(new CreateUserEvent(AuthStatus.FAILED, null));
+            }
+            return userInfo;
+        }
+
+        @Override
+        protected void onPostExecute(UserInfo userInfo) {
+            AuthStatus status = AuthStatus.FAILED;
+            String error = null;
+            error = userInfo.getError();
+            if (userInfo.getCode() == BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE || userInfo.getCode() == BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE) {
+                AppUtil.postEventOnUi(new ForceUpgradeEvent(userInfo.getError()));
+            } else if (userInfo.getCode() == Constants.RESPONSE_CODE_OK && userInfo.getUser() != null) {
+                status = AuthStatus.SUCCESS;
+            }
+            AppUtil.postEventOnUi(new CreateUserEvent(status, error));
+        }
+    }
+
+
+}

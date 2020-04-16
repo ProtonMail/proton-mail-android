@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/toolbar_parent"
+            layout="@layout/toolbar_white" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_margin_content">
+
+            <ch.protonmail.android.views.CustomFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin_large"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:text="@string/connect_account_login_title"
+                android:textColor="@color/black"
+                android:textSize="@dimen/h3"
+                app:fontName="Roboto-Bold.ttf"
+                tools:visibility="visible" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fields_default_space_medium">
+
+                <ch.protonmail.android.views.CustomFontEditText
+                    android:id="@+id/username"
+                    style="@style/LoginEditText.Border.Grey"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/caps_username"
+                    android:imeOptions="actionNext"
+                    android:inputType="textVisiblePassword|textNoSuggestions|textFilter"
+                    android:nextFocusRight="@+id/password"
+                    android:nextFocusDown="@+id/password"
+                    android:nextFocusForward="@+id/password"
+                    android:paddingStart="@dimen/fields_default_space_small"
+                    android:paddingTop="@dimen/fields_default_space_medium"
+                    android:paddingEnd="130dp"
+                    android:paddingBottom="@dimen/fields_default_space_medium"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@drawable/cursor_purple"
+                    app:fontName="Roboto-Light.ttf" />
+
+                <ch.protonmail.android.views.CustomFontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:alpha="0.8"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="24dp"
+                    android:text="@string/at_pmail"
+                    android:textColor="@color/name_gray"
+                    android:textSize="@dimen/h5"
+                    android:visibility="gone"
+                    app:fontName="Roboto-Light.ttf"
+                    tools:visibility="visible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/fields_default_space_medium">
+
+                <ch.protonmail.android.views.CustomFontEditText
+                    android:id="@+id/password"
+                    style="@style/LoginEditText.Border.Grey"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/caps_login_password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:paddingStart="@dimen/fields_default_space_small"
+                    android:paddingTop="@dimen/fields_default_space_medium"
+                    android:paddingEnd="80dp"
+                    android:paddingBottom="@dimen/fields_default_space_medium"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@drawable/cursor_purple"
+                    app:fontName="Roboto-Light.ttf" />
+
+                <ToggleButton
+                    android:id="@+id/toggleViewPassword"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:button="@drawable/toggle_password_selector_black"
+                    android:padding="0dp"
+                    android:textOff=""
+                    android:textOn=""
+                    android:textSize="0sp" />
+            </RelativeLayout>
+
+            <ch.protonmail.android.views.CustomFontButton
+                android:id="@+id/connect"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="80dp"
+                android:background="@drawable/login_button_selector"
+                android:text="@string/sign_in"
+                android:textAllCaps="false"
+                android:textColor="@color/dark_purple"
+                android:textSize="@dimen/h3"
+                app:fontName="Roboto-Light.ttf" />
+
+            <ch.protonmail.android.views.CustomFontTextView
+                android:id="@+id/forgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:padding="5dp"
+                android:text="@string/forgot_password"
+                android:textColor="@color/new_purple_dark"
+                android:textColorLink="@color/new_purple_dark"
+                android:textSize="@dimen/h5"
+                app:fontName="Roboto-Bold.ttf" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <include layout="@layout/connect_account_progress"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

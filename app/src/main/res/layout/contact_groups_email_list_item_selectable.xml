@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal"
+    android:paddingEnd="@dimen/fields_default_space"
+    android:paddingStart="@dimen/fields_default_space">
+
+    <ch.protonmail.android.views.contactsList.ContactGroupEmailAvatarView
+        android:id="@+id/mailAvatar"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:gravity="center" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/check"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:gravity="center"
+        android:clickable="false"
+        android:focusable="false"
+        android:padding="0dp"
+        app:buttonTint="@color/lead_gray" />
+
+    <LinearLayout
+        android:id="@+id/contactEmailDataParent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_toEndOf="@id/mailAvatar"
+        android:layout_toLeftOf="@id/check"
+        android:layout_toRightOf="@id/mailAvatar"
+        android:layout_toStartOf="@id/check"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/fields_default_space"
+        android:paddingEnd="@dimen/fields_default_space_small"
+        android:paddingLeft="@dimen/fields_default_space_small"
+        android:paddingRight="@dimen/fields_default_space_small"
+        android:paddingStart="@dimen/fields_default_space_small"
+        android:paddingTop="@dimen/fields_default_space">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/fields_default_space_small"
+            android:layout_marginRight="@dimen/fields_default_space_small"
+            android:gravity="center_vertical"
+            android:textColor="@color/rain_gray"
+            android:textSize="@dimen/h4"
+            tools:text="@tools:sample/full_names" />
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/fields_default_space_small"
+            android:gravity="center_vertical"
+            android:textColor="@color/iron_gray"
+            android:textSize="@dimen/h6" />
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,1087 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="protonmail">ProtonMail</string>
+    <string name="encrypted_emails">TITKOSÍTOTT E-MAIL</string>
+    <string name="secure_email_swiss">Biztonságos E-mail <br/>
+Svájci székhellyel</string>
+    <string name="decrypt_mailbox"><b>Postafiók</b> visszafejtése</string>
+    <string name="decrypt">Visszafejtés</string>
+    <string name="user_sign_in">Bejelentkezés</string>
+    <string name="two_factor_sign_in">Kétlépcsős azonosítás</string>
+    <string name="sign_in">Bejelentkezés</string>
+    <string name="sign_out">Kijelentkezés</string>
+    <string name="sign_out_question">Biztos, hogy ki szeretne jelentkezni?</string>
+    <string name="remember_me_on_device">Emlékezzen rám ezen az eszközön</string>
+    <string name="show_password">Jelszó megjelenítése</string>
+    <string name="username">Felhasználónév</string>
+    <string name="password">Jelszó</string>
+    <string name="login_password">Bejelentkezési jelszó</string>
+    <string name="mailbox_password">E-mail jelszó</string>
+    <string name="two_factor_code">Kétlépcsős kód</string>
+    <string name="processing_request">A kérés feldolgozás alatt</string>
+    <!-- should check for html tag -->
+    <string name="need_account_sign_up">Szeretne egy fiókot létrehozni? Regisztráljon.</string>
+    <string name="need_to_be_logged_in">Nincs bejelentkezve!</string>
+    <string name="forgot_password">Elfelejtett jelszó?</string>
+    <string name="reset_mailbox_password">JELSZÓ ALAPHELYZETBE ÁLLÍTÁSA</string>
+    <string name="forgot_mailbox_password">Az e-mail fiók jelszavának helyreállításához, kérjük, használja a ProtonMail webes felületét, a protonmail.com címen</string>
+    <!-- Toast messages -->
+    <string name="error_chrome_disabled">Tartalom betöltése nem sikerült. Engedélyezze a Chrome-ot</string>
+    <string name="error_chrome_not_found">Tartalom betöltése nem sikerült. Telepítse a Chrome-ot</string>
+    <string name="messages_load_failure">Az üzenetek betöltése sikertelen</string>
+    <string name="message_details_load_failure">Az üzenet részleteinek betöltése sikertelen</string>
+    <string name="no_more_messages">Nincs több üzenet</string>
+    <string name="mailbox_login_failure">Az e-mail fiókba történő bejelentkezés sikertelen</string>
+    <string name="login_failure">Sikertelen bejelentkezés</string>
+    <string name="invalid_server_proof">Érvénytelen szerver tanúsítvány</string>
+    <string name="invalid_credentials">Érvénytelen hitelesítés</string>
+    <string name="invalid_mailbox_password">Érvénytelen e-mail jelszó</string>
+    <string name="not_signed_up">Ön nem regisztrált a ProtonMail Android Béta verziójára</string>
+    <string name="no_network">Nincs hálózat</string>
+    <string name="no_network_queued">Nincs hálózat, az üzenet várólistára került</string>
+    <string name="update_app_title">Frissítés szükséges</string>
+    <string name="update_app">A ProtonMail alkalmazás nem használható, amíg nincs frissítve</string>
+    <string name="api_offline_title">A ProtonMail API jelenleg nem elérhető</string>
+    <string name="api_offline">A ProtonMail nem érhető el. Kérjük, nézze meg a https://protonstatus.com vagy https://twitter.com/protonmail oldalakat a friss hírekért.</string>
+    <string name="cannot_open">A fájl nem nyitható meg</string>
+    <string name="downloaded_attachment">Letöltve %s</string>
+    <string name="edit_contact_validation">Kérjük adjon meg egy érvényes nevet és e-mail címet</string>
+    <string name="contact_saved">Névjegy elmentve</string>
+    <string name="contact_saved_offline">Névjegy elmentve. A kapcsolat helyreállásakor lesz szinkronizálva.</string>
+    <string name="contact_exist">Már létezik névjegy ezzel az e-mail címmel</string>
+    <string name="invalid_email">Érvénytelen e-mail cím</string>
+    <string name="duplicate_email">Az e-mail cím egy másodpéldány</string>
+    <string name="invalid_code">Érvénytelen kód</string>
+    <string name="message_drafted">Az üzenet küldése sikertelen volt. A Piszkozatok mappában került mentésre.</string>
+    <string name="message_drafted_reason">%s nem létezik.\nErre a címre nem tud e-mailt küldeni.</string>
+    <string name="open_drawer">Megnyitás</string>
+    <string name="close_drawer">Bezárás</string>
+    <string name="inbox_option">BEÉRKEZETT ÜZENETEK</string>
+    <string name="starred_option">CSILLAGOZOTT</string>
+    <string name="drafts_option">PISZKOZAT</string>
+    <string name="sent_option">ELKÜLDÖTT</string>
+    <string name="archive_option">ARCHÍVUM</string>
+    <string name="trash_option">LOMTÁR</string>
+    <string name="spam_option">LEVÉLSZEMÉT</string>
+    <string name="contacts_option">NÉVJEGYEK</string>
+    <string name="settings_option">BEÁLLÍTÁSOK</string>
+    <string name="report_bugs_option">HIBA JELENTÉS</string>
+    <string name="signout_option">KIJELENTKEZÉS</string>
+    <string name="inbox">Beérkezett üzenetek</string>
+    <string name="starred">Csillagozott</string>
+    <string name="drafts">Piszkozatok</string>
+    <string name="sent">Elküldött</string>
+    <string name="archive">Archívum</string>
+    <string name="trash">Lomtár</string>
+    <string name="spam">Levélszemét</string>
+    <string name="contacts">Névjegyek</string>
+    <string name="contact_groups">Névjegy csoportok</string>
+    <string name="search_contacts">Névjegyek keresése</string>
+    <string name="fetching_contacts">ProtonMail névjegyek lekérése...</string>
+    <string name="fetching_contacts_success">Névjegyek sikeresen frissítve</string>
+    <string name="fetching_contacts_failure">Nem sikerült a névjegyek frissítése</string>
+    <string name="search">Keresés</string>
+    <string name="search_messages">Üzenetek keresése</string>
+    <string name="no_search_results">Nincs találat</string>
+    <string name="compose">Levélírás</string>
+    <string name="compose_message">Üzenet írása</string>
+    <string name="empty_folder">Üres mappa</string>
+    <string name="view_headers">Fejlécek megtekintése</string>
+    <string name="message_headers">Üzenet fejléc</string>
+    <string name="delete_message">Üzenet törlése</string>
+    <string name="delete_messages">Üzenetek törlése</string>
+    <string name="add_label">Címke hozzáadása</string>
+    <string name="add_star">Megjelölés kedvencként</string>
+    <string name="remove_star">Csillag törlése</string>
+    <string name="mark_read">Megjelölés olvasottként</string>
+    <string name="mark_unread">Megjelölés olvasatlanként</string>
+    <string name="move_to_archive">Archiválás</string>
+    <string name="move_to_trash">Áthelyezés a lomtárba</string>
+    <string name="move_to_spam">Áthelyezés a levélszeméthez</string>
+    <string name="move_to_inbox">Áthelyezés a beérkezett üzenetekhez</string>
+    <string name="move_message_to_trash">Áthelyezi az üzenetet a lomtárba?</string>
+    <string name="are_you_sure_empty">Biztosan törli az összes üzenetet ebben a mappában?</string>
+    <string name="send">Küldés</string>
+    <string name="selected">Kiválasztva</string>
+    <string name="no_messages">Nincs üzenet</string>
+    <string name="no_labels">Nincs címke</string>
+    <string name="to">Címzett</string>
+    <string name="cc">Másolatot kap</string>
+    <string name="bcc">Titkos másolat</string>
+    <string name="to_prefix">Címzett:</string>
+    <string name="cc_prefix">Másolat:</string>
+    <string name="bcc_prefix">Titkos másolat:</string>
+    <string name="from_prefix">Feladó:</string>
+    <string name="date_prefix">Dátum:</string>
+    <string name="expiration_time_prefix">Lejár</string>
+    <string name="view_details">RÉSZLETEK</string>
+    <string name="hide_details">RÉSZLETEK ELREJTÉSE</string>
+    <string name="download">LETÖLTÉS</string>
+    <string name="reply">Válasz</string>
+    <string name="reply_all">Válasz mindenkinek</string>
+    <string name="forward">Továbbítás</string>
+    <string name="subject">Tárgy</string>
+    <string name="email_subject">E-mail tárgy</string>
+    <string name="define_message_password">Üzenet jelszó</string>
+    <string name="confirm_message_password">Jelszó megerősítése</string>
+    <string name="define_password_hint">Emlékeztető megadása (opcionális)</string>
+    <string name="message_passwords_do_not_match">A bejelentkezési jelszavak nem egyeznek meg</string>
+    <string name="message_mailbox_passwords_do_not_match">Az e-mail jelszavak nem egyeznek meg</string>
+    <string name="eo_passwords_do_not_match">A jelszavak nem egyeznek meg</string>
+    <string name="define_expiration_period">Időkorlát meghatározása</string>
+    <string name="set_message_expiration">Az üzenet időkorlátjának beállítása</string>
+    <string name="days">Nap</string>
+    <string name="hours">Óra</string>
+    <string name="max_labels_exceeded">Az üzenetnek (%1$s) nem lehet több, mint %2$d címkéje.</string>
+    <string name="max_labels_selected">Maximálisan %d címke választható</string>
+    <string name="max_attachments_reached">Az üzenethez csatolható mellékletek száma elérte a maximumot.</string>
+    <plurals name="hours_string">
+        <item quantity="one">%d óra</item>
+        <item quantity="other">%d óra</item>
+    </plurals>
+    <plurals name="days_string">
+        <item quantity="one">%d nap</item>
+        <item quantity="other">%d nap</item>
+    </plurals>
+    <plurals name="minutes_string">
+        <item quantity="one">%d perc</item>
+        <item quantity="other">%d perc</item>
+    </plurals>
+    <plurals name="attachments">
+        <item quantity="one">Egy melléklet</item>
+        <item quantity="other">%d melléklet</item>
+    </plurals>
+    <plurals name="attachments_non_descriptive">
+        <item quantity="one">\u0020 1 melléklet</item>
+        <item quantity="other">\u0020 %d melléklet</item>
+    </plurals>
+    <string name="add_attachment">Melléklet hozzáadása</string>
+    <string name="select_file">Fájl kiválasztása</string>
+    <string name="attach_file">Fájl csatolása</string>
+    <string name="take_photo">Fotó készítése</string>
+    <string name="problem_taking_photo">Hiba történt a fénykép készítésekor</string>
+    <string name="problem_selecting_file">Hiba történt a kiválasztott fájl hozzáadásakor</string>
+    <string name="add_contact">Névjegy hozzáadása</string>
+    <string name="delete_contact">%s eltávolítása a névjegyekből?</string>
+    <string name="sync_contact">%s szinkronizálása a webes alkalmazással?</string>
+    <string name="confirm">Megerősítés</string>
+    <string name="confirm_destructive_action">Biztos benne? Ezt nem lehet visszavonni.</string>
+    <string name="create">Létrehozás</string>
+    <string name="name">Név</string>
+    <string name="email">E-mail</string>
+    <string name="email_address">E-mail cím</string>
+    <string name="phone">Telefonszám</string>
+    <string name="save">Mentés</string>
+    <string name="add">Hozzáadás</string>
+    <string name="syncing_messages">Szinkronizálás...</string>
+    <string name="sync">Névjegyek szinkronizálása</string>
+    <string name="save_message_as_draft">Menti az üzenetet piszkozatként?</string>
+    <string name="no_subject">Elküldi az üzenetet tárgy nélkül?</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="okay">OK</string>
+    <string name="report_bugs">Hiba bejelentése</string>
+    <string name="send_report">Bejelentés elküldése</string>
+    <string name="bug_title">Cím</string>
+    <string name="bug_description">Hiba leírása</string>
+    <string name="sending_report">Bejelentés elküldése...</string>
+    <string name="received_report">Bejelentés megérkezett</string>
+    <string name="not_received_report">Bejelentés nem érkezett meg</string>
+    <string name="not_received_report_offline">Nincs kapcsolat! A jelentés a kapcsolat helyreállásakor kerül elküldésre</string>
+    <string name="forward_prefix">Fwd:</string>
+    <string name="original_message_divider">-------- Eredeti üzenet --------</string>
+    <string name="invalid_email_address">A cím érvénytelen: %s</string>
+    <string name="no_recipients_specified">Kérjük adjon meg legalább egy címzettet</string>
+    <string name="no_password_specified">Lejárati idő csak teljesen titkosított üzenetekhez adható meg. Kérjük, adjon meg egy jelszót a nem ProtonMail címzettekhez.</string>
+    <string name="attachment_limit">A mellékletek maximális mérete: %1$s. Jelenleg %2$s melléklet van megadva.</string>
+    <string name="sending_message">Üzenet küldése...</string>
+    <string name="sending_message_offline">Nincs hálózat, az üzenet várólistára került...</string>
+    <string name="mailbox_password_changed">E-mail jelszó megváltoztatva</string>
+    <string name="go_to_mailbox_login">Átugrik a bejelentkezéshez, hogy megadja az új jelszót?</string>
+    <string name="go_to_inbox">Ugrás a beérkezett üzenetekhez</string>
+    <string name="message_sent">Üzenet elküldve</string>
+    <string name="message_failed">Üzenet elküldése sikertelen</string>
+    <string name="storage_limit">A tárhely kapacitása</string>
+    <string name="storage_limit_warning">A tárhely rövidesen megtelik</string>
+    <string name="do_not_show_again">Ne jelenjen meg újra</string>
+    <string name="edit_settings">Beállítások módosítása</string>
+    <string name="save_settings">Beállítások mentése</string>
+    <string name="share">Megosztás</string>
+    <string name="settings_saved">Új beállítások elmentve</string>
+    <string name="settings_not_saved_password"> A beállítások nem kerültek mentésre - hibás belépési jelszó</string>
+    <string name="settings_not_saved_email"> A beállítások nem kerültek mentésre - érvénytelen az értesítési e-mail</string>
+    <string name="save_settings_question">Beállítások mentése?</string>
+    <string name="enter">Belépés</string>
+    <string name="cancel">Mégsem</string>
+    <string name="close">Bezárás</string>
+    <string name="passwords">Jelszókezelő</string>
+    <string name="change_password">Jelszó módosítása</string>
+    <string name="change_login_password">Bejelentkezési jelszó módosítása</string>
+    <string name="change_mailbox_password">E-mail jelszó módosítása</string>
+    <string name="eo_password_title">Jelszó beállítása</string>
+    <string name="eo_password_subtitle">Állítson be egy jelszót a nem ProtonMail felhasználók számára küldött titkosított üzenethez</string>
+    <string name="eo_password_more_info">További információ</string>
+    <string name="old_login_password">Jelenlegi bejelentkezési jelszó</string>
+    <string name="new_login_password">Új jelszó</string>
+    <string name="confirm_new_login_password">Új jelszó megerősítése</string>
+    <string name="old_mailbox_password">Jelenlegi e-mail jelszó</string>
+    <string name="new_mailbox_password">Új e-mail jelszó</string>
+    <string name="confirm_new_mailbox_password">Új e-mail jelszó megerősítése</string>
+    <string name="no_attachments">0 melléklet</string>
+    <string name="num_attachments">%d melléklet</string>
+    <string name="new_passwords_not_valid">Hibás adat</string>
+    <string name="new_passwords_do_not_match">A új jelszavak nem egyeznek meg</string>
+    <string name="new_login_password_saved">Új belépési jelszó elmentve</string>
+    <string name="new_mailbox_password_saved">Új e-mail jelszó elmentve</string>
+    <string name="could_not_change_password">A jelszót nem lehet megváltoztatni</string>
+    <string name="auto_logout_option_settings">Az automatikus kijelentkezés beállításai</string>
+    <string name="pin_lock_option_settings">Az alkalmazás zárolási beállításai</string>
+    <string name="pin_lock_after">Az alkalmazás zárolása</string>
+    <string name="lock_the_app">Alkalmazás zárolása</string>
+    <string name="no_sound_or_vibrate">Nincs rezgés vagy hang</string>
+    <string name="sound">Hang, rezgés nélkül</string>
+    <string name="vibration">Rezgés, hang nélkül</string>
+    <string name="both_sound_and_vibration">Rezgés és hang</string>
+    <string name="display_name_banned_chars">Érvénytelen megjelenítési név. \"&gt;\" és \"&lt;\" nem megengedett</string>
+    <string name="cont">Tovább</string>
+    <string name="email_verification_code">Egy ellenőrző kódot küldünk a fenti e-mail címre.</string>
+    <string name="sms_verification_code">Egy ellenőrző kódot küldünk a fenti telefonszámra.</string>
+    <string name="send_verification_code">Ellenőrző kód küldése</string>
+    <string name="resend_verification_code">Újraküldés</string>
+    <string name="enter_verification_code">Írja be az ellenőrző kódot</string>
+    <string name="verify">Ellenőrzés</string>
+    <string name="reply_prefix_on">Be</string>
+    <string name="create_new_account">Új fiók létrehozása</string>
+    <string name="setup_new_account">Fiók beállítása</string>
+    <string name="create_account">Fiók létrehozása</string>
+    <string name="create_passwords">Jelszó beállítása</string>
+    <string name="sign_up">Regisztráció</string>
+    <string name="caps_username">Felhasználónév</string>
+    <string name="caps_login_password">Jelszó</string>
+    <string name="caps_two_factor">Kétlépcsős kód</string>
+    <string name="caps_confirm_password">Jelszó megerősítése</string>
+    <string name="caps_confirm_mailbox_password">E-mail jelszó megerősítése</string>
+    <string name="caps_optional_notification_email">JELSZÓ HELYREÁLLÍTÓ E-MAIL (OPCIONÁLIS)</string>
+    <string name="caps_optional">* OPCIONÁLIS</string>
+    <string name="update_me_for_new_features">Tájékoztasson az új funkciókról</string>
+    <string name="create_mailbox_password">Jelszó létrehozása</string>
+    <string name="confirm_mailbox_password">E-mail jelszó megerősítése</string>
+    <string name="password_note"><b>Megjegyzés:</b> Ez a jelszó az üzenetek titkosítására és visszafejtésére szolgál.
+        Ne veszítse el, mert nem tudjuk visszaállítani. Ha elveszíti jelszavát, akkor többé nem lesz képes elolvasni e-mailjeit.</string>
+    <string name="username_note"><b>Megjegyzés:</b> A felhasználónév egyben a ProtonMail e-mail cím is</string>
+    <string name="terms_and_conditions">A ProtonMail használatával elfogadja a\n
+        <a href="https://protonmail.com/terms-and-conditions">felhasználási feltételeket</a> és az <a href="https://protonmail.com/privacy-policy">adatvédelmi irányelveket</a></string>
+    <string name="human_verification">Bizonyítsa, hogy nem robot</string>
+    <string name="human_verification_subtitle">A ProtonMaillel való visszaélések elkerülése érdekében\nellenőriznünk kell, hogy nem robot.</string>
+    <string name="select_options">Kérjük, válasszon egyet az alábbi lehetőségek közül:</string>
+    <string name="no_verification_methods_found">Nem található ellenőrzési módszer</string>
+    <string name="email_verification">E-mailes ellenőrzés</string>
+    <string name="phone_verification">Telefonos ellenőrzés</string>
+    <string name="existing_email_address">Adjon meg létező e-mail címet</string>
+    <string name="phone_number">Adja meg a telefonszámát</string>
+    <string name="encryption_setup">Titkosítás beállítása</string>
+    <string name="high_security">Magas szintű biztonság (2048 bit)</string>
+    <string name="current_standard">A jelenlegi szabvány</string>
+    <string name="extreme_security">Extrém szintű biztonság (4096 bites)</string>
+    <string name="highest_security">Az elérhető legmagasabb szintű titkosítás.<b> Beállítása több percig is eltarthat.</b></string>
+    <string name="generate_keypair">Kulcspár generálása</string>
+    <string name="labels_title_apply">Címkék alkalmazása</string>
+    <string name="labels_title_add">Címke hozzáadása</string>
+    <string name="labels_title">Címkék</string>
+    <string name="labels_create">Címke hozzáadása</string>
+    <string name="label_name">Címke neve</string>
+    <string name="label_name_empty">Címke nevének megadása kötelező</string>
+    <string name="label_name_duplicate">Ez a címke már létezik</string>
+    <string name="label_created">Címke létrehozva</string>
+    <string name="label_invalid">A címke érvénytelen név miatt nem került hozzáadásra.</string>
+    <string name="undo">Visszavonás</string>
+    <string name="customize_swipe_actions">Csúsztatás műveletek testreszabása</string>
+    <string name="message_details_swipe_info">Visszatérhet az üzenetek listájához balról-jobbra 
+        csúsztatással, és áthelyezheti az aktuális üzenetet a Lomtárba, jobbról-balra csúsztatással</string>
+    <string name="composing_message_scroll_info">A levélszerkesztőben fel-le navigálhat a képernyő jobboldali szélén való fel-le csúsztatással</string>
+    <string name="message_can_not_edit">Nem lehet válaszolni vagy továbbítani. Ez az üzenet még nincs elküldve.</string>
+    <string name="label_apply">Alkalmazás</string>
+    <string name="label_delete">Törlés</string>
+    <string name="label_add">Hozzáadás</string>
+    <string name="no_browser_found">A művelet befejezéséhez, teleptítsen egy böngésző alkalmazást</string>
+    <string name="no_application_found">Nincs megfelelő alkalmazás a művelet elvégzésére</string>
+    <string name="no_application_found_or_link_invalid">Nincs alkalmazás ehhez a művelethez vagy erénytelen URL</string>
+    <string name="also_archive">Archiválás</string>
+    <string name="label_deleted">Címke törölve</string>
+    <string name="label_deleted_error">Hiba a címke törlése közben</string>
+    <string name="respond_inline">Válaszolás az eredeti levélben</string>
+    <string name="no_connectivity_detected">Nincs kapcsolat...</string>
+    <string name="no_connectivity_message_not_downloaded">Nincs kapcsolat...
+        \nAz üzenet nem tölthető le</string>
+    <string name="connectivity_arrived">Csatlakozva</string>
+    <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
+    <string name="sync_short">szinkronizálás</string>
+    <string name="draft_attachments_uploading">A piszkozat még feltöltés alatt...</string>
+    <string name="draft_label_attachments_uploading">mellékletek feltöltése…</string>
+    <string name="draft_label_message_uploading">üzenet küldése…</string>
+    <string name="attachment_failed">Az üzenet mellékleteinek feltöltése sikertelen </string>
+    <string name="attachment_failed_new">Az üzenet mellékleteinek feltöltése sikertelen %1$s %2$s</string>
+    <string name="attaching_photo_failed">Fénykép csatolása sikertelen</string>
+    <string name="empty_message">Üres üzenet</string>
+    <string name="dismiss">Bezárás</string>
+    <string name="new_message_arrived">Új üzenet érkezett!</string>
+    <string name="please_choose_color">Válasszon színt</string>
+    <string name="display_images">Távoli tartalom megjelenítése</string>
+    <string name="retry">Újra</string>
+    <string name="saving_failed_no_conn">Mentés sikertelen, nincs kapcsolat</string>
+    <string name="can_not_create_account_while_beta">A regisztráció nem lehetséges a Béta programban</string>
+    <string name="changing_mailbox_password_disabled_while_beta">Az e-mail jelszó megváltoztatása nem lehetséges a Béta programban</string>
+    <string name="username_is_available">%s elérhető!</string>
+    <string name="username_is_not_available">%s nem érhető el!</string>
+    <string name="congratulation">Gratulálunk!</string>
+    <string name="new_account_ready">Az új biztonságos e-mail\n fiókja készen áll.</string>
+    <string name="optional_email_note">Az opcionális helyreállító e-mail cím, lehetőséget biztosít
+        a bejelentkezési jelszó visszaállítására, ha elfelejtené azt.</string>
+    <string name="optional_display_name">E-mail küldésekor, ez a név fog megjelenni
+        feladóként.</string>
+    <string name="error_captcha_not_valid">Nem érvényes</string>
+    <string name="close_engagement">bemutató bezárása</string>
+    <string name="engagement_title_welcome">Üdvözöljük a ProtonMailnél!</string>
+    <string name="engagement_title_swipe">Gyors csúsztatási műveletek</string>
+    <string name="engagement_title_labels">Címke kezelés</string>
+    <string name="engagement_title_encryption">Végpontok közti titkosítás</string>
+    <string name="engagement_title_expire">Időkorlátos üzenetek</string>
+    <string name="engagement_title_help">Segítség &amp; támogatás</string>
+    <string name="engagement_title_support_protonmail">A ProtonMail támogatása</string>
+    <string name="engagement_subtitle_welcome">Az új e-mail fiókja készen áll a titkosított üzenetek fogadására és küldésére.</string>
+    <string name="engagement_subtitle_swipe">A csúsztatásos műveleteket a ProtonMail Beállítások menüjében állíthatja be igényeihez.</string>
+    <string name="engagement_subtitle_labels">Címkékkel jelölheti meg a beérkezett üzeneteket. Érintsen meg egy üzenetet és tartsa lenyomva a lehetőségek megjelenítéséhez.</string>
+    <string name="engagement_subtitle_encryption">A beérkezett üzenetek mostantól végpontok közötti titkosítással védettek. Amennyiben szeretné elküldött üzeneteit automatikusan biztonságossá tenni, kérje fel ismerőseit a ProtonMail használatára! Természetesen manuálisan is küldhet titkosított e-mailt, amennyiben a címzett nem ProtonMail felhasználó.</string>
+    <string name="engagement_subtitle_expire">Az elküldött üzenetek beállíthatóak úgy, hogy bizonyos idő elteltével automatikusan törlődjenek.</string>
+    <string name="engagement_subtitle_help">Segítséget és támogatást kaphat a protonmail.com/support webhelyen. A hibákat az alkalmazás segítségével is jelentheti.</string>
+    <string name="engagement_subtitle_support_protonmail">A ProtonMail nem küld hirdetéseket és nem él vissza
+        magánéletével. Ezért kiemelten fontos, hogy támogassa munkánkat. Frissíthet
+        előfizetői számlára vagy támogathat minket adományokkal.</string>
+    <string name="attachment_exists">Ez a melléklet már csatolva van</string>
+    <string name="sending_email_success">Ellenőrzési kód elküldve</string>
+    <string name="sending_email_failed">Ellenőrzési kód elküldése nem sikerült</string>
+    <string name="password_required">Írja be a bejelentkezési jelszavát a módosítás végrehajtásához</string>
+    <string name="password_not_valid">A beírt jelszó helytelen</string>
+    <string name="send_code_wait">Várjon %d másodpercet majd kattintson újra</string>
+    <string name="eo_password_not_completed">Jelszó hiányzik.</string>
+    <string name="delinquency_title">A fiók számlatartozás miatt le van tiltva</string>
+    <string name="delinquency_subtitle">A fiók elérése számlatartozás miatt le van tiltva. Kérjük, lépjen be a protonmail.com weblapon és egyenlítse ki a számláit.</string>
+    <string name="direct_disabled_subtitle">A mobil regisztráció átmenetileg nem érhető el. Kérjük, próbálja meg később, vagy regisztráljon a <a href="https://protonmail.com">protonmail.com</a> weblapon egy számítógépről.</string>
+    <string name="downloading">Letöltés...</string>
+    <string name="cant_download_attachment">A melléklet nem tölthető le</string>
+    <string name="auto_logout">Automatikus kijelentkezés</string>
+    <string-array name="auto_logout_options_array">
+        <item>Azonnal</item>
+        <item>5 perc inaktivitás</item>
+        <item>15 perc inaktivitás</item>
+        <item>1 óra inaktivitás</item>
+        <item>24 óra inaktivitás</item>
+    </string-array>
+    <string-array name="pin_options_array">
+        <item>PIN módosítása</item>
+        <item>PIN kód időkorlát megadása</item>
+    </string-array>
+    <string name="delete_label_confirmation_title">Törli a kiválasztott címkéket?</string>
+    <string name="delete_folder_confirmation_title">Törli a kiválasztott mappákat?</string>
+    <string name="delete_label_confirmation_message">Ezek a levelek meg fognak jelenni az <b>Összes levél</b> mappában</string>
+    <string name="enter_pin">Írja be a PIN kódját a levelek megnyitásához</string>
+    <string name="enter_pin_message_details">Írja be a PIN kódját az üzenet megnyitásához</string>
+    <string name="enter_current_pin">Adja meg jelenlegi PIN kódját</string>
+    <string name="hint_pin">PIN kód</string>
+    <string name="pin_subtitle_create">PIN kód létrehozása</string>
+    <string name="pin_subtitle_create_new">ÚJ PIN kód létrehozása</string>
+    <string name="pin_subtitle_confirm">PIN kód megerősítése</string>
+    <string name="pin_subtitle_confirm_new">ÚJ PIN kód megerősítése</string>
+    <string name="forgot_pin">Elfelejtette a PIN kódot?</string>
+    <string name="pin_invalid">PIN-kód érvénytelen, adja meg a helyes 4 számjegyű PIN-kódot</string>
+    <string name="pin_confirmation_not_match">A megadott PIN kódok nem egyeznek meg</string>
+    <string name="pin_not_match">PIN kód nem egyezik</string>
+    <string name="new_pin_saved">Új PIN beállítva</string>
+    <string name="pin_settings">PIN beállítások</string>
+    <string name="next">következő</string>
+    <string name="back">vissza</string>
+    <string name="new_emails">%d új üzenet</string>
+    <string name="attachment_download_success">%s sikeresen letöltve a fájl kezelőbe</string>
+    <string name="attachment_download_failed">%s letöltése nem sikerült</string>
+    <string name="sender_changed">Távolítsa el a mellékleteket, hogy megváltoztathassa a feladó címét.</string>
+    <string name="ringtone">Csengőhang</string>
+    <string name="ringtone_selected">Csengőhang:</string>
+    <string name="notification_option">%1$s\nCsengőhang: %2$s</string>
+    <string name="ringtone_invalid">Az értesítési hang kiválasztása érvénytelen értéket adott</string>
+    <string name="ringtone_no_default">Nem sikerült az alapértelmezett értesítési hang betöltése</string>
+    <string name="select_tone">Hang kiválasztása</string>
+    <string name="copy_link">Link másolása</string>
+    <string name="share_link">Link megosztása</string>
+    <string name="attachment_delete_failed">Melléklet törlése nem sikerült: %s</string>
+    <string name="sync_attachments">Mellékletek szinkronizálása</string>
+    <string name="processing_attachment">Melléklet feldolgozása</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Ön hamarosan elindítja a webböngészőt ide:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Akarja folytatni?</string>
+    <string name="hyperlink_confirmation_checkbox_text">Ne kérdezze újra</string>
+    <string name="none">Egyik sem</string>
+    <string name="changes_affected_after_closing">A módosítások az alkalmazás bezárása után lépnek érvénybe</string>
+    <plurals name="incorrect_pin_remaining_attempts">
+        <item quantity="one">Érvénytelen PIN, %d próbálkozás maradt</item>
+        <item quantity="other">Érvénytelen PIN, %d próbálkozás maradt</item>
+    </plurals>
+    <plurals name="incorrect_pin_remaining_attempts_wipe">
+        <item quantity="one">%d próbálkozás az adattörlésig!</item>
+        <item quantity="other">%d próbálkozás az adattörlésig!</item>
+    </plurals>
+    <string name="done">Kész</string>
+    <string name="logout">Kijelentkezés</string>
+    <string name="logout_question">Biztos, hogy ki szeretne jelentkezni?</string>
+    <string name="logout_question_next_account">Biztos benne, hogy kijelentkezik az aktuális fiókból és a következőt használja: %s?</string>
+    <string name="upselling">Csomagváltás/Adományozás</string>
+    <string name="upselling_title">A ProtonMail ingyenes és nyílt forráskódú</string>
+    <string name="upselling_subtitle">Szükségünk van a támogatására, hogy tovább dolgozhassunk a személyes adatok védelméért és fejleszthessük a ProtonMailt</string>
+    <string name="upselling_donate_title">Adományozás</string>
+    <string name="upselling_upgrade_title">Váltás ProtonVPN Plus csomagra</string>
+    <string name="upselling_donate_subtitle">Adománya segít abban, hogy kapacitásunkat növelhessük, és a ProtonMail továbbra is egy ingyenes és nyílt forráskódú szoftver maradhasson. Csak a közösség támogatása teszi lehetővé, hogy a ProtonMail szolgáltatásait az emberek bárhol a világon igénybe vehessék.</string>
+    <string name="upselling_upgrade_subtitle">Előfizetése segít abban, hogy kapacitásunkat növelhessük, és a ProtonMail továbbra is egy ingyenes és nyílt forráskódú szoftver maradhasson. Csak a közösség támogatása teszi lehetővé, hogy a ProtonMail szolgáltatásait az emberek bárhol a világon igénybe vehessék.</string>
+    <string name="upgrade_donate">Csomagváltás/Adományozás</string>
+    <string name="upselling_donate_pick_amount">Válasszon egy összeget vagy írjon be egy tetszőleges értéket</string>
+    <string name="amount_5">5€</string>
+    <string name="amount_15">15€</string>
+    <string name="amount_50">50€</string>
+    <string name="amount_100">100€</string>
+    <string name="donation_amount">Írja be az adomány összegét</string>
+    <string name="donate">Adományozás</string>
+    <string name="donate_paypal_bitcoin">Adományozás PayPal vagy Bitcoin fizetéssel</string>
+    <string name="upgrade_line1">Minden ami az ingyenes csomagban is elérhető</string>
+    <string name="upgrade_line2">5 GB tárhely</string>
+    <string name="upgrade_line3">Saját domain név használata</string>
+    <string name="upgrade_line4">5 e-mail alias</string>
+    <string name="upgrade_line5">Elsőbbségi felhasználói támogatás</string>
+    <string name="upgrade_plus_price">4€</string>
+    <string name="per_month">/hó</string>
+    <string name="upgrade">Csomagváltás</string>
+    <string name="payment_options">Fizetési mód</string>
+    <string name="other_plans">Több tárhelyet tartalmazó csomagokra a
+    ProtonMail webes felületén válthat.</string>
+    <string name="upgrade_paid_user">Köszönőjük, hogy ön fizető ügyfél!</string>
+    <string name="select_account_type">Válassza ki a fiók típusát</string>
+    <string name="select_account_type_subtitle">A ProtonMail egy ingyenes szolgáltatás,
+    a közösség érdekeiért. Ön is támogathatja a személyes adatok védelmét egy fizetős csomagra váltással.</string>
+    <string name="plan_free_with_price">INGYENES</string>
+    <string name="plan_plus_with_price">PLUS %s/hó</string>
+    <string name="plan_visionary_with_price">VISIONARY %s/hó</string>
+    <string name="plan_business_with_price">BUSINESS %s/hó</string>
+    <string name="plan_free_title">Alap fióktípus, korlátozott lehetőségekkel</string>
+    <string name="plan_plus_title">Biztonságos e-mail, fejlett funkciókkal</string>
+    <string name="plan_visionary_title">Speciális fiók támogatóknak</string>
+    <string name="plan_business_title">Speciális fiók támogatóknak</string>
+    <string name="plan_plus_line2">1000 üzenet küldése naponta</string>
+    <string name="plan_plus_line3">Címkék és egyedi szűrők</string>
+    <string name="plan_plus_line4">Titkosított üzenetek küldése külsős címzetteknek</string>
+    <string name="plan_plus_line7">Elsőbbségi felhasználói támogatás</string>
+    <string name="plan_free_line1">500 MB tárhely</string>
+    <string name="plan_free_line2">150 üzenet naponta</string>
+    <string name="plan_free_line22">%d üzenet naponta</string>
+    <string name="plan_free_line3">20 címke</string>
+    <string name="plan_free_line4">Saját domain név: nem lehetséges</string>
+    <string name="plan_free_line5">1 cím</string>
+    <string name="plan_free_line6">Felhasználói támogatás: korlátozott</string>
+    <string name="plan_visio_line2">Nincs küldési korlát</string>
+    <string name="plan_visio_line3">Korai hozzáférés új funkciókhoz</string>
+    <string name="plan_visio_line6">Szavazás új funkciók fejlesztésére a Visionary csomagban</string>
+    <string name="plan_business_line1">szervezetek számára hamarosan elérhető a titkosított e-mailek használata!</string>
+    <string name="currency_duration">Pénznem és Időtartam</string>
+    <string name="credit_card_name">Kártyabirtokos neve</string>
+    <string name="zip_code">Irányítószám</string>
+    <string name="card_number">Kártya szám</string>
+    <string name="billing_information">Számlázási adatok</string>
+    <string name="billing_upgrade_thanks">Sikeres előfizetés! Köszönjük, a támogatását!</string>
+    <string name="country">Ország</string>
+    <string name="cvc">Biztonsági kód</string>
+    <string name="terms_and_conditions_billing">Az Elküldés gomb megnyomásával 
+    elfogadja a\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail Felhasználási Feltételeteket</a></string>
+    <string name="submit">Elküldés</string>
+    <string name="currency">Pénznem</string>
+    <string name="plan_duration">Számlázási ciklus</string>
+    <string name="duration_annual_line1">Éves előfizetés <font color="#C3E129">20% megtakarítás</font></string>
+    <string name="duration_annual_line2">%s havonta</string>
+    <string name="per_month_text_only">havonta</string>
+    <string name="per_year_text_only">évente</string>
+    <string name="duration_annual_line3">Számlázva évente %s</string>
+    <string name="duration_annual_line4">Számlázva %s havonta</string>
+    <string name="duration_monthly_line1">Havi előfizetés</string>
+    <string name="duration_monthly_line2">%s havonta</string>
+    <string name="duration_monthly_line3">20% megtakarítás</string>
+    <string name="set_cont">Mentés és folytatás</string>
+    <string name="payment_error">Hiba a fizetéskor</string>
+    <string name="error">Hiba</string>
+    <string name="try_another_card">Próbálja meg egy másik kártyát</string>
+    <string name="try_another_paypal">Fizetés PayPallal</string>
+    <string name="try_another_payment_method">Próbáljon egy másikat</string>
+    <string name="submit_paypal">Fizetés Paypal használatával</string>
+    <string name="picker_card">Bankkártya</string>
+    <string name="picker_paypal">PayPal</string>
+    <string name="paypal_disclaimer">A tranzakció végrehajtásához be kell jelentkeznie PayPal-fiókjába. Megnyitjuk egy új böngészőablakban a PayPal-t.</string>
+    <string name="payment_picker_disclaimer">Kérem, válassza ki a fizetési módot</string>
+    <string name="payment_success_title">Sikeres fizetés!</string>
+    <string name="payment_success_text">Most frissítjük fiókját, kérjük várjon egy percet. Köszönjük a támogatást!</string>
+    <string name="donation_success_title">Sikeres adományozás!</string>
+    <string name="donation_success_text">A támogatása elengedhetetlen, hogy a ProtonMail működhessen. Köszönjük, hogy támogatja a személyes adatok védelmét az interneten!</string>
+    <string name="create_free_account">Ingyenes fiók létrehozása</string>
+    <string name="storage_gb">%d GB tárhely</string>
+    <string name="storage_mb">%d MB tárhely</string>
+    <string name="max_addresses">%d e-mail alias</string>
+    <string name="inline_prefix">[Inline]</string>
+    <string name="inline_header">%d beágyazott kép</string>
+    <string name="select">Kiválasztás</string>
+    <string name="change_currency">Pénznem módosítása</string>
+    <string name="switch_billing_monthly">Váltás havi fizetésre</string>
+    <string name="switch_billing_yearly">Váltás éves fizetésre</string>
+    <string name="warning">Figyelem</string>
+    <string name="empty_recovery_email_question">Figyelem: nem adott meg helyreállító e-mail címet. Ha elveszíti a jelszavát, így lehetetlen lesz visszaszereznie a fiók elérést. Biztos, hogy folytatja helyreállító e-mail nélkül?</string>
+    <string name="card_details_title">%1$s (*** %2$s)</string>
+    <string name="card_details_subtitle">Lejárat %s</string>
+    <string name="payment_methods">Fizetési módok</string>
+    <string name="payment_approval_activity">Fizetési mód jóváhagyása</string>
+    <string name="payment_approval_success">A fizetési mód jóváhagyásra került</string>
+    <string name="payment_approval_unknown_error_description">Hiba történt a fizetési mód ellenőrzése közben. Próbálkozzon újra, vagy váltson másik kártyára.</string>
+    <string name="payment_approval_cancel_error_description">Fizetési mód ellenőrzése megszakítva. Próbálkozzon újra, vagy váltson másik kártyára.</string>
+    <string name="payment_approval_consumed_error_description">Fizetési módot már használta erre a fizetésre. Kérjük, ellenőrizze előfizetésének állapotát.</string>
+    <string name="no_payment_methods">Nincs elmentve fizetési mód.</string>
+    <string name="edit_payment_methods">Kérjük, a számlázási adatok szerkesztéséhez, lépjen be a protonmail.com weblapon.</string>
+    <string name="no_permission_contacts">Nincs engedély a névjegyek olvasásához</string>
+    <string name="message_not_loaded">Üzenet nincs betöltve</string>
+    <string name="signature_on">Aláírás bekapcsolva</string>
+    <string name="signature_text">Aláírás szövege</string>
+    <string name="please_use_webapp_pass_change">A művelet befejezéséhez, kérjük használja a &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; oldalt egy számítógépről.</string>
+    <string name="available_addresses">Elérhető címek</string>
+    <string name="inactive_addresses">Kikapcsolt címek</string>
+    <string name="not_set">Nincs megadva</string>
+    <string name="edit_notification_email">Helyreállító e-mail cím szerkesztése</string>
+    <string name="available_swipe_actions">Elérhető műveletek</string>
+    <string name="no_available_addresses">Nincs elérhető cím</string>
+    <string name="no_inactive_addresses">Nincs kikapcsolt cím</string>
+    <string name="label_add_new">Új címke hozzáadása</string>
+    <string name="available_labels">Elérhető címkék</string>
+    <string name="choose_label_color">Címke színének kiválasztása</string>
+    <string name="save_new_label">Címke mentése</string>
+    <string name="delete_selected">Kijelöltek törlése</string>
+    <string name="pin_not_activated">PIN kód nincs aktiválva</string>
+    <string name="available_options">Elérhető műveletek</string>
+    <string name="current_recovery_email">Jelenlegi visszaállító és értesítési e-mail</string>
+    <string name="change_recovery_email">Visszaállító és értesítési e-mail megváltoztatása</string>
+    <string name="new_recovery_email">Új visszaállító és értesítési e-mail</string>
+    <string name="confirm_new_recovery_email">Visszaállító és értesítési e-mail megerősítése</string>
+    <string name="recovery_emails_invalid">Az e-mail címek nem egyeznek meg vagy érvénytelenek</string>
+    <string name="authenticate">Azonosítás</string>
+    <string name="background_sync_subtitle">Bekapcsolásakor az alkalmazás a háttérben is szinkronizál a szerverrel. Kikapcsolása letiltja PUSH értesítéseket.</string>
+    <string-array name="notification_options">
+        <item>Nincs rezgés vagy hang</item>
+        <item>Hang, rezgés nélkül</item>
+        <item>Rezgés, hang nélkül</item>
+        <item>Rezgés és hang</item>
+    </string-array>
+    <string-array name="account_type_names">
+        <item>Ingyenes</item>
+        <item>Plus</item>
+        <item>Visionary</item>
+        <item>Professional</item>
+    </string-array>
+    <plurals name="custom_domains">
+        <item quantity="one">Saját domain név használata (pl.: john@smith.com)</item>
+        <item quantity="other">Akár %d saját domain név használata</item>
+    </plurals>
+    <string-array name="months_array">
+        <item>HH</item>
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+    <string name="contacts_groups">Csoportok</string>
+    <string name="phone_contact">Telefonos névjegy</string>
+    <string name="contact_details_display_name">Név</string>
+    <string name="contact_details">Névjegy részletei</string>
+    <string name="email_type_home">Otthoni</string>
+    <string name="email_type_work">Munkahelyi</string>
+    <string name="option_type_custom">Új típus</string>
+    <string name="type_title">Válasszon típust</string>
+    <string name="no_permission_storage">Nincs engedély a tárhely eléréshez</string>
+    <string name="message_drafted_error_server">Üzenet küldése sikertelen. %s</string>
+    <string name="sync_local_contacts">Feltöltés a ProtonMailre</string>
+    <string name="please_select_only_phone_contacts">Csak helyi telefon névjegyeket válasszon</string>
+    <string name="contact_vcard_hint_email">Írja be az e-mail címet</string>
+    <string name="contact_vcard_hint_phone">Írjuk be a telefonszámot</string>
+    <string name="contact_vcard_hint_address">Írja be a címet</string>
+    <string name="contact_vcard_hint_other">Írja be az információkat</string>
+    <string name="contact_vcard_hint_note">Írjon be egy megjegyzést</string>
+    <string name="contact_vcard_phone">Telefonszám</string>
+    <string name="contact_vcard_address">Cím</string>
+    <string name="contact_vcard_new_row_email">e-mail cím hozzáadása</string>
+    <string name="contact_vcard_new_row_phone">telefonszám hozzáadása</string>
+    <string name="contact_vcard_new_row_address">cím hozzáadása</string>
+    <string name="contact_vcard_new_row_other">információ hozzáadása</string>
+    <string name="contact_vcard_new_row_custom">egyéni mező hozzáadása</string>
+    <string name="vcard_other_option_org">Szervezet</string>
+    <string name="vcard_other_option_title">Cím</string>
+    <string name="vcard_other_option_nickname">Becenév</string>
+    <string name="vcard_other_option_birthday">Születésnap</string>
+    <string name="vcard_other_option_anniversary">Évforduló</string>
+    <string name="vcard_other_option_gender">Nem</string>
+    <string name="vcard_other_option_role">Szerepkör</string>
+    <string name="vcard_other_option_url">URL</string>
+    <string name="sync_question">Névjegyek szinkronizálása?</string>
+    <string name="sync_question_subtitle">Ezzel a funkcióval az eszközön lévő névjegyek tölthetők be a ProtonMail névjegyeihez. Ezután ezeket a névjegyeket az összes ProtonMail felületen használhatja.</string>
+    <string name="convert_contact">Névjegyek konvertálása</string>
+    <string name="upload_contacts">Névjegyek feltöltése</string>
+    <string name="encrypted_data">Titkosított adatok</string>
+    <string name="upgrade_encrypted_contact">Kérjük, fizessen elő, hogy titkosított névjegyadatokat is tárolhasson.</string>
+    <string name="empty_encrypted_data">Üres titkosított névjegy információk.</string>
+    <string name="uploading_contacts">Névjegyek feltöltése&#8230;</string>
+    <string name="error_encrypted_data">Hiba a titkosított névjegyadatok betöltésekor.</string>
+    <string-array name="vcard_option_phone">
+        <item>Telefonszám</item>
+        <item>Mobil</item>
+        <item>Munkahelyi</item>
+        <item>Fax</item>
+        <item>Egyéb</item>
+    </string-array>
+    <string-array name="vcard_option_email">
+        <item>E-mail</item>
+        <item>Személyes</item>
+        <item>Munkahelyi</item>
+        <item>Egyéb</item>
+    </string-array>
+    <string-array name="vcard_option_address">
+        <item>Cím</item>
+        <item>Személyes</item>
+        <item>Munkahelyi</item>
+        <item>Egyéb</item>
+    </string-array>
+    <string-array name="vcard_option_other">
+        <item>@string/vcard_other_option_org</item>
+        <item>@string/vcard_other_option_anniversary</item>
+        <item>@string/vcard_other_option_birthday</item>
+        <item>@string/vcard_other_option_gender</item>
+        <item>@string/vcard_other_option_nickname</item>
+        <item>@string/vcard_other_option_role</item>
+        <item>@string/vcard_other_option_title</item>
+        <item>@string/vcard_other_option_url</item>
+    </string-array>
+    <string name="logged_out">Kijelentkezve</string>
+    <string name="logged_out_description">Kijelentkezett. Kérjük, jelentkezzen be újra.</string>
+    <string name="verification_needed">Ellenőrzés szükséges</string>
+    <string name="verification_needed_description">Biztonsági okokból, kérjük, igazolja, hogy nem egy robot.</string>
+    <string name="verification_needed_description_notification">Kérjük, hogy az üzenet (%s) elküldése előtt igazolja, hogy nem robot</string>
+    <string name="message_drafted_verification_needed">Üzenet nincs elküldve - ellenőrzés szükséges. Az üzenetet a piszkozatokhoz került elmentésre.</string>
+    <string name="error_message_zip_code_invalid">Hiba: Az irányítószám érvénytelen</string>
+    <string name="error_message_cvc_invalid">Hiba: az ellenőrző kód érvénytelen</string>
+    <string name="error_message_card_name_invalid">Hiba: a kártyabirtokos neve érvénytelen</string>
+    <string name="error_message_select_country">Kérjük, válassza ki az országot</string>
+    <string name="error_message_exp_date_invalid">Hiba: a lejárati dátum érvénytelen</string>
+    <string name="error_message_exp_date_past">Hiba: a lejárati dátum érvénytelen</string>
+    <string name="error_message_card_number_invalid">Hiba: a kártyaszám érvénytelen</string>
+    <string name="print_error">Nyomtatási hiba</string>
+    <string name="download_error">Letöltési hiba</string>
+    <string name="download_complete">A letöltés befejeződött</string>
+    <string name="download_in_progress">Letöltés folyamatban</string>
+    <string name="expires_in">\tLejár: %s</string>
+    <string name="unsaved_changes_title">Nem mentett módosítások</string>
+    <string name="unsaved_changes_subtitle">Az űrlapon nem mentett módosítások vannak. Biztos, hogy elveti?</string>
+    <string name="discard">Elvetés</string>
+    <string name="keep_editing">Szerkesztés folytatása</string>
+    <string name="request_timeout">Kapcsolat-időtúllépés, próbálja meg újra</string>
+    <string name="add_folder">Áthelyezés mappába</string>
+    <string name="no_folders">Nincsenek mappák</string>
+    <string name="folders_title_move">Üzenetek áthelyezése:</string>
+    <string name="move">Áthelyezés</string>
+    <string name="folders_manager">Mappák kezelése</string>
+    <string name="folder_add_new">Új mappa hozzáadása</string>
+    <string name="folder_name">Mappa neve</string>
+    <string name="available_folders">Elérhető mappák</string>
+    <string name="choose_folder_color">Mappa színe</string>
+    <string name="folder_created">Mappa létrehozva</string>
+    <string name="folder_invalid">Mappa létrehozása nem sikerült, a név érvénytelen.</string>
+    <string name="folder_deleted">Mappa törölve</string>
+    <string name="folder_deleted_error">Hiba a mappa törlése közben</string>
+    <string name="save_new_folder">Új mappa mentése</string>
+    <string name="create_new_folder">Mappa létrehozása</string>
+    <string name="all_mail">Összes levél</string>
+    <string name="allmail_option">ÖSSZES LEVÉL</string>
+    <string name="empty_emails">Nincsenek üzenetek</string>
+    <string name="empty_email_list">Nincs e-mail cím</string>
+    <string name="no_contacts">Nincsenek névjegyek</string>
+    <string name="sender_name_address">%1$s &lt;%2$s&gt; írta:</string>
+    <string name="update_label">Címke frissítése</string>
+    <string name="folder_name_empty">A mappának szükséges egy nevet adni</string>
+    <string name="max_labels_in_message">Az üzenet (%1$s) maximum %2$d címkével rendelkezhet.</string>
+    <string name="delete">Törlés</string>
+    <string name="subject_copied">Szöveg másolva a vágólapra</string>
+    <string name="details_copied">Adatok a vágólapra másolva</string>
+    <string name="saving">Mentés...</string>
+    <string name="update_folder">Mappa frissítése</string>
+    <string name="spam_score_100">Ez az e-mail a ProtonMailról feladottnak tűnik, de külső rendszerből érkezett és nem felelt meg az ellenőrzési követelményeknek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
+    <string name="spam_score_101">Az e-mail nem felelt meg a domain név ellenőrzési követelményeinek. Lehet becsapós üzenet vagy hibásan továbbított!</string>
+    <string name="spam_score_102">Ez az üzenet lehetséges, hogy egy adathalászati kísérlet! Kérjük, alaposan ellenőrizze, hogy a feladó és az üzenet szövege megbízható-e. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">TOVÁBBI INFORMÁCIÓK</a></string>
+    <string name="print_from_template">Feladó: %s</string>
+    <string name="print_to_template">Címzett: %s; &#160;</string>
+    <string name="print_cc_template">Másolat: %s; &#160;</string>
+    <string name="print_bcc_template">Titkos másolat: %s; &#160;</string>
+    <string name="contacts_invalid_type">Érvénytelen típus</string>
+    <string name="signature_error">Ellenőrzési hiba</string>
+    <string name="signature_error_desc">A tartalom aláírásának ellenőrzése sikertelen</string>
+    <string name="decryption_error">Visszafejtési hiba</string>
+    <string name="decryption_error_desc">A tartalom visszafejtése sikertelen</string>
+    <string name="address">Cím: </string>
+    <string name="address_street">Utca, házszám</string>
+    <string name="address_city">Település</string>
+    <string name="address_region">Állam vagy régió</string>
+    <string name="address_postcode">Irányítószám</string>
+    <string name="address_country">Ország</string>
+    <string name="recheck_delinquency">Ellenőrizze újra</string>
+    <string name="close_app">Alkalmazás bezárása</string>
+    <string name="empty_subject">(Nincs tárgy)</string>
+    <string name="contacts_unknown">Ismeretlen</string>
+    <string name="expand_collapse">Nyit/Csuk</string>
+    <string name="learn_more"><u>További információk</u></string>
+    <string name="info">Infó</string>
+    <string name="error_can_not_send_from_this_address">Váltson nagyobb csomagra, hogy üzenhessen erről a címről: %s.</string>
+    <string name="digital_signature_verified">Digitális aláírás ellenőrizve</string>
+    <string name="encrypted_and_digital_signature_verified">Kódolt és digitális aláírás ellenőrizve</string>
+    <string name="email_empty">E-mail cím hiányzik</string>
+    <string name="edit_contact_details">Névjegy részleteinek szerkesztése</string>
+    <string name="encrypted_contact_details">Titkosított névjegy adatok</string>
+    <string name="edit_contact_toolbar_title">Szerkesztés: %s</string>
+    <string name="convert_question">Helyi névjegyek felötlése</string>
+    <string name="convert_question_subtitle">Ezzel a funkcióval az eszközön lévő névjegyek tölthetők be a ProtonMail névjegyeihez. Ezután ezeket a névjegyeket az összes ProtonMail felületen használhatja.</string>
+    <string name="refresh_contacts">Frissítés</string>
+    <string name="upload">Feltöltés</string>
+    <string name="invalid_email_some_contacts">Némelyik névjegyben érvénytelen e-mail cím szerepel</string>
+    <string name="protonmail_contacts">ProtonMail névjegyek</string>
+    <string name="device_contacts">Eszköz névjegyek</string>
+    <string name="print_date_template">Dátum: %s</string>
+    <string name="print_attachment_template">Melléklet: %s; &#160;</string>
+    <string name="pm_me_changed">Üzenetek küldése a @pm.me címről előfizetéshez kötött. Az Ön üzenete az %s, alapértelmezett címről lesz elküldve</string>
+    <string name="pm_me_can_not_be_default">Váltson fizetős csomagra, hogy ezt a címet is beállíthassa alapértelmezettként: %s</string>
+    <string name="dont_remind_again">Ne emlékeztessen újra</string>
+    <string name="load_embedded_images">Beágyazott képek betöltése</string>
+    <string name="remove_password">Jelszó eltávolítása</string>
+    <string name="remove_password_question">Jelszó eltávolítása?</string>
+    <string name="attachment_storage_value_current">Jelenleg kiválasztva: %d MB</string>
+    <string name="attachment_storage_value_current_unlimited">Jelenleg kiválasztva: Korlátlan</string>
+    <string name="attachment_offline_max_storage">Beállítja a ProtonMail által, az eszközön helyileg használható maximális tárterületet.</string>
+    <string name="load_embedded_images_failed_no_network">Hiba a beágyazott képek betöltésekor. Ellenőrizze a kapcsolatot.</string>
+    <string name="load_embedded_images_failed">Hiba a beágyazott képek betöltésekor.</string>
+    <string name="attachment_storage_unlimited">%.2f MB (nincs korlátozva)</string>
+    <string name="unlimited">Korlátlan</string>
+    <string name="local_storage_cleared">Helyi tárhely kiürítve</string>
+    <string name="local_storage_clear">Helyi tárhely kiürítése</string>
+    <string name="recipient_popup_compose_to">Levélírás neki</string>
+    <string name="recipient_popup_copy_address">Cím másolása</string>
+    <string name="recipient_popup_see_details">Névjegy részletei</string>
+    <string name="send_with_untrusted_key_title">Biztos, hogy egy nem megbízható kulccsal küldi?</string>
+    <string name="send_with_untrusted_key_message">Ön engedélyezte %s címre a hitelesítést megbízható kulcsokkal, de az aktív titkosítási kulcsok nincsenek megbízhatóként jelölve.</string>
+    <string name="resign_contact_title">Újra aláírja a névjegyet?</string>
+    <string name="resign_contact_message">Hiba a következő cím ellenőrzésekor: %s. A névjegy nincs megfelelően aláírva. A névjegyet ismét alá kell írnia, vagy szerkesztenie, hogy üzenetet küldhessen erre a címre. Ezt a hibát az is okozhatja, ha jelszó visszaállítást kért és visszaállította a saját kulcsait.</string>
+    <!-- Sender locks -->
+    <string name="sender_lock_unencrypted">Nem titkosított üzenet</string>
+    <string name="sender_lock_zero_access">Zéró Hozzáférés titkosítással tárolva</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_end_to_end">Ön által küldve, végpontok közt titkosítva</string>
+    <!-- External message that was encrypted by the BE -->
+    <string name="sender_lock_sent_autoresponder">A ProtonMail küldte, Zéró Hozzáférés titkosítással</string>
+    <string name="sender_lock_verification_failed">A küldő ellenőrzése sikertelen volt</string>
+    <string name="sender_lock_pgp_encrypted">PGP titkosított üzenet</string>
+    <string name="sender_lock_pgp_verified">PGP aláírt üzenet, ellenőrzött címről</string>
+    <string name="sender_lock_pgp_encrypted_verified">PGP titkosított üzenet, ellenőrzött címről</string>
+    <string name="sender_lock_pgp_signed_verified_sender">PGP aláírt üzenet, ellenőrzött címről</string>
+    <!-- External PGP signed-only message that was encrypted by the BE -->
+    <string name="sender_lock_internal">Végpontok közt titkosított üzenet</string>
+    <string name="sender_lock_internal_verified">Végpontok közt titkosított, ellenőrzött címről</string>
+    <!-- Composer locks -->
+    <string name="composer_lock_internal">Végpontok közt titkosított</string>
+    <string name="composer_lock_internal_pinned">Végpontok közt titkosított, ellenőrzött címre</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP-titkosított</string>
+    <string name="composer_lock_pgp_signed">PGP-aláírt</string>
+    <string name="recipient_not_found_and_removed">A címzett nem található és eltávolításra került: %s</string>
+    <string name="recipient_error_and_removed">Hiba a címzett információinak lekérésre közben, ezért eltávolításra került: %s</string>
+    <string name="send_anyway">Küldés mindenképpen</string>
+    <string name="expiration_error_title">Megadta az üzenet lejárati időpontját, de nem minden címzett támogatja.</string>
+    <string name="expiration_error_add_msg_password">Kérjük, adjon meg üzenet jelszót a következő címzetteknek:</string>
+    <string name="expiration_error_disable_pgp_sending">Kérjük, kapcsolja a ki a PGP titkosítást, hogy lejárati időt adhasson meg, a következő címzetteknél:</string>
+    <string name="expiration_error_proceed">Érintse meg, hogy ezeknek a címzetteknek időkorlát nélküli üzenetet küldjön.</string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">TOVÁBBI INFORMÁCIÓK</a></string>
+    <string name="no_items_found">Nem található elem</string>
+    <string name="channel_name_attachments">Mellékletek</string>
+    <string name="channel_description_attachments">A letöltés állapotát mutatja</string>
+    <string name="channel_name_emails">E-mailek</string>
+    <string name="channel_description_emails">Értesítések bejövő üzenetekről</string>
+    <string name="channel_name_account">Fiók</string>
+    <string name="channel_description_account">Fiók állapota</string>
+    <string name="channel_name_ongoing_operations">Folyamatban lévő műveletek</string>
+    <string name="channel_description_ongoing_operations">Mutatja az összes folyamatban lévő műveletet,
+	mint új üzenet letöltése a háttérben</string>
+    <string name="checking_mailbox">Fiók ellenőrzése</string>
+    <string name="report_phishing">Adathalászat bejelentése</string>
+    <string name="print">Nyomtatás</string>
+    <string name="phishing_dialog_title">Erősítse meg az adathalász bejelentést</string>
+    <string name="phishing_dialog_message">Az adathalász kísérletként megjelölt üzeneteket a rendszer
+	hozzánk továbbítja, hogy kiértékelhessük és fejleszthessük a szűrőinket. Ebben az esetben 
+	az üzenet teljes szövegéhez hozzáférhetünk.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Jelentés elküldve. Az üzenet áthelyezve a levélszeméthez.</string>
+    <string name="report_send">Jelentés elküldve</string>
+    <string name="cannot_send_report_send">Jelentés elküldése nem sikerült</string>
+    <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
+    <!-- Contact Groups Strings -->
+    <string name="email_default">Alapértelmezett e-mail</string>
+    <string name="email_private">Privát e-mail</string>
+    <string name="phone_private">Privát telefon</string>
+    <string name="add_photo">Fénykép hozzáadása</string>
+    <string name="contact_display_name">\ue91c Megjelenített név</string>
+    <string name="add_new_email">\ue914 Email cím hozzáadása</string>
+    <string name="no_groups">Nincs csoport</string>
+    <string name="contact_vcard_note">Megjegyzés</string>
+    <string name="edit_contact">Névjegy szerkesztése</string>
+    <string name="create_contact_group">Új névjegy csoport</string>
+    <string name="edit_contact_group">Névjegy csoport szerkesztése</string>
+    <string name="contact_groups_add_addresses">Cím hozzáadása</string>
+    <string name="contact_groups_manage_addresses">Tagok kezelése</string>
+    <string name="contact_group_display_name">\ue91a Megjelenített név</string>
+    <string name="contact_group_groups_icon">\ue91a </string>
+    <string name="contact_add_addr_to_group">Címek hozzáadása a csoporthoz</string>
+    <string name="title_activity_address_chooser">Tagok kezelése</string>
+    <string name="title_activity_account_manager">Fiókok kezelése</string>
+    <string name="title_activity_connect_account">Fiók csatlakoztatása</string>
+    <string name="account_manager_add_account">Fiók hozzáadása</string>
+    <string name="account_manager_remove_all_accounts">Összes fiók eltávolítása</string>
+    <string name="account_manager_note">Egyidejűleg korlátlan számú fizetett ProtonMail-fiókba és egy ingyenes fiókba jelentkezhet be.</string>
+    <string name="account_manager_remove_all">Összes fiók eltávolítása</string>
+    <string name="account_manager_logout">Kijelentkezés</string>
+    <string name="account_manager_login">Bejelentkezés</string>
+    <string name="manage_accounts_user_loggedout">%s (kilépett)</string>
+    <string name="manage_accounts_user_primary">%s (elsődleges)</string>
+    <string name="account_manager_remove">Eltávolítás</string>
+    <string name="connect_account_login_title">Jelentkezzen be a ProtonMail fiókjába</string>
+    <string name="default_error_message">Hiba történt</string>
+    <string name="no_contact_groups">Nincsenek névjegy csoportok</string>
+    <string name="search_contacts_inside_group">Névjegyek keresése a csoportban</string>
+    <string name="contact_group_toolbar_title">%s (%s)</string>
+    <plurals name="contact_group_members">
+        <item quantity="one">%d tag</item>
+        <item quantity="other">%d tag</item>
+    </plurals>
+    <string name="groups">Csoportok</string>
+    <string name="tab_contacts">Névjegyek (%d)</string>
+    <string name="tab_contact_groups">Csoportok (%d)</string>
+    <string name="contact_group_saved">Csoport elmentve</string>
+    <string name="no_recipients">Nincs címzett</string>
+    <string name="contact_group_selected">%d kiválasztva</string>
+    <string name="contact_group_deleted">Csoport törölve</string>
+    <string name="paid_plan_needed">Kérjük, váltson fizetős csomagra, hogy ezt a prémium szolgáltatást használhassa</string>
+    <string name="composer_group_count">%1$s (%2$d tag)</string>
+    <string name="composer_group_count_of">%1$s (%2$d/%3$d tag)</string>
+    <string name="address_successful_update">Cím sikeresen frissítve</string>
+    <plurals name="are_you_sure_delete_group">
+        <item quantity="one">Biztos, hogy törölni szeretné ezt a csoportot?</item>
+        <item quantity="other">Biztos, hogy törölni szeretné a kijelölt csoportokat?</item>
+    </plurals>
+    <plurals name="group_deleted">
+        <item quantity="one">Csoport törölve</item>
+        <item quantity="other">Csoportok törölve</item>
+    </plurals>
+    <plurals name="are_you_sure_delete_contact">
+        <item quantity="one">Biztos, hogy törölni szeretné ezt a névjegyet?</item>
+        <item quantity="other">Biztos, hogy törölni szeretné a kijelölt névjegyeket?</item>
+    </plurals>
+    <string name="members">Tagok</string>
+    <string name="max_emails_in_group_title">Csoport létszám elérte a korlátot</string>
+    <string name="max_emails_in_group_subtitle">A csoport elérte a maximális méretet (%1$d). Töröljön %2$d címet.</string>
+    <string name="select_deselect_all">Összes kijelölése</string>
+    <string name="contact_group_name_hint">Adjon meg egy csoport nevet</string>
+    <string name="contact_group_change_color">Szín megváltoztatása</string>
+    <string name="fab_add_contact">Új névjegy</string>
+    <string name="fab_add_contact_group">Új névjegy csoport</string>
+    <string name="contacts_add_photo_title">Fénykép hozzáadása</string>
+    <string name="contacts_add_photo_select_gallery">Kiválasztás a galériából</string>
+    <string name="contacts_add_photo_select_camera">Fénykép készítése</string>
+    <string name="save_group_validation_error">Adjon meg egy nevet a csoportnak</string>
+    <!-- region Storage Limit Reached -->
+    <string name="storage_limit_alert">Tárhely korlát túllépés. Nem lehet üzeneteket fogadni és küldeni.
+        Kérjük, tájékozódjon a lehetőségekről.</string>
+    <string name="storage_limit_warning_title">Figyelem</string>
+    <string name="storage_limit_reached_text">A fiók elérte tárolókapacitása maximumát. Nem küldhet 
+        vagy fogadhat további leveleket, hacsak nem töröl véglegesen néhány üzenetet vagy vásárol további
+        tárhelyet.</string>
+    <string name="storage_limit_approaching_text">90 százalékot ért el a tárolókapacitás foglaltsága.
+        Fontolja meg, hogy helyet szabadít fel vagy további tárhelyet vásárol, mielőtt kifutna a szabad helyből.</string>
+    <string name="storage_limit_do_not_remind">NE EMLÉKEZTESSEN</string>
+    <!-- endregion -->
+    <string name="need_permissions_title">Engedélyek</string>
+    <string name="need_storage_permissions_text">Melléklet hozzáadáshoz engedélyeznie kell 
+        a tárhely elérését.</string>
+    <string name="need_phone_permissions_text">Partner felhívásához engedélyeznie kell a
+        telefon névjegyek elérését.</string>
+    <string name="push_notifications_alert_title">Push értesítés riasztás</string>
+    <string name="push_notifications_alert_subtitle">A ProtonMail push értesítések nem működnek a legújabb Google Play szolgáltatások nélkül.</string>
+    <string name="app_locked">Az alkalmazás zárolt</string>
+    <string name="please_use_fingerprint">Használja az ujjlenyomatát a feloldáshoz.</string>
+    <string name="use_pin_instead">Inkább PIN-kód használata</string>
+    <string name="undisclosed_recipients">Címzettek nem láthatók</string>
+    <string name="could_not_delete_attachment">Feltöltés közben a melléklet nem távolítható el</string>
+    <string name="manage_accounts">Fiókok kezelése</string>
+    <!-- region Settings -->
+    <string name="settings">Beállítások</string>
+    <string name="account_settings">Fiók beállítások</string>
+    <!-- region Acc Settings -->
+    <string name="account">Fiók</string>
+    <string name="subscription">Előfizetés</string>
+    <string name="plan_and_user">Csomag</string>
+    <string name="plan">Csomag</string>
+    <string name="payment_method">Fizetési mód</string>
+    <string name="password_manager">Jelszókezelő</string>
+    <string name="recovery_email">Helyreállítási e-mail</string>
+    <string name="storage">Postafiók mérete</string>
+    <string name="storage_used">%1$s / %2$s</string>
+    <string name="addresses">Címek</string>
+    <string name="default_mail_address">Alapértelmezett email cím</string>
+    <string name="default_address">Alapértelmezett cím</string>
+    <string name="display_name_n_signature">Megjelenítendő név és aláírás</string>
+    <string name="display_name">Megjelenített név</string>
+    <string name="edit_display_name">Megjelenített név szerkesztése</string>
+    <string name="signature">Aláírás</string>
+    <string name="edit_signature">Aláírás bekapcsolása</string>
+    <string name="mobile_signature">Mobil aláírás</string>
+    <string name="edit_mobile_signature">Mobil aláírás bekapcsolása</string>
+    <string name="default_mobile_signature">ProtonMail alkalmazásból küldve</string>
+    <string name="plus_account_required_mobile_signature">A mobil aláírás szerkesztéséhez ProtonMail Plus csomag szükséges</string>
+    <string name="mobile_signature_is_premium">A mobil aláírást csak elfőzető felhasználók módosíthatják</string>
+    <!-- region Snooze Settings -->
+    <string name="snooze_header">Halasztás</string>
+    <string name="notifications_snooze">Értesítések szüneteltetése</string>
+    <string name="notifications_snooze_finishing">Az értesítések $s perc múlva újra aktívak</string>
+    <string name="snooze_notifications">Értesítések szüneteltetése</string>
+    <string name="snooze_notifications_adjust">Beállítás</string>
+    <string name="notifications_snoozed">Értesítések szüneteltetve</string>
+    <string name="notifications_snooze_scheduled">Ütemezés</string>
+    <string name="notifications_snooze_scheduled_settings">Ütemezett szüneteltetés beállításai</string>
+    <string name="notifications_snooze_current_status">Állapot</string>
+    <string name="snooze_start_time">Kezdés:</string>
+    <string name="snooze_end_time">Befejezés:</string>
+    <string name="snooze_repeat">Ismétlés:</string>
+    <plurals name="quick_snooze_resume_min">
+        <item quantity="one">Az értesítések 1 perc múlva újra aktívak</item>
+        <item quantity="other">Az értesítések %d perc múlva újra aktívak</item>
+    </plurals>
+    <string name="quick_snooze_resume_hours">Az értesítések %1$d óra %2$d perc múlva újra aktívak</string>
+    <string name="minutes">Perc</string>
+    <string name="set_custom_quick_snooze">Egyéni gyors szüneteltetési érték megadása</string>
+    <string name="turn_off">Kikapcsolás</string>
+    <string name="snooze_will_repeat">Szüneteltetés ismétlődni fog</string>
+    <string name="quick_and_scheduled_enabled">Gyors szüneteltetés és ütemezett szüneteltetés aktív</string>
+    <string name="quick_only_enabled">Gyors szüneteltetés aktív</string>
+    <string name="scheduled_only_enabled">Ütemezett szüneteltetés aktív</string>
+    <string name="quick_and_scheduled_disabled">Gyors szüneteltetés és ütemezett szüneteltetés kikapcsolt</string>
+    <string name="scheduled_snooze_on">Ütemezve (Be)</string>
+    <string name="scheduled_snooze_off">Ütemezve (Ki)</string>
+    <!-- endregion -->
+    <string name="mailbox">Postafiók</string>
+    <string name="privacy">Adatvédelem</string>
+    <string name="auto_download_messages_title_short">Automatikus letöltés</string>
+    <string name="auto_download_messages_title">Üzenetek automatikus letöltése</string>
+    <string name="auto_download_messages_subtitle">Bekapcsolásakor a ProtonMail a háttérben automatikusan letölti az új üzenetek törzsét (több adatforgalmat igényel). Ha ki van kapcsolva, a ProtonMail az üzenet törzsét csak az üzenet megnyitásakor tölti le. (Megjegyzés: ha törli a gyorstárat vagy kijelentkezik, akkor egyik esetben sem tudja elolvasni a levelet, amikor nincs internetkapcsolat.)</string>
+    <string name="settings_background_sync">Szinkronizálás háttérben</string>
+    <string name="settings_auto_show_images">Távoli képek automatikus megjelenítése</string>
+    <string name="settings_auto_show_embedded_images">Beágyazott képek automatikus megjelenítése</string>
+    <string name="settings_prevent_taking_screenshots">Képernyőkép készítés megakadályozása</string>
+    <string name="hyperlink_confirmation">Kérés link megerősítése</string>
+    <string name="labels_and_folders">Címkék és Mappák </string>
+    <string name="labels_manage">Címkék kezelése</string>
+    <string name="folders_manage">Mappák kezelése</string>
+    <string name="swiping_gesture">Csúsztatási gesztus</string>
+    <string name="swipe_action_left">Csúsztatás balról jobbra</string>
+    <string name="swipe_action_right">Csúsztatás jobbról balra</string>
+    <!-- region Swipe Actions -->
+    <string name="swipe_action_chooser_title">Válasszon műveletet a csúsztatáshoz</string>
+    <string name="swipe_action_trash">Áthelyezés a Lomtárba</string>
+    <string name="swipe_action_trash_short">Áthelyezés a Lomtárba</string>
+    <string name="swipe_action_star">Csillagozás frissítése</string>
+    <string name="swipe_action_spam">Levélszemétként megjelölés</string>
+    <string name="swipe_action_archive">Archiválás</string>
+    <string name="swipe_action_mark_read">Megjelölés olvasottként</string>
+    <plurals name="action_move_to_trash">
+        <item quantity="one">Üzenet áthelyezve a lomtárba</item>
+        <item quantity="other">Üzenetek áthelyezve a lomtárba</item>
+    </plurals>
+    <plurals name="action_move_to_spam">
+        <item quantity="one">Üzenet levélszemétként megjelölve</item>
+        <item quantity="other">Üzenetek levélszemétként megjelölve</item>
+    </plurals>
+    <plurals name="action_move_to_archive">
+        <item quantity="one">Üzenet archiválva</item>
+        <item quantity="other">Üzenetek archiválva</item>
+    </plurals>
+    <!-- endregion -->
+    <string name="local_storage">Helyi tárhely korlát</string>
+    <string name="storage_value">%1$d MB (%2$.2f MB használt)</string>
+    <!-- endregion -->
+    <string name="app_settings">Alkalmazás beállítások</string>
+    <!-- region App Settings -->
+    <string name="push_notifications">Push értesítések</string>
+    <string name="extended_notifications">Bővített értesítések</string>
+    <string name="extended_notifications_description">Kapcsolja be ezt a funkciót, hogy az e-mailek feladóját\nláthassa a push értesítésekben.</string>
+    <string name="notification_settings">Értesítési beállítások</string>
+    <string name="auto_lock">Automatikus lezárás</string>
+    <string name="auto_lock_app">Alkalmazás automatikus lezárása</string>
+    <string name="auto_lock_description">Kapcsolja be ezt a funkciót\naz alkalmazás automatikus lezárásához\nés PIN-kód vagy ujjlenyomat segítségével oldja fel.</string>
+    <string name="change_pin_code">PIN kód megváltoztatása</string>
+    <string name="auto_lock_timer">Automatikus lezárás időzítése</string>
+    <string name="unlock_with_fingerprint">Feloldás ujjlenyomattal</string>
+    <string name="app_language">Alkalmazás nyelve</string>
+    <string name="custom_language_dialog_title">Alkalmazás nyelv választása</string>
+    <string name="auto_detect">Automatikus-észlelés</string>
+    <string name="combined_contacts">Kombinált névjegyek</string>
+    <string name="turn_combined_contacts_on">Kapcsolja be ezt a funkciót az automatikus e-mail címek kitöltéséhez az összes bejelentkezett fiók névjegyei alapján.</string>
+    <string name="local_cache_management">Helyi gyorsítótár-kezelő</string>
+    <string name="cache_cleared">Helyi gyorsítótár frissítve</string>
+    <string name="empty_cache">Gyorsítótár ürítése</string>
+    <!-- endregion -->
+    <string name="enabled">Engedélyezve</string>
+    <string name="disabled">Letiltva</string>
+    <string name="app_info">Alkalmazás információk</string>
+    <string name="app_version">Alkalmazás verzió</string>
+    <!-- endregion -->
+    <!-- region Multi Account -->
+    <string name="primary_account">Elsődleges felhasználói fiók</string>
+    <string name="make_primary_account">Legyen %s az elsődleges fiókja?</string>
+    <string name="logout_account_question">Kijelentkezés %s?</string>
+    <string name="remove_account_question">Eltávolítja ezt: %s?</string>
+    <string name="signed_in_with">Bejelentkezve ezzel: %s</string>
+    <string name="signed_in_with_logged_out_from">Kijelentkezett a következőből: %1$s és bejelentkezett: %2$s-vel</string>
+    <string name="connect_account_limit_title">Korlát elérve</string>
+    <string name="connect_account_limit_subtitle">Nem adhat hozzá újabb ingyenes ProtonMail fiókot. Csak egy ingyenes ProtonMail fiók adható hozzá. Kérjük, jelentkezzen ki másik ingyenes fiókjáról, vagy frissítse egyik ingyenes fiókját fizetős fiókra.</string>
+    <string name="switch_accounts_question">Fiók váltása?</string>
+    <string name="switch_to_account">Váltás %s-ra</string>
+    <string name="login_failure_missing_keys">A hozzáadni kívánt fiók nem rendelkezik generált kulccsal. Kérjük, jelölje meg ezt a fiókot elsődleges fiókként, vagy jelentkezzen be a webes felületen, hogy kulcsot generálhasson, majd adja hozzá fiókját \"további fiókként\" az alkalmazáshoz.</string>
+    <!-- endregion -->
+</resources>
