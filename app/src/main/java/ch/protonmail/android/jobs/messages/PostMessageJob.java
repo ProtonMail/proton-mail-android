@@ -139,17 +139,17 @@ public class PostMessageJob extends ProtonMailBaseJob {
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
         if (message != null) {
-            // region sentry
-            EventBuilder eventBuilder = new EventBuilder()
-                    .withTag(SENDING_FAILED_TAG, getAppVersion())
-                    .withTag(SENDING_FAILED_REASON_TAG, String.valueOf(cancelReason))
-                    .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-                    .withTag("LOCATION", "CANCEL - NOTNULL")
-                    .withTag("DBID", String.valueOf(mMessageDbId))
-                    .withTag("EXCEPTION", (throwable != null) ? throwable.getMessage() : "NO EXCEPTION");
-            StringBuilder exceptionStringBuilder = getExceptionStringBuilder(throwable);
-            Sentry.capture(eventBuilder.withMessage(exceptionStringBuilder.toString()).build());
-            // endregion
+            if (!BuildConfig.DEBUG) {
+                EventBuilder eventBuilder = new EventBuilder()
+                        .withTag(SENDING_FAILED_TAG, getAppVersion())
+                        .withTag(SENDING_FAILED_REASON_TAG, String.valueOf(cancelReason))
+                        .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
+                        .withTag("LOCATION", "CANCEL - NOTNULL")
+                        .withTag("DBID", String.valueOf(mMessageDbId))
+                        .withTag("EXCEPTION", (throwable != null) ? throwable.getMessage() : "NO EXCEPTION");
+                StringBuilder exceptionStringBuilder = getExceptionStringBuilder(throwable);
+                Sentry.capture(eventBuilder.withMessage(exceptionStringBuilder.toString()).build());
+            }
             message.setLocation(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue());
             message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
             message.setTime(ServerTime.currentTimeMillis() / 1000);
@@ -160,17 +160,17 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 pendingActionsDatabase.insertPendingForSend(pendingSend);
             }
         } else {
-            // region sentry
-            EventBuilder eventBuilder = new EventBuilder()
-                    .withTag(SENDING_FAILED_TAG, getAppVersion())
-                    .withTag(SENDING_FAILED_REASON_TAG, String.valueOf(cancelReason))
-                    .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-                    .withTag("LOCATION", "CANCEL - NULL")
-                    .withTag("EXCEPTION", (throwable != null) ? throwable.getMessage() : "NO EXCEPTION")
-                    .withTag("DBID", String.valueOf(mMessageDbId));
-            StringBuilder exceptionStringBuilder = getExceptionStringBuilder(throwable);
-            Sentry.capture(eventBuilder.withMessage(exceptionStringBuilder.toString()).build());
-            // endregion
+            if (!BuildConfig.DEBUG) {
+                EventBuilder eventBuilder = new EventBuilder()
+                        .withTag(SENDING_FAILED_TAG, getAppVersion())
+                        .withTag(SENDING_FAILED_REASON_TAG, String.valueOf(cancelReason))
+                        .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
+                        .withTag("LOCATION", "CANCEL - NULL")
+                        .withTag("EXCEPTION", (throwable != null) ? throwable.getMessage() : "NO EXCEPTION")
+                        .withTag("DBID", String.valueOf(mMessageDbId));
+                StringBuilder exceptionStringBuilder = getExceptionStringBuilder(throwable);
+                Sentry.capture(eventBuilder.withMessage(exceptionStringBuilder.toString()).build());
+            }
         }
 
         sendErrorSending(null);
@@ -185,13 +185,15 @@ public class PostMessageJob extends ProtonMailBaseJob {
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         if (mMessageDbId == null) {
             Exception e = new RuntimeException("Message id is null");
-            EventBuilder eventBuilder = new EventBuilder()
-                    .withMessage(getExceptionStringBuilder(e).toString());
-            Sentry.capture(eventBuilder.build());
+            if (!BuildConfig.DEBUG)  {
+                EventBuilder eventBuilder = new EventBuilder()
+                        .withMessage(getExceptionStringBuilder(e).toString());
+                Sentry.capture(eventBuilder.build());
+            }
             throw e;
         }
         Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
-        if (message == null) {
+        if (!BuildConfig.DEBUG && message == null) {
             EventBuilder eventBuilder = new EventBuilder()
                     .withTag(SENDING_FAILED_TAG, getAppVersion())
                     .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
@@ -234,22 +236,26 @@ public class PostMessageJob extends ProtonMailBaseJob {
             uploadAttachments(message, crypto, mailSettings);
             fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
         } catch (Exception e) {
-            if (message != null) {
-                EventBuilder eventBuilder = new EventBuilder()
-                        .withTag(SENDING_FAILED_TAG, getAppVersion())
-                        .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-                        .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(mUserManager.getUsername())))
-                        .withTag("LOC", "ONRUN - 1")
-                        .withMessage(getExceptionStringBuilder(e).toString());
-                Sentry.capture(eventBuilder.build());
+            if (BuildConfig.DEBUG) {
+                throw e;
             } else {
-                EventBuilder eventBuilder = new EventBuilder()
-                        .withTag(SENDING_FAILED_TAG, getAppVersion())
-                        .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-                        .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(mUserManager.getUsername())))
-                        .withTag("LOC", "ONRUN - 2")
-                        .withMessage(getExceptionStringBuilder(e).toString());
-                Sentry.capture(eventBuilder.build());
+                if (message != null) {
+                    EventBuilder eventBuilder = new EventBuilder()
+                            .withTag(SENDING_FAILED_TAG, getAppVersion())
+                            .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
+                            .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(mUserManager.getUsername())))
+                            .withTag("LOC", "ONRUN - 1")
+                            .withMessage(getExceptionStringBuilder(e).toString());
+                    Sentry.capture(eventBuilder.build());
+                } else {
+                    EventBuilder eventBuilder = new EventBuilder()
+                            .withTag(SENDING_FAILED_TAG, getAppVersion())
+                            .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
+                            .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(mUserManager.getUsername())))
+                            .withTag("LOC", "ONRUN - 2")
+                            .withMessage(getExceptionStringBuilder(e).toString());
+                    Sentry.capture(eventBuilder.build());
+                }
             }
         }
 
@@ -340,15 +346,19 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 .withTag("LOC", "ONRUNPOSTMESSAGE");
 
         if (draftResponse == null) {
-            eventBuilder.withMessage("Draft response is null");
-            Sentry.capture(eventBuilder.build());
+            if (!BuildConfig.DEBUG) {
+                eventBuilder.withMessage("Draft response is null");
+                Sentry.capture(eventBuilder.build());
+            }
             return;
         }
 
         if (draftResponse.getCode() != RESPONSE_CODE_OK) {
-            eventBuilder.withMessage(draftResponse.getCode() + " " + draftResponse.getError());
-            Sentry.capture(eventBuilder.build());
-            sendErrorSending(draftResponse.getError());
+            if (!BuildConfig.DEBUG) {
+                eventBuilder.withMessage(draftResponse.getCode() + " " + draftResponse.getError());
+                Sentry.capture(eventBuilder.build());
+                sendErrorSending(draftResponse.getError());
+            }
             return;
         }
 
@@ -395,7 +405,9 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     verifyIntent.putExtra(VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID, message.getAddressID());
                     ProtonMailApplication.getApplication().sendOrderedBroadcast(verifyIntent, null);
                 } else {
-                    Sentry.capture(eventBuilder.withMessage(builder.toString()).build());
+                    if (!BuildConfig.DEBUG) {
+                        Sentry.capture(eventBuilder.withMessage(builder.toString()).build());
+                    }
                     sendErrorSending(errorSending);
                     return;
                 }

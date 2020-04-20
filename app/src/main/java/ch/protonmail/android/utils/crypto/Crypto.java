@@ -20,8 +20,6 @@ package ch.protonmail.android.utils.crypto;
 
 import android.text.TextUtils;
 
-import android.os.Build;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -41,7 +39,6 @@ import ch.protonmail.android.api.models.KeyExtensionsKt;
 import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.core.UserManager;
-import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
 import timber.log.Timber;
 

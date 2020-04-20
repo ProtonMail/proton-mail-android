@@ -1,5 +1,6 @@
 import Plugin
 import Project
+import Module
 
 apply plugin: Plugin.android_application.id
 apply plugin: Plugin.kotlin_android.id
@@ -179,7 +180,7 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
 
-
+        // Sensitive data
         buildConfigField "String", "SENTRY_DNS_1", "\"${privateProperties.sentryDNS_1}\""
         buildConfigField "String", "SENTRY_DNS_2", "\"${privateProperties.sentryDNS_2}\""
         buildConfigField "String", "SAFETY_NET_API_KEY", "\"${privateProperties.safetyNet_apiKey}\""
@@ -188,21 +189,9 @@ android {
         buildConfigField "String", "H_ENDPOINT_URL", "\"${privateProperties.h_endpointUrl}\""
         buildConfigField "String", "PM_CLIENT_SECRET", "\"${privateProperties.pm_clientSecret}\""
 
-        buildConfigField "boolean", "LOGOUT_WHEN_UPDATE", "false" // master key
-        buildConfigField "boolean", "LOGOUT_EVERY_PREVIOUS_VERSION", "false"
-        buildConfigField "int[]", "LOGOUT_PREVIOUS_VERSIONS", "{}"
-        buildConfigField "int", "SETTINGS_UPDATED_VERSION", "${versionCode}"
         buildConfigField "boolean", "FETCH_FULL_CONTACTS", "true"
-        buildConfigField "boolean", "CLEAR_MESSAGES_TABLE", "false"
-        buildConfigField "boolean", "FETCH_USER_INFO", "true"
         buildConfigField "boolean", "REREGISTER_FOR_PUSH", "true"
-        buildConfigField "boolean", "REFETCH_MAIL_SETTINGS", "true"
-        buildConfigField "boolean", "MIGRATE_TO_1_12_3", "false"
-        buildConfigField "boolean", "MIGRATE_TO_703", "false"
-        buildConfigField "boolean", "MIGRATE_MULTI_USER", "true"
-        buildConfigField "int", "MIGRATE_MULTI_USER_MIN_VERSION", "652"
         buildConfigField "int", "ROOM_DB_VERSION", "${databaseVersion}"
-        buildConfigField "boolean", "MIGRATE_VALUES_TO_USER_SPECIFIC_SHARED_PREFERENCES", "true"
 
         javaCompileOptions {
             annotationProcessorOptions {

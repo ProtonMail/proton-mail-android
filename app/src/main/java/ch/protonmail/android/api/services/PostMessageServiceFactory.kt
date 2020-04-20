@@ -19,7 +19,6 @@
 package ch.protonmail.android.api.services
 
 import android.content.Context
-import android.os.Build
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.room.messages.Message
@@ -28,8 +27,6 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingDraft
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_DEVICE_TAG
-import ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_TAG
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -42,13 +39,9 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.Crypto
 import com.birbit.android.jobqueue.JobManager
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import timber.log.Timber
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
 
 class PostMessageServiceFactory {

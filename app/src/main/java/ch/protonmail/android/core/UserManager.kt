@@ -28,12 +28,7 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
-import ch.protonmail.android.api.models.LoginInfoResponse
-import ch.protonmail.android.api.models.LoginResponse
-import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.UserSettings
+import ch.protonmail.android.api.models.*
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
@@ -44,8 +39,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.squareup.otto.Produce
-import org.apache.commons.lang3.ArrayUtils
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -291,6 +285,8 @@ class UserManager(
 
     /**
      * Do not instantiate on Main thread!
+     *
+     * @see MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC
      */
     init {
         app.appComponent.inject(this)
@@ -301,7 +297,9 @@ class UserManager(
         // and if every single previous version should be force logged out
         // or any specific previous version should be logged out
         if (previousVersion != currentAppVersion) {
-            if (BuildConfig.LOGOUT_WHEN_UPDATE && (BuildConfig.LOGOUT_EVERY_PREVIOUS_VERSION || ArrayUtils.contains(BuildConfig.LOGOUT_PREVIOUS_VERSIONS, previousVersion))) {
+
+            // Removed check for updates where we need to logout as it was always false. See doc ref in method header
+            if (false) {
                 val pin = mailboxPin
                 logoutOffline()
                 savePin(pin)

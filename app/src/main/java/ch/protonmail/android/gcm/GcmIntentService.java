@@ -34,6 +34,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.api.ProtonMailApi;
 import ch.protonmail.android.api.local.SnoozeSettings;
@@ -149,9 +150,11 @@ public class GcmIntentService extends IntentService {
                     }
                 } catch (Exception e) {
                     // can not deliver notification
-                    EventBuilder eventBuilder = new EventBuilder().withTag("GCM_MU", TextUtils.isEmpty(notificationUsername) ? "EMPTY" : "NOT_EMPTY");
-                    Sentry.capture(eventBuilder);
-                    Sentry.capture(e);
+                    if (!BuildConfig.DEBUG) {
+                        EventBuilder eventBuilder = new EventBuilder().withTag("GCM_MU", TextUtils.isEmpty(notificationUsername) ? "EMPTY" : "NOT_EMPTY");
+                        Sentry.capture(eventBuilder);
+                        Sentry.capture(e);
+                    }
                 }
 
                 if (notificationData == null || messageData == null) {

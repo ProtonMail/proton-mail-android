@@ -51,8 +51,6 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -209,8 +207,6 @@ public class ProtonMailApplication extends MultiDexApplication implements HasAct
         ViewStateStoreConfig.INSTANCE
                 .setErrorStateGenerator(ErrorStateGeneratorsKt.getErrorStateGenerator());
 
-        // Sentry will look for uncaught exceptions from previous runs and send them
-        Sentry.init(String.format(getString(R.string.sentry_url), BuildConfig.SENTRY_DNS_1, BuildConfig.SENTRY_DNS_2), new AndroidSentryClientFactory(this));
         contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
 
@@ -550,6 +546,9 @@ public class ProtonMailApplication extends MultiDexApplication implements HasAct
         }
     }
 
+    /**
+     * {@link MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC}
+     */
     private void checkForUpdateAndClearCache() {
         final SharedPreferences prefs = getDefaultSharedPreferences();
         int currentAppVersion = AppUtil.getAppVersionCode(this);
@@ -564,7 +563,7 @@ public class ProtonMailApplication extends MultiDexApplication implements HasAct
                 mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
             }
 
-            if (BuildConfig.CLEAR_MESSAGES_TABLE) {
+            if (BuildConfig.DEBUG) {
                 new RefreshMessagesAndAttachments(messagesDatabase).execute();
             }
             if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn()) {
@@ -580,12 +579,14 @@ public class ProtonMailApplication extends MultiDexApplication implements HasAct
                 // if this version requires the user to be logged out when updatingAttachmentMetadataDatabase
                 // and if every single previous version should be force logged out
                 // or any specific previous version should be logged out
-                if (BuildConfig.LOGOUT_WHEN_UPDATE && (BuildConfig.LOGOUT_EVERY_PREVIOUS_VERSION || ArrayUtils.contains(BuildConfig.LOGOUT_PREVIOUS_VERSIONS, previousVersion))) {
+
+                // Removed check for updates where we need to logout as it was always false. See doc ref in method header
+                if (false) {
                     mUserManager.logoutOffline();
                     AppUtil.deleteDatabases(this, mUserManager.getUsername());
                     AppUtil.deletePrefs();
                 }
-                if (BuildConfig.MIGRATE_TO_1_12_3) {
+                if (BuildConfig.DEBUG) {
                     List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
                     long elapsedTime = SystemClock.elapsedRealtime();
                     for (String userName : loggedInUsers) {
@@ -597,7 +598,7 @@ public class ProtonMailApplication extends MultiDexApplication implements HasAct
                         user.setLastInteraction(elapsedTime);
                     }
                 }
-                if (BuildConfig.MIGRATE_TO_703) {
+                if (BuildConfig.DEBUG) {
                     AlarmReceiver alarmReceiver = new AlarmReceiver();
                     alarmReceiver.cancelAlarm(this);
                     startJobManager();
@@ -624,20 +625,18 @@ public class ProtonMailApplication extends MultiDexApplication implements HasAct
                         }
                     }
                 }
-                if (BuildConfig.MIGRATE_VALUES_TO_USER_SPECIFIC_SHARED_PREFERENCES) {
-                    SharedPreferences secureSharedPreferences = getSecureSharedPreferences(mUserManager.getUsername());
-                    SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
+                SharedPreferences secureSharedPreferences = getSecureSharedPreferences(mUserManager.getUsername());
+                SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
 
-                    if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
-                        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING,
-                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)).apply();
-                        defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_WARNING).apply();
-                    }
-                    if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_REACHED)) {
-                        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED,
-                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)).apply();
-                        defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
-                    }
+                if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
+                    secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING,
+                            defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)).apply();
+                    defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_WARNING).apply();
+                }
+                if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_REACHED)) {
+                    secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED,
+                            defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)).apply();
+                    defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
                 }
             }
         } else {

@@ -20,8 +20,8 @@ package ch.protonmail.android.core
 
 import android.content.Context
 import android.text.TextUtils
-import ch.protonmail.android.R
 
+import ch.protonmail.android.R
 
 object Constants {
 

@@ -138,7 +138,7 @@ abstract class MessagesDatabase {
 								preservedAtt.setMessage(message)
 							}
 						}
-						preservedAtt.isUploaded = it.isUploaded
+                        preservedAtt.isUploaded = it.isUploaded
                         preservedAtt.isUploading = it.isUploading
 					}
 				} else {

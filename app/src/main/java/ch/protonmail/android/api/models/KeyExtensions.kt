@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.models
 
 import android.os.Build
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
@@ -38,6 +39,7 @@ import timber.log.Timber
  *
  * @return null if we couldn't determine passphrase for some reason
  */
+// TODO: Better logging and move direct Sentry call to Timber
 fun Keys.getKeyPassphrase(openPgp: OpenPGP, userKeys: List<Keys>, userKeysPassphrase: ByteArray): ByteArray? {
     if (this.Token.isNullOrBlank() || this.Signature.isNullOrBlank()) {
         return userKeysPassphrase
@@ -52,11 +54,19 @@ fun Keys.getKeyPassphrase(openPgp: OpenPGP, userKeys: List<Keys>, userKeysPassph
             } catch (e: Exception) {
                 Timber.d(e, "exception decrypting AddressKey's Token")
             }
-            val message = "failed getting passphrase for key $id, primary = $isPrimary, signature.isNullOrBlank = ${signature.isNullOrBlank()}, token.isNullOrBlank = ${token.isNullOrBlank()}, activation.isNullOrBlank = ${activation.isNullOrBlank()}"
-            val eventBuilder = EventBuilder()
+            if (!BuildConfig.DEBUG) {
+                val message = """
+                    failed getting passphrase for key $id, 
+                    primary = $isPrimary, 
+                    signature = ${signature}, 
+                    token = ${token}, 
+                    activation = $activation
+                """.trimIndent()
+                val eventBuilder = EventBuilder()
                     .withTag(Constants.LogTags.SENDING_FAILED_TAG, AppUtil.getAppVersion())
                     .withTag(Constants.LogTags.SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-            Sentry.capture(eventBuilder.withMessage(message).build())
+                Sentry.capture(eventBuilder.withMessage(message).build())
+            }
         }
 
         Timber.e("failed getting passphrase for key %s, primary = %s, signature.isNullOrBlank = %s, token.isNullOrBlank = %s, activation.isNullOrBlank = %s",
@@ -71,6 +81,7 @@ fun Keys.getKeyPassphrase(openPgp: OpenPGP, userKeys: List<Keys>, userKeysPassph
  *
  * @return null if we couldn't determine passphrase for some reason
  */
+// TODO: Better logging and move direct Sentry call to Timber
 fun Keys.getActivationToken(openPgp: OpenPGP, userKeys: List<Keys>, userKeysPassphrase: ByteArray): String? {
 
     if (!this.Activation.isNullOrBlank()) {
@@ -83,11 +94,18 @@ fun Keys.getActivationToken(openPgp: OpenPGP, userKeys: List<Keys>, userKeysPass
             } catch (e: Exception) {
                 Timber.d(e, "exception decrypting Activation Token")
             }
-            val message = "failed obtaining activation for key $id, primary = ${isPrimary}, signature.isNullOrBlank = ${signature.isNullOrBlank()}, token.isNullOrBlank = ${token.isNullOrBlank()}, activation.isNullOrBlank = ${activation.isNullOrBlank()}"
-            val eventBuilder = EventBuilder()
+            if (!BuildConfig.DEBUG) {
+                val message = """
+                    failed obtaining activation for key $id, primary = ${isPrimary}, 
+                    signature = ${signature}, 
+                    token${token}, 
+                    activation = $activation
+                """.trimIndent()
+                val eventBuilder = EventBuilder()
                     .withTag(Constants.LogTags.SENDING_FAILED_TAG, AppUtil.getAppVersion())
                     .withTag(Constants.LogTags.SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-            Sentry.capture(eventBuilder.withMessage(message).build())
+                Sentry.capture(eventBuilder.withMessage(message).build())
+            }
         }
 
         Timber.e("failed obtaining activation for key %s, primary = %s, signature.isNullOrBlank = %s, token.isNullOrBlank = %s, activation.isNullOrBlank = %s",
