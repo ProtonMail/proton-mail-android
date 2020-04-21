@@ -59,7 +59,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:src="@drawable/inbox_check_selector"
-                android:tint="@color/dark_purple"
+                app:tint="@color/dark_purple"
 				tools:visibility="gone"
 			/>
 
@@ -195,8 +195,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 app:layout_constraintTop_toBottomOf="@+id/messageTitleContainerLinearLayout"
                 app:layout_constraintLeft_toRightOf="@+id/checkboxImageView"
                 app:layout_constraintRight_toRightOf="parent"
-                android:layout_below="@id/message_title_container"
-                android:layout_toEndOf="@id/checkbox"
                 android:gravity="top"
                 android:orientation="horizontal">
 
