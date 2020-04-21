@@ -30,6 +30,9 @@ installPrivateConfig() {
     local configBranch='config-files';
     local outputDir='privateConfig';
     local repository="$(git remote get-url origin)";
+    copyFiles() {
+      cp "$outputDir/sentry.properties" .
+    }
     # The branch does not exist for the public repository
     if [[ "$repository" =~ github\.com ]]; then
         return 0
@@ -39,10 +42,12 @@ installPrivateConfig() {
         cd "$outputDir";
         git pull --quiet;
         cd - > /dev/null
+        copyFiles
         return 0
     fi;
     echo '[run] install configuration'
     git clone "$repository" --quiet --depth 1 --branch "$configBranch"  "$outputDir"
+    copyFiles
 }
 
 installPrivateConfig

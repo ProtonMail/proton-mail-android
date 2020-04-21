@@ -34,3 +34,4 @@ app/schemas/
 
 # contact the lead to get access to these files
 privateConfig
+sentry.properties
