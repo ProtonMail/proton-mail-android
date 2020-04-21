@@ -11,21 +11,21 @@ See [LICENSE](LICENSE) file
 
 ## Setup
 
-The most straightforward way to build and run the project is by following these steps: 
+The most straightforward way to build and run this application is to:
 
 - Install Android Studio: https://developer.android.com/studio/install
-- Clone the repository:
-	- either by using the `Project from version control` in Android Studio or 
-	- using the `git clone` command and importing it into Android Studio
-- Build and run the project directly from Android Studio
+- Clone the repository. You have two options:
+	- Use the `Project from version control` in Android Studio, or
+	- Use the `git clone` command and import it into Android Studio
+- Build and run the app directly in Android Studio
 
-Alternatively, if you want to build directly from the command line (or using a different IDE, etc.), you will first need to install the command line tools from: https://developer.android.com/studio#cmdline-tools and install the SDK by using the `sdkmanager` tool. After cloning the repository with `git clone` you will need to edit the `local.properties` file so that it points to the location of the SDK, which for the various operating systems most usually is:
+Alternatively, if you want to build the app directly from the command line (or using a different IDE, etc.), you will first need to install the command line tools from: https://developer.android.com/studio#cmdline-tools. Then you will need to install the SDK using the `sdkmanager` tool. After cloning the repository with `git clone` you will need to edit the `local.properties` file so that it points to the location of the SDK. Depending on which operating systems you use, the location of the SDK is usually:
 
 - Windows: `C:\Users\<username>\AppData\Local\Android\sdk`
 - MacOS: `/Users/<username>/Library/Android/Sdk/`
 - Linux: `/Users/<username>/Android/Sdk/`
 
-Then, after moving into the project's root directory, you can simply run:
+Then, go to the app’s root directory in the command line tool and run:
 
 - `./gradlew assembleBetaDebug`
 - `adb install ./app/build/outputs/apk/beta/debug/ProtonMail-Android-1.XX.X-beta-debug.apk`
