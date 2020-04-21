@@ -1,0 +1,148 @@
+default:
+  image: gitlab.protontech.ch:4567/android/mail/proton-mail-android:android-mail
+
+before_script:
+  - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
+  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod +x ./gradlew
+  - export VERSION_NAME=$(grep -E "versionName " app/build.gradle | awk '{print $3}' | sed s/\"//g)
+  - export VERSION_CODE=$(grep -E "versionCode " app/build.gradle | awk '{print $3}' | sed s/\"//g)
+  - echo "App version name ${VERSION_NAME}"
+  - echo "App version name ${VERSION_CODE}"
+cache:
+  paths:
+    - .gradle/caches
+    - app/build/
+variables:
+  ANDROID_COMPILE_SDK: "28"
+  ANDROID_BUILD_TOOLS: "28.0.3"
+  ANDROID_SDK_TOOLS:   "26.1.1"
+
+stages:
+  - analyze
+  - build
+  - test
+  - bot-i18n
+  - bot-release
+
+#####################
+detekt analysis:
+  stage: analyze
+  tags:
+    - android
+  script:
+    - ./gradlew detekt
+  artifacts:
+    reports:
+        codequality: app/build/reports/detekt.json
+
+build debug:
+  stage: build
+  tags:
+    #    - android
+    - experimental
+  script:
+    - ./gradlew assembleBetaDebug
+    - ./gradlew assembleBetaDebugAndroidTest
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - app/build/outputs/apk
+
+build prerelease:
+  stage: build
+  only:
+    - prerelease
+  tags:
+    - android
+  script:
+    - ./gradlew assemblePlaystoreReleasePlayStore
+  artifacts:
+    expire_in: 3 week
+    paths:
+      - app/build/outputs
+
+build release:
+  stage: build
+  only:
+    - releases
+  tags:
+    - android
+  script:
+    - ./gradlew assemblePlaystoreReleasePlayStore
+  artifacts:
+    expire_in: 4 week
+    paths:
+      - app/build/outputs
+
+
+unit tests:
+  stage: test
+  tags:
+    #    - android
+    - experimental
+  script:
+    - ./gradlew test
+
+#firebase tests:
+#  stage: test
+#  script:
+#    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+#    - mkdir -p /opt
+#    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+#    - /opt/google-cloud-sdk/install.sh --quiet
+#    - source /opt/google-cloud-sdk/path.bash.inc
+#
+#    - gcloud components update
+#    - echo $CLOUD_PROJECT_ID
+#    - gcloud config set project $CLOUD_PROJECT_ID
+#    - echo $SERVICE_ACCOUNT > /tmp/service-account.json
+#    - gcloud auth activate-service-account --key-file /tmp/service-account.json
+#    - gcloud firebase test android run
+#      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
+#      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+#      --device model=Pixel2,version=28
+
+include:
+  - project: 'translations/generator'
+    ref: master
+    file: '/jobs/sync-crowdin.gitlab-ci.yml'
+
+  - project: 'translations/generator'
+    ref: master
+    file: '/jobs/commit-locales.gitlab-ci.yml'
+
+  - project: 'agarroux/publish-github'
+    ref: master
+    file: '/jobs/release.gitlab-ci.yml'
+
+i18n-sync-crowdin:
+  stage: bot-i18n
+  variables:
+      I18N_SYNC_CROWDIN_PROJECT: 'android-mail'
+  extends: .i18n-sync-crowdin-shared
+
+i18n-commit-locales:
+  stage: bot-i18n
+  variables:
+      I18N_COMMIT_CROWDIN_PROJECT: 'android-mail'
+  extends: .i18n-commit-locales-shared
+
+
+release-publish-github:
+  stage: bot-release
+  when: 'manual'
+  variables:
+    RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
+    RELEASE_SYNC_TO_BRANCH: 'release'
+    RELEASE_SYNC_FROM_BRANCH: 'release'
+  extends: .release-sync-commit-shared
+
+release-publish-github-tags:
+  stage: bot-release
+  variables:
+    RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
+    RELEASE_SYNC_TO_BRANCH: 'release'
+    RELEASE_SYNC_FROM_BRANCH: 'release'
+  extends: .release-sync-tags-shared
