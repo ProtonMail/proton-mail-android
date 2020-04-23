@@ -30,11 +30,11 @@ import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.extensions.ifNull
 import ch.protonmail.android.utils.extensions.ifNullElse
 import com.birbit.android.jobqueue.JobManager
 import com.google.gson.Gson
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -102,7 +102,7 @@ class EventManager {
                 backupLastEvent(handler.username, Gson().toJson(response))
                 handleEvents(handler, response)
                 removeLastEvent(handler.username)
-                return if (lastEvent == null) response.hasMore() else true
+                return response.hasMore()
             } else {
                 throw ApiException(response, response.error)
             }
@@ -195,7 +195,11 @@ class EventManager {
     private fun backupLastEvent(username: String, event: String) {
         val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
         recoverLastEvent(username).ifNull {
-            prefs.edit().putString(PREF_LATEST_EVENT, event).apply()
+            try {
+                prefs.edit().putString(PREF_LATEST_EVENT, event).apply()
+            } catch (exc: Exception) {
+                Timber.e(exc, "Event could not be saved")
+            }
         }
     }
 

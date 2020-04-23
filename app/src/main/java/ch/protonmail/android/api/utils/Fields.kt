@@ -308,7 +308,7 @@ object Fields {
     object Events {
         const val EVENT_ID = "EventID"
         const val REFRESH = "Refresh"
-        const val MORE = "MORE"
+        const val MORE = "More"
         const val USED_SPACE = "UsedSpace"
         const val MESSAGES = "Messages"
         const val CONTACTS = "Contacts"
