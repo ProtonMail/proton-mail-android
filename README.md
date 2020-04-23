@@ -23,7 +23,7 @@ Alternatively, if you want to build the app directly from the command line (or u
 
 - Windows: `C:\Users\<username>\AppData\Local\Android\sdk`
 - MacOS: `/Users/<username>/Library/Android/Sdk/`
-- Linux: `/Users/<username>/Android/Sdk/`
+- Linux: `/home/<username>/Android/Sdk`
 
 Then, go to the app’s root directory in the command line tool and run:
 
