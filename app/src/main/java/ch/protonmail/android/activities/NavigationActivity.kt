@@ -418,9 +418,6 @@ abstract class NavigationActivity : BaseActivity(),
 
     /** Creates a properly formatted List for the Drawer and deliver to the Adapter  */
     fun refreshDrawer() {
-        if (BuildConfig.DEBUG) {
-            Timber.tag("523").d("staticDrawerItems is null: ${staticDrawerItems == null}; drawerLabels is null: ${drawerLabels == null}")
-        }
         drawerAdapter.items = staticDrawerItems.setLabels(drawerLabels)
     }
 

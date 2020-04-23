@@ -59,57 +59,53 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
 
     @Override
     public void onAdded() {
-        try {
-            final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion
-                    .getInstance(getApplicationContext())
-                    .getDatabase();
-            int totalUnread = 0;
-            for (String id : mMessageIds) {
-                Message message = messageDetailsRepository.findMessageById(id);
-                if (message != null) {
-                    if (!message.isRead()) {
-                        UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());
-                        if (unreadLocationCounter != null) {
-                            unreadLocationCounter.decrement();
-                            countersDatabase.insertUnreadLocation(unreadLocationCounter);
-                        }
-                        totalUnread++;
+        final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion
+                .getInstance(getApplicationContext())
+                .getDatabase();
+        int totalUnread = 0;
+        for (String id : mMessageIds) {
+            Message message = messageDetailsRepository.findMessageById(id);
+            if (message != null) {
+                if (!message.isRead()) {
+                    UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());
+                    if (unreadLocationCounter != null) {
+                        unreadLocationCounter.decrement();
+                        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+                    }
+                    totalUnread++;
+                }
+                if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_SENT) {
+                    message.addLabels(Arrays.asList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
+                } else {
+                    if (!TextUtils.isEmpty(mLabelId)) {
+                        message.removeLabels(Arrays.asList(mLabelId));
                     }
                     if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_SENT) {
-                        message.addLabels(Arrays.asList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
+                        message.setLocation(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue());
+                        message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
                     } else {
-                        if (!TextUtils.isEmpty(mLabelId)) {
-                            message.removeLabels(Arrays.asList(mLabelId));
-                        }
-                        if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_SENT) {
-                            message.setLocation(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue());
-                            message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
-                        } else {
-                            message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
-                        }
+                        message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
                     }
-                    if (mFolderIds != null) {
-                        for (String folderId : mFolderIds) {
-                            if (!TextUtils.isEmpty(folderId)) {
-                                message.removeLabels(Arrays.asList(folderId));
-                            }
-                        }
-                    }
-                    messageDetailsRepository.saveMessageInDB(message);
                 }
+                if (mFolderIds != null) {
+                    for (String folderId : mFolderIds) {
+                        if (!TextUtils.isEmpty(folderId)) {
+                            message.removeLabels(Arrays.asList(folderId));
+                        }
+                    }
+                }
+                messageDetailsRepository.saveMessageInDB(message);
             }
-
-            UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
-            if (unreadLocationCounter == null) {
-                return;
-            }
-            unreadLocationCounter.increment(totalUnread);
-            countersDatabase.insertUnreadLocation(unreadLocationCounter);
-
-            AppUtil.postEventOnUi(new RefreshDrawerEvent());
-        } catch (Exception exc) {
-            Timber.tag("523").e(exc, "PostTrashJobV2 threw exception in onAdded");
         }
+
+        UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
+        if (unreadLocationCounter == null) {
+            return;
+        }
+        unreadLocationCounter.increment(totalUnread);
+        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+
+        AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
     @Override

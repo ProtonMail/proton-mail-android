@@ -728,34 +728,30 @@ public class MailboxActivity extends NavigationActivity implements
 
     @Override
     protected void onResume() {
-        try {
-            super.onResume();
-            if (!mUserManager.isLoggedIn()) {
-                return;
-            }
-            reloadMessageCounts();
-            registerGcmReceiver();
-            registerHumanVerificationReceiver();
-            checkDelinquency();
-            mNoMessagesRefreshLayout.setVisibility(View.GONE);
-            if (!mNetworkUtil.isConnectedAndHasConnectivity(this)) {
-                showNoConnSnack();
-            }
-
-            checkForDraftedMessages();
-            final Constants.MessageLocationType mailboxLocation = mMailboxLocation.getValue();
-            if (mailboxLocation == Constants.MessageLocationType.INBOX) {
-                AppUtil.clearNotifications(this, mUserManager.getUsername());
-            }
-            if (mailboxLocation == Constants.MessageLocationType.ALL_DRAFT || mailboxLocation == Constants.MessageLocationType.DRAFT) {
-                AppUtil.clearSendingFailedNotifications(this, mUserManager.getUsername());
-            }
-
-            setUpDrawer();
-            closeDrawer(true);
-        } catch (Exception exc) {
-            Timber.tag("523").e(exc, "onResume threw an exception in MailboxActivity");
+        super.onResume();
+        if (!mUserManager.isLoggedIn()) {
+            return;
         }
+        reloadMessageCounts();
+        registerGcmReceiver();
+        registerHumanVerificationReceiver();
+        checkDelinquency();
+        mNoMessagesRefreshLayout.setVisibility(View.GONE);
+        if (!mNetworkUtil.isConnectedAndHasConnectivity(this)) {
+            showNoConnSnack();
+        }
+
+        checkForDraftedMessages();
+        final Constants.MessageLocationType mailboxLocation = mMailboxLocation.getValue();
+        if (mailboxLocation == Constants.MessageLocationType.INBOX) {
+            AppUtil.clearNotifications(this, mUserManager.getUsername());
+        }
+        if (mailboxLocation == Constants.MessageLocationType.ALL_DRAFT || mailboxLocation == Constants.MessageLocationType.DRAFT) {
+            AppUtil.clearSendingFailedNotifications(this, mUserManager.getUsername());
+        }
+
+        setUpDrawer();
+        closeDrawer(true);
     }
 
     @Override
@@ -1339,7 +1335,6 @@ public class MailboxActivity extends NavigationActivity implements
 
         switch (menuItemId) {
             case R.id.move_to_trash:
-                Timber.tag("523").d("call PostTrashJobV2 in onActionItemClicked in MailboxActivity; messageIds is null: " + (messageIds == null) + "; mLabelId is null: " + (mLabelId == null));
                 job = new PostTrashJobV2(messageIds, mLabelId);
                 undoSnack = DialogUtils.Companion.showUndoSnackbar(MailboxActivity.this, findViewById(R.id.drawer_layout),
                         getResources().getQuantityString(R.plurals.action_move_to_trash, messageIds.size()), unit -> unit, false);
@@ -1396,7 +1391,6 @@ public class MailboxActivity extends NavigationActivity implements
 
         //TODO refactor to list
         if (menuItemId != R.id.add_label && menuItemId != R.id.add_folder && menuItemId != R.id.delete_message) {
-            Timber.tag("523").d("action mode finish in onActionItemClicked in MailboxActivity; mode is null: " + (mode == null));
             mode.finish();
         }
         return true;
@@ -1571,7 +1565,6 @@ public class MailboxActivity extends NavigationActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Timber.tag("523").d("onActivityResult in MailboxActivity was called with requestCode: " + requestCode + " and resultCode: " + resultCode);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_CODE_TRASH_MESSAGE_DETAILS:
@@ -1719,7 +1712,6 @@ public class MailboxActivity extends NavigationActivity implements
                     intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false);
                 }
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, message.getMessageId());
-                Timber.tag("523").d("startActivityForResult in MailboxActivity to MessageDetailsActivity");
                 mailboxActivity.startActivityForResult(intent, REQUEST_CODE_TRASH_MESSAGE_DETAILS);
             }
         }
@@ -1907,11 +1899,9 @@ public class MailboxActivity extends NavigationActivity implements
             final int swipeActionOrdinal;
             switch (direction) {
                 case ItemTouchHelper.RIGHT:
-                    Timber.tag("523").d("user swiped right; mail settings is null: " + (mUserManager.getMailSettings() == null));
                     swipeActionOrdinal = mUserManager.getMailSettings().getLeftSwipeAction();
                     break;
                 case ItemTouchHelper.LEFT:
-                    Timber.tag("523").d("user swiped left; mail settings is null: " + (mUserManager.getMailSettings() == null));
                     swipeActionOrdinal = mUserManager.getMailSettings().getRightSwipeAction();
                     break;
                 default:
@@ -1960,11 +1950,9 @@ public class MailboxActivity extends NavigationActivity implements
                 if (mMailboxLocation.getValue() == Constants.MessageLocationType.ALL_DRAFT) {
                     layoutId = SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0);
                 } else if (deltaX < 0) {
-                    Timber.tag("523").d("onChildDraw1 in SwipeController in MailboxActivity; mail settings is null: " + (mUserManager.getMailSettings() == null));
                     layoutId = SwipeAction.values()[mUserManager.getMailSettings().getRightSwipeAction()].getActionBackgroundResource(
                             false);
                 } else {
-                    Timber.tag("523").d("onChildDraw2 in SwipeController in MailboxActivity; mail settings is null: " + (mUserManager.getMailSettings() == null));
                     layoutId = SwipeAction.values()[mUserManager.getMailSettings().getLeftSwipeAction()].getActionBackgroundResource(
                             true);
                 }

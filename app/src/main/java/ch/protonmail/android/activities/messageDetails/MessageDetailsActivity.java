@@ -417,7 +417,6 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
                 onBackPressed();
                 return true;
             case R.id.move_to_trash:
-                Timber.tag("523").d("call PostTrashJobV2 in onOptionsItemSelected in MessageDetailsActivity");
                 if (message != null) {
                     job = new PostTrashJobV2(Collections.singletonList(message.getMessageId()), null);
                 } else {
@@ -699,7 +698,6 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
 
     @Override
     public void onBackPressed() {
-        Timber.tag("523").d("onBackPressed was called in MessageDetailsActivity");
         stopEmbeddedImagesTask();
         saveLastInteraction();
         if (messageRecipientUsername != null) {

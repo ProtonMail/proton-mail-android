@@ -49,7 +49,6 @@ public abstract class ProtonMailEndlessJob extends ProtonMailBaseJob {
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
-        Timber.tag("523").e(throwable, "ProtonMailEndlessJob handled an exception in shouldReRunOnThrowable");
         if (throwable instanceof Exception) {
             if (throwable.getCause() instanceof IOException) {
                 shouldReschedule = true;
