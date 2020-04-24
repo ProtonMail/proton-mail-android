@@ -441,7 +441,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Synchronizace příloh</string>
     <string name="processing_attachment">Zpracování přílohy</string>
     <string name="hyperlink_confirmation_dialog_text_html">Chystáte se spustit webový prohlížeč a přejít na&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Chcete pokračovat?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Příště se neptat</string>
+    <string name="dont_ask_again">Příště se neptat</string>
     <string name="none">Žádné</string>
     <string name="changes_affected_after_closing">Změny se projeví až po zavření aplikace</string>
     <plurals name="incorrect_pin_remaining_attempts">

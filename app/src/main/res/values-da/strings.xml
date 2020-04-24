@@ -433,7 +433,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Synkroniserer vedhæftninger</string>
     <string name="processing_attachment">Behandler vedhæftninger</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du er ved at starte webbrowseren og navigere til:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Fortsæt?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Spørg ikke igen</string>
+    <string name="dont_ask_again">Spørg ikke igen</string>
     <string name="none">Ingen</string>
     <string name="changes_affected_after_closing">Ændringer effektueres efter lukning af app\'en</string>
     <plurals name="incorrect_pin_remaining_attempts">

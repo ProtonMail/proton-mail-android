@@ -20,25 +20,25 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">E-MAIL CRIPTAT</string>
-    <string name="secure_email_swiss">E-mail securizat <br/> găzduit în Elveția</string>
+    <string name="secure_email_swiss">E-mail securizat\ngăzduit în Elveția</string>
     <string name="decrypt_mailbox">Decriptare <b>Mesaje</b></string>
     <string name="decrypt">Decriptare</string>
     <string name="user_sign_in">Conectare utilizator</string>
     <string name="two_factor_sign_in">Autentificare cu doi factori</string>
-    <string name="sign_in">Autentificare</string>
+    <string name="sign_in">Conectare</string>
     <string name="sign_out">Deconectare</string>
     <string name="sign_out_question">Sigur doriți să vă deconectați?</string>
     <string name="remember_me_on_device">Ține-mă minte pe acest dispozitiv</string>
     <string name="show_password">Afișare parolă</string>
     <string name="username">Utilizator</string>
-    <string name="password">Parolă</string>
-    <string name="login_password">Parolă de autentificare</string>
+    <string name="password">Parola</string>
+    <string name="login_password">Parola de autentificare</string>
     <string name="mailbox_password">Parolă mesaje</string>
-    <string name="two_factor_code">Cod autentificare conectare cu doi factori</string>
-    <string name="processing_request">Cererea este în curs de procesare</string>
+    <string name="two_factor_code">Cod conectare cu doi factori</string>
+    <string name="processing_request">Solicitarea este în curs de procesare</string>
     <!-- should check for html tag -->
     <string name="need_account_sign_up">Aveți nevoie de un cont? Înscrieți-vă.</string>
-    <string name="need_to_be_logged_in">Nu sunteți autentificat(ă)!</string>
+    <string name="need_to_be_logged_in">Nu sunteți conectat!</string>
     <string name="forgot_password">Ați uitat parola?</string>
     <string name="reset_mailbox_password">RESETARE PAROLĂ MESAJE</string>
     <string name="forgot_mailbox_password">Pentru a reseta parola mesajelor, vă rugăm să folosiți versiunea web a ProtonMail de la protonmail.com</string>
@@ -54,23 +54,23 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_credentials">Date de acreditare nevalide</string>
     <string name="invalid_mailbox_password">Parolă mesaje nevalidă</string>
     <string name="not_signed_up">Nu sunteți înscris(ă) pentru versiunea Beta a aplicației ProtonMail pentru Android</string>
-    <string name="no_network">Nu aveți conexiune</string>
-    <string name="no_network_queued">Nu aveți conexiune, mesaj pus în așteptare</string>
+    <string name="no_network">Nu există conexiune</string>
+    <string name="no_network_queued">Nu există conexiune, mesaj pus în așteptare</string>
     <string name="update_app_title">Actualizare necesară</string>
     <string name="update_app">Nu puteți folosi aplicația ProtonMail înainte de a o actualiza</string>
-    <string name="api_offline_title">IPA din ProtonMail este deconectată</string>
-    <string name="api_offline">ProtonMail este momentan indisponibil. Verificați starea acestuia accesând: https://protonstatus.com sau https://twitter.com/protonmail.</string>
+    <string name="api_offline_title">API-ul ProtonMail nu este funcțional</string>
+    <string name="api_offline">ProtonMail este momentan deconectat, pentru starea curentă verificați: https://twitter.com/protonmail</string>
     <string name="cannot_open">Fișierul nu poate fi deschis</string>
     <string name="downloaded_attachment">Descărcat %s</string>
     <string name="edit_contact_validation">Introduceți un nume și o adresă de e-mail validă</string>
     <string name="contact_saved">Contact salvat</string>
-    <string name="contact_saved_offline">Contact salvat. Va fi sincronizat când o conexiune va fi disponibilă.</string>
+    <string name="contact_saved_offline">Contact salvat, va fi sincronizat când conexiunea va fi disponibilă</string>
     <string name="contact_exist">Adresa de e-mail a contactului există deja</string>
     <string name="invalid_email">Adresă de e-mail nevalidă</string>
     <string name="duplicate_email">Adresa de e-mail este o dublură</string>
     <string name="invalid_code">Codul nu este valid</string>
-    <string name="message_drafted">Trimiterea mesajului a eșuat. Mesajele sunt salvate în folderul Ciorne.</string>
-    <string name="message_drafted_reason">%s nu există.\nNu se poate livra e-mailul.</string>
+    <string name="message_drafted">Trimitere mesaj eșuată. Mesajele sunt salvate în folderul «Ciorne»</string>
+    <string name="message_drafted_reason">%s nu există.\nMesajul nu se poate livra.</string>
     <string name="open_drawer">Deschidere</string>
     <string name="close_drawer">Închidere</string>
     <string name="inbox_option">PRIMITE</string>
@@ -117,17 +117,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_spam">Mutare în «Spam»</string>
     <string name="move_to_inbox">Mutare în «Primite»</string>
     <string name="move_message_to_trash">Mutați mesajul în «Gunoi»?</string>
-    <string name="are_you_sure_empty">Sunteți sigur(ă) că doriți să ștergeți toate mesajele din acest folder?</string>
-    <string name="send">Trimitere</string>
+    <string name="are_you_sure_empty">Sigur doriți să ștergeți toate mesajele din acest folder?</string>
+    <string name="send">Trimite</string>
     <string name="selected">Selectat</string>
     <string name="no_messages">Nu sunt mesaje</string>
     <string name="no_labels">Nu sunt etichete</string>
     <string name="to">Către</string>
     <string name="cc">Cc</string>
-    <string name="bcc">Ca</string>
+    <string name="bcc">Bcc</string>
     <string name="to_prefix">Către:</string>
     <string name="cc_prefix">Cc:</string>
-    <string name="bcc_prefix">Ca:</string>
+    <string name="bcc_prefix">Bcc:</string>
     <string name="from_prefix">De la:</string>
     <string name="date_prefix">Data:</string>
     <string name="expiration_time_prefix">Expiră în</string>
@@ -151,7 +151,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="hours">Ore</string>
     <string name="max_labels_exceeded">Mesajul %1$s nu poate avea mai mult de %2$d etichete.</string>
     <string name="max_labels_selected">%d etichete este maximul permis</string>
-    <string name="max_attachments_reached">S-a atins maximul permis de fișiere atașate unui mesaj.</string>
+    <string name="max_attachments_reached">S-a atins maximum permis de fișiere atașate unui mesaj</string>
     <plurals name="hours_string">
         <item quantity="one">O oră</item>
         <item quantity="few">%d ore</item>
@@ -177,58 +177,60 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="few">\u0020 %d fișiere atașate</item>
         <item quantity="other">\u0020 %d de fișiere atașate</item>
     </plurals>
-    <string name="add_attachment">Adăugare fișier</string>
+    <string name="add_attachment">Adăugare atașament</string>
     <string name="select_file">Selectare fișier</string>
     <string name="attach_file">Atașare fișier</string>
     <string name="take_photo">Faceți o fotografie</string>
     <string name="problem_taking_photo">A apărut o problemă la fotografiere</string>
     <string name="problem_selecting_file">A apărut o problemă la adăugarea fișierului selectat</string>
     <string name="add_contact">Adăugare contact</string>
-    <string name="delete_contact">Se șterge %s din contacte?</string>
-    <string name="sync_contact">Sincronizare %s cu aplicația web?</string>
+    <string name="delete_contact">Ștergeți %s din contacte?</string>
+    <string name="sync_contact">Sincronizați %s cu aplicația web?</string>
     <string name="confirm">Confirmare</string>
-    <string name="confirm_destructive_action">Sunteți sigur(ă)? Această acțiune nu poate fi anulată.</string>
+    <string name="confirm_destructive_action">Sigur? Această acțiune nu poate fi anulată.</string>
     <string name="create">Creare</string>
     <string name="name">Nume</string>
     <string name="email">E-mail</string>
-    <string name="email_address">Adresă de e-mail</string>
+    <string name="email_address">Adresă e-mail</string>
     <string name="phone">Număr de telefon</string>
     <string name="save">Salvare</string>
     <string name="add">Adăugare</string>
-    <string name="syncing_messages">Sincronizare...</string>
+    <string name="syncing_messages">Se sincronizează...</string>
     <string name="sync">Sincronizare contacte</string>
-    <string name="save_message_as_draft">Salvare mesaj ca ciornă?</string>
+    <string name="save_message_as_draft">Salvați mesajul ca ciornă?</string>
     <string name="no_subject">Trimiteți mesajul fără subiect?</string>
     <string name="yes">Da</string>
     <string name="no">Nu</string>
     <string name="okay">OK</string>
     <string name="report_bugs">Raportare erori</string>
-    <string name="send_report">Trimite raportul</string>
+    <string name="send_report">Trimite raport</string>
     <string name="bug_title">Titlu</string>
     <string name="bug_description">Descriere eroare</string>
     <string name="sending_report">Se trimite raportul...</string>
     <string name="received_report">Raport recepționat</string>
     <string name="not_received_report">Raport nerecepționat</string>
     <string name="not_received_report_offline">Deconectat! Raportul va fi trimis când aveți conexiune.</string>
-    <string name="forward_prefix">Fw:</string>
+    <string name="forward_prefix">Redir:</string>
     <string name="original_message_divider">-------- Mesaj original --------</string>
     <string name="invalid_email_address">Adresa \'%s\' nu este validă</string>
+    <string name="invalid_email_address_removed">Adresa „%s” nu este validă și a fost eliminată</string>
     <string name="no_recipients_specified">Adăugați cel puțin un destinatar</string>
     <string name="no_password_specified">Timp de expirare pot avea doar mesajele complet criptate. Setați o parolă pentru destinatarii non-ProtonMail.</string>
     <string name="attachment_limit">Fișierele atașate sunt limitate la %1$s. Total atașate vor avea %2$s.</string>
     <string name="sending_message">Se trimite mesajul...</string>
-    <string name="sending_message_offline">Offline, așteaptă să fie trimis ulterior...</string>
+    <string name="sending_message_offline">Deconectat, așteaptă să fie trimis ulterior...</string>
     <string name="mailbox_password_changed">Parola pentru mesaje a fost modificată</string>
     <string name="go_to_mailbox_login">Doriți să vă reautentificați cu noua parolă a mesajelor?</string>
     <string name="go_to_inbox">Salt la «Primite»</string>
     <string name="message_sent">Mesaj trimis</string>
     <string name="message_failed">Eroare la trimiterea mesajului</string>
+    <string name="message_sending_failures">Eroare trimitere %d mesaje</string>
     <string name="storage_limit">Limită de stocare</string>
     <string name="storage_limit_warning">Vă apropiați de limita de stocare</string>
     <string name="do_not_show_again">Nu mai arăta</string>
     <string name="edit_settings">Editare setări</string>
     <string name="save_settings">Salvare setări</string>
-    <string name="share">Distribuie</string>
+    <string name="share">Partajare</string>
     <string name="settings_saved">Noile setări au fost salvate</string>
     <string name="settings_not_saved_password">Setări nesalvate - parolă de autentificare nevalidă</string>
     <string name="settings_not_saved_email">Setările nu au fost salvate - e-mail de notificare nevalid</string>
@@ -238,7 +240,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close">Închidere</string>
     <string name="passwords">Gestionare parole</string>
     <string name="change_password">Schimbare parolă</string>
-    <string name="change_login_password">Schimbare parolă de acces</string>
+    <string name="change_login_password">Modificare parolă de acces</string>
     <string name="change_mailbox_password">Modificare parolă mesaje</string>
     <string name="eo_password_title">Setare parolă</string>
     <string name="eo_password_subtitle">Setați o parolă de criptare a acestui mesaj pentru cei ce nu folosesc ProtonMail</string>
@@ -249,13 +251,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_mailbox_password">Parolă curentă mesaje</string>
     <string name="new_mailbox_password">Parolă nouă mesaje</string>
     <string name="confirm_new_mailbox_password">Confirmare parolă mesaje</string>
-    <string name="no_attachments">0 fișiere atașate</string>
-    <string name="num_attachments">%d fișiere atașate</string>
-    <string name="new_passwords_not_valid">Introducere nevalidă</string>
+    <string name="no_attachments">0 atașamente</string>
+    <string name="num_attachments">%d atașamente</string>
+    <string name="new_passwords_not_valid">Intrare nevalidă</string>
     <string name="new_passwords_do_not_match">Parolele noi nu sunt identice</string>
     <string name="new_login_password_saved">Parola nouă de conectare salvată</string>
     <string name="new_mailbox_password_saved">Parola nouă a mesajelor a fost salvată</string>
-    <string name="could_not_change_password">Nu s-a putut modifica parola</string>
+    <string name="could_not_change_password">Parola nu s-a putut modifica</string>
     <string name="auto_logout_option_settings">Opțiuni autodeconectare</string>
     <string name="pin_lock_option_settings">Opțiuni blocare aplicație</string>
     <string name="pin_lock_after">Blocare aplicație după</string>
@@ -264,7 +266,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sound">Sunet fără vibrare</string>
     <string name="vibration">Vibrare fără sunet</string>
     <string name="both_sound_and_vibration">Vibrare și sunet</string>
-    <string name="display_name_banned_chars">Nume afișat nevalid. \'&gt;\' și \'&lt;\' nu sunt permise</string>
+    <string name="display_name_banned_chars">Nume afișat nevalid. \'&gt;\' și \'&lt;\' nu sunt permise.</string>
     <string name="cont">Continuare</string>
     <string name="email_verification_code">Vom trimite un cod de verificare la adresa de e-mail de mai sus.</string>
     <string name="sms_verification_code">Vă vom trimite un cod de verificare la numărul de telefon de mai sus.</string>
@@ -278,9 +280,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="create_account">Creare cont</string>
     <string name="create_passwords">Setare parolă</string>
     <string name="sign_up">Înregistrare</string>
-    <string name="caps_username">Nume utilizator</string>
+    <string name="caps_username">Utilizator</string>
     <string name="caps_login_password">Parola</string>
-    <string name="caps_two_factor">Cod cu doi factori</string>
+    <string name="caps_two_factor">Cod conectare cu doi factori</string>
     <string name="caps_confirm_password">Confirmare parolă</string>
     <string name="caps_confirm_mailbox_password">Confirmare parolă mesaje</string>
     <string name="caps_optional_notification_email">E-MAIL RECUPERARE PAROLĂ (OPȚIONAL)</string>
@@ -311,7 +313,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_title">Etichete</string>
     <string name="labels_create">Adăugare etichetă</string>
     <string name="label_name">Nume etichetă</string>
-    <string name="label_name_empty">Numele etichetei este obligatoriu</string>
+    <string name="label_name_empty">Eticheta trebuie să aibă un nume</string>
     <string name="label_name_duplicate">Acest nume de etichetă există deja</string>
     <string name="label_created">Etichetă creată</string>
     <string name="label_invalid">Eticheta neadăugată fiindcă numele nu este valid.</string>
@@ -322,7 +324,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="composing_message_scroll_info">Puteți derula panoul de compunere mesaj deplasând în sus sau în jos bara din dreapta panoului</string>
     <string name="message_can_not_edit">Nu se poate răspunde/redirecționa. Acest mesaj nu a fost trimis.</string>
     <string name="label_apply">Aplicare</string>
-    <string name="label_delete">Ștergere</string>
+    <string name="label_delete">Ștergeți</string>
     <string name="label_add">Adăugare</string>
     <string name="no_browser_found">Instalați un navigator pentru a finaliza această acțiune</string>
     <string name="no_application_found">Nu este aplicație asociată acestei acțiuni</string>
@@ -330,10 +332,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="also_archive">Și arhivează</string>
     <string name="label_deleted">Etichetă ștearsă</string>
     <string name="label_deleted_error">Eroare la ștergerea etichetei</string>
+    <string name="message_deleted_error">A apărut o eroare la ștergerea unor mesaje. Unele din mesajele selectate sunt în proces de trimitere?!</string>
     <string name="respond_inline">Răspuns în mesaj</string>
-    <string name="no_connectivity_detected">Nu există conexiune...</string>
-    <string name="no_connectivity_message_not_downloaded">Nu există conexiune...
-        \nMesajul nu s-a descărcat</string>
+    <string name="no_connectivity_detected">Nu s-a detectat o conexiune... (<u>Depanare</u>)</string>
+    <string name="no_connectivity_message_not_downloaded">No connectivity detected...
+        \nMesaj nedescărcat</string>
     <string name="connectivity_arrived">Conectat</string>
     <string name="connectivity_checking">Verificare conexiune...</string>
     <string name="sync_short">sincronizare</string>
@@ -347,13 +350,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="dismiss">Renunțare</string>
     <string name="new_message_arrived">Mesaj nou!</string>
     <string name="please_choose_color">Alegere culoare</string>
-    <string name="display_images">Afișare imagini</string>
+    <string name="display_images">Afișare conținut extern</string>
     <string name="retry">Reîncercare</string>
     <string name="saving_failed_no_conn">Salvare eșuată, nu există conexiune</string>
     <string name="can_not_create_account_while_beta">Crearea unui cont este dezactivată în Beta</string>
     <string name="changing_mailbox_password_disabled_while_beta">Schimbarea parolei pentru mesaje este dezactivată în Beta</string>
-    <string name="username_is_available">%s este disponibil!</string>
-    <string name="username_is_not_available">%s NU este disponibil!</string>
+    <string name="username_is_available">Nume disponibil!</string>
+    <string name="username_is_not_available">Numele de utilizator există deja!</string>
+    <string name="username_is_too_long">Lungimea maximă pentru nume utilizator este de %d caractere!</string>
     <string name="congratulation">Felicitări!</string>
     <string name="new_account_ready">Noul cont de e-mail\nsecurizat este gata.</string>
     <string name="optional_email_note">Adresa de e-mail opțională de recuperare vă
@@ -381,14 +385,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_exists">Fișier atașat deja prezent</string>
     <string name="sending_email_success">Cod de verificare trimis</string>
     <string name="sending_email_failed">Trimitere eșuată cod de verificare</string>
-    <string name="password_required">Introduceți parola de conectare pentru aplicarea modificării</string>
+    <string name="password_required">Introduceți parola de conectare pentru a aplica această modificare</string>
     <string name="password_not_valid">Parola introdusă nu este validă</string>
     <string name="send_code_wait">Așteptați %d secunde înainte de a apăsa din nou</string>
     <string name="eo_password_not_completed">Nu a fost introdusă parola mesajului.</string>
     <string name="delinquency_title">Accesul la cont este blocat datorită unei plăți restante</string>
     <string name="delinquency_subtitle">Accesul la acest cont este blocat datorită unei plăți restante. Autentificați-vă la protonmail.com și achitați factura restantă.</string>
     <string name="direct_disabled_subtitle">Înscrierea de pe mobil este temporar dezactivată. Reîncercați mai târziu sau înscrieți-vă la <a href="https://protonmail.com">protonmail.com</a> de pe un calculator desktop sau laptop.</string>
-    <string name="downloading">Descărcare...</string>
+    <string name="downloading">Se descarcă...</string>
     <string name="cant_download_attachment">Nu se poate descărca fișierul atașat</string>
     <string name="auto_logout">Autodeconectare</string>
     <string-array name="auto_logout_options_array">
@@ -414,7 +418,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="pin_subtitle_confirm">Confirmare PIN</string>
     <string name="pin_subtitle_confirm_new">Confirmare PIN NOU</string>
     <string name="forgot_pin">Ați uitat codul PIN?</string>
-    <string name="pin_invalid">PIN nevalid. Introduceți un PIN corect de 4 cifre.</string>
+    <string name="pin_invalid">PIN nevalid. Introduceți un PIN corect din 4 cifre.</string>
     <string name="pin_confirmation_not_match">Codul PIN de confirmare nu se potrivește</string>
     <string name="pin_not_match">Codul PIN nu se potrivește</string>
     <string name="new_pin_saved">PIN nou salvat</string>
@@ -437,8 +441,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Sincronizare fișiere atașate</string>
     <string name="processing_attachment">Procesare fișier atașat</string>
     <string name="hyperlink_confirmation_dialog_text_html">Se va lansa navigatorul web la pagina: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;. Continuați?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Nu mai întreba</string>
-    <string name="none">Nimic</string>
+    <string name="dont_ask_again">Nu mai întreba</string>
+    <string name="none">Niciuna</string>
     <string name="changes_affected_after_closing">Modificările vor avea efect după oprirea aplicației</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorect, o încercare rămasă</item>
@@ -452,12 +456,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="done">Gata</string>
     <string name="logout">Deconectare</string>
-    <string name="logout_question">Sigur doriți să vă deconectați?</string>
-    <string name="logout_question_next_account">Sigur doriți să vă deconectați din contul curent și să continuați cu %s?</string>
+    <string name="log_out">Deconectare %s?</string>
+    <string name="logout_question">Sigur doriţi să vă deconectați?</string>
+    <string name="logout_question_next_account">Veți fi comutat la %s.</string>
     <string name="upselling">Upgrade/Donare</string>
     <string name="upselling_title">ProtonMail este gratuit și cu cod sursă public</string>
     <string name="upselling_subtitle">Avem nevoie de susținerea dvs. pentru continuarea protejării intimității și îmbunătățirii ProtonMail</string>
-    <string name="upselling_donate_title">Donație</string>
+    <string name="upselling_donate_title">Donați</string>
     <string name="upselling_upgrade_title">Upgrade la ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">Prin donația dvs. ne veți ajuta să
     ne mărim capacitatea și să continuăm dezvoltarea ProtonMail, gratuit și cu cod sursă public.
@@ -496,14 +501,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_business_with_price">BUSINESS %s /lună</string>
     <string name="plan_free_title">Cont simplu cu opțiuni limitate</string>
     <string name="plan_plus_title">E-mail sigur cu opțiuni avansate</string>
-    <string name="plan_visionary_title">Conturi speciale pentru fani</string>
-    <string name="plan_business_title">Conturi speciale pentru fani</string>
+    <string name="plan_visionary_title">Conturi speciale pentru susținătorii noștri</string>
+    <string name="plan_business_title">Conturi speciale pentru susținătorii noștri</string>
     <string name="plan_plus_line2">Trimitere până la 1000 de mesaje pe zi</string>
     <string name="plan_plus_line3">Etichete și filtre personale</string>
-    <string name="plan_plus_line4">Trimitere mesaje criptate spre destinatari externi</string>
-    <string name="plan_plus_line7">Prioritate la asistență clienți</string>
+    <string name="plan_plus_line4">Trimitere mesaje criptate destinatarilor externi</string>
+    <string name="plan_plus_line7">Suport prioritar clienți</string>
     <string name="plan_free_line1">500 MB spațiu</string>
-    <string name="plan_free_line2">150 de mesaje pe zi</string>
+    <string name="plan_free_line2">150 mesaje pe zi</string>
     <string name="plan_free_line22">%d de mesaje pe zi</string>
     <string name="plan_free_line3">20 de etichete</string>
     <string name="plan_free_line4">Domenii personale: nesuportate</string>
@@ -511,13 +516,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_free_line6">Asistență clienți: limitată</string>
     <string name="plan_visio_line2">Fără limite la trimitere</string>
     <string name="plan_visio_line3">Acces timpuriu la funcții noi</string>
-    <string name="plan_visio_line6">Ajutați la alegerea funcțiilor noi prin sondaje disponibile doar în planul Vizionar</string>
+    <string name="plan_visio_line6">Ajută la alegerea de caracteristici noi prin intermediul sondajelor exclusive Visionary</string>
     <string name="plan_business_line1">în curând plan de e-mail criptat și pentru organizații!</string>
     <string name="currency_duration">Monedă &amp; Durată</string>
     <string name="credit_card_name">Titular card de credit/debit</string>
-    <string name="zip_code">Cod poștal</string>
+    <string name="zip_code">Cod poştal</string>
     <string name="card_number">Număr card</string>
-    <string name="billing_information">Informații facturare</string>
+    <string name="billing_information">Informații referitoare la facturare</string>
     <string name="billing_upgrade_thanks">Actualizare reușită! Vă mulțumim pentru suport!</string>
     <string name="country">Țara</string>
     <string name="cvc">CVC</string>
@@ -539,7 +544,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_error">Eroare la plată</string>
     <string name="error">Eroare</string>
     <string name="try_another_card">Încercați un alt card</string>
-    <string name="try_another_paypal">Plată prin PayPal</string>
+    <string name="try_another_paypal">Plată cu PayPal</string>
     <string name="try_another_payment_method">Încercați alta</string>
     <string name="submit_paypal">Plată cu PayPal</string>
     <string name="picker_card">Card de credit/debit</string>
@@ -560,8 +565,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="change_currency">Schimbare monedă</string>
     <string name="switch_billing_monthly">Trecere la lunar</string>
     <string name="switch_billing_yearly">Trecere la anual</string>
-    <string name="warning">Atenție</string>
-    <string name="empty_recovery_email_question">Atenție: Nu ați setat o adresă de e-mail de recuperare. Dacă uitați parola, contul nu poate fi recuperat.\nContinuați fără adresă de recuperare?</string>
+    <string name="warning">Avertizare</string>
+    <string name="empty_recovery_email_question">Avertizare: Nu ați setat un e-mail de recuperare pentru a vă putea recuperarea contul dacă vă uitați parola. Continuați fără e-mail de recuperare?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Expirare %s</string>
     <string name="payment_methods">Metode de plată</string>
@@ -612,7 +617,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </string-array>
     <plurals name="custom_domains">
         <item quantity="one">Folosiți propriul domeniu (ex: ion@popescu.ro)</item>
-        <item quantity="few">Acceptare până la %d domenii</item>
+        <item quantity="few">Acceptare până la %d de domenii</item>
         <item quantity="other">Acceptare până la %d de domenii</item>
     </plurals>
     <string-array name="months_array">
@@ -648,20 +653,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_vcard_hint_other">Introducere informații</string>
     <string name="contact_vcard_hint_note">Introducere notă</string>
     <string name="contact_vcard_phone">Telefon</string>
-    <string name="contact_vcard_address">Adresa</string>
+    <string name="contact_vcard_address">Adresă</string>
     <string name="contact_vcard_new_row_email">adăugare adresă de e-mail</string>
     <string name="contact_vcard_new_row_phone">adăugare număr de telefon</string>
     <string name="contact_vcard_new_row_address">adăugare adresă</string>
     <string name="contact_vcard_new_row_other">adăugare informații</string>
     <string name="contact_vcard_new_row_custom">adăugare câmp personal</string>
     <string name="vcard_other_option_org">Organizație</string>
-    <string name="vcard_other_option_title">Titlu</string>
+    <string name="vcard_other_option_title">Titulatură</string>
     <string name="vcard_other_option_nickname">Porecla</string>
-    <string name="vcard_other_option_birthday">Data nașterii</string>
+    <string name="vcard_other_option_birthday">Data naşterii</string>
     <string name="vcard_other_option_anniversary">Aniversare</string>
-    <string name="vcard_other_option_gender">Sex</string>
+    <string name="vcard_other_option_gender">Gen</string>
     <string name="vcard_other_option_role">Rol</string>
-    <string name="vcard_other_option_url">Adresa URL</string>
+    <string name="vcard_other_option_url">URL</string>
     <string name="sync_question">Sincronizați contactele?</string>
     <string name="sync_question_subtitle">Se vor sincroniza contactele din dispozitiv cu cele din ProtonMail. Apoi veți putea accesa aceste contacte și pe alte dispozitive prin intermediul ProtonMail.</string>
     <string name="convert_contact">Convertire contact</string>
@@ -703,7 +708,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="logged_out">Deconectat</string>
     <string name="logged_out_description">Ați fost deconectat. Vă rugăm reautentificați-vă.</string>
     <string name="verification_needed">Verificare obligatorie</string>
-    <string name="verification_needed_description">Din motive de securitate, demonstrați că nu sunteți un robot.</string>
+    <string name="verification_needed_description">Din motive de securitate, verificăm că nu sunteţi un robot.</string>
     <string name="verification_needed_description_notification">Demonstrați că sunteți o persoană înainte de a trimite acest mesaj: %s</string>
     <string name="message_drafted_verification_needed">Mesajul nu a fost trimis - este necesară o verificare. Mesajele sunt salvate în folderul «Ciorne».</string>
     <string name="error_message_zip_code_invalid">Eroare: cod poștal nevalid</string>
@@ -713,7 +718,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_message_exp_date_invalid">Eroare: Dată expirare nevalidă</string>
     <string name="error_message_exp_date_past">Eroare: dată expirare nevalidă</string>
     <string name="error_message_card_number_invalid">Eroare: Număr card nevalid</string>
-    <string name="print_error">Eroare la imprimare</string>
+    <string name="print_error">Eroare la tipărire</string>
     <string name="download_error">Eroare la descărcare</string>
     <string name="download_complete">Descărcare finalizată</string>
     <string name="download_in_progress">Descărcare în curs</string>
@@ -762,15 +767,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contacts_invalid_type">Tip nevalid</string>
     <string name="signature_error">Eroare verificare</string>
     <string name="signature_error_desc">Verificarea semnăturii acestui conținut a eșuat</string>
-    <string name="decryption_error">Eroare de decriptare</string>
+    <string name="decryption_error">Eroare decriptare</string>
     <string name="decryption_error_desc">Decriptare eșuată conținut</string>
     <string name="address">Adresa: </string>
     <string name="address_street">Strada</string>
-    <string name="address_city">Oraș</string>
+    <string name="address_city">Oraş</string>
     <string name="address_region">Regiune (stat sau județ)</string>
     <string name="address_postcode">Cod poștal</string>
     <string name="address_country">Țara</string>
-    <string name="recheck_delinquency">Reverificare</string>
+    <string name="recheck_delinquency">Reverificați</string>
     <string name="close_app">Închide aplicația</string>
     <string name="empty_subject">(Fără subiect)</string>
     <string name="contacts_unknown">Necunoscut</string>
@@ -795,11 +800,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_attachment_template">Atașament: %s; &#160;</string>
     <string name="pm_me_changed">Trimiterea de mesaje de la adrese @pm.me este o facilitate plătită. Mesajul vă va fi trimis de pe adresa implicită %s</string>
     <string name="pm_me_can_not_be_default">Treceți la un plan cu plată pentru a vă putea seta adresa %s ca implicită</string>
-    <string name="dont_remind_again">Nu mă mai atenționa</string>
+    <string name="dont_remind_again">Nu-mi mai reaminti</string>
     <string name="load_embedded_images">Încărcare imagini incluse</string>
     <string name="remove_password">Eliminare parolă</string>
     <string name="remove_password_question">Eliminați parola?</string>
-    <string name="attachment_storage_value_current">Selectare actuală: %d Mb</string>
+    <string name="attachment_storage_value_current">Selectare actuală: %d MB</string>
     <string name="attachment_storage_value_current_unlimited">Selectare actuală: nelimitat</string>
     <string name="attachment_offline_max_storage">Stabilire spațiu maxim total pe dispozitivul mobil pe care îl poate folosi ProtonMail.</string>
     <string name="load_embedded_images_failed_no_network">Încărcare eșuată imagini incluse. Verificați conexiunea la internet.</string>
@@ -808,7 +813,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="unlimited">Nelimitat</string>
     <string name="local_storage_cleared">Stocare locală golită</string>
     <string name="local_storage_clear">Golire stocare locală</string>
-    <string name="recipient_popup_compose_to">Scrie la</string>
+    <string name="recipient_popup_compose_to">Scrie lui</string>
     <string name="recipient_popup_copy_address">Copiere adresă</string>
     <string name="recipient_popup_see_details">Afișare detalii contact</string>
     <string name="send_with_untrusted_key_title">Doriți să-l trimiteți cu o cheie nesigură?</string>
@@ -855,7 +860,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 		descărcarea în fundal a mesajelor</string>
     <string name="checking_mailbox">Verificare mesaje</string>
     <string name="report_phishing">Raportare înșelăciune</string>
-    <string name="print">Imprimare</string>
+    <string name="print">Tipărire</string>
     <string name="phishing_dialog_title">Confirmare raport înșelăciune</string>
     <string name="phishing_dialog_message">Raportarea unui mesaj ca fiind o încercare de înșelăciune
 		ne va trimite mesajul și nouă pentru a-l analiza și a ne îmbunătăți filtrele noastre. Aceasta înseamnă
@@ -899,7 +904,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="search_contacts_inside_group">Căutare contacte în grup</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
     <plurals name="contact_group_members">
-        <item quantity="one">%d membru</item>
+        <item quantity="one">Un membru</item>
         <item quantity="few">%d membri</item>
         <item quantity="other">%d de membri</item>
     </plurals>
@@ -910,7 +915,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_recipients">Lipsă destinatari</string>
     <string name="contact_group_selected">Selectate: %d</string>
     <string name="contact_group_deleted">Grup șters</string>
-    <string name="paid_plan_needed">Vă rugăm să treceți la un plan cu plată pentru aceste funcții speciale</string>
+    <string name="paid_plan_needed">Vă rugăm să treceți la un abonament cu plată pentru aceste funcționalități plătite</string>
     <string name="composer_group_count">%1$s (%2$d membri)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d membri)</string>
     <string name="address_successful_update">Adresă actualizată cu succes</string>
@@ -925,9 +930,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">Grupuri șterse</item>
     </plurals>
     <plurals name="are_you_sure_delete_contact">
-        <item quantity="one">Sigur doriți să ștergeți acest contact?</item>
-        <item quantity="few">Sigur doriți să ștergeți aceste contacte?</item>
-        <item quantity="other">Sigur doriți să ștergeți aceste contacte?</item>
+        <item quantity="one">Sigur doriți ștergerea contactului selectat?</item>
+        <item quantity="few">Sigur doriți ștergerea contactelor selectate?</item>
+        <item quantity="other">Sigur doriți ștergerea contactelor selectate?</item>
     </plurals>
     <string name="members">Membri</string>
     <string name="max_emails_in_group_title">A fost atins numărul maxim de adrese per grup</string>
@@ -962,6 +967,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_locked">Aplicație blocată</string>
     <string name="please_use_fingerprint">Folosiți amprenta pentru a debloca aplicația.</string>
     <string name="use_pin_instead">Folosiți PIN</string>
+    <!-- strings used for biometric enrollment -->
+    <string name="no_biometric_data_enrolled">Nu există date biometrice</string>
+    <string name="log_in_using_biometric_credential">Deblocare folosind acreditările biometrice</string>
+    <string name="unlock_using_biometrics">Deblocare folosind date biometrice</string>
+    <string name="biometric_error_hw_not_available">Dizpozitiv biometric nedisponibil.</string>
+    <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Destinatari nedivulgați</string>
     <string name="could_not_delete_attachment">Atașamentul nu poate fi eliminat în timpul încărcării</string>
     <string name="manage_accounts">Gestionare conturi</string>
@@ -982,9 +993,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="default_mail_address">Adresa de e-mail implicită</string>
     <string name="default_address">Adresa implicită</string>
     <string name="display_name_n_signature">Nume afișat și semnătură</string>
-    <string name="display_name">Nume afișat</string>
+    <string name="display_name">Afișare nume</string>
     <string name="edit_display_name">Editare nume afișat</string>
-    <string name="signature">Semnătură</string>
+    <string name="signature">Semnătura</string>
     <string name="edit_signature">Activare semnătură</string>
     <string name="mobile_signature">Semnătură mobil</string>
     <string name="edit_mobile_signature">Activare semnătură mobil</string>
@@ -998,7 +1009,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="snooze_notifications">Amânare notificări</string>
     <string name="snooze_notifications_adjust">Ajustare</string>
     <string name="notifications_snoozed">Notificări amânate</string>
-    <string name="notifications_snooze_scheduled">Programată</string>
+    <string name="notifications_snooze_scheduled">Programat</string>
     <string name="notifications_snooze_scheduled_settings">Setări amânări programate</string>
     <string name="notifications_snooze_current_status">Stare</string>
     <string name="snooze_start_time">Oră pornire:</string>
@@ -1014,6 +1025,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="set_custom_quick_snooze">Setare valoare personală amânare rapidă</string>
     <string name="turn_off">Oprește</string>
     <string name="snooze_will_repeat">Amânarea se va repeta</string>
+    <string name="work_days">Zile de lucru</string>
+    <string name="weekends">Weekend</string>
+    <string name="every_day">Zilnic</string>
     <string name="quick_and_scheduled_enabled">Amânarea rapidă &amp; Amânarea programată active</string>
     <string name="quick_only_enabled">Amânare rapidă activă</string>
     <string name="scheduled_only_enabled">Amânare programată activă</string>
@@ -1023,11 +1037,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="mailbox">Căsuță poștală</string>
     <string name="privacy">Confidențialitate</string>
-    <string name="auto_download_messages_title_short">Descărcare automată</string>
+    <string name="auto_download_messages_title_short">Autodescărcare</string>
     <string name="auto_download_messages_title">Descărcare automată mesaje</string>
     <string name="auto_download_messages_subtitle">Dacă această opțiune este activată, corpul mesajelor va fi în mod automat descărcat de fiecare dată când primiți o nouă notificare de e-mail (se vor consuma mai multe date). Dacă este dezactivată, corpul mesajelor v-a fi descărcat doar când deschideți un e-mail. (Notă: indiferent de setare, dacă ieșiți din cont sau goliți memoria aplicației, nu veți putea citii corpul mesajelor deconectați.)</string>
     <string name="settings_background_sync">Sincronizare în fundal</string>
-    <string name="settings_auto_show_images">Afișare automată imagini neincluse</string>
+    <string name="settings_auto_show_images">Afișare automată imagini externe</string>
     <string name="settings_auto_show_embedded_images">Afișare automată imagini incluse</string>
     <string name="settings_prevent_taking_screenshots">Prevenire capturare ecran</string>
     <string name="hyperlink_confirmation">Solicitare de confirmare</string>
@@ -1039,14 +1053,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_action_right">Glisare de la dreapta la stânga</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Alegere acțiune de glisare</string>
-    <string name="swipe_action_trash">Mesaj mutat în «Gunoi»</string>
+    <string name="swipe_action_trash">Mutare mesaj în «Gunoi»</string>
     <string name="swipe_action_trash_short">Mutat în «Gunoi»</string>
     <string name="swipe_action_star">Actualizare marcare mesaj</string>
     <string name="swipe_action_spam">Marcare mesaj ca spam</string>
-    <string name="swipe_action_archive">Arhivare mesaj</string>
+    <string name="swipe_action_archive">Mesaj arhivat</string>
     <string name="swipe_action_mark_read">Mesaj marcat ca citit</string>
     <plurals name="action_move_to_trash">
-        <item quantity="one">Mesaj mutat în «Gunoi»</item>
+        <item quantity="one">Mutare mesaj în «Gunoi»</item>
         <item quantity="few">Mesaje mutate în «Gunoi»</item>
         <item quantity="other">Mesaje mutate în «Gunoi»</item>
     </plurals>
@@ -1068,11 +1082,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region App Settings -->
     <string name="push_notifications">Notificări</string>
     <string name="extended_notifications">Notificări extinse</string>
-    <string name="extended_notifications_description">Activați funcția pentru a vedea expeditorul mesajelor în notificări.</string>
+    <string name="extended_notifications_description">Activați funcția pentru a vedea\nexpeditorul mesajelor în notificări.</string>
     <string name="notification_settings">Setări notificare</string>
     <string name="auto_lock">Autoblocare</string>
     <string name="auto_lock_app">Autoblocare aplicație</string>
-    <string name="auto_lock_description">Activați funcția pentru autoblocarea aplicației și deblocarea cu PIN sau cu amprentă.</string>
+    <string name="auto_lock_description">Activați funcția pentru autoblocarea\naplicației și deblocarea cu PIN\nsau cu amprentă.</string>
     <string name="change_pin_code">Schimbare cod PIN</string>
     <string name="auto_lock_timer">Timp autoblocare</string>
     <string name="unlock_with_fingerprint">Deblocare cu amprenta</string>
@@ -1102,5 +1116,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="switch_accounts_question">Comutați contul?</string>
     <string name="switch_to_account">Comutare la %s</string>
     <string name="login_failure_missing_keys">Contul pe care încercați să îl adăugați nu are chei generate. Adăugați acest cont ca primul în aplicație sau autentificați-vă în versiunea web pentru a genera cheile și apoi adăugați-l ca și cont adițional în aplicație.</string>
+    <!-- endregion -->
+    <!-- region Compose shortcut -->
+    <string name="shortcut_compose">Compunere</string>
+    <string name="shortcut_compose_new_message">Compunere mesaj</string>
+    <!-- endregion -->
+    <!-- region Troubleshoot screen -->
+    <string name="troubleshoot_title">Probleme și soluții comune conexiune</string>
+    <string name="troubleshoot_message"><i>Fără conexiune la internet</i> - Asigurați-vă că aveți conexiune la internet.
+        \n\n<i>Problemă (ISP) Furnizor Servicii Internet</i> - Încercați să vă conectați la Proton dintr-o altă rețea (sau folosiți <a href="https://protonvpn.com/">ProtonVPN</a> sau <a href="https://www.torproject.org/">Tor</a>).
+        \n\n<i>Blocare guvernamentală</i> - Țara dvs. s-ar putea să blocheze accesul către Proton. Încercați <a href="https://protonvpn.com/">ProtonVPN</a> (sau oricare alt VPN) sau <a href="https://www.torproject.org/">Tor</a> pentru a accesa Proton.
+        \n\n<i>Interfață antivirus</i> - Dezactivați temporar sau eliminați programul antivirus.
+        \n\n<i>Interferențe Proxy/Paravan de protecție</i> - Dezactivați paravanele de protecție sau proxy-urile sau contactați administratorul de rețea.
+        \n\n<i>Proton este căzut</i> - Verificați <a href="http://protonstatus.com/">Starea Proton</a> pentru starea sistemului nostru.
+        \n\n<i>Încă nu găsiți o soluție</i> - Contactați-ne direct prin <a href="https://protonmail.com/support-form">formularul de suport</a>, <a href="mailto:support@protonmail.com">e-mail</a> (support@protonmail.com) sau <a href="https://twitter.com/ProtonMail">Twitter</a>.
+    </string>
     <!-- endregion -->
 </resources>

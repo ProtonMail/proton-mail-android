@@ -272,7 +272,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sound">Sound without vibration</string>
     <string name="vibration">Vibration without sound</string>
     <string name="both_sound_and_vibration">Vibration and sound</string>
-    <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are notallowed</string>
+    <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are not allowed</string>
     <string name="cont">Continue</string>
     <string name="email_verification_code">We will send a verification code to the email address above.</string>
     <string name="sms_verification_code">We will send a verification code to the phone number above.</string>
@@ -459,7 +459,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Syncing attachments</string>
     <string name="processing_attachment">Processing attachment</string>
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/>&lt;br/>&lt;u>%s&lt;/u>&lt;br/>&lt;br/>Do you want to continue?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Don\'t ask again</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <string name="none">None</string>
     <string name="changes_affected_after_closing">Changes will be affected after closing the app</string>
 

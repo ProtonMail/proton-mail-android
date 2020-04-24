@@ -444,7 +444,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Синхронізуємо вкладення</string>
     <string name="processing_attachment">Обробка вкладення</string>
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Do you want to continue?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Don\'t ask again</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
     <string name="none">Немає</string>
     <string name="changes_affected_after_closing">Changes will be affected after closing the app</string>
     <plurals name="incorrect_pin_remaining_attempts">

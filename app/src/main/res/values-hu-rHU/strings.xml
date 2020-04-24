@@ -434,7 +434,7 @@ Svájci székhellyel</string>
     <string name="sync_attachments">Mellékletek szinkronizálása</string>
     <string name="processing_attachment">Melléklet feldolgozása</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ön hamarosan elindítja a webböngészőt ide:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Akarja folytatni?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Ne kérdezze újra</string>
+    <string name="dont_ask_again">Ne kérdezze újra</string>
     <string name="none">Egyik sem</string>
     <string name="changes_affected_after_closing">A módosítások az alkalmazás bezárása után lépnek érvénybe</string>
     <plurals name="incorrect_pin_remaining_attempts">

@@ -429,7 +429,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="sync_attachments">Ekler eşitleniyor</string>
     <string name="processing_attachment">Ek işleniyor</string>
     <string name="hyperlink_confirmation_dialog_text_html">Web tarayıcısını başlatmak ve yönlendirmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Devam etmek istiyor musunuz?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Bir daha sorma</string>
+    <string name="dont_ask_again">Bir daha sorma</string>
     <string name="none">Hiçbiri</string>
     <string name="changes_affected_after_closing">Değişiklikler uygulama kapatıldıktan sonra geçerli olacak</string>
     <plurals name="incorrect_pin_remaining_attempts">

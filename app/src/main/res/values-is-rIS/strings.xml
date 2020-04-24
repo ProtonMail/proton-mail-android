@@ -433,7 +433,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Samstilli viðhengi</string>
     <string name="processing_attachment">Vinn með viðhengi</string>
     <string name="hyperlink_confirmation_dialog_text_html">Þú ert í þann mund að fara að ræsa vafrann og fara á:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Viltu halda áfram?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Ekki spyrja aftur</string>
+    <string name="dont_ask_again">Ekki spyrja aftur</string>
     <string name="none">Ekkert</string>
     <string name="changes_affected_after_closing">Breytingar munu hafa áhrif eftir að forritinu hefur verið lokað</string>
     <plurals name="incorrect_pin_remaining_attempts">

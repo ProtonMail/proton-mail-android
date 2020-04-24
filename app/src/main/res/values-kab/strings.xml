@@ -432,7 +432,7 @@ ar
     <string name="sync_attachments">Amtawi n ifuyla yeddan</string>
     <string name="processing_attachment">Asesfer n ufaylu yeddan</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ad tsnekreḍ iminig web akken zd terzuḍ ɣer:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Tebɣiḍ ad tkemleḍ?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Ur sutur ara tikelt-nniḍen</string>
+    <string name="dont_ask_again">Ur sutur ara tikelt-nniḍen</string>
     <string name="none">Ula yiwen</string>
     <string name="changes_affected_after_closing">Changes will be affected after closing the app</string>
     <plurals name="incorrect_pin_remaining_attempts">

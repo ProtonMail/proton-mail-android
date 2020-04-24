@@ -149,7 +149,7 @@ public class PMWebViewClient extends WebViewClient {
             }
             Spanned message = Html.fromHtml(String.format(mActivity.getString(R.string.hyperlink_confirmation_dialog_text_html), hyperlink));
 
-            DialogUtils.Companion.showInfoDialogWithTwoButtonsAndCheckbox(mActivity, "", message, mActivity.getString(R.string.cancel), mActivity.getString(R.string.cont), mActivity.getString(R.string.hyperlink_confirmation_checkbox_text), unit -> {
+            DialogUtils.Companion.showInfoDialogWithTwoButtonsAndCheckbox(mActivity, "", message, mActivity.getString(R.string.cancel), mActivity.getString(R.string.cont), mActivity.getString(R.string.dont_ask_again), unit -> {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(url));
                 mActivity.startActivity(intent);

@@ -429,7 +429,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="processing_attachment">Memproses lampiran</string>
     <string name="hyperlink_confirmation_dialog_text_html">Anda akan meluncurkan peramban web dan menavigasi
 ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Jangan tanya lagi</string>
+    <string name="dont_ask_again">Jangan tanya lagi</string>
     <string name="none">Tak bawa</string>
     <string name="changes_affected_after_closing">Perubahan akan terpengaruh setelah menutup aplikasi</string>
     <plurals name="incorrect_pin_remaining_attempts">

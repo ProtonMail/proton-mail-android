@@ -428,7 +428,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Synkroniserar bilagor</string>
     <string name="processing_attachment">Bearbetar bilaga</string>
     <string name="hyperlink_confirmation_dialog_text_html">Du är på väg att starta webbläsaren och gå till:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Vill du fortsätta?</string>
-    <string name="hyperlink_confirmation_checkbox_text">Fråga inte igen</string>
+    <string name="dont_ask_again">Fråga inte igen</string>
     <string name="none">Ingen</string>
     <string name="changes_affected_after_closing">Ändringar slår igenom efter att appen avslutats</string>
     <plurals name="incorrect_pin_remaining_attempts">

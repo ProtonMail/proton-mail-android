@@ -20,7 +20,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">CORREU XIFRAT</string>
-    <string name="secure_email_swiss">Correu Segur Radicat <br/> a Suïssa</string>
+    <string name="secure_email_swiss">Correu Segur Radicat\na Suïssa</string>
     <string name="decrypt_mailbox">Desxifrar la <b>bústia</b></string>
     <string name="decrypt">Desxifrar</string>
     <string name="user_sign_in">Nom d\'usuari</string>
@@ -32,14 +32,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="show_password">Mostrar contrasenya</string>
     <string name="username">Nom d\'usuari</string>
     <string name="password">Contrasenya</string>
-    <string name="login_password">Contrasenya</string>
+    <string name="login_password">Contrasenya d\'inici de sessió</string>
     <string name="mailbox_password">Contrasenya de la bústia</string>
     <string name="two_factor_code">Codi de dos factors</string>
     <string name="processing_request">La teva sol·licitud s\'està processant</string>
     <!-- should check for html tag -->
     <string name="need_account_sign_up">Necessites un compte? Registra\'t.</string>
     <string name="need_to_be_logged_in">No heu iniciat sessió!</string>
-    <string name="forgot_password">Has oblidat la vostra?</string>
+    <string name="forgot_password">Has oblidat la contrasenya?</string>
     <string name="reset_mailbox_password">RESTABLIR LA CONTRASENYA DE LA BÚSTIA DE CORREU</string>
     <string name="forgot_mailbox_password">Per restablir la contrasenya de la vostra bústia, si us plau feu servir la versió de ProtonMail a protonmail.com</string>
     <!-- Toast messages -->
@@ -59,20 +59,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app_title">Actualització necessària</string>
     <string name="update_app">No podeu fer servir l\'app de ProtonMail fins que no sigui actualizada</string>
     <string name="api_offline_title">Protonmail API fora de servei</string>
-    <string name="api_offline">ProtonMail està actualment fora de línia. Consulteu https://protonstatus.com o https://twitter.com/protonmail per coneixer l’estat actual.</string>
+    <string name="api_offline">Actualment ProtonMail es troba fora de línia, consulta\'n l\'estat actual al nostre twitter: https://twitter.com/protonmail</string>
     <string name="cannot_open">No es pot obrir el fitxer</string>
-    <string name="downloaded_attachment">Baixat %s</string>
+    <string name="downloaded_attachment">Descarregat %s</string>
     <string name="edit_contact_validation">Si us plau, introdueix un nom i adreça de correu electrònic vàlids</string>
     <string name="contact_saved">Contacte desat</string>
-    <string name="contact_saved_offline">S\'ha desat el contacte. Es sincronitzarà quan estigui disponible una connexió.</string>
-    <string name="contact_exist">El contacte ja existeix</string>
+    <string name="contact_saved_offline">Contacte desat, es sincronitzarà quan hi hagi una connexió disponible</string>
+    <string name="contact_exist">El correo electrònic de contacte ja existeix</string>
     <string name="invalid_email">Adreça de correu electrònic invàlida</string>
     <string name="duplicate_email">Adreça de correu electrònic és un duplicat</string>
     <string name="invalid_code">Codi invàlid</string>
-    <string name="message_drafted">Ha fallat l\'enviament de missatges. Els vostres missatges es desen a la carpeta Esborranys.</string>
+    <string name="message_drafted">Ha fallat l\'enviament del missatge. Els teus missatges es desaran a la carpeta d\'esborranys</string>
     <string name="message_drafted_reason">%s no existeix.\nNo es pot lliurar el correu electrònic.</string>
     <string name="open_drawer">Obrir</string>
-    <string name="close_drawer">Tanca</string>
+    <string name="close_drawer">Tancar</string>
     <string name="inbox_option">SAFATA D\'ENTRADA</string>
     <string name="starred_option">DESTACATS</string>
     <string name="drafts_option">ESBORRANYS</string>
@@ -82,12 +82,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="spam_option">CORREU BROSSA</string>
     <string name="contacts_option">CONTACTES</string>
     <string name="settings_option">CONFIGURACIÓ</string>
-    <string name="report_bugs_option">REPORTAR ERRORS</string>
+    <string name="report_bugs_option">REPORTAR ERRADES</string>
     <string name="signout_option">TANCAR SESSIÓ</string>
     <string name="inbox">Safata d\'entrada</string>
-    <string name="starred">Destacats</string>
+    <string name="starred">Destacat</string>
     <string name="drafts">Esborranys</string>
-    <string name="sent">Enviats</string>
+    <string name="sent">Enviat</string>
     <string name="archive">Arxiu</string>
     <string name="trash">Paperera</string>
     <string name="spam">Correu brossa</string>
@@ -101,14 +101,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="search_messages">Cerqueu missatges</string>
     <string name="no_search_results">Cap resultat de cerca</string>
     <string name="compose">Redactar</string>
-    <string name="compose_message">Redactar un missatge</string>
+    <string name="compose_message">Redactar missatge</string>
     <string name="empty_folder">Buidar carpeta</string>
     <string name="view_headers">Mostrar capçaleres</string>
     <string name="message_headers">Capçalera del missatge</string>
     <string name="delete_message">Eliminar missatge</string>
     <string name="delete_messages">Eliminar missatges</string>
     <string name="add_label">Afegir etiqueta</string>
-    <string name="add_star">Destaca</string>
+    <string name="add_star">Afegeix a destacats</string>
     <string name="remove_star">Suprimeix destacat</string>
     <string name="mark_read">Marca com a llegit</string>
     <string name="mark_unread">Marca com a no llegit</string>
@@ -121,8 +121,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="send">Enviar</string>
     <string name="selected">Seleccionat</string>
     <string name="no_messages">No hi ha missatges</string>
-    <string name="no_labels">No hi han etiquetes</string>
-    <string name="to">Per</string>
+    <string name="no_labels">Sense etiquetes</string>
+    <string name="to">Per a</string>
     <string name="cc">Cc</string>
     <string name="bcc">Cco</string>
     <string name="to_prefix">Per a:</string>
@@ -135,8 +135,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="hide_details">AMAGAR DETALLS</string>
     <string name="download">DESCARREGAR</string>
     <string name="reply">Respondre</string>
-    <string name="reply_all">Respondre a tots</string>
-    <string name="forward">Reenviar</string>
+    <string name="reply_all">Respon a tothom</string>
+    <string name="forward">Endavant</string>
     <string name="subject">Assumpte</string>
     <string name="email_subject">Assumpte del correu electrònic</string>
     <string name="define_message_password">Contrasenya del missatge</string>
@@ -151,7 +151,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="hours">Hores</string>
     <string name="max_labels_exceeded">El missatge %1$s no pot tenir més de %2$d etiquetes.</string>
     <string name="max_labels_selected">%d etiquetes es el màxim permès</string>
-    <string name="max_attachments_reached">S\'ha aconseguit el màxim de fitxers adjunts per missatge.</string>
+    <string name="max_attachments_reached">S\'ha assolit el nombre màxim d\'arxius adjunts per missatge</string>
     <plurals name="hours_string">
         <item quantity="one">%d hora</item>
         <item quantity="other">%d hores</item>
@@ -182,7 +182,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="delete_contact">Suprimir %s dels seus contactes?</string>
     <string name="sync_contact">Sincronitzar %s amb l\'aplicació de web?</string>
     <string name="confirm">Confirmar</string>
-    <string name="confirm_destructive_action">N\'esteu segur? Aquesta acció no es pot desfer.</string>
+    <string name="confirm_destructive_action">Esteu segur? Això no es pot desfer.</string>
     <string name="create">Crear</string>
     <string name="name">Nom</string>
     <string name="email">Correu electrònic</string>
@@ -194,11 +194,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync">Sincronitzar contactes</string>
     <string name="save_message_as_draft">Desar missatge com a esborrany?</string>
     <string name="no_subject">Enviar missatge sense assumpte?</string>
-    <string name="yes">Si</string>
+    <string name="yes">Sí</string>
     <string name="no">No</string>
     <string name="okay">D\'acord</string>
     <string name="report_bugs">Informa d\'un error</string>
-    <string name="send_report">Envieu un informe</string>
+    <string name="send_report">Enviar informe</string>
     <string name="bug_title">Títol</string>
     <string name="bug_description">Descripció de l\'error</string>
     <string name="sending_report">Enviant informe...</string>
@@ -208,6 +208,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="forward_prefix">Adj:</string>
     <string name="original_message_divider">-------- Missatge Original --------</string>
     <string name="invalid_email_address">La direcció \'%s\' no és vàlida</string>
+    <string name="invalid_email_address_removed">La adreça \'%s\' es invàlida i ha estat esborrada</string>
     <string name="no_recipients_specified">Si us plau agrega almenys un destinatari</string>
     <string name="no_password_specified">Els temps d\'expiració només es poden establir en missatges totalment xifrats. Estableix una contrasenya pels destinataris que no siguin de ProtonMail.</string>
     <string name="attachment_limit">Els fitxers adjunts són limitats a %1$s. Total adjuntat seria %2$s.</string>
@@ -218,6 +219,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_inbox">Anar a la meva safata d\'entrada</string>
     <string name="message_sent">Missatge enviat</string>
     <string name="message_failed">Error al enviar el missatge</string>
+    <string name="message_sending_failures">%d errades d\'enviament de missatges</string>
     <string name="storage_limit">Límit d\'emmagatzematge</string>
     <string name="storage_limit_warning">S\'està assolint el límit d\'emmagatzematge</string>
     <string name="do_not_show_again">No mostrar de nou</string>
@@ -234,7 +236,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="passwords">Administrador de contrasenyes</string>
     <string name="change_password">Canviar Contrasenya</string>
     <string name="change_login_password">Canvia la contrasenya d\'inici de sessió</string>
-    <string name="change_mailbox_password">Canviar la contrasenya del bústia</string>
+    <string name="change_mailbox_password">Canviar la contrasenya de la bústia</string>
     <string name="eo_password_title">Establir contrasenya</string>
     <string name="eo_password_subtitle">Estableix una contrasenya per xifrar aquest missatge per usuaris que no siguin de ProtonMail</string>
     <string name="eo_password_more_info">Rebre més informació</string>
@@ -243,36 +245,36 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_new_login_password">Confirma nova contrasenya</string>
     <string name="old_mailbox_password">Contrasenya de la bústia actual</string>
     <string name="new_mailbox_password">Nova contrasenya de la bústia</string>
-    <string name="confirm_new_mailbox_password">Confirma la contrasenya de la bústia</string>
+    <string name="confirm_new_mailbox_password">Confirma la nova contrasenya de la bústia</string>
     <string name="no_attachments">0 Fitxers adjunts</string>
     <string name="num_attachments">%d Fitxers adjunts</string>
     <string name="new_passwords_not_valid">Entrada invàlida</string>
     <string name="new_passwords_do_not_match">Les noves contrasenyes no coincideixen</string>
     <string name="new_login_password_saved">Nova contrasenya d\'inici de sessió desada</string>
-    <string name="new_mailbox_password_saved">Nova contrasenya de la bústia guardada</string>
+    <string name="new_mailbox_password_saved">Nova contrasenya de la bústia desada</string>
     <string name="could_not_change_password">No s\'ha pogut canviar la contrasenya</string>
     <string name="auto_logout_option_settings">Opcions de Sortida automàtica</string>
-    <string name="pin_lock_option_settings">Bloqueja les opcions de l\'aplicació</string>
+    <string name="pin_lock_option_settings">Opcions de bloqueig d’aplicació</string>
     <string name="pin_lock_after">Bloqueja l\'aplicació després</string>
     <string name="lock_the_app">Bloqueja l\'aplicació</string>
-    <string name="no_sound_or_vibrate">No hi ha vibració ni so</string>
+    <string name="no_sound_or_vibrate">Sense vibració ni so</string>
     <string name="sound">So sense vibració</string>
     <string name="vibration">Vibració sense so</string>
     <string name="both_sound_and_vibration">Vibració i so</string>
-    <string name="display_name_banned_chars">Nom invàlid. No es permeten els caràcters \'&gt;\' i \'&lt;\'</string>
+    <string name="display_name_banned_chars">Nom de visualització no vàlid. \'&gt;\' i \'&lt;\' no estan permesos</string>
     <string name="cont">Continua</string>
     <string name="email_verification_code">Enviarem un codi de verificació a l\'adreça electrònica de dalt.</string>
     <string name="sms_verification_code">Enviarem un codi de verificació al número de telèfon anterior.</string>
     <string name="send_verification_code">Envia el codi de verificació</string>
     <string name="resend_verification_code">Reenviar</string>
     <string name="enter_verification_code">Entrar codi de verificació</string>
-    <string name="verify">Verifica</string>
-    <string name="reply_prefix_on">Actiu</string>
+    <string name="verify">Verificar</string>
+    <string name="reply_prefix_on">A</string>
     <string name="create_new_account">Crea un compte nou</string>
     <string name="setup_new_account">Configureu el vostre compte</string>
     <string name="create_account">Crea un compte</string>
     <string name="create_passwords">Establir contrasenya</string>
-    <string name="sign_up">Enregistrar-se</string>
+    <string name="sign_up">Registra\'t</string>
     <string name="caps_username">Nom d\'usuari</string>
     <string name="caps_login_password">Contrasenya</string>
     <string name="caps_two_factor">Codi de dos factors</string>
@@ -280,7 +282,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="caps_confirm_mailbox_password">Confirmar la contrasenya de la bústia</string>
     <string name="caps_optional_notification_email">CORREU ELECTRÒNIC DE RECUPERACIÓ DE CONTRASENYA (OPCIONAL)</string>
     <string name="caps_optional">*OPCIONAL</string>
-    <string name="update_me_for_new_features">Mantén-me actualitzat sobre les noves funcions</string>
+    <string name="update_me_for_new_features">Manteneu-me al dia sobre les noves funcions</string>
     <string name="create_mailbox_password">Crea una contrasenya</string>
     <string name="confirm_mailbox_password">Confirmar la contrasenya de la bústia</string>
     <string name="password_note"><b> Nota: </b> Això s\'utilitza per xifrar i desxifrar els vostres missatges.
@@ -289,7 +291,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="terms_and_conditions">En utilitzar ProtonMail, accepteu la nostra\n
       <a href="https://protonmail.com/terms-and-conditions">termes i condicions</a>i<a href="https://protonmail.com/privacy-policy">política de privacitat</a></string>
     <string name="human_verification">Verificació humana</string>
-    <string name="human_verification_subtitle">Per evitar l’abús de ProtonMail,\nhem de verificar que sou humà.</string>
+    <string name="human_verification_subtitle">Per evitar l\'ús abusiu de ProtonMail, \nnecessitem verificar que sou humà.</string>
     <string name="select_options">Seleccioneu una de les opcions següents:</string>
     <string name="no_verification_methods_found">No s\'ha trobat cap mètode de verificació</string>
     <string name="email_verification">Verificació de correu electrònic</string>
@@ -303,20 +305,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="highest_security">El nivell més alt de xifrat disponible. <b> Pot trigar uns minuts a configurar. </b></string>
     <string name="generate_keypair">Genera un parell de claus</string>
     <string name="labels_title_apply">Aplicar etiquetes</string>
-    <string name="labels_title_add">Afegir etiqueta</string>
+    <string name="labels_title_add">Afegeix etiqueta</string>
     <string name="labels_title">Etiquetes</string>
-    <string name="labels_create">Afegir etiqueta</string>
+    <string name="labels_create">Afegeix etiqueta</string>
     <string name="label_name">Nom de etiqueta</string>
-    <string name="label_name_empty">El nom de l’etiqueta és obligatori</string>
+    <string name="label_name_empty">L\'etiqueta ha de tenir un nom</string>
     <string name="label_name_duplicate">Ja existeix aquest nom d\'etiqueta</string>
     <string name="label_created">Etiqueta creada</string>
     <string name="label_invalid">L\'etiqueta no s\'ha afegit a causa del nom no vàlid.</string>
-    <string name="undo">Desfés</string>
+    <string name="undo">Desfer</string>
     <string name="customize_swipe_actions">Personalitza les accions de lliscament</string>
     <string name="message_details_swipe_info">Podeu tornar a la pantalla de la bústia per mitjà de
       desplaçant-vos d\'esquerra a dreta i moure el missatge actual a PAPERERA passant per la dreta a l\'esquerra</string>
     <string name="composing_message_scroll_info">Podeu desplaçar-vos cap amunt o avall pel tauler de composició desplaçant-vos per la vora dreta del tauler de composició</string>
-    <string name="message_can_not_edit">No es pot respondre/reenviar. Aquest missatge encara no s’enviarà.</string>
+    <string name="message_can_not_edit">No es pot respondre/reenviar. Aquest missatge encara no s’enviarà</string>
     <string name="label_apply">Aplicar</string>
     <string name="label_delete">Esborra</string>
     <string name="label_add">Afegir</string>
@@ -326,8 +328,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="also_archive">Archivar també</string>
     <string name="label_deleted">Etiqueta esborrada</string>
     <string name="label_deleted_error">S\'ha produït un error en eliminar l\'etiqueta</string>
+    <string name="message_deleted_error">S\'ha produït un error en suprimir alguns missatges. Alguns dels missatges seleccionats estan en procés d’enviament?!</string>
     <string name="respond_inline">Respondre en línia</string>
-    <string name="no_connectivity_detected">No s\'ha detectat cap connectivitat...</string>
+    <string name="no_connectivity_detected">No s\'ha detectat cap connectivitat... (<u>Resolució de problemes</u>)</string>
     <string name="no_connectivity_message_not_downloaded">No s\'ha detectat cap connectivitat...
         \nMissatge no descarregat</string>
     <string name="connectivity_arrived">Connectat</string>
@@ -340,16 +343,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_failed_new">Error al carregar l\'arxiu adjunt al missatge %1$s %2$s</string>
     <string name="attaching_photo_failed">No ha sigut possible adjuntar la foto</string>
     <string name="empty_message">Missatge buit</string>
-    <string name="dismiss">Desestimar</string>
+    <string name="dismiss">Descartar</string>
     <string name="new_message_arrived">Missatge nou!</string>
     <string name="please_choose_color">Si us plau tria un color</string>
     <string name="display_images">Mostra el contingut remot</string>
     <string name="retry">Reintentar</string>
     <string name="saving_failed_no_conn">Error al desar, sense connexió</string>
     <string name="can_not_create_account_while_beta">La creació de comptes està desactivada a Beta</string>
-    <string name="changing_mailbox_password_disabled_while_beta">S\'ha canviat la contrasenya de la bústia desactivada a Beta</string>
-    <string name="username_is_available">%s està disponible!</string>
-    <string name="username_is_not_available">%s no està disponible!</string>
+    <string name="changing_mailbox_password_disabled_while_beta">Cambiar la contrasenya de la bústia està desactivada a Beta</string>
+    <string name="username_is_available">Nom d\'usuari disponible!</string>
+    <string name="username_is_not_available">El nom d\'usuari ja està en ús!</string>
+    <string name="username_is_too_long">La longitud màxima per a un nom d\'usuari és %d caràcters!</string>
     <string name="congratulation">Enhorabona!</string>
     <string name="new_account_ready">El vostre nou correu electrònic segur \ncompte està a punt.</string>
     <string name="optional_email_note">L\'adreça electrònica de recuperació opcional us permet fer-ho
@@ -358,13 +362,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         apareix al camp del remitent.</string>
     <string name="error_captcha_not_valid">Invàlid</string>
     <string name="close_engagement">tancar recorregut</string>
-    <string name="engagement_title_welcome">Benvingut a ProtonMail!</string>
-    <string name="engagement_title_swipe">Acciones de desglaçament ràpid</string>
+    <string name="engagement_title_welcome">Benvingut/benvinguda a ProtonMail!</string>
+    <string name="engagement_title_swipe">Accions de desplaçament ràpid</string>
     <string name="engagement_title_labels">Gestió d\'etiquetes</string>
-    <string name="engagement_title_encryption">Xiftar d\'extrem a extrem</string>
+    <string name="engagement_title_encryption">Xifrat d\'extrem a extrem</string>
     <string name="engagement_title_expire">Missatges amb expiració</string>
-    <string name="engagement_title_help">Ajuda &amp; suport</string>
-    <string name="engagement_title_support_protonmail">Suporta ProtonMail</string>
+    <string name="engagement_title_help">Ajuda &amp; Support</string>
+    <string name="engagement_title_support_protonmail">Suport ProtonMail</string>
     <string name="engagement_subtitle_welcome">La seva nova compte de correu electrònic ja està configurada i llesta per enviar i rebre missatges xifrats.</string>
     <string name="engagement_subtitle_swipe">Pots personalitzar els gestos de lliscament en la configuració de l\'aplicació de ProtonMail.</string>
     <string name="engagement_subtitle_labels">Crea i afegeix etiquetes per organitzar la safata d\'entrada. Mantingui pressionat sobre un missatge per visualitzar totes les opcions.</string>
@@ -409,14 +413,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="pin_subtitle_create_new">Creeu el NOU PIN aquí</string>
     <string name="pin_subtitle_confirm">Confirma aquí el PIN</string>
     <string name="pin_subtitle_confirm_new">Confirma aquí el NOU PIN</string>
-    <string name="forgot_pin">He oblidat el PIN?</string>
+    <string name="forgot_pin">Heu oblidat el PIN?</string>
     <string name="pin_invalid">El PIN no és vàlid, introduïu el PIN de 4 dígits correcte</string>
     <string name="pin_confirmation_not_match">El PIN de confirmació no coincideix</string>
     <string name="pin_not_match">El PIN no coincideix</string>
-    <string name="new_pin_saved">Nou PIN guardat</string>
+    <string name="new_pin_saved">Nou PIN desat</string>
     <string name="pin_settings">Configuració del PIN</string>
     <string name="next">següent</string>
-    <string name="back">endarrere</string>
+    <string name="back">tornar</string>
     <string name="new_emails">%d nous missatges de correu electrònic</string>
     <string name="attachment_download_success">%s descarregat amb èxit a l\'Administrador d\'arxius</string>
     <string name="attachment_download_failed">%s no es va poder descarregar correctament</string>
@@ -424,8 +428,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="ringtone">To de notificació</string>
     <string name="ringtone_selected">To de notificació:</string>
     <string name="notification_option">%1$s\nTo de notificació: %2$s</string>
-    <string name="ringtone_invalid">La selecció de toos retorna un valor no vàlid</string>
-    <string name="ringtone_no_default">Impossible carregar un to de trucada per defecte</string>
+    <string name="ringtone_invalid">La selecció de to de notificació retorna un valor no vàlid</string>
+    <string name="ringtone_no_default">Impossible carregar un to de notificació per defecte</string>
     <string name="select_tone">Selecciona el to</string>
     <string name="copy_link">Copia l\'enllaç</string>
     <string name="share_link">Comparteix l\'enllaç</string>
@@ -433,7 +437,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">Sincronització de fitxers adjunts</string>
     <string name="processing_attachment">Processament adjunt</string>
     <string name="hyperlink_confirmation_dialog_text_html">Esteu a punt d\'obrir el navegador web i anar a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Voleu continuar?</string>
-    <string name="hyperlink_confirmation_checkbox_text">No m\'ho demaneu més</string>
+    <string name="dont_ask_again">No m\'ho demaneu més</string>
     <string name="none">Cap</string>
     <string name="changes_affected_after_closing">Els canvis es veuran afectats després de tancar l\'aplicació</string>
     <plurals name="incorrect_pin_remaining_attempts">
@@ -441,24 +445,25 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">Codi PIN incorrecte, %d intents restants</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
-        <item quantity="one">%d intenteu fins que es netegeu la informació segura!</item>
-        <item quantity="other">%d intenta fins que es netegeu la informació segura!</item>
+        <item quantity="one">%d intent fins un esborrat de dades de seguretat!</item>
+        <item quantity="other">%d intents fins un esborrat de dades de seguretat!</item>
     </plurals>
     <string name="done">Fet</string>
     <string name="logout">Tanca sessió</string>
+    <string name="log_out">Tancar sessió de %s?</string>
     <string name="logout_question">Està segur que desitja tancar la sessió?</string>
-    <string name="logout_question_next_account">Esteu segur que voleu tancar la sessió amb el compte corrent i continuar fent ús de %s?</string>
+    <string name="logout_question_next_account">Es canviarà a %s.</string>
     <string name="upselling">Actualització / Donació</string>
     <string name="upselling_title">ProtonMail és de codi obert i gratuït</string>
     <string name="upselling_subtitle">Necessitem el vostre suport per continuar protegint la privadesa i millorant ProtonMail</string>
     <string name="upselling_donate_title">Donar</string>
     <string name="upselling_upgrade_title">Actualització a ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">La teva donació ens ajudará
-  a ampliar capacitats i continuar desenvolupant ProtonMail gratuitament i com a programari lliure. És només gràcies al 
+  a ampliar capacitats i continuar desenvolupant ProtonMail gratuitament i com a programari lliure. És només gràcies al
   suport de la comunitat que som capaços de seguir oferint ProtonMail a les persones d\'arreu                          del món.</string>
-    <string name="upselling_upgrade_subtitle">La vostra actualització de subscripció ens ajudarà a afegir 
+    <string name="upselling_upgrade_subtitle">La vostra actualització de subscripció ens ajudarà a afegir
    capacitats i continuar desenvolupant ProtonMail com a font lliure i oberta. Només a través del
-   suport de la comunitat podem continuar oferint ProtonMail a persones de tot 
+   suport de la comunitat podem continuar oferint ProtonMail a persones de tot
    el món.</string>
     <string name="upgrade_donate">Actualització / Donació</string>
     <string name="upselling_donate_pick_amount">Seleccioneu un import de donació o introduïu qualsevol quantitat</string>
@@ -467,7 +472,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="amount_50">50€</string>
     <string name="amount_100">100€</string>
     <string name="donation_amount">Introduïu l\'import de la donació</string>
-    <string name="donate">Donar</string>
+    <string name="donate">Doneu</string>
     <string name="donate_paypal_bitcoin">Donar a través de PayPal o Bitcoin</string>
     <string name="upgrade_line1">Tot inclòs al nostre pla gratuït</string>
     <string name="upgrade_line2">5 GB d\'emmagatzematge</string>
@@ -478,9 +483,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="per_month">/mes</string>
     <string name="upgrade">Actualitzar</string>
     <string name="payment_options">Mètodes de pagament</string>
-    <string name="other_plans">Per als plans amb més emmagatzematge, actualitzeu-vos a través
-  de la interfície de correu web de ProtonMail.</string>
-    <string name="upgrade_paid_user">Gràcies per ser un usuari pagat!</string>
+    <string name="other_plans">Per als plans amb més emmagatzematge, actualitzeu-vos a mitjançant
+ la interfície de correu web de ProtonMail.</string>
+    <string name="upgrade_paid_user">Gràcies per ser un usuari de pagament!</string>
     <string name="select_account_type">Seleccioneu el vostre tipus de compte</string>
     <string name="select_account_type_subtitle">ProtonMail és un servei gratuït
     per al bé públic. Podeu ajudar a mantenir la privadesa en línia seleccionant un compte de pagament.</string>
@@ -495,7 +500,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_plus_line2">Enviar fins a 1000 missatges per dia</string>
     <string name="plan_plus_line3">Etiquetes i filtres personalitzats</string>
     <string name="plan_plus_line4">Envia missatges xifrats a destinataris externs</string>
-    <string name="plan_plus_line7">Prioritat d\'atenció al client</string>
+    <string name="plan_plus_line7">Atenció al client prioritària</string>
     <string name="plan_free_line1">500 MB d\'emmagatzematge</string>
     <string name="plan_free_line2">150 missatges per dia</string>
     <string name="plan_free_line22">%d missatges per dia</string>
@@ -507,7 +512,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_visio_line3">Accés anticipat a novetats</string>
     <string name="plan_visio_line6">Ajuda a triar noves funcions només a través d\'enquestes Visionaris</string>
     <string name="plan_business_line1">aviat, les organitzacions podran gaudir d\'un correu electrònic xifrat!</string>
-    <string name="currency_duration">Moneda &amp; durada</string>
+    <string name="currency_duration">Moneda &amp; Durada</string>
     <string name="credit_card_name">Nom de targeta de crèdit/dèbit</string>
     <string name="zip_code">Codi postal</string>
     <string name="card_number">Número de la targeta de crèdit</string>
@@ -515,7 +520,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="billing_upgrade_thanks">Actualització amb èxit! Gràcies pel teu suport!</string>
     <string name="country">País</string>
     <string name="cvc">CVC</string>
-    <string name="terms_and_conditions_billing">En fer clic a Enviar, accepteu 
+    <string name="terms_and_conditions_billing">En fer clic a Enviar, accepteu
   que\n<a href="https://protonmail.com/terms-and-conditions"> termes i condicions de ProtonMail</a></string>
     <string name="submit">Enviar</string>
     <string name="currency">Moneda</string>
@@ -587,22 +592,22 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="available_options">Opcions disponibles</string>
     <string name="current_recovery_email">Adreça electrònica de recuperació actual</string>
     <string name="change_recovery_email">Canvia la direcció de correu electrònic de recuperació</string>
-    <string name="new_recovery_email">Nou correu electrònic de recuperació</string>
-    <string name="confirm_new_recovery_email">Confirmeu un nou correu electrònic de recuperació</string>
-    <string name="recovery_emails_invalid">L\'adreça electrònica no coincideix o no és vàlida</string>
+    <string name="new_recovery_email">Nou Correu Electrónic de Restauració/Notificació</string>
+    <string name="confirm_new_recovery_email">Confirma el nou Correu Electronic per Restauració/Notificació</string>
+    <string name="recovery_emails_invalid">La adreça de correu electronic no coindiceix o es invàlida</string>
     <string name="authenticate">Autenticar</string>
     <string name="background_sync_subtitle">Si aquesta opció està habilitada, l\'aplicació es sincronitzarà amb el servidor en segon pla. Si desactiveu aquesta característica, es desactivaran les notificacions push.</string>
     <string-array name="notification_options">
-        <item>No hi ha vibració ni so</item>
+        <item>Sense vibració o so</item>
         <item>So sense vibració</item>
         <item>Vibració sense so</item>
         <item>Vibració i so</item>
     </string-array>
     <string-array name="account_type_names">
         <item>Gratuït</item>
-        <item>Més</item>
+        <item>Plus</item>
         <item>Visionari</item>
-        <item>Professional</item>
+        <item>Profesional</item>
     </string-array>
     <plurals name="custom_domains">
         <item quantity="one">Utilitzi el teu propi domini (ex: john@smith.com)</item>
@@ -624,16 +629,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>12</item>
     </string-array>
     <string name="contacts_groups">Grups</string>
-    <string name="phone_contact">Contacte del telèfon</string>
+    <string name="phone_contact">Telefon de contacte</string>
     <string name="contact_details_display_name">Nom</string>
-    <string name="contact_details">Dades de contacte</string>
+    <string name="contact_details">Detalls de contacte</string>
     <string name="email_type_home">Inici</string>
     <string name="email_type_work">Feina</string>
     <string name="option_type_custom">Nou tipus</string>
     <string name="type_title">Trieu Tipus</string>
     <string name="no_permission_storage">Sense permís d\'emmagatzematge</string>
     <string name="message_drafted_error_server">Error en enviar missatges. %s</string>
-    <string name="sync_local_contacts">Pengeu a ProtonMail</string>
+    <string name="sync_local_contacts">Pujar a ProtonMail</string>
     <string name="please_select_only_phone_contacts">Seleccioneu només Contactes telefònics locals</string>
     <string name="contact_vcard_hint_email">Introduïu correu electrònic</string>
     <string name="contact_vcard_hint_phone">Introduïu el número de telèfon</string>
@@ -650,7 +655,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="vcard_other_option_org">Organització</string>
     <string name="vcard_other_option_title">Títol</string>
     <string name="vcard_other_option_nickname">Sobrenom</string>
-    <string name="vcard_other_option_birthday">Aniversari</string>
+    <string name="vcard_other_option_birthday">Data de naixement</string>
     <string name="vcard_other_option_anniversary">Aniversari</string>
     <string name="vcard_other_option_gender">Gènere</string>
     <string name="vcard_other_option_role">Rol</string>
@@ -658,7 +663,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_question">Sincronitzar contactes?</string>
     <string name="sync_question_subtitle">Això sincronitzarà els contactes locals al vostre dispositiu al directori de contactes de ProtonMail. A continuació, podrà accedir a aquests contactes en els altres dispositius a través de ProtonMail.</string>
     <string name="convert_contact">Converteix el contacte</string>
-    <string name="upload_contacts">Penja contactes</string>
+    <string name="upload_contacts">Pujar contactes</string>
     <string name="encrypted_data">Dades xifrades</string>
     <string name="upgrade_encrypted_contact">Actualitzeu per utilitzar la informació de contacte xifrada.</string>
     <string name="empty_encrypted_data">Buida la informació de contacte xifrada.</string>
@@ -694,7 +699,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>@string/vcard_other_option_url</item>
     </string-array>
     <string name="logged_out">Desconnectat</string>
-    <string name="logged_out_description">Heu tancat la sessió. Torna a iniciar sessió.</string>
+    <string name="logged_out_description">Heu tancat la sessió. Torneu a iniciar sessió.</string>
     <string name="verification_needed">Verificació obligatòria</string>
     <string name="verification_needed_description">Per raons de seguretat, si us plau verifiqueu que no sou un robot.</string>
     <string name="verification_needed_description_notification">Verifiqueu que sou un usuari abans d\'enviar aquest missatge: %s</string>
@@ -702,18 +707,18 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_message_zip_code_invalid">Error: codi postal no és vàlid</string>
     <string name="error_message_cvc_invalid">Error: Nombre CVC no es invàlid</string>
     <string name="error_message_card_name_invalid">Error: el nom de la targeta no és vàlid</string>
-    <string name="error_message_select_country">Si us plau Seleccioneu País</string>
+    <string name="error_message_select_country">Si us plau seleccioneu País</string>
     <string name="error_message_exp_date_invalid">Error: data de caducitat no és vàlida</string>
     <string name="error_message_exp_date_past">Error: data de caducitat no és vàlida</string>
     <string name="error_message_card_number_invalid">Error: el número de la targeta no és vàlid</string>
     <string name="print_error">Error d\'impressió</string>
-    <string name="download_error">Baixada fallida</string>
-    <string name="download_complete">Baixada completa</string>
+    <string name="download_error">Descàrrega fallida</string>
+    <string name="download_complete">Descàrrega completa</string>
     <string name="download_in_progress">Descàrrega en curs</string>
     <string name="expires_in">\tCaduca a %s</string>
-    <string name="unsaved_changes_title">Canvis no emmagatzemats</string>
+    <string name="unsaved_changes_title">Canvis no desats</string>
     <string name="unsaved_changes_subtitle">Hi ha entrades sense desar al formulari. Esteu segur que voleu descartar-los?</string>
-    <string name="discard">Descartar</string>
+    <string name="discard">Descarta</string>
     <string name="keep_editing">Continua editant</string>
     <string name="request_timeout">El temps de la petició s\'ha esgotat, si us plau intenteu-ho de nou</string>
     <string name="add_folder">Afegir carpeta</string>
@@ -748,7 +753,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="spam_score_100">Aquest correu sembla que sigui d\'una adreça de ProtonMail però ha arribat des de fora del nostre sistema i no ha passat els requisits d\'autentificació. És possible que es tracti d\'un correu falsejat o reenviat indegudament!</string>
     <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament!</string>
     <string name="spam_score_102">Aquest missatge pot ser un intent de suplantació d\'identitat. Si us plau comprovi el remitent i continguts per assegurar-se que són legítimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SEBRE MÉS</a></string>
-    <string name="print_from_template">De: %s</string>
+    <string name="print_from_template">Des de: %s</string>
     <string name="print_to_template">A: %s; &#160;</string>
     <string name="print_cc_template">CC: %s; &#160;</string>
     <string name="print_bcc_template">BCC: %s; &#160;</string>
@@ -797,12 +802,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_offline_max_storage">Estableix la quantitat màxima d\'espai d\'emmagatzematge que ProtonMail pot utilitzar al vostre dispositiu mòbil.</string>
     <string name="load_embedded_images_failed_no_network">Ha fallat la càrrega d\'imatges incrustades. Comproveu la vostra connexió de xarxa.</string>
     <string name="load_embedded_images_failed">Ha fallat la càrrega d\'imatges incrustades.</string>
-    <string name="attachment_storage_unlimited">%.2f MB de Il·limitat</string>
+    <string name="attachment_storage_unlimited">%.2fMB of Il·limitat</string>
     <string name="unlimited">Il·limitat</string>
     <string name="local_storage_cleared">S\'ha eliminat l\'emmagatzematge local</string>
     <string name="local_storage_clear">Esborra l\'emmagatzematge local</string>
     <string name="recipient_popup_compose_to">Enviar missatge a</string>
-    <string name="recipient_popup_copy_address">Copia l\'adreça</string>
+    <string name="recipient_popup_copy_address">Copiar l\'adreça</string>
     <string name="recipient_popup_see_details">Veure detalls del contacte</string>
     <string name="send_with_untrusted_key_title">Voleu enviar amb una clau que no sigui de confiança?</string>
     <string name="send_with_untrusted_key_message">Heu activat la verificació d\'adreces amb claus de confiança per a %s, però no s\'han confiat claus de xifratge actives.</string>
@@ -844,7 +849,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_account">Compte</string>
     <string name="channel_description_account">Estat del compte</string>
     <string name="channel_name_ongoing_operations">Operacions en curs</string>
-    <string name="channel_description_ongoing_operations">Mostra totes les operacions en curs com a noves	
+    <string name="channel_description_ongoing_operations">Mostra totes les operacions en curs com a noves
  descàrrega de missatges en segon pla</string>
     <string name="checking_mailbox">Comprovació de la bústia de correu</string>
     <string name="report_phishing">Informeu de phishing</string>
@@ -854,7 +859,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  ens envieu un missatge, per poder analitzar-lo i millorar-ne els filtres. Això significa que podrem
  per veure el contingut del missatge complet.</string>
     <string name="phishing_report_send_message_moved_to_spam">Informe enviat. Missatge traslladat a spam.</string>
-    <string name="report_send">L\'informe és enviat</string>
+    <string name="report_send">L\'informe està enviat</string>
     <string name="cannot_send_report_send">No es pot enviar l\'informe</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
@@ -870,7 +875,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="create_contact_group">Crear Grup de Contactes</string>
     <string name="edit_contact_group">Edita Grup de Contactes</string>
     <string name="contact_groups_add_addresses">Afegir Adreça</string>
-    <string name="contact_groups_manage_addresses">Gestiona les adreces</string>
+    <string name="contact_groups_manage_addresses">Gestionar les adreces</string>
     <string name="contact_group_display_name">\ue91a Nom de Visualització</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Afegiu adreçes a grups</string>
@@ -915,8 +920,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">Grups Suprimits</item>
     </plurals>
     <plurals name="are_you_sure_delete_contact">
-        <item quantity="one">Esteu segur que voleu esborrar aquest contacte?</item>
-        <item quantity="other">Està segur que vol suprimir aquests contactes?</item>
+        <item quantity="one">¿Esteu segur que voleu esborrar aquest contacte?</item>
+        <item quantity="other">¿Estàs segur que vols esborrar aquest contacte?</item>
     </plurals>
     <string name="members">Membres</string>
     <string name="max_emails_in_group_title">A arribar al max missatges de correu electrònic per grup</string>
@@ -951,11 +956,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_locked">L\'aplicació està bloquejada</string>
     <string name="please_use_fingerprint">Utilitzeu la vostra empremta digital per desbloquejar l’aplicació.</string>
     <string name="use_pin_instead">Utilitzeu el PIN en lloc</string>
+    <!-- strings used for biometric enrollment -->
+    <string name="no_biometric_data_enrolled">No s’han registrat dades biomètriques</string>
+    <string name="log_in_using_biometric_credential">Desbloquejar amb les vostres credencials biomètriques</string>
+    <string name="unlock_using_biometrics">Desbloquejar usant biomètrica</string>
+    <string name="biometric_error_hw_not_available">Hardware biomètric no disponible.</string>
+    <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Destinataris ocults</string>
     <string name="could_not_delete_attachment">No es pot suprimir l’enllaç quan es puja</string>
     <string name="manage_accounts">Gestionar comptes</string>
     <!-- region Settings -->
-    <string name="settings">Configuració</string>
+    <string name="settings">Preferències</string>
     <string name="account_settings">Configuració del compte</string>
     <!-- region Acc Settings -->
     <string name="account">Compte</string>
@@ -971,7 +982,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="default_mail_address">Adreça de correu electrònic per defecte</string>
     <string name="default_address">Adreça per defecte</string>
     <string name="display_name_n_signature">Nom de visualització &amp; signatura</string>
-    <string name="display_name">Nom a mostrar</string>
+    <string name="display_name">Mostrar el nom</string>
     <string name="edit_display_name">Modificar el nom per mostrar</string>
     <string name="signature">Signatura</string>
     <string name="edit_signature">Habilitar signatura</string>
@@ -982,7 +993,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="mobile_signature_is_premium">El canvi de la signatura mòbil només es permet als usuaris de pagament</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Posposa</string>
-    <string name="notifications_snooze">Notificacions posposar</string>
+    <string name="notifications_snooze">Posposar notificacions</string>
     <string name="notifications_snooze_finishing">Les notificacions es reprendran en $s min</string>
     <string name="snooze_notifications">Posposar Notificacions</string>
     <string name="snooze_notifications_adjust">Ajusta</string>
@@ -1002,11 +1013,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="set_custom_quick_snooze">Estableix el valor de repetició ràpid personalitzat</string>
     <string name="turn_off">Desactiva</string>
     <string name="snooze_will_repeat">Posposició es repetirà</string>
+    <string name="work_days">Dies laborables</string>
+    <string name="weekends">Cap de setmana</string>
+    <string name="every_day">Cada dia</string>
     <string name="quick_and_scheduled_enabled">Repetició ràpida i Posposició programada activa</string>
-    <string name="quick_only_enabled">Posposició ràpid actiu</string>
-    <string name="scheduled_only_enabled">Posposició programat actiu</string>
+    <string name="quick_only_enabled">Posposició ràpida activa</string>
+    <string name="scheduled_only_enabled">Posposició programada activa</string>
     <string name="quick_and_scheduled_disabled">Posposició ràpida i posposició programada desactivada</string>
-    <string name="scheduled_snooze_on">Programat (encès)</string>
+    <string name="scheduled_snooze_on">Programat (Activat)</string>
     <string name="scheduled_snooze_off">Programat (desactivat)</string>
     <!-- endregion -->
     <string name="mailbox">Bústia de correu</string>
@@ -1017,9 +1031,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="settings_background_sync">Sincronitzar en segon pla</string>
     <string name="settings_auto_show_images">Mostrar les imatges remotes automàticament</string>
     <string name="settings_auto_show_embedded_images">Mostrar automàticament les imatges incrustades</string>
-    <string name="settings_prevent_taking_screenshots">Evita prendre captures de pantalla</string>
+    <string name="settings_prevent_taking_screenshots">Prevenciò de captures de pantalla</string>
     <string name="hyperlink_confirmation">Sol·licitar enllaç de confirmació</string>
-    <string name="labels_and_folders">Etiquetes &amp; carpetes </string>
+    <string name="labels_and_folders">Etiquetes &amp; Carpetes </string>
     <string name="labels_manage">Administrador de etiquetes</string>
     <string name="folders_manage">Administrar carpetes</string>
     <string name="swiping_gesture">Gest de lliscament</string>
@@ -1027,9 +1041,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_action_right">Llisca de dreta a esquerra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Tria l\'acció de lliscar</string>
-    <string name="swipe_action_trash">S\'ha mogut el missatge a la paperera</string>
-    <string name="swipe_action_trash_short">S\'ha mogut a la paperera</string>
-    <string name="swipe_action_star">Estrella de missatge actualitzada</string>
+    <string name="swipe_action_trash">Missatge mogut a la paperera</string>
+    <string name="swipe_action_trash_short">Mogut a la paperera</string>
+    <string name="swipe_action_star">Missatge destacat actualitzat</string>
     <string name="swipe_action_spam">Missatge marcat com a spam</string>
     <string name="swipe_action_archive">Missatge arxivat</string>
     <string name="swipe_action_mark_read">Missatge marcat com a llegit</string>
@@ -1087,5 +1101,19 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="switch_accounts_question">Canviar de compte?</string>
     <string name="switch_to_account">Canviar a %s</string>
     <string name="login_failure_missing_keys">El compte que intenteu afegir no té claus generades. Afegiu aquest compte com a primer compte a l\'aplicació o inicieu la sessió mitjançant la versió web per generar claus i, a continuació, afegiu-lo com a compte addicional a l\'aplicació.</string>
+    <!-- endregion -->
+    <!-- region Compose shortcut -->
+    <string name="shortcut_compose">Redactar</string>
+    <string name="shortcut_compose_new_message">Escriu un missatge nou</string>
+    <!-- endregion -->
+    <!-- region Troubleshoot screen -->
+    <string name="troubleshoot_title">Problemes de conexió comuns i solucions</string>
+    <string name="troubleshoot_message"><i>No hi ha conexió a internet</i> - Si us plau, revisi que la teva conexió a internet funciona correctament..
+        \n\n<i>Problema del Proveïdor de servei d\'Internet (ISP)</i> - Proveu de connectar-vos a Proton des d\'una altra xarxa (o utilitzi <a href="https://protonvpn.com/">ProtonVPN</a> o <a href="https://www.torproject.org/">Tor</a>).
+        \n\n<i>Bloqueig governamental</i> - El teu país pot tenir bloquejat el acces a Proton. Proveu  <a href="https://protonvpn.com/">ProtonVPN</a> (o qualsevol altre VPN) o <a href="https://www.torproject.org/">Tor</a> per accedir a Proton.
+        \n\n<i>Interferencia d\'Antivirus</i> - Desactivi temporalment o esborri el seu software antivirus..
+        \n\n<i>Interferencia Proxy/Firewall</i> - Desactivi qualsevol proxy o firewalls, o contacti amb el seu administrador de xarxa.
+        \n\n<i>Proton està caigut</i> - Comproveu <a href="http://protonstatus.com/">Proton Status</a> per sebre el estat del nostre sistema.
+        \n\n<i>Encara no he trobat una solució </i> - Contacti\'ns  directament a través <a href="https://protonmail.com/support-form">formulari de contacte</a>, <a href="mailto:support@protonmail.com">correu electronic</a> (support@protonmail.com), o <a href="https://twitter.com/ProtonMail">Twitter</a>.    </string>
     <!-- endregion -->
 </resources>
