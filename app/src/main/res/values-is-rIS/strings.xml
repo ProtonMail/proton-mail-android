@@ -348,8 +348,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">Villa við vistun, engin tenging</string>
     <string name="can_not_create_account_while_beta">Gerð notandaaðgangs er ekki virk í Beta-prófunarútgáfum</string>
     <string name="changing_mailbox_password_disabled_while_beta">Að breyta lykilorði á pósthólfi er ekki virkt í Beta-prófunarútgáfum</string>
-    <string name="username_is_available">%s er tiltækt!</string>
-    <string name="username_is_not_available">%s er EKKI tiltækt!</string>
     <string name="congratulation">Til hamingju!</string>
     <string name="new_account_ready">Nýi öruggi tölvupóst\naðgangurinn þinn er tilbúinn.</string>
     <string name="optional_email_note">Valkvæða endurheimtupóstfangið gerir þér kleift að
@@ -1083,5 +1081,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="switch_accounts_question">Skipta um notandaaðgang?</string>
     <string name="switch_to_account">Skipta yfir í %s</string>
     <string name="login_failure_missing_keys">Notandaaðgangurinn sem þú ert að reyna að bæta við er ekki með útbúna dulritunarlykla. Bættu þessum aðgangi við sem fyrsta aðgangi í forritinu eða skráðu þig inn með vefviðmótinu til að útbúa dulritunarlykla og bættu honum síðan við sem aukaaðgangi í forritinu.</string>
+    <!-- endregion -->
+    <!-- region Compose shortcut -->
+    <string name="shortcut_compose">Semja póst</string>
+    <string name="shortcut_compose_new_message">Semja ný skilaboð</string>
+    <!-- endregion -->
+    <!-- region Troubleshoot screen -->
+    <string name="troubleshoot_title">Algeng tengivandamál og lausnir á þeim</string>
     <!-- endregion -->
 </resources>

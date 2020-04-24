@@ -203,6 +203,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">---元のメッセージ---</string>
     <string name="invalid_email_address">\'%s\' のアドレスは無効です。</string>
+    <string name="invalid_email_address_removed">このアドレス%sは無効で、削除されました。</string>
     <string name="no_recipients_specified">少なくとも 1 人の受信者を追加してください。</string>
     <string name="no_password_specified">有効期限は、完全に暗号化されたメッセージに対してのみ設定できます。非 ProtonMail受信者のためのパスワードを設定してください。</string>
     <string name="attachment_limit">添付ファイルは、%1$s に制限されています。添付ファイルの合計は、%2$s になります。</string>
@@ -213,6 +214,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_inbox">受信箱に移動</string>
     <string name="message_sent">メッセージが送信されました。</string>
     <string name="message_failed">メッセージ送信の失敗</string>
+    <string name="message_sending_failures">%dメッセージの送信に失敗</string>
     <string name="storage_limit">ストレージの上限</string>
     <string name="storage_limit_warning">ストレージの上限に近づいています。</string>
     <string name="do_not_show_again">次回から表示しない。</string>
@@ -319,6 +321,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="also_archive">アーカイブも行う</string>
     <string name="label_deleted">ラベルが削除されました。</string>
     <string name="label_deleted_error">ラベル削除中のエラー</string>
+    <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
     <string name="no_connectivity_detected">接続が検出できません...</string>
     <string name="no_connectivity_message_not_downloaded">接続検出できません...
@@ -341,8 +344,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">保存に失敗しました。接続がありません。</string>
     <string name="can_not_create_account_while_beta">ベータ版でのアカウント作成はできません。</string>
     <string name="changing_mailbox_password_disabled_while_beta">ベータ版ではメールボックスのパスワード変更はできません。</string>
-    <string name="username_is_available">%s が利用可能です。</string>
-    <string name="username_is_not_available">%s は利用できません。</string>
+    <string name="username_is_available">ユーザー名は使用可能です。</string>
+    <string name="username_is_not_available">既に使用されているユーザー名です。</string>
+    <string name="username_is_too_long">ユーザー名の最大長は %d 文字です。</string>
     <string name="congratulation">おめでとうございます！</string>
     <string name="new_account_ready">新しいセキュリティで保護された新しい電子メール\nアカウント
 ができました。</string>
@@ -434,6 +438,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="done">完了</string>
     <string name="logout">ログアウト</string>
+    <string name="log_out">%s からログアウトしてよろしいですか？</string>
     <string name="logout_question">本当にログアウトしてよろしいですか？</string>
     <string name="logout_question_next_account">現在のアカウントでログアウトして、％s を使用して続行してよろしいですか？</string>
     <string name="upselling">アップグレード/寄付</string>
@@ -919,6 +924,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_locked">アプリはロックされています。</string>
     <string name="please_use_fingerprint">指紋認証でロックを解除してください。</string>
     <string name="use_pin_instead">代わりにPINを使用する</string>
+    <!-- strings used for biometric enrollment -->
+    <string name="log_in_using_biometric_credential">生体認証によるロック解除</string>
+    <string name="unlock_using_biometrics">生体認証によるロック解除</string>
+    <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">非公開の宛先</string>
     <string name="could_not_delete_attachment">アップロード中に添付ファイルを削除することはできません。</string>
     <string name="manage_accounts">アカウントの管理</string>

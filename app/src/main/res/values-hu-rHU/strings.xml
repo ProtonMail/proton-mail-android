@@ -209,6 +209,7 @@ Svájci székhellyel</string>
     <string name="forward_prefix">Fwd:</string>
     <string name="original_message_divider">-------- Eredeti üzenet --------</string>
     <string name="invalid_email_address">A cím érvénytelen: %s</string>
+    <string name="invalid_email_address_removed">A %s cím érvénytelen és eltávolításra került</string>
     <string name="no_recipients_specified">Kérjük adjon meg legalább egy címzettet</string>
     <string name="no_password_specified">Lejárati idő csak teljesen titkosított üzenetekhez adható meg. Kérjük, adjon meg egy jelszót a nem ProtonMail címzettekhez.</string>
     <string name="attachment_limit">A mellékletek maximális mérete: %1$s. Jelenleg %2$s melléklet van megadva.</string>
@@ -219,6 +220,7 @@ Svájci székhellyel</string>
     <string name="go_to_inbox">Ugrás a beérkezett üzenetekhez</string>
     <string name="message_sent">Üzenet elküldve</string>
     <string name="message_failed">Üzenet elküldése sikertelen</string>
+    <string name="message_sending_failures">Az üzenet elküldése %d alkalommal sikertelen</string>
     <string name="storage_limit">A tárhely kapacitása</string>
     <string name="storage_limit_warning">A tárhely rövidesen megtelik</string>
     <string name="do_not_show_again">Ne jelenjen meg újra</string>
@@ -349,8 +351,6 @@ Svájci székhellyel</string>
     <string name="saving_failed_no_conn">Mentés sikertelen, nincs kapcsolat</string>
     <string name="can_not_create_account_while_beta">A regisztráció nem lehetséges a Béta programban</string>
     <string name="changing_mailbox_password_disabled_while_beta">Az e-mail jelszó megváltoztatása nem lehetséges a Béta programban</string>
-    <string name="username_is_available">%s elérhető!</string>
-    <string name="username_is_not_available">%s nem érhető el!</string>
     <string name="congratulation">Gratulálunk!</string>
     <string name="new_account_ready">Az új biztonságos e-mail\n fiókja készen áll.</string>
     <string name="optional_email_note">Az opcionális helyreállító e-mail cím, lehetőséget biztosít

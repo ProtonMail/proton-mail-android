@@ -343,8 +343,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">儲存失敗，無網際網路連線</string>
     <string name="can_not_create_account_while_beta">測試版中已停用建立帳號</string>
     <string name="changing_mailbox_password_disabled_while_beta">測試版中已停用變更電子信箱密碼</string>
-    <string name="username_is_available">%s 可用！</string>
-    <string name="username_is_not_available">%s 不可用！</string>
     <string name="congratulation">恭喜！</string>
     <string name="new_account_ready">您的新安全電子郵件\n帳號已可以使用。</string>
     <string name="optional_email_note">可選的救援電子郵件地址可以

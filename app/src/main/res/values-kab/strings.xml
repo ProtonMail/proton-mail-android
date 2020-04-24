@@ -348,8 +348,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">Asekles yecceḍ, ulac tuqqna</string>
     <string name="can_not_create_account_while_beta">Timerna n umiḍan tensa di Beta</string>
     <string name="changing_mailbox_password_disabled_while_beta">Abeddel n wawal uffir n tnaka n urmas tensa di lqem beta</string>
-    <string name="username_is_available">Yella %s!</string>
-    <string name="username_is_not_available">Ulac %s!</string>
     <string name="congratulation">Ayuz!</string>
     <string name="new_account_ready">Amiḍan-ik amaynut n \nyimayl aɣelsan ihegga.</string>
     <string name="optional_email_note">Tansa imayl n tririt tafrayant ad k-teǧǧ ad talseḍ awennez n wawal-ik uffir ma tettuḍ-ṭ.</string>

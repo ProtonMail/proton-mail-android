@@ -345,8 +345,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">Misslyckades att spara, ingen anslutning</string>
     <string name="can_not_create_account_while_beta">Skapa konto är inaktiverat i Beta</string>
     <string name="changing_mailbox_password_disabled_while_beta">Ändra lösenord för brevlådan inaktiverat i Beta</string>
-    <string name="username_is_available">%s är tillgängligt!</string>
-    <string name="username_is_not_available">%s är INTE tillgängligt!</string>
     <string name="congratulation">Grattis!</string>
     <string name="new_account_ready">Ditt nya säkra epost-\nkonto är klart.</string>
     <string name="optional_email_note">Den valfria återställningsadressen ger dig möjlighet
@@ -992,6 +990,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="set_custom_quick_snooze">Ange anpassat snabbsnoozevärde</string>
     <string name="turn_off">Stäng av</string>
     <string name="snooze_will_repeat">Snooze upprepas</string>
+    <string name="every_day">Varje dag</string>
     <string name="quick_and_scheduled_enabled">Snabbsnooze och schemalagd snooze aktiverat</string>
     <string name="quick_only_enabled">Snabbsnooze aktiverat</string>
     <string name="scheduled_only_enabled">Schemalagd snooze aktiverad</string>

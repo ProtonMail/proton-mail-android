@@ -218,6 +218,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Исходное сообщение --------</string>
     <string name="invalid_email_address">Адрес \'%s\' неверен</string>
+    <string name="invalid_email_address_removed">Адрес \\\'%s\\\' недействителен и был удален</string>
     <string name="no_recipients_specified">Пожалуйста, укажите хотя бы одного получателя</string>
     <string name="no_password_specified">Срок действия можно установить только на полностью зашифрованные сообщения. Пожалуйста, укажите пароль для получателей вне ProtonMail.</string>
     <string name="attachment_limit">Вложения ограничены %1$s. Все вложения займут: %2$s.</string>
@@ -228,6 +229,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_inbox">Перейти во Входящие</string>
     <string name="message_sent">Сообщение отправлено</string>
     <string name="message_failed">Сбой отправки сообщения</string>
+    <string name="message_sending_failures">%d сбоев отправки сообщений</string>
     <string name="storage_limit">Предел объёма хранилища</string>
     <string name="storage_limit_warning">Вы приближаетесь к пределу объёма хранилища</string>
     <string name="do_not_show_again">Больше не показывать</string>
@@ -336,6 +338,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="also_archive">Перенести в архив</string>
     <string name="label_deleted">Ярлык удалён</string>
     <string name="label_deleted_error">Ошибка при удалении ярлыка</string>
+    <string name="message_deleted_error">Ошибка при удалении некоторых сообщений. Находятся ли некоторые из них в процессе отправки?!</string>
     <string name="respond_inline">Ответить с цитированием</string>
     <string name="no_connectivity_detected">Подключение не обнаружено...</string>
     <string name="no_connectivity_message_not_downloaded">Подключение не обнаружено...
@@ -358,8 +361,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">Сбой сохранения. Нет подключения</string>
     <string name="can_not_create_account_while_beta">Создание учётной записи отключено в Бета-версии</string>
     <string name="changing_mailbox_password_disabled_while_beta">Изменение пароля почтового ящика отключено в Бета-версии</string>
-    <string name="username_is_available">%s доступно!</string>
-    <string name="username_is_not_available">%s НЕдоступно!</string>
+    <string name="username_is_available">Имя пользователя доступно!</string>
+    <string name="username_is_not_available">Имя пользователя уже используется!</string>
+    <string name="username_is_too_long">Максимальная длина имени пользователя – %d символов!</string>
     <string name="congratulation">Поздравляем!</string>
     <string name="new_account_ready">Ваша новая учётная запись\nзащищённой эл. почты готова.</string>
     <string name="optional_email_note">Резервный адрес эл. почты позволит вам
@@ -460,6 +464,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="done">Готово</string>
     <string name="logout">Выход</string>
+    <string name="log_out">Выйти из %s?</string>
     <string name="logout_question">Вы уверены, что хотите выйти?</string>
     <string name="logout_question_next_account">Вы уверены, что хотите выйти из текущей учётной записи и продолжить использование %s?</string>
     <string name="upselling">Повысить/Пожертвовать</string>
@@ -976,6 +981,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_locked">Приложение заблокировано</string>
     <string name="please_use_fingerprint">Пожалуйста, используйте отпечаток своего пальца для разблокировки приложения.</string>
     <string name="use_pin_instead">Использовать PIN-код вместо этого</string>
+    <!-- strings used for biometric enrollment -->
+    <string name="biometric_error_hw_not_available">Биометрическое оборудование недоступно.</string>
+    <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Скрытые получатели</string>
     <string name="could_not_delete_attachment">Вложение не может быть удалено во время его загрузки</string>
     <string name="manage_accounts">Управление учётными записями</string>
@@ -1120,5 +1128,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="switch_accounts_question">Сменить учётную запись?</string>
     <string name="switch_to_account">Сменить на %s</string>
     <string name="login_failure_missing_keys">У учетной записи, которую вы пытаетесь добавить, нет сгенерированных ключей. Пожалуйста, добавьте эту учетную запись в качестве первой учетной записи в приложении или войдите через веб-сайт для генерации ключей, после чего можно будет добавить её в качестве дополнительной учетной записи в приложении.</string>
+    <!-- endregion -->
+    <!-- region Compose shortcut -->
+    <string name="shortcut_compose">Новое письмо</string>
+    <string name="shortcut_compose_new_message">Написать новое сообщение</string>
+    <!-- endregion -->
+    <!-- region Troubleshoot screen -->
+    <string name="troubleshoot_title">Соединение: общие проблемы и решения</string>
     <!-- endregion -->
 </resources>

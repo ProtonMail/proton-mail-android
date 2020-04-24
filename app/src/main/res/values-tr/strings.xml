@@ -348,8 +348,6 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="saving_failed_no_conn">Kaydetme başarısız, bağlantı yok</string>
     <string name="can_not_create_account_while_beta">Beta sürümünde hesap oluşturma devre dışı bırakıldı</string>
     <string name="changing_mailbox_password_disabled_while_beta">Beta sürümünden posta kutusu şifresini değiştirme devredışı bırakıldı</string>
-    <string name="username_is_available">%s kullanılabilir!</string>
-    <string name="username_is_not_available">%s kullanılamaz!</string>
     <string name="congratulation">Tebrikler!</string>
     <string name="new_account_ready">Yeni güvenli e-posta\nhesabınız hazır.</string>
     <string name="optional_email_note">İsteğe bağlı kurtarma e-posta adresi, şifrenizi unutursanız oturum açma şifrenizi sıfırlamanızı sağlar.</string>

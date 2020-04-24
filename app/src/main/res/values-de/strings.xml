@@ -208,6 +208,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="forward_prefix">WG:</string>
     <string name="original_message_divider">-------- Original-Nachricht --------</string>
     <string name="invalid_email_address">Die Adresse \"%s\" ist ungültig</string>
+    <string name="invalid_email_address_removed">Die Adresse \\\'%s\\\' ist ungültig und wurde entfernt</string>
     <string name="no_recipients_specified">Bitte geben Sie mindestens einen Empfänger an</string>
     <string name="no_password_specified">Die Zeit, nach der eine Nachricht verfällt, kann nur bei vollständig verschlüsselten Nachrichten gesetzt werden. Bitte tragen Sie ein Passwort für die nicht-ProtonMail-Empfänger ein.</string>
     <string name="attachment_limit">Anhänge sind auf %1$s limitiert. Die Gesamtgröße der Anhänge wäre %2$s.</string>
@@ -218,6 +219,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_inbox">Geh zu meiner Inbox</string>
     <string name="message_sent">Nachricht gesendet</string>
     <string name="message_failed">Nachricht senden fehlgeschlagen</string>
+    <string name="message_sending_failures">%d Nachrichten konnten nicht gesendet werden</string>
     <string name="storage_limit">Speicherlimit</string>
     <string name="storage_limit_warning">Speicherplatz fast aufgebraucht</string>
     <string name="do_not_show_again">Nicht erneut anzeigen</string>
@@ -323,6 +325,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="also_archive">Auch archivieren</string>
     <string name="label_deleted">Kategorie gelöscht</string>
     <string name="label_deleted_error">Fehler beim Löschen der Kategorie</string>
+    <string name="message_deleted_error">Fehler beim Löschen einiger Nachrichten. Werden einige der ausgewählte gerade gesendet?</string>
     <string name="respond_inline">Eingebettet antworten</string>
     <string name="no_connectivity_detected">Keine Verbindung erkannt …</string>
     <string name="no_connectivity_message_not_downloaded">Keine Verbindung erkannt…
@@ -345,8 +348,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">Speichern fehlgeschlagen, keine Internetverbindung</string>
     <string name="can_not_create_account_while_beta">In der Beta ist die Kontoerstellung deaktiviert</string>
     <string name="changing_mailbox_password_disabled_while_beta">Ändern des Postfach-Passworts in der Beta deaktiviert</string>
-    <string name="username_is_available">%s ist verfügbar!</string>
-    <string name="username_is_not_available">%s ist nicht verfügbar!</string>
+    <string name="username_is_available">Benutzername verfügbar!</string>
+    <string name="username_is_not_available">Benutzername wird bereits verwendet!</string>
+    <string name="username_is_too_long">Die Länge des Benutzernamens beträgt maximal %d Zeichen!</string>
     <string name="congratulation">Glückwunsch!</string>
     <string name="new_account_ready">Ihr neuer sicherer E-Mail\nAccount ist fertig.</string>
     <string name="optional_email_note">Die optionale Wiederherstellungs-E-Mail-Adresse ermöglicht es Ihnen,

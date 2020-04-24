@@ -359,8 +359,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">Saving failed, no connection</string>
     <string name="can_not_create_account_while_beta">У бета-версії створення обліковки вимкнено</string>
     <string name="changing_mailbox_password_disabled_while_beta">У бета-версії зміну гасла поштової скриньки вимкнено</string>
-    <string name="username_is_available">%s доступно!</string>
-    <string name="username_is_not_available">%s НЕ доступно!</string>
     <string name="congratulation">Вітаємо!</string>
     <string name="new_account_ready">Ваш нова захищена обліковка\nе-пошти вже готова.</string>
     <string name="optional_email_note">Не обов\'язкова адерса е-пошти для відновлення дозволяє Вам
