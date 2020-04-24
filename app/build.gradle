@@ -174,7 +174,7 @@ android {
         applicationId "ch.protonmail.android"
         minSdkVersion Project.minSdk
         targetSdkVersion Project.targetSdk
-        versionCode = 717 // jenkinsBuildNumber.toInteger()
+        versionCode = 718 // jenkinsBuildNumber.toInteger()
         versionName = "1.13.4"
 
         multiDexEnabled true
