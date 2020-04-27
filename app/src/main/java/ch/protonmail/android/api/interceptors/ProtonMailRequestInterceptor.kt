@@ -47,9 +47,6 @@ class ProtonMailRequestInterceptor private constructor(
         networkUtil: QueueNetworkUtil
 ): BaseRequestInterceptor(userManager, jobManager, networkUtil) {
 
-    var previousInterceptTime = System.currentTimeMillis() - FIVE_SECONDS_IN_MILLIS
-    val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
-
     companion object {
         @Volatile private var INSTANCE: ProtonMailRequestInterceptor? = null
 
@@ -74,13 +71,7 @@ class ProtonMailRequestInterceptor private constructor(
         try {
 
             Logger.doLog(TAG,  "Intercept: advancing request with url: " + request.url())
-            // val requestUrl = request.url().toString()
-            // response = if (requestUrl.contains(Constants.ENDPOINT_URI) && prefs.getBoolean("pref_doh_ongoing", false)) {
-            //     Logger.doLog(TAG, "Intercept: stifling request because it's using old api and doh is ongoing")
-            //     null
-            // } else {
-                response = chain.proceed(request)
-            // }
+            response = chain.proceed(request)
 
         } catch (exception: IOException) {
             // checkForProxy()
