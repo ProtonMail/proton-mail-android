@@ -122,7 +122,6 @@ import ch.protonmail.android.views.messageDetails.ReplyButtonsPanelView;
 import dagger.android.AndroidInjection;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import timber.log.Timber;
 
 import static ch.protonmail.android.activities.NavigationActivityKt.EXTRA_SWITCHED_USER;
 import static ch.protonmail.android.activities.labelsManager.LabelsManagerActivityKt.EXTRA_CREATE_ONLY;
@@ -224,7 +223,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
         String currentAccountUsername = mUserManager.getUsername();
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false);
         AppUtil.clearNotifications(this);
-        if (!mUserManager.isLoggedIn()){
+        if (!mUserManager.isLoggedIn(mUserManager.getUsername())){
             startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         }
         loadMailSettings();

@@ -28,7 +28,9 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.uiModel.DrawerItemUiModel
-import ch.protonmail.android.uiModel.DrawerItemUiModel.*
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Divider
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Header
+import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
 import ch.protonmail.android.utils.extensions.inflate
 import ch.protonmail.android.utils.extensions.setNotificationIndicatorSize
 import ch.protonmail.android.views.DrawerHeaderView
@@ -47,16 +49,13 @@ private const val VIEW_TYPE_LABEL = 3
 
 /**
  * Adapter for Drawer Items that support different View types
- * @see Companion
- *
  * Inherit from [BaseAdapter]
  *
  * @author Davide Farella.
  */
-
-internal class DrawerAdapter : BaseAdapter<
+internal class DrawerAdapter(onItemClick: (DrawerItemUiModel) -> Unit) : BaseAdapter<
         DrawerItemUiModel, DrawerAdapter.ViewHolder<DrawerItemUiModel>
->( ModelsComparator ) {
+    >(ModelsComparator, onItemClick) {
 
     /** Select the given [item] and un-select all the others */
     fun setSelected( item: Primary ) {

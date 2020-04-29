@@ -90,9 +90,9 @@ import ch.protonmail.android.utils.extensions.TextExtensions;
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID;
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ID;
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_INLINE;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 
 public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {
 
@@ -382,7 +382,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void saveLastInteraction() {
-        if (mUserManager.isLoggedIn()) {
+        if (mUserManager.isLoggedIn(mUserManager.getUsername())) {
             User user = mUserManager.getUser();
             user.setLastInteraction(SystemClock.elapsedRealtime());
         }

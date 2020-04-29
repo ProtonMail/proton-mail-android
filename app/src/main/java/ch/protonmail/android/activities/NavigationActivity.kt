@@ -26,6 +26,7 @@ import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -34,6 +35,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
+import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
 import ch.protonmail.android.activities.multiuser.ConnectAccountActivity
@@ -42,7 +44,8 @@ import ch.protonmail.android.activities.navigation.LabelWithUnreadCounter
 import ch.protonmail.android.activities.navigation.NavigationViewModel
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LABEL_ID
 import ch.protonmail.android.activities.settings.EXTRA_CURRENT_MAILBOX_LOCATION
-import ch.protonmail.android.adapters.AccountsAdapter
+import ch.protonmail.android.adapters.AccountManagerAccountsAdapter
+import ch.protonmail.android.adapters.DrawerAccountsAdapter
 import ch.protonmail.android.adapters.DrawerAdapter
 import ch.protonmail.android.adapters.mapLabelsToDrawerLabels
 import ch.protonmail.android.adapters.setUnreadLocations
@@ -75,6 +78,7 @@ import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.DrawerHeaderView
+import ch.protonmail.libs.core.utils.takeIfNotBlank
 import kotlinx.android.synthetic.main.drawer_header.*
 import java.util.*
 import javax.inject.Inject
@@ -100,8 +104,7 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
  * approaching 1000 lines of code, I had to split it this way. [MailboxActivity] needs more
  * refactoring because it still has more than 700 lines of code.
  */
-
-abstract class NavigationActivity : BaseActivity(),
+internal abstract class NavigationActivity : BaseActivity(),
         DrawerHeaderView.IDrawerHeaderListener, QuickSnoozeDialogFragment.IQuickSnoozeListener {
 
     // region views
@@ -117,13 +120,13 @@ abstract class NavigationActivity : BaseActivity(),
      * [DrawerAdapter] for the Drawer. Now all the elements in the Drawer are handled by this
      * Adapter
      */
-    private val drawerAdapter = DrawerAdapter()
+    private val drawerAdapter = DrawerAdapter(::onDrawerItemClicked)
 
     /**
-     * [AccountsAdapter] for the Drawer. It is used as a replacement to the default [navigationDrawerRecyclerView]
+     * [AccountManagerAccountsAdapter] for the Drawer. It is used as a replacement to the default [navigationDrawerRecyclerView]
      * to display the users (logged in and recently logged out) of the application.
      */
-    private val accountsAdapter = AccountsAdapter()
+    private val accountsAdapter = DrawerAccountsAdapter(::onDrawerUserClicked)
 
     /** [DrawerItemUiModel.Header] for the Drawer  */
     private var drawerHeader: DrawerItemUiModel.Header? = null
@@ -171,41 +174,6 @@ abstract class NavigationActivity : BaseActivity(),
      */
     private var onDrawerClose: () -> Unit = {}
 
-    init {
-        drawerAdapter.onItemClick = { drawerItem ->
-            // Header clicked
-            if (drawerItem is DrawerItemUiModel.Header) {
-                onQuickSnoozeClicked()
-                // Primary item clicked
-            } else if (drawerItem is Primary) {
-                onDrawerClose = {
-
-                    // Static item clicked
-                    if (drawerItem is Primary.Static) selectItem(drawerItem.type)
-
-                    // Label clicked
-                    else if (drawerItem is Primary.Label) onNavLabelItemClicked(drawerItem.uiModel)
-                }
-                drawerAdapter.setSelected(drawerItem)
-                drawerLayout.closeDrawer(GravityCompat.START)
-            }
-        }
-
-        accountsAdapter.onItemClick = { account ->
-            if (account is DrawerUserModel.BaseUser) {
-                val currentActiveAccount = userManager.username
-                if (!AccountManager.getInstance(this).getLoggedInUsers().contains(account.name)) {
-                    val intent = Intent(this, ConnectAccountActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    intent.putExtra(EXTRA_USERNAME, account.name)
-                    ContextCompat.startActivity(this, AppUtil.decorInAppIntent(intent), null)
-                } else if (currentActiveAccount != account.name) {
-                    switchAccountProcedure(account.name)
-                }
-            }
-        }
-    }
-
     protected abstract fun onLogout()
 
     protected abstract fun onSwitchedAccounts()
@@ -229,7 +197,7 @@ abstract class NavigationActivity : BaseActivity(),
 
     override fun onResume() {
         super.onResume()
-        ProtonMailApplication.getApplication().startJobManager()
+        mApp.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
         alarmReceiver.setAlarm(this)
@@ -251,10 +219,14 @@ abstract class NavigationActivity : BaseActivity(),
     }
 
     protected fun switchAccountProcedure(accountName: String) {
-        ProtonMailApplication.getApplication().clearPaymentMethods()
+        mApp.clearPaymentMethods()
         userManager.switchToAccount(accountName)
         onSwitchedAccounts()
         DialogUtils.showSignedInSnack(drawerLayout, String.format(getString(R.string.signed_in_with), accountName))
+        // Go to login if User is not logged in
+        if (!mUserManager.isLoggedIn(mUserManager.username)) {
+            startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
+        }
     }
 
     @JvmOverloads
@@ -334,26 +306,32 @@ abstract class NavigationActivity : BaseActivity(),
         navigationViewModel.notificationsCounterLiveData.observe(this, Observer {map ->
             val accountsManager = AccountManager.getInstance(this)
             val currentPrimaryAccount = mUserManager.username
-            val accounts = accountsManager.getLoggedInUsers().sortedByDescending {
-                it == currentPrimaryAccount
-            }.map {
-                val userAddresses = userManager.getUser(it).addresses
-                val primaryAddress = userAddresses.find { address ->
-                    address.type == Constants.ADDRESS_TYPE_PRIMARY
-                }
-                val primaryAddressEmail = if (primaryAddress == null) {
-                    it
-                } else {
-                    primaryAddress.email
-                }
-                val displayName = primaryAddress?.displayName ?: ""
-                DrawerUserModel.BaseUser.DrawerUser(it, primaryAddressEmail, true, map[it] ?: 0, areNotificationSnoozed(it), if (displayName.isNotEmpty()) displayName else it)
-            } as MutableList<DrawerUserModel>
-            accounts.addAll(accountsManager.getSavedUsers().map {
-                DrawerUserModel.BaseUser.DrawerUser(name = it, loggedIn = false, notifications = 0, notificationsSnoozed = false, displayName = it)
-            } as MutableList<DrawerUserModel>)
-            // todo fetch all user missing data (email, notifications etc)
-            accounts.add(DrawerUserModel.Footer)
+            val accounts = accountsManager.getLoggedInUsers()
+                .sortedByDescending { it == currentPrimaryAccount }
+                .map { name ->
+                    val userAddresses = userManager.getUser(name).addresses
+                    val primaryAddress = userAddresses.find { address ->
+                        address.type == Constants.ADDRESS_TYPE_PRIMARY
+                    }
+                    val primaryAddressEmail = if (primaryAddress == null) {
+                        name
+                    } else {
+                        primaryAddress.email
+                    }
+                    val displayName = primaryAddress?.displayName ?: ""
+                    DrawerUserModel.User(
+                        name = name,
+                        emailAddress = primaryAddressEmail,
+                        loggedIn = userManager.isLoggedIn(name),
+                        notificationCount = map[name] ?: 0,
+                        notificationsSnoozed = areNotificationSnoozed(name),
+                        displayName = displayName.takeIfNotBlank() ?: name
+                    )
+                } +
+                // TODO: fetch all user missing data (email, notifications etc)
+                accountsManager.getSavedUsers().map { DrawerUserModel.User(name = it) } +
+                DrawerUserModel.ManageAccounts
+
             accountsAdapter.items = accounts
         })
     }
@@ -436,6 +414,50 @@ abstract class NavigationActivity : BaseActivity(),
         refreshDrawer()
         refreshDrawerHeader(mUserManager.user)
         setupAccountsList()
+    }
+
+    private fun onDrawerUserClicked(drawerUser: DrawerUserModel) {
+        when (drawerUser) {
+            is DrawerUserModel.User -> {
+                val currentActiveAccount = userManager.username
+                if (drawerUser.name !in AccountManager.getInstance(this).getLoggedInUsers()) {
+                    val intent = Intent(this, ConnectAccountActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.putExtra(EXTRA_USERNAME, drawerUser.name)
+                    ContextCompat.startActivity(this, AppUtil.decorInAppIntent(intent), null)
+                } else if (currentActiveAccount != drawerUser.name) {
+                    switchAccountProcedure(drawerUser.name)
+                }
+            }
+            is DrawerUserModel.ManageAccounts -> {
+                ActivityCompat.startActivityForResult(
+                    this,
+                    AppUtil.decorInAppIntent(Intent(this, AccountManagerActivity::class.java)),
+                    REQUEST_CODE_ACCOUNT_MANAGER,
+                    null
+                )
+                overridePendingTransition(R.anim.slide_up, R.anim.slide_up_close)
+            }
+        }
+    }
+
+    private fun onDrawerItemClicked(drawerItem: DrawerItemUiModel) {
+        // Header clicked
+        if (drawerItem is DrawerItemUiModel.Header) {
+            onQuickSnoozeClicked()
+            // Primary item clicked
+        } else if (drawerItem is Primary) {
+            onDrawerClose = {
+
+                // Static item clicked
+                if (drawerItem is Primary.Static) selectItem(drawerItem.type)
+
+                // Label clicked
+                else if (drawerItem is Primary.Label) onNavLabelItemClicked(drawerItem.uiModel)
+            }
+            drawerAdapter.setSelected(drawerItem)
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
     }
 
     protected fun reloadMessageCounts() {

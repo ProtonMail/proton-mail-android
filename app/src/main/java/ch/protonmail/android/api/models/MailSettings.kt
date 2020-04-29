@@ -21,13 +21,10 @@ package ch.protonmail.android.api.models
 import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
-
-import com.google.gson.annotations.SerializedName
-
-import java.io.Serializable
-
 import ch.protonmail.android.api.models.enumerations.PackageType
 import ch.protonmail.android.core.ProtonMailApplication
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 // region constants
 private const val FIELD_DISPLAY_NAME = "DisplayName"
@@ -159,7 +156,9 @@ class MailSettings : Serializable {
     }
 
     fun save() {
-        val pref: SharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username)
+        // TODO: Unsafe operator needed since now the parameter is annotated as `@NonNull`
+        //  it would be better to ensure that in a proper way
+        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username!!)
         Log.d("PMTAG", "saving MailSettings for username: `" + this.username + "`")
 
         pref.edit()

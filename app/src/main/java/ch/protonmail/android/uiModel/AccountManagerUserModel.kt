@@ -22,24 +22,25 @@ import ch.protonmail.libs.core.utils.EMPTY_STRING
 
 /**
  * Represent a base Navigation Drawer User data class.
- * @see ch.protonmail.android.adapters.DrawerAccountsAdapter
+ * @see ch.protonmail.android.adapters.AccountManagerAccountsAdapter
  *
  * @author Dino Kadrikj
  */
-internal sealed class DrawerUserModel {
+internal sealed class AccountManagerUserModel {
 
+    // TODO: remove unused fields, if any
     data class User @JvmOverloads constructor(
         val name: String,
         val emailAddress: String = EMPTY_STRING,
         val loggedIn: Boolean = false,
-        val notificationCount: Int = 0,
-        val notificationsSnoozed: Boolean = false,
+        val primary: Boolean = false,
         val displayName: String = name
-    ) : DrawerUserModel()
+    ) : AccountManagerUserModel()
+
 
     /** Divider for Drawer Items */
-    object Divider : DrawerUserModel()
+    object Divider : AccountManagerUserModel()
 
-    /** Footer for Nav Drawer Items */
-    object ManageAccounts : DrawerUserModel()
+    /** Footer for Account Manager Items */
+    object AddAccount : AccountManagerUserModel()
 }

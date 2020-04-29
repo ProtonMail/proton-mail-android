@@ -34,7 +34,13 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.bl.HtmlProcessor
-import ch.protonmail.android.core.*
+import ch.protonmail.android.core.BigContentHolder
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.NetworkResults
+import ch.protonmail.android.core.PREF_USERNAME
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
@@ -217,12 +223,6 @@ class AppModule(val app: ProtonMailApplication) {
 
     @Provides
     @Singleton
-    fun provideUserManager(@Named(Constants.PrefsType.DEFAULT) prefs: SharedPreferences,
-                           @Named(Constants.PrefsType.BACKUP) backupPrefs: SharedPreferences,
-                           app: ProtonMailApplication): UserManager = UserManager(prefs, backupPrefs, app.applicationContext)
-
-    @Provides
-    @Singleton
     fun provideNetworkResults(): NetworkResults = NetworkResults()
 
     @Provides
@@ -233,11 +233,6 @@ class AppModule(val app: ProtonMailApplication) {
     @Singleton
     @Named(Constants.PrefsType.DEFAULT)
     fun provideDefaultSharedPreferences(): SharedPreferences = app.defaultSharedPreferences
-
-    @Provides
-    @Singleton
-    @Named(Constants.PrefsType.BACKUP)
-    fun provideBackupSharedPreferences(): SharedPreferences = app.getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE)
 
     @Provides
     @Singleton

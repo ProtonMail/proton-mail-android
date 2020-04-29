@@ -20,6 +20,7 @@ package ch.protonmail.android.api.segments.event;
 
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ProtonJobIntentService;
 
@@ -58,7 +59,7 @@ public class EventUpdaterService extends ProtonJobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        if (mUserManager.isLoggedIn()) {
+        if (mUserManager.isLoggedIn(mUserManager.getUsername())) {
             if (mUserManager.isBackgroundSyncEnabled()) {
                 if (mNetworkUtils.isConnected() && mUserManager.accessTokenExists()) {
                     startService();

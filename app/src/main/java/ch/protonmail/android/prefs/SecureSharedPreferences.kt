@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.prefs
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -33,8 +32,15 @@ import android.util.Base64
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import java.math.BigInteger
-import java.security.*
+import java.security.Key
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.KeyStore
+import java.security.MessageDigest
+import java.security.PrivateKey
+import java.security.UnrecoverableKeyException
 import java.util.*
+import java.util.Locale
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import javax.security.auth.x500.X500Principal
@@ -45,14 +51,16 @@ private const val ALGORITHM_AES = "AES"
 const val PREF_SYMMETRIC_KEY = "SEKRIT"
 // endregion
 
-class SecureSharedPreferences
 /**
  * Constructor
  *
  * @param context
  * @param delegate - SharedPreferences object from the system
  */
-private constructor(var context: Context, private val delegate: SharedPreferences) : SharedPreferences {
+class SecureSharedPreferences(
+    private val context: Context,
+    private val delegate: SharedPreferences
+) : SharedPreferences {
 
     private val keyStoreName = "AndroidKeyStore"
     private val asymmetricKeyAlias = "ProtonMailKey"
@@ -475,36 +483,8 @@ private constructor(var context: Context, private val delegate: SharedPreference
         }
     }
 
-    companion object {
-        private var decryptionErrorFlag = false
-        private lateinit var SEKRIT: CharArray
-        @SuppressLint("StaticFieldLeak")
-        private var prefs: SecureSharedPreferences? = null
-        private val userSSPs = mutableMapOf<String, SecureSharedPreferences>()
-
-        /**
-         * Accessor to grab the preferences in a singleton.  This stores the reference in a singleton so it can be accessed repeatedly with
-         * no performance penalty
-         *
-         * @param context     - the context used to access the preferences.
-         * @param appName     - domain the shared preferences should be stored under
-         * @param contextMode - Typically Context.MODE_PRIVATE
-         * @return
-         */
-        @Synchronized
-        fun getPrefs(context: Context, appName: String, contextMode: Int): SecureSharedPreferences {
-            if (prefs == null) {
-                prefs =
-                        SecureSharedPreferences(context.applicationContext, context.applicationContext.getSharedPreferences(appName, contextMode))
-            }
-            return prefs!!
-        }
-
-        @Synchronized
-        fun getPrefsForUser(context: Context, username: String): SecureSharedPreferences {
-            return userSSPs.getOrPut(username) {
-                SecureSharedPreferences(context.applicationContext, context.applicationContext.getSharedPreferences("${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP", Context.MODE_PRIVATE))
-            }
-        }
+    private companion object {
+        var decryptionErrorFlag = false
+        lateinit var SEKRIT: CharArray
     }
 }
