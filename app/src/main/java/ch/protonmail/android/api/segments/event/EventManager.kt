@@ -195,11 +195,7 @@ class EventManager {
     private fun backupLastEvent(username: String, event: String) {
         val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
         recoverLastEvent(username).ifNull {
-            try {
-                prefs.edit().putString(PREF_LATEST_EVENT, event).apply()
-            } catch (exc: Exception) {
-                Timber.e(exc, "Event could not be saved")
-            }
+            prefs.edit().putString(PREF_LATEST_EVENT, event).apply()
         }
     }
 
