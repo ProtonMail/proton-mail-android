@@ -23,12 +23,16 @@ Alternatively, if you want to build the app directly from the command line (or u
 
 - Windows: `C:\Users\<username>\AppData\Local\Android\sdk`
 - MacOS: `/Users/<username>/Library/Android/Sdk/`
-- Linux: `/Users/<username>/Android/Sdk/`
+- Linux: `/home/<username>/Android/Sdk/`
 
 Then, go to the app’s root directory in the command line tool and run:
 
 - `./gradlew assembleBetaDebug`
 - `adb install ./app/build/outputs/apk/beta/debug/ProtonMail-Android-1.XX.X-beta-debug.apk`
+
+## Contributions
+
+
 
 Copyright (c) 2020 Proton Technologies AG
 
