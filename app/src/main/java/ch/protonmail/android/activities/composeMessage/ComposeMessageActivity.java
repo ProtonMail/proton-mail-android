@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -182,6 +182,7 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import kotlin.collections.CollectionsKt;
+import timber.log.Timber;
 
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
@@ -392,10 +393,15 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             initialiseActivityOnFirstStart(intent, savedInstanceState, type);
             setRespondInlineVisibility(!TextUtils.isEmpty(mComposeBodyEditText.getText()));
         }
-        if (Arrays.asList(Constants.MessageActionType.FORWARD, Constants.MessageActionType.REPLY, Constants.MessageActionType.REPLY_ALL)
-                .contains(composeMessageViewModel.get_actionId())) {
-            // upload attachments if using pgp/mime
-            composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), mComposeBodyEditText.getText().toString());
+        try {
+            if (Arrays.asList(Constants.MessageActionType.FORWARD, Constants.MessageActionType.REPLY, Constants.MessageActionType.REPLY_ALL)
+                    .contains(composeMessageViewModel.get_actionId())) {
+                // upload attachments if using pgp/mime
+                composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), mComposeBodyEditText.getText().toString());
+            }
+        } catch (Exception exc){
+            Timber.tag("588").e(exc, "Exception on create (upload attachments)");
+
         }
 
         mAddressesSpinner.getBackground().setColorFilter(getResources().getColor(R.color.new_purple), PorterDuff.Mode.SRC_ATOP);
@@ -471,18 +477,22 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         composeMessageViewModel.getDbIdWatcher().observe(ComposeMessageActivity.this, new SendMessageObserver());
 
         composeMessageViewModel.getFetchMessageDetailsEvent().observe(this, messageBuilderDataEvent -> {
-            mProgressView.setVisibility(View.GONE);
-            MessageBuilderData messageBuilderData = messageBuilderDataEvent.getContentIfNotHandled();
-            if (messageBuilderData != null) {
-                String mimeType = messageBuilderData.getMessage().getMimeType();
-                setMessageBodyInContainers(composeMessageViewModel.setMessageBody
-                        (messageBuilderData.getDecryptedMessage(), false,
-                                mimeType != null && mimeType.equals(Constants.MIME_TYPE_PLAIN_TEXT), getString(R.string.sender_name_address),
-                                getString(R.string.original_message_divider),
-                                getString(R.string.reply_prefix_on),
-                                DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+            try {
+                mProgressView.setVisibility(View.GONE);
+                MessageBuilderData messageBuilderData = messageBuilderDataEvent.getContentIfNotHandled();
+                if (messageBuilderData != null) {
+                    String mimeType = messageBuilderData.getMessage().getMimeType();
+                    setMessageBodyInContainers(composeMessageViewModel.setMessageBody
+                            (messageBuilderData.getDecryptedMessage(), false,
+                                    mimeType != null && mimeType.equals(Constants.MIME_TYPE_PLAIN_TEXT), getString(R.string.sender_name_address),
+                                    getString(R.string.original_message_divider),
+                                    getString(R.string.reply_prefix_on),
+                                    DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+                }
+                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
+            } catch (Exception exc){
+                Timber.tag("588").e(exc, "Exception on fetch message details event");
             }
-            composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
         });
 
         composeMessageViewModel.getBuildingMessageCompleted().observe(this, new BuildObserver());
@@ -581,18 +591,22 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     private void initialiseMessageBody(Intent intent, Bundle extras, String type, String content, String composerContent) {
         if (extras != null && (!TextUtils.isEmpty(content) || (!TextUtils.isEmpty(composerContent) && extras.getBoolean(EXTRA_MAIL_TO)))) {
             // forward, reply, reply all here
-            composeMessageViewModel.setMessageTimestamp(extras.getLong(EXTRA_MESSAGE_TIMESTAMP));
-            String senderName = extras.getString(EXTRA_SENDER_NAME);
-            String senderAddress = extras.getString(EXTRA_SENDER_ADDRESS);
+            try {
+                composeMessageViewModel.setMessageTimestamp(extras.getLong(EXTRA_MESSAGE_TIMESTAMP));
+                String senderName = extras.getString(EXTRA_SENDER_NAME);
+                String senderAddress = extras.getString(EXTRA_SENDER_ADDRESS);
 
-            composeMessageViewModel.setSender(senderName != null ? senderName : "", senderAddress != null ? senderAddress : "");
+                composeMessageViewModel.setSender(senderName != null ? senderName : "", senderAddress != null ? senderAddress : "");
 
-            setMessageBodyInContainers(composeMessageViewModel.setMessageBody(composerContent, content, true,
-                    composeMessageViewModel.getMessageDataResult().isPGPMime(),
-                    getString(R.string.sender_name_address),
-                    getString(R.string.original_message_divider),
-                    getString(R.string.reply_prefix_on),
-                    DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+                setMessageBodyInContainers(composeMessageViewModel.setMessageBody(composerContent, content, true,
+                        composeMessageViewModel.getMessageDataResult().isPGPMime(),
+                        getString(R.string.sender_name_address),
+                        getString(R.string.original_message_divider),
+                        getString(R.string.reply_prefix_on),
+                        DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
+            } catch (Exception exc){
+                Timber.tag("588").e(exc, "Exception on initialise message body");
+            }
         } else if (extras != null && extras.containsKey(EXTRA_MESSAGE_ID) && extras.getBoolean(EXTRA_REPLY_FROM_GCM, false)) {
             // reply from notification here
             composeMessageViewModel.setMessageTimestamp(extras.getLong(EXTRA_MESSAGE_TIMESTAMP));
@@ -1278,8 +1292,12 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             int actionType = composeMessageViewModel.getActionType().ordinal();
             Constants.MessageActionType messageActionType = Constants.MessageActionType.Companion.fromInt(actionType);
             if (messageActionType != Constants.MessageActionType.REPLY && messageActionType != Constants.MessageActionType.REPLY_ALL) {
-                message.setAddressID(user.getSenderAddressIdByEmail((String) mAddressesSpinner.getSelectedItem()));
-                message.setSenderName(user.getSenderAddressNameByEmail((String) mAddressesSpinner.getSelectedItem()));
+                try {
+                    message.setAddressID(user.getSenderAddressIdByEmail((String) mAddressesSpinner.getSelectedItem()));
+                    message.setSenderName(user.getSenderAddressNameByEmail((String) mAddressesSpinner.getSelectedItem()));
+                } catch (Exception exc){
+                    Timber.tag("588").e(exc, "Exception on fill message with user inputs");
+                }
             } else {
                 message.setAddressID(user.getAddressId());
                 message.setSenderName(user.getDisplayName());

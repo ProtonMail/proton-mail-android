@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -161,10 +161,14 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
     MessageDetailsViewModel.Factory factory;
     MessageDetailsAttachmentListAdapter attachmentsListAdapter;
 
-    /** The id of the current message */
+    /**
+     * The id of the current message
+     */
     private String messageId;
 
-    /** Whether the current message needs to be store in database. If transient if won't be stored */
+    /**
+     * Whether the current message needs to be store in database. If transient if won't be stored
+     */
     private boolean isTransientMessage;
     private String messageRecipientUsername;
 
@@ -643,7 +647,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
     }
 
     @Subscribe
-    public void  onMailSettingsEvent(MailSettingsEvent event) {
+    public void onMailSettingsEvent(MailSettingsEvent event) {
         loadMailSettings();
     }
 
@@ -933,6 +937,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
     }
 
     private List<Attachment> prevAttachments;
+
     private class AttachmentsObserver implements Observer<List<Attachment>> {
         @Override
         public void onChanged(@Nullable List<Attachment> newAttachments) {
@@ -1007,7 +1012,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
             messageExpandableAdapter.setMessageData(message);
             messageExpandableAdapter.refreshRecipientsLayout();
 
-            if(viewModel.getRefreshedKeys()) {
+            if (viewModel.getRefreshedKeys()) {
                 filterAndLoad(decryptedBody);
                 messageExpandableAdapter.setMode(MODE_ACCORDION);
                 mWvScrollView.setLayoutManager(new LinearLayoutManager(MessageDetailsActivity.this));
@@ -1018,85 +1023,89 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
             viewModel.triggerVerificationKeyLoading();
 
             replyButtonsPanelView.setOnMessageActionListener(messageAction -> {
-                String newMessageTitle = MessageUtils.buildNewMessageTitle(MessageDetailsActivity.this, messageAction, message.getSubject());
+                try {
+                    String newMessageTitle = MessageUtils.buildNewMessageTitle(MessageDetailsActivity.this, messageAction, message.getSubject());
 
-                long userUsedSpace = ProtonMailApplication.getApplication().getSecureSharedPreferences(mUserManager.getUsername()).getLong(Constants.Prefs.PREF_USED_SPACE, 0);
-                long userMaxSpace = mUserManager.getUser().getMaxSpace() == 0L ? Long.MAX_VALUE : mUserManager.getUser().getMaxSpace();
-                long percentageUsed = userUsedSpace * 100 / userMaxSpace;
+                    long userUsedSpace = ProtonMailApplication.getApplication().getSecureSharedPreferences(mUserManager.getUsername()).getLong(Constants.Prefs.PREF_USED_SPACE, 0);
+                    long userMaxSpace = mUserManager.getUser().getMaxSpace() == 0L ? Long.MAX_VALUE : mUserManager.getUser().getMaxSpace();
+                    long percentageUsed = userUsedSpace * 100 / userMaxSpace;
 
-                if (percentageUsed >= 100) {
-                    DialogUtils.Companion.showInfoDialogWithTwoButtons(MessageDetailsActivity.this,
-                            getString(R.string.storage_limit_warning_title), getString(R.string
-                                    .storage_limit_reached_text), getString(R.string.learn_more), getString(R.string.okay), unit -> {
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse
-                                        (getString(R.string.limit_reached_learn_more)));
-                                startActivity(browserIntent);
-                                return unit;
-                            }, unit -> unit,
-                            true);
-                } else {
-                    viewModel.getPrepareEditMessageIntent().observe(MessageDetailsActivity.this,
-                            editIntentExtrasEvent -> {
-                                IntentExtrasData editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled();
-                                if (editIntentExtras == null) {
-                                    return;
-                                }
-                                Intent intent = AppUtil.decorInAppIntent(new Intent(MessageDetailsActivity.this, ComposeMessageActivity.class));
-                                MessageUtils.addRecipientsToIntent(
-                                        intent, ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
-                                        editIntentExtras.getToRecipientListString(),
-                                        editIntentExtras.getMessageAction(),
-                                        editIntentExtras.getUserAddresses()
-                                );
-                                if (editIntentExtras.getIncludeCCList()) {
+                    if (percentageUsed >= 100) {
+                        DialogUtils.Companion.showInfoDialogWithTwoButtons(MessageDetailsActivity.this,
+                                getString(R.string.storage_limit_warning_title), getString(R.string
+                                        .storage_limit_reached_text), getString(R.string.learn_more), getString(R.string.okay), unit -> {
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse
+                                            (getString(R.string.limit_reached_learn_more)));
+                                    startActivity(browserIntent);
+                                    return unit;
+                                }, unit -> unit,
+                                true);
+                    } else {
+                        viewModel.getPrepareEditMessageIntent().observe(MessageDetailsActivity.this,
+                                editIntentExtrasEvent -> {
+                                    IntentExtrasData editIntentExtras = editIntentExtrasEvent.getContentIfNotHandled();
+                                    if (editIntentExtras == null) {
+                                        return;
+                                    }
+                                    Intent intent = AppUtil.decorInAppIntent(new Intent(MessageDetailsActivity.this, ComposeMessageActivity.class));
                                     MessageUtils.addRecipientsToIntent(
-                                            intent, ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
-                                            editIntentExtras.getMessageCcList(),
+                                            intent, ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
+                                            editIntentExtras.getToRecipientListString(),
                                             editIntentExtras.getMessageAction(),
                                             editIntentExtras.getUserAddresses()
                                     );
-                                }
-                                intent.putExtra(ComposeMessageActivity.EXTRA_LOAD_IMAGES,
-                                        editIntentExtras.getImagesDisplayed());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
-                                        editIntentExtras.getRemoteContentDisplayed());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_SENDER_NAME,
-                                        editIntentExtras.getMessageSenderName());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
-                                        editIntentExtras.getSenderEmailAddress());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_PGP_MIME,
-                                        editIntentExtras.isPGPMime());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
-                                        editIntentExtras.getNewMessageTitle());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
-                                        editIntentExtras.getLargeMessageBody());
-                                mBigContentHolder.setContent(editIntentExtras
-                                        .getMBigContentHolder().getContent());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY,
-                                        editIntentExtras.getBody());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
-                                        editIntentExtras.getTimeMs());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
-                                        editIntentExtras.getMessageIsEncrypted());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_PARENT_ID,
-                                        editIntentExtras.getMessageId());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_ACTION_ID,
-                                        editIntentExtras.getMessageAction());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, editIntentExtras.getAddressID());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS, editIntentExtras.getAddressEmailAlias());
-                                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT, isTransientMessage);
-                                if (editIntentExtras.getEmbeddedImagesAttachmentsExist()) {
-                                    intent.putParcelableArrayListExtra(ComposeMessageActivity
-                                                    .EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
-                                            editIntentExtras.getAttachments());
-                                }
-                                ArrayList<LocalAttachment> attachments = editIntentExtras.getAttachments();
-                                if (attachments.size() > 0) {
-                                    intent.putParcelableArrayListExtra(ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS, attachments);
-                                }
-                                startActivityForResult(intent, 0);
-                            });
-                    viewModel.prepareEditMessageIntent(messageAction, message, newMessageTitle, decryptedBody, mBigContentHolder);
+                                    if (editIntentExtras.getIncludeCCList()) {
+                                        MessageUtils.addRecipientsToIntent(
+                                                intent, ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
+                                                editIntentExtras.getMessageCcList(),
+                                                editIntentExtras.getMessageAction(),
+                                                editIntentExtras.getUserAddresses()
+                                        );
+                                    }
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_LOAD_IMAGES,
+                                            editIntentExtras.getImagesDisplayed());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_LOAD_REMOTE_CONTENT,
+                                            editIntentExtras.getRemoteContentDisplayed());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_SENDER_NAME,
+                                            editIntentExtras.getMessageSenderName());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_SENDER_ADDRESS,
+                                            editIntentExtras.getSenderEmailAddress());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_PGP_MIME,
+                                            editIntentExtras.isPGPMime());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TITLE,
+                                            editIntentExtras.getNewMessageTitle());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY_LARGE,
+                                            editIntentExtras.getLargeMessageBody());
+                                    mBigContentHolder.setContent(editIntentExtras
+                                            .getMBigContentHolder().getContent());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_BODY,
+                                            editIntentExtras.getBody());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_TIMESTAMP,
+                                            editIntentExtras.getTimeMs());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ENCRYPTED,
+                                            editIntentExtras.getMessageIsEncrypted());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_PARENT_ID,
+                                            editIntentExtras.getMessageId());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_ACTION_ID,
+                                            editIntentExtras.getMessageAction());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, editIntentExtras.getAddressID());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_EMAIL_ALIAS, editIntentExtras.getAddressEmailAlias());
+                                    intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_IS_TRANSIENT, isTransientMessage);
+                                    if (editIntentExtras.getEmbeddedImagesAttachmentsExist()) {
+                                        intent.putParcelableArrayListExtra(ComposeMessageActivity
+                                                        .EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
+                                                editIntentExtras.getAttachments());
+                                    }
+                                    ArrayList<LocalAttachment> attachments = editIntentExtras.getAttachments();
+                                    if (attachments.size() > 0) {
+                                        intent.putParcelableArrayListExtra(ComposeMessageActivity.EXTRA_MESSAGE_ATTACHMENTS, attachments);
+                                    }
+                                    startActivityForResult(intent, 0);
+                                });
+                        viewModel.prepareEditMessageIntent(messageAction, message, newMessageTitle, decryptedBody, mBigContentHolder);
+                    }
+                } catch (Exception exc) {
+                    Timber.tag("588").e(exc, "Exception on reply panel press");
                 }
                 return null;
             });
