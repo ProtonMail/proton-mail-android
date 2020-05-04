@@ -25,11 +25,9 @@ import org.jsoup.nodes.Document
  */
 class DefaultTransformer : AbstractTransformer() {
 
-    private val blacklist = arrayOf("meta", "audio", "video", "iframe", "object", "picture", "form", "map", "area", "button", "input", "embed", "script")
+    private val blacklist = arrayOf("meta", "audio", "video", "iframe", "object", "picture", "form", "map", "area", "button", "input", "embed", "script", "style")
 
     override fun transform(doc: Document): Document {
-        val body = doc.body()
-        body.select("style").remove()
         for (blackElement in blacklist) {
             val blockedElements = doc.select(blackElement)
             blockedElements.remove()
