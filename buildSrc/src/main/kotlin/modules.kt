@@ -16,26 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import org.gradle.kotlin.dsl.KotlinBuildScript
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.dokka.gradle.DokkaAndroidTask
-import java.io.File
+object Module {
+    // Libs
+    const val tokenAutoComplete = ":tokenAutoComplete:tokenAutoComplete-lib"
 
-/**
- * A script for apply Dokka Android Gradle plugin
- * @author Davide Farella
- */
-@Suppress("unused")
-fun KotlinBuildScript.applyDokka() {
-    apply(Plugin.android_library)
-    apply(Plugin.kotlin_android)
-    apply(Plugin.dokka_android)
-    tasks.withType(DokkaAndroidTask::class) {
-        apiVersion = Project.targetSdk.toString()
-        jdkVersion = Project.jdkVersion.ordinal
-        sourceDirs = listOf(File("src/main/kotlin"))
-        outputFormat = "html"
-        outputDirectory = "docs"
-    }
+    // Test
+    const val testKotlin = ":sharedTest:testKotlin"
+    const val testAndroid = ":sharedTest:testAndroid"
+    const val testAndroidInstrumented = ":sharedTest:testAndroidInstrumented"
+}
+
+/*** Internal libs */
+object Lib {
+    @Suppress("unused") const val composer = "Composer"
+    @Suppress("unused") const val composerTest = "Composer-test"
+    const val protonCore = "Proton-core"
 }

@@ -16,20 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+import studio.forface.easygradle.dsl.*
+import studio.forface.easygradle.dsl.android.*
+
 plugins {
-    apply(Plugin.android_library)
-    apply(Plugin.kotlin_android)
-    apply(Plugin.kotlin_android_extensions)
+    `android-library`
+    `kotlin-android`
+    `kotlin-android-extensions`
 }
 
-android { configLib() }
+android()
 
 dependencies {
-    implementation(Lib.kotlin)
-    implementation(Lib.Android.appcompat) { exclude(AndroidArch, AndroidLifecycle) }
-    implementation(Lib.Android.annotations)
-    compileOnly(Lib.Android.arch_core)
+    implementation(
+        `kotlin-jdk7`,
+        `appcompat`,
+        `android-annotation`,
+
+        // Lifecycle
+        `lifecycle-runtime`
+    )
 
     testImplementation(project(Module.testAndroid))
-    androidTestImplementation(project(Module.testAndroidInstrumented)) { exclude(AndroidArch, AndroidLifecycle) }
+    androidTestImplementation(project(Module.testAndroidInstrumented))
 }

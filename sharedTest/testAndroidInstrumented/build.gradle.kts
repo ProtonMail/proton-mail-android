@@ -16,45 +16,53 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+import studio.forface.easygradle.dsl.*
+import studio.forface.easygradle.dsl.android.*
+
 plugins {
-    apply(Plugin.android_library)
-    apply(Plugin.kotlin_android)
-    apply(Plugin.kotlin_android_extensions)
+    `android-library`
+    `kotlin-android`
+    `kotlin-android-extensions`
 }
 
-android { configLib() }
+android()
 
 dependencies {
-    // region base dependencies
-    // Kotlin
-    implementation(Lib.kotlin)
-    implementation(Lib.coroutines_android)
 
-    // Android
-    implementation(Lib.Android.lifecycle_runtime)
-    implementation(Lib.Android.lifecycle_liveData)
-    implementation(Lib.Android.lifecycle_viewModel)
-    // endregion
+    // Base dependencies
+    implementation(
+        // Kotlin
+        `kotlin-jdk7`,
+        `coroutines-android`,
 
-    // region test dependencies
-    api(project(Module.testAndroid)) {
-        // Exclude MockK since we will use MockK-Android
-        // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
-        exclude(MockK.mockk, JUnit5.allModules())
-    }
+        // Android
+        `lifecycle-runtime`,
+        `lifecycle-liveData`,
+        `lifecycle-viewModel`
+    )
 
-    // jUnit 4
-    api(Lib.Test.jUnit4)
+    // Test dependencies
+    api(
+        project(Module.testAndroid).apply {
+            exclude(
+                // Exclude MockK since we will use MockK-Android
+                `mockk`,
+                // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
+                jUnit5(`any`, `any`),
+                // Exclude Robolectric since not needed for instrumented tests
+                `robolectric`
+            )
+        },
 
-    // MockK
-    api(Lib.Test.mockk_android)
+        // MockK
+        `mockk-android`,
 
-    // Android
-    api(Lib.Android.annotations)
-    api(Lib.Test.android_test_core)
-    api(Lib.Test.android_test_runner)
-    api(Lib.Test.android_test_rules)
-    api(Lib.Test.espresso)
-    api(Lib.Test.hamcrest)
-    // endregion
+        // Android
+        `android-annotation`,
+        `android-test-core`,
+        `android-test-runner`,
+        `android-test-rules`,
+        `espresso`,
+        `hamcrest`
+    )
 }

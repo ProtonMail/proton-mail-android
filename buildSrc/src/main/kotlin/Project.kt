@@ -16,18 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import org.gradle.api.JavaVersion
 
 /**
  * Params for the Application and various modules
  * @author Davide Farella
  */
 object Project {
-    const val appId = "ch.protonmail.android"
-    const val versionName = "1.12.3"
-    const val versionCode = 687 // jenkinsBuildNumber.toInteger()
+    const val versionName = "1.13.4"
+    const val versionCode = 717
 
     const val targetSdk = 28
     const val minSdk = 21
-    val jdkVersion = JavaVersion.VERSION_1_8
 }

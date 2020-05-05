@@ -32,7 +32,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
 import ch.protonmail.android.activities.mailbox.MailboxActivity
@@ -77,7 +76,6 @@ import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.DrawerHeaderView
 import kotlinx.android.synthetic.main.drawer_header.*
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 

@@ -16,22 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+import studio.forface.easygradle.dsl.*
+import studio.forface.easygradle.dsl.android.*
+
 plugins {
-    apply(Plugin.android_application)
-    apply(Plugin.kotlin_android)
-    apply(Plugin.kotlin_android_extensions)
+    `android-application`
+    `kotlin-android`
+    `kotlin-android-extensions`
 }
 
-android { configApp("ch.protonmail.tokenautocomplete.example") }
+android("tokenautocomplete.example")
 
 dependencies {
-    implementation(Lib.kotlin)
-    implementation(Lib.Android.appcompat)
-    implementation(Lib.Android.annotations)
-    implementation(Lib.Android.lifecycle_liveData)
+    implementation(
+        project(Module.tokenAutoComplete),
 
-    implementation(project(Module.tokenAutoComplete))
-
+        `kotlin-jdk7`,
+        `coroutines-android`,
+        `appcompat`,
+        `android-annotation`,
+        `lifecycle-runtime`,
+        `lifecycle-liveData`,
+        `lifecycle-viewModel`
+    )
+    
     testImplementation(project(Module.testAndroid))
     androidTestImplementation(project(Module.testAndroidInstrumented))
 }

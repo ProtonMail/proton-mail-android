@@ -16,34 +16,49 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+import studio.forface.easygradle.dsl.*
+import studio.forface.easygradle.dsl.android.*
+
 plugins {
-    apply(Plugin.android_library)
-    apply(Plugin.kotlin_android)
-    apply(Plugin.kotlin_android_extensions)
+    `android-library`
+    `kotlin-android`
+    `kotlin-android-extensions`
 }
 
-android { configLib() }
+android()
 
 dependencies {
-    // region base dependencies
-    // Kotlin
-    implementation(Lib.kotlin)
-    implementation(Lib.coroutines_android)
 
-    // Android
-    implementation(Lib.Android.lifecycle_runtime)
-    implementation(Lib.Android.lifecycle_liveData)
-    implementation(Lib.Android.lifecycle_viewModel)
+    // Base dependencies
+    implementation(
+        // Kotlin
+        `kotlin-jdk7`,
+        `coroutines-android`,
+        `serialization`,
 
-    // RxJava
-    implementation(Lib.rxJava_android)
-    // endregion
+        // Android
+        `constraint-layout`,
+        `material`,
+        `lifecycle-runtime`,
+        `lifecycle-liveData`,
+        `lifecycle-viewModel`,
 
+        // Proton Libs
+        rootProject.aar(Lib.protonCore, version = `protonCore version`),
+//        rootProject.aar(Lib.composer, version = `composer version`),
 
-    // region test dependencies
-    api(project(Module.testKotlin))
+        // RxJava
+        `rxJava-android`
+    )
 
-    // Android
-    api(Lib.Test.android_arch)
-    // endregion
+    // Test dependencies
+    api(
+        project(Module.testKotlin),
+//        rootProject.aar(Lib.composerTest, version = `composer version`),
+
+        // Android
+        `android-test-core`,
+        `android-arch-testing`,
+        `robolectric`
+    )
 }

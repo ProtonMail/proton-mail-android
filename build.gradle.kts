@@ -18,13 +18,15 @@
  */
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+initVersions()
+
 buildscript {
     repositories(repos)
     dependencies(classpathDependencies)
 }
 
 plugins {
-    apply(Plugin.sonarQube, withVersion = true)
+    `sonarQube`
 }
 
 allprojects {

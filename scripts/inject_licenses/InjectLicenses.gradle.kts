@@ -32,18 +32,22 @@ val EXTENSIONS = arrayOf("kt", "kts", "java", "xml")
 
 /** Find the root dir of our project. `` **./proton-mail-android `` */
 val ROOT_DIR = with(StringBuilder(File("").absolutePath)) {
-        if (last() == File.separatorChar) deleteCharAt(lastIndex)
+    // Path for CLI gradle commands is usually '/Users/<username>/.gradle/<gradle-version>', so in
+    // these situations we cannot get the root of our Project
+    if (".gradle" in toString()) return@with null
 
-        var current = ""
-        while (current != "proton-mail-android") {
-            val lastSeparatorIndex = indexOfLast { it == File.separatorChar }
-            current = substring(lastSeparatorIndex + 1..lastIndex)
-            delete(lastSeparatorIndex, length)
-        }
+    if (last() == File.separatorChar) deleteCharAt(lastIndex)
 
-        val path = toString() + File.separator + current
-        return@with File(path)
+    var current = ""
+    while (current != "proton-mail-android") {
+        val lastSeparatorIndex = indexOfLast { it == File.separatorChar }
+        current = substring(lastSeparatorIndex + 1..lastIndex)
+        delete(lastSeparatorIndex, length)
     }
+
+    val path = toString() + File.separator + current
+    return@with File(path)
+}
 
 val LICENSE = """
 Copyright (c) 2020 Proton Technologies AG
@@ -151,7 +155,12 @@ fun File.addLicense(): Boolean {
             temp.renameTo(this)
 
         } catch (e: IOException) {
-            throw IOException(e.message + " for file ${this.absolutePath}")
+            if (e.message == "File $path is empty.") {
+                // Delete file if is empty
+                delete()
+            } else {
+                throw IOException(e.message + " for file ${this.absolutePath}")
+            }
         }
     }
 
@@ -165,9 +174,11 @@ fun licenseFor(file: File) = _licensesByExtension[file.extension]
 
 
 
-println()
-println("Using dir: ${ROOT_DIR.absolutePath}")
-println("Found: ${ROOT_DIR.children().size} files")
-println("Updated: ${ROOT_DIR.children().filter { it.addLicense() }.size} files")
-println()
+ROOT_DIR?.run {
+    println()
+    println("Using dir: ${absolutePath}")
+    println("Found: ${children().size} files")
+    println("Updated: ${children().filter { it.addLicense() }.size} files")
+    println()
+}
 

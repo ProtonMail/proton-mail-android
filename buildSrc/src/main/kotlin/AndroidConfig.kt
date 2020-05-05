@@ -17,55 +17,40 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 import com.android.build.gradle.TestedExtension
-import com.android.build.gradle.internal.dsl.DefaultConfig
+import org.gradle.api.JavaVersion
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.kotlin.dsl.configure
+import studio.forface.easygradle.dsl.android.*
 
 /**
- * Apply the default Android configuration for `app` module
- *
- * @param extraConfig [ExtraConfig] block that will be applied into the `android` closure
- *
- * @param extraDefaultConfig [ExtraDefaultConfig] block that will be applied into the
- * `android.defaultConfig` closure
+ * Dsl for apply the android configuration to a library or application module
+ * @author Davide Farella
  */
-fun TestedExtension.configApp(
-        appId: String = Project.appId,
+fun org.gradle.api.Project.android(
+
+        appIdSuffix: String? = null,
         minSdk: Int = Project.minSdk,
         targetSdk: Int = Project.targetSdk,
-        extraConfig: ExtraConfig = {},
-        extraDefaultConfig: ExtraDefaultConfig = {}
-) = applyAndroidConfig(appId, minSdk, targetSdk, extraConfig, extraDefaultConfig)
+        version: Version? = null,
+        versionCode: Int = Project.versionCode,
+        versionName: String = Project.versionName,
+        config: ExtraConfig = {}
 
-/**
- * Apply the default Android configuration a library modules
- *
- * @param extraConfig [ExtraConfig] block that will be applied into the `android` closure
- *
- * @param extraDefaultConfig [ExtraDefaultConfig] block that will be applied into the
- * `android.defaultConfig` closure
- */
-fun TestedExtension.configLib(
-        minSdk: Int = Project.minSdk,
-        targetSdk: Int = Project.targetSdk,
-        extraConfig: ExtraConfig = {},
-        extraDefaultConfig: ExtraDefaultConfig = {}
-) = applyAndroidConfig(null, minSdk, targetSdk, extraConfig, extraDefaultConfig)
+) = (this as ExtensionAware).extensions.configure<TestedExtension> {
 
-private fun TestedExtension.applyAndroidConfig(
-        appId: String?,
-        minSdk: Int,
-        targetSdk: Int,
-        extraConfig: ExtraConfig,
-        extraDefaultConfig: ExtraDefaultConfig
-) {
-    compileSdkVersion(Project.targetSdk)
+    compileSdkVersion(targetSdk)
     defaultConfig {
 
         // Params
-        appId?.let { applicationId = it }
-        versionCode = Project.versionCode
-        versionName = Project.versionName
+        appIdSuffix?.let { applicationId = "ch.protonmail.$it" }
+        if (version != null) {
+            this.version = version
+        } else {
+            this.versionCode = versionCode
+            this.versionName = versionName
+        }
 
-        // Sdk
+        // SDK
         minSdkVersion(minSdk)
         targetSdkVersion(targetSdk)
 
@@ -74,32 +59,53 @@ private fun TestedExtension.applyAndroidConfig(
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled = true
 
-        extraDefaultConfig(this)
+        // Annotation processors must be explicitly declared now.  The following dependencies on
+        // the compile classpath are found to contain annotation processor.  Please add them to the
+        // annotationProcessor configuration.
+        // - auto-service-1.0-rc4.jar (com.google.auto.service:auto-service:1.0-rc4)
+        //
+        // Note that this option ( 👇 ) is deprecated and will be removed in the future.
+        // See https://developer.android.com/r/tools/annotation-processor-error-message.html for
+        // more details.
+        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     }
+
     buildTypes {
         register("releasePlayStore")
         register("releaseBeta")
     }
+
     // Add support for `src/x/kotlin` instead of `src/x/java` only
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
         getByName("test").java.srcDirs("src/test/kotlin")
         getByName("androidTest").java.srcDirs("src/androidTest/kotlin")
     }
+
     compileOptions {
-        sourceCompatibility = Project.jdkVersion
-        targetCompatibility = Project.jdkVersion
-    }
-    packagingOptions {
-        exclude("go/error.java")
-        exclude("go/LoadJNI.java")
-        exclude("go/Seq.java")
-        exclude("go/Universe.java")
-        exclude("META-INF/atomicfu.kotlin_module")
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = sourceCompatibility
     }
 
-    extraConfig()
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
+    packagingOptions {
+        exclude("META-INF/*.kotlin_module")
+        exclude("META-INF/DEPENDENCIES")
+        exclude("META-INF/DEPENDENCIES.txt")
+        exclude("META-INF/LGPL2.1")
+        exclude("META-INF/LICENSE")
+        exclude("META-INF/LICENSE.md")
+        exclude("META-INF/LICENSE.txt")
+        exclude("META-INF/LICENSE-notice.md")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/NOTICE.txt")
+        exclude("META-INF/rxjava.properties")
+    }
+
+    apply(config)
 }
 
 typealias ExtraConfig = TestedExtension.() -> Unit
-typealias ExtraDefaultConfig = DefaultConfig.() -> Unit

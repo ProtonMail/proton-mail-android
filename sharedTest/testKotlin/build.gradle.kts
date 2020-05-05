@@ -16,42 +16,47 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+import studio.forface.easygradle.dsl.*
+
 plugins {
-    apply(Plugin.java_library)
-    apply(Plugin.kotlin)
+    `java-library`
+    `kotlin`
 }
 
 dependencies {
-    // region base dependencies
-    // Kotlin
-    implementation(Lib.kotlin)
-    implementation(Lib.coroutines)
+    // Base dependencies
+    implementation(
+            `kotlin-jdk8`,
+            `coroutines-core`,
+            `serialization`
+    )
     // endregion
 
 
     // region test dependencies
+    api(`kotlin-test`, `kotlin-test-junit`)
+
     // region jUnit 5
 
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    api(Lib.Test.jUnit5_jupiterApi)
-    testRuntimeOnly(Lib.Test.jUnit5_jupiterEngine)
+    api(`jUnit5-jupiter-api`)
+    testRuntimeOnly(`jUnit5-jupiter-engine`)
 
     // (Optional) If you need "Parameterized Tests"
-    api(Lib.Test.jUnit5_jupiterParams)
+    api(`jUnit5-jupiter-params`)
 
     // (Optional) If you also have JUnit 4-based tests
-    api(Lib.Test.jUnit4)
-    testRuntimeOnly(Lib.Test.jUnit5_vintageEngine)
+    testRuntimeOnly(`jUnit5-vintage-engine`)
 
     // endregion
 
     // Assertion
-    api(Lib.Test.assertJ)
+    api(`assertJ`)
 
     // MockK
-    api(Lib.Test.mockk)
+    api(`mockk`)
 
     // Kotlin
-    api(Lib.Test.coroutines)
+    api(`coroutines-test`)
     // endregion
 }
