@@ -1087,15 +1087,15 @@ public class MailboxActivity extends NavigationActivity implements
 
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
-        Logger.doLog(TAG, "onConnectivityEvent");
+        Timber.d("onConnectivityEvent");
         if(!isDohOngoing) {
-            Logger.doLog(TAG, "DoH NOT ongoing showing UI");
+            Timber.d("DoH NOT ongoing showing UI");
             if (!event.hasConnection()) {
-                Logger.doLog(TAG, "Has connection: false");
+                Timber.d("Has connection: false");
                 // mPingHasConnection = false;
                 showNoConnSnack();
             } else {
-                Logger.doLog(TAG, "Has connection: true");
+                Timber.d("Has connection: true");
                 hideNoConnSnack();
                 if (!mPingHasConnection) {
                     setRefreshing(true);
@@ -1104,7 +1104,7 @@ public class MailboxActivity extends NavigationActivity implements
                 }
             }
         } else {
-            Logger.doLog(TAG, "DoH ongoing, not showing UI");
+            Timber.d("DoH ongoing, not showing UI");
         }
     }
 
@@ -1652,7 +1652,7 @@ public class MailboxActivity extends NavigationActivity implements
                     googleAPI.getErrorDialog(this, result, PLAY_SERVICES_RESOLUTION_REQUEST, dialog -> TextExtensions.showToast(MailboxActivity.this, "cancel", Toast.LENGTH_SHORT)).show();
                 }
             } else {
-                Logger.doLog(TAG_MAILBOX_ACTIVITY, "This device is not GCM supported.");
+                Timber.d("%s: This device is not GCM supported.", TAG_MAILBOX_ACTIVITY);
             }
             return false;
         }

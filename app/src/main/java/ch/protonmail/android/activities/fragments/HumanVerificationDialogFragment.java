@@ -45,7 +45,7 @@ public abstract class HumanVerificationDialogFragment extends DialogFragment {
 
     protected static final String ARGUMENT_TOKEN = "token";
     protected IHumanVerificationListener mListener;
-    protected String mHost;
+    protected String host;
     protected String token;
     protected boolean hasConnectivity;
     protected String mToken;

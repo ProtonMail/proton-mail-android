@@ -18,17 +18,15 @@
  */
 package ch.protonmail.android.api.interceptors
 
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.JobManager
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import timber.log.Timber
 import java.io.IOException
 import java.net.ConnectException
 
@@ -38,7 +36,7 @@ import java.net.ConnectException
  */
 
 // region constants
-private const val FIVE_SECONDS_IN_MILLIS = 5000L
+// private const val FIVE_SECONDS_IN_MILLIS = 5000L
 private const val TAG = "ProtonMailRequestInterceptor"
 // endregion
 class ProtonMailRequestInterceptor private constructor(
@@ -70,25 +68,17 @@ class ProtonMailRequestInterceptor private constructor(
         var response: Response? = null
         try {
 
-            Logger.doLog(TAG,  "Intercept: advancing request with url: " + request.url())
+            Timber.tag(TAG).d(TAG,  "Intercept: advancing request with url: " + request.url())
             response = chain.proceed(request)
 
         } catch (exception: IOException) {
             // checkForProxy()
-            Logger.doLog(TAG,  "Intercept: IOException with url: " + request.url())
-            // val currentInterceptTime = System.currentTimeMillis()
-            // if(currentInterceptTime - previousInterceptTime >= FIVE_SECONDS_IN_MILLIS) {
-            //     Logger.doLog(TAG, "Time difference between caught requests is greater than 5 seconds. Updating times and posting on UI...")
-                AppUtil.postEventOnUi(ConnectivityEvent(false))
-            // }
-            // previousInterceptTime = currentInterceptTime
+            Timber.tag(TAG).d("Intercept: IOException with url: " + request.url())
+            AppUtil.postEventOnUi(ConnectivityEvent(false))
             networkUtils.setCurrentlyHasConnectivity(false)
-            // exception.printStackTrace() // TODO: should we pollute the logcat?
         } catch (exception: ConnectException) {
-            Logger.doLog(TAG, "Intercept: ConnectException")
             exception.printStackTrace()
         } catch (exception: Exception) {
-            Logger.doLog(TAG, "Intercept: Exception")
             exception.printStackTrace()
         }
 

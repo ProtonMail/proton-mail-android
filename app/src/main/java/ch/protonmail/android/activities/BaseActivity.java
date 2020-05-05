@@ -45,6 +45,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.birbit.android.jobqueue.JobManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
+import timber.log.Timber;
 
 import javax.inject.Inject;
 
@@ -535,13 +536,13 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Override
     public void startDohSignal () {
         isDohOngoing = true;
-        Logger.doLog("BaseActivity", "startDohSignal");
+        Timber.d("BaseActivity: startDohSignal");
     }
 
     @Override
     public void stopDohSignal () {
         isDohOngoing = false;
-        Logger.doLog("BaseActivity", "stopDohSignal");
+        Timber.d("BaseActivity: stopDohSignal");
     }
 
     @Override

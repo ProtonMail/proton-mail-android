@@ -22,6 +22,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.work.*
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.libs.core.utils.EMPTY_STRING
@@ -43,7 +44,7 @@ class NetworkApiSwitchDispatcher(context : Context) {
 
     private val mContext = context
     private val appContext = ProtonMailApplication.getApplication().applicationContext
-    private val switchInterval = if(AppUtil.isDebug()) TWO_MINUTES_IN_MILLIS else TWENTY_FOUR_HOURS_IN_MILLIS
+    private val switchInterval = if(BuildConfig.DEBUG) TWO_MINUTES_IN_MILLIS else TWENTY_FOUR_HOURS_IN_MILLIS
 
     val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
     private val workManager = WorkManager.getInstance(mContext)
@@ -58,7 +59,7 @@ class NetworkApiSwitchDispatcher(context : Context) {
         val timeDiff = System.currentTimeMillis() - apiTimeStamp
         val interval = switchInterval - timeDiff
 
-        if(AppUtil.isDebug()) {
+        if(BuildConfig.DEBUG) {
             Timber.d("apiTimeStamp is: $apiTimeStamp")
             Timber.d("timeDiff is: $timeDiff")
             Timber.d("interval is: $interval")

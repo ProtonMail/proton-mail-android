@@ -31,6 +31,7 @@ import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.NetworkUtil
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.SnackbarContentLayout
+import timber.log.Timber
 
 /**
  * Created by dkadrikj on 11/2/15.
@@ -70,7 +71,7 @@ abstract class BaseConnectivityActivity: BaseActivity() {
 		if (mNetworkUtil.isConnected()) {
 			val thirdPartyConnectionsEnabled = mUserManager.user.allowSecureConnectionsViaThirdParties
 			if (thirdPartyConnectionsEnabled) {
-				Logger.doLog(TAG, "Third party connections enabled, attempting DoH...")
+				Timber.d("Third party connections enabled, attempting DoH...")
 				networkConfigurator.refreshDomainsAsync() // refreshDomains(false) // switch to new here
 			}
 		}

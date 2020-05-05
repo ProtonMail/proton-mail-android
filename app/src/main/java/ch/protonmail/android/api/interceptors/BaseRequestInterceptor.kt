@@ -29,7 +29,6 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.RequestTimeoutEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
 import okhttp3.Interceptor
@@ -38,9 +37,9 @@ import okhttp3.Response
 import timber.log.Timber
 
 // region constants
-private const val TWO_MINUTES_IN_MILLIS = 2 * 60 * 1000L
+// private const val TWO_MINUTES_IN_MILLIS = 2 * 60 * 1000L
 private const val TWENTY_FOUR_HOURS_IN_MILLIS = 24 * 60 * 60 * 1000L
-private const val TAG = "BaseRequestInterceptor"
+// private const val TAG = "BaseRequestInterceptor"
 // endregion
 
 abstract class BaseRequestInterceptor(protected val userManager: UserManager,
@@ -65,7 +64,7 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
         val proxies = Proxies.getInstance(null, prefs)
         if (user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
             if (proxies.proxyList.proxies.isNotEmpty()) {
-                Logger.doLog(TAG, "ProxyList is not empty")
+                Timber.d("ProxyList is not empty")
                 val proxy: ProxyItem? = try {
                     proxies.getCurrentActiveProxy()
                 } catch (e: Exception) {
@@ -73,10 +72,10 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                 }
 
                 return if (proxy != null) { // if the proxy is not null, it's the current active proxy
-                    Logger.doLog(TAG, "Proxy active")
+                    Timber.d("Proxy active")
                     revertToOldApiIfNeeded(user, proxy.lastTrialTimestamp, false)
                 } else { // if there aren't any active proxies, find the proxy with the most recent timestamp
-                    Logger.doLog(TAG, "ProxyList is null")
+                    Timber.d("ProxyList is null")
                     val latestProxy = proxies.proxyList.proxies.maxBy { it.lastTrialTimestamp }
                     revertToOldApiIfNeeded(user, latestProxy?.lastTrialTimestamp, true)
                 }
@@ -91,7 +90,7 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
 
     private fun revertToOldApiIfNeeded(user: User, timeStamp: Long?, force: Boolean) : Boolean {
          if (force) {
-             Logger.doLog(TAG, "force switching to old api, since the new api is not available")
+             Timber.d("force switching to old api, since the new api is not available")
              networkUtils.networkConfigurator.networkSwitcher.reconfigureProxy(null) // force switch to old proxy
              user.usingDefaultApi = true
              return true
@@ -102,7 +101,7 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
         val switchInterval = TWENTY_FOUR_HOURS_IN_MILLIS
         val timeDiff = kotlin.math.abs(currentTime - lastApiAttempt)
         if (timeDiff >= switchInterval) {
-            Logger.doLog(TAG, "time difference is greater than switch interval, switching to old API")
+            Timber.d("time difference is greater than switch interval, switching to old API")
             networkUtils.networkConfigurator.networkSwitcher.reconfigureProxy(null) // force switch to old proxy
             user.usingDefaultApi = true
             return true
