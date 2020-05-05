@@ -20,6 +20,7 @@ package ch.protonmail.android.core;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +39,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.multidex.MultiDexApplication;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.datatheorem.android.trustkit.TrustKit;
@@ -129,7 +129,7 @@ import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_R
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
 
 @Singleton
-public class ProtonMailApplication extends MultiDexApplication implements HasActivityInjector {
+public class ProtonMailApplication extends Application implements HasActivityInjector {
 
     private static ProtonMailApplication sInstance;
 

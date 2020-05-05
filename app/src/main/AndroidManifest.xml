@@ -19,7 +19,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="ch.protonmail.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -50,7 +49,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <application
         android:name=".core.ProtonMailApplication"
-        tools:replace="android:allowBackup"
         android:allowBackup="false"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"

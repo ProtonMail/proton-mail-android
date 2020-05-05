@@ -19,7 +19,8 @@
 package ch.protonmail.android.api.models.room.notifications
 
 import androidx.room.Room
-import androidx.test.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
 import ch.protonmail.android.testAndroidInstrumented.matchers
 import org.hamcrest.Matchers.`is`
@@ -31,79 +32,79 @@ import org.junit.Test
 /**
  * Created by Kamil Rajtar on 05.09.18.  */
 internal class NotificationsDatabaseTest {
-	private val context=InstrumentationRegistry.getTargetContext()
-	private val databaseFactory=Room.inMemoryDatabaseBuilder(context,
-			NotificationsDatabaseFactory::class.java).build()
-	private val database=databaseFactory.getDatabase()
+    private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
+    private val databaseFactory = Room.inMemoryDatabaseBuilder(context,
+        NotificationsDatabaseFactory::class.java).build()
+    private val database = databaseFactory.getDatabase()
 
-	private val notifications=listOf(
-			Notification("a","aa","aaa").apply {dbId=3},
-			Notification("b","bb","bbb").apply {dbId=2},
-			Notification("c","cc","ccc").apply {dbId=1},
-			Notification("d","dd","ddd").apply {dbId=8},
-			Notification("e","ee","eee").apply {dbId=7}
-	)
+    private val notifications = listOf(
+        Notification("a", "aa", "aaa").apply { dbId = 3 },
+        Notification("b", "bb", "bbb").apply { dbId = 2 },
+        Notification("c", "cc", "ccc").apply { dbId = 1 },
+        Notification("d", "dd", "ddd").apply { dbId = 8 },
+        Notification("e", "ee", "eee").apply { dbId = 7 }
+    )
 
-	private fun NotificationsDatabase.populate() {
-		notifications.forEach(this::insertNotification)
-	}
+    private fun NotificationsDatabase.populate() {
+        notifications.forEach(this::insertNotification)
+    }
 
-	@Before
-	fun setUp(){
-		database.populate()
-	}
+    @Before
+    fun setUp() {
+        database.populate()
+    }
 
-	private fun assertDatabaseState(expectedNotifications:List<Notification> =notifications){
-		val expected=expectedNotifications.matchers
-		val actual=database.findAllNotifications()
-		Assert.assertThat(actual,containsInAnyOrder(expected))
-	}
+    private fun assertDatabaseState(expectedNotifications: List<Notification> = notifications) {
+        val expected = expectedNotifications.matchers
+        val actual = database.findAllNotifications()
+        Assert.assertThat(actual, containsInAnyOrder(expected))
+    }
 
-	@Test
-	fun findByMessageId() {
-		notifications.forEach{
-			val expected=it
-			val actual=database.findByMessageId(it.messageId)
-			Assert.assertThat(actual,`is`(ReflectivePropertiesMatcher(expected)))
-		}
-		assertDatabaseState()
-	}
+    @Test
+    fun findByMessageId() {
+        notifications.forEach {
+            val expected = it
+            val actual = database.findByMessageId(it.messageId)
+            Assert.assertThat(actual!!, `is`(ReflectivePropertiesMatcher(expected)))
+        }
+        assertDatabaseState()
+    }
 
-	@Test
-	fun findByMessageIdShouldReturnNull() {
-		val actual=database.findByMessageId("asfsagsg")
-		Assert.assertNull(actual)
-		assertDatabaseState()
-	}
+    @Test
+    fun findByMessageIdShouldReturnNull() {
+        val actual = database.findByMessageId("asfsagsg")
+        Assert.assertNull(actual)
+        assertDatabaseState()
+    }
 
-	@Test
-	fun deleteByMessageId() {
-		val deletedId=notifications[0].messageId
-		val expected=notifications.filterNot {it.messageId==deletedId}
-		database.deleteByMessageId(deletedId)
-		assertDatabaseState(expectedNotifications = expected)
-	}
+    @Test
+    fun deleteByMessageId() {
+        val deletedId = notifications[0].messageId
+        val expected = notifications.filterNot { it.messageId == deletedId }
+        database.deleteByMessageId(deletedId)
+        assertDatabaseState(expectedNotifications = expected)
+    }
 
-	@Test
-	fun insertNotification() {
-		val inserted=Notification("j","jj","jjj").apply {}
-		database.insertNotification(inserted)
-		inserted.dbId=database.findByMessageId("j")!!.dbId
-		assertDatabaseState(expectedNotifications=notifications+inserted)
-	}
+    @Test
+    fun insertNotification() {
+        val inserted = Notification("j", "jj", "jjj").apply {}
+        database.insertNotification(inserted)
+        inserted.dbId = database.findByMessageId("j")!!.dbId
+        assertDatabaseState(expectedNotifications = notifications + inserted)
+    }
 
-	@Test
-	fun clearNotificationCache() {
-		database.clearNotificationCache()
-		assertDatabaseState(expectedNotifications=emptyList())
-	}
+    @Test
+    fun clearNotificationCache() {
+        database.clearNotificationCache()
+        assertDatabaseState(expectedNotifications = emptyList())
+    }
 
 
-	@Test
-	fun deleteNotifications() {
-		val deleted=listOf(notifications[2],notifications[1])
-		val expected=notifications-deleted
-		database.deleteNotifications(deleted)
-		assertDatabaseState(expectedNotifications=expected)
-	}
+    @Test
+    fun deleteNotifications() {
+        val deleted = listOf(notifications[2], notifications[1])
+        val expected = notifications - deleted
+        database.deleteNotifications(deleted)
+        assertDatabaseState(expectedNotifications = expected)
+    }
 }

@@ -16,18 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-@file:Suppress("PackageDirectoryMismatch")
+import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.ScriptHandlerScope
+import studio.forface.easygradle.dsl.*
+import studio.forface.easygradle.dsl.android.*
 
 /**
- * Internal modules of the project
+ * Lambda that applies dependencies to the classpath
  * @author Davide Farella
  */
-object Module {
-    // Libs
-    const val tokenAutoComplete = ":tokenAutoComplete:tokenAutoComplete-lib"
-
-    // Test
-    const val testKotlin = ":sharedTest:testKotlin"
-    const val testAndroid = ":sharedTest:testAndroid"
-    const val testAndroidInstrumented = ":sharedTest:testAndroidInstrumented"
+val ScriptHandlerScope.classpathDependencies: DependencyHandlerScope.() -> Unit get() = {
+    classpath(`android-gradle-plugin`)
+    classpath(`detekt-plugin`)
+    classpath(`hugo-plugin`)
+    classpath(`kotlin-gradle-plugin`)
+    classpath(`serialization-gradle-plugin`)
+    classpath(`sentry-android-plugin`)
 }

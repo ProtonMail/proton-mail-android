@@ -26,12 +26,11 @@ repositories {
 }
 
 dependencies {
-    val android =   "3.5.0"    // Updated: Aug 08, 2019
-    val dokka =     "0.9.18"        // Updated: Mar 19, 2019
-    val sentry =    "1.7.22"   // Updated:
+    val android =       "3.5.0"         // Updated: Aug 08, 2019
+    val easyGradle =    "1.2.3-beta-4"  // Updated: Mar 01, 2020
+    val sentry =        "1.7.22"        // Updated:
 
     implementation("com.android.tools.build:gradle:$android")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:$dokka")
-    implementation("org.jetbrains.dokka:dokka-android-gradle-plugin:$dokka")
+    implementation("studio.forface.easygradle:dsl-android:$easyGradle")
     implementation("io.sentry:sentry-android-gradle-plugin:$sentry")
 }

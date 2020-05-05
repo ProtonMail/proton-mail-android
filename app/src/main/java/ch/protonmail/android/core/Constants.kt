@@ -23,6 +23,7 @@ import android.text.TextUtils
 
 import ch.protonmail.android.R
 
+
 object Constants {
 
     // region Urls
