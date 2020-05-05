@@ -25,10 +25,7 @@ import ch.protonmail.android.api.models.doh.ProxyList
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
 import ch.protonmail.android.utils.Logger
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.*
 
 // region constants
 const val DOH_PROVIDER_TIMEOUT = 10000L
@@ -40,13 +37,14 @@ private const val TAG = "NetworkConfigurator"
  */
 class NetworkConfigurator(
         private val dohProviders: Array<DnsOverHttpsProviderRFC8484>,
-        private val prefs: SharedPreferences
+        private val prefs: SharedPreferences,
+        private val scope: CoroutineScope = GlobalScope
 ) {
 
     lateinit var networkSwitcher: INetworkSwitcher
     private var isRunning = false
 
-    fun refreshDomainsAsync() = GlobalScope.async {
+    fun refreshDomainsAsync() = scope.async {
         if (!isRunning) {
             Logger.doLog(TAG, "Setting running to true")
             isRunning = true

@@ -985,7 +985,7 @@ public class MailboxActivity extends NavigationActivity implements
         final TextView vvv = contentLayout.getActionView();
         mNoConnectivitySnack.show();
         if (mUserManager.getUser().getAllowSecureConnectionsViaThirdParties() && autoRetry && !isDohOngoing && !isFinishing()) {
-            new Handler().postDelayed(vvv::callOnClick, 500);
+            getWindow().getDecorView().postDelayed(vvv::callOnClick, 500);
         }
     }
 

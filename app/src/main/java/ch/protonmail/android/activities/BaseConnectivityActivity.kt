@@ -89,7 +89,7 @@ abstract class BaseConnectivityActivity: BaseActivity() {
 		mCheckForConnectivitySnack?.saveDismiss()
 
 		if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {
-            Handler().postDelayed({ vvv.callOnClick() }, 500)
+			window.decorView.postDelayed({ vvv.callOnClick() }, 500)
         }
 	}
 
