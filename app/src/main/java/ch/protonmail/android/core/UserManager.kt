@@ -168,11 +168,17 @@ class UserManager @Inject constructor(
         }
 
     /** @return `true` if the User with the given [username] is locally saved as logged id */
-    fun isLoggedIn(username: String) = prefsFor(username)[PREF_IS_LOGGED_IN] ?: false
+    fun isLoggedIn(username: String) = prefsFor(username)[PREF_IS_LOGGED_IN] ?:
+        (username in AccountManager.getInstance(context).getLoggedInUsers())
+            .also { isLoggedIn -> setLoggedIn(username, isLoggedIn) }
 
     /** Locally store login state fo the user with the given [username] */
     fun setLoggedIn(username: String, loggedIn: Boolean) {
         prefsFor(username)[PREF_IS_LOGGED_IN] = loggedIn
+        with(AccountManager.getInstance(context)) {
+            if (loggedIn) onSuccessfulLogin(username)
+            else onSuccessfulLogout(username)
+        }
     }
 
     val isFirstLogin: Boolean
