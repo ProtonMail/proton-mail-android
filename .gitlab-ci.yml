@@ -83,7 +83,7 @@ unit tests:
     #    - android
     - experimental
   script:
-    - ./gradlew test
+    - ./gradlew testDebugUnitTest
 
 #firebase tests:
 #  stage: test
