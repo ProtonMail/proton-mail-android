@@ -59,14 +59,14 @@ The template for a commit message is the following
 <Title of the commit>
 
 #comment <Description of the changes>
-Affected: <Item1, Item2>
+Affected: <List of affected classes or behaviours>
 ```
 
 _Title_ is required and must start with a capital letter.
 
 `#comment` field is optional if the Title can exhaustively explain the changes, otherwise is required. Body of the comment must start with a capital letter.
 
-`Affected` is optional but highly appreciated and must be a comma separated list of the elements affected by the changes.
+`Affected` is optional and must be a comma separated list of the elements affected by the changes, it could be the name of a class or a behaviour like `Encryption, Login flow, LoginActivity.kt`
 
 #### Code style and pattern
 
