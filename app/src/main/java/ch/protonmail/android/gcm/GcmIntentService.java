@@ -36,7 +36,7 @@ import javax.inject.Inject;
 
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
-import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.local.SnoozeSettings;
 import ch.protonmail.android.api.models.DatabaseProvider;
 import ch.protonmail.android.api.models.User;
@@ -71,7 +71,7 @@ public class GcmIntentService extends IntentService {
     private static final String EXTRA_UID = "UID";
 
     @Inject
-    ProtonMailApi mApi;
+    ProtonMailApiManager mApi;
     @Inject
     UserManager mUserManager;
     @Inject

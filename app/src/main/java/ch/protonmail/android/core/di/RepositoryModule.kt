@@ -30,7 +30,7 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailbo
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewModel
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
@@ -171,7 +171,7 @@ class RepositoryModule {
     // region repositories
     @Provides
     @Singleton
-    fun provideEditContactDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, databaseProvider: DatabaseProvider)
+    fun provideEditContactDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
             : EditContactDetailsRepository = EditContactDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
     @Provides
@@ -180,35 +180,35 @@ class RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideContactGroupsRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, databaseProvider: DatabaseProvider):
+    fun provideContactGroupsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider):
             ContactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
 
     @Provides
     @Singleton
-    fun provideContactGroupDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, databaseProvider: DatabaseProvider)
+    fun provideContactGroupDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
             : ContactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
     @Provides
     @Singleton
-    fun provideContactGroupEditCreateRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, databaseProvider: DatabaseProvider)
+    fun provideContactGroupEditCreateRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
             : ContactGroupEditCreateRepository = ContactGroupEditCreateRepository(jobManager, protonMailApi, databaseProvider)
 
     @Provides
     @Singleton
-    fun provideContactDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, databaseProvider: DatabaseProvider)
+    fun provideContactDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
             : ContactDetailsRepository = ContactDetailsRepository(jobManager, protonMailApi, databaseProvider)
 
     @Provides
-    fun provideComposeMessageRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, databaseProvider: DatabaseProvider, @Named("messages") messagesDatabase: MessagesDatabase, @Named("messages_search") searchDatabase: MessagesDatabase, messageDetailsRepository: MessageDetailsRepository)
+    fun provideComposeMessageRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider, @Named("messages") messagesDatabase: MessagesDatabase, @Named("messages_search") searchDatabase: MessagesDatabase, messageDetailsRepository: MessageDetailsRepository)
             : ComposeMessageRepository = ComposeMessageRepository(jobManager, protonMailApi, databaseProvider, messagesDatabase, searchDatabase, messageDetailsRepository)
 
     @Provides
     @Singleton
-    fun provideContactListRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, contactsDatabase: ContactsDatabase):
+    fun provideContactListRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, contactsDatabase: ContactsDatabase):
             ContactListRepository = ContactListRepository(jobManager, protonMailApi, contactsDatabase)
 
     @Provides
-    fun provideMessageDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApi, @Named("messages_search") searchDatabase: MessagesDatabase, pendingActionsDatabase: PendingActionsDatabase, applicationContext: Context, databaseProvider: DatabaseProvider):
+    fun provideMessageDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, @Named("messages_search") searchDatabase: MessagesDatabase, pendingActionsDatabase: PendingActionsDatabase, applicationContext: Context, databaseProvider: DatabaseProvider):
         MessageDetailsRepository = MessageDetailsRepository(jobManager, protonMailApi, searchDatabase, pendingActionsDatabase, applicationContext, databaseProvider)
     // endregion
 }

@@ -22,8 +22,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.adapters.swipe.SwipeProcessor
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.*
 import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
@@ -52,9 +53,20 @@ import javax.inject.Singleton
 @Module
 class AppModule(val app: ProtonMailApplication) {
 
+    private val alternativeApiPins = listOf(
+            "EU6TS9MO0L/GsDHvVc9D5fChYLNy5JdGYpJw0ccgetM=",
+            "iKPIHPnDNqdkvOnTClQ8zQAIKG0XavaPkcEo0LBAABA=",
+            "MSlVrBCdL0hKyczvgYVSRNm88RicyY04Q2y5qrBt0xA=",
+            "C2UxW0T1Ckl9s+8cXfjXxlEqwAfPM4HiW2y3UdtBeCw=")
+
+    private val dnsOverHttpsProviders =
+            arrayOf(DnsOverHttpsProviderRFC8484("https://dns11.quad9.net/dns-query/"),
+                    DnsOverHttpsProviderRFC8484("https://dns.google/dns-query/"))
+
     @Provides
     @Singleton
     fun provideApplication(): ProtonMailApplication = app
+
 
     @Provides
     @Singleton
@@ -62,7 +74,34 @@ class AppModule(val app: ProtonMailApplication) {
 
     @Provides
     @Singleton
-    fun provideNetworkUtil(): QueueNetworkUtil = QueueNetworkUtil(app)
+    fun provideNetworkUtil(
+            networkConfigurator: NetworkConfigurator
+    ): QueueNetworkUtil = QueueNetworkUtil(app, networkConfigurator)
+
+    @Provides
+    @Singleton
+    fun provideNetworkConfigurator(@Named(Constants.PrefsType.DEFAULT) prefs: SharedPreferences): NetworkConfigurator
+            = NetworkConfigurator(dnsOverHttpsProviders, prefs)
+
+    @Provides
+    @Singleton
+    fun provideNetworkSwitcher(apiManager: ProtonMailApiManager,
+                               apiProvider: ProtonMailApiProvider,
+                               okHttpProvider: OkHttpProvider,
+                               @Named(Constants.PrefsType.DEFAULT) prefs: SharedPreferences,
+                               networkConfigurator: NetworkConfigurator): NetworkSwitcher {
+        val switcher = NetworkSwitcher(apiManager, apiProvider, okHttpProvider, prefs)
+        networkConfigurator.apply {
+            networkSwitcher = switcher
+        }
+        return switcher
+    }
+
+    @Provides
+    @Singleton
+    fun provideProxies(@Named(Constants.PrefsType.DEFAULT) prefs: SharedPreferences): Proxies {
+        return Proxies.getInstance(prefs = prefs)
+    }
 
     @Provides
     @Singleton
@@ -81,8 +120,7 @@ class AppModule(val app: ProtonMailApplication) {
 
     @Provides
     @Singleton
-    fun provideContactEmailsManager(protonMailApi: ProtonMailApi, databaseProvider: DatabaseProvider): ContactEmailsManager
-            = ContactEmailsManager(protonMailApi, databaseProvider)
+    fun provideContactEmailsManager(protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider): ContactEmailsManager = ContactEmailsManager(protonMailApi, databaseProvider)
 
     @Provides
     @Singleton
@@ -112,8 +150,7 @@ class AppModule(val app: ProtonMailApplication) {
     @Provides
     @Singleton
     @Named("messages_search")
-    fun provideSearchMessagesDatabase(@Named("messages_search_factory") messagesDatabaseFactory: MessagesDatabaseFactory): MessagesDatabase
-            = messagesDatabaseFactory.getDatabase()
+    fun provideSearchMessagesDatabase(@Named("messages_search_factory") messagesDatabaseFactory: MessagesDatabaseFactory): MessagesDatabase = messagesDatabaseFactory.getDatabase()
 
     @Provides
     @Singleton
@@ -124,8 +161,7 @@ class AppModule(val app: ProtonMailApplication) {
 
     @Provides
     @Singleton
-    fun providePendingActionsDatabase(pendingActionsDatabaseFactory: PendingActionsDatabaseFactory): PendingActionsDatabase
-        = pendingActionsDatabaseFactory.getDatabase()
+    fun providePendingActionsDatabase(pendingActionsDatabaseFactory: PendingActionsDatabaseFactory): PendingActionsDatabase = pendingActionsDatabaseFactory.getDatabase()
 
     @Provides
     @Singleton
@@ -142,8 +178,42 @@ class AppModule(val app: ProtonMailApplication) {
     @Inject
     @Provides
     @Singleton
-    fun provideApi(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil)
-            : ProtonMailApi = ProtonMailApi(userManager, jobManager, networkUtil)
+    fun provideProtonRetrofitBuilder(
+            userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil,
+                                     okHttpProvider: OkHttpProvider, @Named(Constants.PrefsType.DEFAULT) prefs: SharedPreferences)
+            : ProtonRetrofitBuilder {
+
+        val dnsOverHttpsHost = if(!userManager.user.usingDefaultApi) // userManager.user.allowSecureConnectionsViaThirdParties)
+            Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain() else Constants.ENDPOINT_URI
+
+        // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
+
+        val builder = ProtonRetrofitBuilder(userManager, jobManager, networkUtil, okHttpProvider, dnsOverHttpsHost)
+        builder.rebuildMapFor(okHttpProvider, dnsOverHttpsHost)
+        return builder
+    }
+
+    // region retrofit
+    @Inject
+    @Provides
+    @Singleton
+    fun provideOkHttpClientProvider(): OkHttpProvider {
+        return OkHttpProvider(alternativeApiPins)
+    }
+
+    // endregion
+
+    @Inject
+    @Provides
+    @Singleton
+    fun provideProtonMailApiProvider(protonRetrofitBuilder: ProtonRetrofitBuilder): ProtonMailApiProvider {
+        return ProtonMailApiProvider(protonRetrofitBuilder)
+    }
+
+    @Inject
+    @Provides
+    @Singleton
+    fun provideApiManager(protonMailApi: ProtonMailApi) = ProtonMailApiManager(protonMailApi)
 
     @Provides
     @Singleton

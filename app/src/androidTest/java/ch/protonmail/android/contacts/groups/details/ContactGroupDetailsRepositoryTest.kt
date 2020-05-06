@@ -21,6 +21,7 @@ package ch.protonmail.android.contacts.groups.details
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.EmptyResultSetException
 import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
@@ -45,7 +46,7 @@ import java.io.IOException
  * Created by kadrikj on 8/27/18. */
 class ContactGroupDetailsRepositoryTest {
     //region mocks
-    private val protonMailApi = mockk<ProtonMailApi>(relaxed = true)
+    private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true)
     private val database = mockk<ContactsDatabase>(relaxed = true)
     private val jobManager = mockk<JobManager>(relaxed = true)
     private val contactLabelFactory = mockk<IConverterFactory<ServerLabel, ContactLabel>>(relaxed = true)

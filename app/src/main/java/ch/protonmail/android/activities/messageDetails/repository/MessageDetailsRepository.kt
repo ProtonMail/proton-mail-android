@@ -24,7 +24,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.messages.*
@@ -61,7 +61,7 @@ private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
  */
 
 class MessageDetailsRepository @Inject constructor(
-        private val jobManager: JobManager, private val api: ProtonMailApi,
+        private val jobManager: JobManager, private val api: ProtonMailApiManager,
         var searchDatabaseDao: MessagesDao,
         private var pendingActionsDatabase: PendingActionsDao,
         private val applicationContext: Context,

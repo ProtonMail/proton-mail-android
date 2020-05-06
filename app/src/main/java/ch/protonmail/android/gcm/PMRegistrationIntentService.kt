@@ -30,7 +30,7 @@ import com.google.android.gms.iid.InstanceID
 import javax.inject.Inject
 
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.RegisterDeviceBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
@@ -50,7 +50,7 @@ class PMRegistrationIntentService : ProtonJobIntentService() {
 
     @Inject
     @Transient
-    internal lateinit var mApi: ProtonMailApi
+    internal lateinit var mApi: ProtonMailApiManager
     @Inject
     @Transient
     internal lateinit var mUserManager: UserManager

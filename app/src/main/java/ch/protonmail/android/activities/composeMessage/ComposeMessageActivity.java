@@ -110,6 +110,7 @@ import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.MessageRecipientViewAdapter;
 import ch.protonmail.android.api.AccountManager;
+import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
@@ -806,20 +807,22 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     protected class ConnectivityRetryListener extends RetryListener {
         @Override
         public void onClick(View v) {
-            super.onClick(v);
             mNetworkUtil.setCurrentlyHasConnectivity(true);
             Snackbar mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), ComposeMessageActivity.this);
             mCheckForConnectivitySnack.show();
+            super.onClick(v);
         }
     }
 
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(new ConnectivityRetryListener());
-        } else {
-            mPingHasConnection = true;
-            hideNoConnSnack();
+        if(!isDohOngoing) {
+            if (!event.hasConnection()) {
+                showNoConnSnack(new ConnectivityRetryListener(), this);
+            } else {
+                mPingHasConnection = true;
+                hideNoConnSnack();
+            }
         }
     }
 
@@ -1376,7 +1379,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                 isValid = false;
             }
             if (!isValid) {
-                if (mNetworkUtil.isConnected(this)) {
+                if (mNetworkUtil.isConnected()) {
                     composeMessageViewModel.startFetchPublicKeysJob(jobs, true);
                     mProgressView.setVisibility(View.VISIBLE);
                     mProgressSpinner.setVisibility(View.VISIBLE);
@@ -2122,7 +2125,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         @Override
         public void onChanged(@Nullable Long dbId) {
             @StringRes int sendingToast = R.string.sending_message;
-            if (!mNetworkUtil.isConnected(ComposeMessageActivity.this)) {
+            if (!mNetworkUtil.isConnected()) {
                 sendingToast = R.string.sending_message_offline;
             }
 
@@ -2233,7 +2236,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                 // draft
                 fillMessageFromUserInputs(localMessage, true);
                 localMessage.setExpirationTime(0);
-                composeMessageViewModel.saveDraft(localMessage, composeMessageViewModel.getParentId(), mNetworkUtil.isConnected(ComposeMessageActivity.this));
+                composeMessageViewModel.saveDraft(localMessage, composeMessageViewModel.getParentId(), mNetworkUtil.isConnected());
                 if (userAction == UserAction.SAVE_DRAFT_EXIT) {
                     finishActivity();
                 }

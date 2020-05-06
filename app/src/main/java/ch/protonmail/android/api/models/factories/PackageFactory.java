@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.Auth;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.ModulusResponse;
@@ -46,7 +46,6 @@ import ch.protonmail.android.api.models.messages.send.MessageSendPackage;
 import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.utils.HTMLToMDConverter;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.MIME.MIMEBuilder;
 import ch.protonmail.android.utils.crypto.AddressCrypto;
 import ch.protonmail.android.utils.crypto.EOToken;
@@ -55,12 +54,12 @@ import kotlin.text.Charsets;
 
 public class PackageFactory {
 
-    private ProtonMailApi mApi;
+    private ProtonMailApiManager mApi;
     private AddressCrypto crypto;
     private String outsidersPassword;
     private String outsidersHint;
 
-    public PackageFactory(ProtonMailApi mApi, AddressCrypto crypto, String outsidersPassword, String outsidersHint) {
+    public PackageFactory(ProtonMailApiManager mApi, AddressCrypto crypto, String outsidersPassword, String outsidersHint) {
         this.mApi = mApi;
         this.crypto = crypto;
         this.outsidersPassword = outsidersPassword;

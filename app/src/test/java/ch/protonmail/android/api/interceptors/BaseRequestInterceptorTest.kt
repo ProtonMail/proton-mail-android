@@ -18,8 +18,12 @@
  */
 package ch.protonmail.android.api.interceptors
 
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.RefreshBody
+import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.core.ProtonMailApplication
@@ -40,6 +44,16 @@ import org.junit.Test
 
 class BaseRequestInterceptorTest {
 
+    private val userMock = mockk<User> {
+        every { username } returns "testuser"
+        every { allowSecureConnectionsViaThirdParties } returns true
+        every { usingDefaultApi } returns true
+    }
+
+    private val prefsMock = mockk<SharedPreferences> {
+        every { getString(PREF_DNS_OVER_HTTPS_API_URL_LIST, null) } returns null
+    }
+
     private val tokenManagerMock = mockk<TokenManager> {
         every { createRefreshBody() } returns RefreshBody("refresh_token")
         every { handleRefresh(any()) } returns mockk<Unit>()
@@ -51,9 +65,10 @@ class BaseRequestInterceptorTest {
         every { username } answers {"testuser"}
         every { getTokenManager("testuser") } returns tokenManagerMock
         every { getMailboxPassword("testuser") } returns "mailbox password".toByteArray()
+        every { user } returns userMock
     }
 
-    val interceptor = ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
+    private val interceptor = ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
 
     @Test
     fun gateway_timeout() {
@@ -77,6 +92,11 @@ class BaseRequestInterceptorTest {
 
     @Test
     fun ok_response() {
+        mockkStatic(ProtonMailApplication::class)
+
+        every {
+            ProtonMailApplication.getApplication().defaultSharedPreferences
+        } returns prefsMock
 
         val responseMock = mockk<Response> {
             every { code() } returns 200
@@ -116,6 +136,15 @@ class BaseRequestInterceptorTest {
 
     @Test
     fun unauthorized_then_auth_okay_and_retry() {
+
+        mockkStatic(ProtonMailApplication::class)
+
+        every {
+            ProtonMailApplication.getApplication().currentLocale
+        } returns "en"
+        every {
+            ProtonMailApplication.getApplication().defaultSharedPreferences
+        } returns prefsMock
 
         val chainMock = mockk<Interceptor.Chain> {
             every { request() } returns mockk {

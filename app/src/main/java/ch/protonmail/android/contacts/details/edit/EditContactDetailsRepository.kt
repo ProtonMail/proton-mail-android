@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.contacts.details.edit
 
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -38,7 +38,7 @@ import javax.inject.Inject
 // if there is no internet connectivity (check for IOException)
 class EditContactDetailsRepository @Inject constructor(
         jobManager: JobManager,
-        api: ProtonMailApi,
+        api: ProtonMailApiManager,
         databaseProvider: DatabaseProvider): ContactDetailsRepository(jobManager, api, databaseProvider) {
 
     fun clearEmail(email: String) {

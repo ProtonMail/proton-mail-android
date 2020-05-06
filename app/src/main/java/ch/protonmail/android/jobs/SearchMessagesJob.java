@@ -50,7 +50,7 @@ public class SearchMessagesJob extends ProtonMailBaseJob {
     public void onRun() throws Throwable {
         if (queryString.trim().length() > 0) {
             boolean hasResults;
-            if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+            if (!mQueueNetworkUtil.isConnected()) {
                 hasResults = doLocalSearch();
             } else {
                 hasResults = doRemoteSearch();

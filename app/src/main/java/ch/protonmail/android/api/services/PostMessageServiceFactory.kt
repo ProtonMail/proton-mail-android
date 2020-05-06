@@ -106,7 +106,7 @@ class PostMessageServiceFactory {
     }
 
     private suspend fun handleCreateDraft(message: Message, localMessageId: String, uploadAttachments: Boolean, newAttachments: List<String>, context: Context) {
-        if (!networkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!networkUtil.isConnected()) {
             AppUtil.postEventOnUi(DraftCreatedEvent(message.messageId, localMessageId, null, Status.NO_NETWORK))
             return
         }
@@ -120,7 +120,7 @@ class PostMessageServiceFactory {
     }
 
     private suspend fun handleUpdateDraft(message: Message, uploadAttachments: Boolean, newAttachments: List<String>, context: Context) {
-        if (!networkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!networkUtil.isConnected()) {
             return
         }
         message.setLabelIDs(listOf(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString(), Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(), Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()))

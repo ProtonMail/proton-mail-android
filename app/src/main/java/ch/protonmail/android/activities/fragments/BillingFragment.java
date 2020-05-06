@@ -261,7 +261,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
         // Set up no connectivity SnackBar
         noConnectivitySnackBar =
-                Snackbar.make(snackBarLayout, R.string.no_connectivity_detected, Snackbar.LENGTH_INDEFINITE);
+                Snackbar.make(snackBarLayout, R.string.no_connectivity_detected_troubleshoot, Snackbar.LENGTH_INDEFINITE);
         View snackBarView = noConnectivitySnackBar.getView();
         snackBarView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.red));
         TextView snackBarTextView =

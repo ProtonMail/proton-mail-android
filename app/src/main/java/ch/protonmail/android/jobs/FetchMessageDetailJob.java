@@ -45,7 +45,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
     public void onRun() throws Throwable {
         final MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
                 getApplicationContext()).getDatabase();
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             Logger.doLog(TAG_FETCH_MESSAGE_DETAIL_JOB, "no network cannot fetch message detail");
             AppUtil.postEventOnUi(new FetchMessageDetailEvent(false, mMessageId));
             return;

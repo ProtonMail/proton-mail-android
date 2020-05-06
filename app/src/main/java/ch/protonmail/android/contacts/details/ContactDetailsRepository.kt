@@ -19,7 +19,7 @@
 package ch.protonmail.android.contacts.details
 
 import android.util.Log
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
@@ -36,9 +36,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 open class ContactDetailsRepository @Inject constructor(
-    protected val jobManager: JobManager,
-    protected val api: ProtonMailApi,
-    protected val databaseProvider: DatabaseProvider) {
+        protected val jobManager: JobManager,
+        protected val api: ProtonMailApiManager,
+        protected val databaseProvider: DatabaseProvider) {
 
     protected val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactDetailsRepository"); databaseProvider.provideContactsDao() }
 

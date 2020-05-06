@@ -21,7 +21,7 @@ package ch.protonmail.android.api.segments.event
 import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -46,7 +46,7 @@ private const val PREF_LATEST_EVENT = "latest_event"
 class EventManager {
 
     @Inject
-    lateinit var mApi : ProtonMailApi
+    lateinit var mApi : ProtonMailApiManager
     @Inject
     lateinit var mUserManager : UserManager
     @Inject
@@ -54,14 +54,18 @@ class EventManager {
     @Inject
     lateinit var databaseProvider: DatabaseProvider
 
-    private val service : EventService
+    private var service : EventService
     private var sharedPrefs = mutableMapOf<String, SharedPreferences>()
     private var lastEventIds = mutableMapOf<String, String?>()
     private var eventHandlers = mutableMapOf<String, EventHandler>()
 
     init {
         ProtonMailApplication.getApplication().appComponent.inject(this)
-        service = mApi.securedServices.event
+        service = mApi.getSecuredServices().event
+    }
+
+    fun reconfigure(service : EventService) {
+        this.service = service
     }
 
     private fun getLastEventId(username: String) : String? {

@@ -81,6 +81,13 @@ val DependencyHandler.`sentry-android-plugin` get() =       dependency("io.sentr
 val DependencyHandler.`stetho` get() =                      dependency("com.facebook", "stetho") version `stetho version`
 val DependencyHandler.`timber` get() =                      jakeWharton("timber") version `timber version`
 val DependencyHandler.`trustKit` get() =                    dependency("com.datatheorem.android", "trustkit") version `trustKit version`
+// subregion DoH
+val DependencyHandler.`minidns` get() =                     dependency("org.minidns", module = "minidns-hla") version `minidns version`
+val DependencyHandler.`retrofit2-converter` get() =         dependency("com.squareup.retrofit2", module = "converter-jackson") version `rf2 converter version`
+val DependencyHandler.`fasterxml-jackson-core` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-core") version `jackson version`
+val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-annotations") version `jackson version`
+val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
+// endsubregion
 
 fun DependencyHandler.detekt(moduleSuffix: String, version: String = `detekt version`) =
     dependency("io.gitlab.arturbosch", groupName = "detekt", moduleSuffix = moduleSuffix, version = version)

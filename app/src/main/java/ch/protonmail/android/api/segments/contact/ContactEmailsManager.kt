@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.contact
 
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.api.rx.ThreadSchedulers
@@ -26,7 +26,7 @@ import ch.protonmail.android.api.models.room.contacts.*
 import javax.inject.Inject
 
 class ContactEmailsManager @Inject constructor(
-        private var mApi : ProtonMailApi,
+        private var mApi : ProtonMailApiManager,
         private val databaseProvider: DatabaseProvider) {
 
     private var contactApi : ContactApiSpec = mApi

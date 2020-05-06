@@ -63,13 +63,16 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.AccountManager;
-import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.NetworkConfigurator;
+import ch.protonmail.android.api.NetworkSwitcher;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.PaymentMethod;
 import ch.protonmail.android.api.models.User;
+import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.messages.Message;
@@ -142,11 +145,16 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     @Inject
     QueueNetworkUtil mNetworkUtil;
     @Inject
-    ProtonMailApi mApi;
+    ProtonMailApiManager mApi;
     @Inject
     OpenPGP mOpenPGP;
     @Inject
     DispatchingAndroidInjector<Activity> activityInjector;
+
+    @Inject
+    NetworkConfigurator networkConfigurator;
+    @Inject
+    NetworkSwitcher networkSwitcher;
 
     private Bus mBus;
     private boolean mIsInitialized;
@@ -168,6 +176,8 @@ public class ProtonMailApplication extends Application implements HasActivityInj
 
     private ContactsDatabase contactsDatabase;
     private MessagesDatabase messagesDatabase;
+
+    private String API_URL = "";
 
     @NonNull
     public static ProtonMailApplication getApplication() {
@@ -202,6 +212,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         // Initialize TrustKit for TLS Certificate Pinning
         TrustKit.initializeWithNetworkSecurityConfiguration(this);
         mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(ProtonMailApplication.this)).build();
+
         mAppComponent.inject(ProtonMailApplication.this);
 
         ViewStateStoreConfig.INSTANCE
@@ -651,7 +662,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         return mUserManager;
     }
 
-    public ProtonMailApi getApi() {
+    public ProtonMailApiManager getApi() {
         return mApi;
     }
 
@@ -774,5 +785,10 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         CustomLocale.Companion.apply(this);
+    }
+
+    public void changeApiProviders(boolean switchToOld, boolean force) {
+        final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        networkConfigurator.networkSwitcher.reconfigureProxy(Proxies.Companion.getInstance(null, prefs));
     }
 }

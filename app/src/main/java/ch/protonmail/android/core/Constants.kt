@@ -159,6 +159,8 @@ object Constants {
         const val PREF_DONT_SHOW_PLAY_SERVICES = "dont_show_play_services"
         const val PREF_COMBINED_CONTACTS = "combined_contacts"
         const val PREF_TIME_AND_DATE_CHANGED = "time_and_date_changed"
+        const val PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES = "allow_secure_connections_via_third_parties"
+        const val PREF_USING_REGULAR_API = "pref_doh_using_regular_api"
 
         // permissions
         const val PREF_PERMISSION_READ_CONTACTS = "pref_permission_contacts"

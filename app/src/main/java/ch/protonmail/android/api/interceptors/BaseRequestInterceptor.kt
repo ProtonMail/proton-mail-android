@@ -20,6 +20,9 @@ package ch.protonmail.android.api.interceptors
 
 import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.api.ProtonMailPublicService
+import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.doh.Proxies
+import ch.protonmail.android.api.models.doh.ProxyItem
 import ch.protonmail.android.api.segments.*
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -33,14 +36,20 @@ import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
 
+// region constants
+// private const val TWO_MINUTES_IN_MILLIS = 2 * 60 * 1000L
+private const val TWENTY_FOUR_HOURS_IN_MILLIS = 24 * 60 * 60 * 1000L
+// private const val TAG = "BaseRequestInterceptor"
+// endregion
+
 abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                                       protected val jobManager: JobManager,
-                                      protected val networkUtil: QueueNetworkUtil) : Interceptor {
+                                      protected val networkUtils: QueueNetworkUtil) : Interceptor {
 
     // this can't be required in constructor because of circular dependency when setting up networking
     lateinit var publicService: ProtonMailPublicService
 
-    protected val appVersionName by lazy {
+    private val appVersionName by lazy {
         val name = "Android_" + AppUtil.getAppVersionName(ProtonMailApplication.getApplication())
         if (name[name.length - 1] == '.') {
             name.substring(0, name.length - 1)
@@ -49,12 +58,67 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
         }
     }
 
+    private fun check24hExpired() : Boolean {
+        val user = userManager.user
+        val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
+        val proxies = Proxies.getInstance(null, prefs)
+        if (user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
+            if (proxies.proxyList.proxies.isNotEmpty()) {
+                Timber.d("ProxyList is not empty")
+                val proxy: ProxyItem? = try {
+                    proxies.getCurrentActiveProxy()
+                } catch (e: Exception) {
+                    null
+                }
+
+                return if (proxy != null) { // if the proxy is not null, it's the current active proxy
+                    Timber.d("Proxy active")
+                    revertToOldApiIfNeeded(user, proxy.lastTrialTimestamp, false)
+                } else { // if there aren't any active proxies, find the proxy with the most recent timestamp
+                    Timber.d("ProxyList is null")
+                    val latestProxy = proxies.proxyList.proxies.maxBy { it.lastTrialTimestamp }
+                    revertToOldApiIfNeeded(user, latestProxy?.lastTrialTimestamp, true)
+                }
+            } else {
+                // TODO: DoH: proxy list is empty, what to do here?
+            }
+        } else {
+            // if user has not enabled third party, do nothing
+        }
+        return false
+    }
+
+    private fun revertToOldApiIfNeeded(user: User, timeStamp: Long?, force: Boolean) : Boolean {
+         if (force) {
+             Timber.d("force switching to old api, since the new api is not available")
+             networkUtils.networkConfigurator.networkSwitcher.reconfigureProxy(null) // force switch to old proxy
+             user.usingDefaultApi = true
+             return true
+         }
+
+        val currentTime = System.currentTimeMillis()
+        val lastApiAttempt = timeStamp ?: currentTime // Proxies.getLastApiAttemptTimeStamp(prefs)
+        val switchInterval = TWENTY_FOUR_HOURS_IN_MILLIS
+        val timeDiff = kotlin.math.abs(currentTime - lastApiAttempt)
+        if (timeDiff >= switchInterval) {
+            Timber.d("time difference is greater than switch interval, switching to old API")
+            networkUtils.networkConfigurator.networkSwitcher.reconfigureProxy(null) // force switch to old proxy
+            user.usingDefaultApi = true
+            return true
+        }
+        return false
+    }
+
     /**
      * @return if returned null, no need to re-authorize or HTTP 504/429 happened (there's nothing we can do)
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     fun checkIfTokenExpired(chain: Interceptor.Chain, request: Request, response: Response?): Response? {
         if (response == null) {
+            return null
+        }
+
+        if(check24hExpired()) {
             return null
         }
 
@@ -73,9 +137,9 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                         Timber.tag("429").i("access token expired, got correct refresh response, handle refresh in token manager")
                         tokenManager.handleRefresh(refreshResponseBody)
                     } else {
-                        if (refreshResponse.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
+                        return if (refreshResponse.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
                             Timber.tag("429").i("access token expired, got 429 response trying to refresh it, quitting flow")
-                            return null
+                            null
                         } else {
                             Timber.tag("429").i("access token expired, got error response (${refreshResponse.code()}) trying to refresh it (refresh token blank = ${tokenManager.isRefreshTokenBlank()}, uid blank = ${tokenManager.isUidBlank()}), logging out")
                             ProtonMailApplication.getApplication().notifyLoggedOut(usernameAuth)
@@ -83,8 +147,7 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                             jobManager.clear()
                             jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
                             userManager.logoutOffline(usernameAuth)
-//                        AppUtil.postEventOnUi(InvalidAccessTokenEvent())
-                            return response
+                            response
                         }
                     }
 
@@ -109,7 +172,6 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                                 .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
                                 .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
                                 .build()
-
                     }
                     // retry the original request which got 401 when we first tried it
                     return chain.proceed(newRequest)
@@ -125,6 +187,8 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
             AppUtil.postEventOnUi(RequestTimeoutEvent())
         } else if (response.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
             Timber.d("'too many requests' when processing request")
+        } else if (response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE) { // 503
+            Timber.d("'service unavailable' when processing request")
         }
 
         return null

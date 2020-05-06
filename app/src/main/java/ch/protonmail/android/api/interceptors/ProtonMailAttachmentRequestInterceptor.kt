@@ -18,10 +18,13 @@
  */
 package ch.protonmail.android.api.interceptors
 
+import android.util.Log
 import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProgressResponseBody
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.ProtonMailPublicService
+import ch.protonmail.android.api.models.doh.Proxies
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.ConnectivityEvent
@@ -39,7 +42,7 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         networkUtil: QueueNetworkUtil
 ) : BaseRequestInterceptor(userManager, jobManager, networkUtil) {
 
-    lateinit var protonMailApi: ProtonMailApi
+    lateinit var protonMailApi: ProtonMailApiManager
     private var progressListener : ProgressListener? = null
     private var semaphore : Semaphore? = null
 
@@ -55,6 +58,8 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         private fun buildInstance(publicService: ProtonMailPublicService, userManager: UserManager,
                                   jobManager: JobManager, networkUtil: QueueNetworkUtil) =
                 ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil).also { it.publicService = publicService }
+
+        val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
     }
 
     fun nextProgressListener(progressListener : ProgressListener) {
@@ -75,11 +80,11 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
             response = chain.proceed(request)
         } catch (exception: IOException) {
             AppUtil.postEventOnUi(ConnectivityEvent(false))
-            networkUtil.setCurrentlyHasConnectivity(false)
+            networkUtils.setCurrentlyHasConnectivity(false)
             throw exception
         }
 
-        networkUtil.setCurrentlyHasConnectivity(true)
+        networkUtils.setCurrentlyHasConnectivity(true)
         AppUtil.postEventOnUi(ConnectivityEvent(true))
 
         // check if expired token, otherwise just pass the original response on

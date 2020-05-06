@@ -45,6 +45,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.birbit.android.jobqueue.JobManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
+import timber.log.Timber;
 
 import javax.inject.Inject;
 
@@ -54,7 +55,8 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.adapters.swipe.SwipeProcessor;
-import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.NetworkConfigurator;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
@@ -80,6 +82,8 @@ import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
+import ch.protonmail.android.utils.INetworkConfiguratorCallback;
+import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
@@ -90,7 +94,7 @@ import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOG
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {
 
     public static final String EXTRA_IN_APP = "extra_in_app";
     public static final int REQUEST_CODE_VALIDATE_PIN = 998;
@@ -100,7 +104,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Inject
     protected ProtonMailApplication mApp;
     @Inject
-    ProtonMailApi mApi;
+    protected ProtonMailApiManager mApi;
+    @Inject
+    protected NetworkConfigurator networkConfigurator;
     @Inject
     protected UserManager mUserManager;
     @Inject
@@ -115,6 +121,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected BigContentHolder mBigContentHolder;
     @Inject
     protected NetworkResults mNetworkResults;
+
+
     @Nullable
     @BindView(R.id.toolbar)
     protected Toolbar mToolbar;
@@ -141,6 +149,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected boolean shouldCheckForAutoLogout() {
         return true;
     }
+
+    protected boolean isDohOngoing = false;
+    protected boolean autoRetry = true;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -226,6 +237,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             enableScreenshotProtector();
         }
         ProtonMailApplication.getApplication().setAppInBackground(false);
+        NetworkConfigurator.Companion.setNetworkConfiguratorCallback(this);
     }
 
     @Override
@@ -514,5 +526,32 @@ public abstract class BaseActivity extends AppCompatActivity {
         mHtmlProcessor.addHandler(new HtmlDivHandler());
         mHtmlProcessor.addHandler(new Html5Handler());
         mHtmlProcessor.addHandler(new XHtmlHandler());
+    }
+
+    @Override
+    public void onApiProvidersChanged() {
+        networkConfigurator.refreshDomainsAsync();
+    }
+
+    @Override
+    public void startDohSignal () {
+        isDohOngoing = true;
+        Timber.d("BaseActivity: startDohSignal");
+    }
+
+    @Override
+    public void stopDohSignal () {
+        isDohOngoing = false;
+        Timber.d("BaseActivity: stopDohSignal");
+    }
+
+    @Override
+    public void startAutoRetry() {
+        autoRetry = true;
+    }
+
+    @Override
+    public void stopAutoRetry() {
+        autoRetry = false;
     }
 }

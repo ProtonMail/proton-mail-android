@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.*
@@ -31,7 +31,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ContactGroupsRepository @Inject constructor(val jobManager: JobManager, val api: ProtonMailApi, val databaseProvider: DatabaseProvider) {
+class ContactGroupsRepository @Inject constructor(val jobManager: JobManager, val api: ProtonMailApiManager, val databaseProvider: DatabaseProvider) {
 
     private var contactsDatabase = databaseProvider.provideContactsDao()
 

@@ -50,7 +50,7 @@ public class FetchContactDetailsJob extends ProtonMailBaseJob {
         ContactsDatabase contactsDatabase= ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         FullContactDetails contact = contactsDatabase.findFullContactDetailsById(contactId);
         checkAndParse(contact);
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             return;
         } else {
             FullContactDetailsResponse response = mApi.fetchContactDetails(contactId);

@@ -19,17 +19,27 @@
 package ch.protonmail.android.activities
 
 import android.os.Handler
-import androidx.annotation.StringRes
-import com.google.android.material.snackbar.Snackbar
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.annotation.StringRes
 import butterknife.BindView
 import ch.protonmail.android.R
 import ch.protonmail.android.jobs.PingJob
+import ch.protonmail.android.utils.INetworkConfiguratorCallback
+import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.NetworkUtil
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.snackbar.SnackbarContentLayout
+import timber.log.Timber
 
 /**
  * Created by dkadrikj on 11/2/15.
  */
+
+// region constants
+const val TAG = "BaseConnectivityActivity"
+// endregion
 abstract class BaseConnectivityActivity: BaseActivity() {
 
 	@BindView(R.id.layout_no_connectivity_info)
@@ -52,16 +62,35 @@ abstract class BaseConnectivityActivity: BaseActivity() {
 			}
 			pingHandler.removeCallbacks(pingRunnable)
 			pingHandler.postDelayed(pingRunnable, 3000)
+
+			retryWithDoh()
+		}
+	}
+
+	protected fun retryWithDoh() {
+		if (mNetworkUtil.isConnected()) {
+			val thirdPartyConnectionsEnabled = mUserManager.user.allowSecureConnectionsViaThirdParties
+			if (thirdPartyConnectionsEnabled) {
+				Timber.d("Third party connections enabled, attempting DoH...")
+				networkConfigurator.refreshDomainsAsync() // refreshDomains(false) // switch to new here
+			}
 		}
 	}
 
 	@JvmOverloads
-	protected fun showNoConnSnack(listener: RetryListener? = null, @StringRes message: Int = R.string.no_connectivity_detected,
-								  view: View = mSnackLayout) {
-        mNoConnectivitySnack = mNoConnectivitySnack ?: NetworkUtil.setNoConnectionSnackLayout(
-				view, this, listener ?: connectivityRetryListener, false, message)
+	protected fun showNoConnSnack(listener: RetryListener? = null, @StringRes message: Int = R.string.no_connectivity_detected_troubleshoot,
+								  view: View = mSnackLayout, callback: INetworkConfiguratorCallback) {
+		val user = mUserManager.user
+        mNoConnectivitySnack = mNoConnectivitySnack ?: NetworkUtil.setNoConnectionSnackLayout(view,
+				this, listener ?: connectivityRetryListener, false, message, user, callback)
 		mNoConnectivitySnack!!.show()
+		val contentLayout = (mNoConnectivitySnack!!.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
+		val vvv: TextView = contentLayout.actionView
 		mCheckForConnectivitySnack?.saveDismiss()
+
+		if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {
+			window.decorView.postDelayed({ vvv.callOnClick() }, 500)
+        }
 	}
 
 	protected fun hideNoConnSnack() {

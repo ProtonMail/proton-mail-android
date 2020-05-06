@@ -25,7 +25,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.getActivationToken
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
@@ -47,7 +47,7 @@ class AddressKeyActivationWorker(context: Context, params: WorkerParameters) : W
     internal lateinit var userManager: UserManager
 
     @Inject
-    internal lateinit var api: ProtonMailApi
+    internal lateinit var api: ProtonMailApiManager
 
     private val openPgp: OpenPGP by lazy { userManager.openPgp }
 

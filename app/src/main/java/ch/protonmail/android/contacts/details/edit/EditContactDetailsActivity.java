@@ -765,7 +765,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
         if (!event.hasConnection()) {
-            showNoConnSnack();
+            showNoConnSnack(this);
         } else {
             mPingHasConnection = true;
             hideNoConnSnack();
@@ -963,7 +963,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             } else if (!vCardPhotos.get(0).getUrl().isEmpty()) {
                 photoCardViewWrapper.setVisibility(View.GONE);
                 contactInitials.setVisibility(View.VISIBLE);
-                if (mNetworkUtil.isConnected(this)) {
+                if (mNetworkUtil.isConnected()) {
                     editContactDetailsViewModel.getBitmapFromURL(vCardPhotos.get(0).getUrl());
                 }
             }

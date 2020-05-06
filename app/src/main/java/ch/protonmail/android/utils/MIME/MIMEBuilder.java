@@ -34,11 +34,10 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 
-import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.AttachmentHeaders;
 import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.utils.HTMLToMDConverter;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.crypto.AddressCrypto;
 import ch.protonmail.android.utils.crypto.BinaryCiphertext;
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult;
@@ -48,11 +47,11 @@ public class MIMEBuilder {
     private String html;
     private String plaintext;
     private List<Attachment> attachments;
-    private ProtonMailApi api;
+    private ProtonMailApiManager api;
     private AddressCrypto crypto;
 
 
-    public MIMEBuilder(ProtonMailApi api, AddressCrypto crypto) {
+    public MIMEBuilder(ProtonMailApiManager api, AddressCrypto crypto) {
         this.loadPlaintext("")
             .loadAttachments(Collections.<Attachment>emptyList());
         this.api = api;

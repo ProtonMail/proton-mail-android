@@ -286,7 +286,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
         super.onResume();
         checkDelinquency();
         getPingHandler().postDelayed(getPingRunnable(), 0);
-        if (!mNetworkUtil.isConnected(this)) {
+        if (!mNetworkUtil.isConnected()) {
             showNoConnSnackExtended();
         }
     }
@@ -525,7 +525,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
     private void showNoConnSnackExtended() {
         Snackbar noConnectivitySnack = getMNoConnectivitySnack();
         if (noConnectivitySnack == null || !noConnectivitySnack.isShownOrQueued()) {
-            showNoConnSnack(messageDetailsRetryListener, R.string.no_connectivity_detected, coordinatorLayout);
+            showNoConnSnack(messageDetailsRetryListener, R.string.no_connectivity_detected_troubleshoot, coordinatorLayout, this);
             calculateAndUpdateActionButtonsPosition();
         }
         invalidateOptionsMenu();
@@ -581,12 +581,14 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
             if (content == null) {
                 return;
             }
-            if (content) {
-                hideNoConnSnackExtended();
-                BaseActivity.mPingHasConnection = true;
-            } else {
-                showNoConnSnackExtended();
-            }
+            // if(!isDohOngoing) {
+                if (content) {
+                    hideNoConnSnackExtended();
+                    BaseActivity.mPingHasConnection = true;
+                } else {
+                    showNoConnSnackExtended();
+                }
+            // }
         });
     }
 
@@ -899,7 +901,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
                     viewModel.fetchMessageDetails(true);
                 }
             } else {
-                boolean hasConnectivity = mNetworkUtil.isConnected(MessageDetailsActivity.this);
+                boolean hasConnectivity = mNetworkUtil.isConnected();
                 if (hasConnectivity) {
                     viewModel.fetchMessageDetails(false);
                 } else {
@@ -909,7 +911,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
         }
 
         private void onMessageNotFound() {
-            if ((isTransientMessage || messageRecipientUsername != null) && mNetworkUtil.isConnected(MessageDetailsActivity.this)) {
+            if ((isTransientMessage || messageRecipientUsername != null) && mNetworkUtil.isConnected()) {
                 // request to fetch message if didn't find in local database
                 viewModel.fetchMessageDetails(false);
             }

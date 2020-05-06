@@ -48,7 +48,7 @@ public class PostHumanVerificationJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(new PostHumanVerificationEvent(Status.NO_NETWORK));
             return;
         }

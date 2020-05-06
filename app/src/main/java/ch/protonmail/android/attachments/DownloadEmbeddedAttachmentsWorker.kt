@@ -28,7 +28,7 @@ import androidx.work.*
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProgressListener
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.messages.Attachment
@@ -75,7 +75,7 @@ class DownloadEmbeddedAttachmentsWorker(context: Context, params: WorkerParamete
     internal lateinit var userManager: UserManager
 
     @Inject
-    internal lateinit var api: ProtonMailApi
+    internal lateinit var api: ProtonMailApiManager
 
     @Inject
     internal lateinit var messageDetailsRepository: MessageDetailsRepository

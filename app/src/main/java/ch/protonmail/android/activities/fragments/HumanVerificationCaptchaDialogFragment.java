@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.activities.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +34,9 @@ import java.net.URL;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
+import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.views.PMWebView;
 
@@ -70,18 +73,21 @@ public class HumanVerificationCaptchaDialogFragment extends HumanVerificationDia
         mProgressBar.setVisibility(View.VISIBLE);
         mContinue.setVisibility(View.GONE);
         hasConnectivity = mListener.hasConnectivity();
-        mHost = Constants.ENDPOINT_URI.substring(8);
-        int slashIndex = mHost.indexOf('/');
+        SharedPreferences prefs = ((ProtonMailApplication)(getContext().getApplicationContext())).getDefaultSharedPreferences();
+        String apiUrl = Proxies.Companion.getInstance(null, prefs).getCurrentWorkingProxyDomain();
+        host = apiUrl.substring(8);
+        int slashIndex = host.indexOf('/');
         if (slashIndex > 0) {
-            mHost = mHost.substring(0, slashIndex);
+            host = host.substring(0, slashIndex);
         }
         try {
-            mHost = new URL(Constants.ENDPOINT_URI).getHost();
+            // host = new URL(Constants.ENDPOINT_URI).getHost();
+            host = new URL(apiUrl).getHost();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         if (hasConnectivity) {
-            mWebView.loadUrl("https://secure.protonmail.com/captcha/captcha.html?token=" + mToken + "&client=android&host=" + mHost);
+            mWebView.loadUrl("https://secure.protonmail.com/captcha/captcha.html?token=" + mToken + "&client=android&host=" + host);
         } else {
             TextExtensions.showToast(getContext(), R.string.no_connectivity_detected);
         }
@@ -90,7 +96,7 @@ public class HumanVerificationCaptchaDialogFragment extends HumanVerificationDia
 
     public void connectionArrived() {
         if (!hasConnectivity) {
-            mWebView.loadUrl("https://secure.protonmail.com/captcha/captcha.html?token=" + mToken + "&client=android&host=" + mHost);
+            mWebView.loadUrl("https://secure.protonmail.com/captcha/captcha.html?token=" + mToken + "&client=android&host=" + host);
         }
     }
 

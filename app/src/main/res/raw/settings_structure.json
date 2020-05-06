@@ -29,6 +29,13 @@
     "setting_type": "drill"
   },
   {
+    "setting_id": "connections_via_third_parties",
+    "is_section": false,
+    "setting_value": "",
+    "setting_hasValue": true,
+    "setting_type": "drill"
+  },
+  {
     "setting_id": "app_language",
     "is_section": false,
     "setting_value": "English",

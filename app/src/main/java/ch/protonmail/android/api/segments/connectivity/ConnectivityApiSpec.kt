@@ -19,11 +19,10 @@
 package ch.protonmail.android.api.segments.connectivity
 
 import ch.protonmail.android.api.models.ResponseBody
-import java.io.IOException
 
 interface ConnectivityApiSpec {
 
-    @Throws(IOException::class)
     fun ping(): ResponseBody
 
+    suspend fun pingAsync(): ResponseBody
 }

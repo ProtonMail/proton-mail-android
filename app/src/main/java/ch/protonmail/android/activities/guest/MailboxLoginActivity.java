@@ -180,10 +180,10 @@ public class MailboxLoginActivity extends BaseLoginActivity {
 
         @Override
         public void onClick(View v) {
-            super.onClick(v);
             mNetworkUtil.setCurrentlyHasConnectivity(true);
             mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), MailboxLoginActivity.this);
             mCheckForConnectivitySnack.show();
+            super.onClick(v);
         }
     }
 
@@ -192,7 +192,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
         if (!event.hasConnection()) {
-            showNoConnSnack(connectivityRetryListener);
+            showNoConnSnack(connectivityRetryListener, this);
         } else {
             mPingHasConnection = true;
             hideNoConnSnack();

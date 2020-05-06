@@ -22,11 +22,13 @@ import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.interceptors.ProtonMailAttachmentRequestInterceptor
 import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.DeafProgressListener
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.ProtonMailApplication
 import okhttp3.RequestBody
 import java.io.IOException
 
@@ -72,7 +74,10 @@ class AttachmentApi (private val basicService : AttachmentService,
     }
 
     override fun getAttachmentUrl(attachmentId: String): String {
-        return Constants.ENDPOINT_URI + "/attachments/" + attachmentId
+        // return Constants.ENDPOINT_URI + "/attachments/" + attachmentId
+        val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
+        val apiUrl = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
+        return apiUrl + "/attachments/" + attachmentId
     }
 
 }

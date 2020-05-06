@@ -32,7 +32,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
-import androidx.annotation.StringRes
 import ch.protonmail.android.R
 import ch.protonmail.android.views.CustomFontButton
 import com.google.android.material.snackbar.Snackbar
@@ -56,7 +55,7 @@ class DialogUtils {
                 .show()
         }
 
-        fun showInfoDialogWithCustomView(context: Context, @StringRes title: Int, view: View, okListener: ((Unit) -> Unit)?) {
+        fun showInfoDialogWithCustomView(context: Context, title: String, view: View, okListener: ((Unit) -> Unit)?) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(title)
                     .setView(view)

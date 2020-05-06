@@ -19,7 +19,7 @@
 package ch.protonmail.android.contacts.groups.details
 
 import android.util.Log
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
@@ -38,7 +38,7 @@ import javax.inject.Inject
 
 /**
  * Created by kadrikj on 8/23/18. */
-class ContactGroupDetailsRepository @Inject constructor(val jobManager: JobManager, val api: ProtonMailApi, private val databaseProvider: DatabaseProvider) {
+class ContactGroupDetailsRepository @Inject constructor(val jobManager: JobManager, val api: ProtonMailApiManager, private val databaseProvider: DatabaseProvider) {
 
     private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupDetailsRepository"); databaseProvider.provideContactsDao() }
 

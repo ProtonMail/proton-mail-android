@@ -22,6 +22,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
@@ -55,7 +56,7 @@ class ContactGroupsViewModelTestSecond {
     private val label2 = ContactLabel("b", "bb")
     private val label3 = ContactLabel("c", "cc")
 
-    private val protonMailApi = mockk<ProtonMailApi>(relaxed = true) {
+    private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true) {
         every { fetchContactGroupsAsObservable() } returns Observable.error(IOException(":("))
     }
     private val jobManager = mockk<JobManager>(relaxed = true)
