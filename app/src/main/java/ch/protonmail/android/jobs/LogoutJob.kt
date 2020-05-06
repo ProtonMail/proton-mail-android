@@ -34,7 +34,7 @@ class LogoutJob(username: String) : ProtonMailBaseJob(Params(Priority.HIGH).pers
 
     @Throws(Throwable::class)
     override fun onRun() {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(LogoutEvent(Status.NO_NETWORK))
         } else {
             // Unregister GCM only if this is the last user on device

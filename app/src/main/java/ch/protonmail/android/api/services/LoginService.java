@@ -45,6 +45,7 @@ import javax.inject.Inject;
 
 import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.KeySalts;
 import ch.protonmail.android.api.models.Keys;
@@ -153,7 +154,7 @@ public class LoginService extends ProtonJobIntentService {
     @Inject
     OpenPGP openPGP;
     @Inject
-    ProtonMailApi api;
+    ProtonMailApiManager api;
     @Inject
     JobManager jobManager;
     @Inject
@@ -402,7 +403,7 @@ public class LoginService extends ProtonJobIntentService {
 
     private void handleCreateUser(final String username, final byte[] password, final boolean updateMe, final Constants.TokenType tokenType, final String token) {
         AuthStatus status = AuthStatus.FAILED;
-        if (networkUtils.isConnected(this)) {
+        if (networkUtils.isConnected()) {
             // TODO: handle payment token type
             try {
                 final ModulusResponse modulus = api.randomModulus();
@@ -421,7 +422,7 @@ public class LoginService extends ProtonJobIntentService {
         AuthStatus status = AuthStatus.FAILED;
         LoginInfoResponse infoResponse = null;
         try {
-            if (networkUtils.isConnected(this)) {
+            if (networkUtils.isConnected()) {
                 infoResponse = api.loginInfoForAuthentication(username);
                 boolean foundErrorCode = AppUtil.checkForErrorCodes(infoResponse.getCode(), infoResponse.getError());
                 if (foundErrorCode) {
@@ -463,7 +464,7 @@ public class LoginService extends ProtonJobIntentService {
     private void handleLogin(final String username, final byte[] password, final LoginInfoResponse infoResponse, final int fallbackAuthVersion, final boolean signUp) {
         LoginHelperData loginHelperData = new LoginHelperData();
         try {
-            if (networkUtils.isConnected(this)) {
+            if (networkUtils.isConnected()) {
                 final SRPClient.Proofs proofs = srpProofsForInfo(username, password, infoResponse, fallbackAuthVersion);
                 if (proofs != null) {
                     LoginResponse loginResponse = api.login(username, infoResponse.getSRPSession(), proofs.clientEphemeral, proofs.clientProof);
@@ -527,7 +528,7 @@ public class LoginService extends ProtonJobIntentService {
             AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
         }
         try {
-            if (networkUtils.isConnected(this)) {
+            if (networkUtils.isConnected()) {
                 tokenManager = userManager.getTokenManager(username);
 
                 boolean checkPassphrase = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), generatedMailboxPassword);
@@ -547,7 +548,7 @@ public class LoginService extends ProtonJobIntentService {
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
                         if (!signUp) {
-                            if (networkUtils.isConnected(this) && userManager.isLoggedIn() && userManager.accessTokenExists()) {
+                            if (networkUtils.isConnected() && userManager.isLoggedIn() && userManager.accessTokenExists()) {
                                 AlarmReceiver alarmReceiver = new AlarmReceiver();
                                 alarmReceiver.setAlarm(ProtonMailApplication.getApplication());
                             }
@@ -574,7 +575,7 @@ public class LoginService extends ProtonJobIntentService {
         LoginHelperData loginHelperData = new LoginHelperData();
 
         try {
-            if (networkUtils.isConnected(this)) {
+            if (networkUtils.isConnected()) {
                 final SRPClient.Proofs proofs = srpProofsForInfo(username, password, infoResponse, fallbackAuthVersion);
                 if (proofs != null) {
                     String currentPrimary = userManager.getUsername();
@@ -621,7 +622,7 @@ public class LoginService extends ProtonJobIntentService {
 
         try {
             AppUtil.clearTasks(jobManager);
-            if (networkUtils.isConnected(this)) {
+            if (networkUtils.isConnected()) {
                 tokenManager = userManager.getTokenManager(username);
                 boolean checkPassphrase = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), generatedMailboxPassword);
                 if (!checkPassphrase) {
@@ -670,7 +671,7 @@ public class LoginService extends ProtonJobIntentService {
         AuthStatus status = AuthStatus.FAILED;
         AddressSetupResponse response = null;
         try {
-            if (networkUtils.isConnected(this)) {
+            if (networkUtils.isConnected()) {
                 response = api.setupAddress(new AddressSetupBody(domain));
                 boolean foundErrorCode = AppUtil.checkForErrorCodes(response.getCode(), response.getError());
                 if (foundErrorCode) {
@@ -971,11 +972,11 @@ public class LoginService extends ProtonJobIntentService {
                     // Indicates communication with the service was successful.
                     String jwsResult = response.getJwsResult();
 
-                    new CheckDeviceVerification(api, username, password, modulus, updateMe, tokenType, token, timestamp, jwsResult).execute();
+                    new CheckDeviceVerification(api.getApi(), username, password, modulus, updateMe, tokenType, token, timestamp, jwsResult).execute();
                 })
                 .addOnFailureListener(activity, e -> {
                     // An error occurred while communicating with the service.
-                    new CheckDeviceVerification(api, username, password, modulus, updateMe, tokenType, token, timestamp, "").execute();
+                    new CheckDeviceVerification(api.getApi(), username, password, modulus, updateMe, tokenType, token, timestamp, "").execute();
 
                     // An error with the Google Play services API contains some
                     // or

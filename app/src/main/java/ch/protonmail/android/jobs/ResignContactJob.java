@@ -80,7 +80,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
             return;
         }
 
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.NO_NETWORK, mDestination));
         }
     }

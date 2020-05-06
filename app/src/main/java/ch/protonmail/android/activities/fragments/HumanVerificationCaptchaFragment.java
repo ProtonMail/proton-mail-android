@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.activities.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -38,7 +39,9 @@ import java.net.URL;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
+import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.CreateUserEvent;
 import ch.protonmail.android.events.KeysSetupEvent;
@@ -97,13 +100,17 @@ public class HumanVerificationCaptchaFragment extends HumanVerificationBaseFragm
         mProgressBar.setVisibility(View.VISIBLE);
         mContinue.setVisibility(View.GONE);
         hasConnectivity = mListener.hasConnectivity();
-        mHost = Constants.ENDPOINT_URI.substring(8);
+        // mHost = Constants.ENDPOINT_URI.substring(8);
+        SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        String apiUrl = Proxies.Companion.getInstance(null, prefs).getCurrentWorkingProxyDomain();
+        mHost = apiUrl.substring(8);
         int slashIndex = mHost.indexOf('/');
         if (slashIndex > 0) {
             mHost = mHost.substring(0, slashIndex);
         }
         try {
-            mHost = new URL(Constants.ENDPOINT_URI).getHost();
+            // mHost = new URL(Constants.ENDPOINT_URI).getHost();
+            mHost = new URL(apiUrl).getHost();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

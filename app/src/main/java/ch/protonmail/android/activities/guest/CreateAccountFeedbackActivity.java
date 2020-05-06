@@ -186,7 +186,7 @@ public class CreateAccountFeedbackActivity extends BaseConnectivityActivity impl
 
     @Override
     public boolean hasConnectivity() {
-        return mNetworkUtil.isConnected(this);
+        return mNetworkUtil.isConnected();
     }
 
     @Override

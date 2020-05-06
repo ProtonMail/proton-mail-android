@@ -38,7 +38,7 @@ import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.fragments.BaseFragment
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.*
 import ch.protonmail.android.contacts.details.ContactDetailsActivity
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
@@ -188,7 +188,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
         val loaderManager = LoaderManager.getInstance(this)
         val application = activity!!.application
         hasContactsPermission = arguments?.getBoolean(EXTRA_PERMISSION) ?: false
-        val factory = ContactsListViewModelFactory(application, loaderManager, listener.jobManager, (application as ProtonMailApplication).api as ProtonMailApi)
+        val factory = ContactsListViewModelFactory(application, loaderManager, listener.jobManager, (application as ProtonMailApplication).api as ProtonMailApiManager)
         viewModel = ViewModelProviders.of(this, factory).get(ContactsListViewModel::class.java)
 
         initAdapter()

@@ -116,6 +116,15 @@
   ],
   [
     {
+      "setting_id": "allow_secure_connections_via_third_parties",
+      "is_section": false,
+      "setting_value": "",
+      "setting_hasValue": true,
+      "setting_type": "toggle"
+    }
+  ],
+  [
+    {
       "setting_id": "combined_contacts",
       "is_section": false,
       "setting_value": "",

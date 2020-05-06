@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.api.segments.event;
 
+import android.content.SharedPreferences;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.birbit.android.jobqueue.Params;
@@ -27,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ch.protonmail.android.api.AccountManager;
+import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.ProtonMailApplication;
@@ -55,7 +59,7 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
     @Override
     public void onRun() throws Throwable {
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             Logger.doLog(TAG_FETCH_UPDATES_JOB, "no network cannot fetch updates");
             AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.NO_NETWORK));
             return;

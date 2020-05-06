@@ -45,7 +45,7 @@ public class CheckUsernameAvailableJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             Logger.doLog(TAG_CHECK_USERNAME_AVAILABLE_JOB, "no network cannot fetch updates");
             AppUtil.postEventOnUi(new CheckUsernameEvent(Status.NO_NETWORK, false));
             return;

@@ -33,7 +33,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.MailSettings;
@@ -62,7 +62,7 @@ import ezvcard.property.RawProperty;
 
 public class SendPreferencesFactory {
 
-    private ProtonMailApi mApi;
+    private ProtonMailApiManager mApi;
     private UserManager mUserManager;
     private MailSettings mailSettings;
     private UserCrypto crypto;
@@ -71,7 +71,7 @@ public class SendPreferencesFactory {
 
     @Inject
     public SendPreferencesFactory(
-            ProtonMailApi api,
+            ProtonMailApiManager api,
             UserManager userManager,
             @Named("username" /* TODO: use `CURRENT_USERNAME` const, unsupported in Java */) String username,
             MailSettings mailSettings,

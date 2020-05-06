@@ -29,7 +29,7 @@ import com.birbit.android.jobqueue.RetryConstraint;
 import javax.inject.Inject;
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
-import ch.protonmail.android.api.ProtonMailApi;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
@@ -41,7 +41,7 @@ public abstract class ProtonMailBaseJob extends Job {
     @Inject
     protected transient UserManager mUserManager;
     @Inject
-    protected transient ProtonMailApi mApi;
+    protected transient ProtonMailApiManager mApi;
     @Inject
     protected transient JobManager mJobManager;
     @Inject

@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.contacts.list.viewModel
 
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
@@ -29,7 +29,7 @@ import io.reactivex.Completable
 import java.io.IOException
 import javax.inject.Inject
 
-class ContactListRepository @Inject constructor(val jobManager: JobManager, val api: ProtonMailApi, val contactsDatabase: ContactsDatabase) {
+class ContactListRepository @Inject constructor(val jobManager: JobManager, val api: ProtonMailApiManager, val contactsDatabase: ContactsDatabase) {
 
      fun delete(contactItems: IDList): Completable {
         return api.deleteContact(contactItems)

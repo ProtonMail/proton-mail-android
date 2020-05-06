@@ -316,7 +316,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
 
     @Override
     public boolean hasConnectivity() {
-        return mNetworkUtil.isConnected(this);
+        return mNetworkUtil.isConnected();
     }
 
     @Override
@@ -507,7 +507,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
         if (!event.hasConnection()) {
-            showNoConnSnack(connectivityRetryListener);
+            showNoConnSnack(connectivityRetryListener, this);
         } else {
             if (captchaFragment != null && captchaFragment.isAdded()) {
                 captchaFragment.connectionArrived();
@@ -557,7 +557,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
                 break;
             case NO_NETWORK:
                 checkDirectEnabled();
-                showNoConnSnack(connectivityRetryListener);
+                showNoConnSnack(connectivityRetryListener, this);
                 break;
         }
     }
@@ -574,12 +574,12 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
 
         @Override
         public void onClick(View v) {
-            super.onClick(v);
             mNetworkUtil.setCurrentlyHasConnectivity(true);
             mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(
                     getMSnackLayout(), CreateAccountActivity.this);
             mCheckForConnectivitySnack.show();
             checkDirectEnabled();
+            super.onClick(v);
         }
     }
 }

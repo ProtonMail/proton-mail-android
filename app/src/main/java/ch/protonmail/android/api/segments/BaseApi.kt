@@ -34,6 +34,7 @@ const val AUTH_INFO_PATH = "auth/info"
 
 const val ONE_MINUTE = 60L
 const val THREE_SECONDS = 3L
+const val TEN_SECONDS = 10L
 
 const val API_VERSION = "3"
 const val HEADER_LOCALE = "x-pm-locale"
@@ -46,6 +47,7 @@ const val HEADER_USER_AGENT = "User-Agent"
 const val RESPONSE_CODE_UNAUTHORIZED = 401
 const val RESPONSE_CODE_GATEWAY_TIMEOUT = 504
 const val RESPONSE_CODE_TOO_MANY_REQUESTS = 429
+const val RESPONSE_CODE_SERVICE_UNAVAILABLE = 503
 const val RESPONSE_CODE_OLD_PASSWORD_INCORRECT = 8002
 const val RESPONSE_CODE_NEW_PASSWORD_INCORRECT = 12022
 const val RESPONSE_CODE_NEW_PASSWORD_MESSED_UP = 12020
@@ -97,7 +99,6 @@ open class BaseApi {
         } catch (e: InterruptedException) {
             throw RuntimeException("Interrupted!")
         }
-
 
         return List(list.size) { i : Int -> result[i] }
     }

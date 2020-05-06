@@ -23,7 +23,7 @@ import android.text.TextUtils
 import android.webkit.URLUtil
 import androidx.room.*
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.AppUtil
@@ -142,7 +142,7 @@ data class Attachment @JvmOverloads constructor(
     }
 
 	@Throws(Exception::class)
-	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, api:ProtonMailApi, crypto:Crypto) : String? {
+	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, api: ProtonMailApiManager, crypto:Crypto) : String? {
 		val filePath = filePath
 		val fileContent = if (URLUtil.isDataUrl(filePath)) {
 			android.util.Base64.decode(filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
@@ -155,7 +155,7 @@ data class Attachment @JvmOverloads constructor(
 	}
 
 	@Throws(Exception::class)
-	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, fileContent:ByteArray, api: ProtonMailApi, crypto:Crypto) : String? {
+	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, fileContent:ByteArray, api: ProtonMailApiManager, crypto:Crypto) : String? {
 		val headers = headers
 		val bct = crypto.encrypt(fileContent, fileName)
 		val keyPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.keyPacket)

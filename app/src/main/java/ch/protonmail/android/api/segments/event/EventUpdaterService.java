@@ -60,7 +60,7 @@ public class EventUpdaterService extends ProtonJobIntentService {
     protected void onHandleWork(@NonNull Intent intent) {
         if (mUserManager.isLoggedIn()) {
             if (mUserManager.isBackgroundSyncEnabled()) {
-                if (mNetworkUtils.isConnected(this) && mUserManager.accessTokenExists()) {
+                if (mNetworkUtils.isConnected() && mUserManager.accessTokenExists()) {
                     startService();
                 } else {
                     startService();

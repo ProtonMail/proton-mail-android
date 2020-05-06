@@ -85,6 +85,9 @@ class SettingsActivity : BaseSettingsActivity() {
         val autoLockSettingValue = if (mPinValue) getString(R.string.enabled) else getString(R.string.disabled)
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 
+        val allowSecureConnectionsViaThirdPartiesSettingValue = if (user.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(R.string.denied)
+        setValue(SettingsEnum.CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdPartiesSettingValue)
+
         setValue(SettingsEnum.COMBINED_CONTACTS, if (user.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled))
 
         setValue(SettingsEnum.APP_VERSION, String.format(getString(R.string.app_version_code), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)))

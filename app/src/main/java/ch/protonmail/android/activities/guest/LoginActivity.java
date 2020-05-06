@@ -194,11 +194,12 @@ public class LoginActivity extends BaseLoginActivity {
 
         @Override
         public void onClick(View v) {
-            super.onClick(v);
             mNetworkUtil.setCurrentlyHasConnectivity(true);
             mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(
                     getMSnackLayout(), LoginActivity.this);
             mCheckForConnectivitySnack.show();
+            onSignIn();
+            super.onClick(v);
         }
     }
 
@@ -207,7 +208,7 @@ public class LoginActivity extends BaseLoginActivity {
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
         if (!event.hasConnection()) {
-            showNoConnSnack(connectivityRetryListener);
+            showNoConnSnack(connectivityRetryListener, this);
         } else {
             mPingHasConnection = true;
             hideNoConnSnack();

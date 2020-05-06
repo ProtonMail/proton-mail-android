@@ -53,7 +53,7 @@ class BaseRequestInterceptorTest {
         every { getMailboxPassword("testuser") } returns "mailbox password".toByteArray()
     }
 
-    val interceptor = ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
+    private val interceptor = ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
 
     @Test
     fun gateway_timeout() {

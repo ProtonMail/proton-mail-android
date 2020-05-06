@@ -20,6 +20,7 @@ package ch.protonmail.android.contacts.groups
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
@@ -48,7 +49,7 @@ class ContactGroupsRepositoryTest {
     private val label4 = ContactLabel("d", "dd")
 
     private val jobManager = mockk<JobManager>(relaxed = true)
-    private val protonMailApi = mockk<ProtonMailApi>(relaxed = true) {
+    private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true) {
         every { fetchContactGroupsAsObservable() } answers { Observable.just(listOf(label1, label2, label3, label4)).delay(500, TimeUnit.MILLISECONDS) }
     }
     private val database = mockk<ContactsDatabase>(relaxed = true) {

@@ -41,7 +41,7 @@ class FetchMessageCountsJob(username: String?) : ProtonMailBaseJob(Params(Priori
 
     @Throws(Throwable::class)
     override fun onRun() {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             Logger.doLog(TAG_JOB_FETCH_UNREAD, "no network - cannot fetch unread")
             AppUtil.postEventOnUi(MessageCountsEvent(Status.FAILED))
             return

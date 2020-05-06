@@ -21,7 +21,7 @@ package ch.protonmail.android.api.services
 import android.content.Intent
 import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
@@ -64,7 +64,7 @@ private const val PREF_LAST_MESSAGE_TIME_ALL = "lastMessageTimeAll"
 class MessagesService : JobIntentService() {
 
 	@Inject
-	internal lateinit var mApi: ProtonMailApi
+	internal lateinit var mApi: ProtonMailApiManager
 
 	@Inject
 	internal lateinit var mJobManager: JobManager
@@ -90,7 +90,7 @@ class MessagesService : JobIntentService() {
 
 	override fun onHandleWork(intent:Intent) {
 
-        if (!mNetworkUtils.isConnected(this)) {
+        if (!mNetworkUtils.isConnected()) {
             Logger.doLog(TAG_MESSAGES_SERVICE, "no network to fetch messages")
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.NO_NETWORK, null))
             return

@@ -91,4 +91,6 @@ const val `sonarQube version` =             "2.7.1"         // Released: May 14,
 const val `stetho version` =                "1.5.1"         // Released: Mar 18, 201
 const val `timber version` =                "4.7.1"         // Released:
 const val `trustKit version` =              "1.1.2"         // Released: Jun 09, 2019
-
+const val `minidns version` =               "0.3.3"         // Released: Oct 14, 2018
+const val `rf2 converter version` =         "2.7.1"         // Released: Jan 02, 2020
+const val `jackson version` =               "2.10.2"        // Released: Jan 05, 2020

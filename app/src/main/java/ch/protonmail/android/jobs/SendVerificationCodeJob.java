@@ -53,7 +53,7 @@ public class SendVerificationCodeJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             Logger.doLog(TAG_CHECK_USERNAME_AVAILABLE_JOB, "no network");
             AppUtil.postEventOnUi(new SendVerificationCodeEvent(Status.NO_NETWORK, ProtonMailApplication.getApplication().getString(R.string.no_network)));
             return;

@@ -20,14 +20,13 @@ package ch.protonmail.android.api.services
 
 import android.content.Intent
 import androidx.core.app.JobIntentService
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.LogoutJob
-import ch.protonmail.libs.core.utils.EMPTY_STRING
 import ch.protonmail.libs.core.utils.takeIfNotBlank
 import timber.log.Timber
 import com.birbit.android.jobqueue.JobManager
@@ -51,7 +50,7 @@ class LogoutService : JobIntentService() {
     @Inject
     internal lateinit var userManager: UserManager
     @Inject
-    internal lateinit var api: ProtonMailApi
+    internal lateinit var api: ProtonMailApiManager
 
     init {
         ProtonMailApplication.getApplication().appComponent.inject(this)

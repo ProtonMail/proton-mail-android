@@ -25,6 +25,8 @@ import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.ProtonRetrofit
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
 import ch.protonmail.android.api.SecuredServices
 import ch.protonmail.android.api.models.address.AddressKeyActivationWorker
@@ -38,7 +40,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.gcm.GcmIntentService
 import ch.protonmail.android.gcm.PMRegistrationIntentService
-import ch.protonmail.android.jobs.ChangePasswordJob
 import ch.protonmail.android.jobs.FetchContactsEmailsJob
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.receivers.ConnectivityBroadcastReceiver
@@ -53,12 +54,14 @@ import dagger.Component
 @Component(modules = [AppModule::class, ActivityModule::class, RepositoryModule::class])
 interface AppComponent {
     fun inject(application: ProtonMailApplication)
+    fun inject(api: ProtonMailApiManager)
     fun inject(api: ProtonMailApi)
     fun inject(userManager: UserManager)
     fun inject(eventManager: EventManager)
     fun inject(eventHandler: EventHandler)
     fun inject(contactEmailsManager: ContactEmailsManager)
     fun inject(openPGP: OpenPGP)
+    fun inject(protonRetrofit: ProtonRetrofit)
 
     fun inject(job: ProtonMailBaseJob)
     fun inject(job: FetchContactsEmailsJob)

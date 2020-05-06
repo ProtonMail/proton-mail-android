@@ -317,7 +317,7 @@ formatting:
   ParameterListWrapping:
     active: true
     autoCorrect: true
-    indentSize: 4
+    indentSize: 8
   SpacingAroundColon:
     active: true
     autoCorrect: true

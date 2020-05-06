@@ -191,7 +191,12 @@ dependencies {
         `timber`,
         `trustKit`,
         `viewStateStore`,
-        `viewStateStore-paging`
+        `viewStateStore-paging`,
+        `minidns`,
+        `retrofit2-converter`,
+        `fasterxml-jackson-core`,
+        `fasterxml-jackson-anno`,
+        `fasterxml-jackson-databind`
     )
 
     testImplementation(project(Module.testAndroid))

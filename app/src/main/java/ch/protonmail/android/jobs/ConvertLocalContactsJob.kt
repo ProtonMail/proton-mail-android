@@ -64,7 +64,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
     }
 
     override fun onAdded() {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.NO_NETWORK, false))
         }
     }

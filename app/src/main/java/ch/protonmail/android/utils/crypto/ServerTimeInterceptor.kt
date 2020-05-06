@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.utils.crypto
 
+import ch.protonmail.android.api.models.doh.Proxies
+import ch.protonmail.android.core.Constants
 import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -58,7 +60,6 @@ class ServerTimeInterceptor : Interceptor {
             handleResponse(response)
         } catch (exception: IOException) {
             mQueueNetworkUtil.setCurrentlyHasConnectivity(false)
-            AppUtil.postEventOnUi(ConnectivityEvent(false))
         } catch (exception: Exception) {
             // noop
         }

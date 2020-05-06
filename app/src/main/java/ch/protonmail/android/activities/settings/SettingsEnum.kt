@@ -130,6 +130,14 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.app_language)
     },
+    CONNECTIONS_VIA_THIRD_PARTIES {
+        override fun getHint(context: Context): String = ""
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.connections_via_third_parties)
+    },
+    ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES {
+        override fun getHint(context: Context): String = ""
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.allow_secure_connections_via_third_parties)
+    },
     COMBINED_CONTACTS {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.combined_contacts)

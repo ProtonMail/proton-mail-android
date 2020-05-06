@@ -22,7 +22,7 @@ import android.text.TextUtils
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -52,7 +52,7 @@ import javax.inject.Inject
  * Created by kadrikj on 9/17/18. */
 class ComposeMessageRepository @Inject constructor(
         val jobManager: JobManager,
-        val api: ProtonMailApi,
+        val api: ProtonMailApiManager,
         val databaseProvider: DatabaseProvider,
         var messagesDatabase: MessagesDatabase,
         val searchDatabase: MessagesDatabase,

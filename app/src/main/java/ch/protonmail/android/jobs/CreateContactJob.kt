@@ -60,7 +60,7 @@ class CreateContactJob()
         val contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext).getDatabase()
         contactsDatabase.saveAllContactsEmails(mContactEmails!!)
 
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.NO_NETWORK, true))
         }
     }

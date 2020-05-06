@@ -55,7 +55,7 @@ public class ReportBugsJob extends ProtonMailEndlessJob {
     @Override
     public void onAdded() {
         super.onAdded();
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(new BugReportEvent(Status.NO_NETWORK));
         }
     }

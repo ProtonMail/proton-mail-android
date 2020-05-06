@@ -164,7 +164,7 @@ public class ReportBugsActivity extends BaseConnectivityActivity {
             TextExtensions.showToast(this, R.string.received_report, Toast.LENGTH_SHORT);
         } else if (event.getStatus() == Status.NO_NETWORK) {
             TextExtensions.showToast(this, R.string.not_received_report_offline);
-            showNoConnSnack();
+            showNoConnSnack(this);
         } else {
             TextExtensions.showToast(this, R.string.not_received_report, Toast.LENGTH_SHORT);
         }

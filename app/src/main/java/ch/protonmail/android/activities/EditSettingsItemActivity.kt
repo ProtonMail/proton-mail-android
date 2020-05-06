@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
@@ -65,6 +66,7 @@ enum class SettingsItem {
     LABELS_AND_FOLDERS,
     SWIPE,
     PUSH_NOTIFICATIONS,
+    CONNECTIONS_VIA_THIRD_PARTIES,
     COMBINED_CONTACTS,
     RECOVERY_EMAIL,
     AUTO_DOWNLOAD_MESSAGES,
@@ -141,6 +143,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         }
     }
 
+    @SuppressLint("LogNotTimber")
     override fun renderViews() {
 
         when (settingsItemType) {
@@ -403,6 +406,21 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 }
 
                 actionBarTitle = R.string.combined_contacts
+            }
+            SettingsItem.CONNECTIONS_VIA_THIRD_PARTIES -> {
+                setValue(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, getString(R.string.allow_secure_connections_via_third_parties_settings_description))
+                setEnabled(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, user.allowSecureConnectionsViaThirdParties)
+
+                setToggleListener(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES) { _: View, isChecked: Boolean ->
+                    user.allowSecureConnectionsViaThirdParties = isChecked
+
+                    if (!isChecked) {
+                        mNetworkUtil.networkConfigurator.networkSwitcher.reconfigureProxy(null)
+                        user.usingDefaultApi = true
+                    }
+                }
+
+                actionBarTitle = R.string.connections_via_third_parties
             }
         }
     }

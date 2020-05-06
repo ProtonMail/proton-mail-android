@@ -40,7 +40,7 @@ public class FetchDraftDetailJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             Logger.doLog(TAG_FETCH_DRAFT_DETAIL_JOB, "no network - cannot fetch draft detail");
             AppUtil.postEventOnUi(new FetchDraftDetailEvent(false));
             return;

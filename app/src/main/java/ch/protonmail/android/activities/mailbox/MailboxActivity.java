@@ -33,11 +33,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
@@ -63,6 +65,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.snackbar.SnackbarContentLayout;
 import com.squareup.otto.Subscribe;
 
 import java.lang.ref.WeakReference;
@@ -98,10 +101,13 @@ import ch.protonmail.android.adapters.swipe.SpamSwipeHandler;
 import ch.protonmail.android.adapters.swipe.StarSwipeHandler;
 import ch.protonmail.android.adapters.swipe.SwipeAction;
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler;
+import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.models.MessageCount;
+import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.SimpleMessage;
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse;
 import ch.protonmail.android.api.models.User;
+import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.counters.CountersDatabase;
 import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
 import ch.protonmail.android.api.models.room.counters.TotalLabelCounter;
@@ -116,6 +122,7 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.AuthStatus;
@@ -205,6 +212,8 @@ public class MailboxActivity extends NavigationActivity implements
     public static final int LOADER_ID_LABELS_OFFLINE = 32;
     private static final int REQUEST_CODE_TRASH_MESSAGE_DETAILS = 1;
     private static final int REQUEST_CODE_COMPOSE_MESSAGE = 19;
+
+    private static final String TAG = "MailboxActivity";
 
     private CountersDatabase countersDatabase;
     private PendingActionsDatabase pendingActionsDatabase;
@@ -667,7 +676,13 @@ public class MailboxActivity extends NavigationActivity implements
             mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(mConnectivitySnackLayout, MailboxActivity.this);
             mCheckForConnectivitySnack.show();
             mSyncUUID = UUID.randomUUID().toString();
-            new Handler().postDelayed(new FetchMessagesRetryRunnable(MailboxActivity.this), 3000);
+            if (mNetworkUtil.isConnected()) {
+                new Handler().postDelayed(new FetchMessagesRetryRunnable(MailboxActivity.this), 3000);
+                boolean thirdPartyConnectionsEnabled = mUserManager.getUser().getAllowSecureConnectionsViaThirdParties();
+                if (thirdPartyConnectionsEnabled) {
+                    networkConfigurator.refreshDomainsAsync();
+                }
+            }
         }
     };
 
@@ -737,7 +752,7 @@ public class MailboxActivity extends NavigationActivity implements
         registerHumanVerificationReceiver();
         checkDelinquency();
         mNoMessagesRefreshLayout.setVisibility(View.GONE);
-        if (!mNetworkUtil.isConnectedAndHasConnectivity(this)) {
+        if (!mNetworkUtil.isConnectedAndHasConnectivity()) {
             showNoConnSnack();
         }
 
@@ -963,15 +978,20 @@ public class MailboxActivity extends NavigationActivity implements
     }
 
     private void showNoConnSnack() {
-        if (mNoConnectivitySnack == null || !mNoConnectivitySnack.isShown()) {
-            mNoConnectivitySnack = NetworkUtil.setNoConnectionSnackLayout(mConnectivitySnackLayout, this, connectivityRetryListener);
-            mNoConnectivitySnack.show();
+        if (mNoConnectivitySnack == null) {
+            mNoConnectivitySnack = NetworkUtil.setNoConnectionSnackLayout(mConnectivitySnackLayout, this, connectivityRetryListener, mUserManager.getUser(), this);
+        }
+        final SnackbarContentLayout contentLayout = (SnackbarContentLayout) ((ViewGroup) mNoConnectivitySnack.getView()).getChildAt(0);
+        final TextView vvv = contentLayout.getActionView();
+        mNoConnectivitySnack.show();
+        if (mUserManager.getUser().getAllowSecureConnectionsViaThirdParties() && autoRetry && !isDohOngoing && !isFinishing()) {
+            new Handler().postDelayed(vvv::callOnClick, 500);
         }
     }
 
     private void hideNoConnSnack() {
         if (mNoConnectivitySnack != null) {
-            if (mCheckForConnectivitySnack != null && mCheckForConnectivitySnack.isShownOrQueued()) {
+            if (mCheckForConnectivitySnack != null) {
                 mCheckForConnectivitySnack.dismiss();
             }
             mNoConnectivitySnack.dismiss();
@@ -1055,7 +1075,9 @@ public class MailboxActivity extends NavigationActivity implements
         mSyncingHandler.postDelayed(new SyncDoneRunnable(this), 1000);
         setRefreshing(false);
         setLoadingMore(false);
-        showToast(event.status);
+        if(!isDohOngoing) {
+            showToast(event.status);
+        }
         final Constants.MessageLocationType mailboxLocation = this.mMailboxLocation.getValue();
         if (event.status == Status.NO_NETWORK && (mailboxLocation == Constants.MessageLocationType.LABEL || mailboxLocation == Constants.MessageLocationType.LABEL_FOLDER || mailboxLocation == Constants.MessageLocationType.LABEL_OFFLINE)) {
             this.mMailboxLocation.setValue(Constants.MessageLocationType.LABEL_OFFLINE);
@@ -1065,16 +1087,24 @@ public class MailboxActivity extends NavigationActivity implements
 
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
-        if (!event.hasConnection()) {
-            mPingHasConnection = false;
-            showNoConnSnack();
-        } else {
-            hideNoConnSnack();
-            if (!mPingHasConnection) {
-                setRefreshing(true);
-                fetchUpdates();
-                mPingHasConnection = true;
+        Logger.doLog(TAG, "onConnectivityEvent");
+        if(!isDohOngoing) {
+            Logger.doLog(TAG, "DoH NOT ongoing showing UI");
+            if (!event.hasConnection()) {
+                Logger.doLog(TAG, "Has connection: false");
+                // mPingHasConnection = false;
+                showNoConnSnack();
+            } else {
+                Logger.doLog(TAG, "Has connection: true");
+                hideNoConnSnack();
+                if (!mPingHasConnection) {
+                    setRefreshing(true);
+                    fetchUpdates();
+                    mPingHasConnection = true;
+                }
             }
+        } else {
+            Logger.doLog(TAG, "DoH ongoing, not showing UI");
         }
     }
 
@@ -1104,7 +1134,7 @@ public class MailboxActivity extends NavigationActivity implements
                 showNoConnSnack();
                 break;
             case SUCCESS: {
-                if (mNetworkUtil.isConnectedAndHasConnectivity(this)) {
+                if (mNetworkUtil.isConnectedAndHasConnectivity()) {
                     hideNoConnSnack();
                 }
             }
@@ -1833,7 +1863,6 @@ public class MailboxActivity extends NavigationActivity implements
 
             if (!GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType) &&
                     !GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-                mNetworkUtil.setCurrentlyHasConnectivity(true);
                 mSyncUUID = UUID.randomUUID().toString();
                 checkUserAndFetchNews();
                 if (((LinearLayoutManager) mMessagesListView.getLayoutManager()).findFirstVisibleItemPosition() > 1) {

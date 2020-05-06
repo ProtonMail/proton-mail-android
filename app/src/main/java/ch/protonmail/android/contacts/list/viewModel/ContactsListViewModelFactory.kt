@@ -22,7 +22,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.loader.app.LoaderManager
-import ch.protonmail.android.api.ProtonMailApi
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.contacts.list.listView.ContactItemListFactory
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsLoaderCallbacksFactory
@@ -35,7 +35,7 @@ import com.birbit.android.jobqueue.JobManager
 /**
  * Created by Kamil Rajtar on 23.08.18.  */
 class ContactsListViewModelFactory(private val application: Application, private val loaderManager: LoaderManager,
-                                   private val jobManager: JobManager, private val api: ProtonMailApi) : ViewModelProvider.Factory {
+                                   private val jobManager: JobManager, private val api: ProtonMailApiManager) : ViewModelProvider.Factory {
 	override fun <T : ViewModel?> create(modelClass: Class<T>): T {
 		val contactsDatabase = ContactsDatabaseFactory.getInstance(application.applicationContext).getDatabase()
 		val contactItemFactory = ContactItemListFactory()

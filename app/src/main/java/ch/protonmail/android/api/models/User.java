@@ -42,12 +42,12 @@ import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.prefs.SecureSharedPreferences;
-import ch.protonmail.android.utils.Logger;
 
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALIASES;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOGOUT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
@@ -325,6 +325,30 @@ public class User {
     private int loadPreventTakingScreenshotsSetting() {
         final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
         return pref.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
+    }
+
+    public void setAllowSecureConnectionsViaThirdParties(boolean allowSecureConnectionsViaThirdParties) {
+        SharedPreferences secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences();
+        secureSharedPreferences.edit().putBoolean(PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdParties).apply();
+    }
+
+    public boolean getAllowSecureConnectionsViaThirdParties() {
+        SharedPreferences secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences();
+        return secureSharedPreferences.getBoolean(PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, true); // automatic opt-in for users
+    }
+
+    /**
+     * Using default proton api (not proxy).
+     * @param useDefaultApi boolean
+     */
+    public void setUsingDefaultApi(boolean useDefaultApi) {
+        SharedPreferences secureSharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        secureSharedPreferences.edit().putBoolean(PREF_USING_REGULAR_API, useDefaultApi).apply();
+    }
+
+    public boolean getUsingDefaultApi() {
+        SharedPreferences sharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        return sharedPreferences.getBoolean(PREF_USING_REGULAR_API, true); // false);
     }
 
     public void saveNotificationSettingsBackup() {

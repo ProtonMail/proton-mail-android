@@ -331,6 +331,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val pinManagerIntent = AppUtil.decorInAppIntent(Intent(this, PinSettingsActivity::class.java))
                 startActivity(pinManagerIntent)
             }
+            SettingsEnum.CONNECTIONS_VIA_THIRD_PARTIES -> {
+                val allowSecureConnectionsViaThirdPartiesIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
+                allowSecureConnectionsViaThirdPartiesIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.CONNECTIONS_VIA_THIRD_PARTIES)
+                startActivity(allowSecureConnectionsViaThirdPartiesIntent)
+            }
             SettingsEnum.APP_LANGUAGE -> {
                 showCustomLocaleDialog()
             }
@@ -420,7 +425,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     @Subscribe
     fun onConnectivityEvent(event: ConnectivityEvent) {
         if (!event.hasConnection()) {
-            showNoConnSnack()
+            showNoConnSnack(callback = this)
         } else {
             mPingHasConnection = true
             hideNoConnSnack()

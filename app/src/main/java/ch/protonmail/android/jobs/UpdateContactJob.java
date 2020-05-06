@@ -96,7 +96,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                 e.printStackTrace();
             }
         }
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(new ContactEvent(ContactEvent.NO_NETWORK, true));
         }
     }

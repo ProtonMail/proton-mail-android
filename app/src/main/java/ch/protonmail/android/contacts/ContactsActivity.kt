@@ -165,8 +165,8 @@ class ContactsActivity : BaseConnectivityActivity(), HasSupportFragmentInjector,
 
     override fun onResume() {
         super.onResume()
-        if (!mNetworkUtil.isConnected(this)) {
-            showNoConnSnack()
+        if (!mNetworkUtil.isConnected()) {
+            showNoConnSnack(callback = this)
         }
     }
 
@@ -198,13 +198,19 @@ class ContactsActivity : BaseConnectivityActivity(), HasSupportFragmentInjector,
                 this@ContactsActivity
             )
             mCheckForConnectivitySnack!!.show()
+
+            // Dimitar: manually check if we have network connectivity and initiate DOH if we do
+            if (mNetworkUtil.isConnectedAndHasConnectivity()) {
+                // TODO: DoH
+//                mJobManager.addJobInBackground(DnsOverHttpsJob(this@ContactsActivity, this@ContactsActivity))
+            }
         }
     }
 
     @Subscribe
     fun onConnectivityEvent(event: ConnectivityEvent) {
         if (!event.hasConnection()) {
-            showNoConnSnack(contactsConnectivityRetryListener, view = layout_no_connectivity_info)
+            showNoConnSnack(contactsConnectivityRetryListener, view = layout_no_connectivity_info, callback = this)
         } else {
             mPingHasConnection = true
             hideNoConnSnack()

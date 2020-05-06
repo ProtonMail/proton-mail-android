@@ -21,10 +21,10 @@ package ch.protonmail.android.api.segments.connectivity
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
-import java.io.IOException
 
-class ConnectivityApi (private val pingService: PingService) : BaseApi(), ConnectivityApiSpec {
+class ConnectivityApi(val pingService: PingService) : BaseApi(), ConnectivityApiSpec {
 
-    @Throws(IOException::class)
     override fun ping(): ResponseBody = ParseUtils.parse(pingService.ping().execute())
+
+    override suspend fun pingAsync(): ResponseBody = pingService.pingAsync().body()!!
 }

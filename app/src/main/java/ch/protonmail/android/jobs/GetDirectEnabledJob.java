@@ -40,7 +40,7 @@ public class GetDirectEnabledJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             Logger.doLog(TAG_GET_DIRECT_ENABLED_JOB, "no network cannot fetch updates");
             AppUtil.postEventOnUi(new GetDirectEnabledEvent(Status.NO_NETWORK));
             return;

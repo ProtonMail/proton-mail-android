@@ -44,7 +44,7 @@ public class ReportPhishingJob extends ProtonMailEndlessJob {
     @Override
     public void onAdded() {
         super.onAdded();
-        if (!mQueueNetworkUtil.isConnected(ProtonMailApplication.getApplication())) {
+        if (!mQueueNetworkUtil.isConnected()) {
             AppUtil.postEventOnUi(new PostPhishingReportEvent(Status.NO_NETWORK));
         }
     }
