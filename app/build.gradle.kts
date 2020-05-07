@@ -85,7 +85,10 @@ android(appIdSuffix = "android") {
 
     signingConfigs {
         register("release") {
+            storeFile = file("$rootDir/privateConfig/keystore/ProtonMail.keystore")
+            storePassword = "${privateProperties["keyStorePassword"]}"
             keyAlias = "ProtonMail"
+            keyPassword = "${privateProperties["keyStoreKeyPassword"]}"
         }
     }
 
@@ -114,6 +117,7 @@ android(appIdSuffix = "android") {
         getByName("releaseBeta") {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), File("proguard-rules.pro"))
+            signingConfig = signingConfigs["release"]
         }
     }
 }

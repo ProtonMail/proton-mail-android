@@ -75,6 +75,11 @@ fun org.gradle.api.Project.android(
         register("releaseBeta")
     }
 
+    lintOptions {
+        disable("InvalidPackage")
+        disable("MissingTranslation")
+        disable("ExtraTranslation")
+    }
     // Add support for `src/x/kotlin` instead of `src/x/java` only
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
