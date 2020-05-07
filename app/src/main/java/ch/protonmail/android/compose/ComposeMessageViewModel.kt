@@ -305,8 +305,11 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
         }
     }
 
-    private suspend fun saveAttachmentsToDatabase(localAttachments: List<Attachment>, dispatcher: CoroutineDispatcher,
-                                                  uploadAttachments: Boolean): List<String> {
+    private suspend fun saveAttachmentsToDatabase(
+            localAttachments: List<Attachment>,
+            dispatcher: CoroutineDispatcher,
+            uploadAttachments: Boolean
+    ): List<String> {
         val result = ArrayList<String>()
         for (i in localAttachments.indices) {
             val attachment = localAttachments[i]
@@ -391,7 +394,8 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
                         ?: "",
                         newAttachments, uploadAttachments, _oldSenderAddressId)
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
-                    _oldSenderAddressId = message.addressID ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
+                    _oldSenderAddressId = message.addressID
+                            ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
                 }
                 setIsDirty(false)
                 //endregion
@@ -658,7 +662,7 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
             var draftMessage: Message? = null
             if (eventMessage != null) {
                 val eventMessageAttachmentList =
-                        composeMessageRepository.getAttachments(eventMessage,  _messageDataResult.isTransient, IO)
+                        composeMessageRepository.getAttachments(eventMessage, _messageDataResult.isTransient, IO)
 
                 for (localAttachment in _messageDataResult.attachmentList) {
                     for (attachment in eventMessageAttachmentList) {
@@ -740,7 +744,7 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
 
     fun createLocalAttachments(loadedMessage: Message) {
         viewModelScope.launch {
-            val messageAttachments = composeMessageRepository.getAttachments(loadedMessage,  _messageDataResult.isTransient, IO)
+            val messageAttachments = composeMessageRepository.getAttachments(loadedMessage, _messageDataResult.isTransient, IO)
             val localAttachments = LocalAttachment.createLocalAttachmentList(messageAttachments).toMutableList()
             _messageDataResult = MessageBuilderData.Builder()
                     .fromOld(_messageDataResult)
@@ -950,9 +954,16 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
     }
 
     @JvmOverloads
-    fun setMessageBody(composerBody: String? = null, messageBody: String, setComposerContent: Boolean, isPlainText: Boolean,
-                       senderNameAddressFormat: String, originalMessageDividerString: String, replyPrefixOnString: String,
-                       formattedDateTimeString: String): MessageBodySetup {
+    fun setMessageBody(
+            composerBody: String? = null,
+            messageBody: String,
+            setComposerContent: Boolean,
+            isPlainText: Boolean,
+            senderNameAddressFormat: String,
+            originalMessageDividerString: String,
+            replyPrefixOnString: String,
+            formattedDateTimeString: String
+    ): MessageBodySetup {
         val messageBodySetup = MessageBodySetup()
         val user = userManager.user
         val builder = StringBuilder()
@@ -1098,10 +1109,10 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
         content = content.replace("<", LESS_THAN).replace(">", GREATER_THAN).replace("\n", NEW_LINE)
 
         signatureContainsHtml = with(_messageDataResult.signature) {
-            val afterTagOpen = substringAfter("<","")
-            val openingTag = afterTagOpen.substringBefore(">","")
-            val afterTagClose = afterTagOpen.substringAfter(">","")
-            val betweenTag = afterTagClose.substringBeforeLast("</$openingTag>","")
+            val afterTagOpen = substringAfter("<", "")
+            val openingTag = afterTagOpen.substringBefore(">", "")
+            val afterTagClose = afterTagOpen.substringAfter(">", "")
+            val betweenTag = afterTagClose.substringBeforeLast("</$openingTag>", "")
             betweenTag.isNotEmpty()
         }
 
