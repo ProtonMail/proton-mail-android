@@ -173,6 +173,7 @@ import ch.protonmail.android.utils.ui.selection.SelectionModeEnum;
 import ch.protonmail.android.views.alerts.StorageLimitAlert;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import timber.log.Timber;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING;

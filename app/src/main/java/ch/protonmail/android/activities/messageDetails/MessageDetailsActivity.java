@@ -122,6 +122,7 @@ import ch.protonmail.android.views.messageDetails.ReplyButtonsPanelView;
 import dagger.android.AndroidInjection;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import timber.log.Timber;
 
 import static ch.protonmail.android.activities.NavigationActivityKt.EXTRA_SWITCHED_USER;
 import static ch.protonmail.android.activities.labelsManager.LabelsManagerActivityKt.EXTRA_CREATE_ONLY;
