@@ -126,6 +126,7 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
     private var _dbId: Long? = null
 
     private var sendingInProcess = false
+    private var signatureContainsHtml = false
 
     // endregion
     // region events observables
@@ -1096,7 +1097,15 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
         content.replace("   ", "&nbsp;&nbsp;&nbsp;").replace("  ", "&nbsp;&nbsp;")
         content = content.replace("<", LESS_THAN).replace(">", GREATER_THAN).replace("\n", NEW_LINE)
 
-        if (_messageDataResult.signature.contains("<(\\w*)( +.+)*/*>((.*))(</\\1>)*".toRegex())) {
+        signatureContainsHtml = with(_messageDataResult.signature) {
+            val afterTagOpen = substringAfter("<","")
+            val openingTag = afterTagOpen.substringBefore(">","")
+            val afterTagClose = afterTagOpen.substringAfter(">","")
+            val betweenTag = afterTagClose.substringBeforeLast("</$openingTag>","")
+            betweenTag.isNotEmpty()
+        }
+
+        if (signatureContainsHtml) {
             val fromHtmlSignature = UiUtil.createLinksSending((UiUtil.fromHtml(_messageDataResult.signature).toString()).replace("\n", NEW_LINE))
             if (!TextUtils.isEmpty(fromHtmlSignature)) {
                 content = content.replace(fromHtmlSignature, _messageDataResult.signature)
@@ -1130,7 +1139,7 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
 
         content = UiUtil.createLinksSending(content)
 
-        if (_messageDataResult.signature.contains("<(\\w*)( +.+)*/*>((.*))(</\\1>)*".toRegex())) {
+        if (signatureContainsHtml) {
             val fromHtmlSignature = UiUtil.createLinksSending((UiUtil.fromHtml(_messageDataResult.signature).toString()).replace("\n", NEW_LINE))
             if (!TextUtils.isEmpty(fromHtmlSignature)) {
                 content = content.replace(fromHtmlSignature, _messageDataResult.signature)
