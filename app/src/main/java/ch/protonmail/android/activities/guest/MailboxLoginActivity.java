@@ -36,7 +36,6 @@ import com.squareup.otto.Subscribe;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
-import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
@@ -89,16 +88,16 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFFFFFF, android.graphics.PorterDuff.Mode.MULTIPLY);
-        mUserManager.setLoggedIn(false);
+//        mUserManager.setLoggedIn(false);
         mPasswordEditText.setFocusable(false);
         mPasswordEditText.setOnTouchListener(mTouchListener);
     }
 
     @Override
     protected void onMailboxSuccess() {
-        ProtonMailApplication.getApplication().getBus().unregister(this);
+        mApp.getBus().unregister(this);
         mIsUnRegistered = true;
-        mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
+        mUserManager.setLoginState(mUserManager.getUsername(), LOGIN_STATE_TO_INBOX);
     }
 
     @Override
@@ -129,14 +128,14 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ProtonMailApplication.getApplication().getBus().register(this);
+        mApp.getBus().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if (!mIsUnRegistered) {
-            ProtonMailApplication.getApplication().getBus().unregister(this);
+            mApp.getBus().unregister(this);
         }
     }
 

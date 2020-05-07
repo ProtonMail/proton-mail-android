@@ -86,7 +86,7 @@ public class PMWebViewClient extends WebViewClient {
         // FIXME: team check if this is OK?!
         String url = url1.replaceFirst(Constants.DUMMY_URL_PREFIX, "");
         if (url.startsWith("mailto:")) {
-            Intent intent = AppUtil.decorInAppIntent(new Intent(mUserManager.getContext(), ComposeMessageActivity.class));
+            Intent intent = AppUtil.decorInAppIntent(new Intent(view.getContext(), ComposeMessageActivity.class));
             MailTo mt = MailTo.parse(url);
 
             User user = mUserManager.getUser();

@@ -43,6 +43,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.ProtonMailApi;
 import ch.protonmail.android.api.ProtonMailApiManager;
@@ -97,13 +98,9 @@ import ch.protonmail.android.utils.SRPClient;
 import ch.protonmail.android.utils.crypto.KeyType;
 import ch.protonmail.android.utils.crypto.OpenPGP;
 import kotlin.Unit;
-import kotlin.text.Charsets;
 import timber.log.Timber;
 
-import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static kotlin.text.Charsets.UTF_8;
 
 public class LoginService extends ProtonJobIntentService {
     private static final String TAG_LOGIN_SERVICE = "LoginService";
@@ -176,7 +173,7 @@ public class LoginService extends ProtonJobIntentService {
             final LoginInfoResponse infoResponse = intent.getParcelableExtra(EXTRA_LOGIN_INFO_RESPONSE);
             final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
             final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
-            handleLogin(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, infoResponse, fallbackAuthVersion, signUp);
+            handleLogin(username, password.getBytes(UTF_8) /*TODO passphrase*/, infoResponse, fallbackAuthVersion, signUp);
         } else if (ACTION_2FA.equals(action)) {
             final String username = intent.getStringExtra(EXTRA_USERNAME);
             final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
@@ -186,18 +183,18 @@ public class LoginService extends ProtonJobIntentService {
             final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
             final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
             final boolean isConnecting = intent.getBooleanExtra(EXTRA_CONNECTING, false);
-            handle2FA(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, twoFactor, infoResponse, loginResponse, fallbackAuthVersion, signUp, isConnecting);
+            handle2FA(username, password.getBytes(UTF_8) /*TODO passphrase*/, twoFactor, infoResponse, loginResponse, fallbackAuthVersion, signUp, isConnecting);
         } else if (ACTION_LOGIN_INFO.equals(action)) {
             final String username = intent.getStringExtra(EXTRA_USERNAME);
             final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
             final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
-            handleLoginInfo(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, fallbackAuthVersion);
+            handleLoginInfo(username, password.getBytes(UTF_8) /*TODO passphrase*/, fallbackAuthVersion);
         } else if (ACTION_MAILBOX_LOGIN.equals(action)) {
             final String mailboxPassword = intent.getStringExtra(EXTRA_MAILBOX_PASSWORD);
             final String username = intent.getStringExtra(EXTRA_USERNAME);
             final String keySalt = intent.getStringExtra(EXTRA_KEY_SALT);
             final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
-            handleMailboxLogin(username, mailboxPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, keySalt, signUp);
+            handleMailboxLogin(username, mailboxPassword.getBytes(UTF_8) /*TODO passphrase*/, keySalt, signUp);
         } else if (ACTION_GENERATE_KEYS.equals(action)) {
             final String username = intent.getStringExtra(EXTRA_USERNAME);
             final int bits = intent.getIntExtra(EXTRA_BITS, Constants.HIGH_SECURITY_BITS);
@@ -213,7 +210,7 @@ public class LoginService extends ProtonJobIntentService {
             final String keySalt = openPGP.createNewKeySalt();
             final byte[] generatedMailboxPassword;
             try {
-                generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, password.getBytes(Charsets.UTF_8));
+                generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, password.getBytes(UTF_8));
                 String privateKey = openPGP.generateKey(username, domain, generatedMailboxPassword, KeyType.RSA, bits);
                 if (TextUtils.isEmpty(userManager.getUsername())) {
                     userManager.saveKeySalt(keySalt, username);
@@ -234,7 +231,7 @@ public class LoginService extends ProtonJobIntentService {
             final Constants.TokenType tokenType = (Constants.TokenType) intent.getSerializableExtra(EXTRA_TOKEN_TYPE);
             final boolean updateMe = intent.getBooleanExtra(EXTRA_UPDATE_ME, false);
 
-            handleCreateUser(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, updateMe, tokenType, token);
+            handleCreateUser(username, password.getBytes(UTF_8) /*TODO passphrase*/, updateMe, tokenType, token);
         } else if (ACTION_SETUP_ADDRESS.equals(action)) {
             String domain = intent.getStringExtra(EXTRA_ADDRESS_DOMAIN);
             //default domain is protonmail.com, later we may let the user pick .com/.ch or even a custom domain
@@ -246,19 +243,19 @@ public class LoginService extends ProtonJobIntentService {
             final String addressId = intent.getStringExtra(EXTRA_ADDRESS_ID);
             final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
 
-            handleKeysSetup(addressId, password.getBytes(Charsets.UTF_8));
+            handleKeysSetup(addressId, password.getBytes(UTF_8));
         } else if (ACTION_CONNECT_ACCOUNT_LOGIN.equals(action)) {
             final String username = intent.getStringExtra(EXTRA_USERNAME);
             final String password = intent.getStringExtra(EXTRA_PASSWORD); /*TODO passphrase*/
             final LoginInfoResponse infoResponse = intent.getParcelableExtra(EXTRA_LOGIN_INFO_RESPONSE);
             final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
-            connectAccountLogin(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/, infoResponse, fallbackAuthVersion);
+            connectAccountLogin(username, password.getBytes(UTF_8) /*TODO passphrase*/, infoResponse, fallbackAuthVersion);
         } else if (ACTION_CONNECT_ACCOUNT_MAILBOX_LOGIN.equals(action)) {
             final String mailboxPassword = intent.getStringExtra(EXTRA_MAILBOX_PASSWORD);
             final String username = intent.getStringExtra(EXTRA_USERNAME);
             final String keySalt = intent.getStringExtra(EXTRA_KEY_SALT);
             final String currentPrimary = intent.getStringExtra(EXTRA_CURRENT_PRIMARY);
-            connectAccountMailboxLogin(username, currentPrimary, mailboxPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, keySalt);
+            connectAccountMailboxLogin(username, currentPrimary, mailboxPassword.getBytes(UTF_8) /*TODO passphrase*/, keySalt);
         } else if (ACTION_FETCH_USER_DETAILS.equals(action)) {
             handleFetchUserDetails();
         }
@@ -542,15 +539,15 @@ public class LoginService extends ProtonJobIntentService {
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
-                        userManager.setLoggedIn(true);
+                        userManager.setLoggedIn(username, true);
                         userManager.saveMailboxPassword(generatedMailboxPassword, username);
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
                         if (!signUp) {
-                            if (networkUtils.isConnected() && userManager.isLoggedIn() && userManager.accessTokenExists()) {
+                            if (networkUtils.isConnected() && userManager.isLoggedIn(username) && userManager.accessTokenExists()) {
                                 AlarmReceiver alarmReceiver = new AlarmReceiver();
-                                alarmReceiver.setAlarm(ProtonMailApplication.getApplication());
+                                alarmReceiver.setAlarm(getApplicationContext());
                             }
                             if (userManager.isFirstLogin()) {
                                 jobManager.start();
@@ -902,7 +899,7 @@ public class LoginService extends ProtonJobIntentService {
         } catch (NullPointerException e) {
             // noop
         }
-        if (TextUtils.isEmpty(addressId) || !userManager.isLoggedIn()) {
+        if (TextUtils.isEmpty(addressId) || !userManager.isLoggedIn(username)) {
             AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.NO_NETWORK));
         } else {
             final boolean isPwdOk = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), mailboxPassword);
@@ -967,7 +964,7 @@ public class LoginService extends ProtonJobIntentService {
         byte[] nonce = digester != null ? digester.digest() : new byte[0];
 
         // TODO: api key should be retrieved from server for future versions
-        SafetyNet.getClient(this).attest(nonce, new String(Base64.decode(SAFETY_NET_API_KEY, Base64.NO_WRAP), UTF_8))
+        SafetyNet.getClient(this).attest(nonce, new String(Base64.decode(BuildConfig.SAFETY_NET_API_KEY, Base64.NO_WRAP), UTF_8))
                 .addOnSuccessListener(activity, response -> {
                     // Indicates communication with the service was successful.
                     String jwsResult = response.getJwsResult();

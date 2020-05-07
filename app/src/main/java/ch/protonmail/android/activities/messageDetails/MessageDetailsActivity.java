@@ -224,7 +224,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
         String currentAccountUsername = mUserManager.getUsername();
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false);
         AppUtil.clearNotifications(this);
-        if (!mUserManager.isLoggedIn()){
+        if (!mUserManager.isLoggedIn(mUserManager.getUsername())){
             startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         }
         loadMailSettings();

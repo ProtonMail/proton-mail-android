@@ -744,7 +744,7 @@ public class MailboxActivity extends NavigationActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (!mUserManager.isLoggedIn()) {
+        if (!mUserManager.isLoggedIn(mUserManager.getUsername())) {
             return;
         }
         reloadMessageCounts();
@@ -1015,7 +1015,7 @@ public class MailboxActivity extends NavigationActivity implements
             context.startActivity(AppUtil.decorInAppIntent(new Intent(context, MailboxLoginActivity.class)));
             finish();
         } else {
-            mUserManager.setLoggedIn(true);
+            mUserManager.setLoggedIn(mUserManager.getUsername(), true);
         }
     }
 
