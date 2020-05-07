@@ -35,7 +35,7 @@ detekt analysis:
     - ./gradlew detekt
   artifacts:
     reports:
-        codequality: reports/detekt.json
+        codequality: detekt/report.json
 
 build debug:
   stage: build
