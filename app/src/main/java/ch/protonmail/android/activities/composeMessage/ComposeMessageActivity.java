@@ -2217,17 +2217,25 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                 composeMessageViewModel.setOfflineDraftSaved(false);
 
                 String aliasAddress = composeMessageViewModel.getMessageDataResult().getAddressEmailAlias();
+                MessageSender messageSender;
                 if (aliasAddress != null && aliasAddress.equals(mAddressesSpinner.getSelectedItem())) { // it's being sent by alias
-                    localMessage.setSender(new MessageSender(mUserManager.getUser().getDisplayNameForAddress(composeMessageViewModel.getMessageDataResult().getAddressId()), composeMessageViewModel.getMessageDataResult().getAddressEmailAlias()));
+                    messageSender = new MessageSender(mUserManager.getUser().getDisplayNameForAddress(composeMessageViewModel.getMessageDataResult().getAddressId()), composeMessageViewModel.getMessageDataResult().getAddressEmailAlias());
                 } else {
                     Address nonAliasAddress;
-                    if (localMessage.getAddressID() != null) {
-                        nonAliasAddress = mUserManager.getUser().getAddressById(localMessage.getAddressID());
-                    } else { // fallback to default address if newly composed message has no addressId
-                        nonAliasAddress = mUserManager.getUser().getDefaultAddress();
+                    try {
+                        if (localMessage.getAddressID() != null) {
+                            nonAliasAddress = mUserManager.getUser().getAddressById(localMessage.getAddressID());
+                        } else { // fallback to default address if newly composed message has no addressId
+                            nonAliasAddress = mUserManager.getUser().getDefaultAddress();
+                        }
+                        messageSender = new MessageSender(nonAliasAddress.getDisplayName(), nonAliasAddress.getEmail());
+                    } catch (NullPointerException e) {
+                        Timber.d(e, "Inside "+this.getClass().getName() + " nonAliasAddress was null");
+                        messageSender = new MessageSender("","");
                     }
-                    localMessage.setSender(new MessageSender(nonAliasAddress.getDisplayName(), nonAliasAddress.getEmail()));
                 }
+                localMessage.setSender(messageSender);
+
             } else {
                 return;
             }

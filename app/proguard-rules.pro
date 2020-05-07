@@ -159,7 +159,7 @@
 -keep public interface ch.protonmail.android.adapters.base.ClickableAdapter { *; }
 
 # PM goopenpgp
-# -keep class com.proton.gopenpgp.** { *; }
+-keep class com.proton.gopenpgp.** { *; }
 
 # ez-vcard
 -dontwarn com.fasterxml.jackson.**		# Jackson JSON Processor (for jCards) not used
