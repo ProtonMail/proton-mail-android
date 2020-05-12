@@ -19,64 +19,64 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">EMAIL YANG DIBACA</string>
-    <string name="secure_email_swiss">Amankan Email Berbasis <br/> di Swiss</string>
-    <string name="decrypt_mailbox">Dekripsi <b>Kotak pesan</b></string>
+    <string name="encrypted_emails">EMAIL TERENKRIPSI</string>
+    <string name="secure_email_swiss">Email Aman Berbasis\ndi Swiss</string>
+    <string name="decrypt_mailbox">Dekripsi <b>Kotak Surat</b></string>
     <string name="decrypt">Dekripsi</string>
     <string name="user_sign_in">Login pengguna</string>
-    <string name="two_factor_sign_in">Dua faktor otentikasi</string>
+    <string name="two_factor_sign_in">Autentikasi dua faktor</string>
     <string name="sign_in">Masuk</string>
     <string name="sign_out">Keluar</string>
-    <string name="sign_out_question">Anda yakin ingin keluar?</string>
+    <string name="sign_out_question">Apakah Anda yakin anda ingin keluar?</string>
     <string name="remember_me_on_device">Ingat saya di perangkat ini</string>
     <string name="show_password">Tampilkan kata sandi</string>
     <string name="username">Nama pengguna</string>
     <string name="password">Kata sandi</string>
     <string name="login_password">Kata sandi masuk</string>
     <string name="mailbox_password">Kata sandi kotak pesan</string>
-    <string name="two_factor_code">Dua Kode Faktor</string>
-    <string name="processing_request">Permintaan Anda sedang diproses</string>
+    <string name="two_factor_code">Kode Dua Faktor</string>
+    <string name="processing_request">Permintaan anda sedang diproses</string>
     <!-- should check for html tag -->
     <string name="need_account_sign_up">Butuh akun? Daftar.</string>
-    <string name="need_to_be_logged_in">Kamu belum masuk!</string>
+    <string name="need_to_be_logged_in">Anda belum masuk!</string>
     <string name="forgot_password">Lupa Kata Sandi?</string>
     <string name="reset_mailbox_password">ATUR ULANG KATA SANDI KOTAK PESAN</string>
     <string name="forgot_mailbox_password">Untuk mengatur ulang kata sandi kotak surat Anda, mohon gunakan ProtonMail versi web di protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Tidak dapat memuat konten. Mohon aktifkan Chrome</string>
-    <string name="error_chrome_not_found">Tidak dapat memuat konten. Mohon pasang Chrome</string>
-    <string name="messages_load_failure">Tidak dapat mengambil pesan</string>
-    <string name="message_details_load_failure">Tidak dapat mengambil rincian pesan</string>
-    <string name="no_more_messages">Tidak ada lagi pesan</string>
+    <string name="error_chrome_not_found">Tidak dapat memuat konten. Harap install Chrome</string>
+    <string name="messages_load_failure">Tidak dapat memuat pesan</string>
+    <string name="message_details_load_failure">Tidak dapat memuat rincian pesan</string>
+    <string name="no_more_messages">Tidak ada pesan lagi</string>
     <string name="mailbox_login_failure">Gagal masuk ke kotak surat</string>
-    <string name="login_failure">Gagal untuk masuk</string>
+    <string name="login_failure">Gagal masuk</string>
     <string name="invalid_server_proof">Bukti server tidak valid</string>
     <string name="invalid_credentials">Kredensial tidak valid</string>
     <string name="invalid_mailbox_password">Kata sandi kotak surat tidak valid</string>
     <string name="not_signed_up">Anda tidak terdaftar untuk ProtonMail Android Beta</string>
     <string name="no_network">Tidak ada jaringan</string>
     <string name="no_network_queued">Tidak ada jaringan, pesan diantrekan</string>
-    <string name="update_app_title">Dibutuhkan Pembaruan</string>
-    <string name="update_app">Aplikasi Protonmail Anda tidak dapat digunakan sampai diperbarui</string>
-    <string name="api_offline_title">API Protonmail sedang luring</string>
+    <string name="update_app_title">Butuh pembaruan</string>
+    <string name="update_app">Aplikasi ProtonMail Anda tidak dapat digunakan karena perlu diperbarui</string>
+    <string name="api_offline_title">API ProtonMail sedang luring</string>
     <string name="api_offline">ProtonMail saat ini sedang luring. Silakan kunjungi Twitter kami untuk status saat ini: https://twitter.com/protonmail</string>
     <string name="cannot_open">Tidak bisa membuka berkas</string>
-    <string name="downloaded_attachment">Diunduh %s</string>
+    <string name="downloaded_attachment">Unduh %s</string>
     <string name="edit_contact_validation">Mohon masukkan nama dan alamat surel yang valid</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
-    <string name="contact_saved_offline">Kontak telah tersimpan. Hal ini akan tersinkronisasi apabila koneksi tersedia</string>
+    <string name="contact_saved_offline">Kontak tersimpan akan disinkronkan saat koneksi tersedia</string>
     <string name="contact_exist">Kontak surel sudah ada</string>
     <string name="invalid_email">Alamat surel tidak valid</string>
     <string name="duplicate_email">Alamat surel adalah duplikat</string>
     <string name="invalid_code">Kode tidak valid</string>
-    <string name="message_drafted">Gagal mengirim pesan. Pesan Anda disimpan dalam map konsep</string>
+    <string name="message_drafted">Gagal mengirim pesan. Pesan Anda disimpan dalam folder draf</string>
     <string name="message_drafted_reason">%s tidak ada.\nTidak dapat mengirim surel.</string>
     <string name="open_drawer">Buka</string>
     <string name="close_drawer">Tutup</string>
-    <string name="inbox_option">Kotak Masuk</string>
-    <string name="starred_option">Dibintangi</string>
-    <string name="drafts_option">KONSEP</string>
-    <string name="sent_option">KIRIM</string>
+    <string name="inbox_option">KOTAK MASUK</string>
+    <string name="starred_option">DIBINTANGI</string>
+    <string name="drafts_option">DRAF</string>
+    <string name="sent_option">TERKIRIM</string>
     <string name="archive_option">ARSIP</string>
     <string name="trash_option">SAMPAH</string>
     <string name="spam_option">SPAM</string>
@@ -85,24 +85,24 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="report_bugs_option">LAPORKAN BUG</string>
     <string name="signout_option">KELUAR</string>
     <string name="inbox">Kotak masuk</string>
-    <string name="starred">Dibintangi</string>
-    <string name="drafts">Konsep</string>
-    <string name="sent">Dikirim</string>
-    <string name="archive">Arsipkan</string>
+    <string name="starred">Ditandai</string>
+    <string name="drafts">Draf</string>
+    <string name="sent">Terkirim</string>
+    <string name="archive">Arsip</string>
     <string name="trash">Sampah</string>
     <string name="spam">Spam</string>
     <string name="contacts">Kontak</string>
     <string name="contact_groups">Grup Kontak</string>
     <string name="search_contacts">Cari kontak</string>
-    <string name="fetching_contacts">Mengambil kontak Protonmail...</string>
+    <string name="fetching_contacts">Mengambil kontak ProtonMail...</string>
     <string name="fetching_contacts_success">Kontak berhasil disegarkan</string>
     <string name="fetching_contacts_failure">Tidak dapat menyegarkan kontak</string>
     <string name="search">Pencarian</string>
     <string name="search_messages">Cari pesan</string>
     <string name="no_search_results">Tidak ada hasil pencarian</string>
-    <string name="compose">Menyusun</string>
-    <string name="compose_message">Menulis pesan</string>
-    <string name="empty_folder">Folder kosong</string>
+    <string name="compose">Tulis</string>
+    <string name="compose_message">Tulis pesan</string>
+    <string name="empty_folder">Folder Kosong</string>
     <string name="view_headers">Lihat Header</string>
     <string name="message_headers">Header Pesan</string>
     <string name="delete_message">Hapus pesan</string>
@@ -110,48 +110,48 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="add_label">Tambahkan Label</string>
     <string name="add_star">Tambahkan bintang</string>
     <string name="remove_star">Hapus bintang</string>
-    <string name="mark_read">Mark membaca</string>
+    <string name="mark_read">Tandai dibaca</string>
     <string name="mark_unread">Tandai belum dibaca</string>
-    <string name="move_to_archive">Pindah ke Arsip</string>
-    <string name="move_to_trash">Pindah ke Sampah</string>
-    <string name="move_to_spam">Pindah ke Spam</string>
-    <string name="move_to_inbox">Pindah ke Inbox</string>
+    <string name="move_to_archive">Pindahkan ke Arsip</string>
+    <string name="move_to_trash">Pindahkan ke Sampah</string>
+    <string name="move_to_spam">Pindahkan ke spam</string>
+    <string name="move_to_inbox">Pindahkan ke Kotak masuk</string>
     <string name="move_message_to_trash">Pindahkan pesan ke sampah?</string>
     <string name="are_you_sure_empty">Yakin ingin menghapus semua pesan dari folder ini?</string>
     <string name="send">Kirim</string>
-    <string name="selected">Terpilih</string>
+    <string name="selected">Dipilih</string>
     <string name="no_messages">Tidak ada pesan</string>
     <string name="no_labels">Tidak ada label</string>
-    <string name="to">Untuk</string>
+    <string name="to">Kepada</string>
     <string name="cc">Cc</string>
     <string name="bcc">Bcc</string>
-    <string name="to_prefix">Untuk:</string>
+    <string name="to_prefix">Kepada:</string>
     <string name="cc_prefix">Cc:</string>
     <string name="bcc_prefix">Bcc:</string>
     <string name="from_prefix">Dari:</string>
     <string name="date_prefix">Tanggal:</string>
-    <string name="expiration_time_prefix">Kadaluarsa dalam</string>
+    <string name="expiration_time_prefix">Kedaluwarsa dalam</string>
     <string name="view_details">DETAIL</string>
     <string name="hide_details">SEMBUNYIKAN DETAIL</string>
-    <string name="download">DOWNLOAD</string>
-    <string name="reply">Balasan</string>
-    <string name="reply_all">Membalas semua</string>
-    <string name="forward">Meneruskan</string>
-    <string name="subject">Subyek</string>
-    <string name="email_subject">Subjek Surel</string>
-    <string name="define_message_password">Kata sandi pesan</string>
-    <string name="confirm_message_password">Konfirmasi sandi</string>
+    <string name="download">UNDUH</string>
+    <string name="reply">Balas</string>
+    <string name="reply_all">Balas Semua</string>
+    <string name="forward">Teruskan</string>
+    <string name="subject">Subjek</string>
+    <string name="email_subject">Subjek surel</string>
+    <string name="define_message_password">Kata Sandi Pesan</string>
+    <string name="confirm_message_password">Konfirmasi Kata Sandi</string>
     <string name="define_password_hint">Tentukan Petunjuk (Opsional)</string>
-    <string name="message_passwords_do_not_match">Sandi Login tidak cocok</string>
-    <string name="message_mailbox_passwords_do_not_match">Sandi Kotak Pesan tidak cocok</string>
-    <string name="eo_passwords_do_not_match">Sandi tidak cocok</string>
-    <string name="define_expiration_period">Tentukan Periode Kadaluarsa</string>
-    <string name="set_message_expiration">Tetapkan Kadaluarsa Pesan</string>
+    <string name="message_passwords_do_not_match">Kata sandi Masuk Tidak Cocok</string>
+    <string name="message_mailbox_passwords_do_not_match">Kata sandi Kotak Pesan Tidak Cocok</string>
+    <string name="eo_passwords_do_not_match">Kata sandi tidak cocok</string>
+    <string name="define_expiration_period">Tentukan Periode Kedaluwarsa</string>
+    <string name="set_message_expiration">Atur Kedaluwarsa Pesan</string>
     <string name="days">Hari</string>
     <string name="hours">Jam</string>
-    <string name="max_labels_exceeded">Pesan %1$s tidak boleh memiliki label lebih dari %2$d.</string>
-    <string name="max_labels_selected">%d label adalah maksimum yang diizinkan</string>
-    <string name="max_attachments_reached">Telah mencapai Batas maksimal jumlah lampiran per pesan.</string>
+    <string name="max_labels_exceeded">Pesan %1$s tidak boleh memiliki lebih dari %2$d label.</string>
+    <string name="max_labels_selected">Maksimum yang diizinkan adalah %d label</string>
+    <string name="max_attachments_reached">Lampiran maksimum per pesan telah tercapai</string>
     <plurals name="hours_string">
         <item quantity="other">%d jam</item>
     </plurals>
@@ -172,19 +172,19 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attach_file">Lampirkan berkas</string>
     <string name="take_photo">Ambil foto</string>
     <string name="problem_taking_photo">Terjadi masalah saat memotret</string>
-    <string name="problem_selecting_file">Ada masalah saat menambahkan file yang dipilih</string>
-    <string name="add_contact">Tambah kontak</string>
+    <string name="problem_selecting_file">Ada masalah saat menambahkan berkas yang dipilih</string>
+    <string name="add_contact">Tambah Kontak</string>
     <string name="delete_contact">Hapus %s dari Kontak?</string>
     <string name="sync_contact">Sinkronkan %s dengan aplikasi web?</string>
     <string name="confirm">Konfirmasi</string>
-    <string name="confirm_destructive_action">Apakah Anda yakin? Hal ini tidak dapat dibatalkan.</string>
-    <string name="create">Membuat</string>
+    <string name="confirm_destructive_action">Apakah Anda yakin? Tindakan ini tidak dapat dibatalkan.</string>
+    <string name="create">Buat</string>
     <string name="name">Nama</string>
     <string name="email">Surel</string>
-    <string name="email_address">Alamat surel</string>
+    <string name="email_address">Alamat email</string>
     <string name="phone">Nomor telepon</string>
-    <string name="save">Menyimpan</string>
-    <string name="add">Menambahkan</string>
+    <string name="save">Simpan</string>
+    <string name="add">Tambah</string>
     <string name="syncing_messages">Menyinkronkan...</string>
     <string name="sync">Sinkronkan Kontak</string>
     <string name="save_message_as_draft">Simpan pesan sebagai konsep?</string>
@@ -200,19 +200,19 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="received_report">Laporan diterima</string>
     <string name="not_received_report">Laporan tidak diterima</string>
     <string name="not_received_report_offline">Sedang Luring! laporan akan disampaikan saat daring</string>
-    <string name="forward_prefix">Fw:</string>
+    <string name="forward_prefix">Trs:</string>
     <string name="original_message_divider">-------- Pesan asli --------</string>
     <string name="invalid_email_address">Alamat \'%s\' tidak valid</string>
-    <string name="invalid_email_address_removed">Alamat \\\'%s\\\' tidak valid dan telah dihapus</string>
+    <string name="invalid_email_address_removed">Alamat \'%s\' tidak valid dan telah dihapus</string>
     <string name="no_recipients_specified">Harap tambahkan setidaknya satu penerima</string>
-    <string name="no_password_specified">Waktu kadaluarsa hanya dapat diatur pada pesan terenkripsi penuh. Harap tentukan kata sandi untuk penerima non-ProtonMail Anda.</string>
-    <string name="attachment_limit">Lampiran terbatas pada %1$s. Total terlampir akan menjadi %2$s.</string>
+    <string name="no_password_specified">Waktu kedaluwarsa hanya dapat diatur pada pesan terenkripsi penuh. Harap tentukan kata sandi untuk penerima non-ProtonMail Anda.</string>
+    <string name="attachment_limit">Lampiran dibatasi hingga %1$s. Total terlampir seharusnya menjadi %2$s.</string>
     <string name="sending_message">Mengirim pesan...</string>
-    <string name="sending_message_offline">Offline, antri untuk pengiriman nanti...</string>
+    <string name="sending_message_offline">Sedang luring, antre untuk pengiriman nanti...</string>
     <string name="mailbox_password_changed">Kata sandi kotak pesan berubah</string>
-    <string name="go_to_mailbox_login">Masuk ke kotak masuk masuk untuk memasukkan kata sandi kotak pesan yang diperbarui?</string>
+    <string name="go_to_mailbox_login">Go to mailbox login to enter updated mailbox password?</string>
     <string name="go_to_inbox">Buka kotak masuk saya</string>
-    <string name="message_sent">Pesan terkirim</string>
+    <string name="message_sent">Pesan Terkirim</string>
     <string name="message_failed">Kegagalan Mengirim Pesan</string>
     <string name="message_sending_failures">%d pesan gagal dikirim</string>
     <string name="storage_limit">Batas penyimpanan</string>
@@ -222,185 +222,186 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="save_settings">Simpan Pengaturan</string>
     <string name="share">Bagikan</string>
     <string name="settings_saved">Pengaturan baru disimpan</string>
-    <string name="settings_not_saved_password"> Pengaturan tidak disimpan - salah kata sandi masuk</string>
-    <string name="settings_not_saved_email"> Setelan tidak disimpan - email notifikasi tidak valid</string>
-    <string name="save_settings_question">Simpan Pengaturan?</string>
-    <string name="enter">Memasukkan</string>
-    <string name="cancel">Membatalkan</string>
+    <string name="settings_not_saved_password"> Pengaturan tidak disimpan - kata sandi masuk salah</string>
+    <string name="settings_not_saved_email"> Setelan tidak disimpan - notifikasi surel tidak valid</string>
+    <string name="save_settings_question">Simpan pengaturan?</string>
+    <string name="enter">Enter</string>
+    <string name="cancel">Batal</string>
     <string name="close">Tutup</string>
-    <string name="passwords">Sandi Manager</string>
-    <string name="change_password">Ganti kata sandi</string>
-    <string name="change_login_password">Ganti kata sandi login</string>
-    <string name="change_mailbox_password">Ubah Password Kotak Pesan</string>
-    <string name="eo_password_title">Set Kata sandi</string>
-    <string name="eo_password_subtitle">Tetapkan kata sandi untuk mengenkripsi pesan ini untuk pengguna non-ProtonMail</string>
+    <string name="passwords">Pengelola Kata Sandi</string>
+    <string name="change_password">Ubah Kata Sandi</string>
+    <string name="change_login_password">Ubah Kata Sandi untuk Masuk</string>
+    <string name="change_mailbox_password">Ubah Kata Sandi Kotak Pesan</string>
+    <string name="eo_password_title">Atur Kata Sandi</string>
+    <string name="eo_password_subtitle">Atur kata sandi untuk mengenkripsi pesan ini untuk pengguna non-ProtonMail</string>
     <string name="eo_password_more_info">Dapatkan lebih banyak informasi</string>
     <string name="old_login_password">Kata Sandi Masuk Saat Ini</string>
     <string name="new_login_password">Kata sandi baru</string>
-    <string name="confirm_new_login_password">Konfirmasi password baru</string>
+    <string name="confirm_new_login_password">Konfirmasi kata sandi baru</string>
     <string name="old_mailbox_password">Kata sandi kotak surat saat ini</string>
-    <string name="new_mailbox_password">Password Kotak Pesan Baru</string>
-    <string name="confirm_new_mailbox_password">Konfirmasikan Password Kotak Pesan Baru</string>
+    <string name="new_mailbox_password">Kata Sandi Kotak Surat Baru</string>
+    <string name="confirm_new_mailbox_password">Konfirmasi Kata Sandi Kotak Pesan Baru</string>
     <string name="no_attachments">0 Lampiran</string>
     <string name="num_attachments">%d Lampiran</string>
     <string name="new_passwords_not_valid">Masukan tidak valid</string>
     <string name="new_passwords_do_not_match">Kata sandi baru tidak cocok</string>
-    <string name="new_login_password_saved">Kata sandi masuk baru tersimpan</string>
-    <string name="new_mailbox_password_saved">Kata sandi kotak pesan baru disimpan</string>
-    <string name="could_not_change_password">Password tidak bisa diubah</string>
+    <string name="new_login_password_saved">Kata sandi masuk baru berhasil disimpan</string>
+    <string name="new_mailbox_password_saved">Kata sandi kotak pesan baru berhasil disimpan</string>
+    <string name="could_not_change_password">Kata sandi tidak dapat diubah</string>
     <string name="auto_logout_option_settings">Opsi Keluar Otomatis</string>
-    <string name="pin_lock_option_settings">Kunci Pilihan Aplikasi</string>
-    <string name="pin_lock_after">Kunci setelah aplikasi</string>
-    <string name="lock_the_app">Kunci App</string>
+    <string name="pin_lock_option_settings">Opsi Kunci Aplikasi</string>
+    <string name="pin_lock_after">Kunci setelah</string>
+    <string name="lock_the_app">Kunci Aplikasi</string>
     <string name="no_sound_or_vibrate">Tidak ada getaran atau suara</string>
     <string name="sound">Suara tanpa getaran</string>
     <string name="vibration">Getaran tanpa suara</string>
     <string name="both_sound_and_vibration">Getaran dan suara</string>
     <string name="display_name_banned_chars">Nama tampilan tidak valid. \'&gt;\' dan \'&lt;\' tidak diizinkan</string>
-    <string name="cont">Terus</string>
-    <string name="email_verification_code">Kami akan mengirimkan kode verifikasi ke alamat email di atas.</string>
+    <string name="cont">Lanjutkan</string>
+    <string name="email_verification_code">Kami akan mengirimkan kode verifikasi ke alamat surel di atas.</string>
     <string name="sms_verification_code">Kami akan mengirimkan kode verifikasi ke nomor telepon di atas.</string>
-    <string name="send_verification_code">Kirim kode verifikasi</string>
+    <string name="send_verification_code">Kirim Kode Verifikasi</string>
     <string name="resend_verification_code">Kirim ulang</string>
     <string name="enter_verification_code">Masukkan kode verifikasi</string>
-    <string name="verify">Memeriksa</string>
-    <string name="reply_prefix_on">Di</string>
+    <string name="verify">Verifikasi</string>
+    <string name="reply_prefix_on">Aktif</string>
     <string name="create_new_account">Buat akun baru</string>
     <string name="setup_new_account">Siapkan akun Anda</string>
-    <string name="create_account">Membuat akun</string>
-    <string name="create_passwords">Set Password</string>
+    <string name="create_account">Buat Akun</string>
+    <string name="create_passwords">Atur Kata Sandi</string>
     <string name="sign_up">Daftar</string>
-    <string name="caps_username">Nama pengguna</string>
-    <string name="caps_login_password">Kata sandi</string>
-    <string name="caps_two_factor">Dua Kode Faktor</string>
-    <string name="caps_confirm_password">Konfirmasi sandi</string>
-    <string name="caps_confirm_mailbox_password">Konfirmasi Password Kotak Pesan</string>
-    <string name="caps_optional_notification_email">PEMULIHAN SANDI EMAIL (OPTIONAL)</string>
-    <string name="caps_optional">*PILIHAN</string>
-    <string name="update_me_for_new_features">Terus saya update tentang fitur baru</string>
-    <string name="create_mailbox_password">Buat kata sandi</string>
-    <string name="confirm_mailbox_password">Konfirmasi Password Kotak Pesan</string>
-    <string name="password_note"><b>Catatan:</b> Ini digunakan untuk mengenkripsi dan mendekripsi pesan Anda.
-        Jangan sampai kehilangan password ini, kita tidak bisa mengembalikannya. Jika Anda kehilangan kata sandi Anda, Anda tidak akan bisa membaca email Anda.</string>
-    <string name="username_note"><b>Catatan:</b> Username juga merupakan alamat ProtonMail Anda</string>
-    <string name="terms_and_conditions">Dengan menggunakan ProtonMail, Anda setuju terhadap\n
-        <a href="https://protonmail.com/terms-and-conditions">syarat dan ketentuan</a> serta <a href="https://protonmail.com/privacy-policy">kebijakan privasi</a> kami</string>
-    <string name="human_verification">Verifikasi Manusia</string>
-    <string name="human_verification_subtitle">Untuk mencegah penyalahgunaan ProtonMail,\nkami harus memverifikasi bahwa Anda adalah manusia.</string>
-    <string name="select_options">Pilih salah satu dari pilihan berikut:</string>
+    <string name="caps_username">Nama Pengguna</string>
+    <string name="caps_login_password">Kata Sandi</string>
+    <string name="caps_two_factor">Kode Dua Faktor</string>
+    <string name="caps_confirm_password">Konfirmasi Kata Sandi</string>
+    <string name="caps_confirm_mailbox_password">Konfirmasi Kata Sandi Kotak Pesan</string>
+    <string name="caps_optional_notification_email">EMAIL PEMULIHAN KATA SANDI (OPTIONAL)</string>
+    <string name="caps_optional">*OPSIONAL</string>
+    <string name="update_me_for_new_features">Beri saya kabar tentang fitur-fitur baru</string>
+    <string name="create_mailbox_password">Buat Kata Sandi</string>
+    <string name="confirm_mailbox_password">Konfirmasi Kata Sandi Kotak Pesan</string>
+    <string name="password_note"><b>Catatan:</b> Ini dipakai untuk mengenkripsi dan mendekripsi pesan Anda.
+Jangan sampai kehilangan kata sandi ini, karena kami tidak dapat memulihkannya. Jika Anda kehilangan kata sandi Anda, Anda tidak dapat membaca surel.</string>
+    <string name="username_note"><b>Catatan:</b> Nama pengguna ini juga merupakan alamat ProtonMail Anda</string>
+    <string name="terms_and_conditions">Dengan menggunakan ProtonMail, anda setuju dengan\n
+<a href="https://protonmail.com/terms-and-conditions">syarat dan ketentuan</a> kami, dan <a href="https://protonmail.com/privacy-policy">kebijakan privasi</a>kami</string>
+    <string name="human_verification">Verifikasi</string>
+    <string name="human_verification_subtitle">Untuk mencegah penyalahgunaan ProtonMail,\nkami perlu memverifikasi bahwa anda adalah manusia.</string>
+    <string name="select_options">Silahkan pilih salah satu opsi berikut:</string>
     <string name="no_verification_methods_found">Tidak ada metode verifikasi yang ditemukan</string>
     <string name="email_verification">Verifikasi email</string>
     <string name="phone_verification">Verifikasi Telepon</string>
-    <string name="existing_email_address">Masukkan alamat email yang ada</string>
-    <string name="phone_number">Masukkan nomor telepon Anda</string>
-    <string name="encryption_setup">Penyiapan Enkripsi</string>
+    <string name="existing_email_address">Masukkan alamat email anda yang ada</string>
+    <string name="phone_number">Masukan nomor telepon anda</string>
+    <string name="encryption_setup">Pengaturan enkripsi</string>
     <string name="high_security">Keamanan Tinggi (2048 bit)</string>
     <string name="current_standard">Standar saat ini</string>
     <string name="extreme_security">Keamanan Ekstrim (4096 bit)</string>
-    <string name="highest_security">Tingkat enkripsi tertinggi tersedia.<b> Perlu waktu beberapa menit untuk menyiapkannya.</b></string>
-    <string name="generate_keypair">Buatlah Keypair</string>
+    <string name="highest_security">Enkripsi tingkat tertinggi tersedia.<b> Perlu waktu beberapa menit untuk menyiapkannya.</b></string>
+    <string name="generate_keypair">Membuat Keypair</string>
     <string name="labels_title_apply">Terapkan Label</string>
     <string name="labels_title_add">Tambahkan Label</string>
     <string name="labels_title">Label</string>
     <string name="labels_create">Tambahkan Label</string>
-    <string name="label_name">Label Nama</string>
+    <string name="label_name">Nama Label</string>
     <string name="label_name_empty">Label harus memiliki nama</string>
     <string name="label_name_duplicate">Nama label ini sudah ada</string>
-    <string name="label_created">Label dibuat</string>
-    <string name="label_invalid">Label tidak ditambahkan karena nama yang tidak benar.</string>
-    <string name="undo">Membuka</string>
-    <string name="customize_swipe_actions">Sesuaikan tindakan gesek</string>
+    <string name="label_created">Label Dibuat</string>
+    <string name="label_invalid">Label tidak ditambahkan karena nama yang tidak valid.</string>
+    <string name="undo">Urungkan</string>
+    <string name="customize_swipe_actions">Kustomisasi tindakan swipe</string>
     <string name="message_details_swipe_info">Anda dapat kembali ke layar kotak pesan dengan
-         menggesek kiri ke kanan dan memindahkan pesan saat ini ke SAMPAH dengan menggesek ke kiri</string>
-    <string name="composing_message_scroll_info">Anda dapat menggulir panel penulisan ke atas atau ke bawah dengan menggulirkan tepi paling kanan panel penulisan</string>
+menggeser dari kiri ke kanan dan memindahkan pesan saat ini ke SAMPAH dengan menggeser dari kanan ke kiri</string>
+    <string name="composing_message_scroll_info">Anda dapat menggulirkan panel penulisan ke atas atau ke bawah dengan menggulirkan tepi paling kanan panel penulisan</string>
     <string name="message_can_not_edit">Tidak dapat membalas/meneruskan, pesan ini belum dikirim</string>
-    <string name="label_apply">Menerapkan</string>
-    <string name="label_delete">Menghapus</string>
-    <string name="label_add">Menambahkan</string>
-    <string name="no_browser_found">Pasang apl browser untuk menyelesaikan tindakan ini</string>
-    <string name="no_application_found">Tidak ada aplikasi yang ditemukan untuk menangani tindakan ini</string>
-    <string name="no_application_found_or_link_invalid">Aplikasi untuk menangani aksi atau URL invalid ini tidak ditemukan</string>
+    <string name="label_apply">Terapkan</string>
+    <string name="label_delete">Hapus</string>
+    <string name="label_add">Tambah</string>
+    <string name="no_browser_found">Mohon pasang aplikasi peramban untuk menyelesaikan tindakan ini</string>
+    <string name="no_application_found">Aplikasi untuk menangani tindakan ini tidak ditemukan</string>
+    <string name="no_application_found_or_link_invalid">Tidak ada aplikasi yang ditemukan untuk menangani tindakan ini atau URL tidak valid</string>
     <string name="also_archive">Juga Arsipkan</string>
     <string name="label_deleted">Label Dihapus</string>
     <string name="label_deleted_error">Kesalahan saat menghapus label</string>
-    <string name="message_deleted_error">Kesalahan saat menghapus beberapa pesan. Pesan-pesan yang dipilih sedang dalam proses pengiriman?!</string>
+    <string name="message_deleted_error">Kesalahan saat menghapus beberapa pesan. Beberapa pesan yang di pilih sedang dalam proses pengiriman?!</string>
     <string name="respond_inline">Tanggapi dalam-baris</string>
-    <string name="no_connectivity_detected">Tidak ada konektivitas yang terdeteksi...</string>
+    <string name="no_connectivity_detected">Tidak ada koneksivitas yang terdeteksi...</string>
+    <string name="no_connectivity_detected_troubleshoot">Tidak ada konektivitas yang terdeteksi… (<u>Penyelesaian masalah</u>)</string>
     <string name="no_connectivity_message_not_downloaded">Tidak ada konektivitas yang terdeteksi...
- \ n Pesan tidak didownload</string>
-    <string name="connectivity_arrived">Terhubung</string>
+\nPesan tidak diunduh</string>
+    <string name="connectivity_arrived">Tersambung</string>
     <string name="connectivity_checking">Memeriksa koneksi...</string>
     <string name="sync_short">sinkronkan</string>
-    <string name="draft_attachments_uploading">Draft masih mengunggah...</string>
+    <string name="draft_attachments_uploading">Konsep masih mengunggah...</string>
     <string name="draft_label_attachments_uploading">mengunggah lampiran…</string>
     <string name="draft_label_message_uploading">mengirim pesan…</string>
-    <string name="attachment_failed">Upload Lampiran Gagal untuk pesan </string>
+    <string name="attachment_failed">Gagal mengunggah lampiran untuk pesan </string>
     <string name="attachment_failed_new">Gagal mengunggah lampiran untuk pesan %1$s %2$s</string>
-    <string name="attaching_photo_failed">Melampirkan Foto Gagal</string>
+    <string name="attaching_photo_failed">Gagal Melampirkan Foto</string>
     <string name="empty_message">Pesan kosong</string>
-    <string name="dismiss">Memberhentikan</string>
+    <string name="dismiss">Abaikan</string>
     <string name="new_message_arrived">Pesan baru!</string>
-    <string name="please_choose_color">Silahkan pilih warna</string>
-    <string name="display_images">Tampilkan Gambar</string>
-    <string name="retry">Mencoba kembali</string>
+    <string name="please_choose_color">Silakan pilih warna</string>
+    <string name="display_images">Tampilkan konten jarak jauh</string>
+    <string name="retry">Coba lagi</string>
     <string name="saving_failed_no_conn">Gagal menyimpan, tidak ada koneksi</string>
-    <string name="can_not_create_account_while_beta">Pembuatan akun dinonaktifkan dalam Beta</string>
-    <string name="changing_mailbox_password_disabled_while_beta">Mengubah Password Kotak Pesan dinonaktifkan dalam versi Beta</string>
+    <string name="can_not_create_account_while_beta">Pembuatan akun dinonaktifkan dalam versi Beta</string>
+    <string name="changing_mailbox_password_disabled_while_beta">Mengubah Kata Sandi Kotak Pesan dinonaktifkan dalam versi Beta</string>
     <string name="username_is_available">Nama pengguna tersedia!</string>
     <string name="username_is_not_available">Nama pengguna sudah ada!</string>
     <string name="username_is_too_long">Panjang maksimum nama pengguna adalah %d karakter!</string>
     <string name="congratulation">Selamat!</string>
-    <string name="new_account_ready">Akun email aman \ n Anda telah siap.</string>
-    <string name="optional_email_note">Alamat email pemulihan opsional memungkinkan Anda
-         menyetel ulang kata sandi masuk jika Anda lupa.</string>
-    <string name="optional_display_name">Saat Anda mengirim email, ini adalah nama yang
-         muncul di bidang pengirim.</string>
+    <string name="new_account_ready">Akun emal aman baru anda\ntelah siap.</string>
+    <string name="optional_email_note">Alamat email pemulihan opsional memungkinkan anda
+mengatur ulang kata sandi masuk anda jika anda lupa.</string>
+    <string name="optional_display_name">Saat anda mengirim email, nama inilah yang
+muncul di bidang pengirim.</string>
     <string name="error_captcha_not_valid">Tidak valid</string>
-    <string name="close_engagement">tur dekat</string>
+    <string name="close_engagement">tutup tur</string>
     <string name="engagement_title_welcome">Selamat Datang di ProtonMail!</string>
-    <string name="engagement_title_swipe">Tindakan Cepat Gesek</string>
+    <string name="engagement_title_swipe">Tindakan Gesek Cepat</string>
     <string name="engagement_title_labels">Manajemen label</string>
     <string name="engagement_title_encryption">Enkripsi End-to-End</string>
-    <string name="engagement_title_expire">Kadaluarsa pesan</string>
-    <string name="engagement_title_help">Bantuan &amp; Mendukung</string>
-    <string name="engagement_title_support_protonmail">Dukungan ProtonMail</string>
-    <string name="engagement_subtitle_welcome">Akun email terenkripsi baru Anda telah disiapkan dan siap untuk mengirim dan menerima pesan terenkripsi.</string>
-    <string name="engagement_subtitle_swipe">Anda dapat menyesuaikan isyarat babatan di Setelan Aplikasi ProtonMail.</string>
+    <string name="engagement_title_expire">Pesan kedaluwarsa</string>
+    <string name="engagement_title_help">Bantuan &amp; Dukungan</string>
+    <string name="engagement_title_support_protonmail">Dukung ProtonMail</string>
+    <string name="engagement_subtitle_welcome">Akun email terenkripsi baru anda telah disiapkan dan kini siap untuk mengirim dan menerima pesan terenkripsi.</string>
+    <string name="engagement_subtitle_swipe">Anda dapat menyesuaikan isyarat gerakan pada Pengaturan Aplikasi ProtonMail.</string>
     <string name="engagement_subtitle_labels">Buat dan tambahkan Label untuk mengatur kotak masuk Anda. Tekan dan tahan pesan untuk semua opsi.</string>
     <string name="engagement_subtitle_encryption">Kotak masuk Anda sekarang dilindungi dengan enkripsi end-to-end. Untuk mengirim surel aman ke kontak Anda secara otomatis, undang mereka untuk menggunakan ProtonMail! Anda juga dapat mengenkripsi pesan secara manual jika mereka tidak menggunakan ProtonMail.</string>
-    <string name="engagement_subtitle_expire">Pesan yang Anda kirim bisa diatur untuk menghapus secara otomatis setelah jangka waktu tertentu.</string>
+    <string name="engagement_subtitle_expire">Pesan yang Anda kirim dapat diatur untuk terhapus otomatis setelah jangka waktu tertentu.</string>
     <string name="engagement_subtitle_help">Anda bisa mendapatkan bantuan dan dukungan di protonmail.com/support. Bug juga dapat dilaporkan dengan aplikasi.</string>
     <string name="engagement_subtitle_support_protonmail">ProtonMail tidak menjual iklan atau menyalahgunakan
-        privasi Anda. Dukungan Anda sangat penting untuk menjaga agar ProtonMail tetap berjalan. Anda dapat meng-upgrade ke
-        akun berbayar atau menyumbang untuk mendukung ProtonMail.</string>
+privasi Anda. Dukungan Anda sangat penting untuk menjaga agar ProtonMail tetap berjalan. Anda dapat meningkatkan akun ke
+akun berbayar atau menyumbang untuk mendukung ProtonMail.</string>
     <string name="attachment_exists">Lampiran sudah terlampir</string>
     <string name="sending_email_success">Kode verifikasi dikirim</string>
     <string name="sending_email_failed">Pengiriman kode verifikasi gagal</string>
-    <string name="password_required">Masukkan kata sandi login Anda untuk melakukan perubahan ini</string>
+    <string name="password_required">Masukkan kata sandi masuk Anda untuk melakukan perubahan ini</string>
     <string name="password_not_valid">Kata sandi masuk tidak valid</string>
     <string name="send_code_wait">Mohon tunggu %d detik untuk mengklik lagi</string>
-    <string name="eo_password_not_completed">Pesan Kata Sandi Tidak Selesai.</string>
-    <string name="delinquency_title">Akses ke akun ini dinonaktifkan karena tidak membayar</string>
-    <string name="delinquency_subtitle">Akses ke akun ini dinonaktifkan karena tidak membayar. Silakan masuk melalui protonmail.com untuk membayar tagihan yang belum dibayar.</string>
-    <string name="direct_disabled_subtitle">Pendaftaran seluler untuk sementara dinonaktifkan. Silakan coba lagi nanti, atau coba mendaftar di <a href="https://protonmail.com"> protonmail.com</a> menggunakan komputer desktop atau laptop.</string>
+    <string name="eo_password_not_completed">Kata Sandi Pesan tidak lengkap.</string>
+    <string name="delinquency_title">Akses ke akun ini dinonaktifkan karena belum membayar</string>
+    <string name="delinquency_subtitle">Akses ke akun ini dinonaktifkan karena belum membayar. Silakan masuk melalui protonmail.com untuk membayar tagihan yang belum dibayar.</string>
+    <string name="direct_disabled_subtitle">Pendaftaran seluler untuk sementara dinonaktifkan. Silakan coba lagi nanti, atau coba mendaftar di <a href="https://protonmail.com">protonmail.com</a> menggunakan komputer desktop atau laptop.</string>
     <string name="downloading">Mengunduh...</string>
-    <string name="cant_download_attachment">Tidak dapat mendownload Attachment</string>
-    <string name="auto_logout">Keluar otomatis</string>
+    <string name="cant_download_attachment">Tidak Dapat Mengunduh Lampiran</string>
+    <string name="auto_logout">Keluar Otomatis</string>
     <string-array name="auto_logout_options_array">
         <item>Segera</item>
         <item>5 menit tidak aktif</item>
         <item>15 menit tidak aktif</item>
-        <item>1h tidak aktif</item>
+        <item>1 jam tidak aktif</item>
         <item>24 jam tidak aktif</item>
     </string-array>
     <string-array name="pin_options_array">
         <item>Ganti PIN</item>
-        <item>Ubah waktu batas waktu PIN</item>
+        <item>Ubah batas waktu PIN</item>
     </string-array>
-    <string name="delete_label_confirmation_title">Hapus label yang terpilih?</string>
-    <string name="delete_folder_confirmation_title">Hapus map yang terpilih?</string>
-    <string name="delete_label_confirmation_message">Surel yang tersimpan di sini akan dapat ditemukan di <b>Semua Surat</b></string>
-    <string name="enter_pin">Masukkan PIN Anda untuk membuka kunci Inbox Anda</string>
+    <string name="delete_label_confirmation_title">Hapus label yang dipilih?</string>
+    <string name="delete_folder_confirmation_title">Hapus folder yang dipilih?</string>
+    <string name="delete_label_confirmation_message">Surel yang tersimpan di sini dapat ditemukan di <b>Semua Surat</b></string>
+    <string name="enter_pin">Masukkan PIN Anda untuk membuka kunci Kotak Masuk Anda</string>
     <string name="enter_pin_message_details">Masukkan PIN Anda untuk membuka kunci Pesan Anda</string>
     <string name="enter_current_pin">Masukkan PIN Anda saat ini</string>
     <string name="hint_pin">Kode PIN</string>
@@ -416,79 +417,80 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="pin_settings">Pengaturan PIN</string>
     <string name="next">berikutnya</string>
     <string name="back">kembali</string>
-    <string name="new_emails">%d email baru</string>
+    <string name="new_emails">%d surel baru</string>
     <string name="attachment_download_success">%s berhasil diunduh ke File Manager</string>
     <string name="attachment_download_failed">%s gagal diunduh dengan benar</string>
     <string name="sender_changed">Harap hapus lampiran untuk mengubah alamat pengirim.</string>
-    <string name="ringtone">Ringtone</string>
-    <string name="ringtone_selected">Ringtone:</string>
+    <string name="ringtone">Nada dering</string>
+    <string name="ringtone_selected">Nada dering:</string>
     <string name="notification_option">%1$s\nNada dering:%2$s</string>
     <string name="ringtone_invalid">Pilihan nada dering mengembalikan nilai yang tidak valid</string>
-    <string name="ringtone_no_default">Tidak memungkinkan untuk memuat Nada Dering standar</string>
+    <string name="ringtone_no_default">Tidak mungkin memuat Nada dering bawaan</string>
     <string name="select_tone">Pilih Nada</string>
-    <string name="copy_link">Salin tautan</string>
-    <string name="share_link">Membagikan tautan</string>
-    <string name="attachment_delete_failed">Menghapus lampiran %s gagal</string>
+    <string name="copy_link">Salin Tautan</string>
+    <string name="share_link">Bagi Tautan</string>
+    <string name="attachment_delete_failed">Gagal menghapus lampiran %s</string>
     <string name="sync_attachments">Menyinkronkan lampiran</string>
     <string name="processing_attachment">Memproses lampiran</string>
-    <string name="hyperlink_confirmation_dialog_text_html">Anda akan meluncurkan peramban web dan menavigasi
+    <string name="hyperlink_confirmation_dialog_text_html">Anda akan meluncurkan peramban web dan pindah
 ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
     <string name="dont_ask_again">Jangan tanya lagi</string>
-    <string name="none">Tak bawa</string>
-    <string name="changes_affected_after_closing">Perubahan akan terpengaruh setelah menutup aplikasi</string>
+    <string name="none">Tidak ada</string>
+    <string name="changes_affected_after_closing">Perubahan akan terjadi setelah Anda menutup aplikasi</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN salah, %d upaya tersisa</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
-        <item quantity="other">%d mencoba sampai data yang aman dihapus!</item>
+        <item quantity="other">%d upaya sampai data yang aman dihapus!</item>
     </plurals>
     <string name="done">Selesai</string>
     <string name="logout">Keluar</string>
-    <string name="logout_question">Anda yakin ingin keluar?</string>
-    <string name="logout_question_next_account">Apakah Anda yakin ingin keluar dari akun saat ini dan melanjutkan menggunakan %s?</string>
-    <string name="upselling">Tingkatkan / Donasi</string>
-    <string name="upselling_title">ProtonMail bebas dan open source</string>
+    <string name="log_out">Keluar %s?</string>
+    <string name="logout_question">Yakin ingin keluar?</string>
+    <string name="logout_question_next_account">Anda akan pindah ke %s.</string>
+    <string name="upselling">Tingkatkan/Donasi</string>
+    <string name="upselling_title">ProtonMail gratis dan open source</string>
     <string name="upselling_subtitle">Kami membutuhkan dukungan Anda untuk terus melindungi privasi dan meningkatkan ProtonMail</string>
-    <string name="upselling_donate_title">Menyumbangkan</string>
-    <string name="upselling_upgrade_title">Meningkatkan ke ProtonMail Plus</string>
+    <string name="upselling_donate_title">Donasi</string>
+    <string name="upselling_upgrade_title">Tingkatkan ke ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">Sumbangan Anda akan membantu kami menambah
-    kapasitas dan terus mengembangkan ProtonMail sebagai perangkat lunak bebas dan open source. Hanya meski
-    dukungan masyarakat kita bisa terus memberikan ProtonMail kepada orang-orang di
-    seluruh dunia.</string>
-    <string name="upselling_upgrade_subtitle">Peningkatan paket Anda akan membantu kami menambah
-    kapasitas dan terus mengembangkan ProtonMail sebagai sumber bebas dan terbuka. Hanya melalui
-    dukungan masyarakat kita dapat terus memberikan ProtonMail kepada orang-orang di
-    seluruh dunia.</string>
-    <string name="upgrade_donate">Tingkatkan / Donasi</string>
-    <string name="upselling_donate_pick_amount">Pilih jumlah donasi atau masukkan jumlah apapun</string>
-    <string name="amount_5">5 €</string>
-    <string name="amount_15">15 €</string>
+kapasitas dan terus mengembangkan ProtonMail sebagai perangkat lunak bebas dan open source. Hanya dengan
+dukungan komunitas, kami dapat terus menyediakan ProtonMail kepada orang-orang di
+seluruh dunia.</string>
+    <string name="upselling_upgrade_subtitle">Peningkatan langganan Anda membantu kami menambah
+kapasitas dan terus mengembangkan ProtonMail sebagai perangkat lunak bebas dan open source. Hanya dengan
+dukungan komunitas, kami dapat terus menyediakan ProtonMail kepada orang-orang di
+seluruh dunia.</string>
+    <string name="upgrade_donate">Tingkatkan/Donasi</string>
+    <string name="upselling_donate_pick_amount">Pilih jumlah donasi atau masukkan jumlah berapapun</string>
+    <string name="amount_5">5€</string>
+    <string name="amount_15">15€</string>
     <string name="amount_50">50€</string>
     <string name="amount_100">100€</string>
     <string name="donation_amount">Masukkan jumlah donasi</string>
-    <string name="donate">Menyumbangkan</string>
+    <string name="donate">Donasi</string>
     <string name="donate_paypal_bitcoin">Donasi via PayPal atau Bitcoin</string>
-    <string name="upgrade_line1">Semuanya termasuk dalam rencana gratis kami</string>
+    <string name="upgrade_line1">Semuanya disertakan dalam paket Gratis kami</string>
     <string name="upgrade_line2">Penyimpanan 5 GB</string>
     <string name="upgrade_line3">Gunakan domain Anda sendiri</string>
-    <string name="upgrade_line4">Sampai 5 alias</string>
+    <string name="upgrade_line4">Maksimal 5 alias</string>
     <string name="upgrade_line5">Dukungan pelanggan prioritas</string>
     <string name="upgrade_plus_price">4€</string>
     <string name="per_month">/bulan</string>
-    <string name="upgrade">Meningkatkan</string>
-    <string name="payment_options">Pilihan pembayaran</string>
-    <string name="other_plans">Untuk rencana dengan lebih banyak penyimpanan, upgrade melalui
-    antarmuka webmail ProtonMail.</string>
+    <string name="upgrade">Tingkatkan</string>
+    <string name="payment_options">Pilihan Pembayaran</string>
+    <string name="other_plans">Untuk mendapatkan paket dengan penyimpanan lebih, tingkatkan melalui
+antarmuka webmail ProtonMail.</string>
     <string name="upgrade_paid_user">Terima kasih telah menjadi pengguna berbayar!</string>
     <string name="select_account_type">Pilih jenis akun Anda</string>
     <string name="select_account_type_subtitle">ProtonMail adalah layanan gratis
-    untuk kebaikan publik. Anda dapat membantu mendukung privasi online dengan memilih akun berbayar.</string>
-    <string name="plan_free_with_price">BEBAS</string>
+untuk kebaikan publik. Anda dapat membantu mendukung privasi daring dengan memilih akun berbayar.</string>
+    <string name="plan_free_with_price">FREE</string>
     <string name="plan_plus_with_price">PLUS %s /Bulan</string>
     <string name="plan_visionary_with_price">VISIONARY %s /Bulan</string>
-    <string name="plan_business_with_price">BISNIS %s /Bulan</string>
+    <string name="plan_business_with_price">BUSINESS %s /Bulan</string>
     <string name="plan_free_title">Akun dasar dengan fitur terbatas</string>
-    <string name="plan_plus_title">Amankan email dengan fitur canggih</string>
+    <string name="plan_plus_title">Amankan surel dengan fitur lanjutan</string>
     <string name="plan_visionary_title">Akun khusus untuk pendukung kami</string>
     <string name="plan_business_title">Akun khusus untuk pendukung kami</string>
     <string name="plan_plus_line2">Kirim hingga 1000 pesan per hari</string>
@@ -504,76 +506,76 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="plan_free_line6">Dukungan Pelanggan: terbatas</string>
     <string name="plan_visio_line2">Tidak ada batas pengiriman</string>
     <string name="plan_visio_line3">Akses awal ke fitur baru</string>
-    <string name="plan_visio_line6">Bantu ambil fitur baru melalui polling Visioner saja</string>
-    <string name="plan_business_line1">segera hadir untuk organisasi untuk menikmati email terenkripsi!</string>
-    <string name="currency_duration">Mata uang &amp; Lamanya</string>
+    <string name="plan_visio_line6">Bantu kami memilih fitur baru melalui polling dengan akun Visionary</string>
+    <string name="plan_business_line1">segera hadir surel terenkripsi yang siap dinikmati untuk organisasi!</string>
+    <string name="currency_duration">Mata uang &amp; Durasi</string>
     <string name="credit_card_name">Nama pada kartu kredit/debit</string>
-    <string name="zip_code">Kode Pos</string>
+    <string name="zip_code">Kode pos</string>
     <string name="card_number">Nomor kartu</string>
     <string name="billing_information">Informasi tagihan</string>
     <string name="billing_upgrade_thanks">Peningkatan berhasil! Terima kasih atas dukungannya!</string>
     <string name="country">Negara</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">Dengan mengklik Kirim, Anda bersedia
-    mematuhi\n<a href="https://protonmail.com/terms-and-conditions">syarat dan ketentuan penggunaan ProtonMail</a></string>
-    <string name="submit">Menyerahkan</string>
-    <string name="currency">Mata uang</string>
+mematuhi\n<a href="https://protonmail.com/terms-and-conditions">syarat dan ketentuan penggunaan ProtonMail</a></string>
+    <string name="submit">Kirim</string>
+    <string name="currency">Mata Uang</string>
     <string name="plan_duration">Siklus Penagihan</string>
-    <string name="duration_annual_line1">Paket Tahunan <font color = "# C3E129"> Hemat 20% </font></string>
+    <string name="duration_annual_line1">Paket Tahunan <font color="# C3E129">Hemat 20%</font></string>
     <string name="duration_annual_line2">%s per bulan</string>
     <string name="per_month_text_only">per bulan</string>
     <string name="per_year_text_only">per tahun</string>
-    <string name="duration_annual_line3">Ditagih sebagai %s /Tahun</string>
+    <string name="duration_annual_line3">Ditagih %s /Tahun</string>
     <string name="duration_annual_line4">Ditagih %s /Bulan</string>
-    <string name="duration_monthly_line1">Rencana bulanan</string>
+    <string name="duration_monthly_line1">Paket Bulanan</string>
     <string name="duration_monthly_line2">%s per bulan</string>
     <string name="duration_monthly_line3">Hemat 20%</string>
-    <string name="set_cont">Set &amp; Terus</string>
-    <string name="payment_error">Kesalahan pembayaran</string>
+    <string name="set_cont">Atur &amp; Lanjutkan</string>
+    <string name="payment_error">Kesalahan Pembayaran</string>
     <string name="error">Kesalahan</string>
     <string name="try_another_card">Coba kartu lain</string>
     <string name="try_another_paypal">Bayar dengan PayPal</string>
     <string name="try_another_payment_method">Coba yang lain</string>
-    <string name="submit_paypal">Bayar dengan Paypal</string>
+    <string name="submit_paypal">Bayar dengan PayPal</string>
     <string name="picker_card">Kartu kredit/debit</string>
     <string name="picker_paypal">PayPal</string>
-    <string name="paypal_disclaimer">Anda harus masuk ke akun PayPal Anda untuk menyelesaikan transaksi ini. Kami akan membuka jendela peramban baru dengan PayPal untuk Anda.</string>
-    <string name="payment_picker_disclaimer">Mohon pilih tipe pembayaran</string>
+    <string name="paypal_disclaimer">Anda harus masuk ke akun PayPal Anda untuk menyelesaikan transaksi ini. Kami akan membukakan Anda PayPal di jendela peramban baru.</string>
+    <string name="payment_picker_disclaimer">Pilih metode pembayaran</string>
     <string name="payment_success_title">Pembayaran Berhasil!</string>
     <string name="payment_success_text">Kami sekarang meningkatkan akun Anda, mohon tunggu sebentar. Terima kasih atas dukungan Anda!</string>
     <string name="donation_success_title">Sumbangan terkirim!</string>
     <string name="donation_success_text">Dukungan Anda memastikan ProtonMail terus ada. Terima kasih sudah mendukung privasi Internet!</string>
     <string name="create_free_account">Buat akun gratis</string>
-    <string name="storage_gb">%d penyimpanan GB</string>
-    <string name="storage_mb">%d MB penyimpanan</string>
-    <string name="max_addresses">Sampai dengan %d email alias</string>
+    <string name="storage_gb">Penyimpanan %d GB</string>
+    <string name="storage_mb">Penyimpanan %d MB</string>
+    <string name="max_addresses">Maksimal %d alias surel</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d Gambar Tertanam</string>
-    <string name="select">Memilih</string>
+    <string name="select">Pilih</string>
     <string name="change_currency">Ubah mata uang</string>
     <string name="switch_billing_monthly">Beralih ke Bulanan</string>
     <string name="switch_billing_yearly">Beralih ke Tahunan</string>
     <string name="warning">Peringatan</string>
-    <string name="empty_recovery_email_question">Peringatan: Anda tidak mengatur email pemulihan sehingga pemulihan akun tidak mungkin dilakukan jika Anda lupa kata sandinya. Lanjutkan tanpa email pemulihan?</string>
+    <string name="empty_recovery_email_question">Peringatan: Anda tidak mengatur surel pemulihan. Jika Anda melupakan sandi, surel tidak mungkin dapat dipulihkan. Lanjutkan tanpa surel pemulihan?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Kadaluarsa % s</string>
-    <string name="payment_methods">Cara Pembayaran</string>
+    <string name="card_details_subtitle">Kedaluwarsa %s</string>
+    <string name="payment_methods">Metode Pembayaran</string>
     <string name="payment_approval_activity">Persetujuan Metode Pembayaran</string>
     <string name="payment_approval_success">Metode pembayaran telah disetujui</string>
     <string name="payment_approval_unknown_error_description">Terjadi kesalahan saat mencoba memverifikasi metode pembayaran Anda. Silakan coba lagi atau alihkan ke kartu lain.</string>
     <string name="payment_approval_cancel_error_description">Verifikasi metode pembayaran dibatalkan. Mohon coba lagi atau alihkan ke kartu lain.</string>
     <string name="payment_approval_consumed_error_description">Metode pembayaran sudah digunakan untuk pembayaran ini. Mohon periksa status langganan Anda.</string>
-    <string name="no_payment_methods">Anda tidak memiliki metode pembayaran tersimpan.</string>
+    <string name="no_payment_methods">Anda tidak memiliki metode pembayaran yang tersimpan.</string>
     <string name="edit_payment_methods">Silakan masuk melalui protonmail.com untuk mengedit informasi penagihan.</string>
-    <string name="no_permission_contacts">Tidak Baca Izin Kontak</string>
+    <string name="no_permission_contacts">Tidak Ada Izin Baca Kontak</string>
     <string name="message_not_loaded">Pesan tidak dimuat</string>
-    <string name="signature_on">Tanda tangan di</string>
-    <string name="signature_text">Teks tanda tangan</string>
-    <string name="please_use_webapp_pass_change">Silahkan gunakan aplikasi web  &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; menggunakan komputer desktop atau laptop utuk menyelesaikan tindakan ini.</string>
+    <string name="signature_on">Tanda Tangan Aktif</string>
+    <string name="signature_text">Teks Tanda Tangan</string>
+    <string name="please_use_webapp_pass_change">Silakan gunakan aplikasi web kami &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; menggunakan komputer desktop atau laptop untuk menyelesaikan tindakan ini.</string>
     <string name="available_addresses">Alamat yang tersedia</string>
     <string name="inactive_addresses">Alamat tidak aktif</string>
     <string name="not_set">Tidak diatur</string>
-    <string name="edit_notification_email">Edit Email Pemulihan</string>
+    <string name="edit_notification_email">Edit Surel Pemulihan</string>
     <string name="available_swipe_actions">Tindakan yang tersedia</string>
     <string name="no_available_addresses">Anda tidak memiliki alamat yang tersedia</string>
     <string name="no_inactive_addresses">Anda tidak memiliki alamat tidak aktif</string>
@@ -584,13 +586,13 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="delete_selected">Hapus yang Dipilih</string>
     <string name="pin_not_activated">PIN tidak diaktifkan</string>
     <string name="available_options">Pilihan yang tersedia</string>
-    <string name="current_recovery_email">Alamat Email Pemulihan Saat Ini</string>
-    <string name="change_recovery_email">Ubah Alamat Email Pemulihan</string>
-    <string name="new_recovery_email">Email Pemulihan Baru</string>
-    <string name="confirm_new_recovery_email">Konfirmasikan Email Pemulihan Baru</string>
-    <string name="recovery_emails_invalid">Alamat email tidak cocok atau tidak valid</string>
+    <string name="current_recovery_email">Alamat Surel Sekarang untuk Atur Ulang/Notifikasi</string>
+    <string name="change_recovery_email">Ubah Surel Sekarang untuk Atur Ulang/Notifikasi</string>
+    <string name="new_recovery_email">Surel Baru untuk Atur Ulang/Notifikasi</string>
+    <string name="confirm_new_recovery_email">Konfirmasi Surel Baru untuk Atur Ulang/Notifikasi</string>
+    <string name="recovery_emails_invalid">Alamat surel tidak cocok atau tidak valid</string>
     <string name="authenticate">Otentikasi</string>
-    <string name="background_sync_subtitle">Jika opsi ini diaktifkan, aplikasi akan disinkronkan dengan server di latar belakang. Menonaktifkan fitur ini akan menonaktifkan pemberitahuan push.</string>
+    <string name="background_sync_subtitle">Jika opsi ini diaktifkan, aplikasi akan disinkronkan dengan server di latar belakang. Menonaktifkan fitur ini akan menonaktifkan notifikasi push.</string>
     <string-array name="notification_options">
         <item>Tidak ada getaran atau suara</item>
         <item>Suara tanpa getaran</item>
@@ -598,16 +600,16 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         <item>Getaran dan suara</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Bebas</item>
+        <item>Gratis</item>
         <item>Plus</item>
-        <item>Visioner</item>
-        <item>Profesional</item>
+        <item>Visionary</item>
+        <item>Professional</item>
     </string-array>
     <plurals name="custom_domains">
         <item quantity="other">Maksimal %d domain</item>
     </plurals>
     <string-array name="months_array">
-        <item>MM</item>
+        <item>BB</item>
         <item>01</item>
         <item>02</item>
         <item>03</item>
@@ -621,21 +623,21 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">Kelompok</string>
+    <string name="contacts_groups">Grup</string>
     <string name="phone_contact">Kontak Telepon</string>
     <string name="contact_details_display_name">Nama</string>
-    <string name="contact_details">Rincian kontak</string>
+    <string name="contact_details">Rincian Kontak</string>
     <string name="email_type_home">Rumah</string>
-    <string name="email_type_work">Kerja</string>
-    <string name="option_type_custom">Tipe baru</string>
+    <string name="email_type_work">Kantor</string>
+    <string name="option_type_custom">Jenis baru</string>
     <string name="type_title">Pilih Jenis</string>
-    <string name="no_permission_storage">Tidak ada Izin Penyimpanan</string>
-    <string name="message_drafted_error_server">Pengiriman pesan gagal % s</string>
+    <string name="no_permission_storage">Tidak Ada Izin Penyimpanan</string>
+    <string name="message_drafted_error_server">Pengiriman pesan gagal. %s</string>
     <string name="sync_local_contacts">Unggah ke ProtonMail</string>
     <string name="please_select_only_phone_contacts">Harap pilih hanya Kontak Telepon Lokal</string>
-    <string name="contact_vcard_hint_email">Masukan email</string>
-    <string name="contact_vcard_hint_phone">Masukkan nomor telepon</string>
-    <string name="contact_vcard_hint_address">Masukkan alamat</string>
+    <string name="contact_vcard_hint_email">Masukkan Surel</string>
+    <string name="contact_vcard_hint_phone">Masukkan Nomor Telepon</string>
+    <string name="contact_vcard_hint_address">Masukkan Alamat</string>
     <string name="contact_vcard_hint_other">Masukkan Informasi</string>
     <string name="contact_vcard_hint_note">Masukkan Catatan</string>
     <string name="contact_vcard_phone">Telepon</string>
@@ -643,43 +645,43 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contact_vcard_new_row_email">tambahkan alamat email</string>
     <string name="contact_vcard_new_row_phone">tambahkan nomor telepon</string>
     <string name="contact_vcard_new_row_address">tambahkan alamat</string>
-    <string name="contact_vcard_new_row_other">menambahkan informasi</string>
-    <string name="contact_vcard_new_row_custom">tambahkan bidang kustom</string>
+    <string name="contact_vcard_new_row_other">tambahkan informasi</string>
+    <string name="contact_vcard_new_row_custom">tambah kolom khusus</string>
     <string name="vcard_other_option_org">Organisasi</string>
-    <string name="vcard_other_option_title">Judul</string>
-    <string name="vcard_other_option_nickname">Nama panggilan</string>
+    <string name="vcard_other_option_title">Gelar</string>
+    <string name="vcard_other_option_nickname">Nama panggil</string>
     <string name="vcard_other_option_birthday">Ulang tahun</string>
-    <string name="vcard_other_option_anniversary">Ulang tahun</string>
-    <string name="vcard_other_option_gender">Jenis kelamin</string>
+    <string name="vcard_other_option_anniversary">Hari Pernikahan</string>
+    <string name="vcard_other_option_gender">Gender</string>
     <string name="vcard_other_option_role">Peran</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="sync_question">Sinkronkan Kenalan?</string>
+    <string name="sync_question">Sinkronisasi Kontak?</string>
     <string name="sync_question_subtitle">Ini akan menyinkronkan kontak lokal pada perangkat Anda ke direktori kontak ProtonMail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui ProtonMail.</string>
     <string name="convert_contact">Mengkonversi Kontak</string>
-    <string name="upload_contacts">Upload Kontak</string>
+    <string name="upload_contacts">Unggah Kontak</string>
     <string name="encrypted_data">Data Terenkripsi</string>
-    <string name="upgrade_encrypted_contact">Silakan upgrade untuk menggunakan informasi kontak terenkripsi.</string>
+    <string name="upgrade_encrypted_contact">Silakan tingkatkan akun untuk menggunakan informasi kontak terenkripsi.</string>
     <string name="empty_encrypted_data">Kosongkan informasi kontak terenkripsi.</string>
-    <string name="uploading_contacts">Mengunggah kenalan&#8230;</string>
+    <string name="uploading_contacts">Mengunggah kontak…</string>
     <string name="error_encrypted_data">Terjadi kesalahan saat mengambil informasi kontak terenkripsi.</string>
     <string-array name="vcard_option_phone">
         <item>Telepon</item>
-        <item>Mobile</item>
-        <item>Kerja</item>
-        <item>Fax</item>
-        <item>Lain</item>
+        <item>Seluler</item>
+        <item>Kantor</item>
+        <item>Faks</item>
+        <item>Lainnya</item>
     </string-array>
     <string-array name="vcard_option_email">
         <item>Email</item>
         <item>Pribadi</item>
-        <item>Kerja</item>
-        <item>Lain</item>
+        <item>Kantor</item>
+        <item>Lainnya</item>
     </string-array>
     <string-array name="vcard_option_address">
         <item>Alamat</item>
         <item>Pribadi</item>
         <item>Kerja</item>
-        <item>Lain</item>
+        <item>Lainnya</item>
     </string-array>
     <string-array name="vcard_option_other">
         <item>@string/vcard_other_option_org</item>
@@ -692,81 +694,83 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
         <item>@string/vcard_other_option_url</item>
     </string-array>
     <string name="logged_out">Keluar</string>
-    <string name="logged_out_description">Kamu telah keluar Silahkan login lagi.</string>
-    <string name="verification_needed">Verifikasi yang dibutuhkan</string>
-    <string name="verification_needed_description">Demi keamanan, mohon verifikasi bahwa Anda bukan robot.</string>
+    <string name="logged_out_description">Anda telah keluar. Silakan masuk lagi.</string>
+    <string name="verification_needed">Verifikasi Dibutuhkan</string>
+    <string name="verification_needed_description">Demi keamanan, buktikan Anda bukan robot.</string>
     <string name="verification_needed_description_notification">Harap verifikasi bahwa Anda adalah manusia sebelum mengirim pesan ini: %s</string>
-    <string name="message_drafted_verification_needed">Pesan tidak terkirim - verifikasi diperlukan. Pesan Anda disimpan di map konsep.</string>
+    <string name="message_drafted_verification_needed">Pesan tidak terkirim - verifikasi diperlukan. Pesan Anda disimpan di folder konsep.</string>
     <string name="error_message_zip_code_invalid">Kesalahan: Kode Pos tidak valid</string>
     <string name="error_message_cvc_invalid">Kesalahan: Nomor CVC tidak valid</string>
     <string name="error_message_card_name_invalid">Kesalahan: Nama Kartu tidak valid</string>
-    <string name="error_message_select_country">Silahkan Pilih Negara</string>
-    <string name="error_message_exp_date_invalid">Kesalahan: Tanggal Kadaluarsa tidak valid</string>
-    <string name="error_message_exp_date_past">Kesalahan: Tanggal Kedaluarsa tidak valid</string>
+    <string name="error_message_select_country">Pilih Negara</string>
+    <string name="error_message_exp_date_invalid">Kesalahan: Tanggal Kedaluwarsa tidak valid</string>
+    <string name="error_message_exp_date_past">Kesalahan: Tanggal kedaluwarsa tidak valid</string>
     <string name="error_message_card_number_invalid">Kesalahan: Nomor Kartu tidak valid</string>
     <string name="print_error">Mencetak Kesalahan</string>
-    <string name="download_error">Unduh kesalahan</string>
-    <string name="download_complete">Unduh selesai</string>
-    <string name="download_in_progress">Unduh sedang berlangsung</string>
-    <string name="expires_in">\tBerakhir dalam %s</string>
-    <string name="unsaved_changes_title">Perubahan yang belum disimpan</string>
+    <string name="download_error">Unduhan salah</string>
+    <string name="download_complete">Unduhan selesai</string>
+    <string name="download_in_progress">Unduhan sedang berlangsung</string>
+    <string name="expires_in">\tKedaluwarsa dalam %s</string>
+    <string name="unsaved_changes_title">Perubahan Belum Disimpan</string>
     <string name="unsaved_changes_subtitle">Ada entri yang belum disimpan dalam formulir. Apakah Anda yakin ingin membuangnya?</string>
-    <string name="discard">Membuang</string>
-    <string name="keep_editing">Teruslah mengedit</string>
+    <string name="discard">Buang</string>
+    <string name="keep_editing">Tetap edit</string>
     <string name="request_timeout">Waktu permintaan habis, silakan coba lagi</string>
     <string name="add_folder">Tambah Folder</string>
     <string name="no_folders">Tidak ada folder</string>
     <string name="folders_title_move">Pindahkan pesan ke</string>
     <string name="move">Pindah</string>
-    <string name="folders_manager">Manajer folder</string>
+    <string name="folders_manager">Pengelola Folder</string>
     <string name="folder_add_new">Tambahkan Folder Baru</string>
-    <string name="folder_name">Nama folder</string>
+    <string name="folder_name">Nama Folder</string>
     <string name="available_folders">Folder yang Tersedia</string>
     <string name="choose_folder_color">Pilih Warna Folder</string>
     <string name="folder_created">Folder Dibuat</string>
-    <string name="folder_invalid">Folder tidak dibuat karena nama yang tidak benar.</string>
+    <string name="folder_invalid">Folder tidak dibuat karena nama tidak valid.</string>
     <string name="folder_deleted">Folder Dihapus</string>
     <string name="folder_deleted_error">Kesalahan saat menghapus folder</string>
     <string name="save_new_folder">Simpan Folder Baru</string>
-    <string name="create_new_folder">Membuat folder</string>
-    <string name="all_mail">Semua surat</string>
+    <string name="create_new_folder">Buat Folder</string>
+    <string name="all_mail">Semua Surat</string>
     <string name="allmail_option">SEMUA SURAT</string>
-    <string name="empty_emails">Tidak ada email</string>
-    <string name="empty_email_list">Alamat surel tidak ada</string>
+    <string name="empty_emails">Tidak ada surel</string>
+    <string name="empty_email_list">Tidak ada alamat surel</string>
     <string name="no_contacts">Tidak ada kontak</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; menulis:</string>
     <string name="update_label">Perbarui Label</string>
-    <string name="folder_name_empty">Map harus punya nama</string>
-    <string name="max_labels_in_message">Pesan %1$s tidak boleh memiliki label lebih dari %2$d.</string>
-    <string name="delete">Menghapus</string>
+    <string name="folder_name_empty">Folder harus punya nama</string>
+    <string name="max_labels_in_message">Pesan %1$s tidak boleh memiliki lebih dari %2$d label.</string>
+    <string name="delete">Hapus</string>
     <string name="subject_copied">Subjek disalin ke papan klip</string>
-    <string name="details_copied">Rincian disalin ke clipboard</string>
-    <string name="saving">Penghematan...</string>
-    <string name="update_folder">Perbaharui Folder</string>
-    <string name="spam_score_100">Surel ini sepertinya berasal dari alamat ProtonMail namun berasal dari luar sistem kami dan gagal memenuhi persyaratan otentikasi kami. Surel ini mungkin palsu atau tidak diteruskan dengan benar!</string>
+    <string name="details_copied">Rincian disalin ke papan klip</string>
+    <string name="saving">Menyimpan...</string>
+    <string name="update_folder">Perbarui Folder</string>
+    <string name="spam_score_100">Surel ini sepertinya berasal dari alamat ProtonMail tapi datang dari luar sistem kami dan gagal memenuhi persyaratan autentikasi kami. Surel mungkin palsu atau tidak diteruskan dengan benar!</string>
     <string name="spam_score_101">Surel ini telah gagal dalam persyaratan otentikasi domainnya. Surel ini mungkin palsu atau tidak diteruskan dengan benar!</string>
-    <string name="spam_score_102">Pesan ini mungkin merupakan upaya pengelabuan. Mohon periksa pengirim dan konten untuk memastikan mereka sah. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a></string>
+    <string name="spam_score_102">Pesan ini mungkin merupakan upaya phishing. Mohon periksa pengirim dan konten untuk memastikan mereka sah. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">PELAJARI LEBIH LANJUT</a></string>
     <string name="print_from_template">Dari: %s</string>
-    <string name="print_to_template">Kepada: %s; &#160;</string>
-    <string name="print_cc_template">CC: %s; &#160;</string>
-    <string name="print_bcc_template">BCC: %s; &#160;</string>
-    <string name="contacts_invalid_type">Jenis tidak valid</string>
+    <string name="print_to_template">Kepada: %s;  </string>
+    <string name="print_cc_template">CC: %s;  </string>
+    <string name="print_bcc_template">BCC: %s;  </string>
+    <string name="contacts_invalid_type">Tipe tidak valid</string>
     <string name="signature_error">Kesalahan verifikasi</string>
-    <string name="signature_error_desc">Verifikasi tanda tangan konten ini telah gagal</string>
+    <string name="signature_error_desc">Verifikasi tanda tangan konten ini gagal</string>
     <string name="decryption_error">Kesalahan dekripsi</string>
-    <string name="decryption_error_desc">Dekripsi konten ini telah gagal</string>
+    <string name="decryption_error_desc">Dekripsi konten ini gagal</string>
     <string name="address">Alamat: </string>
     <string name="address_street">Jalan</string>
     <string name="address_city">Kota</string>
-    <string name="address_region">Wilayah (negara bagian atau propinsi)</string>
-    <string name="address_postcode">Kode Pos</string>
+    <string name="address_region">Wilayah (negara bagian/provinsi)</string>
+    <string name="address_postcode">Kode pos</string>
     <string name="address_country">Negara</string>
-    <string name="recheck_delinquency">Periksa lagi</string>
-    <string name="close_app">Tutup App</string>
-    <string name="empty_subject">(Tidak ada subjek)</string>
+    <string name="recheck_delinquency">Periksa Lagi</string>
+    <string name="close_app">Tutup Aplikasi</string>
+    <string name="empty_subject">(Tanpa judul)</string>
     <string name="contacts_unknown">Tidak diketahui</string>
     <string name="expand_collapse">Perluas/Perkecil</string>
-    <string name="learn_more"><u>Pelajari Lebih Lanjut</u></string>
+    <string name="learn_more">
+        <u>Pelajari Lebih Lanjut</u>
+    </string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Tingkatkan ke paket berbayar untuk mengirim dari alamat %s Anda.</string>
     <string name="digital_signature_verified">Tanda tangan digital telah diverifikasi</string>
@@ -776,30 +780,30 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="encrypted_contact_details">Rincian Kontak Terenkripsi</string>
     <string name="edit_contact_toolbar_title">Sunting %s</string>
     <string name="convert_question">Unggah kontak lokal</string>
-    <string name="convert_question_subtitle">Hal ini akan menyinkronkan kontak lokal pada perangkat Anda ke direktori kontak ProtonMail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui ProtonMail.</string>
-    <string name="refresh_contacts">Menyegarkan</string>
+    <string name="convert_question_subtitle">Ini akan mengunggah kontak lokal pada perangkat Anda ke direktori kontak ProtonMail Anda. Anda kemudian dapat mengakses kontak ini di perangkat Anda yang lain melalui ProtonMail.</string>
+    <string name="refresh_contacts">Segarkan</string>
     <string name="upload">Unggah</string>
-    <string name="invalid_email_some_contacts">Alamat email tidak berlaku untuk beberapa kontak Anda</string>
+    <string name="invalid_email_some_contacts">Alamat surel tidak valid untuk beberapa kontak Anda</string>
     <string name="protonmail_contacts">Kontak ProtonMail</string>
     <string name="device_contacts">Kontak Perangkat</string>
     <string name="print_date_template">Tanggal: %s</string>
-    <string name="print_attachment_template">Lampiran: %s; &#160;</string>
-    <string name="pm_me_changed">Mengirim pesan dari alamat @pm.me adalah fitur berbayar. Pesan Anda akan dikirim dari alamat utsma Anda %s</string>
-    <string name="pm_me_can_not_be_default">Tingkatkan ke paket berbayar untuk dapat menetapkan alamat %s Anda sebagai yang utama</string>
+    <string name="print_attachment_template">Lampiran: %s;  </string>
+    <string name="pm_me_changed">Mengirim pesan dari alamat @pm.me adalah fitur berbayar. Pesan Anda akan dikirim dari alamat bawaan Anda %s</string>
+    <string name="pm_me_can_not_be_default">Tingkatkan ke paket berbayar untuk dapat mengatur alamat %s Anda sebagai yang utama</string>
     <string name="dont_remind_again">Jangan ingatkan saya lagi</string>
     <string name="load_embedded_images">Muat gambar yang disematkan</string>
     <string name="remove_password">Hapus Kata Sandi</string>
     <string name="remove_password_question">Hapus Kata Sandi?</string>
     <string name="attachment_storage_value_current">Sedang dipilih: %dMB</string>
-    <string name="attachment_storage_value_current_unlimited">Saat ini dipilih: Tak Batas</string>
-    <string name="attachment_offline_max_storage">Mengatur jumlah ruang penyimpanan maksimum yang dapat digunakan ProtonMail di perangkat seluler Anda.</string>
+    <string name="attachment_storage_value_current_unlimited">Sedang dipilih: Tidak terbatas</string>
+    <string name="attachment_offline_max_storage">Atur jumlah ruang penyimpanan maksimum yang dapat digunakan ProtonMail di perangkat seluler Anda.</string>
     <string name="load_embedded_images_failed_no_network">Gagal memuat gambar yang disematkan. Mohon periksa koneksi jaringan Anda.</string>
     <string name="load_embedded_images_failed">Gagal memuat gambar yang disematkan.</string>
     <string name="attachment_storage_unlimited">%.2fMB dari Tanpa Batas</string>
     <string name="unlimited">Tanpa Batas</string>
     <string name="local_storage_cleared">Penyimpanan lokal dihapus</string>
     <string name="local_storage_clear">Hapus Penyimpanan Lokal</string>
-    <string name="recipient_popup_compose_to">Tulis ke</string>
+    <string name="recipient_popup_compose_to">Tulis untuk</string>
     <string name="recipient_popup_copy_address">Salin alamat</string>
     <string name="recipient_popup_see_details">Lihat rincian kontak</string>
     <string name="send_with_untrusted_key_title">Apakah Anda ingin mengirim dengan kunci yang tidak terpercaya?</string>
@@ -807,13 +811,13 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="resign_contact_title">Apakah Anda ingin menandatangani ulang kontak?</string>
     <string name="resign_contact_message">Verifikasi %s telah gagal: kontak tidak ditandatangani dengan benar. Anda harus menandatangani ulang kontak untuk mengirim pesan ke alamat ini atau mengubah kontak. Hal ini juga dapat terjadi ketika Anda telah memulihkan kata sandi dan mengatur ulang kunci Anda.</string>
     <!-- Sender locks -->
-    <string name="sender_lock_unencrypted">Pesan yang tidak terenkripsi</string>
-    <string name="sender_lock_zero_access">Disimpan dengan enkripsi tanpa akses</string>
+    <string name="sender_lock_unencrypted">Pesan tidak dienkripsi</string>
+    <string name="sender_lock_zero_access">Disimpan dengan enkripsi akses nol</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Dikirim oleh Anda dengan enkripsi end-to-end</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Dikirim oleh ProtonMail dengan enkripsi tanpa akses</string>
-    <string name="sender_lock_verification_failed">Verifikasi pengirim telah gagal</string>
+    <string name="sender_lock_sent_autoresponder">Dikirim oleh ProtonMail dengan enkripsi akses nol</string>
+    <string name="sender_lock_verification_failed">Verifikasi pengirim gagal</string>
     <string name="sender_lock_pgp_encrypted">Pesan terenkripsi PGP</string>
     <string name="sender_lock_pgp_verified">Pesan yang ditandatangani PGP dari alamat yang terverifikasi</string>
     <string name="sender_lock_pgp_encrypted_verified">Pesan terenkripsi PGP dari alamat terverifikasi</string>
@@ -822,51 +826,53 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="sender_lock_internal">Pesan terenkripsi end-to-end</string>
     <string name="sender_lock_internal_verified">Pesan terenkripsi end-to-end dari alamat terverifikasi</string>
     <!-- Composer locks -->
-    <string name="composer_lock_internal">Terenkripsi end-to-end</string>
+    <string name="composer_lock_internal">Dienkripsi end-to-end</string>
     <string name="composer_lock_internal_pinned">Terenkripsi end-to-end ke alamat terverifikasi</string>
     <string name="composer_lock_pgp_encrypted_pinned">Terenkripsi PGP</string>
     <string name="composer_lock_pgp_signed">Ditandatangani PGP</string>
     <string name="recipient_not_found_and_removed">Penerima tidak dapat ditemukan: %s dan telah dihapus</string>
-    <string name="recipient_error_and_removed">Terjadi galat saat mengambil informasi penerima dan penerima telah dihapus: %s</string>
+    <string name="recipient_error_and_removed">Kesalahan saat mengambil informasi penerima dan penerima telah dihapus: %s</string>
     <string name="send_anyway">Tetap kirim</string>
     <string name="expiration_error_title">Anda mengaktifkan pesan yang dapat kedaluwarsa, namun tidak semua penerima mendukung fitur ini.</string>
-    <string name="expiration_error_add_msg_password">Silahkan tambahkan kata sandi pesan untuk penerima berikut:</string>
-    <string name="expiration_error_disable_pgp_sending">Mohon menonaktifkan pengiriman PGP untuk mengaktifkan kedaluwarsa bagi penerima berikut:</string>
+    <string name="expiration_error_add_msg_password">Silakan tambahkan kata sandi pesan untuk penerima berikut:</string>
+    <string name="expiration_error_disable_pgp_sending">Mohon nonaktifkan pengiriman PGP untuk mengaktifkan fitur kedaluwarsa untuk penerima berikut:</string>
     <string name="expiration_error_proceed">Ketuk tetap kirim untuk mengirim tanpa kedaluwarsa ke penerima ini.</string>
-    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEBIH LANJUT</a></string>
-    <string name="no_items_found">Tidak ada barang yang ditemukan</string>
+    <string name="expiration_error_learn_more">
+        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">PELAJARI LEBIH LANJUT</a>
+    </string>
+    <string name="no_items_found">Item tidak ditemukan</string>
     <string name="channel_name_attachments">Lampiran</string>
-    <string name="channel_description_attachments">Menginformasikan tentang status unduhan lampiran</string>
+    <string name="channel_description_attachments">Menginformasikan status unduhan lampiran</string>
     <string name="channel_name_emails">Surel</string>
     <string name="channel_description_emails">Pemberitahuan surel masuk</string>
     <string name="channel_name_account">Akun</string>
     <string name="channel_description_account">Status akun</string>
     <string name="channel_name_ongoing_operations">Operasi yang sedang berlangsung</string>
     <string name="channel_description_ongoing_operations">Memperlihatkan semua operasi yang sedang berlangsung seperti
-		unduh pesan baru di latar belakang</string>
+unduh pesan baru di latar belakang</string>
     <string name="checking_mailbox">Memeriksa kotak pesan</string>
-    <string name="report_phishing">Laporkan pengelabuan</string>
+    <string name="report_phishing">Laporkan phishing</string>
     <string name="print">Cetak</string>
     <string name="phishing_dialog_title">Konfirmasi laporan phishing</string>
-    <string name="phishing_dialog_message">Melaporkan sebuah pesan sebagai upaya pengelabuan akan mengirim
-		pesan kepada kami, sehingga kami dapat menganalisan dan meningkatkan penyaring kami. Hal ini berati kami dapat
-		melihan konten dari pesan secara penuh.</string>
-    <string name="phishing_report_send_message_moved_to_spam">Laporan dikirim. Pesan dipindahkan ke spam.</string>
+    <string name="phishing_dialog_message">Pesan phising yang dilaporkan kepada kami
+akan kami analisis dan kami pakai untuk meningkatkan filter kami. Ini berarti, kami dapat
+membaca seluruh isi pesan tersebut.</string>
+    <string name="phishing_report_send_message_moved_to_spam">Laporan terkirim. Pesan dipindahkan ke spam.</string>
     <string name="report_send">Laporan terkirim</string>
     <string name="cannot_send_report_send">Tidak dapat mengirim laporan</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">Surel standar</string>
+    <string name="email_default">Surel Bawaan</string>
     <string name="email_private">Surel Pribadi</string>
     <string name="phone_private">Telepon Pribadi</string>
-    <string name="add_photo">Tambahkan foto</string>
+    <string name="add_photo">Tambah Foto</string>
     <string name="contact_display_name">\ue91c Nama Tampilan</string>
     <string name="add_new_email">\ue914 Tambahkan Alamat Surel</string>
     <string name="no_groups">Tidak ada grup</string>
     <string name="contact_vcard_note">Catatan</string>
     <string name="edit_contact">Ubah Kontak</string>
     <string name="create_contact_group">Buat Grup Kontak</string>
-    <string name="edit_contact_group">Sunting Grup Kontak</string>
+    <string name="edit_contact_group">Edit Grup Kontak</string>
     <string name="contact_groups_add_addresses">Tambahkan Alamat</string>
     <string name="contact_groups_manage_addresses">Kelola Alamat</string>
     <string name="contact_group_display_name">\ue91a Nama Tampilan</string>
@@ -877,15 +883,15 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="title_activity_connect_account">Hubungkan Akun</string>
     <string name="account_manager_add_account">Tambahkan Akun</string>
     <string name="account_manager_remove_all_accounts">Hapus semua akun</string>
-    <string name="account_manager_note">Anda dapat secara serentak masuk ke dalam jumlah tak terbatas dari akun ProtonMail berbayar dan satu akun gratis.</string>
+    <string name="account_manager_note">Anda dapat masuk ke akun ProtonMail berbayar tak terbatas dan satu akun gratis secara simultan.</string>
     <string name="account_manager_remove_all">Hapus semua akun</string>
     <string name="account_manager_logout">Keluar</string>
     <string name="account_manager_login">Masuk</string>
     <string name="manage_accounts_user_loggedout">%s (dikeluarkan)</string>
     <string name="manage_accounts_user_primary">%s (utama)</string>
     <string name="account_manager_remove">Hapus</string>
-    <string name="connect_account_login_title">Masuk ke akun Protonmail Anda</string>
-    <string name="default_error_message">Terjadi Galat</string>
+    <string name="connect_account_login_title">Masuk ke akun ProtonMail Anda</string>
+    <string name="default_error_message">Terjadi kesalahan</string>
     <string name="no_contact_groups">Tidak ada Grup Kontak</string>
     <string name="search_contacts_inside_group">Cari kontak dari dalam grup</string>
     <string name="contact_group_toolbar_title">%s (%s)</string>
@@ -898,54 +904,60 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="contact_group_saved">Grup disimpan</string>
     <string name="no_recipients">Tidak ada Penerima</string>
     <string name="contact_group_selected">%d Dipilih</string>
-    <string name="contact_group_deleted">Grup telah dihapus</string>
-    <string name="paid_plan_needed">Mohon tingkatkan ke paket berbayar untuk fitur premium ini</string>
+    <string name="contact_group_deleted">Grup Telah Dihapus</string>
+    <string name="paid_plan_needed">Silakan tingkatkan ke paket berbayar untuk fitur premium ini</string>
     <string name="composer_group_count">%1$s (%2$d Anggota)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Anggota)</string>
     <string name="address_successful_update">Alamat berhasil diperbarui</string>
     <plurals name="are_you_sure_delete_group">
-        <item quantity="other">Apakah Anda yakin ingin mengapus grup ini?</item>
+        <item quantity="other">Apakah Anda yakin ingin menghapus grup ini?</item>
     </plurals>
     <plurals name="group_deleted">
-        <item quantity="other">Grup telah dihapus</item>
+        <item quantity="other">Grup Dihapus</item>
     </plurals>
     <plurals name="are_you_sure_delete_contact">
         <item quantity="other">Anda yakin ingin menghapus kontak ini?</item>
     </plurals>
     <string name="members">Anggota</string>
     <string name="max_emails_in_group_title">Jumlah surel maksimum per grup tercapai</string>
-    <string name="max_emails_in_group_subtitle">Anda telah mencapai jumlah maksimum surel per grup (%1$d). Silahkan hapus %2$d barang.</string>
+    <string name="max_emails_in_group_subtitle">Anda telah mencapai jumlah maksimum surel per grup (%1$d). Silakan hapus %2$d item.</string>
     <string name="select_deselect_all">Pilih Semua</string>
     <string name="contact_group_name_hint">Pilih nama grup</string>
     <string name="contact_group_change_color">Ubah warna</string>
     <string name="fab_add_contact">Tambahkan kontak baru</string>
-    <string name="fab_add_contact_group">Tambahkan kontak grup baru</string>
+    <string name="fab_add_contact_group">Tambahkan grup kontak baru</string>
     <string name="contacts_add_photo_title">Tambahkan foto</string>
     <string name="contacts_add_photo_select_gallery">Pilih Dari Galeri</string>
-    <string name="contacts_add_photo_select_camera">Pilih Dari Kamera</string>
-    <string name="save_group_validation_error">Mohon sediakan nama grup</string>
+    <string name="contacts_add_photo_select_camera">Jepret Dari Kamera</string>
+    <string name="save_group_validation_error">Mohon masukkan nama grup</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Batas penyimpanan tercapai. Tidak dapat mengirim atau menerima surel.
-        Tekan untuk mempelajari lebih lanjut.</string>
+Tekan untuk mempelajari lebih lanjut.</string>
     <string name="storage_limit_warning_title">Peringatan</string>
-    <string name="storage_limit_reached_text">Anda telah mencapai 100% dari kapasitas penyimpanan Anda. Anda
-        tidak akan dapat mengirim atau menerima surel baru kecuali jika Anda menghapus secara permanen beberapa surel atau membeli penyimpanan
-        lebih.</string>
-    <string name="storage_limit_approaching_text">Anda telah mencapai 90% dari kapasitas penyimpanan Anda.
-        Pertimbangkan untuk membebaskan beberapa ruang atau membeli lebih banyak penyimpanan sebelum Anda kehabisan kapasitas.</string>
+    <string name="storage_limit_reached_text">Kapasitas penyimpanan Anda sudah mencapai 100%. Anda
+tidak akan dapat menerima surel kecuali Anda menghapus surel lainnya atau membayar penyimpanan
+lebih banyak.</string>
+    <string name="storage_limit_approaching_text">Kapasitas penyimpanan Anda sudah mencapai 90%.
+Silakan pertimbangkan untuk membebaskan ruang atau membayar penyimpanan lebih sebelum kapasitas penyimpanan Anda habis.</string>
     <string name="storage_limit_do_not_remind">JANGAN INGATKAN SAYA</string>
     <!-- endregion -->
     <string name="need_permissions_title">Izin</string>
     <string name="need_storage_permissions_text">Untuk menambahkan lampiran Anda harus mengizinkan
-        akses menuju penyimpanan.</string>
+akses menuju penyimpanan.</string>
     <string name="need_phone_permissions_text">Untuk menghubungi kontak ini Anda harus mengizinkan
-        akses ke Telepon.</string>
+akses ke Telepon.</string>
     <string name="push_notifications_alert_title">Notifikasi Pemberitahuan Push</string>
-    <string name="push_notifications_alert_subtitle">Pemberitahuan Push untuk ProtonMail tidak dapat berfungsi bilamana tanpa memperbarui Google Play Services.</string>
+    <string name="push_notifications_alert_subtitle">Pemberitahuan Push untuk ProtonMail tidak dapat berfungsi tanpa memperbarui layanan Google Play.</string>
     <string name="app_locked">Aplikasi terkunci</string>
     <string name="please_use_fingerprint">Mohon gunakan sidik jari Anda untuk membuka kunci aplikasi.</string>
     <string name="use_pin_instead">Gunakan PIN sebagai gantinya</string>
-    <string name="undisclosed_recipients">Penerima yang tidak diungkapkan</string>
+    <!-- strings used for biometric enrollment -->
+    <string name="no_biometric_data_enrolled">Tidak ada data biometrik yang didaftarkan</string>
+    <string name="log_in_using_biometric_credential">Buka kunci dengan kredensial biometrik</string>
+    <string name="unlock_using_biometrics">Buka kunci dengan biometrik</string>
+    <string name="biometric_error_hw_not_available">Perangkat keras biometrik tidak tersedia.</string>
+    <!-- end strings used for biometric enrollment -->
+    <string name="undisclosed_recipients">Penerima Dirahasiakan</string>
     <string name="could_not_delete_attachment">Lampiran tidak dapat dihapus saat proses mengunggah</string>
     <string name="manage_accounts">Kelola akun</string>
     <!-- region Settings -->
@@ -953,84 +965,87 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <string name="account_settings">Pengaturan Akun</string>
     <!-- region Acc Settings -->
     <string name="account">Akun</string>
-    <string name="subscription">Berlangganan</string>
-    <string name="plan_and_user">Rencana</string>
-    <string name="plan">Rencana</string>
-    <string name="payment_method">Metode pembayaran</string>
+    <string name="subscription">Langganan</string>
+    <string name="plan_and_user">Paket</string>
+    <string name="plan">Paket</string>
+    <string name="payment_method">Metode Pembayaran</string>
     <string name="password_manager">Pengelolaan kata sandi</string>
-    <string name="recovery_email">Alamat Surel untuk Pemulihan</string>
+    <string name="recovery_email">Surel pemulihan</string>
     <string name="storage">Ukuran Kotak Surat</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Alamat</string>
-    <string name="default_mail_address">Alamat surel default</string>
-    <string name="default_address">Alamat standar</string>
-    <string name="display_name_n_signature">Nama Tampilan &amp; tanda tangan</string>
+    <string name="default_mail_address">Alamat surel bawaan</string>
+    <string name="default_address">Alamat bawaan</string>
+    <string name="display_name_n_signature">Nama tampilan &amp; tanda tangan</string>
     <string name="display_name">Nama tampilan</string>
     <string name="edit_display_name">Edit nama tampilan</string>
     <string name="signature">Tanda tangan</string>
-    <string name="edit_signature">Aktifkan Tanda Tangan</string>
-    <string name="mobile_signature">Tanda tangan seluler</string>
+    <string name="edit_signature">Aktifkan tanda tangan</string>
+    <string name="mobile_signature">Tanda tangan mobile</string>
     <string name="edit_mobile_signature">Aktifkan tanda tangan seluler</string>
-    <string name="default_mobile_signature">Dikirim dari ponsel ProtonMail</string>
-    <string name="plus_account_required_mobile_signature">ProtonMail Plus diperlukan untuk mengedit tanda tangan mobile</string>
+    <string name="default_mobile_signature">Dikirim dari ProtonMail seluler</string>
+    <string name="plus_account_required_mobile_signature">ProtonMail Plus diperlukan untuk mengedit tanda tangan seluler</string>
     <string name="mobile_signature_is_premium">Mengubah Tanda Tangan Seluler hanya diizinkan hanya untuk pengguna berbayar</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Tunda</string>
     <string name="notifications_snooze">Pemberitahuan Tunda</string>
-    <string name="notifications_snooze_finishing">Pemberitahuan akan dilanjutkan dalam $s min</string>
-    <string name="snooze_notifications">Tunda Notifikasi</string>
-    <string name="snooze_notifications_adjust">Menyesuaikan</string>
-    <string name="notifications_snoozed">Notifikasi ditunda</string>
+    <string name="notifications_snooze_finishing">Pemberitahuan akan dilanjutkan dalam $s mnt</string>
+    <string name="snooze_notifications">Tunda Pemberitahuan</string>
+    <string name="snooze_notifications_adjust">Sesuaikan</string>
+    <string name="notifications_snoozed">Pemberitahuan ditunda</string>
     <string name="notifications_snooze_scheduled">Dijadwalkan</string>
-    <string name="notifications_snooze_scheduled_settings">Setelan Tunda Terjadwal</string>
+    <string name="notifications_snooze_scheduled_settings">Pengaturan Tunda Terjadwal</string>
     <string name="notifications_snooze_current_status">Status</string>
     <string name="snooze_start_time">Waktu mulai:</string>
-    <string name="snooze_end_time">Akhir waktu:</string>
+    <string name="snooze_end_time">Waktu akhir:</string>
     <string name="snooze_repeat">Ulangi:</string>
     <plurals name="quick_snooze_resume_min">
         <item quantity="other">Pemberitahuan akan dilanjutkan dalam %d menit</item>
     </plurals>
     <string name="quick_snooze_resume_hours">Pemberitahuan akan dilanjutkan dalam %1$d jam dan %2$d menit</string>
     <string name="minutes">Menit</string>
-    <string name="set_custom_quick_snooze">Tetapkan nilai tunda cepat khusus</string>
+    <string name="set_custom_quick_snooze">Atur waktu tunda khusus</string>
     <string name="turn_off">Matikan</string>
     <string name="snooze_will_repeat">Tunda akan berulang</string>
-    <string name="quick_and_scheduled_enabled">Snooze cepat dan Tunda Terjadwal aktif</string>
-    <string name="quick_only_enabled">Cepat Tunda aktif</string>
-    <string name="scheduled_only_enabled">Snooze terjadwal aktif</string>
-    <string name="quick_and_scheduled_disabled">Tunda cepat dan Tunda Tunai Terjadwal dinonaktifkan</string>
+    <string name="work_days">Hari kerja</string>
+    <string name="weekends">Akhir pekan</string>
+    <string name="every_day">Setiap hari</string>
+    <string name="quick_and_scheduled_enabled">Tunda Cepat dan Tunda Terjadwal aktif</string>
+    <string name="quick_only_enabled">Tunda Cepat aktif</string>
+    <string name="scheduled_only_enabled">Tunda Terjadwal aktif</string>
+    <string name="quick_and_scheduled_disabled">Tunda Cepat dan Tunda Terjadwal nonaktif</string>
     <string name="scheduled_snooze_on">Dijadwalkan (Aktif)</string>
-    <string name="scheduled_snooze_off">Dijadwalkan (Off)</string>
+    <string name="scheduled_snooze_off">Dijadwalkan (Tidak aktif)</string>
     <!-- endregion -->
     <string name="mailbox">Kotak Surat</string>
     <string name="privacy">Privasi</string>
     <string name="auto_download_messages_title_short">Unduh-otomatis</string>
-    <string name="auto_download_messages_title">Pesan unduh-otomatis</string>
-    <string name="auto_download_messages_subtitle">Ketika opsi ini diaktifkan, badan pesan akan diunduh secara otomatis setiap kali Anda menerima pemberitahuan surel baru (hal ini akan menggunakan lebih banyak data). Jika opsi ini tidak diaktifkan, badan pesan hanya akan diunduh saat Anda membuka surel. (Catatan: dengan opsi mana pun, jika Anda menghapus cache atau keluar, Anda tidak akan dapat membaca badan pesan saat luring.)</string>
-    <string name="settings_background_sync">Sinkronisasi Latar Belakang</string>
+    <string name="auto_download_messages_title">Unduh-otomatis pesan</string>
+    <string name="auto_download_messages_subtitle">Ketika opsi ini diaktifkan, pesan akan diunduh secara otomatis setiap kali anda menerima pemberitahuan email baru (hal ini akan menggunakan lebih banyak data). Jika opsi ini tidak diaktifkan, pesan hanya akan diunduh saat anda membuka email. (Catatan: dengan opsi mana pun, jika anda menghapus cache atau keluar, anda tidak akan dapat membaca badan pesan saat offline.)</string>
+    <string name="settings_background_sync">Sinkronkan di Latar Belakang</string>
     <string name="settings_auto_show_images">Tampilkan Otomatis Gambar Jarak Jauh</string>
     <string name="settings_auto_show_embedded_images">Tampilkan Otomatis Gambar yang Disematkan</string>
-    <string name="settings_prevent_taking_screenshots">Cegah pengambilan Screenshot</string>
+    <string name="settings_prevent_taking_screenshots">Cegah pengambilan Tangkapan layar</string>
     <string name="hyperlink_confirmation">Minta tautan konfirmasi</string>
-    <string name="labels_and_folders">Label &amp; Map </string>
+    <string name="labels_and_folders">Label &amp; Folder </string>
     <string name="labels_manage">Pengelola Label</string>
-    <string name="folders_manage">Pengelola Map</string>
+    <string name="folders_manage">Pengelola Folder</string>
     <string name="swiping_gesture">Gerakan usap</string>
     <string name="swipe_action_left">Geser dari kiri ke kanan</string>
     <string name="swipe_action_right">Geser dari kanan ke kiri</string>
     <!-- region Swipe Actions -->
-    <string name="swipe_action_chooser_title">Pilih tindakan gesek</string>
-    <string name="swipe_action_trash">Pesan dipindahkan ke folder Sampah</string>
-    <string name="swipe_action_trash_short">Pindahkan ke berkas Sampah</string>
-    <string name="swipe_action_star">Bintang pesan diperbarui</string>
+    <string name="swipe_action_chooser_title">Pilih tindakan usap</string>
+    <string name="swipe_action_trash">Pesan dipindahkan ke sampah</string>
+    <string name="swipe_action_trash_short">Pindahkan ke sampah</string>
+    <string name="swipe_action_star">Pesan berbintang diperbarui</string>
     <string name="swipe_action_spam">Pesan ditandai sebagai spam</string>
-    <string name="swipe_action_archive">Pesan arsip</string>
-    <string name="swipe_action_mark_read">Pesan ditandai sebagai telah dibaca</string>
+    <string name="swipe_action_archive">Pesan diarsipkan</string>
+    <string name="swipe_action_mark_read">Pesan ditandai telah dibaca</string>
     <plurals name="action_move_to_trash">
-        <item quantity="other">Pesan telah dipindahkan ke sampah</item>
+        <item quantity="other">Pesan telah dipindahkan ke folder sampah</item>
     </plurals>
     <plurals name="action_move_to_spam">
-        <item quantity="other">Pesan telah ditandai sebagai spam</item>
+        <item quantity="other">Pesan ditandai sebagai spam</item>
     </plurals>
     <plurals name="action_move_to_archive">
         <item quantity="other">Pesan telah diarsipkan</item>
@@ -1041,41 +1056,62 @@ ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda 
     <!-- endregion -->
     <string name="app_settings">Pengaturan aplikasi</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Notifikasi Push</string>
-    <string name="extended_notifications">Pemberitahuan Diperpanjang</string>
-    <string name="extended_notifications_description">Aktifkan fitur ini untuk melihat pengirim\ndari surel dalam pemberitahuan push.</string>
-    <string name="notification_settings">Pengaturan pemberitahuan</string>
-    <string name="auto_lock">Otomatis terkunci</string>
-    <string name="auto_lock_app">Aplikasi Otomatis terkunci</string>
-    <string name="auto_lock_description">Untuk mengaktifkan fitur ini guna kunci otomatis Aplikasi\nAnda dan gunakan kode PIN atau sidik jari\nuntuk membukanya.</string>
+    <string name="push_notifications">Notifikasi</string>
+    <string name="extended_notifications">Notifikasi diperpanjang</string>
+    <string name="extended_notifications_description">Aktifkan fitur ini untuk melihat pengirim\nemail dalam notifikasi.</string>
+    <string name="notification_settings">Pengaturan Pemberitahuan</string>
+    <string name="auto_lock">Kunci otomatis</string>
+    <string name="auto_lock_app">Kunci otomatis aplikasi</string>
+    <string name="auto_lock_description">Aktifkan fitur ini untuk mengunci otomatis aplikasi\nanda dan gunakan kode PIN atau sidik jari\nuntuk membukanya.</string>
     <string name="change_pin_code">Ubah kode PIN</string>
-    <string name="auto_lock_timer">Penghitu waktu penguncian otomatis</string>
+    <string name="auto_lock_timer">Timer kunci otomatis</string>
     <string name="unlock_with_fingerprint">Buka kunci dengan sidik jari</string>
+    <string name="connections_via_third_parties">Route alternatif</string>
+    <string name="allow_secure_connections_via_third_parties">Izinkan route alternatif</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Jika situs Proton di blokir, pengaturan ini memungkinkan aplikasi untuk mencoba perutean jaringan alternatif untuk mencapai Proton, yang mana dapat berguna untuk melewati/mem-bypass firewall atau masalah jaringan. Kami sarankan untuk tetap mengaktifkan pengaturan ini untuk kendala yang lebih baik.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Jika situs Proton diblokir, pengaturan ini memungkinkan aplikasi untuk mencoba perutean jaringan alternatif untuk mencapai Proton, yang mana dapat berguna untuk melewati/mem-bypass firewall atau masalah jaringan. Kami sarankan untuk tetap mengaktifkan pengatura ini untuk keaandalan yang lebih baik.<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Pelajari lebih lanjut</a></string>
     <string name="app_language">Bahasa Aplikasi</string>
     <string name="custom_language_dialog_title">Pilih Bahasa Aplikasi</string>
     <string name="auto_detect">Deteksi otomatis</string>
     <string name="combined_contacts">Kontak Gabungan</string>
-    <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat surel menggunakan kontak dari semua akun masuk Anda.</string>
+    <string name="turn_combined_contacts_on">Aktifkan fitur ini untuk otomatis melengkapi alamat email menggunakan kontak dari semua akun masuk anda.</string>
     <string name="local_cache_management">Pengelola Cache Lokal</string>
     <string name="cache_cleared">Cache Lokal Disegarkan</string>
     <string name="empty_cache">Kosongkan Cache</string>
     <!-- endregion -->
     <string name="enabled">Diaktifkan</string>
-    <string name="disabled">Cacat</string>
+    <string name="disabled">Dinonaktifkan</string>
     <string name="app_info">Informasi Aplikasi</string>
     <string name="app_version">Versi Aplikasi</string>
     <!-- endregion -->
     <!-- region Multi Account -->
     <string name="primary_account">Akun Utama</string>
-    <string name="make_primary_account">Buat %s sebagai Akun Utama Anda?</string>
+    <string name="make_primary_account">Buat %s sebagai Akun Utama anda?</string>
     <string name="logout_account_question">Keluar %s?</string>
     <string name="remove_account_question">Hapus %s?</string>
     <string name="signed_in_with">Masuk dengan %s</string>
     <string name="signed_in_with_logged_out_from">Keluar dari %1$s dan masuk dengan %2$s</string>
     <string name="connect_account_limit_title">Batas tercapai</string>
-    <string name="connect_account_limit_subtitle">Anda tidak dapat menambahkan akun ProtonMail gratis lainnya. Hanya satu akun ProtonMail gratis yang dapat ditambahkan. Harap keluar dari akun gratis Anda yang lain atau tingkatkan salah satu akun gratis Anda ke akun berbayar.</string>
+    <string name="connect_account_limit_subtitle">Anda tidak dapat menambahkan akun ProtonMail gratis lainnya. Hanya satu akun ProtonMail gratis yang dapat ditambahkan. Harap keluar dari akun gratis anda atau tingkatkan ke akun berbayar.</string>
     <string name="switch_accounts_question">Ganti akun?</string>
     <string name="switch_to_account">Ganti ke %s</string>
-    <string name="login_failure_missing_keys">Akun yang akan Anda tambahkan belum punya kunci. Tambahkan dulu akun ini sebagai akun pertama di aplikasi (atau masuk via web) untuk menghasilkan kunci, lalu tambahkan akun ini sebagai akun tambahan di aplikasi.</string>
+    <string name="login_failure_missing_keys">Akun yang anda tambahkan belum punya kunci. Harap tambahkan akun ini sebagai akun pertama di aplikasi, atau masuk via web, untuk menambahkan kunci dan lalu tambahkan akun tersebut sebagai akun tambahan di aplikasi.</string>
     <!-- endregion -->
+    <!-- region Compose shortcut -->
+    <string name="shortcut_compose">Tulis</string>
+    <string name="shortcut_compose_new_message">Tulis pesan baru</string>
+    <!-- endregion -->
+    <!-- region Troubleshoot screen -->
+    <string name="troubleshoot_dialog_title">Masalah umum koneksi dan solusi</string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Tidak ada akses internet&lt;/i&gt; - Pastikan koneksi internet anda berfungsi.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;masalah Penyedia Layanan Internet (ISP)&lt;/i&gt; - Coba sambungkan ke Proton dengan koneksi yang berbeda (atau gunakan &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Dibokir Pemerintah&lt;/i&gt; - Negara anda mungkin memblokir akses ke Proton. Coba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (atau VPN yang lainnya) atau &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; untuk mengakses ke Proton.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;gangguan Antivirus&lt;/i&gt; - Nonaktifkan atau hapus sementara perangkat lunak antivirus anda.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;gangguan Proksi/Firewall&lt;/i&gt; - Nonaktifkan proksi atau firewall apa pun, atau hubungi pengelola jaringan anda.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton sedang offline/down&lt;/i&gt; - Cek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; untuk status sistem kami.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masih tidak dapat menemukan solusi&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://protonmail.com/support-form\"&gt;form dukukan kami&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), atau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+</string>
+    <!-- endregion -->
+    <string name="allowed">Diizinkan</string>
+    <string name="denied">Ditolak</string>
 </resources>

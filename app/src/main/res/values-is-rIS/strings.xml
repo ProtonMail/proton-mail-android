@@ -20,7 +20,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">DULRITAÐUR TÖLVUPÓSTUR</string>
-    <string name="secure_email_swiss">Öruggur tölvupóstur <br/> hýstur í Sviss</string>
+    <string name="secure_email_swiss">Öruggur tölvupóstur\nhýstur í Sviss</string>
     <string name="decrypt_mailbox">Afkóða <b>pósthólf</b></string>
     <string name="decrypt">Afkóða</string>
     <string name="user_sign_in">Innskráning notanda</string>
@@ -35,13 +35,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_password">Lykilorð innskráningar</string>
     <string name="mailbox_password">Lykilorð á pósthólfi</string>
     <string name="two_factor_code">Tveggja-þátta lykilkóði</string>
-    <string name="processing_request">Beiðnin þín er í vinnslu</string>
+    <string name="processing_request">Beiðnin þín er þegar í vinnslu</string>
     <!-- should check for html tag -->
     <string name="need_account_sign_up">Vantar þig aðgang? Skráðu þig.</string>
     <string name="need_to_be_logged_in">Þú ert ekki innskráð(ur)!</string>
     <string name="forgot_password">Gleymt lykilorð?</string>
-    <string name="reset_mailbox_password">Endurstilla lykilorð á pósthólfi</string>
-    <string name="forgot_mailbox_password">Til að endurstilla lykilorðið á pósthólfinu, notaðu þá vefútgáfu ProtonMail á protonmail.com</string>
+    <string name="reset_mailbox_password">ENDURSTILLA LYKILORÐ Á PÓSTHÓLFI</string>
+    <string name="forgot_mailbox_password">Til að endurstilla lykilorðið á pósthólfinu, skaltu nota vefútgáfu ProtonMail á protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Mistókst að hlaða inn efni. Virkjaðu Chrome</string>
     <string name="error_chrome_not_found">Mistókst að hlaða inn efni. Settu upp Chrome</string>
@@ -57,19 +57,19 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network">Engin nettenging</string>
     <string name="no_network_queued">Engin nettenging, skilaboð í biðröð</string>
     <string name="update_app_title">Uppfærsla nauðsynleg</string>
-    <string name="update_app">Ekki er hægt að nota Protonmail-forritið fyrr en það hefur verið uppfært</string>
-    <string name="api_offline_title">Protonmail API-forritsviðmót er ótengt</string>
-    <string name="api_offline">ProtonMail er ekki tengt við netið. Athugaðu https://protonstatus.com eða https://twitter.com/protonmail til að sjá stöðuna núna.</string>
+    <string name="update_app">Ekki er hægt að nota ProtonMail-forritið fyrr en það hefur verið uppfært</string>
+    <string name="api_offline_title">ProtonMail API-forritsviðmót er ótengt</string>
+    <string name="api_offline">ProtonMail er í augnablikinu án nettengingar, skoðaðu síðustu stöðu mála á Twitter: https://twitter.com/protonmail</string>
     <string name="cannot_open">Gat ekki opnað skrá</string>
     <string name="downloaded_attachment">Sótti %s</string>
     <string name="edit_contact_validation">Settu inn gilt nafn og tölvupóstfang</string>
     <string name="contact_saved">Tengiliður vistaður</string>
-    <string name="contact_saved_offline">Tengiliður vistaður. Hann verður samstilltur þegar tenging verður tiltæk.</string>
+    <string name="contact_saved_offline">Tengiliður vistaður, verður samstilltur næst þegar nettenging er til staðar</string>
     <string name="contact_exist">Tölvupóstfang tengiliðar þegar til</string>
     <string name="invalid_email">Tölvupóstfang er ekki gilt</string>
     <string name="duplicate_email">Tölvupóstfang er tvítekið</string>
     <string name="invalid_code">Kóði er ekki gildur</string>
-    <string name="message_drafted">Sending skilaboða mistókst. Skilaboðin þín eru vistuð í Drög-möppunni.</string>
+    <string name="message_drafted">Sending skilaboða mistókst. Skilaboðin eru vistuð í Drög-möppunni</string>
     <string name="message_drafted_reason">%s er ekki til.\nGet ekki afhent póst.</string>
     <string name="open_drawer">Opna</string>
     <string name="close_drawer">Loka</string>
@@ -92,15 +92,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Rusl</string>
     <string name="spam">Ruslpóstur</string>
     <string name="contacts">Tengiliðir</string>
-    <string name="contact_groups">Tengiliðahópar</string>
+    <string name="contact_groups">Hópar tengiliða</string>
     <string name="search_contacts">Leita að tengiliðum</string>
-    <string name="fetching_contacts">Sæki Protonmail tengiliði...</string>
+    <string name="fetching_contacts">Sæki ProtonMail tengiliði...</string>
     <string name="fetching_contacts_success">Það tókst að endurlesa tengiliði</string>
     <string name="fetching_contacts_failure">Ekki tókst að endurlesa tengiliði</string>
     <string name="search">Leita</string>
     <string name="search_messages">Leita í skilaboðum</string>
     <string name="no_search_results">Engar leitarniðurstöður</string>
-    <string name="compose">Samsetning</string>
+    <string name="compose">Semja skilaboð</string>
     <string name="compose_message">Skrifa skilaboð</string>
     <string name="empty_folder">Tóm mappa</string>
     <string name="view_headers">Skoða hausa</string>
@@ -123,8 +123,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_messages">Engin skilaboð</string>
     <string name="no_labels">Engar merkingar</string>
     <string name="to">Til</string>
-    <string name="cc">Cc</string>
-    <string name="bcc">Bcc</string>
+    <string name="cc">Afrit (Cc)</string>
+    <string name="bcc">Falið afrit (Bcc)</string>
     <string name="to_prefix">Til:</string>
     <string name="cc_prefix">Cc:</string>
     <string name="bcc_prefix">Bcc:</string>
@@ -140,7 +140,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="subject">Viðfangsefni</string>
     <string name="email_subject">Viðfangsefni pósts</string>
     <string name="define_message_password">Lykilorð skilaboða</string>
-    <string name="confirm_message_password">Staðfestu lykilorð</string>
+    <string name="confirm_message_password">Staðfesta lykilorð</string>
     <string name="define_password_hint">Skilgreina vísbendingu (valkvætt)</string>
     <string name="message_passwords_do_not_match">Innskráningarlykilorðin stemma ekki</string>
     <string name="message_mailbox_passwords_do_not_match">Lykilorð á pósthólfi stemma ekki</string>
@@ -173,7 +173,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">\u0020 %d viðhengi</item>
     </plurals>
     <string name="add_attachment">Bæta við viðhengi</string>
-    <string name="select_file">Veldu skrár</string>
+    <string name="select_file">Velja skrá</string>
     <string name="attach_file">Hengja við skrá</string>
     <string name="take_photo">Taka ljósmynd</string>
     <string name="problem_taking_photo">Vandamál kom upp við að taka mynd</string>
@@ -198,7 +198,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no">Nei</string>
     <string name="okay">Í lagi</string>
     <string name="report_bugs">Tilkynna villur</string>
-    <string name="send_report">Senda inn skýrslu</string>
+    <string name="send_report">Senda skýrslu</string>
     <string name="bug_title">Titill</string>
     <string name="bug_description">Lýsing á villu</string>
     <string name="sending_report">Sendi inn skýrslu...</string>
@@ -207,17 +207,19 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="not_received_report_offline">Án nettengingar! Skýrsla verður send þegar tenging næst</string>
     <string name="forward_prefix">Áfram:</string>
     <string name="original_message_divider">-------- Upprunaleg skilaboð --------</string>
-    <string name="invalid_email_address">Vistfangið \'%s\' er ógilt</string>
+    <string name="invalid_email_address">Tölvupóstfangið \'%s\' er ógilt</string>
+    <string name="invalid_email_address_removed">Tölvupóstfangið \'%s\' er ógilt og var fjarlægt</string>
     <string name="no_recipients_specified">Bættu við a.m.k. einum viðtakanda</string>
     <string name="no_password_specified">Gildistíma er einungis hægt að stilla á full-dulrituðum skilaboðum. Stilltu lykilorð fyrir þá viðtakendur sem ekki eru með ProtonMail.</string>
     <string name="attachment_limit">Viðhengi eru takmörkuð við %1$s. Alls geta viðhengi verið %2$s.</string>
     <string name="sending_message">Sendi skilaboð...</string>
     <string name="sending_message_offline">Án nettengingar, sett í biðröð til að senda síðar...</string>
     <string name="mailbox_password_changed">Breytt lykilorð á pósthólfi</string>
-    <string name="go_to_mailbox_login">Fara í innskráningu á pósthólf til að setja inn lykilorð á pósthólfi?</string>
+    <string name="go_to_mailbox_login">Go to mailbox login to enter updated mailbox password?</string>
     <string name="go_to_inbox">Fara í innhólfið mitt</string>
     <string name="message_sent">Skilaboð send</string>
     <string name="message_failed">Mistókst að senda skilaboð</string>
+    <string name="message_sending_failures">%d villur við sendingu skilaboða</string>
     <string name="storage_limit">Takmörk geymslurýmis</string>
     <string name="storage_limit_warning">Nálgast takmörk geymslurýmis</string>
     <string name="do_not_show_again">Ekki birta þetta aftur</string>
@@ -231,7 +233,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="enter">Setja inn</string>
     <string name="cancel">Hætta við</string>
     <string name="close">Loka</string>
-    <string name="passwords">Lykilorða-umsýsla</string>
+    <string name="passwords">Lykilorðaumsýsla</string>
     <string name="change_password">Breyta lykilorði</string>
     <string name="change_login_password">Breyta lykilorði innskráningar</string>
     <string name="change_mailbox_password">Breyta lykilorði á pósthólfi</string>
@@ -259,12 +261,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sound">Hljóð án titrings</string>
     <string name="vibration">Titringur án hljóðs</string>
     <string name="both_sound_and_vibration">Hljóð og titringur</string>
-    <string name="display_name_banned_chars">Ógilt birtingarnafn. \'&gt;\' og \'&lt;\' eru ekki leyfileg</string>
+    <string name="display_name_banned_chars">Ógilt birtingarnafn. \'&gt;\' og \'&lt;\' eru ekki leyfilegt</string>
     <string name="cont">Halda áfram</string>
     <string name="email_verification_code">Við munum senda sannvottunarkóða á tölvupóstfangið hér fyrir ofan.</string>
     <string name="sms_verification_code">Við munum senda sannvottunarkóða á símanúmerið hér fyrir ofan.</string>
     <string name="send_verification_code">Senda sannvottunarkóða</string>
-    <string name="resend_verification_code">Senda aftur</string>
+    <string name="resend_verification_code">Endursenda</string>
     <string name="enter_verification_code">Settu inn sannvottunarkóða</string>
     <string name="verify">Sannreyna</string>
     <string name="reply_prefix_on">Kveikt</string>
@@ -272,11 +274,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Setja upp notandaaðganginn þinn</string>
     <string name="create_account">Búa til notandaaðgang</string>
     <string name="create_passwords">Setja lykilorð</string>
-    <string name="sign_up">Skráðu þig</string>
+    <string name="sign_up">Nýskrá</string>
     <string name="caps_username">Notandanafn</string>
     <string name="caps_login_password">Lykilorð</string>
     <string name="caps_two_factor">Tveggja-þátta lykilkóði</string>
-    <string name="caps_confirm_password">Staðfestu lykilorð</string>
+    <string name="caps_confirm_password">Staðfesta lykilorð</string>
     <string name="caps_confirm_mailbox_password">Staðfestu lykilorð fyrir pósthólf</string>
     <string name="caps_optional_notification_email">PÓSTUR TIL ENDURHEIMTINGAR LYKILORÐS (VALFRJÁLST)</string>
     <string name="caps_optional">*VALFRJÁLST</string>
@@ -284,16 +286,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="create_mailbox_password">Útbúa lykilorð</string>
     <string name="confirm_mailbox_password">Staðfestu lykilorð fyrir pósthólf</string>
     <string name="password_note">&lt;bAthugaðu:&lt;/b&gt; Þetta er notað til að dulrita og afkóða skilaboðin þín.
-        Ekki týna þessu lykilorði - við getum ekki endurheimt það. Ef þú týnir lykilorðinu muntu ekki geta lesið póstinn þinn.</string>
+Ekki týna þessu lykilorði - við getum ekki endurheimt það. Ef þú týnir lykilorðinu muntu ekki geta lesið póstinn þinn.</string>
     <string name="username_note">&lt;bAthugaðu:&lt;/b&gt; Notandanafnið er líka vistfang þitt hjá ProtonMail</string>
     <string name="terms_and_conditions">Með því að nota ProtonMail, samþykkir þú\n
-        <a href="https://protonmail.com/terms-and-conditions">ákvæði okkar og skilyrði</a> auk <a href="https://protonmail.com/privacy-policy">stefnu okkar varðandi gagnaleynd</a></string>
+<a href="https://protonmail.com/terms-and-conditions">ákvæði okkar og skilyrði</a> auk <a href="https://protonmail.com/privacy-policy">stefnu okkar varðandi gagnaleynd</a></string>
     <string name="human_verification">Mennskupróf</string>
     <string name="human_verification_subtitle">Til að koma í veg fyrir misnotkun á ProtonMail,\nverðum við að ganga úr skugga um að þú sért mannvera.</string>
     <string name="select_options">Veldu einn af eftirfarandi möguleikum:</string>
     <string name="no_verification_methods_found">Engar staðfestingaraðgerðir fundust</string>
     <string name="email_verification">Sannvottun tölvupósts</string>
-    <string name="phone_verification">Sannprófun símanúmers</string>
+    <string name="phone_verification">Sannvottun símanúmers</string>
     <string name="existing_email_address">Settu inn núverandi tölvupóstfangið þitt</string>
     <string name="phone_number">Settu inn símanúmerið þitt</string>
     <string name="encryption_setup">Uppsetning dulritunar</string>
@@ -306,30 +308,32 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_title_add">Bæta við merkingu</string>
     <string name="labels_title">Merkingar</string>
     <string name="labels_create">Bæta við merkingu</string>
-    <string name="label_name">Heiti merkingar</string>
-    <string name="label_name_empty">Heiti merkingar er nauðsynlegt</string>
+    <string name="label_name">Heiti merkis</string>
+    <string name="label_name_empty">Merki þarf að hafa nafn</string>
     <string name="label_name_duplicate">Merking með þessu nafni er þegar til staðar</string>
     <string name="label_created">Bjó til merkingu</string>
     <string name="label_invalid">Merkingu var ekki bætt við því hún er með óleyfilegt heiti.</string>
     <string name="undo">Afturkalla</string>
     <string name="customize_swipe_actions">Sérsníða aðgerðir við stroku</string>
     <string name="message_details_swipe_info">Þú getur snúið aftur á skjáinn með pósthólfinu
-        með því að strjúka frá vinstri til hægri, og sett þessi skilaboð í RUSL með því að strjúka frá hægri til vinstri</string>
+með því að strjúka frá vinstri til hægri, og sett þessi skilaboð í RUSL með því að strjúka frá hægri til vinstri</string>
     <string name="composing_message_scroll_info">Þú getur skrunað upp eða niður á ritilspjaldinu með því að strjúka yst á hægri jaðri ritilspjaldsins</string>
-    <string name="message_can_not_edit">Get ekki svarað eða sent áfram, þessi skilaboð hafa ekki verið send.</string>
+    <string name="message_can_not_edit">Get ekki svarað eða sent áfram, þessi skilaboð hafa ekki verið send</string>
     <string name="label_apply">Virkja</string>
     <string name="label_delete">Eyða</string>
     <string name="label_add">Bæta við</string>
     <string name="no_browser_found">Settu upp vafraforrit til að ljúka þessari aðgerð</string>
     <string name="no_application_found">Ekkert forrit fannst sem getur meðhöndlað þessa aðgerð</string>
-    <string name="no_application_found_or_link_invalid">Ekkert forrit fannst sem getur meðhöndlað þessa aðgerð eða að slóðin er ógild</string>
+    <string name="no_application_found_or_link_invalid">Ekkert forrit fannst sem getur meðhöndlað þessa aðgerð eða að vefslóðin er ógild</string>
     <string name="also_archive">Einnig safn</string>
     <string name="label_deleted">Merkingu eytt</string>
     <string name="label_deleted_error">Villa kom upp við að eyða merkingu</string>
+    <string name="message_deleted_error">Villa kom upp við eyðingu á sumum skilaboðum. Gætu skilaboðin verið í sendingarferli?!</string>
     <string name="respond_inline">Svara innan-texta</string>
     <string name="no_connectivity_detected">Engin tenging fannst...</string>
+    <string name="no_connectivity_detected_troubleshoot">Engin tenging fannst… (<u>Finna lausn</u>)</string>
     <string name="no_connectivity_message_not_downloaded">Engin tenging fannst...
-        \nSkilaboð voru ekki sótt</string>
+\nSkilaboð voru ekki sótt</string>
     <string name="connectivity_arrived">Tengt</string>
     <string name="connectivity_checking">Athuga með tengingu...</string>
     <string name="sync_short">samstilla</string>
@@ -337,23 +341,26 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="draft_label_attachments_uploading">sendi inn viðhengi…</string>
     <string name="draft_label_message_uploading">sendi skilaboð…</string>
     <string name="attachment_failed">Innsending viðhengis mistókst fyrir skilaboðin </string>
-    <string name="attachment_failed_new">Innsending viðhengis mistókst fyrir skilaboðin %1$s %2$s</string>
+    <string name="attachment_failed_new">Innsending viðhengis mistókst fyrir skilaboðin  %1$s %2$s</string>
     <string name="attaching_photo_failed">Mistókst að hengja við mynd</string>
     <string name="empty_message">Auð skilaboð</string>
-    <string name="dismiss">Hunsa</string>
+    <string name="dismiss">Vísa frá</string>
     <string name="new_message_arrived">Ný skilaboð!</string>
     <string name="please_choose_color">Veldu lit</string>
-    <string name="display_images">Birta myndir</string>
+    <string name="display_images">Birta fjartengt efni</string>
     <string name="retry">Reyna aftur</string>
     <string name="saving_failed_no_conn">Villa við vistun, engin tenging</string>
     <string name="can_not_create_account_while_beta">Gerð notandaaðgangs er ekki virk í Beta-prófunarútgáfum</string>
     <string name="changing_mailbox_password_disabled_while_beta">Að breyta lykilorði á pósthólfi er ekki virkt í Beta-prófunarútgáfum</string>
+    <string name="username_is_available">Notandanafnið er tiltækt!</string>
+    <string name="username_is_not_available">Notandanafn er þegar í notkun!</string>
+    <string name="username_is_too_long">Hámarkslengd notandanafns er %d stafir!</string>
     <string name="congratulation">Til hamingju!</string>
     <string name="new_account_ready">Nýi öruggi tölvupóst\naðgangurinn þinn er tilbúinn.</string>
     <string name="optional_email_note">Valkvæða endurheimtupóstfangið gerir þér kleift að
-        endurstilla innskráningarlykilorðið ef þú gleymir því.</string>
+endurstilla innskráningarlykilorðið ef þú gleymir því.</string>
     <string name="optional_display_name">Þegar þú sendir tölvupóst, þá er þetta nafnið
-        sem birtist í reitnum fyrir sendanda.</string>
+sem birtist í reitnum fyrir sendanda.</string>
     <string name="error_captcha_not_valid">Ekki gilt</string>
     <string name="close_engagement">loka yfirferð</string>
     <string name="engagement_title_welcome">Velkomin í ProtonMail!</string>
@@ -361,7 +368,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_title_labels">Umsýsla merkinga</string>
     <string name="engagement_title_encryption">Enda-í-enda dulritun</string>
     <string name="engagement_title_expire">Skilaboð sem renna út</string>
-    <string name="engagement_title_help">Hjálp &amp; aðstoð</string>
+    <string name="engagement_title_help">Hjálp og aðstoð</string>
     <string name="engagement_title_support_protonmail">Styðja við ProtonMail</string>
     <string name="engagement_subtitle_welcome">Nýi dulritaði tölvupóstaðgangurinn þinn er uppsettur og tilbúinn til að senda og taka á móti dulrituðum skilaboðum.</string>
     <string name="engagement_subtitle_swipe">Þú getur sérsniðið aðgerðir við strokur í stillingum ProtonMail-forritsins.</string>
@@ -369,9 +376,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_subtitle_encryption">Pósthólfið þitt er núna varið með enda-í-enda dulritun. Til að senda sjálfvirkt örugga tölvupósta á tengiliðina þína, skaltu bjóða þeim að nota ProtonMail!  Þú getur líka dulritað handvirkt skilaboð til þeirra, ef þeir eru ekki að nota ProtonMail.</string>
     <string name="engagement_subtitle_expire">Skilaboð sem þú sendir er hægt að stilla þannig að þau eyðist sjálfvirkt eftir ákveðinn tíma.</string>
     <string name="engagement_subtitle_help">Þú getur fengið hjálp og ýmsa aðstoð á protonmail.com/support. Einnig er hægt að tilkynna um villur innan úr forritinu.</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail selur ekki auglýsingar eða
-        misnotar gagnaleynd þína. Stuðningur þinn er nauðsynlegur til að halda ProtonMail gangandi. Þú getur uppfært í
-        greidda áskrift eða gefið peninga til að styðja ProtonMail.</string>
+    <string name="engagement_subtitle_support_protonmail">ProtonMail selur ekki auglýsingar eða misnotar gagnaleynd þína. Stuðningur þinn er nauðsynlegur til að halda ProtonMail gangandi. Þú getur uppfært í greidda áskrift eða gefið peninga til að styðja ProtonMail.</string>
     <string name="attachment_exists">Viðhengið er þegar hengt við</string>
     <string name="sending_email_success">Sannvottunarkóði sendur</string>
     <string name="sending_email_failed">Sending sannvottunarkóða mistókst</string>
@@ -399,9 +404,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="delete_label_confirmation_title">Eyða völdum merkingum?</string>
     <string name="delete_folder_confirmation_title">Eyða völdum möppum?</string>
     <string name="delete_label_confirmation_message">Þessa tölvupósta má finna í <b>Allur póstur</b></string>
-    <string name="enter_pin">Settu inn PIN-kóðann þinn til að aflæsa innhólfinu</string>
-    <string name="enter_pin_message_details">Settu inn PIN-kóðann þinn til að aflæsa skilaboðunum</string>
-    <string name="enter_current_pin">Settu inn núverandi PIN-kóðann þinn</string>
+    <string name="enter_pin">Settu inn PIN-númerið þitt til að aflæsa innhólfinu</string>
+    <string name="enter_pin_message_details">Settu inn PIN-númerið þitt til að aflæsa skilaboðunum</string>
+    <string name="enter_current_pin">Settu inn núverandi PIN-númer þitt</string>
     <string name="hint_pin">PIN-númer</string>
     <string name="pin_subtitle_create">Útbúðu PIN-númerið þitt hér</string>
     <string name="pin_subtitle_create_new">Útbúðu NÝJA PIN-númerið þitt hér</string>
@@ -412,7 +417,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="pin_confirmation_not_match">PIN-númer staðfestingar passa ekki saman</string>
     <string name="pin_not_match">PIN-númer passa ekki saman</string>
     <string name="new_pin_saved">Vistaði nýtt PIN-númer</string>
-    <string name="pin_settings">Stillingar PIN</string>
+    <string name="pin_settings">Stillingar PIN-númera</string>
     <string name="next">næsta</string>
     <string name="back">til baka</string>
     <string name="new_emails">%d nýir tölvupóstar</string>
@@ -436,7 +441,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="changes_affected_after_closing">Breytingar munu hafa áhrif eftir að forritinu hefur verið lokað</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Rangt PIN-númer, %d tilraun eftir</item>
-        <item quantity="other">Rangt PIN, %d tilraunir eftir</item>
+        <item quantity="other">Rangt PIN-númer, %d tilraunir eftir</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="one">%d tilraun eftir þar til tækið verður hreinsað í öryggisskyni!</item>
@@ -444,21 +449,22 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="done">Lokið</string>
     <string name="logout">Útskráning</string>
-    <string name="logout_question">Ertu viss um að þú viljir skrá þig út?</string>
-    <string name="logout_question_next_account">Ertu viss um að þú viljir skrá þig út af núverandi aðgangi og halda áfram með því að nota %s?</string>
+    <string name="log_out">Skrá út %s?</string>
+    <string name="logout_question">Ertu viss að þú viljir skrá þig út?</string>
+    <string name="logout_question_next_account">Þér mun verða skipt yfir á %s.</string>
     <string name="upselling">Uppfæra/Styrkja</string>
     <string name="upselling_title">ProtonMail er frjálst, ókeypis og með opinn grunnkóða</string>
     <string name="upselling_subtitle">Við þurfum stuðning þinn til halda áfram að verja friðhelgi fólks og að bæta ProtonMail</string>
     <string name="upselling_donate_title">Styrkja</string>
     <string name="upselling_upgrade_title">Uppfæra í ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">Styrkurinn frá þér mun hjálpa okkur að bæta við
-    nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
-    Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
-    til fólks um víða veröld.</string>
+nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
+Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
+til fólks um víða veröld.</string>
     <string name="upselling_upgrade_subtitle">Áskriftin þín mun hjálpa okkur að bæta við
-    nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
-    Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
-    til fólks um víða veröld.</string>
+nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
+Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
+til fólks um víða veröld.</string>
     <string name="upgrade_donate">Uppfæra/Styrkja</string>
     <string name="upselling_donate_pick_amount">Veldu upphæð styrks eða settu inn einhverja upphæð</string>
     <string name="amount_5">5€</string>
@@ -478,12 +484,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upgrade">Uppfæra</string>
     <string name="payment_options">Valkostir við greiðslu</string>
     <string name="other_plans">Fyrir áskriftarleiðir með meira geymslurými, ættirðu að
-    uppfæra í gegnum vefviðmót ProtonMail.</string>
+uppfæra í gegnum vefviðmót ProtonMail.</string>
     <string name="upgrade_paid_user">Takk fyrir að gerast greiðandi notandi!</string>
     <string name="select_account_type">Veldu tegund notandaaðgangs</string>
     <string name="select_account_type_subtitle">ProtonMail er ókeypis þjónusta
-    í almannaþágu. Þú getur sýnt stuðning við gagnaleynd á netinu með því að velja greidda áskrift.</string>
-    <string name="plan_free_with_price">ÓKEYPIS</string>
+í almannaþágu. Þú getur sýnt stuðning við gagnaleynd á netinu með því að velja greidda áskrift.</string>
+    <string name="plan_free_with_price">FREE</string>
     <string name="plan_plus_with_price">PLUS %s /mánuði</string>
     <string name="plan_visionary_with_price">VISIONARY %s /mánuði</string>
     <string name="plan_business_with_price">BUSINESS %s /mánuði</string>
@@ -493,29 +499,30 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_business_title">Séraðgangar fyrir stuðningsaðila okkar</string>
     <string name="plan_plus_line2">Sendu allt að 1000 skilaboð á dag</string>
     <string name="plan_plus_line3">Merkingar og sérsniðnar síur</string>
-    <string name="plan_plus_line4">Senda dulrituð skilaboð til utanaðkomandi viðtakenda</string>
+    <string name="plan_plus_line4">Sendu dulrituð skilaboð til utanaðkomandi viðtakenda</string>
     <string name="plan_plus_line7">Forgangsstuðningur viðskiptavina</string>
     <string name="plan_free_line1">500 GB geymslurými</string>
     <string name="plan_free_line2">150 skilaboð á dag</string>
     <string name="plan_free_line22">%d skilaboð á dag</string>
     <string name="plan_free_line3">20 merkingar</string>
     <string name="plan_free_line4">Sérsniðin lén: ekki stuðningur</string>
-    <string name="plan_free_line5">1 vistfang</string>
-    <string name="plan_free_line6">Stuðningur viðskiptavina: takmarkaður</string>
+    <string name="plan_free_line5">1 póstfang</string>
+    <string name="plan_free_line6">Stuðningur við viðskiptavini: takmarkaður</string>
     <string name="plan_visio_line2">Engin takmörk á sendingum</string>
     <string name="plan_visio_line3">Snemmbúinn aðgangur að nýjum eiginleikum</string>
-    <string name="plan_visio_line6">Hjálpaðu við að velja nýja eiginleika í gegnum skoðanakannanir sem einungis eru í Visionary áskriftarleiðinni</string>
+    <string name="plan_visio_line6">Hjálpaðu við að velja nýja eiginleika í gegnum skoðanakannanir sem einungis
+eru í Visionary áskriftarleiðinni</string>
     <string name="plan_business_line1">það kemur fljótlega að því að félög, stofnanir og fyrirtæki nýti sér dulritaðan tölvupóst!</string>
     <string name="currency_duration">Gjaldmiðill &amp; tímalengd</string>
     <string name="credit_card_name">Nafn á greiðslukorti</string>
     <string name="zip_code">Póstnúmer</string>
-    <string name="card_number">Greiðslukortanúmer</string>
-    <string name="billing_information">Greiðsluupplýsingar</string>
+    <string name="card_number">Númer greiðslukorts</string>
+    <string name="billing_information">Upplýsingar um greiðanda</string>
     <string name="billing_upgrade_thanks">Uppfærsla tókst! Takk fyrir stuðninginn!</string>
     <string name="country">Land</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">Með því að smella á \'Senda inn\'
-    samþykkir þú\nskilmála og kvaðir <a href="https://protonmail.com/terms-and-conditions">ProtonMail</a></string>
+samþykkir þú\nskilmála og kvaðir <a href="https://protonmail.com/terms-and-conditions">ProtonMail</a></string>
     <string name="submit">Senda inn</string>
     <string name="currency">Gjaldmiðill</string>
     <string name="plan_duration">Greiðslutímabil</string>
@@ -527,8 +534,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duration_annual_line4">Greiðist sem %s /mánuði</string>
     <string name="duration_monthly_line1">Mánaðarleg áskriftarleið</string>
     <string name="duration_monthly_line2">%s á mánuði</string>
-    <string name="duration_monthly_line3">Sparaðu 20%</string>
-    <string name="set_cont">Stilla &amp; halda áfram</string>
+    <string name="duration_monthly_line3">Vista 20%</string>
+    <string name="set_cont">Stilla og halda áfram</string>
     <string name="payment_error">Villa við greiðslu</string>
     <string name="error">Villa</string>
     <string name="try_another_card">Prófa annað kort</string>
@@ -541,13 +548,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_picker_disclaimer">Veldu gerð greiðslu</string>
     <string name="payment_success_title">Greiðsla tókst!</string>
     <string name="payment_success_text">Við erum að uppfæra aðganginn þinn, hinkraðu aðeins. Þakka þér fyrir stuðninginn!</string>
-    <string name="donation_success_title">Styrkveiting tókst!</string>
+    <string name="donation_success_title">Greiðsla styrks tókst!</string>
     <string name="donation_success_text">Stuðningur þinn er undirstaða áframhaldandi þróunar ProtonMail. Þakka þér kærlega fyrir að styðja gagnaleynd á netinu!</string>
     <string name="create_free_account">Búa til ókeypis notandaaðgang</string>
     <string name="storage_gb">%d GB geymslurými</string>
     <string name="storage_mb">%d MB geymslurými</string>
     <string name="max_addresses">Allt að %d tölvupóstsamheiti</string>
-    <string name="inline_prefix">[innfellt]</string>
+    <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d ívafnar myndir</string>
     <string name="select">Velja</string>
     <string name="change_currency">Skipta um gjaldmiðil</string>
@@ -572,7 +579,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="please_use_webapp_pass_change">Endilega notaðu vefviðmótið okkar á  &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; með borð- eða fartölvu til að ljúka þessari aðgerð.</string>
     <string name="available_addresses">Tiltæk tölvupóstföng</string>
     <string name="inactive_addresses">Óvirk tölvupóstföng</string>
-    <string name="not_set">Ekki stillt</string>
+    <string name="not_set">Ekki skilgreint</string>
     <string name="edit_notification_email">Breyta endurheimtupósti</string>
     <string name="available_swipe_actions">Tiltækar aðgerðir</string>
     <string name="no_available_addresses">Þú ert ekki með nein tiltæk tölvupóstföng</string>
@@ -584,13 +591,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="delete_selected">Eyða völdu</string>
     <string name="pin_not_activated">PIN-númer ekki virkjað</string>
     <string name="available_options">Tiltækir valkostir</string>
-    <string name="current_recovery_email">Núgildandi endurheimtupóstfang</string>
-    <string name="change_recovery_email">Breyta endurheimtupóstfangi</string>
-    <string name="new_recovery_email">Nýr endurheimtupóstur</string>
-    <string name="confirm_new_recovery_email">Staðfestu nýjan endurheimtupóst</string>
+    <string name="current_recovery_email">Núgildandi endurheimtu/tilkynningapóstfang</string>
+    <string name="change_recovery_email">Breyta endurstillinga/tilkynningapóstfangi</string>
+    <string name="new_recovery_email">Nýr endurstillinga/tilkynningapóstur</string>
+    <string name="confirm_new_recovery_email">Staðfestu nýjan endurstillinga/tilkynningapóst</string>
     <string name="recovery_emails_invalid">Tölvupóstfang samsvarar ekki eða er ógilt</string>
     <string name="authenticate">Auðkenna</string>
-    <string name="background_sync_subtitle">Ef þessi möguleiki er virkur, mun forritið samstillast við þjóninn í bakgrunni. Sé þessi eiginleiki óvirkur verða ýti-tilkynningar líka óvirkar.</string>
+    <string name="background_sync_subtitle">Ef þessi möguleiki er virkur, mun forritið samstillast við þjóninn í bakgrunni. Sé þessi eiginleiki óvirkur verða ýtitilkynningar líka óvirkar.</string>
     <string-array name="notification_options">
         <item>Hvorki hljóð né titringur</item>
         <item>Hljóð án titrings</item>
@@ -598,7 +605,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>Hljóð og titringur</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Ókeypis</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -623,7 +630,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>12</item>
     </string-array>
     <string name="contacts_groups">Hópar</string>
-    <string name="phone_contact">Sími tengiliðar</string>
+    <string name="phone_contact">Tengiliður á síma</string>
     <string name="contact_details_display_name">Nafn</string>
     <string name="contact_details">Nánar um tengilið</string>
     <string name="email_type_home">Heima</string>
@@ -646,7 +653,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_vcard_new_row_address">bæta við heimilisfangi</string>
     <string name="contact_vcard_new_row_other">bæta við upplýsingum</string>
     <string name="contact_vcard_new_row_custom">bæta við sérsniðnum reit</string>
-    <string name="vcard_other_option_org">Stofnun</string>
+    <string name="vcard_other_option_org">Fyrirtæki/Stofnun/Samtök/Félag</string>
     <string name="vcard_other_option_title">Titill</string>
     <string name="vcard_other_option_nickname">Gælunafn</string>
     <string name="vcard_other_option_birthday">Fæðingardagur</string>
@@ -661,7 +668,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="encrypted_data">Dulrituð gögn</string>
     <string name="upgrade_encrypted_contact">Uppfærðu áskriftina þína til að nota dulritaðar upplýsingar um tengiliði.</string>
     <string name="empty_encrypted_data">Auðar dulritaðar upplýsingar um tengilið.</string>
-    <string name="uploading_contacts">Sendi inn tengiliði&#8230;</string>
+    <string name="uploading_contacts">Sendi inn tengiliði…</string>
     <string name="error_encrypted_data">Villa við að sækja dulritaðar upplýsingar um tengilið.</string>
     <string-array name="vcard_option_phone">
         <item>Sími</item>
@@ -677,8 +684,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>Annað</item>
     </string-array>
     <string-array name="vcard_option_address">
-        <item>Vistfang</item>
-        <item>Persónulegt</item>
+        <item>Heimilisfang</item>
+        <item>Einka</item>
         <item>Vinna</item>
         <item>Annað</item>
     </string-array>
@@ -692,7 +699,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>@string/vcard_other_option_title</item>
         <item>@string/vcard_other_option_url</item>
     </string-array>
-    <string name="logged_out">Skráð(ur) úr</string>
+    <string name="logged_out">Skráður út</string>
     <string name="logged_out_description">Þú hefur verið skráð(ur) út. Skráðu þig aftur inn.</string>
     <string name="verification_needed">Sannvottunar krafist</string>
     <string name="verification_needed_description">Af öryggisástæðum þarftu að sanna að þú sért ekki vélmenni.</string>
@@ -702,7 +709,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_message_cvc_invalid">Villa: Ógilt CVC-númer</string>
     <string name="error_message_card_name_invalid">Villa: Ógilt nafn á korti</string>
     <string name="error_message_select_country">Veldu land</string>
-    <string name="error_message_exp_date_invalid">Villa: Ógildur gildistími</string>
+    <string name="error_message_exp_date_invalid">Villa: Dagsetning lokagildistíma er ógild</string>
     <string name="error_message_exp_date_past">Villa: Dagsetning lokagildistíma er ógild</string>
     <string name="error_message_card_number_invalid">Villa: Ógilt kortanúmer</string>
     <string name="print_error">Villa við prentun</string>
@@ -713,7 +720,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="unsaved_changes_title">Óvistaðar breytingar</string>
     <string name="unsaved_changes_subtitle">Það eru óvistaðar færslur á síðunni. Ertu viss um að þú viljir henda þeim?</string>
     <string name="discard">Henda</string>
-    <string name="keep_editing">Halda áfram með breytingar</string>
+    <string name="keep_editing">Halda áfram að gera breytingar</string>
     <string name="request_timeout">Beiðni féll á tíma, reyndu aftur</string>
     <string name="add_folder">Bæta við möppu</string>
     <string name="no_folders">Engar möppur</string>
@@ -730,7 +737,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="folder_deleted_error">Villa kom upp við að eyða möppu</string>
     <string name="save_new_folder">Vista nýja möppu</string>
     <string name="create_new_folder">Búa til möppu</string>
-    <string name="all_mail">Allur tölvupóstur</string>
+    <string name="all_mail">Allur póstur</string>
     <string name="allmail_option">ALLUR PÓSTUR</string>
     <string name="empty_emails">Enginn tölvupóstur</string>
     <string name="empty_email_list">Ekkert tölvupóstfang</string>
@@ -738,7 +745,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sender_name_address">%1$s &lt; %2$s&gt; skrifaði:</string>
     <string name="update_label">Uppfæra merkingu</string>
     <string name="folder_name_empty">Mappa þarf að hafa nafn</string>
-    <string name="max_labels_in_message">Skilaboðin %1$s geta ekki verið með fleiri en %2$d merki.</string>
+    <string name="max_labels_in_message">Skilaboðin %1$s geta ekki verið með fleiri en %2$d merkingar.</string>
     <string name="delete">Eyða</string>
     <string name="subject_copied">Viðfangsefni afritað á klippispjald</string>
     <string name="details_copied">Afritaði ítarupplýsingar á klippispjaldið</string>
@@ -748,17 +755,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="spam_score_101">Þessi tölvupóstur féll á auðkenningarprófunum lénsins. Hann gæti verið áframsendur á rangan hátt eða falsaður!</string>
     <string name="spam_score_102">Þessi skilaboð gætu verið tilraun til gagnaveiði (phishing). Skoðaðu vel sendandann og efni þeirra til að ganga úr skugga um gildi þeirra. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SKOÐA NÁNAR</a></string>
     <string name="print_from_template">Frá: %s</string>
-    <string name="print_to_template">Til: %s; &#160;</string>
-    <string name="print_cc_template">Afrit: %s; &#160;</string>
-    <string name="print_bcc_template">Falið afrit: %s; &#160;</string>
+    <string name="print_to_template">Til: %s;  </string>
+    <string name="print_cc_template">Afrit: %s;  </string>
+    <string name="print_bcc_template">Falið afrit: %s;  </string>
     <string name="contacts_invalid_type">Ógild tegund</string>
-    <string name="signature_error">Villa með staðfestingu</string>
+    <string name="signature_error">Villa í staðfestingu</string>
     <string name="signature_error_desc">Sannvottun á undirritun þessa efnis brást</string>
     <string name="decryption_error">Afkóðunarvilla</string>
     <string name="decryption_error_desc">Afkóðun þessa efnis mistókst</string>
     <string name="address">Heimilisfang: </string>
     <string name="address_street">Gata</string>
-    <string name="address_city">Borg/Sveitarfélag</string>
+    <string name="address_city">Borg</string>
     <string name="address_region">Hérað (ríki eða fylki)</string>
     <string name="address_postcode">Póstnúmer</string>
     <string name="address_country">Land</string>
@@ -767,14 +774,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="empty_subject">(ekkert viðfangsefni)</string>
     <string name="contacts_unknown">Óþekkt</string>
     <string name="expand_collapse">Fella út/inn</string>
-    <string name="learn_more">&lt;uVita meira&lt;/u&gt;</string>
+    <string name="learn_more">
+        <u>Kanna nánar</u>
+    </string>
     <string name="info">Upplýsingar</string>
     <string name="error_can_not_send_from_this_address">Uppfærðu í greidda áskrift til að senda úr %s tölvupóstfanginu þínu.</string>
     <string name="digital_signature_verified">Stafræn undirritun sannreynd</string>
     <string name="encrypted_and_digital_signature_verified">Dulritað og stafræn undirritun sannreynd</string>
     <string name="email_empty">Tölvupóstfang vantar</string>
     <string name="edit_contact_details">Breyta nánari upplýsingum um tengilið</string>
-    <string name="encrypted_contact_details">Dulrita nánari upplýsingar um tengilið</string>
+    <string name="encrypted_contact_details">Dulritaðar nánari upplýsingar um tengilið</string>
     <string name="edit_contact_toolbar_title">Breyta %s</string>
     <string name="convert_question">Senda inn tengiliði af tæki</string>
     <string name="convert_question_subtitle">Þetta mun senda staðværa tengiliði á tækinu inn í tengiliðamöppuna á ProtonMail. Þú munt þá hafa aðgang að þessum tengiliðum á öðrum tækjum þínum í gegnum ProtonMail.</string>
@@ -784,7 +793,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="protonmail_contacts">Tengiliðir í ProtonMail</string>
     <string name="device_contacts">Tengiliðir tækis</string>
     <string name="print_date_template">Dagsetning: %s</string>
-    <string name="print_attachment_template">Viðhengi: %s; &#160;</string>
+    <string name="print_attachment_template">Viðhengi: %s;  </string>
     <string name="pm_me_changed">Að senda skilaboð frá @pm.me póstföngum er eiginleiki sem greiða þarf fyrir. Skilaboðin þín verða send frá sjálfgefna tölvupóstfanginu %s</string>
     <string name="pm_me_can_not_be_default">Uppfærðu í greidda áskrift til að geta sett %s netfangið þitt sem sjálfgefið</string>
     <string name="dont_remind_again">Ekki minna mig aftur á þetta</string>
@@ -799,9 +808,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_storage_unlimited">%.2fMB af ótakmörkuðu</string>
     <string name="unlimited">Ótakmarkað</string>
     <string name="local_storage_cleared">Staðvær gagnageymsla hreinsuð</string>
-    <string name="local_storage_clear">Hreinsa gagnageymslu</string>
-    <string name="recipient_popup_compose_to">Semja skilaboð til</string>
-    <string name="recipient_popup_copy_address">Afrita póstfang</string>
+    <string name="local_storage_clear">Hreinsa staðværa gagnageymslu</string>
+    <string name="recipient_popup_compose_to">Semja til</string>
+    <string name="recipient_popup_copy_address">Afrita vistfang</string>
     <string name="recipient_popup_see_details">Sjá nánari upplýsingar um tengilið</string>
     <string name="send_with_untrusted_key_title">Viltu senda með ótreystum dulritunarlykli?</string>
     <string name="send_with_untrusted_key_message">Þú hefur virkjað sannvottun vistfangs með treystum dulritunarlyklum fyrir %s, en engum virkum dulritunarlyklum hefur verið treyst.</string>
@@ -844,12 +853,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_description_account">Staða aðgangs</string>
     <string name="channel_name_ongoing_operations">Aðgerðir í gangi</string>
     <string name="channel_description_ongoing_operations">Sýnir allar aðgerðir í gangi eins og þegar
-		náð er í ný skilaboð í bakgrunni</string>
+náð er í ný skilaboð í bakgrunni</string>
     <string name="checking_mailbox">Athuga pósthólf</string>
     <string name="report_phishing">Tilkynna um veiðipóst (phishing)</string>
     <string name="print">Prenta</string>
     <string name="phishing_dialog_title">Staðfesta skýrslu um veiðipóst</string>
-    <string name="phishing_dialog_message">Ef skilaboð eru tilkynnt sem tilraun til gagnaveiði (phishing) verða þau send til okkar, svo við getum greint þau og endurbætt síurnar okkar. Það þýðir aftur á móti að við munum geta séð allt efni skilaboðana.</string>
+    <string name="phishing_dialog_message">Ef skilaboð eru tilkynnt sem tilraun til gagnaveiði (phishing) verða þau send
+til okkar, svo við getum greint þau og endurbætt síurnar okkar. Það þýðir aftur á móti að við munum
+geta séð allt efni skilaboðana.</string>
     <string name="phishing_report_send_message_moved_to_spam">Skýrsla send. Skilaboð færð í ruslpóst.</string>
     <string name="report_send">Skýrslan var send</string>
     <string name="cannot_send_report_send">Get ekki sent skýrslu</string>
@@ -862,7 +873,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_display_name">\ue91c Birtingarnafn</string>
     <string name="add_new_email">\ue914 Bæta við tölvupóstfangi</string>
     <string name="no_groups">Engir hópar</string>
-    <string name="contact_vcard_note">Minnispunktur</string>
+    <string name="contact_vcard_note">Athugasemd</string>
     <string name="edit_contact">Breyta tengilið</string>
     <string name="create_contact_group">Búa til tengiliðahóp</string>
     <string name="edit_contact_group">Breyta tengiliðahóp</string>
@@ -870,16 +881,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_groups_manage_addresses">Sýsla með vistföng</string>
     <string name="contact_group_display_name">\ue91a Birtingarnafn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
-    <string name="contact_add_addr_to_group">Bæta vistfangi við hóp</string>
+    <string name="contact_add_addr_to_group">Bæta vistfangi við hópa</string>
     <string name="title_activity_address_chooser">Sýsla með vistföng</string>
     <string name="title_activity_account_manager">Sýsla með notandaaðganga</string>
     <string name="title_activity_connect_account">Tengja notandaaðgang</string>
     <string name="account_manager_add_account">Bæta við notandaaðgangi</string>
-    <string name="account_manager_remove_all_accounts">Fjarlægi alla aðgangar</string>
+    <string name="account_manager_remove_all_accounts">Fjarlægi alla aðganga</string>
     <string name="account_manager_note">Þú getur verið skráð/ur inn í ótakmarkaðan fjölda greiddra ProtonMail-aðganga ásamt einum ókeypis notandaaðgangi.</string>
-    <string name="account_manager_remove_all">Fjarlægja alla aðgangar</string>
-    <string name="account_manager_logout">Útskráning</string>
-    <string name="account_manager_login">Innskráning</string>
+    <string name="account_manager_remove_all">Fjarlægja alla notandaaðganga</string>
+    <string name="account_manager_logout">Skrá út</string>
+    <string name="account_manager_login">Skrá inn</string>
     <string name="manage_accounts_user_loggedout">%s (útskráður)</string>
     <string name="manage_accounts_user_primary">%s (aðal)</string>
     <string name="account_manager_remove">Fjarlægja</string>
@@ -929,15 +940,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="save_group_validation_error">Settu inn nafn á hópi</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Takmörkum á geymsluplássi náð. Get hvorki sent né tekið á móti tölvupóstum.
-        Ýttu til að kanna nánar.</string>
+Ýttu til að kanna nánar.</string>
     <string name="storage_limit_warning_title">Aðvörun</string>
     <string name="storage_limit_reached_text">Þú hefur fyllt 100% af geymslurýminu þínu. Þú
-        munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverjum tölvupóstum eða kaupir meiri geymslurýmd.</string>
+munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverjum tölvupóstum eða kaupir meiri geymslurýmd.</string>
     <string name="storage_limit_approaching_text">Þú hefur fyllt 90% af geymslurýminu þínu.
-        Íhugaðu að losa eitthvað pláss eða að kaupa meiri geymslurýmd áður en hún klárast.</string>
+Íhugaðu að losa eitthvað pláss eða að kaupa meiri geymslurýmd áður en hún klárast.</string>
     <string name="storage_limit_do_not_remind">EKKI ÁMINNA MIG</string>
     <!-- endregion -->
-    <string name="need_permissions_title">Heimildir</string>
+    <string name="need_permissions_title">Aðgangsheimildir</string>
     <string name="need_storage_permissions_text">Til að geta bætt við viðhengjum þarftu að leyfa aðgang að gagnageymslu.</string>
     <string name="need_phone_permissions_text">Til að geta hringt í þennan tengilið þarftu að leyfa aðgang að símanum.</string>
     <string name="push_notifications_alert_title">Viðvörun vegna ýti-tilkynninga</string>
@@ -945,12 +956,18 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_locked">Forrit læst</string>
     <string name="please_use_fingerprint">Notaðu fingrafaraskanna til að aflæsa forritinu.</string>
     <string name="use_pin_instead">Nota PIN-númer í staðinn</string>
+    <!-- strings used for biometric enrollment -->
+    <string name="no_biometric_data_enrolled">Engin lífkennagögn til staðar</string>
+    <string name="log_in_using_biometric_credential">Aflæsa með líffræðilegu auðkennunum þínum</string>
+    <string name="unlock_using_biometrics">Aflæsa með lífkennslum</string>
+    <string name="biometric_error_hw_not_available">Vélbúnaður fyrir líffræðileg gögn ekki til staðar.</string>
+    <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Viðtakendur ekki gefnir upp</string>
     <string name="could_not_delete_attachment">Ekki er hægt að fjarlægja viðhengi á meðan verið er að senda það inn</string>
-    <string name="manage_accounts">Sýsla með notendaaðganga</string>
+    <string name="manage_accounts">Sýsla með notandaaðganga</string>
     <!-- region Settings -->
     <string name="settings">Stillingar</string>
-    <string name="account_settings">Stillingar aðgangs</string>
+    <string name="account_settings">Stillingar notandaaðgangs</string>
     <!-- region Acc Settings -->
     <string name="account">Notandaaðgangur</string>
     <string name="subscription">Áskrift</string>
@@ -975,7 +992,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plus_account_required_mobile_signature">Til að breyta farsímaundirskrift er nauðsynlegt að vera með ProtonMail Plus</string>
     <string name="mobile_signature_is_premium">Einungis notendur með greidda áskrift geta breytt farsímaundirskrift</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">Blunda</string>
+    <string name="snooze_header">Fresta</string>
     <string name="notifications_snooze">Frestun tilkynninga</string>
     <string name="notifications_snooze_finishing">Tilkynningar munu halda áfram eftir $s mín</string>
     <string name="snooze_notifications">Fresta tilkynningum</string>
@@ -996,6 +1013,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="set_custom_quick_snooze">Settu sérsniðið gildi flýtifrestunar</string>
     <string name="turn_off">Slökkva</string>
     <string name="snooze_will_repeat">Frestun verður endurtekin</string>
+    <string name="work_days">Vinnudagar</string>
+    <string name="weekends">Helgar</string>
+    <string name="every_day">Daglega</string>
     <string name="quick_and_scheduled_enabled">Flýtifrestun og áætluð frestun virkar</string>
     <string name="quick_only_enabled">Flýtifrestun virk</string>
     <string name="scheduled_only_enabled">Áætluð frestun virk</string>
@@ -1020,13 +1040,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_action_left">Strjúka frá vinstri-til-hægri</string>
     <string name="swipe_action_right">Strjúka frá hægri-til-vinstri</string>
     <!-- region Swipe Actions -->
-    <string name="swipe_action_chooser_title">Loka aðgerð við stroku</string>
+    <string name="swipe_action_chooser_title">Veldu aðgerð við stroku</string>
     <string name="swipe_action_trash">Skilaboð voru færð í ruslið</string>
     <string name="swipe_action_trash_short">Fært í ruslið</string>
     <string name="swipe_action_star">Stjörnumerking skilaboða uppfærð</string>
     <string name="swipe_action_spam">Skilaboð merkt sem ruslpóstur</string>
     <string name="swipe_action_archive">Skilaboð sett í safn</string>
-    <string name="swipe_action_mark_read">Skilaboð merkt sem lesin</string>
+    <string name="swipe_action_mark_read">Skilaboðin voru merkt sem lesin</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Skilaboð voru færð í ruslið</item>
         <item quantity="other">Skilaboð voru færð í ruslið</item>
@@ -1055,9 +1075,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="change_pin_code">Breyta PIN-kóða</string>
     <string name="auto_lock_timer">Niðurtalning á sjálfvirkri læsingu</string>
     <string name="unlock_with_fingerprint">Aflæsa með fingrafari</string>
+    <string name="connections_via_third_parties">Varaleið beiningar</string>
+    <string name="allow_secure_connections_via_third_parties">Leyfa varaleið beiningar</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">Sé lokað á Proton-vefsvæði, gerir þessi stilling forritinu kleift að reyna að nota aðra leið um netið til að tengjast Proton, sem aftur getur nýst til að komast fram hjá eldveggjum eða vandamálum varðandi netkerfið. Við mælum með því að hafa þessa stillingu virka til að auka áreiðanleika forritsins.</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">Sé lokað á Proton-vefsvæði, gerir þessi stilling forritinu kleift að reyna að nota aðra leið um netið til að tengjast Proton, sem aftur getur nýst til að komast fram hjá eldveggjum eða vandamálum varðandi netkerfið. Við mælum með því að hafa þessa stillingu virka til að auka áreiðanleika forritsins. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Kanna nánar</a></string>
     <string name="app_language">Tungumál forrits</string>
     <string name="custom_language_dialog_title">Veldu tungumál forrits</string>
-    <string name="auto_detect">Skynja sjálfvirkt</string>
+    <string name="auto_detect">Finna sjálfvirkt</string>
     <string name="combined_contacts">Sameinaðir tengiliðir</string>
     <string name="turn_combined_contacts_on">Kveiktu á þessum eiginleika til að sjálfvirk klárun tölvupóstfanga noti tengiliði úr öllum þeim notendaaðgöngum sem þú ert skráður inn í.</string>
     <string name="local_cache_management">Stýring á staðværu skyndiminni</string>
@@ -1072,7 +1096,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region Multi Account -->
     <string name="primary_account">Aðalaðgangur</string>
     <string name="make_primary_account">Nota %s sem aðalaðganginn þinn?</string>
-    <string name="logout_account_question">Skrá út úr %s?</string>
+    <string name="logout_account_question">Skrá út %s?</string>
     <string name="remove_account_question">Fjarlægja %s?</string>
     <string name="signed_in_with">Skráð inn með %s</string>
     <string name="signed_in_with_logged_out_from">Skráð út úr %1$s og skráð inn með %2$s</string>
@@ -1087,6 +1111,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="shortcut_compose_new_message">Semja ný skilaboð</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_title">Algeng tengivandamál og lausnir á þeim</string>
+    <string name="troubleshoot_dialog_title">Algeng tengivandamál og lausnir á þeim</string>
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Engin internettenging&lt;/i&gt; - Gakktu úr skugga um að nettengingin þín virki.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vandamál hjá internetþjónustuaðila (Internet Service Provider - ISP)&lt;/i&gt; - Reyndu að tengjast Proton frá öðru netkerfi (eða nota &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Lokun á vegum stjórnvalda&lt;/i&gt; - Yfirvöld í landinu þínu gætu verið að hindra aðgang að Proton. Prófaðu að nota &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (eða einhverja VPN-þjónustu) eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; til að tengjast Proton.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflanir vegna vírusvarna&lt;/i&gt; - Gerðu vírusvarnaforritið þitt tímabundið óvirkt.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflanir vegna milliþjóna/eldveggja&lt;/i&gt; - Gerðu alla eldveggi og milliþjóna (proxies) óvirka, eða hafðu samband við kerfisstjórann þinn.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton liggur niðri&lt;/i&gt; - Athugaðu &lt;a href=\"http://protonstatus.com/\"&gt;stöðu Proton&lt;/a&gt; til að sjá ástandið á kerfinu okkar.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Finnurðu ekki ennþá neina lausn&lt;/i&gt; - Hafðu beint samband við okkur í gegnum &lt;a href=\"https://protonmail.com/support-form\"&gt;aðstoðarsíðuna okkar&lt;/a&gt;, með &lt;a href=\"mailto:support@protonmail.com\"&gt; tölvupósti&lt;/a&gt; (support@protonmail.com), eða á &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+</string>
     <!-- endregion -->
+    <string name="allowed">Heimilað</string>
+    <string name="denied">Hafnað</string>
 </resources>
