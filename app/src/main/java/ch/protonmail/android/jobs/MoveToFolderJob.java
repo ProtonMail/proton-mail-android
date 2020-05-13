@@ -35,6 +35,7 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.events.RefreshDrawerEvent;
+import ch.protonmail.android.events.MoveToFolderEvent;
 import ch.protonmail.android.utils.AppUtil;
 
 /**
@@ -78,7 +79,18 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         }
         unreadLocationCounter.increment(totalUnread);
         countersDatabase.insertUnreadLocation(unreadLocationCounter);
+
+        // This should reduce the probability of app crashing when messages are moved to a folder when the user is in MailboxActivity
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
+
+        // This should reduce probability of app crashing when messages are moved to a folder when the user is in MessageDetailsActivity
+        AppUtil.postEventOnUi(new MoveToFolderEvent());
     }
 
     @Override
