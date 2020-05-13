@@ -18,28 +18,67 @@
  */
 package ch.protonmail.android.uiModel
 
-import ch.protonmail.libs.core.utils.EMPTY_STRING
-
 /**
  * Represent a base Navigation Drawer User data class.
- * @see ch.protonmail.android.adapters.DrawerAccountsAdapter
+ * @see ch.protonmail.android.adapters.AccountsAdapter
  *
  * @author Dino Kadrikj
  */
 internal sealed class DrawerUserModel {
 
-    data class User @JvmOverloads constructor(
-        val name: String,
-        val emailAddress: String = EMPTY_STRING,
-        val loggedIn: Boolean = false,
-        val notificationCount: Int = 0,
-        val notificationsSnoozed: Boolean = false,
-        val displayName: String = name
-    ) : DrawerUserModel()
+    sealed class BaseUser : DrawerUserModel() {
+
+        /**
+         * User's user name. Default is empty
+         */
+        open val name: String = ""
+
+        /**
+         * User's email. Default is empty.
+         */
+        open val emailAddress: String = ""
+
+        /**
+         * Value of whether this user is currently logged in or it is logged out.
+         */
+        open val loggedIn: Boolean = false
+
+        /**
+         * Value of whether this user has snoozed his notifications at the moment.
+         */
+        open val notificationsSnoozed: Boolean = false
+
+        data class AccountUser @JvmOverloads constructor(
+                override val name: String = "",
+                override val emailAddress: String = "",
+                override val loggedIn: Boolean = false,
+                val primary: Boolean = false,
+                val displayName: String = ""
+        ) : BaseUser()
+
+        data class DrawerUser @JvmOverloads constructor(
+                override val name: String = "",
+                override val emailAddress: String = "",
+                override val loggedIn: Boolean = false,
+                val notifications: Int = 0,
+                override val notificationsSnoozed: Boolean = false,
+                val displayName: String = ""
+        ) : BaseUser()
+    }
 
     /** Divider for Drawer Items */
     object Divider : DrawerUserModel()
 
     /** Footer for Nav Drawer Items */
-    object ManageAccounts : DrawerUserModel()
+    object Footer : DrawerUserModel()
+
+    /** Footer for Account Manager Items */
+    object AccFooter : DrawerUserModel()
+
+
+    /**
+     * How many notifications has this user received.
+     * Default 0
+     */
+//    open val notificationsCount: Int = 0
 }

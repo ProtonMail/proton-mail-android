@@ -18,34 +18,27 @@
  */
 package ch.protonmail.android.activities.multiuser
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
-import ch.protonmail.android.activities.REQUEST_CODE_SWITCHED_USER
 import ch.protonmail.android.activities.multiuser.viewModel.AccountManagerViewModel
-import ch.protonmail.android.adapters.AccountManagerAccountsAdapter
+import ch.protonmail.android.adapters.AccountsAdapter
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.uiModel.AccountManagerUserModel
-import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.utils.extensions.setBarColors
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToMailbox
 import ch.protonmail.android.utils.moveToMailboxLogout
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
-import ch.protonmail.libs.core.utils.EMPTY_STRING
-import ch.protonmail.libs.core.utils.takeIfNotBlank
 import com.squareup.otto.Subscribe
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_account_manager.*
@@ -66,79 +59,10 @@ class AccountManagerActivity : BaseActivity() {
     }
 
     /**
-     * [AccountManagerAccountsAdapter] for the Accounts RecyclerView. It is used to the default [accountsRecyclerView]
+     * [AccountsAdapter] for the Accounts RecyclerView. It is used to the default [accountsRecyclerView]
      * to display the users (logged in and recently logged out) of the application.
      */
-    private val accountsAdapter = AccountManagerAccountsAdapter(
-        onItemClick = {
-            if (it is AccountManagerUserModel.AddAccount) {
-                val intent = Intent(this, ConnectAccountActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    putExtra(EXTRA_SWITCHED_USER, true)
-                }
-                ActivityCompat.startActivityForResult(
-                    this,
-                    AppUtil.decorInAppIntent(intent),
-                    REQUEST_CODE_SWITCHED_USER,
-                    null
-                )
-                finish()
-            }
-        },
-        onLogin = {
-            val username = it.name
-
-            val intent = Intent(this, ConnectAccountActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra(EXTRA_USERNAME, username)
-            }
-            ContextCompat.startActivity(this, AppUtil.decorInAppIntent(intent), null)
-        },
-        onLogout = {
-            val username = it.name
-            val nextLoggedInAccount = mUserManager.nextLoggedInAccountOtherThanCurrent
-            val isCurrentUserAndHasAnotherUser =
-                nextLoggedInAccount != null && username == mUserManager.username
-
-            val title =
-                if (isCurrentUserAndHasAnotherUser) getString(R.string.logout)
-                else String.format(getString(R.string.log_out), username)
-            val message = if (isCurrentUserAndHasAnotherUser) String.format(
-                getString(R.string.logout_question_next_account),
-                nextLoggedInAccount
-            ) else getString(R.string.logout_question)
-
-            DialogUtils.showInfoDialogWithTwoButtons(
-                this,
-                title,
-                message,
-                getString(R.string.cancel),
-                getString(R.string.okay),
-                {
-                    viewModel.logoutAccountResult.observe(this, Observer(::closeActivity))
-                    viewModel.logoutAccount(username)
-                },
-                false
-            )
-        },
-        onRemove = {
-            val username = it.name
-
-            val message = String.format(getString(R.string.remove_account_question), username)
-            DialogUtils.showInfoDialogWithTwoButtons(
-                this,
-                getString(R.string.logout),
-                message,
-                getString(R.string.cancel),
-                getString(R.string.okay),
-                {
-                    viewModel.removedAccountResult.observe(this, Observer(::closeActivity))
-                    viewModel.removeAccount(username)
-                },
-                false
-            )
-        }
-    )
+    private val accountsAdapter by lazy { AccountsAdapter() }
 
     override fun getLayoutId() = R.layout.activity_account_manager
 
@@ -148,8 +72,36 @@ class AccountManagerActivity : BaseActivity() {
 
         toolbar.setNavigationIcon(R.drawable.ic_close)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        window?.setBarColors(getColor(R.color.new_purple_dark))
+        val actionBar = supportActionBar
+        actionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+        }
+        window?.apply {
+            setBarColors(resources.getColor(R.color.new_purple_dark))
+        }
+
+        val nextLoggedInAccount = mUserManager.nextLoggedInAccountOtherThanCurrent
+        val currentActiveAccount = mUserManager.username
+        accountsAdapter.apply {
+            onLogoutAccount = { username ->
+                DialogUtils.showInfoDialogWithTwoButtons(this@AccountManagerActivity,
+                        if (nextLoggedInAccount != null && username == currentActiveAccount) getString(R.string.logout) else String.format(getString(R.string.log_out), username),
+                        if (nextLoggedInAccount != null && username == currentActiveAccount) String.format(getString(R.string.logout_question_next_account), nextLoggedInAccount) else getString(R.string.logout_question),
+                        getString(R.string.cancel),
+                        getString(R.string.okay), {
+                    viewModel.logoutAccountResult.observe(this@AccountManagerActivity, Observer(::closeActivity))
+                    viewModel.logoutAccount(username)
+                }, false)
+            }
+            onRemoveAccount = { username ->
+                DialogUtils.showInfoDialogWithTwoButtons(this@AccountManagerActivity,
+                        getString(R.string.logout), String.format(getString(R.string.remove_account_question), username), getString(R.string.cancel),
+                        getString(R.string.okay), {
+                    viewModel.removedAccountResult.observe(this@AccountManagerActivity, Observer(::closeActivity))
+                    viewModel.removeAccount(username)
+                }, false)
+            }
+        }
 
         accountsRecyclerView.layoutManager = LinearLayoutManager(this)
     }
@@ -181,7 +133,7 @@ class AccountManagerActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        mApp.bus.register(this)
+        ProtonMailApplication.getApplication().bus.register(this)
         loadData()
     }
 
@@ -192,7 +144,7 @@ class AccountManagerActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
-        mApp.bus.unregister(this)
+        ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -226,29 +178,24 @@ class AccountManagerActivity : BaseActivity() {
             mUserManager.logoutOffline(currentPrimaryAccount)
         }
         val accountManager = AccountManager.getInstance(this)
-
-        val accounts = accountManager.getLoggedInUsers()
-            .map { username ->
-                val userAddresses = mUserManager.getUser(username).addresses
-                val primaryAddress = userAddresses.find { address ->
-                    address.type == Constants.ADDRESS_TYPE_PRIMARY
-                }
-                val displayName = primaryAddress?.displayName ?: EMPTY_STRING
-                val primaryAddressEmail =
-                    if (primaryAddress == null) username else primaryAddress.email
-
-                AccountManagerUserModel.User(
-                    name = username,
-                    emailAddress = primaryAddressEmail,
-                    loggedIn = true,
-                    primary = username == currentPrimaryAccount,
-                    displayName = displayName.takeIfNotBlank() ?: username
-                )
+        val accounts = accountManager.getLoggedInUsers().map {
+            val userAddresses = mUserManager.getUser(it).addresses
+            val primaryAddress = userAddresses.find { address ->
+                address.type == Constants.ADDRESS_TYPE_PRIMARY
             }
-            .sortedByDescending { it.primary } +
-            accountManager.getSavedUsers().map { AccountManagerUserModel.User(name = it) } +
-            AccountManagerUserModel.AddAccount
-
+            val displayName = primaryAddress?.displayName ?: ""
+            val primaryAddressEmail = if (primaryAddress == null) {
+                it
+            } else {
+                primaryAddress.email
+            }
+            DrawerUserModel.BaseUser.AccountUser(it, primaryAddressEmail, true, it == currentPrimaryAccount, if (displayName.isNotEmpty()) displayName else it)
+        }.sortedByDescending {
+            it.primary
+        }.plus(accountManager.getSavedUsers().map {
+            DrawerUserModel.BaseUser.AccountUser(name = it, loggedIn = false, emailAddress = "", primary = false, displayName = it)
+        }) as MutableList<DrawerUserModel>
+        accounts.add(DrawerUserModel.AccFooter)
         accountsAdapter.items = accounts
         accountsRecyclerView.adapter = accountsAdapter
     }

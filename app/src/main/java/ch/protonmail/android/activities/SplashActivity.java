@@ -70,12 +70,11 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mApp.startJobManager();
-        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0 &&
-                mUserManager.loginState(mUserManager.getUsername()) == LOGIN_STATE_TO_INBOX) {
-            alarmReceiver.setAlarm(mApp, true);
+        ProtonMailApplication.getApplication().startJobManager();
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0 && mUserManager.getLoginState() == LOGIN_STATE_TO_INBOX) {
+            alarmReceiver.setAlarm(ProtonMailApplication.getApplication(), true);
             Intent home = new Intent(this, MailboxActivity.class);
-            home.putExtra(EXTRA_FIRST_LOGIN, mApp.hasUpdateOccurred());
+            home.putExtra(EXTRA_FIRST_LOGIN, ProtonMailApplication.getApplication().hasUpdateOccurred());
             home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(home);
             finish();
@@ -95,8 +94,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void navigate() {
-        String currentUser = mUserManager.getUsername();
-        int loginState = mUserManager.loginState(currentUser);
+        int loginState = mUserManager.getLoginState();
         if (loginState == LOGIN_STATE_NOT_INITIALIZED) {
             if (mUserManager.isEngagementShown()) {
                 startActivity(new Intent(this, LoginActivity.class));
@@ -115,7 +113,7 @@ public class SplashActivity extends BaseActivity {
             }
         } else {
             if (mUserManager.accessTokenExists() && !mUserManager.getUser().getAddresses().isEmpty()) {
-                mUserManager.setLoggedIn(currentUser, true);
+                mUserManager.setLoggedIn(true);
                 mJobManager.addJobInBackground(new FetchMailSettingsJob());
                 goHome();
             } else {
@@ -136,7 +134,7 @@ public class SplashActivity extends BaseActivity {
     @Subscribe
     public void onUserSettingsEvent(UserSettingsEvent event) {
         if (event != null && event.getUserSettings() != null) {
-            mUserManager.setLoggedIn(event.getUserSettings().getUsername(), true);
+            mUserManager.setLoggedIn(true);
             goHome();
         }
     }

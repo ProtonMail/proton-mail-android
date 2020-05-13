@@ -20,7 +20,6 @@ package ch.protonmail.android.storage;
 
 import android.content.Context;
 import android.content.Intent;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ProtonJobIntentService;
 
@@ -31,8 +30,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
-import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata;
+import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase;
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
@@ -95,7 +94,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-            if (!mUserManager.isLoggedIn(mUserManager.getUsername())) {
+            if (!mUserManager.isLoggedIn()) {
                 return;
             }
             String action = intent.getAction();
