@@ -24,6 +24,7 @@ import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
 import ch.protonmail.android.api.models.*
 import ch.protonmail.android.api.segments.ATTACH_PATH
 import ch.protonmail.android.api.segments.TEN_SECONDS
+import ch.protonmail.android.api.utils.StringConverterFactory
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
@@ -63,24 +64,25 @@ class ProtonRetrofitBuilder(
 
     fun rebuildMapFor(okHttpProvider: OkHttpProvider, endpointUri: String) {
         this.endpointUri = endpointUri
+
         enumValues<RetrofitType>().forEach { type ->
             cache[type] = when (type) {
                 RetrofitType.PUBLIC -> {
-                    ProtonRetrofitPublic(okHttpProvider, userManager, jobManager, networkUtil)
+                    ProtonRetrofitPublic(okHttpProvider, userManager, jobManager, networkUtil).build(endpointUri).build()
                 }
                 RetrofitType.PING -> {
                     val retrofit = ProtonRetrofitPing(okHttpProvider, userManager, jobManager, networkUtil)
                     retrofit.defaultInterceptor.also {
                         it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
                     }
-                    retrofit
+                    retrofit.build(endpointUri).build()
                 }
                 RetrofitType.EXTENDED_TIMEOUT -> {
                     val retrofit = ProtonRetrofitExtended(okHttpProvider, userManager, jobManager, networkUtil)
                     retrofit.defaultInterceptor.also {
                         it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
                     }
-                    retrofit
+                    retrofit.buildExtended(endpointUri).build()
                 }
                 RetrofitType.ATTACHMENTS -> {
                     val publicRetrofit = ProtonRetrofitPublic(okHttpProvider, userManager, jobManager, networkUtil).build(endpointUri).build()
@@ -90,16 +92,16 @@ class ProtonRetrofitBuilder(
                     retrofit.defaultInterceptor.also {
                         it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
                     }
-                    retrofit
+                    retrofit.build(endpointUri).build()
                 }
                 else -> { // secure is default
                     val retrofit = ProtonRetrofitSecure(okHttpProvider, userManager, jobManager, networkUtil)
                     retrofit.defaultInterceptor.also {
                         it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
                     }
-                    retrofit
+                    retrofit.build(endpointUri).build()
                 }
-            }.build(endpointUri).build()
+            }
         }
     }
 
@@ -156,6 +158,15 @@ sealed class ProtonRetrofit(
         return Retrofit.Builder()
                 .baseUrl(endpointUri)
                 .client(configureOkHttp(endpointUri, defaultInterceptor))
+                .addConverterFactory(GsonConverterFactory.create(gsonUcc))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+    }
+
+    fun buildExtended(endpointUri: String): Retrofit.Builder {
+        return Retrofit.Builder()
+                .baseUrl(endpointUri)
+                .client(configureOkHttp(endpointUri, defaultInterceptor))
+                .addConverterFactory(StringConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gsonUcc))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
     }
