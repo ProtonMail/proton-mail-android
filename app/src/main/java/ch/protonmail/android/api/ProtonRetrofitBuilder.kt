@@ -22,6 +22,7 @@ import android.os.Build
 import ch.protonmail.android.api.interceptors.ProtonMailAttachmentRequestInterceptor
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
 import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.segments.ATTACH_PATH
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -58,7 +59,7 @@ class ProtonRetrofitBuilder(
 ) {
     private val cache = HashMap<RetrofitType, Retrofit>()
     private lateinit var endpointUri: String
-    lateinit var attachReqInter:ProtonMailAttachmentRequestInterceptor
+    lateinit var attachReqInter: ProtonMailAttachmentRequestInterceptor
 
     fun rebuildMapFor(okHttpProvider: OkHttpProvider, endpointUri: String) {
         this.endpointUri = endpointUri
@@ -170,6 +171,7 @@ class ProtonRetrofitPublic(
         // for the public retrofit client it is not needed to have the interceptor, so we tolerate null
         val okHttpClient = okHttpProvider.provideOkHttpClient(
                 endpointUri,
+                endpointUri,
                 TEN_SECONDS,
                 interceptor,
                 HttpLoggingInterceptor.Level.BODY,
@@ -192,6 +194,7 @@ class ProtonRetrofitPing(
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
                 endpointUri,
+                endpointUri,
                 TEN_SECONDS,
                 interceptor,
                 HttpLoggingInterceptor.Level.BODY,
@@ -213,6 +216,7 @@ class ProtonRetrofitExtended(
             throw RuntimeException("Private OkHttp client is mandatory to be provided with public request interceptor")
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
+                endpointUri,
                 endpointUri,
                 TEN_SECONDS, // it was 2 minutes
                 interceptor,
@@ -237,6 +241,7 @@ class ProtonRetrofitAttachments(
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
                 endpointUri,
+                endpointUri + ATTACH_PATH,
                 TEN_SECONDS, // it was 3 minutes
                 attachReqInter,
                 HttpLoggingInterceptor.Level.BASIC,
@@ -258,6 +263,7 @@ class ProtonRetrofitSecure(
             throw RuntimeException("Private OkHttp client is mandatory to be provided with public request interceptor")
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
+                endpointUri,
                 endpointUri,
                 TEN_SECONDS,
                 interceptor,

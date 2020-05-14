@@ -38,20 +38,23 @@ import java.net.ConnectException
 // region constants
 // private const val FIVE_SECONDS_IN_MILLIS = 5000L
 private const val TAG = "ProtonMailRequestInterceptor"
+
 // endregion
 class ProtonMailRequestInterceptor private constructor(
         userManager: UserManager,
         jobManager: JobManager,
         networkUtil: QueueNetworkUtil
-): BaseRequestInterceptor(userManager, jobManager, networkUtil) {
+) : BaseRequestInterceptor(userManager, jobManager, networkUtil) {
 
     companion object {
-        @Volatile private var INSTANCE: ProtonMailRequestInterceptor? = null
+        @Volatile
+        private var INSTANCE: ProtonMailRequestInterceptor? = null
 
         fun getInstance(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil):
                 ProtonMailRequestInterceptor =
                 INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: buildInstance(userManager, jobManager, networkUtil).also { INSTANCE = it }
+                    INSTANCE
+                            ?: buildInstance(userManager, jobManager, networkUtil).also { INSTANCE = it }
                 }
 
         private fun buildInstance(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil) =
@@ -68,7 +71,7 @@ class ProtonMailRequestInterceptor private constructor(
         var response: Response? = null
         try {
 
-            Timber.tag(TAG).d(TAG,  "Intercept: advancing request with url: " + request.url())
+            Timber.tag(TAG).d(TAG, "Intercept: advancing request with url: " + request.url())
             response = chain.proceed(request)
 
         } catch (exception: IOException) {
