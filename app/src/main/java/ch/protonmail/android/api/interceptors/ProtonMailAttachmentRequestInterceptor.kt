@@ -23,7 +23,6 @@ import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProgressResponseBody
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.ProtonMailPublicService
-import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -43,16 +42,18 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
 ) : BaseRequestInterceptor(userManager, jobManager, networkUtil) {
 
     lateinit var protonMailApi: ProtonMailApiManager
-    private var progressListener : ProgressListener? = null
-    private var semaphore : Semaphore? = null
+    private var progressListener: ProgressListener? = null
+    private var semaphore: Semaphore? = null
 
     companion object {
-        @Volatile private var INSTANCE: ProtonMailAttachmentRequestInterceptor? = null
+        @Volatile
+        private var INSTANCE: ProtonMailAttachmentRequestInterceptor? = null
 
         fun getInstance(publicService: ProtonMailPublicService, userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil):
                 ProtonMailAttachmentRequestInterceptor =
                 INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: buildInstance(publicService, userManager, jobManager, networkUtil).also { INSTANCE = it }
+                    INSTANCE
+                            ?: buildInstance(publicService, userManager, jobManager, networkUtil).also { INSTANCE = it }
                 }
 
         private fun buildInstance(publicService: ProtonMailPublicService, userManager: UserManager,
@@ -62,7 +63,7 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
     }
 
-    fun nextProgressListener(progressListener : ProgressListener) {
+    fun nextProgressListener(progressListener: ProgressListener) {
         // If there already is a previous semaphore acquire so we know progressListener has been attached
         this.semaphore?.acquire()
         this.progressListener = progressListener

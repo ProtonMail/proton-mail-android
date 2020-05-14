@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.utils.crypto
 
-import ch.protonmail.android.api.models.doh.Proxies
-import ch.protonmail.android.core.Constants
 import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -30,8 +28,6 @@ import javax.inject.Inject
 
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
-import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ServerTime
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -45,6 +41,7 @@ class ServerTimeInterceptor : Interceptor {
 
     @Inject
     lateinit var mOpenPGP: OpenPGP
+
     @Inject
     lateinit var mQueueNetworkUtil: QueueNetworkUtil
 

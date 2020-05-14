@@ -19,7 +19,6 @@
 package ch.protonmail.android.api
 
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
@@ -31,29 +30,28 @@ import javax.inject.Singleton
  */
 @Singleton
 class OkHttpProvider(private val pinnedKeyHashes: List<String>) {
-
     // cache the clients, this way we can have separate client for every Uri/Url
     private val okHttpClients = HashMap<String, ProtonOkHttpClient>()
-
     /**
      * Decide in runtime which okhttp client to be returned
      */
     fun provideOkHttpClient(
             endpointUri: String,
+            id: String = endpointUri,
             timeout: Long,
             interceptor: Interceptor?,
             loggingLevel: HttpLoggingInterceptor.Level,
             connectionSpecs: List<ConnectionSpec?>,
             serverTimeInterceptor: ServerTimeInterceptor?
     ): ProtonOkHttpClient {
-        if (okHttpClients.containsKey(endpointUri)) {
-            return okHttpClients[endpointUri]!! // we can safely enforce here because we are sure it exists
+        if (okHttpClients.containsKey(id)) {
+            return okHttpClients[id]!! // we can safely enforce here because we are sure it exists
         }
-        okHttpClients[endpointUri] = if (endpointUri == Constants.ENDPOINT_URI) {
+        okHttpClients[id] = if (endpointUri == Constants.ENDPOINT_URI) {
             DefaultOkHttpClient(timeout, interceptor, loggingLevel, connectionSpecs, serverTimeInterceptor)
         } else {
             ProxyOkHttpClient(timeout, interceptor, loggingLevel, connectionSpecs, serverTimeInterceptor, endpointUri, pinnedKeyHashes)
         }
-        return okHttpClients[endpointUri]!!
+        return okHttpClients[id]!!
     }
 }
