@@ -29,6 +29,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.util.Linkify;
@@ -107,7 +108,7 @@ import ch.protonmail.android.jobs.FetchContactsEmailsJob;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
-import ch.protonmail.android.prefs.PreferencesProvider;
+import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.servers.notification.INotificationServer;
 import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.utils.AppUtil;
@@ -135,8 +136,6 @@ public class ProtonMailApplication extends Application implements HasActivityInj
 
     private static ProtonMailApplication sInstance;
 
-    @Inject
-    PreferencesProvider preferencesProvider;
     @Inject
     UserManager mUserManager;
     @Inject
@@ -180,9 +179,6 @@ public class ProtonMailApplication extends Application implements HasActivityInj
 
     private String API_URL = "";
 
-    @java.lang.Deprecated
-    @kotlin.Deprecated(message = "We should not rely on this static field, we should instead inject " +
-            "in the constructor the Context or the Application where needed")
     @NonNull
     public static ProtonMailApplication getApplication() {
         return sInstance;
@@ -216,6 +212,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         // Initialize TrustKit for TLS Certificate Pinning
         TrustKit.initializeWithNetworkSecurityConfiguration(this);
         mAppComponent = DaggerAppComponent.builder().appModule(new AppModule(ProtonMailApplication.this)).build();
+
         mAppComponent.inject(ProtonMailApplication.this);
 
         ViewStateStoreConfig.INSTANCE
@@ -260,25 +257,19 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         return mIsInitialized;
     }
 
-    @java.lang.Deprecated
-    @kotlin.Deprecated(message = "Inject PreferencesProvider in the constructor or directly the needed Preferences")
     @NonNull
     public SharedPreferences getDefaultSharedPreferences() {
-        return preferencesProvider.getSharedPreferences();
+        return PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-    @java.lang.Deprecated
-    @kotlin.Deprecated(message = "Inject PreferencesProvider in the constructor or directly the needed Preferences")
     @NonNull
     public SharedPreferences getSecureSharedPreferences() {
-        return preferencesProvider.getSecureSharedPreferences();
+        return SecureSharedPreferences.Companion.getPrefs(ProtonMailApplication.getApplication(), "ProtonMailSSP", Context.MODE_PRIVATE);
     }
 
-    @java.lang.Deprecated
-    @kotlin.Deprecated(message = "Inject PreferencesProvider in the constructor or directly the needed Preferences")
     @NonNull
-    public SharedPreferences getSecureSharedPreferences(@NonNull String username) {
-        return preferencesProvider.preferencesFor(username);
+    public SharedPreferences getSecureSharedPreferences(String username) {
+        return SecureSharedPreferences.Companion.getPrefsForUser(ProtonMailApplication.getApplication(), username);
     }
 
     @NonNull
@@ -570,9 +561,8 @@ public class ProtonMailApplication extends Application implements HasActivityInj
      * {@link MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC}
      */
     private void checkForUpdateAndClearCache() {
-        String username = mUserManager.getUsername();
         final SharedPreferences prefs = getDefaultSharedPreferences();
-        int currentAppVersion = BuildConfig.VERSION_CODE;
+        int currentAppVersion = AppUtil.getAppVersionCode(this);
         mNetworkUtil.setCurrentlyHasConnectivity(true);
         //refresh local cache if new app version
         int previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
@@ -580,15 +570,14 @@ public class ProtonMailApplication extends Application implements HasActivityInj
             prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, currentAppVersion).apply();
             mUpdateOccurred = true;
 
-            // Not sure if this is right, it was here since 12/09/2019 - only added username param
-            if (mUserManager.isLoggedIn(username)){
-                mUserManager.setLoginState(username, LOGIN_STATE_TO_INBOX);
+            if (mUserManager.isLoggedIn()){
+                mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
             }
 
             if (BuildConfig.DEBUG) {
                 new RefreshMessagesAndAttachments(messagesDatabase).execute();
             }
-            if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn(mUserManager.getUsername())) {
+            if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn()) {
                 jobManager.addJobInBackground(new FetchContactsEmailsJob(0));
                 jobManager.addJobInBackground(new FetchContactsDataJob());
             }
@@ -745,7 +734,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         NotificationManager notificationManager = (NotificationManager) getSystemService(
                 Context.NOTIFICATION_SERVICE);
         INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn(username)) {
+        if (mUserManager != null && mUserManager.isLoggedIn()) {
             notificationServer.notifyUserLoggedOut(mUserManager.getUser(username));
         }
     }
@@ -753,7 +742,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     public void notifySingleErrorSendingMessage(Message message, String error, User user) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn(user.getUsername())) {
+        if (mUserManager != null && mUserManager.isLoggedIn()) {
             notificationServer.notifySingleErrorSendingMessage(message, error, user);
         }
     }
@@ -761,7 +750,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     public void notifyMultipleErrorSendingMessage(List<SendingFailedNotification> sendingFailedNotifications, User user) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn(user.getUsername())) {
+        if (mUserManager != null && mUserManager.isLoggedIn()) {
             notificationServer.notifyMultipleErrorSendingMessage(sendingFailedNotifications, user);
         }
     }

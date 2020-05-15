@@ -68,7 +68,6 @@ import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
-import kotlin.Deprecated;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_API_OFFLINE;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
@@ -133,8 +132,6 @@ public class AppUtil {
                         getAppVersionCode(ProtonMailApplication.getApplication()));
     }
 
-    @Deprecated(message = "Use 'BuildConfig.VERSION_CODE' instead")
-    @java.lang.Deprecated
     public static int getAppVersionCode(Context context) {
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);

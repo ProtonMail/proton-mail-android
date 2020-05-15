@@ -19,6 +19,7 @@
 package ch.protonmail.android.core
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.text.TextUtils
 import androidx.annotation.IntDef
 import androidx.annotation.NonNull
@@ -27,12 +28,7 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
-import ch.protonmail.android.api.models.LoginInfoResponse
-import ch.protonmail.android.api.models.LoginResponse
-import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.UserInfo
-import ch.protonmail.android.api.models.UserSettings
+import ch.protonmail.android.api.models.*
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
@@ -40,12 +36,8 @@ import ch.protonmail.android.events.ForceSwitchedAccountEvent
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.prefs.PreferencesProvider
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
-import ch.protonmail.libs.core.preferences.get
-import ch.protonmail.libs.core.preferences.set
-import ch.protonmail.libs.core.utils.EMPTY_STRING
 import com.squareup.otto.Produce
 import java.util.*
 import javax.inject.Inject
@@ -79,22 +71,16 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 // endregion
 
 @Singleton
-class UserManager @Inject constructor(
-    private val context: Context,
-    private val preferencesProvider: PreferencesProvider,
-    val openPgp: OpenPGP
-) {
-
-    private val prefs get() = preferencesProvider.sharedPreferences
-    private val securePrefs get() = preferencesProvider.secureSharedPreferences
-    private val currentUserPrefs get() = preferencesProvider.preferencesFor(username)
-    private fun prefsFor(username: String) = preferencesProvider.preferencesFor(username)
+class UserManager(
+        private val prefs: SharedPreferences,
+        private val backupPrefs: SharedPreferences,
+        val context: Context) {
 
     private val userReferences = HashMap<String, User>()
     private var mCheckTimestamp: Float = 0.toFloat()
     private var mMailboxPassword: String? = null
     private var mMailboxPin: String? = null
-    private val app = context.applicationContext as ProtonMailApplication
+    private val app: ProtonMailApplication = ProtonMailApplication.getApplication()
     private var mGeneratingKeyPair: Boolean = false
 
     var privateKey: String? = null
@@ -146,6 +132,9 @@ class UserManager @Inject constructor(
 
     var snoozeSettings: SnoozeSettings? = null
 
+    @Inject
+    lateinit var openPgp: OpenPGP
+
     private var mNewUserUsername: String? = null
     private var mNewUserPassword: ByteArray? = null
     private var mNewUserUpdateMe: Boolean = false
@@ -167,23 +156,12 @@ class UserManager @Inject constructor(
             return accountManager.getNextLoggedInAccountOtherThan(currentActiveAccount, currentActiveAccount)
         }
 
-    /** @return `true` if the User with the given [username] is locally saved as logged id */
-    fun isLoggedIn(username: String) = prefsFor(username)[PREF_IS_LOGGED_IN] ?:
-        (username in AccountManager.getInstance(context).getLoggedInUsers())
-            .also { isLoggedIn -> setLoggedIn(username, isLoggedIn) }
-
-    /** Locally store login state fo the user with the given [username] */
-    fun setLoggedIn(username: String, loggedIn: Boolean) {
-        prefsFor(username)[PREF_IS_LOGGED_IN] = loggedIn
-        with(AccountManager.getInstance(context)) {
-            if (loggedIn) onSuccessfulLogin(username)
-            else onSuccessfulLogout(username)
-        }
-    }
+    var isLoggedIn: Boolean
+        get() = prefs.getBoolean(PREF_IS_LOGGED_IN, false)
+        set(isLoggedIn) = prefs.edit().putBoolean(PREF_IS_LOGGED_IN, isLoggedIn).apply()
 
     val isFirstLogin: Boolean
-        get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) &&
-            prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != BuildConfig.VERSION_CODE
+        get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) && prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
 
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
@@ -192,21 +170,26 @@ class UserManager @Inject constructor(
         get() = prefs.getBoolean(PREF_IS_FIRST_MESSAGE_DETAILS, true)
 
     val isEngagementShown: Boolean
-        get() = currentUserPrefs.getBoolean(PREF_ENGAGEMENT_SHOWN, false)
+        get() = backupPrefs.getBoolean(PREF_ENGAGEMENT_SHOWN, false)
 
     /**
      * @return username of currently "active" user
      */
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val username: String
-        get() = prefs[PREF_USERNAME] ?: EMPTY_STRING
+        get() = prefs.getString(PREF_USERNAME, "")
 
     val incorrectPinAttempts: Int
-        get() = securePrefs[PREF_PIN_INCORRECT_ATTEMPTS] ?: 0
+        get() {
+            val secureSharedPreferences = ProtonMailApplication.getApplication().secureSharedPreferences
+            return secureSharedPreferences.getInt(PREF_PIN_INCORRECT_ATTEMPTS, 0)
+        }
 
     val mailboxPin: String?
         get() {
             if (mMailboxPin == null) {
-                mMailboxPin = securePrefs[PREF_PIN]
+                val secureSharedPreferences = ProtonMailApplication.getApplication().secureSharedPreferences
+                mMailboxPin = secureSharedPreferences.getString(PREF_PIN, null)
             }
             return mMailboxPin
         }
@@ -228,16 +211,17 @@ class UserManager @Inject constructor(
      * Gets key salt for current user.
      */
     val keySalt: String?
-        get() = securePrefs[PREF_KEY_SALT]
+        get() {
+            val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+            return secureSharedPreferences.getString(PREF_KEY_SALT, null)
+        }
 
-    /** @return [Int] [LoginState] stored locally for the User with the given [username] */
-    @LoginState fun loginState(username: String) =
-        prefsFor(username)[PREF_LOGIN_STATE] ?: LOGIN_STATE_NOT_INITIALIZED
-
-    /** Locally store login state [LoginState] fo the user with the given [username] */
-    fun setLoginState(username: String, @LoginState state: Int) {
-        prefsFor(username)[PREF_LOGIN_STATE] = state
-    }
+    var loginState: Int
+        @LoginState
+        get() = prefs.getInt(PREF_LOGIN_STATE, LOGIN_STATE_NOT_INITIALIZED)
+        set(@LoginState status) {
+            prefs.edit().putInt(PREF_LOGIN_STATE, status).apply()
+        }
 
     /**
      * Use this method to get settings for currently active User.
@@ -305,11 +289,14 @@ class UserManager @Inject constructor(
      * @see MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC
      */
     init {
+        app.appComponent.inject(this)
+        val prefs = app.defaultSharedPreferences
+        val currentAppVersion = AppUtil.getAppVersionCode(app)
         val previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE)
         // if this version requires the user to be logged out when updating
         // and if every single previous version should be force logged out
         // or any specific previous version should be logged out
-        if (previousVersion != BuildConfig.VERSION_CODE) {
+        if (previousVersion != currentAppVersion) {
 
             // Removed check for updates where we need to logout as it was always false. See doc ref in method header
             if (false) {
@@ -323,7 +310,7 @@ class UserManager @Inject constructor(
             loadSettings(username)
             mCheckTimestamp = this.prefs.getFloat(PREF_CHECK_TIMESTAMP, 0f)
         }
-        app.bus.register(this)
+        ProtonMailApplication.getApplication().bus.register(this)
     }
 
     private fun reset() {
@@ -331,7 +318,7 @@ class UserManager @Inject constructor(
         userReferences.remove(username)
         mMailboxPassword = null
         mMailboxPin = null
-        app.eventManager.clearState()
+        ProtonMailApplication.getApplication().eventManager.clearState()
     }
 
     fun generateKeyPair(username: String, domain: String, password: ByteArray, bits: Int) {
@@ -412,8 +399,6 @@ class UserManager @Inject constructor(
      * @param username the username of the account to be logged out.
      */
     fun logoutAccount(username: String, clearDoneListener: (() -> Unit)?) {
-        setLoggedIn(username, false)
-        setLoginState(username, LOGIN_STATE_NOT_INITIALIZED)
         val accountManager = AccountManager.getInstance(context)
         val currentPrimary = this.username
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
@@ -424,11 +409,13 @@ class UserManager @Inject constructor(
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
         setUsernameAndReload(nextLoggedInAccount)
-        app.clearPaymentMethods()
+        ProtonMailApplication.getApplication().clearPaymentMethods()
     }
 
     @JvmOverloads
-    fun logoutLastActiveAccount(clearDoneListener: () -> Unit = {}) {
+    fun logoutLastActiveAccount(clearDoneListener: (() -> Unit)? = null) {
+        isLoggedIn = false
+        loginState = LOGIN_STATE_NOT_INITIALIZED
         AppUtil.deleteDatabases(app.applicationContext, username, clearDoneListener)
         saveBackupSettings()
         LogoutService.startLogout(true, username)
@@ -439,24 +426,24 @@ class UserManager @Inject constructor(
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
         AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
-        app.clearPaymentMethods()
+        ProtonMailApplication.getApplication().clearPaymentMethods()
     }
 
     @JvmOverloads
     fun logoutOffline(usernameToLogout: String? = null) {
         val username = usernameToLogout ?: this.username
-        setLoggedIn(username, false)
-        setLoginState(username, LOGIN_STATE_NOT_INITIALIZED)
         if (username.isEmpty()) {
             return
         }
-        app.clearPaymentMethods()
+        ProtonMailApplication.getApplication().clearPaymentMethods()
         val nextLoggedInAccount = nextLoggedInAccountOtherThanCurrent
         val accountManager = AccountManager.getInstance(context)
         if (!accountManager.getLoggedInUsers().contains(username)) {
             return
         }
         if (nextLoggedInAccount == null) {
+            isLoggedIn = false
+            loginState = LOGIN_STATE_NOT_INITIALIZED
             saveBackupSettings()
             LogoutService.startLogout(false)
             setRememberMailboxLogin(false)
@@ -513,11 +500,11 @@ class UserManager @Inject constructor(
     }
 
     fun engagementDone() {
-        currentUserPrefs.edit().putBoolean(PREF_ENGAGEMENT_SHOWN, true).apply()
+        backupPrefs.edit().putBoolean(PREF_ENGAGEMENT_SHOWN, true).apply()
     }
 
     fun engagementShowNextTime() {
-        currentUserPrefs.edit().putBoolean(PREF_ENGAGEMENT_SHOWN, false).apply()
+        backupPrefs.edit().putBoolean(PREF_ENGAGEMENT_SHOWN, false).apply()
     }
 
     /**
@@ -530,8 +517,10 @@ class UserManager @Inject constructor(
         prefs.edit().putString(PREF_USERNAME, username).apply()
         val currentUsername = this.username
         if (currentUsername != username) {
+            clearBackupPrefs()
             savePin("")
         }
+        backupPrefs.edit().putString(PREF_USERNAME, username).apply()
         engagementDone() // we set this to done since it is the same person that has switched account
 
         AccountManager.getInstance(context).onSuccessfulLogin(username)
@@ -666,10 +655,10 @@ class UserManager @Inject constructor(
     fun resetGenerateKeyPairEvent() {
         this.mGenerateKeyPairEvent = GenerateKeyPairEvent(false, null)
     }
-    @Deprecated("This is not need anymore, since now we have user related preferences")
+
 
     private fun clearBackupPrefs() {
-//        backupPrefs.edit().clear().apply()
+        backupPrefs.edit().clear().apply()
     }
 
 

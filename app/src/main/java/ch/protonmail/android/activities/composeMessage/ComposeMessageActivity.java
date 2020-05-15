@@ -647,7 +647,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     }
 
     private boolean checkIfUserLoggedIn() {
-        if (!mUserManager.isLoggedIn(mUserManager.getUsername())) {
+        if (!mUserManager.isLoggedIn()) {
             TextExtensions.showToast(this, R.string.need_to_be_logged_in);
             Class activityToRun;
             if (mUserManager != null && mUserManager.isEngagementShown()) {

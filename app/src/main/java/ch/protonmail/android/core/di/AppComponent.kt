@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.core.di
 
+import javax.inject.Singleton
+
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.SearchActivity
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
@@ -25,19 +27,17 @@ import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.ProtonRetrofit
-import ch.protonmail.android.api.SecuredServices
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
+import ch.protonmail.android.api.SecuredServices
 import ch.protonmail.android.api.models.address.AddressKeyActivationWorker
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.api.segments.event.EventHandler
 import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.api.segments.event.EventUpdaterService
-import ch.protonmail.android.api.services.LoginService
-import ch.protonmail.android.api.services.LogoutService
-import ch.protonmail.android.api.services.MessagesService
-import ch.protonmail.android.api.services.PostMessageServiceFactory
+import ch.protonmail.android.api.services.*
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.gcm.GcmIntentService
 import ch.protonmail.android.gcm.PMRegistrationIntentService
 import ch.protonmail.android.jobs.FetchContactsEmailsJob
@@ -49,7 +49,6 @@ import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import dagger.Component
-import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AppModule::class, ActivityModule::class, RepositoryModule::class])
@@ -57,6 +56,7 @@ interface AppComponent {
     fun inject(application: ProtonMailApplication)
     fun inject(api: ProtonMailApiManager)
     fun inject(api: ProtonMailApi)
+    fun inject(userManager: UserManager)
     fun inject(eventManager: EventManager)
     fun inject(eventHandler: EventHandler)
     fun inject(contactEmailsManager: ContactEmailsManager)

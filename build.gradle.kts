@@ -30,7 +30,7 @@ plugins {
 }
 
 allprojects {
-    repositories(repos)
+  repositories(repos)
     // TODO: workaround to this: https://github.com/mockk/mockk/issues/281
     configurations.all {
         resolutionStrategy.force("org.objenesis:objenesis:2.6")
@@ -43,8 +43,8 @@ subprojects {
         kotlinOptions {
             jvmTarget = "1.8"
             freeCompilerArgs = freeCompilerArgs +
-                "-XXLanguage:+NewInference" +
-                "-Xuse-experimental=kotlin.Experimental"
+                    "-XXLanguage:+NewInference" +
+                    "-Xuse-experimental=kotlin.Experimental"
         }
     }
 

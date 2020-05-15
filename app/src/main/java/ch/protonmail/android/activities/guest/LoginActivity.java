@@ -261,7 +261,7 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void onMailboxSuccess() {
-        mUserManager.setLoginState(mUsernameEditText.getText().toString(), LOGIN_STATE_TO_INBOX);
+        mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
     }
 
     @Subscribe
@@ -274,7 +274,7 @@ public class LoginActivity extends BaseLoginActivity {
         if (event == null) {
             return;
         }
-        mApp.resetLoginEvent();
+        ProtonMailApplication.getApplication().resetLoginEvent();
         switch (event.getStatus()) {
             case SUCCESS: {
                 if (event.isRedirectToSetup()) {
@@ -283,7 +283,7 @@ public class LoginActivity extends BaseLoginActivity {
                     return;
                 }
                 hideProgress();
-                mUserManager.setLoginState(event.getUsername(), LOGIN_STATE_LOGIN_FINISHED);
+                mUserManager.setLoginState(LOGIN_STATE_LOGIN_FINISHED);
                 mUserManager.saveKeySalt(event.getKeySalt(), event.getUsername());
                 Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
                 mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, event.getKeySalt());

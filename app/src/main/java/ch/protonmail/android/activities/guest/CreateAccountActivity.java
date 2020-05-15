@@ -282,8 +282,8 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
 
     @Override
     public void createUserCompleted(int windowSize, boolean success) {
-        mUserManager.setLoginState(mUserName, LOGIN_STATE_TO_INBOX);
-        mUserManager.setLoggedIn(mUserName, true);
+        mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
+        mUserManager.setLoggedIn(true);
         mUserManager.engagementShowNextTime();
         Intent feedbackIntent = AppUtil.decorInAppIntent(new Intent(this, CreateAccountFeedbackActivity.class));
         feedbackIntent.putExtra(CreateAccountFeedbackActivity.EXTRA_WINDOW_SIZE, windowSize);

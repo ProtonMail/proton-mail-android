@@ -188,6 +188,7 @@ object Constants {
     }
 
     object PrefsType {
+        const val BACKUP = "backup"
         const val DEFAULT = "default"
         const val BACKUP_PREFS_NAME = "backup_prefs"
     }
