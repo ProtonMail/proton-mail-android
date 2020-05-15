@@ -105,7 +105,7 @@ public class NetworkUtil {
                                                              boolean top) {
         Snackbar connectivitySnackBar = Snackbar.make(snackBarLayout,
                 context.getString(R.string.connectivity_checking),
-                Snackbar.LENGTH_INDEFINITE); // Dimitar, maybe return this to length long?
+                Snackbar.LENGTH_LONG);
         View view = connectivitySnackBar.getView();
         if (top) {
             setTopGravity(view);
