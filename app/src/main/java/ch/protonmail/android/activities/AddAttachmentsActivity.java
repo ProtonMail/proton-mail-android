@@ -25,13 +25,11 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,11 +47,13 @@ import androidx.work.WorkManager;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
@@ -81,6 +81,9 @@ import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import kotlin.Unit;
+import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
+import timber.log.Timber;
 
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
@@ -176,7 +179,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         }
         if (!TextUtils.isEmpty(mAttachTakePhotoWithoutPermission)) {
             mProcessingAttachmentLayout.setVisibility(View.VISIBLE);
-            handleTakePhotoAttachment(mAttachTakePhotoWithoutPermission);
+            handleTakePhotoRequest(mAttachTakePhotoWithoutPermission);
             mAttachTakePhotoWithoutPermission = null;
         }
     }
@@ -284,7 +287,16 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         }
     }
 
-    private boolean checkIfAttachingAllowed() {
+    private boolean isAttachmentsSizeAllowed(long newAttachmentSie) {
+        if (mAdapter == null) return false;
+
+        long currentAttachmentsSize =
+                CollectionsKt.sumOfLong(CollectionsKt.map(mAdapter.getData(), LocalAttachment::getSize));
+
+        return currentAttachmentsSize + newAttachmentSie < Constants.MAX_ATTACHMENT_FILE_SIZE_IN_BYTES;
+    }
+
+    private boolean isAttachmentsCountAllowed() {
         return mAdapter != null && mAdapter.getCount() < Constants.MAX_ATTACHMENTS;
     }
 
@@ -362,65 +374,38 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (mHasStoragePermission == null || !mHasStoragePermission) {
-                if (requestCode == REQUEST_CODE_ATTACH_FILE) {
-                    mAttachFileWithoutPermission = new ArrayList<>();
-                    ClipData clipData = null;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        clipData = data.getClipData();
-                    }
-                    if (clipData != null) {
-                        for (int i = 0; i < clipData.getItemCount(); i++) {
-                            ClipData.Item item = clipData.getItemAt(i);
-                            mAttachFileWithoutPermission.add(item.getUri());
-                        }
-                    } else {
-                        mAttachFileWithoutPermission.add(data.getData());
-                    }
-                } else if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
-                    mAttachTakePhotoWithoutPermission = mPathToPhoto;
-                }
-                storagePermissionHelper.checkPermission();
-                return;
-            }
-            mProcessingAttachmentLayout.setVisibility(View.VISIBLE);
+        if (resultCode != RESULT_OK) {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+
+        if (mHasStoragePermission == null || !mHasStoragePermission) {
+
             if (requestCode == REQUEST_CODE_ATTACH_FILE) {
-
-                String[] uris = null;
-
-                String uriString = data.getData() != null ? data.getData().toString() : null;
-                if (uriString != null) {
-                    uris = new String[]{uriString};
-                }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    ClipData clipData = data.getClipData();
-                    if (clipData != null) {
-                        uris = new String[clipData.getItemCount()];
-                        for (int i = 0; i < clipData.getItemCount(); i++) {
-                            uris[i] = clipData.getItemAt(i).getUri().toString();
-                        }
+                mAttachFileWithoutPermission = new ArrayList<>();
+                ClipData clipData = data.getClipData();
+                if (clipData != null) {
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        ClipData.Item item = clipData.getItemAt(i);
+                        mAttachFileWithoutPermission.add(item.getUri());
                     }
-                }
-
-                if (uris != null) {
-                    Data workerData = new Data.Builder()
-                            .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, uris)
-                            .build();
-
-                    OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
-                            .setInputData(workerData)
-                            .build();
-
-                    WorkManager.getInstance().enqueue(importAttachmentsWork);
+                } else {
+                    mAttachFileWithoutPermission.add(data.getData());
                 }
 
             } else if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
-                handleTakePhotoAttachment(mPathToPhoto);
+                mAttachTakePhotoWithoutPermission = mPathToPhoto;
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+
+            storagePermissionHelper.checkPermission();
+            return;
+        }
+
+        if (requestCode == REQUEST_CODE_ATTACH_FILE) {
+            handleAttachFileRequest(data.getData(), data.getClipData());
+
+        } else if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
+            handleTakePhotoRequest(mPathToPhoto);
         }
     }
 
@@ -447,11 +432,80 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         }
     }
 
-    private void handleTakePhotoAttachment(String path) {
+    private void handleAttachFileRequest(Uri uri, ClipData clipData) {
+        String[] uris = null;
+
+        String uriString = uri != null ? uri.toString() : null;
+        if (uriString != null) {
+            uris = new String[]{uriString};
+        }
+
+        if (clipData != null) {
+            uris = new String[clipData.getItemCount()];
+            for (int i = 0; i < clipData.getItemCount(); i++) {
+                uris[i] = clipData.getItemAt(i).getUri().toString();
+            }
+        }
+
+        if (uris != null) {
+
+            // region Check whether the size of the attachments is within bounds
+            final AtomicLong incrementalSize = new AtomicLong(0);
+            List<String> sizeComplaintUrisList = ArraysKt.filter(uris, fileUriString -> {
+                Uri fileUri = Uri.parse(fileUriString);
+
+                try {
+                    ParcelFileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(fileUri, "r");
+                    if (fileDescriptor == null) {
+                        return false;
+                    }
+                    final long fileSize = fileDescriptor.getStatSize();
+                    return isAttachmentsSizeAllowed(incrementalSize.addAndGet(fileSize));
+
+                } catch (FileNotFoundException e) {
+                    return false;
+                }
+            });
+
+            if (sizeComplaintUrisList.size() < uris.length) {
+                TextExtensions.showToast(this, R.string.max_attachments_size_reached);
+            }
+            // endregion
+
+            if (sizeComplaintUrisList.size() > 0) {
+                mProcessingAttachmentLayout.setVisibility(View.VISIBLE);
+
+                String[] sizeComplaintUris = new String[sizeComplaintUrisList.size()];
+                sizeComplaintUrisList.toArray(sizeComplaintUris);
+                Data workerData = new Data.Builder()
+                        .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, sizeComplaintUris)
+                        .build();
+
+                OneTimeWorkRequest importAttachmentsWork = new OneTimeWorkRequest.Builder(ImportAttachmentsWorker.class)
+                        .setInputData(workerData)
+                        .build();
+
+                WorkManager.getInstance(this).enqueue(importAttachmentsWork);
+            }
+        }
+    }
+
+    private void handleTakePhotoRequest(String path) {
         if (!TextUtils.isEmpty(path)) {
 
+            File file = new File(path);
+
+            // Check whether the size of the attachment is within bounds
+            if (!isAttachmentsSizeAllowed(file.length())) {
+                TextExtensions.showToast(this, R.string.max_attachments_size_reached);
+                return;
+            }
+
+            mProcessingAttachmentLayout.setVisibility(View.VISIBLE);
+
+            Uri uri = Uri.fromFile(file);
             Data data = new Data.Builder()
-                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, new String[]{Uri.fromFile(new File(path)).toString()})
+                    .putStringArray(KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY, new String[]{uri.toString()})
                     .putBoolean(KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN, true)
                     .build();
 
@@ -459,11 +513,12 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
                     .setInputData(data)
                     .build();
 
-            WorkManager.getInstance().enqueue(importAttachmentsWork);
+            WorkManager workManager = WorkManager.getInstance(this);
+            workManager.enqueue(importAttachmentsWork);
 
-            WorkManager.getInstance().getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
+            workManager.getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
                 if (workInfo != null) {
-                    Log.d("PMTAG", "ImportAttachmentsWorker workInfo = " + workInfo.getState());
+                    Timber.d("ImportAttachmentsWorker workInfo = " + workInfo.getState());
                 }
             });
 
@@ -484,7 +539,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     private void updateAttachmentsCount(int totalAttachmentsCount, int totalEmbeddedImagesCount) {
         if (totalAttachmentsCount == 0 && totalEmbeddedImagesCount == 0) {
-            new Handler().postDelayed(() -> mNoAttachmentsView.setVisibility(View.VISIBLE), 350);
+            mNoAttachmentsView.postDelayed(() -> mNoAttachmentsView.setVisibility(View.VISIBLE), 350);
             mNumAttachmentsView.setVisibility(View.GONE);
         } else {
             int normalAttachments = totalAttachmentsCount - totalEmbeddedImagesCount;
@@ -564,14 +619,12 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     }
 
     private boolean openGallery(){
-        if (!checkIfAttachingAllowed()) {
+        if (!isAttachmentsCountAllowed()) {
             TextExtensions.showToast(this, R.string.max_attachments_reached);
             return true;
         }
         Intent target = new Intent(Intent.ACTION_GET_CONTENT);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            target.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
+        target.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         target.addCategory(Intent.CATEGORY_OPENABLE);
         target.setType(ATTACHMENT_MIME_TYPE);
         Intent intent = Intent.createChooser(target, getString(R.string.select_file));
@@ -584,7 +637,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     }
 
     private boolean openCamera(){
-        if (!checkIfAttachingAllowed()) {
+        if (!isAttachmentsCountAllowed()) {
             TextExtensions.showToast(this, R.string.max_attachments_reached);
             return true;
         }
