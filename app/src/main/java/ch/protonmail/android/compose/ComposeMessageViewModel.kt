@@ -22,7 +22,11 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Spanned
 import android.text.TextUtils
-import androidx.lifecycle.*
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
@@ -165,6 +169,7 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
         set(value) {
             _androidContactsLoaded = value
         }
+
     // endregion
     // region getters
     val verify: Boolean
@@ -799,6 +804,17 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
                 .fromOld(_messageDataResult)
                 .signature(signature)
                 .build()
+
+        signatureContainsHtml = with(_messageDataResult.signature) {
+            val afterTagOpen = substringAfter("<", "")
+            var openingTag = afterTagOpen.substringBefore(" ", "")
+            if (openingTag.contains(">")) {
+                openingTag = afterTagOpen.substringBefore(">", "")
+            }
+            val afterTagClose = afterTagOpen.substringAfter(">", "")
+            val betweenTag = afterTagClose.substringBeforeLast("</$openingTag>", "")
+            betweenTag.isNotEmpty()
+        }
     }
 
     fun processSignature(): String {
@@ -837,7 +853,13 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
                 .build()
     }
 
-    fun setMessagePassword(messagePassword: String?, passwordHint: String?, isPasswordValid: Boolean, expiresIn: Long?, isRespondInlineButtonVisible: Boolean) {
+    fun setMessagePassword(
+            messagePassword: String?,
+            passwordHint: String?,
+            isPasswordValid: Boolean,
+            expiresIn: Long?,
+            isRespondInlineButtonVisible: Boolean
+    ) {
         _messageDataResult = MessageBuilderData.Builder()
                 .fromOld(_messageDataResult)
                 .messagePassword(messagePassword)
@@ -924,7 +946,9 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
                             groupedContactsAndGroups.addAll(0, _protonMailGroups)
                             _pmMessageRecipientsResult.postValue(groupedContactsAndGroups)
                             _mergedContactsLiveData.removeSource(pmMessageRecipientsResult)
-                            _mergedContactsLiveData.addSource(pmMessageRecipientsResult) { value -> _mergedContactsLiveData.postValue(value) }
+                            _mergedContactsLiveData.addSource(pmMessageRecipientsResult) { value ->
+                                _mergedContactsLiveData.postValue(value)
+                            }
                         }
                     }
         }
@@ -1010,7 +1034,12 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
         return messageBodySetup
     }
 
-    private fun setQuotationHeader(sender: String, originalMessageDividerString: String, replyPrefixOnString: String, formattedDateTimeString: String) {
+    private fun setQuotationHeader(
+            sender: String,
+            originalMessageDividerString: String,
+            replyPrefixOnString: String,
+            formattedDateTimeString: String
+    ) {
         val originalMessageBuilder = StringBuilder()
         originalMessageBuilder.append(NEW_LINE)
         originalMessageBuilder.append(originalMessageDividerString)
@@ -1034,7 +1063,9 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
             _protonMailContacts.addAll(_androidContacts)
             _androidMessageRecipientsResult.postValue(_protonMailContacts)
             _mergedContactsLiveData.removeSource(contactGroupsResult)
-            _mergedContactsLiveData.addSource(androidMessageRecipientsResult) { value -> _mergedContactsLiveData.postValue(value) }
+            _mergedContactsLiveData.addSource(androidMessageRecipientsResult) { value ->
+                _mergedContactsLiveData.postValue(value)
+            }
         }
     }
 
@@ -1099,7 +1130,11 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
     }
 
     @JvmOverloads
-    fun setBeforeSaveDraft(uploadAttachments: Boolean, contentFromComposeBodyEditText: String, userAction: UserAction = UserAction.SAVE_DRAFT) {
+    fun setBeforeSaveDraft(
+            uploadAttachments: Boolean,
+            contentFromComposeBodyEditText: String,
+            userAction: UserAction = UserAction.SAVE_DRAFT
+    ) {
         setUploadAttachments(uploadAttachments)
 
         _actionType = userAction
@@ -1108,16 +1143,10 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
         content.replace("   ", "&nbsp;&nbsp;&nbsp;").replace("  ", "&nbsp;&nbsp;")
         content = content.replace("<", LESS_THAN).replace(">", GREATER_THAN).replace("\n", NEW_LINE)
 
-        signatureContainsHtml = with(_messageDataResult.signature) {
-            val afterTagOpen = substringAfter("<", "")
-            val openingTag = afterTagOpen.substringBefore(">", "")
-            val afterTagClose = afterTagOpen.substringAfter(">", "")
-            val betweenTag = afterTagClose.substringBeforeLast("</$openingTag>", "")
-            betweenTag.isNotEmpty()
-        }
+        content = UiUtil.createLinksSending(content)
 
         if (signatureContainsHtml) {
-            val fromHtmlSignature = UiUtil.createLinksSending((UiUtil.fromHtml(_messageDataResult.signature).toString()).replace("\n", NEW_LINE))
+            val fromHtmlSignature = UiUtil.createLinksSending(UiUtil.fromHtml(_messageDataResult.signature).toString().replace("\n", NEW_LINE))
             if (!TextUtils.isEmpty(fromHtmlSignature)) {
                 content = content.replace(fromHtmlSignature, _messageDataResult.signature)
             }
