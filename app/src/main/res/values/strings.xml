@@ -463,7 +463,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/>&lt;br/>&lt;u>%s&lt;/u>&lt;br/>&lt;br/>Do you want to continue?</string>
     <string name="dont_ask_again">Don\'t ask again</string>
     <string name="none">None</string>
-    <string name="changes_affected_after_closing">Changes will be affected after closing the app</string>
+    <string name="changes_affected_after_closing">Changes will take effect after closing the app</string>
 
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Incorrect PIN, %d attempt remaining</item>
