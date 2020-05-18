@@ -59,7 +59,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app_title">Aktualizacja jest wymagana</string>
     <string name="update_app">Nie możesz używać aplikacji ProtonMail, dopóki jej nie zaktualizujesz.</string>
     <string name="api_offline_title">Interfejs API ProtonMaila jest niedostępny</string>
-    <string name="api_offline">ProtonMail jest obecnie niedostępny. Sprawdź https://protonstatus.com lub https://twitter.com/protonmail, aby uzyskać informację o bieżącym stanie.</string>
+    <string name="api_offline">ProtonMail jest obecnie niedostępny. Sprawdź naszego Twittera, aby poznać stan usługi: https://twitter.com/protonmail</string>
     <string name="cannot_open">Nie można otworzyć pliku</string>
     <string name="downloaded_attachment">Pobrano %s</string>
     <string name="edit_contact_validation">Wpisz prawidłową nazwę i adres e-mail</string>
@@ -171,7 +171,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item quantity="other">%d minut</item>
     </plurals>
     <plurals name="attachments">
-        <item quantity="one">%d załącznik</item>
+        <item quantity="one">1 załącznik</item>
         <item quantity="few">%d załączniki</item>
         <item quantity="many">%d załączników</item>
         <item quantity="other">%d załączników</item>
@@ -245,7 +245,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close">Zamknij</string>
     <string name="passwords">Menedżer haseł</string>
     <string name="change_password">Zmień hasło</string>
-    <string name="change_login_password">Zmiana hasła logowania</string>
+    <string name="change_login_password">Zmień hasło logowania</string>
     <string name="change_mailbox_password">Zmień hasło skrzynki pocztowej</string>
     <string name="eo_password_title">Ustaw hasło</string>
     <string name="eo_password_subtitle">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila</string>
@@ -287,7 +287,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_up">Zarejestruj się</string>
     <string name="caps_username">Nazwa użytkownika</string>
     <string name="caps_login_password">Hasło</string>
-    <string name="caps_two_factor">Kod dwuskładnikowy</string>
+    <string name="caps_two_factor">Kod uwierzytelniający</string>
     <string name="caps_confirm_password">Potwierdź hasło</string>
     <string name="caps_confirm_mailbox_password">Potwierdź hasło skrzynki pocztowej</string>
     <string name="caps_optional_notification_email">ADRES ODZYSKIWANIA (OPCJONALNIE)</string>
@@ -341,7 +341,7 @@ Nie strać tego hasła - nie możemy go odzyskać. Jeśli je zgubisz, nie będzi
     <string name="respond_inline">Odpowiedz w linii</string>
     <string name="no_connectivity_detected">Wykryto brak połączenia...</string>
     <string name="no_connectivity_detected_troubleshoot">Wykryto brak połączenia… (<u>Rozwiązywanie problemów</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">Nie wykryto połączenia...
+    <string name="no_connectivity_message_not_downloaded">Wykryto brak połączenia...
 \nWiadomość nie została pobrana</string>
     <string name="connectivity_arrived">Połączono</string>
     <string name="connectivity_checking">Sprawdzanie połączenia...</string>
@@ -361,8 +361,8 @@ Nie strać tego hasła - nie możemy go odzyskać. Jeśli je zgubisz, nie będzi
     <string name="saving_failed_no_conn">Zapisywanie nie powiodło się. Brak połączenia z Internetem</string>
     <string name="can_not_create_account_while_beta">Tworzenie konta jest wyłączone w wersji Beta</string>
     <string name="changing_mailbox_password_disabled_while_beta">Opcja zmiany hasła skrzynki pocztowej została wyłączona w wersji Beta</string>
-    <string name="username_is_available">%s jest dostępny!</string>
-    <string name="username_is_not_available">%s nie jest dostępny!</string>
+    <string name="username_is_available">Nazwa użytkownika jest dostępna!</string>
+    <string name="username_is_not_available">Nazwa użytkownika jest już zajęta!</string>
     <string name="username_is_too_long">Maksymalna długość nazwy użytkownika wynosi %d znaków!</string>
     <string name="congratulation">Gratulacje!</string>
     <string name="new_account_ready">Twoje nowe bezpieczne konto\ne-mail jest gotowe.</string>
@@ -370,7 +370,7 @@ Nie strać tego hasła - nie możemy go odzyskać. Jeśli je zgubisz, nie będzi
 zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="optional_display_name">Po wysłaniu wiadomości ta nazwa
 pojawi się w polu nadawcy.</string>
-    <string name="error_captcha_not_valid">Nieprawidłowe</string>
+    <string name="error_captcha_not_valid">Nieprawidłowy</string>
     <string name="close_engagement">zamknij przewodnik</string>
     <string name="engagement_title_welcome">Witaj w ProtonMail!</string>
     <string name="engagement_title_swipe">Szybkie gesty</string>
@@ -464,7 +464,7 @@ pojawi się w polu nadawcy.</string>
     <string name="logout">Wyloguj</string>
     <string name="log_out">Wylogować się z konta %s?</string>
     <string name="logout_question">Czy na pewno chcesz się wylogować?</string>
-    <string name="logout_question_next_account">Czy na pewno chcesz wylogować się z obecnego konta i kontynuować korzystanie z %s?</string>
+    <string name="logout_question_next_account">Zostaniesz przełączony na konto %s.</string>
     <string name="upselling">Ulepsz konto/Wspomóż nas</string>
     <string name="upselling_title">ProtonMail jest darmowym i otwartym oprogramowaniem</string>
     <string name="upselling_subtitle">Potrzebujemy Twojego wsparcia, aby móc chronić prywatność i udoskonalać ProtonMaila</string>
@@ -676,7 +676,7 @@ ludziom na całym świecie.</string>
     <string name="sync_question_subtitle">Spowoduje to synchronizację lokalnych kontaktów z Twojego urządzenia z kontaktami ProtonMaila. Dzięki temu będziesz mógł uzyskać dostęp do tych kontaktów na innych urządzeniach poprzez pocztę ProtonMail.</string>
     <string name="convert_contact">Konwertuj kontakt</string>
     <string name="upload_contacts">Prześlij kontakty</string>
-    <string name="encrypted_data">Zaszyfrowane Dane</string>
+    <string name="encrypted_data">Zaszyfrowane dane</string>
     <string name="upgrade_encrypted_contact">Ulepsz konto, aby używać zaszyfrowanych informacji o kontakcie.</string>
     <string name="empty_encrypted_data">Usuń zaszyfrowane informacje o kontakcie.</string>
     <string name="uploading_contacts">Przesyłanie kontaktów…</string>
@@ -753,7 +753,7 @@ ludziom na całym świecie.</string>
     <string name="empty_emails">Brak wiadomości e-mail</string>
     <string name="empty_email_list">Brak adresu e-mail</string>
     <string name="no_contacts">Brak kontaktów</string>
-    <string name="sender_name_address">%1$s &lt; %2$s &gt; napisał(a):</string>
+    <string name="sender_name_address">%1$s &lt;%2$s &gt; napisał(a):</string>
     <string name="update_label">Aktualizacja etykiety</string>
     <string name="folder_name_empty">Nazwa folderu jest wymagana</string>
     <string name="max_labels_in_message">Wiadomość %1$s nie może posiadać więcej niż %2$d etykiet.</string>
@@ -1016,7 +1016,7 @@ na dostęp do telefonu.</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Usypianie powiadomień</string>
     <string name="notifications_snooze">Usypianie powiadomień</string>
-    <string name="notifications_snooze_finishing">Powiadomienia zostaną wznowione za $s min</string>
+    <string name="notifications_snooze_finishing">Powiadomienia zostaną wznowione za $s minut</string>
     <string name="snooze_notifications">Usypianie powiadomień</string>
     <string name="snooze_notifications_adjust">Dostosuj</string>
     <string name="notifications_snoozed">Powiadomienia zostały uśpione</string>
@@ -1151,6 +1151,6 @@ na dostęp do telefonu.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nadal nie mogę znaleźć rozwiązania&lt;/i&gt; - Skontaktuj się z nami przez &lt;a href=\"https://protonmail.com/support-form\"&gt;formularz kontaktowy&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;wiadomość e-mail&lt;/a&gt; (support@protonmail.com) lub &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twittera&lt;/a&gt;.
 </string>
     <!-- endregion -->
-    <string name="allowed">Allowed</string>
-    <string name="denied">Denied</string>
+    <string name="allowed">Dozwolone</string>
+    <string name="denied">Niedozwolone</string>
 </resources>
