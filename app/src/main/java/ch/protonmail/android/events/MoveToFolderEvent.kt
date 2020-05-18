@@ -18,5 +18,7 @@
  */
 package ch.protonmail.android.events
 
-class MoveToFolderEvent {
-}
+/**
+ * An empty class for describing an event for moving messages between folders
+ */
+class MoveToFolderEvent
