@@ -19,18 +19,20 @@
 package ch.protonmail.android.contacts.details
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Patterns
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.PostResult
+import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
+import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.UNSELECTED
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.Event
 import io.reactivex.Completable
@@ -40,12 +42,26 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import studio.forface.viewstatestore.ViewStateStore
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
 
-open class ContactDetailsViewModel @Inject constructor(private val contactDetailsRepository: ContactDetailsRepository) :
-    ViewModel() {
+/**
+ * A [ViewModel] for display a contact
+ * It is open so it can be extended by EditContactViewModel
+ *
+ * TODO:
+ *   [ ] Replace RxJava with Coroutines
+ *   [ ] Fix unhandled concurrency
+ *   [ ] Replace [LiveData] with [ViewStateStore] for avoid multiple [LiveData] for success and error and
+ *      [ViewStateStore.lock] for avoid useless private [MutableLiveData]
+ *   [ ] Inject dispatchers in the constructor
+ *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
+ */
+open class ContactDetailsViewModel @Inject constructor(
+    private val contactDetailsRepository: ContactDetailsRepository
+) : ViewModel() {
 
     //region data
     protected lateinit var allContactGroups: List<ContactLabel>
@@ -109,7 +125,7 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
                         val selectedState =
                             list2.find { selected -> selected.ID == it.ID } != null
                         it.isSelected = if (selectedState) {
-                            ContactEmailGroupSelectionState.SELECTED
+                            SELECTED
                         } else {
                             ContactEmailGroupSelectionState.DEFAULT
                         }
@@ -156,7 +172,6 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
         }
     }
 
-    @SuppressLint("CheckResult")
     fun fetchContactGroupsAndContactEmails(contactId: String) {
         Observable.zip(contactDetailsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
             .doOnError {
@@ -224,22 +239,21 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
             })
     }
 
-    @SuppressLint("CheckResult")
     fun updateContactEmailGroup(contactLabel: ContactLabel, email: String) {
         val membersList: HashSet<String> = HashSet()
         Observable.just(allContactEmails)
             .flatMapCompletable {
                 val contactEmail = it.find { contactEmail -> contactEmail.email == email }!!
-                membersList.add(contactEmail.contactEmailId!!)
+                membersList.add(contactEmail.contactEmailId)
                 Completable.complete().andThen(
                     contactDetailsRepository.editContactGroup(contactLabel).andThen(
                         when (contactLabel.isSelected) {
-                            ContactEmailGroupSelectionState.SELECTED -> contactDetailsRepository.setMembersForContactGroup(
+                            SELECTED -> contactDetailsRepository.setMembersForContactGroup(
                                 contactLabel.ID,
                                 contactLabel.name,
                                 membersList.toList()
                             )
-                            ContactEmailGroupSelectionState.UNSELECTED -> contactDetailsRepository.removeMembersForContactGroup(
+                            UNSELECTED -> contactDetailsRepository.removeMembersForContactGroup(
                                 contactLabel.ID,
                                 contactLabel.name,
                                 membersList.toList()
