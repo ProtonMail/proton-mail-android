@@ -451,7 +451,7 @@ swiping left to right and move current message to TRASH by swiping right to left
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Do you want to continue?</string>
     <string name="dont_ask_again">Don\'t ask again</string>
     <string name="none">Немає</string>
-    <string name="changes_affected_after_closing">Changes will be affected after closing the app</string>
+    <string name="changes_affected_after_closing">Changes will take effect after closing the app</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Хибний PIN, %d спроба лишилась</item>
         <item quantity="few">Хибний PIN, %d спроби лишилось</item>

@@ -439,7 +439,7 @@ umiḍan s lewlaṣ neɣ ad tmuddeḍ tawsa i ProtonMail.</string>
     <string name="hyperlink_confirmation_dialog_text_html">Ad tsnekreḍ iminig web akken zd terzuḍ ɣer:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Tebɣiḍ ad tkemleḍ?</string>
     <string name="dont_ask_again">Don\'t ask again</string>
     <string name="none">Ula yiwen</string>
-    <string name="changes_affected_after_closing">Changes will be affected after closing the app</string>
+    <string name="changes_affected_after_closing">Changes will take effect after closing the app</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
         <item quantity="other">Yir tangalt PIN,%d n uɛraḍ i d-yeqqimen</item>
