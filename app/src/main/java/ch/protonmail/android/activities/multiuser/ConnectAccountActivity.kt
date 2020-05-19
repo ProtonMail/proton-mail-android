@@ -34,6 +34,7 @@ import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.LOGIN_STATE_LOGIN_FINISHED
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountLoginEvent
@@ -167,6 +168,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
                     return
                 }
                 hideProgress()
+                mUserManager.loginState = LOGIN_STATE_LOGIN_FINISHED
                 val mailboxLoginIntent = Intent(this, ConnectAccountMailboxLoginActivity::class.java)
                 mailboxLoginIntent.putExtra(EXTRA_KEY_SALT, event.keySalt)
                 mailboxLoginIntent.putExtra(EXTRA_USERNAME, viewModel.username)

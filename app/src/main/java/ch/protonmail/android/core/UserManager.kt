@@ -56,7 +56,7 @@ const val PREF_USERNAME = "username"
  */
 private const val PREF_IS_LOGGED_IN = "is_logged_in"
 private const val PREF_REMEMBER_MAILBOX_LOGIN = "remember_mailbox_login"
-private const val PREF_LOGIN_STATE = "login_state"
+const val PREF_LOGIN_STATE = "login_state"
 private const val PREF_MAILBOX_PASSWORD = "mailbox_password"
 private const val PREF_KEY_SALT = "key_salt"
 private const val PREF_PIN_INCORRECT_ATTEMPTS = "mailbox_pin_incorrect_attempts"
@@ -218,9 +218,13 @@ class UserManager(
 
     var loginState: Int
         @LoginState
-        get() = prefs.getInt(PREF_LOGIN_STATE, LOGIN_STATE_NOT_INITIALIZED)
+        get() {
+            val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+            return secureSharedPreferences.getInt(PREF_LOGIN_STATE, LOGIN_STATE_NOT_INITIALIZED)
+        }
         set(@LoginState status) {
-            prefs.edit().putInt(PREF_LOGIN_STATE, status).apply()
+            val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+            secureSharedPreferences.edit().putInt(PREF_LOGIN_STATE, status).apply()
         }
 
     /**

@@ -30,6 +30,7 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailbo
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.moveToMailbox
 import com.squareup.otto.Subscribe
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_connect_account_mailbox_login.*
@@ -101,6 +102,7 @@ class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
         if (!setupComplete) {
             viewModel.username?.let {
                 viewModel.logoutAccount(it)
+                moveToMailbox()
             }
         }
     }

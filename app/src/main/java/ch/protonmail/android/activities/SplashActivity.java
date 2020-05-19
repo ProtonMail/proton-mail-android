@@ -31,6 +31,7 @@ import ch.protonmail.android.activities.guest.FirstActivity;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.activities.guest.MailboxLoginActivity;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
+import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.services.LoginService;
 import ch.protonmail.android.core.ProtonMailApplication;
@@ -93,6 +94,17 @@ public class SplashActivity extends BaseActivity {
         mNavigateHandler.postDelayed(mNavigateRunnable, DELAY);
     }
 
+    private void checkUserDetailsAndGoHome() {
+        if (mUserManager.accessTokenExists() && !mUserManager.getUser().getAddresses().isEmpty()) {
+            mUserManager.setLoggedIn(true);
+            mJobManager.addJobInBackground(new FetchMailSettingsJob());
+            goHome();
+            finish();
+        } else {
+            LoginService.fetchUserDetails();
+        }
+    }
+
     private void navigate() {
         int loginState = mUserManager.getLoginState();
         if (loginState == LOGIN_STATE_NOT_INITIALIZED) {
@@ -101,27 +113,29 @@ public class SplashActivity extends BaseActivity {
             } else {
                 startActivity(new Intent(this, FirstActivity.class));
             }
+            finish();
         } else if (loginState == LOGIN_STATE_LOGIN_FINISHED) {
             // login finished but mailbox login not
-            Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
-            String keySalt = mUserManager.getKeySalt();
-            if (keySalt != null) {
-                mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, keySalt);
-                startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));
+            if (AccountManager.Companion.getInstance(this).getLoggedInUsers().size() > 1) {
+                // There are multiple accounts logged in
+                // Log out the account with unfinished mailbox login and go to next logged in account
+                mUserManager.logoutAccount(mUserManager.getUsername());
+                checkUserDetailsAndGoHome();
             } else {
-                startActivity(new Intent(this, LoginActivity.class));
+                // There is only one account logged in
+                Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
+                String keySalt = mUserManager.getKeySalt();
+                if (keySalt != null) {
+                    mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, keySalt);
+                    startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+                finish();
             }
         } else {
-            if (mUserManager.accessTokenExists() && !mUserManager.getUser().getAddresses().isEmpty()) {
-                mUserManager.setLoggedIn(true);
-                mJobManager.addJobInBackground(new FetchMailSettingsJob());
-                goHome();
-            } else {
-                LoginService.fetchUserDetails();
-                return;
-            }
+            checkUserDetailsAndGoHome();
         }
-        finish();
     }
 
     @Override

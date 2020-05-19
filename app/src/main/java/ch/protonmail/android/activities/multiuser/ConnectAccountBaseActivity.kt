@@ -26,6 +26,7 @@ import android.widget.EditText
 import android.widget.ToggleButton
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseConnectivityActivity
+import ch.protonmail.android.core.LOGIN_STATE_TO_INBOX
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
@@ -90,6 +91,7 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
                 eventsUnregistered = true
                 ProtonMailApplication.getApplication().bus.unregister(this)
                 GcmUtil.setTokenSent(false) // force GCM to register new user
+                mUserManager.loginState = LOGIN_STATE_TO_INBOX
                 moveToMailbox()
                 saveLastInteraction()
                 finish()

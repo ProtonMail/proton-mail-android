@@ -127,7 +127,9 @@ import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
+import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_WARNING;
 
@@ -648,6 +650,18 @@ public class ProtonMailApplication extends Application implements HasActivityInj
                     secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED,
                             defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)).apply();
                     defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
+                }
+                if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
+                    for (String user : AccountManager.Companion.getInstance(this).getLoggedInUsers()) {
+                        SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
+                        if (user.equals(mUserManager.getUsername())) {
+                            secureSharedPreferencesForUser.edit().putInt(PREF_LOGIN_STATE,
+                                    defaultSharedPreferences.getInt(PREF_LOGIN_STATE, LOGIN_STATE_LOGIN_FINISHED)).apply();
+                        } else {
+                            secureSharedPreferencesForUser.edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
+                        }
+                    }
+                    defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
                 }
             }
         } else {
