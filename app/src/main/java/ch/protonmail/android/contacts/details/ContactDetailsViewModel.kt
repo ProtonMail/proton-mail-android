@@ -36,19 +36,20 @@ import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SE
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.UNSELECTED
 import ch.protonmail.android.domain.DispatcherProvider
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.exceptions.BadImageUrlException
+import ch.protonmail.android.exceptions.ImageNotFoundException
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import ch.protonmail.libs.core.utils.ViewModelFactory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import studio.forface.viewstatestore.ViewStateStore
+import java.io.FileNotFoundException
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
@@ -64,7 +65,7 @@ import javax.inject.Inject
  *   [ ] Fix unhandled concurrency
  *   [ ] Replace [LiveData] with [ViewStateStore] for avoid multiple [LiveData] for success and error and
  *      [ViewStateStore.lock] for avoid useless private [MutableLiveData]
- *   [ ] Inject dispatchers in the constructor
+ *   [ x] Inject dispatchers in the constructor
  *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
  */
 open class ContactDetailsViewModel(
@@ -93,7 +94,6 @@ open class ContactDetailsViewModel(
         MutableLiveData()
     private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> =
         MutableLiveData()
-    private val _photoFromUrl: MutableLiveData<Bitmap> = MutableLiveData()
     //endregion
 
     val setupComplete: LiveData<Event<Boolean>>
@@ -114,12 +114,7 @@ open class ContactDetailsViewModel(
     val contactEmailsError: LiveData<Event<ErrorResponse>>
         get() = _emailGroupsError
 
-    val photoFromUrl: LiveData<Bitmap>
-        get() = _photoFromUrl
-
-
-    private val bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-
+    val profilePicture = ViewStateStore<Bitmap>().lock
 
     @SuppressLint("CheckResult")
     fun mergeContactEmailGroups(email: String) {
@@ -282,15 +277,42 @@ open class ContactDetailsViewModel(
             })
     }
 
+
+    @Suppress("BlockingMethodInNonBlockingContext") // Network call launched in a Coroutines, which are not
+    //                                                          recognised as non blocking scope
     fun getBitmapFromURL(src: String) {
-        if (!Patterns.WEB_URL.matcher(src).matches()) {
-            return
-        }
-        GlobalScope.launch(bgDispatcher) {
-            val url = URL(src)
-            val connection = url.openConnection() as HttpURLConnection
-            val input = connection.inputStream
-            _photoFromUrl.postValue(BitmapFactory.decodeStream(input))
+        viewModelScope.launch(Comp) {
+
+            runCatching {
+
+                // Check whether the Url is properly formatted
+                if (!Patterns.WEB_URL.matcher(src).matches()) throw BadImageUrlException(src)
+
+                // Open an input stream to the remote image
+                val inputStream = withContext(Io) {
+                    // FIXME: hardcoded timeout - this network call should be implemented in the data layer anyway
+                    withTimeout(10_000) {
+                        val url = URL(src)
+                        val connection = url.openConnection() as HttpURLConnection
+                        connection.inputStream
+                    }
+                }
+
+                // Convert the stream into a Bitmap
+                BitmapFactory.decodeStream(inputStream)
+
+            }.fold(
+                onSuccess = { profilePicture.post(it) },
+
+                onFailure = { throwable ->
+
+                    if (throwable is FileNotFoundException || throwable is TimeoutCancellationException) {
+                        profilePicture.postError(ImageNotFoundException(throwable, src))
+
+                    } else {
+                        profilePicture.postError(throwable)
+                    }
+                })
         }
     }
 

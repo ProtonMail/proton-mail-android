@@ -270,14 +270,20 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             }
         });
 
-        contactDetailsViewModel.getPhotoFromUrl().observe(this, bitmap -> {
-            if (bitmap != null) {
+        contactDetailsViewModel.getProfilePicture().observe(this, observer -> {
+            observer.doOnData(bitmap -> {
                 contactAvatar.setAvatarType(TYPE_PHOTO);
                 contactAvatar.setImage(bitmap);
-            } else {
+                return Unit.INSTANCE;
+            });
+            observer.doOnError(error -> {
                 contactAvatar.setName(mDisplayName);
                 contactAvatar.setAvatarType(TYPE_INITIALS);
-            }
+                TextExtensions.showToast(this, error);
+                return Unit.INSTANCE;
+            });
+
+            return Unit.INSTANCE;
         });
 
         contactDetailsViewModel.fetchContactGroupsAndContactEmails(mContactId);

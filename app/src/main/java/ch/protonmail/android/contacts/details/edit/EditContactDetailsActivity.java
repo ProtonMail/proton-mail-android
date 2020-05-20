@@ -897,12 +897,22 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
             new Handler().postDelayed(() -> enableControls(false, mEncryptedDataContainer), 10);
         });
-        editContactDetailsViewModel.getPhotoFromUrl().observe(this,
-                bitmap -> {
-                    photoCardViewWrapper.setVisibility(View.VISIBLE);
-                    contactInitials.setVisibility(View.GONE);
-                    contactPhoto.setImageBitmap(bitmap);
-                });
+        editContactDetailsViewModel.getProfilePicture().observe(this, observer -> {
+            observer.doOnData(bitmap -> {
+                photoCardViewWrapper.setVisibility(View.VISIBLE);
+                contactInitials.setVisibility(View.GONE);
+                contactPhoto.setImageBitmap(bitmap);
+                return Unit.INSTANCE;
+            });
+            observer.doOnError(error -> {
+                photoCardViewWrapper.setVisibility(View.GONE);
+                contactInitials.setVisibility(View.VISIBLE);
+                TextExtensions.showToast(this, error);
+                return Unit.INSTANCE;
+            });
+
+            return Unit.INSTANCE;
+        });
     }
 
     private Observer setupNewContactObserver = (Observer<String>) email -> {
