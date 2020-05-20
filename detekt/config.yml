@@ -1,6 +1,6 @@
 # Default excluded files are `` ['**/test/**', '**/androidTest/**', 'buildSrc/**'] ``
 build:
-  maxIssues: 11660
+  maxIssues: 10897 #was 11660
   excludeCorrectable: false
   weights:
     # complexity: 2
