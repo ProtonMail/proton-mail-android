@@ -1,3 +1,6 @@
+// Domain
+include ':domain'
+
 // App
 include ':app'
 
