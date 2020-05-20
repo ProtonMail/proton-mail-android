@@ -53,7 +53,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
@@ -118,6 +118,7 @@ import ezvcard.property.Telephone;
 import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
+import kotlin.Unit;
 
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE0;
@@ -174,7 +175,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private final AtomicBoolean mSavingInProgress = new AtomicBoolean(false);
 
     @Inject
-    EditContactDetailsViewModelFactory editContactDetailsViewModelFactory;
+    EditContactDetailsViewModel.Factory editContactDetailsViewModelFactory;
     EditContactDetailsViewModel editContactDetailsViewModel;
 
     public static Intent startNewContactActivity(@NonNull Context context) {
@@ -216,7 +217,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        editContactDetailsViewModel = ViewModelProviders.of(this, editContactDetailsViewModelFactory).get(EditContactDetailsViewModel.class);
+        editContactDetailsViewModel = new ViewModelProvider(this, editContactDetailsViewModelFactory)
+                .get(EditContactDetailsViewModel.class);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

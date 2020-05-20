@@ -25,6 +25,7 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
@@ -33,15 +34,20 @@ import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.UNSELECTED
+import ch.protonmail.android.domain.DispatcherProvider
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.viewmodel.BaseViewModel
+import ch.protonmail.libs.core.utils.ViewModelFactory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import studio.forface.viewstatestore.ViewStateStore
 import java.net.HttpURLConnection
 import java.net.URL
@@ -51,6 +57,8 @@ import javax.inject.Inject
  * A [ViewModel] for display a contact
  * It is open so it can be extended by EditContactViewModel
  *
+ * Inherit from [BaseViewModel]
+ *
  * TODO:
  *   [ ] Replace RxJava with Coroutines
  *   [ ] Fix unhandled concurrency
@@ -59,9 +67,10 @@ import javax.inject.Inject
  *   [ ] Inject dispatchers in the constructor
  *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
  */
-open class ContactDetailsViewModel @Inject constructor(
+open class ContactDetailsViewModel(
+    dispatcherProvider: DispatcherProvider,
     private val contactDetailsRepository: ContactDetailsRepository
-) : ViewModel() {
+) : BaseViewModel(dispatcherProvider) {
 
     //region data
     protected lateinit var allContactGroups: List<ContactLabel>
@@ -283,5 +292,13 @@ open class ContactDetailsViewModel @Inject constructor(
             val input = connection.inputStream
             _photoFromUrl.postValue(BitmapFactory.decodeStream(input))
         }
+    }
+
+    // TODO: remove when the ViewModel can be injected into a Kotlin class
+    class Factory @Inject constructor (
+        private val dispatcherProvider: DispatcherProvider,
+        private val contactDetailsRepository: ContactDetailsRepository
+    ) : ViewModelFactory<ContactDetailsViewModel>() {
+        override fun create() = ContactDetailsViewModel(dispatcherProvider, contactDetailsRepository)
     }
 }

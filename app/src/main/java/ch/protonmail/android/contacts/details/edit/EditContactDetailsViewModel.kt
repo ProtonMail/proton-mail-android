@@ -19,23 +19,43 @@
 package ch.protonmail.android.contacts.details.edit
 
 import android.annotation.SuppressLint
+import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import android.text.TextUtils
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.DispatcherProvider
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.views.models.LocalContact
+import ch.protonmail.libs.core.utils.ViewModelFactory
 import ezvcard.Ezvcard
 import ezvcard.VCard
 import ezvcard.VCardVersion
-import ezvcard.property.*
+import ezvcard.property.Anniversary
+import ezvcard.property.Birthday
+import ezvcard.property.Email
+import ezvcard.property.Gender
+import ezvcard.property.Key
+import ezvcard.property.Nickname
+import ezvcard.property.Note
+import ezvcard.property.Organization
+import ezvcard.property.Photo
+import ezvcard.property.ProductId
+import ezvcard.property.RawProperty
+import ezvcard.property.Role
+import ezvcard.property.Title
+import ezvcard.property.Uid
+import ezvcard.property.Url
 import io.reactivex.Observable
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
@@ -61,8 +81,11 @@ private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1
  * Created by kadrikj on 9/26/18.
  */
 
-class EditContactDetailsViewModel @Inject constructor(private val editContactDetailsRepository: EditContactDetailsRepository,
-                                                      private val userManager: UserManager) : ContactDetailsViewModel(editContactDetailsRepository) {
+class EditContactDetailsViewModel(
+    dispatcherProvider: DispatcherProvider,
+    private val editContactDetailsRepository: EditContactDetailsRepository,
+    private val userManager: UserManager
+) : ContactDetailsViewModel(dispatcherProvider, editContactDetailsRepository) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -320,4 +343,14 @@ class EditContactDetailsViewModel @Inject constructor(private val editContactDet
     }
 
     class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
+
+    // TODO: remove when the ViewModel can be injected into a Kotlin class
+    class Factory @Inject constructor (
+        private val dispatcherProvider: DispatcherProvider,
+        private val editContactDetailsRepository: EditContactDetailsRepository,
+        private val userManager: UserManager
+    ) : ViewModelFactory<EditContactDetailsViewModel>() {
+        override fun create() =
+            EditContactDetailsViewModel(dispatcherProvider, editContactDetailsRepository, userManager)
+    }
 }

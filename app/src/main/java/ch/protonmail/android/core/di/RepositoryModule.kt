@@ -39,11 +39,8 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.compose.ComposeMessageRepository
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
-import ch.protonmail.android.contacts.ContactsViewModelFactory
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
-import ch.protonmail.android.contacts.details.ContactDetailsViewModelFactory
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsRepository
-import ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelFactory
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsRepository
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateRepository
@@ -70,18 +67,6 @@ class RepositoryModule {
 
     // region view models factories
     @Provides
-    fun provideEditContactDetailsViewModelFactory(editContactDetailsViewModelFactory: EditContactDetailsViewModelFactory):
-            ViewModelProvider.NewInstanceFactory {
-        return editContactDetailsViewModelFactory
-    }
-
-    @Provides
-    fun provideContactsViewModelFactory(contactsViewModelFactory: ContactsViewModelFactory):
-            ViewModelProvider.NewInstanceFactory {
-        return contactsViewModelFactory
-    }
-
-    @Provides
     fun provideAddressChooserViewModelFactory(addressChooserViewModelFactory: AddressChooserViewModelFactory):
             ViewModelProvider.NewInstanceFactory {
         return addressChooserViewModelFactory
@@ -96,11 +81,6 @@ class RepositoryModule {
     @Provides
     fun provideContactGroupDetailsViewModelFactory(contactGroupDetailsViewModelFactory: ContactGroupDetailsViewModelFactory): ViewModelProvider.NewInstanceFactory {
         return contactGroupDetailsViewModelFactory
-    }
-
-    @Provides
-    fun provideContactDetailsViewModelFactory(contactDetailsViewModelFactory: ContactDetailsViewModelFactory): ViewModelProvider.NewInstanceFactory {
-        return contactDetailsViewModelFactory
     }
 
     @Provides

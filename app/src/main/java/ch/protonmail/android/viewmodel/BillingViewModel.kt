@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.viewmodels
+package ch.protonmail.android.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
