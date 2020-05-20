@@ -35,6 +35,7 @@ import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.api.segments.event.EventManager
 import ch.protonmail.android.bl.HtmlProcessor
 import ch.protonmail.android.core.*
+import ch.protonmail.android.domain.DispatcherProvider
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
@@ -45,6 +46,8 @@ import com.birbit.android.jobqueue.config.Configuration
 import com.birbit.android.jobqueue.log.CustomLogger
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
@@ -287,6 +290,13 @@ class AppModule(val app: ProtonMailApplication) {
     fun provideCurrentUserUsername(
             @Named(Constants.PrefsType.DEFAULT) prefs: SharedPreferences
     ): String = prefs[PREF_USERNAME]!!
+
+    @Provides
+    fun provideDispatcherProvider() = object : DispatcherProvider {
+        override val Io = Dispatchers.IO
+        override val Comp = Dispatchers.Default
+        override val Main = Dispatchers.Main
+    }
 
     @Provides
     fun provideMailSettings(

@@ -16,18 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import studio.forface.easygradle.dsl.*
+package ch.protonmail.android.domain
 
-plugins {
-    `java-library`
-    `kotlin`
-}
+import kotlinx.coroutines.CoroutineDispatcher
 
-dependencies {
-    api(
-        `kotlin-jdk7`,
-        `coroutines-core`
-    )
+/**
+ * Provides [CoroutineDispatcher]s in order to inject them in the constructor of a component allowing it to be tested
+ *
+ * @author Davide Farella
+ */
+@Suppress("PropertyName", "VariableNaming") // Non conventional naming starting with uppercase letter
+interface DispatcherProvider {
 
-    testImplementation(project(Module.testKotlin))
+    /** [CoroutineDispatcher] meant to run IO operations */
+    val Io: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run computational operations */
+    val Comp: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run on main thread */
+    val Main: CoroutineDispatcher
 }
