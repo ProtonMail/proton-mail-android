@@ -116,21 +116,13 @@ public class SplashActivity extends BaseActivity {
             finish();
         } else if (loginState == LOGIN_STATE_LOGIN_FINISHED) {
             // login finished but mailbox login not
-            if (AccountManager.Companion.getInstance(this).getLoggedInUsers().size() > 1) {
-                // There are multiple accounts logged in
-                // Log out the account with unfinished mailbox login and go to next logged in account
-                mUserManager.logoutAccount(mUserManager.getUsername());
+            mUserManager.logoutAccount(mUserManager.getUsername());
+            if (AccountManager.Companion.getInstance(this).getLoggedInUsers().size() >= 1) {
+                // There were multiple accounts logged in
                 checkUserDetailsAndGoHome();
             } else {
-                // There is only one account logged in
-                Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
-                String keySalt = mUserManager.getKeySalt();
-                if (keySalt != null) {
-                    mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, keySalt);
-                    startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));
-                } else {
-                    startActivity(new Intent(this, LoginActivity.class));
-                }
+                // There was only one account logged in
+                startActivity(new Intent(this, LoginActivity.class));
                 finish();
             }
         } else {
