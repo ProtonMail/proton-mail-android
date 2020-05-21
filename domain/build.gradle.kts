@@ -16,22 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-object Module {
-    // Layers
-    const val domain = ":domain"
+import studio.forface.easygradle.dsl.*
 
-    // Libs
-    const val tokenAutoComplete = ":tokenAutoComplete:tokenAutoComplete-lib"
-
-    // Test
-    const val testKotlin = ":sharedTest:testKotlin"
-    const val testAndroid = ":sharedTest:testAndroid"
-    const val testAndroidInstrumented = ":sharedTest:testAndroidInstrumented"
+plugins {
+    `java-library`
+    `kotlin`
 }
 
-/*** Internal libs */
-object Lib {
-    @Suppress("unused") const val composer = "Composer"
-    @Suppress("unused") const val composerTest = "Composer-test"
-    const val protonCore = "Proton-core"
+dependencies {
+    api(
+        `kotlin-jdk7`,
+        `coroutines-core`
+    )
+
+    testImplementation(project(Module.testKotlin))
 }

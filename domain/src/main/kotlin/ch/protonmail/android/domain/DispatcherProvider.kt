@@ -16,22 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-object Module {
-    // Layers
-    const val domain = ":domain"
+package ch.protonmail.android.domain
 
-    // Libs
-    const val tokenAutoComplete = ":tokenAutoComplete:tokenAutoComplete-lib"
+import kotlinx.coroutines.CoroutineDispatcher
 
-    // Test
-    const val testKotlin = ":sharedTest:testKotlin"
-    const val testAndroid = ":sharedTest:testAndroid"
-    const val testAndroidInstrumented = ":sharedTest:testAndroidInstrumented"
-}
+/**
+ * Provides [CoroutineDispatcher]s in order to inject them in the constructor of a component allowing it to be tested
+ *
+ * @author Davide Farella
+ */
+@Suppress("PropertyName", "VariableNaming") // Non conventional naming starting with uppercase letter
+interface DispatcherProvider {
 
-/*** Internal libs */
-object Lib {
-    @Suppress("unused") const val composer = "Composer"
-    @Suppress("unused") const val composerTest = "Composer-test"
-    const val protonCore = "Proton-core"
+    /** [CoroutineDispatcher] meant to run IO operations */
+    val Io: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run computational operations */
+    val Comp: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run on main thread */
+    val Main: CoroutineDispatcher
 }

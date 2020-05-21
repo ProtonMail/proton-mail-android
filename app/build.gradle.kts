@@ -124,6 +124,7 @@ android(appIdSuffix = "android") {
 
 dependencies {
     implementation(
+        project(Module.domain),
         rootProject.aar(Lib.protonCore, version = `protonCore version`)
 //        rootProject.aar(Lib.composer, version = `composer version`),
 //        project(Module.tokenAutoComplete)
