@@ -32,6 +32,7 @@ import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.events.RefreshDrawerEvent;
+import ch.protonmail.android.events.MoveToFolderEvent;
 import ch.protonmail.android.utils.AppUtil;
 
 public class PostSpamJob extends ProtonMailCounterJob {
@@ -75,7 +76,18 @@ public class PostSpamJob extends ProtonMailCounterJob {
         }
         unreadLocationCounter.increment(totalUnread);
         countersDatabase.insertUnreadLocation(unreadLocationCounter);
+
+        // This should reduce the probability of app crashing when moving messages to spam when the user is in MailboxActivity
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
+
+        // This should reduce the probability of app crashing when moving messages to spam when the user is in MessageDetailsActivity
+        AppUtil.postEventOnUi(new MoveToFolderEvent());
     }
 
     private boolean markMessageLocally(CountersDatabase countersDatabase, Message message) {
