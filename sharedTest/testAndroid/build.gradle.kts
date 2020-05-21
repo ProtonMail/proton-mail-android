@@ -47,6 +47,9 @@ dependencies {
         rootProject.aar(Lib.protonCore, version = `protonCore version`),
 //        rootProject.aar(Lib.composer, version = `composer version`),
 
+        // Other
+        `viewStateStore`,
+
         // RxJava
         `rxJava-android`
     )
