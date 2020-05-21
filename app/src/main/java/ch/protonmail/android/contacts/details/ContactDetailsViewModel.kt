@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.details
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.util.Patterns
+import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,7 +34,8 @@ import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
 import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.UNSELECTED
-import ch.protonmail.android.domain.DispatcherProvider
+import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.domain.util.DispatcherProvider
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
@@ -46,12 +47,8 @@ import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import studio.forface.viewstatestore.ViewStateStore
 import java.io.FileNotFoundException
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.inject.Inject
 
 /**
@@ -70,6 +67,7 @@ import javax.inject.Inject
  */
 open class ContactDetailsViewModel(
     dispatcherProvider: DispatcherProvider,
+    private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository
 ) : BaseViewModel(dispatcherProvider) {
 
@@ -277,29 +275,12 @@ open class ContactDetailsViewModel(
             })
     }
 
-
-    @Suppress("BlockingMethodInNonBlockingContext") // Network call launched in a Coroutines, which are not
-    //                                                          recognised as non blocking scope
     fun getBitmapFromURL(src: String) {
         viewModelScope.launch(Comp) {
 
             runCatching {
-
-                // Check whether the Url is properly formatted
-                if (!Patterns.WEB_URL.matcher(src).matches()) throw BadImageUrlException(src)
-
-                // Open an input stream to the remote image
-                val inputStream = withContext(Io) {
-                    // FIXME: hardcoded timeout - this network call should be implemented in the data layer anyway
-                    withTimeout(10_000) {
-                        val url = URL(src)
-                        val connection = url.openConnection() as HttpURLConnection
-                        connection.inputStream
-                    }
-                }
-
-                // Convert the stream into a Bitmap
-                BitmapFactory.decodeStream(inputStream)
+                if (!PatternsCompat.WEB_URL.matcher(src).matches()) throw BadImageUrlException(src)
+                BitmapFactory.decodeStream(downloadFile(src))
 
             }.fold(
                 onSuccess = { profilePicture.post(it) },
@@ -319,8 +300,9 @@ open class ContactDetailsViewModel(
     // TODO: remove when the ViewModel can be injected into a Kotlin class
     class Factory @Inject constructor (
         private val dispatcherProvider: DispatcherProvider,
+        private val downloadFile: DownloadFile,
         private val contactDetailsRepository: ContactDetailsRepository
     ) : ViewModelFactory<ContactDetailsViewModel>() {
-        override fun create() = ContactDetailsViewModel(dispatcherProvider, contactDetailsRepository)
+        override fun create() = ContactDetailsViewModel(dispatcherProvider, downloadFile, contactDetailsRepository)
     }
 }

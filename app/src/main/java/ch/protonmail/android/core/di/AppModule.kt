@@ -48,7 +48,8 @@ import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.DispatcherProvider
+import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.domain.util.DispatcherProvider
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
@@ -60,7 +61,12 @@ import com.birbit.android.jobqueue.log.CustomLogger
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import java.io.File
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -320,6 +326,22 @@ class AppModule(val app: ProtonMailApplication) {
         override val Io = Dispatchers.IO
         override val Comp = Dispatchers.Default
         override val Main = Dispatchers.Main
+    }
+
+    // TODO move to data module into a proper class
+    @Provides
+    @Suppress("BlockingMethodInNonBlockingContext") // Network call launched in a Coroutines, which are not
+    //                                                          recognised as non blocking scope
+    fun provideDownloadFile(dispatcherProvider: DispatcherProvider) = object : DownloadFile {
+        override suspend fun invoke(url: String): InputStream {
+            return withContext(dispatcherProvider.Io) {
+                // hardcoded timeout - this network call should be implemented in the data layer anyway
+                withTimeout(10_000) {
+                    val connection = URL(url).openConnection() as HttpURLConnection
+                    connection.inputStream
+                }
+            }
+        }
     }
 
     @Provides

@@ -28,7 +28,8 @@ import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.DispatcherProvider
+import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.domain.util.DispatcherProvider
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.views.models.LocalContact
 import ch.protonmail.libs.core.utils.ViewModelFactory
@@ -83,9 +84,10 @@ private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1
 
 class EditContactDetailsViewModel(
     dispatcherProvider: DispatcherProvider,
+    downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
     private val userManager: UserManager
-) : ContactDetailsViewModel(dispatcherProvider, editContactDetailsRepository) {
+) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -347,10 +349,11 @@ class EditContactDetailsViewModel(
     // TODO: remove when the ViewModel can be injected into a Kotlin class
     class Factory @Inject constructor (
         private val dispatcherProvider: DispatcherProvider,
+        private val downloadFile: DownloadFile,
         private val editContactDetailsRepository: EditContactDetailsRepository,
         private val userManager: UserManager
     ) : ViewModelFactory<EditContactDetailsViewModel>() {
         override fun create() =
-            EditContactDetailsViewModel(dispatcherProvider, editContactDetailsRepository, userManager)
+            EditContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, userManager)
     }
 }

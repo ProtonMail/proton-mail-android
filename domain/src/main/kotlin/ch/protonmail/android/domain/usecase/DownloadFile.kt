@@ -16,24 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.domain
+package ch.protonmail.android.domain.usecase
 
-import kotlinx.coroutines.CoroutineDispatcher
+import java.io.InputStream
 
 /**
- * Provides [CoroutineDispatcher]s in order to inject them in the constructor of a component allowing it to be tested
+ * Interface for download a file from a given url
+ *
+ * Input: [String] url
+ * Output: [InputStream]
  *
  * @author Davide Farella
  */
-@Suppress("PropertyName", "VariableNaming") // Non conventional naming starting with uppercase letter
-interface DispatcherProvider {
+interface DownloadFile {
 
-    /** [CoroutineDispatcher] meant to run IO operations */
-    val Io: CoroutineDispatcher
-
-    /** [CoroutineDispatcher] meant to run computational operations */
-    val Comp: CoroutineDispatcher
-
-    /** [CoroutineDispatcher] meant to run on main thread */
-    val Main: CoroutineDispatcher
+    suspend operator fun invoke(url: String): InputStream
 }

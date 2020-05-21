@@ -16,21 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.viewmodel
+package ch.protonmail.android.domain.util
 
-import androidx.lifecycle.ViewModel
-import ch.protonmail.android.domain.util.DispatcherProvider
-import studio.forface.viewstatestore.ViewStateStoreScope
+import kotlinx.coroutines.CoroutineDispatcher
 
 /**
- * Base [ViewModel] for the App
- * EVERY [ViewModel] must inherit from this
- *
- * Implements [ViewStateStoreScope] for publish to `LockedViewStateStore`
- * Implements [DispatcherProvider] for provide `CoroutineDispatcher`s
+ * Provides [CoroutineDispatcher]s in order to inject them in the constructor of a component allowing it to be tested
  *
  * @author Davide Farella
  */
-abstract class BaseViewModel(
-    dispatcherProvider: DispatcherProvider
-) : ViewModel(), ViewStateStoreScope, DispatcherProvider by dispatcherProvider
+@Suppress("PropertyName", "VariableNaming") // Non conventional naming starting with uppercase letter
+interface DispatcherProvider {
+
+    /** [CoroutineDispatcher] meant to run IO operations */
+    val Io: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run computational operations */
+    val Comp: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run on main thread */
+    val Main: CoroutineDispatcher
+}
