@@ -18,11 +18,13 @@
  */
 package ch.protonmail.android.utils.extensions
 
+import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.utils.MessageUtils
 import com.google.gson.Gson
 import retrofit2.HttpException
@@ -67,3 +69,5 @@ val <T : Any?> T.exhaustive get() = this
 fun String.isValidEmail(): Boolean {
     return MessageUtils.PROTON_EMAIL_ADDRESS.matcher(this).matches()
 }
+
+val Context.app get() = applicationContext as ProtonMailApplication
