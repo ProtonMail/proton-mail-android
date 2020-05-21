@@ -89,12 +89,12 @@ import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.CollectionExtensions;
 import ch.protonmail.android.utils.extensions.TextExtensions;
-import ch.protonmail.android.viewmodels.BillingViewModel;
+import ch.protonmail.android.viewmodel.BillingViewModel;
 import ch.protonmail.android.views.PMWebView;
 
-import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.RESULT_CODE_ERROR;
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_PAYMENT_TOKEN_STRING;
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_STATUS_STRING;
+import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.RESULT_CODE_ERROR;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_CARD;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_PAYPAL;
 

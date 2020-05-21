@@ -19,6 +19,7 @@
 package ch.protonmail.android.exceptions
 
 import studio.forface.viewstatestore.ErrorStateGenerator
+import studio.forface.viewstatestore.ViewState
 
 /**
  * An instance of [ErrorStateGenerator] that maps [Throwable] to [ViewState.Error]
@@ -29,9 +30,11 @@ import studio.forface.viewstatestore.ErrorStateGenerator
  * @author Davide Farella
  */
 internal val errorStateGenerator: ErrorStateGenerator = { throwable ->
-    when ( throwable ) {
-        is InvalidRingtoneException -> InvalidRingtoneError( throwable )
-        is NoDefaultRingtoneException -> NoDefaultRingtoneError( throwable )
+    when (throwable) {
+        is BadImageUrlException -> BadImageUrlError(throwable)
+        is ImageNotFoundException -> ImageNotFoundError(throwable)
+        is InvalidRingtoneException -> InvalidRingtoneError(throwable)
+        is NoDefaultRingtoneException -> NoDefaultRingtoneError(throwable)
 
         else -> default
     }

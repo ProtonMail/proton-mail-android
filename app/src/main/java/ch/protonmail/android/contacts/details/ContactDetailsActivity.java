@@ -58,7 +58,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.core.view.ViewCompat;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -213,7 +213,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     private List<String> mVCardAddressOptions;
     private Menu collapsedMenu;
     @Inject
-    ContactDetailsViewModelFactory contactDetailsViewModelFactory;
+    ContactDetailsViewModel.Factory contactDetailsViewModelFactory;
     ContactDetailsViewModel contactDetailsViewModel;
     ContactEditDetailsEmailGroupsAdapter contactEditDetailsEmailGroupsAdapter;
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
@@ -228,7 +228,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-        contactDetailsViewModel = ViewModelProviders.of(this, contactDetailsViewModelFactory).get(ContactDetailsViewModel.class);
+        contactDetailsViewModel = new ViewModelProvider(this, contactDetailsViewModelFactory)
+                .get(ContactDetailsViewModel.class);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -269,14 +270,20 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             }
         });
 
-        contactDetailsViewModel.getPhotoFromUrl().observe(this, bitmap -> {
-            if (bitmap != null) {
+        contactDetailsViewModel.getProfilePicture().observe(this, observer -> {
+            observer.doOnData(bitmap -> {
                 contactAvatar.setAvatarType(TYPE_PHOTO);
                 contactAvatar.setImage(bitmap);
-            } else {
+                return Unit.INSTANCE;
+            });
+            observer.doOnError(error -> {
                 contactAvatar.setName(mDisplayName);
                 contactAvatar.setAvatarType(TYPE_INITIALS);
-            }
+                TextExtensions.showToast(this, error);
+                return Unit.INSTANCE;
+            });
+
+            return Unit.INSTANCE;
         });
 
         contactDetailsViewModel.fetchContactGroupsAndContactEmails(mContactId);

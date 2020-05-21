@@ -16,18 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.details
+package ch.protonmail.android.domain.usecase
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import javax.inject.Inject
+import java.io.InputStream
 
-class ContactDetailsViewModelFactory @Inject constructor(private val contactDetailsViewModel : ContactDetailsViewModel) : ViewModelProvider.NewInstanceFactory() {
+/**
+ * Interface for download a file from a given url
+ *
+ * Input: [String] url
+ * Output: [InputStream]
+ *
+ * @author Davide Farella
+ */
+interface DownloadFile {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ContactDetailsViewModel::class.java)) {
-            return contactDetailsViewModel as T
-        }
-        throw IllegalArgumentException("Unknown class name")
-    }
+    suspend operator fun invoke(url: String): InputStream
 }

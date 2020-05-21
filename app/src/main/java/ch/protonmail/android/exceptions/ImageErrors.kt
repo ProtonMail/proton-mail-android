@@ -16,24 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.domain
+package ch.protonmail.android.exceptions
 
-import kotlinx.coroutines.CoroutineDispatcher
+import ch.protonmail.android.R
+import studio.forface.viewstatestore.ViewState
 
-/**
- * Provides [CoroutineDispatcher]s in order to inject them in the constructor of a component allowing it to be tested
- *
- * @author Davide Farella
- */
-@Suppress("PropertyName", "VariableNaming") // Non conventional naming starting with uppercase letter
-interface DispatcherProvider {
+internal class BadImageUrlException(url: String) : Exception("Malformed url: $url")
 
-    /** [CoroutineDispatcher] meant to run IO operations */
-    val Io: CoroutineDispatcher
+internal class BadImageUrlError(throwable: BadImageUrlException) :
+    ViewState.Error(throwable, R.string.error_image_bad_url)
 
-    /** [CoroutineDispatcher] meant to run computational operations */
-    val Comp: CoroutineDispatcher
+internal class ImageNotFoundException(cause: Throwable, url: String) :
+    Exception("Cannot resolve image at url: $url", cause)
 
-    /** [CoroutineDispatcher] meant to run on main thread */
-    val Main: CoroutineDispatcher
-}
+internal class ImageNotFoundError(throwable: ImageNotFoundException) :
+    ViewState.Error(throwable, R.string.error_image_not_found)

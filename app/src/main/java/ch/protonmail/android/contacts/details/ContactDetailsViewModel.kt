@@ -19,33 +19,57 @@
 package ch.protonmail.android.contacts.details
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Patterns
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.contacts.PostResult
+import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.SELECTED
+import ch.protonmail.android.contacts.details.ContactEmailGroupSelectionState.UNSELECTED
+import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.domain.util.DispatcherProvider
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.exceptions.BadImageUrlException
+import ch.protonmail.android.exceptions.ImageNotFoundException
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.viewmodel.BaseViewModel
+import ch.protonmail.libs.core.utils.ViewModelFactory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
-import java.net.HttpURLConnection
-import java.net.URL
+import studio.forface.viewstatestore.ViewStateStore
+import java.io.FileNotFoundException
 import javax.inject.Inject
 
-open class ContactDetailsViewModel @Inject constructor(private val contactDetailsRepository: ContactDetailsRepository) :
-    ViewModel() {
+/**
+ * A [ViewModel] for display a contact
+ * It is open so it can be extended by EditContactViewModel
+ *
+ * Inherit from [BaseViewModel]
+ *
+ * TODO:
+ *   [ ] Replace RxJava with Coroutines
+ *   [ ] Fix unhandled concurrency
+ *   [ ] Replace [LiveData] with [ViewStateStore] for avoid multiple [LiveData] for success and error and
+ *      [ViewStateStore.lock] for avoid useless private [MutableLiveData]
+ *   [ x] Inject dispatchers in the constructor
+ *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
+ */
+open class ContactDetailsViewModel(
+    dispatcherProvider: DispatcherProvider,
+    private val downloadFile: DownloadFile,
+    private val contactDetailsRepository: ContactDetailsRepository
+) : BaseViewModel(dispatcherProvider) {
 
     //region data
     protected lateinit var allContactGroups: List<ContactLabel>
@@ -68,7 +92,6 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
         MutableLiveData()
     private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> =
         MutableLiveData()
-    private val _photoFromUrl: MutableLiveData<Bitmap> = MutableLiveData()
     //endregion
 
     val setupComplete: LiveData<Event<Boolean>>
@@ -89,12 +112,7 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
     val contactEmailsError: LiveData<Event<ErrorResponse>>
         get() = _emailGroupsError
 
-    val photoFromUrl: LiveData<Bitmap>
-        get() = _photoFromUrl
-
-
-    private val bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-
+    val profilePicture = ViewStateStore<Bitmap>().lock
 
     @SuppressLint("CheckResult")
     fun mergeContactEmailGroups(email: String) {
@@ -109,7 +127,7 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
                         val selectedState =
                             list2.find { selected -> selected.ID == it.ID } != null
                         it.isSelected = if (selectedState) {
-                            ContactEmailGroupSelectionState.SELECTED
+                            SELECTED
                         } else {
                             ContactEmailGroupSelectionState.DEFAULT
                         }
@@ -156,7 +174,6 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
         }
     }
 
-    @SuppressLint("CheckResult")
     fun fetchContactGroupsAndContactEmails(contactId: String) {
         Observable.zip(contactDetailsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
             .doOnError {
@@ -224,22 +241,21 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
             })
     }
 
-    @SuppressLint("CheckResult")
     fun updateContactEmailGroup(contactLabel: ContactLabel, email: String) {
         val membersList: HashSet<String> = HashSet()
         Observable.just(allContactEmails)
             .flatMapCompletable {
                 val contactEmail = it.find { contactEmail -> contactEmail.email == email }!!
-                membersList.add(contactEmail.contactEmailId!!)
+                membersList.add(contactEmail.contactEmailId)
                 Completable.complete().andThen(
                     contactDetailsRepository.editContactGroup(contactLabel).andThen(
                         when (contactLabel.isSelected) {
-                            ContactEmailGroupSelectionState.SELECTED -> contactDetailsRepository.setMembersForContactGroup(
+                            SELECTED -> contactDetailsRepository.setMembersForContactGroup(
                                 contactLabel.ID,
                                 contactLabel.name,
                                 membersList.toList()
                             )
-                            ContactEmailGroupSelectionState.UNSELECTED -> contactDetailsRepository.removeMembersForContactGroup(
+                            UNSELECTED -> contactDetailsRepository.removeMembersForContactGroup(
                                 contactLabel.ID,
                                 contactLabel.name,
                                 membersList.toList()
@@ -260,14 +276,33 @@ open class ContactDetailsViewModel @Inject constructor(private val contactDetail
     }
 
     fun getBitmapFromURL(src: String) {
-        if (!Patterns.WEB_URL.matcher(src).matches()) {
-            return
+        viewModelScope.launch(Comp) {
+
+            runCatching {
+                if (!PatternsCompat.WEB_URL.matcher(src).matches()) throw BadImageUrlException(src)
+                BitmapFactory.decodeStream(downloadFile(src))
+
+            }.fold(
+                onSuccess = { profilePicture.post(it) },
+
+                onFailure = { throwable ->
+
+                    if (throwable is FileNotFoundException || throwable is TimeoutCancellationException) {
+                        profilePicture.postError(ImageNotFoundException(throwable, src))
+
+                    } else {
+                        profilePicture.postError(throwable)
+                    }
+                })
         }
-        GlobalScope.launch(bgDispatcher) {
-            val url = URL(src)
-            val connection = url.openConnection() as HttpURLConnection
-            val input = connection.inputStream
-            _photoFromUrl.postValue(BitmapFactory.decodeStream(input))
-        }
+    }
+
+    // TODO: remove when the ViewModel can be injected into a Kotlin class
+    class Factory @Inject constructor (
+        private val dispatcherProvider: DispatcherProvider,
+        private val downloadFile: DownloadFile,
+        private val contactDetailsRepository: ContactDetailsRepository
+    ) : ViewModelFactory<ContactDetailsViewModel>() {
+        override fun create() = ContactDetailsViewModel(dispatcherProvider, downloadFile, contactDetailsRepository)
     }
 }

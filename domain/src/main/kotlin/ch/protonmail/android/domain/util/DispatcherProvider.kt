@@ -16,20 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.details.edit
+package ch.protonmail.android.domain.util
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 
 /**
- * Created by kadrikj on 9/26/18. */
-class EditContactDetailsViewModelFactory @Inject constructor(private val editContactDetailsViewModel: EditContactDetailsViewModel) : ViewModelProvider.NewInstanceFactory() {
+ * Provides [CoroutineDispatcher]s in order to inject them in the constructor of a component allowing it to be tested
+ *
+ * @author Davide Farella
+ */
+@Suppress("PropertyName", "VariableNaming") // Non conventional naming starting with uppercase letter
+interface DispatcherProvider {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(EditContactDetailsViewModel::class.java)) {
-            return editContactDetailsViewModel as T
-        }
-        throw IllegalArgumentException("Unknown class name")
-    }
+    /** [CoroutineDispatcher] meant to run IO operations */
+    val Io: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run computational operations */
+    val Comp: CoroutineDispatcher
+
+    /** [CoroutineDispatcher] meant to run on main thread */
+    val Main: CoroutineDispatcher
 }
