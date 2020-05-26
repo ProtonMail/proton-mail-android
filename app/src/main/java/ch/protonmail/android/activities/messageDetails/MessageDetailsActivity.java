@@ -104,7 +104,6 @@ import ch.protonmail.android.jobs.PostSpamJob;
 import ch.protonmail.android.jobs.PostTrashJobV2;
 import ch.protonmail.android.jobs.PostUnreadJob;
 import ch.protonmail.android.jobs.ReportPhishingJob;
-import ch.protonmail.android.events.MoveToFolderEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.DownloadUtils;
@@ -320,7 +319,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
                 Message message = viewModel.getDecryptedMessageData().getValue();
                 MessageUtils.moveMessage(MessageDetailsActivity.this, mJobManager, folderId, viewModel.getFolderIds(), Collections.singletonList(new SimpleMessage(message)));
                 viewModel.markRead(true);
-                // onBackPressed(); // handled by receiving MoveToFolder event
+                onBackPressed();
             }
         });
         viewModel.saveMessage();
@@ -489,18 +488,10 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
 
         if (job != null) {
             mJobManager.addJobInBackground(job);
-            if ((item.getItemId() != R.id.move_to_trash) && (item.getItemId() != R.id.move_to_spam) && (item.getItemId() != R.id.move_to_archive)) {
-                onBackPressed();
-            }
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Subscribe
-    public void onMoveToFolderEvent(MoveToFolderEvent event) {
-        Timber.d("MessageDetailsActivity : MoveToFolderEvent received");
-        onBackPressed();
     }
 
     private void showReportPhishingDialog(final Message message) {
