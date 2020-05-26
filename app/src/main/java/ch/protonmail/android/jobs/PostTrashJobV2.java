@@ -34,8 +34,8 @@ import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.events.RefreshDrawerEvent;
-import ch.protonmail.android.events.MoveToFolderEvent;
 import ch.protonmail.android.utils.AppUtil;
+import timber.log.Timber;
 
 public class PostTrashJobV2 extends ProtonMailCounterJob {
 
@@ -105,17 +105,7 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
         unreadLocationCounter.increment(totalUnread);
         countersDatabase.insertUnreadLocation(unreadLocationCounter);
 
-        // This should reduce the probability of moving messages to trash crash happening when the user is in MailboxActivity (but not swiping)
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
-
-        // This should reduce the probability of moving messages to trash crash happening when the user is in MessageDetailsActivity
-        AppUtil.postEventOnUi(new MoveToFolderEvent());
     }
 
     @Override

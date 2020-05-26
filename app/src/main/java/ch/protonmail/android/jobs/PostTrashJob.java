@@ -83,14 +83,6 @@ public class PostTrashJob extends ProtonMailCounterJob {
         }
         unreadLocationCounter.increment(totalUnread);
         countersDatabase.insertUnreadLocation(unreadLocationCounter);
-
-        // This should reduce the probability of app crashing when moving messages trash when the user is swiping from MailboxActivity
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 

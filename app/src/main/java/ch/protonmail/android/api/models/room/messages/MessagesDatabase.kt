@@ -47,12 +47,14 @@ abstract class MessagesDatabase {
 	@Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
 	abstract fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>>
 
+	@Transaction
 	@Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
 	abstract fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>>
 
 	@Query("""SELECT COUNT(${COLUMN_MESSAGE_ID}) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location """)
 	abstract fun getMessagesCountByLocation(location: Int): Int
 
+	@Transaction
 	@Query("""SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC""")
 	abstract fun getAllMessages(): LiveData<List<Message>>
 
