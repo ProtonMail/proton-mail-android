@@ -40,8 +40,7 @@ detekt analysis:
 build debug:
   stage: build
   tags:
-    #    - android
-    - experimental
+    - android
   script:
     - ./gradlew assembleBetaDebug
     - ./gradlew assembleBetaDebugAndroidTest
@@ -80,8 +79,7 @@ build release:
 unit tests:
   stage: test
   tags:
-    #    - android
-    - experimental
+    - android
   script:
     - ./gradlew testDebugUnitTest
 
