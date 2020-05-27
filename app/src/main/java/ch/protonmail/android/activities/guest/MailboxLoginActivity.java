@@ -164,7 +164,6 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         if (!mDisableBack) {
             mProgressContainer.setVisibility(View.VISIBLE);
             mUserManager.removeAccount(mUserManager.getUsername(), null);
-            AppUtil.clearTasks(mJobManager);
             super.onBackPressed();
         }
     }
@@ -213,6 +212,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
             return;
         }
 
+        AppUtil.clearTasks(mJobManager);
         startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         finish();
     }
