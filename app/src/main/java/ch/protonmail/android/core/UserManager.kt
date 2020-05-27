@@ -27,7 +27,12 @@ import androidx.annotation.Nullable
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.UserSettings
+import ch.protonmail.android.api.models.MailSettings
+import ch.protonmail.android.api.models.LoginInfoResponse
+import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
@@ -70,11 +75,15 @@ private const val PREF_APP_VERSION = "app_version"
 private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 // endregion
 
+/**
+ * UserManager handles behavior of the current primary account, as well as some multi-account behaviors
+ */
 @Singleton
 class UserManager(
         private val prefs: SharedPreferences,
         private val backupPrefs: SharedPreferences,
-        val context: Context) {
+        val context: Context
+) {
 
     private val userReferences = HashMap<String, User>()
     private var mCheckTimestamp: Float = 0.toFloat()
@@ -93,7 +102,8 @@ class UserManager(
                 AppUtil.postEventOnUi(mGenerateKeyPairEvent)
             }
             if (mCreateUserOnKeyPairGenerationFinish) {
-                LoginService.startCreateUser(mNewUserUsername, mNewUserPassword, mNewUserUpdateMe, mNewUserTokenType, mNewUserToken)
+                LoginService.startCreateUser(mNewUserUsername, mNewUserPassword, mNewUserUpdateMe,
+                        mNewUserTokenType, mNewUserToken)
             } else {
                 mCreateUserOnKeyPairGenerationFinish = false
             }
@@ -161,7 +171,8 @@ class UserManager(
         set(isLoggedIn) = prefs.edit().putBoolean(PREF_IS_LOGGED_IN, isLoggedIn).apply()
 
     val isFirstLogin: Boolean
-        get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) && prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
+        get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) &&
+                prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
 
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
@@ -331,7 +342,13 @@ class UserManager(
         LoginService.startGenerateKeys(username, domain, password, bits)
     }
 
-    fun createUser(username: String, password: ByteArray, updateMe: Boolean, tokenType: Constants.TokenType, token: String) {
+    fun createUser(
+            username: String,
+            password: ByteArray,
+            updateMe: Boolean,
+            tokenType: Constants.TokenType,
+            token: String
+    ) {
         if (this.privateKey == null && mGeneratingKeyPair) {
             mCreateUserOnKeyPairGenerationFinish = true
             mNewUserUsername = username
@@ -348,12 +365,26 @@ class UserManager(
         LoginService.startInfo(username, password, 2)
     }
 
-    fun login(username: String, password: ByteArray, response: LoginInfoResponse?, fallbackAuthVersion: Int, signUp: Boolean) {
+    fun login(
+            username: String,
+            password: ByteArray,
+            response: LoginInfoResponse?,
+            fallbackAuthVersion: Int,
+            signUp: Boolean
+    ) {
         LoginService.startLogin(username, password, response, fallbackAuthVersion, signUp)
     }
 
-    fun twoFA(username: String, password: ByteArray, twoFactor: String?, infoResponse: LoginInfoResponse?,
-              loginResponse: LoginResponse?, fallbackAuthVersion: Int, signUp: Boolean, isConnecting: Boolean) {
+    fun twoFA(
+            username: String,
+            password: ByteArray,
+            twoFactor: String?,
+            infoResponse: LoginInfoResponse?,
+            loginResponse: LoginResponse?,
+            fallbackAuthVersion: Int,
+            signUp: Boolean,
+            isConnecting: Boolean
+    ) {
         LoginService.start2FA(username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
                 signUp, isConnecting)
     }
@@ -370,7 +401,13 @@ class UserManager(
         LoginService.startSetupKeys(addressId, password)
     }
 
-    fun connectAccountLogin(username: String, password: ByteArray, twoFactor: String?, response: LoginInfoResponse?, fallbackAuthVersion: Int) {
+    fun connectAccountLogin(
+            username: String,
+            password: ByteArray,
+            twoFactor: String?,
+            response: LoginInfoResponse?,
+            fallbackAuthVersion: Int
+    ) {
         LoginService.startConnectAccount(username, password, twoFactor, response, fallbackAuthVersion)
     }
 
@@ -516,8 +553,8 @@ class UserManager(
      */
     @Synchronized
     fun setUsernameAndReload(username: String) {
-        // TODO if it's possible at one point, we need to handle successful login in one place and make all those setters
-        // of shared pref values (like is_logged_in) private to this class
+        // TODO if it's possible at one point, we need to handle successful login in one place and
+        //  make all those setters of shared pref values (like is_logged_in) private to this class
         prefs.edit().putString(PREF_USERNAME, username).apply()
         val currentUsername = this.username
         if (currentUsername != username) {
@@ -575,7 +612,13 @@ class UserManager(
     }
 
     @JvmOverloads
-    fun setUserInfo(userInfo: UserInfo, username: String? = null, mailSettings: MailSettings, userSettings: UserSettings, addresses: List<Address>) {
+    fun setUserInfo(
+            userInfo: UserInfo,
+            username: String? = null,
+            mailSettings: MailSettings,
+            userSettings: UserSettings,
+            addresses: List<Address>
+    ) {
         val user = userInfo.user
         user.username = username?: this.username
         user.setAddressIdEmail()
@@ -666,7 +709,14 @@ class UserManager(
     }
 
 
-    fun setSnoozeScheduled(isOn: Boolean, startTimeHour: Int, startTimeMinute: Int, endTimeHour: Int, endTimeMinute: Int, repeatingDays: String) {
+    fun setSnoozeScheduled(
+            isOn: Boolean,
+            startTimeHour: Int,
+            startTimeMinute: Int,
+            endTimeHour: Int,
+            endTimeMinute: Int,
+            repeatingDays: String
+    ) {
         snoozeSettings!!.snoozeScheduled = isOn
         snoozeSettings!!.snoozeScheduledStartTimeHour = startTimeHour
         snoozeSettings!!.snoozeScheduledStartTimeMinute = startTimeMinute

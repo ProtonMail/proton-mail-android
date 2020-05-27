@@ -42,6 +42,10 @@ const val EXTRA_KEY_SALT = "key_salt"
 const val EXTRA_CURRENT_PRIMARY = "connect_current_primary"
 // constants
 
+/**
+ * This activity handles the second step towards connecting an account,
+ * where mailbox password should be provided.
+ */
 class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
     override fun removeAccount(username: String) {
         viewModel.removeAccount(username)

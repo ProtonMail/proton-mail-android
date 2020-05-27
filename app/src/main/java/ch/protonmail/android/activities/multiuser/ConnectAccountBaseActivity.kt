@@ -41,6 +41,9 @@ import kotlinx.android.synthetic.main.toolbar_white.*
 const val EXTRA_USERNAME = "connect_account_username"
 // endregion
 
+/**
+ * The base activity for handling connecting an account.
+ */
 abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
 
     protected abstract val togglePasswordView: ToggleButton
@@ -57,13 +60,9 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
         toolbar.setNavigationIcon(R.drawable.ic_close)
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
-        actionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-        }
+        actionBar?.setDisplayHomeAsUpEnabled(true)
 
-        window?.apply {
-            setBarColors(resources.getColor(R.color.new_purple_dark))
-        }
+        window?.setBarColors(resources.getColor(R.color.new_purple_dark))
 
         togglePasswordView.setOnClickListener { onTogglePasswordClick(it as ToggleButton) }
     }
@@ -114,7 +113,8 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
             }
             AuthStatus.CANT_CONNECT -> {
                 resetState()
-                DialogUtils.showInfoDialog(this@ConnectAccountBaseActivity, getString(R.string.connect_account_limit_title),
+                DialogUtils.showInfoDialog(this@ConnectAccountBaseActivity,
+                        getString(R.string.connect_account_limit_title),
                         getString(R.string.connect_account_limit_subtitle)) {
                     saveLastInteraction()
                     moveToMailbox()
