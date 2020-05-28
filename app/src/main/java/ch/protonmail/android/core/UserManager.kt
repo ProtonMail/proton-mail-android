@@ -24,11 +24,15 @@ import android.text.TextUtils
 import androidx.annotation.IntDef
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.UserSettings
+import ch.protonmail.android.api.models.MailSettings
+import ch.protonmail.android.api.models.LoginInfoResponse
+import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
@@ -38,6 +42,7 @@ import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
+import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Produce
 import java.util.*
 import javax.inject.Inject
@@ -56,7 +61,7 @@ const val PREF_USERNAME = "username"
  */
 private const val PREF_IS_LOGGED_IN = "is_logged_in"
 private const val PREF_REMEMBER_MAILBOX_LOGIN = "remember_mailbox_login"
-private const val PREF_LOGIN_STATE = "login_state"
+const val PREF_LOGIN_STATE = "login_state"
 private const val PREF_MAILBOX_PASSWORD = "mailbox_password"
 private const val PREF_KEY_SALT = "key_salt"
 private const val PREF_PIN_INCORRECT_ATTEMPTS = "mailbox_pin_incorrect_attempts"
@@ -70,17 +75,21 @@ private const val PREF_APP_VERSION = "app_version"
 private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
 // endregion
 
+/**
+ * UserManager handles behavior of the current primary account, as well as some multi-account behaviors
+ */
 @Singleton
 class UserManager(
         private val prefs: SharedPreferences,
         private val backupPrefs: SharedPreferences,
-        val context: Context) {
+        val context: Context
+) {
 
     private val userReferences = HashMap<String, User>()
     private var mCheckTimestamp: Float = 0.toFloat()
     private var mMailboxPassword: String? = null
     private var mMailboxPin: String? = null
-    private val app: ProtonMailApplication = ProtonMailApplication.getApplication()
+    private val app: ProtonMailApplication = context.app
     private var mGeneratingKeyPair: Boolean = false
 
     var privateKey: String? = null
@@ -93,7 +102,8 @@ class UserManager(
                 AppUtil.postEventOnUi(mGenerateKeyPairEvent)
             }
             if (mCreateUserOnKeyPairGenerationFinish) {
-                LoginService.startCreateUser(mNewUserUsername, mNewUserPassword, mNewUserUpdateMe, mNewUserTokenType, mNewUserToken)
+                LoginService.startCreateUser(mNewUserUsername, mNewUserPassword, mNewUserUpdateMe,
+                        mNewUserTokenType, mNewUserToken)
             } else {
                 mCreateUserOnKeyPairGenerationFinish = false
             }
@@ -161,7 +171,8 @@ class UserManager(
         set(isLoggedIn) = prefs.edit().putBoolean(PREF_IS_LOGGED_IN, isLoggedIn).apply()
 
     val isFirstLogin: Boolean
-        get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) && prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
+        get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) &&
+                prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
 
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
@@ -181,14 +192,14 @@ class UserManager(
 
     val incorrectPinAttempts: Int
         get() {
-            val secureSharedPreferences = ProtonMailApplication.getApplication().secureSharedPreferences
+            val secureSharedPreferences = app.secureSharedPreferences
             return secureSharedPreferences.getInt(PREF_PIN_INCORRECT_ATTEMPTS, 0)
         }
 
     val mailboxPin: String?
         get() {
             if (mMailboxPin == null) {
-                val secureSharedPreferences = ProtonMailApplication.getApplication().secureSharedPreferences
+                val secureSharedPreferences = app.secureSharedPreferences
                 mMailboxPin = secureSharedPreferences.getString(PREF_PIN, null)
             }
             return mMailboxPin
@@ -201,7 +212,7 @@ class UserManager(
     // val mailboxPassword: String? /*TODO passphrase*/
     //     get() {
     //         if (mMailboxPassword == null) {
-    //             val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+    //             val secureSharedPreferences = app.getSecureSharedPreferences(username)
     //             mMailboxPassword = secureSharedPreferences.getString(PREF_MAILBOX_PASSWORD, null)
     //         }
     //         return mMailboxPassword
@@ -212,15 +223,19 @@ class UserManager(
      */
     val keySalt: String?
         get() {
-            val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+            val secureSharedPreferences = app.getSecureSharedPreferences(username)
             return secureSharedPreferences.getString(PREF_KEY_SALT, null)
         }
 
     var loginState: Int
         @LoginState
-        get() = prefs.getInt(PREF_LOGIN_STATE, LOGIN_STATE_NOT_INITIALIZED)
+        get() {
+            val secureSharedPreferences = app.getSecureSharedPreferences(username)
+            return secureSharedPreferences.getInt(PREF_LOGIN_STATE, LOGIN_STATE_NOT_INITIALIZED)
+        }
         set(@LoginState status) {
-            prefs.edit().putInt(PREF_LOGIN_STATE, status).apply()
+            val secureSharedPreferences = app.getSecureSharedPreferences(username)
+            secureSharedPreferences.edit().putInt(PREF_LOGIN_STATE, status).apply()
         }
 
     /**
@@ -310,7 +325,7 @@ class UserManager(
             loadSettings(username)
             mCheckTimestamp = this.prefs.getFloat(PREF_CHECK_TIMESTAMP, 0f)
         }
-        ProtonMailApplication.getApplication().bus.register(this)
+        app.bus.register(this)
     }
 
     private fun reset() {
@@ -318,7 +333,7 @@ class UserManager(
         userReferences.remove(username)
         mMailboxPassword = null
         mMailboxPin = null
-        ProtonMailApplication.getApplication().eventManager.clearState()
+        app.eventManager.clearState()
     }
 
     fun generateKeyPair(username: String, domain: String, password: ByteArray, bits: Int) {
@@ -327,7 +342,13 @@ class UserManager(
         LoginService.startGenerateKeys(username, domain, password, bits)
     }
 
-    fun createUser(username: String, password: ByteArray, updateMe: Boolean, tokenType: Constants.TokenType, token: String) {
+    fun createUser(
+            username: String,
+            password: ByteArray,
+            updateMe: Boolean,
+            tokenType: Constants.TokenType,
+            token: String
+    ) {
         if (this.privateKey == null && mGeneratingKeyPair) {
             mCreateUserOnKeyPairGenerationFinish = true
             mNewUserUsername = username
@@ -344,12 +365,26 @@ class UserManager(
         LoginService.startInfo(username, password, 2)
     }
 
-    fun login(username: String, password: ByteArray, response: LoginInfoResponse?, fallbackAuthVersion: Int, signUp: Boolean) {
+    fun login(
+            username: String,
+            password: ByteArray,
+            response: LoginInfoResponse?,
+            fallbackAuthVersion: Int,
+            signUp: Boolean
+    ) {
         LoginService.startLogin(username, password, response, fallbackAuthVersion, signUp)
     }
 
-    fun twoFA(username: String, password: ByteArray, twoFactor: String?, infoResponse: LoginInfoResponse?,
-              loginResponse: LoginResponse?, fallbackAuthVersion: Int, signUp: Boolean, isConnecting: Boolean) {
+    fun twoFA(
+            username: String,
+            password: ByteArray,
+            twoFactor: String?,
+            infoResponse: LoginInfoResponse?,
+            loginResponse: LoginResponse?,
+            fallbackAuthVersion: Int,
+            signUp: Boolean,
+            isConnecting: Boolean
+    ) {
         LoginService.start2FA(username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
                 signUp, isConnecting)
     }
@@ -366,7 +401,13 @@ class UserManager(
         LoginService.startSetupKeys(addressId, password)
     }
 
-    fun connectAccountLogin(username: String, password: ByteArray, twoFactor: String?, response: LoginInfoResponse?, fallbackAuthVersion: Int) {
+    fun connectAccountLogin(
+            username: String,
+            password: ByteArray,
+            twoFactor: String?,
+            response: LoginInfoResponse?,
+            fallbackAuthVersion: Int
+    ) {
         LoginService.startConnectAccount(username, password, twoFactor, response, fallbackAuthVersion)
     }
 
@@ -409,7 +450,7 @@ class UserManager(
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
         setUsernameAndReload(nextLoggedInAccount)
-        ProtonMailApplication.getApplication().clearPaymentMethods()
+        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -426,7 +467,7 @@ class UserManager(
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
         AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
-        ProtonMailApplication.getApplication().clearPaymentMethods()
+        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -435,7 +476,7 @@ class UserManager(
         if (username.isEmpty()) {
             return
         }
-        ProtonMailApplication.getApplication().clearPaymentMethods()
+        app.clearPaymentMethods()
         val nextLoggedInAccount = nextLoggedInAccountOtherThanCurrent
         val accountManager = AccountManager.getInstance(context)
         if (!accountManager.getLoggedInUsers().contains(username)) {
@@ -512,8 +553,8 @@ class UserManager(
      */
     @Synchronized
     fun setUsernameAndReload(username: String) {
-        // TODO if it's possible at one point, we need to handle successful login in one place and make all those setters
-        // of shared pref values (like is_logged_in) private to this class
+        // TODO if it's possible at one point, we need to handle successful login in one place and
+        //  make all those setters of shared pref values (like is_logged_in) private to this class
         prefs.edit().putString(PREF_USERNAME, username).apply()
         val currentUsername = this.username
         if (currentUsername != username) {
@@ -528,38 +569,38 @@ class UserManager(
     }
 
     fun increaseIncorrectPinAttempt() {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().secureSharedPreferences
+        val secureSharedPreferences = app.secureSharedPreferences
         var attempts = secureSharedPreferences.getInt(PREF_PIN_INCORRECT_ATTEMPTS, 0)
         secureSharedPreferences.edit().putInt(PREF_PIN_INCORRECT_ATTEMPTS, ++attempts).apply()
     }
 
     fun resetPinAttempts() {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().secureSharedPreferences
+        val secureSharedPreferences = app.secureSharedPreferences
         secureSharedPreferences.edit().putInt(PREF_PIN_INCORRECT_ATTEMPTS, 0).apply()
     }
 
     fun savePin(mailboxPin: String?) {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().secureSharedPreferences
+        val secureSharedPreferences = app.secureSharedPreferences
         secureSharedPreferences.edit().putString(PREF_PIN, mailboxPin).apply()
         mMailboxPin = mailboxPin
     }
 
     @JvmOverloads
     fun saveMailboxPassword(mailboxPassword: ByteArray, userName: String = username) {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(userName)
+        val secureSharedPreferences = app.getSecureSharedPreferences(userName)
         secureSharedPreferences.edit().putString(PREF_MAILBOX_PASSWORD, String(mailboxPassword)).apply()
         mMailboxPassword = String(mailboxPassword) // TODO passphrase
     }
 
     @JvmOverloads
     fun saveKeySalt(keysSalt: String?, userName: String = username) {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(userName)
+        val secureSharedPreferences = app.getSecureSharedPreferences(userName)
         secureSharedPreferences.edit().putString(PREF_KEY_SALT, keysSalt).apply()
     }
 
     @JvmOverloads
     fun getMailboxPassword(userName: String = username): ByteArray? {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(userName) /*TODO passphrase*/
+        val secureSharedPreferences = app.getSecureSharedPreferences(userName) /*TODO passphrase*/
         return secureSharedPreferences.getString(PREF_MAILBOX_PASSWORD, null)?.toByteArray(Charsets.UTF_8)
     }
 
@@ -571,7 +612,13 @@ class UserManager(
     }
 
     @JvmOverloads
-    fun setUserInfo(userInfo: UserInfo, username: String? = null, mailSettings: MailSettings, userSettings: UserSettings, addresses: List<Address>) {
+    fun setUserInfo(
+            userInfo: UserInfo,
+            username: String? = null,
+            mailSettings: MailSettings,
+            userSettings: UserSettings,
+            addresses: List<Address>
+    ) {
         val user = userInfo.user
         user.username = username?: this.username
         user.setAddressIdEmail()
@@ -628,22 +675,22 @@ class UserManager(
     }
 
     fun canShowStorageLimitWarning(): Boolean {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+        val secureSharedPreferences = app.getSecureSharedPreferences(username)
         return secureSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)
     }
 
     fun setShowStorageLimitWarning(value: Boolean) {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+        val secureSharedPreferences = app.getSecureSharedPreferences(username)
         secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, value).apply()
     }
 
     fun canShowStorageLimitReached(): Boolean {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+        val secureSharedPreferences = app.getSecureSharedPreferences(username)
         return secureSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)
     }
 
     fun setShowStorageLimitReached(value: Boolean) {
-        val secureSharedPreferences = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+        val secureSharedPreferences = app.getSecureSharedPreferences(username)
         secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, value).apply()
     }
 
@@ -662,7 +709,14 @@ class UserManager(
     }
 
 
-    fun setSnoozeScheduled(isOn: Boolean, startTimeHour: Int, startTimeMinute: Int, endTimeHour: Int, endTimeMinute: Int, repeatingDays: String) {
+    fun setSnoozeScheduled(
+            isOn: Boolean,
+            startTimeHour: Int,
+            startTimeMinute: Int,
+            endTimeHour: Int,
+            endTimeMinute: Int,
+            repeatingDays: String
+    ) {
         snoozeSettings!!.snoozeScheduled = isOn
         snoozeSettings!!.snoozeScheduledStartTimeHour = startTimeHour
         snoozeSettings!!.snoozeScheduledStartTimeMinute = startTimeMinute

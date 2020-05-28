@@ -31,6 +31,7 @@ import ch.protonmail.android.activities.guest.FirstActivity;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.activities.guest.MailboxLoginActivity;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
+import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.services.LoginService;
 import ch.protonmail.android.core.ProtonMailApplication;
@@ -93,6 +94,17 @@ public class SplashActivity extends BaseActivity {
         mNavigateHandler.postDelayed(mNavigateRunnable, DELAY);
     }
 
+    private void checkUserDetailsAndGoHome() {
+        if (mUserManager.accessTokenExists() && !mUserManager.getUser().getAddresses().isEmpty()) {
+            mUserManager.setLoggedIn(true);
+            mJobManager.addJobInBackground(new FetchMailSettingsJob());
+            goHome();
+            finish();
+        } else {
+            LoginService.fetchUserDetails();
+        }
+    }
+
     private void navigate() {
         int loginState = mUserManager.getLoginState();
         if (loginState == LOGIN_STATE_NOT_INITIALIZED) {
@@ -101,27 +113,21 @@ public class SplashActivity extends BaseActivity {
             } else {
                 startActivity(new Intent(this, FirstActivity.class));
             }
+            finish();
         } else if (loginState == LOGIN_STATE_LOGIN_FINISHED) {
             // login finished but mailbox login not
-            Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
-            String keySalt = mUserManager.getKeySalt();
-            if (keySalt != null) {
-                mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, keySalt);
-                startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));
+            mUserManager.logoutAccount(mUserManager.getUsername());
+            if (AccountManager.Companion.getInstance(this).getLoggedInUsers().size() >= 1) {
+                // There were multiple accounts logged in
+                checkUserDetailsAndGoHome();
             } else {
+                // There was only one account logged in
                 startActivity(new Intent(this, LoginActivity.class));
+                finish();
             }
         } else {
-            if (mUserManager.accessTokenExists() && !mUserManager.getUser().getAddresses().isEmpty()) {
-                mUserManager.setLoggedIn(true);
-                mJobManager.addJobInBackground(new FetchMailSettingsJob());
-                goHome();
-            } else {
-                LoginService.fetchUserDetails();
-                return;
-            }
+            checkUserDetailsAndGoHome();
         }
-        finish();
     }
 
     @Override

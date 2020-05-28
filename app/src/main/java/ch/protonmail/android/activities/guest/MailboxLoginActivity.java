@@ -163,8 +163,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     public void onBackPressed() {
         if (!mDisableBack) {
             mProgressContainer.setVisibility(View.VISIBLE);
-            AppUtil.clearTasks(mJobManager);
-            startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
+            mUserManager.removeAccount(mUserManager.getUsername(), null);
             super.onBackPressed();
         }
     }
@@ -206,13 +205,14 @@ public class MailboxLoginActivity extends BaseLoginActivity {
 
     @Subscribe
     public void onLogoutEvent(LogoutEvent event) {
-        mProgressContainer.setVisibility(View.GONE);
 
         if (event.status == Status.NO_NETWORK) {
+            mProgressContainer.setVisibility(View.GONE);
             TextExtensions.showToast(this, R.string.no_network, Toast.LENGTH_SHORT);
             return;
         }
 
+        AppUtil.clearTasks(mJobManager);
         startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         finish();
     }

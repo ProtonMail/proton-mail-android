@@ -30,6 +30,7 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailbo
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.moveToMailbox
 import com.squareup.otto.Subscribe
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_connect_account_mailbox_login.*
@@ -41,6 +42,10 @@ const val EXTRA_KEY_SALT = "key_salt"
 const val EXTRA_CURRENT_PRIMARY = "connect_current_primary"
 // constants
 
+/**
+ * This activity handles the second step towards connecting an account,
+ * where mailbox password should be provided.
+ */
 class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
     override fun removeAccount(username: String) {
         viewModel.removeAccount(username)
@@ -101,6 +106,7 @@ class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
         if (!setupComplete) {
             viewModel.username?.let {
                 viewModel.logoutAccount(it)
+                moveToMailbox()
             }
         }
     }

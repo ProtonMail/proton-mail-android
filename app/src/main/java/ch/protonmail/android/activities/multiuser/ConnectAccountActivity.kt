@@ -34,6 +34,7 @@ import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.LOGIN_STATE_LOGIN_FINISHED
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountLoginEvent
@@ -55,6 +56,10 @@ import kotlinx.android.synthetic.main.activity_connect_account.*
 import kotlinx.android.synthetic.main.connect_account_progress.*
 import javax.inject.Inject
 
+/**
+ * This activity handles the first step towards connecting an account,
+ * where username and password should be provided.
+ */
 class ConnectAccountActivity : ConnectAccountBaseActivity() {
 
     override fun removeAccount(username: String) {
@@ -114,8 +119,9 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         super.onDestroy()
         viewModel.username?.let {
             val tokenManager = mUserManager.getTokenManager(it)
-            val isLoggedIn = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).getLoggedInUsers().contains(it)
-            if(tokenManager != null && !tokenManager.scope.toLowerCase().split(" ").contains(Constants.TOKEN_SCOPE_FULL) && isLoggedIn){
+            val accountManager = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext)
+            val isLoggedIn = accountManager.getLoggedInUsers().contains(it)
+            if (tokenManager != null && !tokenManager.scope.toLowerCase().split(" ").contains(Constants.TOKEN_SCOPE_FULL) && isLoggedIn) {
                 mUserManager.logoutAccount(it)
             }
         }
@@ -126,7 +132,8 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         ProtonMailApplication.getApplication().resetLogin2FAEvent()
         hideProgress()
         enableInput(true)
-        showTwoFactorDialog(event.username, event.password, event.infoResponse, event.loginResponse, event.fallbackAuthVersion)
+        showTwoFactorDialog(event.username, event.password, event.infoResponse,
+                event.loginResponse, event.fallbackAuthVersion)
     }
 
     @Subscribe
@@ -167,6 +174,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
                     return
                 }
                 hideProgress()
+                mUserManager.loginState = LOGIN_STATE_LOGIN_FINISHED
                 val mailboxLoginIntent = Intent(this, ConnectAccountMailboxLoginActivity::class.java)
                 mailboxLoginIntent.putExtra(EXTRA_KEY_SALT, event.keySalt)
                 mailboxLoginIntent.putExtra(EXTRA_USERNAME, viewModel.username)
@@ -193,13 +201,14 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             }
             AuthStatus.FAILED -> {
                 if (event.isRedirectToSetup) {
-                    showInfoDialog(this, getString(R.string.login_failure), getString(R.string.login_failure_missing_keys), null)
+                    showInfoDialog(this, getString(R.string.login_failure),
+                            getString(R.string.login_failure_missing_keys), null)
                 }
                 hideProgress()
             }
             AuthStatus.CANT_CONNECT -> {
                 hideProgress()
-                DialogUtils.showInfoDialog(this@ConnectAccountActivity, getString(R.string.connect_account_limit_title),
+                showInfoDialog(this@ConnectAccountActivity, getString(R.string.connect_account_limit_title),
                         getString(R.string.connect_account_limit_subtitle)) {
                     saveLastInteraction()
                     moveToMailbox()
@@ -241,8 +250,13 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         }
     }
 
-    private fun showTwoFactorDialog(username: String, password: ByteArray, response: LoginInfoResponse?,
-                                    loginResponse: LoginResponse?, fallbackAuthVersion: Int) {
+    private fun showTwoFactorDialog(
+            username: String,
+            password: ByteArray,
+            response: LoginInfoResponse?,
+            loginResponse: LoginResponse?,
+            fallbackAuthVersion: Int
+    ) {
         twoFactorDialog?.let {
             if (it.isShowing) {
                 return
@@ -261,8 +275,13 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         })
     }
 
-    private fun twoFA(username: String, password: ByteArray, twoFactor: String, infoResponse: LoginInfoResponse?,
-                      loginResponse: LoginResponse?, fallbackAuthVersion: Int) {
+    private fun twoFA(
+            username: String,
+            password: ByteArray,
+            twoFactor: String,
+            infoResponse: LoginInfoResponse?,
+            loginResponse: LoginResponse?,
+            fallbackAuthVersion: Int) {
         mUserManager.twoFA(username, password, twoFactor, infoResponse, loginResponse, signUp = false,
                 isConnecting = true, fallbackAuthVersion = fallbackAuthVersion)
     }
