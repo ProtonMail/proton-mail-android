@@ -28,16 +28,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
     <string name="sign_out_question">Are you sure you want to sign out?</string>
-    <string name="remember_me_on_device">Remember me on this device</string>
-    <string name="show_password">Show password</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="login_password">Login Password</string>
     <string name="mailbox_password">Mailbox Password</string>
     <string name="two_factor_code">Two Factor Code</string>
     <string name="processing_request">Your request is being processed</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">Need an account? Sign Up.</string>
     <string name="need_to_be_logged_in">You are not logged in!</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="reset_mailbox_password">RESET MAILBOX PASSWORD</string>
@@ -60,9 +54,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app">Your ProtonMail app cannot be used until it is updated</string>
     <string name="api_offline_title">ProtonMail API offline</string>
     <string name="api_offline">ProtonMail is currently offline, check our twitter for the current status: https://twitter.com/protonmail</string>
-    <string name="cannot_open">Can\'t open file</string>
-    <string name="downloaded_attachment">Downloaded %s</string>
-    <string name="edit_contact_validation">Please enter a valid name and email</string>
     <string name="contact_saved">Contact saved</string>
     <string name="contact_saved_offline">Contact saved, will be synced when connection is available</string>
     <string name="contact_exist">Contact email already exist</string>
@@ -70,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">Email address is a duplicate</string>
     <string name="invalid_code">Code is not valid</string>
     <string name="message_drafted">Message sending failed. Your messages are saved in drafts folder</string>
-    <string name="message_drafted_reason">%s does not exist.\nCan\'t deliver email.</string>
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Close</string>
     <string name="inbox_option">INBOX</string>
@@ -80,10 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">ARCHIVE</string>
     <string name="trash_option">TRASH</string>
     <string name="spam_option">SPAM</string>
-    <string name="contacts_option">CONTACTS</string>
-    <string name="settings_option">SETTINGS</string>
-    <string name="report_bugs_option">REPORT BUGS</string>
-    <string name="signout_option">SIGN OUT</string>
     <string name="inbox">Inbox</string>
     <string name="starred">Starred</string>
     <string name="drafts">Drafts</string>
@@ -92,7 +78,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Trash</string>
     <string name="spam">Spam</string>
     <string name="contacts">Contacts</string>
-    <string name="contact_groups">Contact Groups</string>
     <string name="search_contacts">Search contacts</string>
     <string name="fetching_contacts">Fetching ProtonMail contacts...</string>
     <string name="fetching_contacts_success">Contacts refreshed successfully</string>
@@ -116,7 +101,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Move to Trash</string>
     <string name="move_to_spam">Move to Spam</string>
     <string name="move_to_inbox">Move to Inbox</string>
-    <string name="move_message_to_trash">Move message to trash?</string>
     <string name="are_you_sure_empty">Are you sure you want to delete all messages from this folder?</string>
     <string name="send">Send</string>
     <string name="selected">Selected</string>
@@ -130,11 +114,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">Bcc:</string>
     <string name="from_prefix">From:</string>
     <string name="date_prefix">Date:</string>
-    <string name="expiration_time_prefix">Expires in</string>
     <string name="view_details">DETAILS</string>
     <string name="hide_details">HIDE DETAILS</string>
     <string name="attachment_size" translatable="false">(%s)</string>
-    <string name="download">DOWNLOAD</string>
     <string name="reply">Reply</string>
     <string name="reply_all">Reply All</string>
     <string name="forward">Forward</string>
@@ -144,7 +126,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">Confirm Password</string>
     <string name="define_password_hint">Define Hint (Optional)</string>
     <string name="message_passwords_do_not_match">Login Passwords do not match</string>
-    <string name="message_mailbox_passwords_do_not_match">Mailbox Passwords do not match</string>
     <string name="eo_passwords_do_not_match">Passwords do not match</string>
     <string name="define_expiration_period">Define Expiration Period</string>
     <string name="set_message_expiration">Set Message Expiration</string>
@@ -182,16 +163,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">There was a problem adding the selected file</string>
     <string name="add_contact">Add Contact</string>
     <string name="delete_contact">Remove %s from Contacts?</string>
-    <string name="sync_contact">Sync %s with the web app?</string>
     <string name="confirm">Confirm</string>
     <string name="confirm_destructive_action">Are you sure? This cannot be undone.</string>
     <string name="create">Create</string>
-    <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="email_address">Email address</string>
     <string name="phone">Phone number</string>
     <string name="save">Save</string>
-    <string name="add">Add</string>
     <string name="syncing_messages">Syncing...</string>
     <string name="sync">Sync Contacts</string>
     <string name="save_message_as_draft">Save message as draft?</string>
