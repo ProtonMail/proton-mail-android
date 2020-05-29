@@ -49,7 +49,7 @@ fun initVersions() {
     // endregion
 
     // region Others
-    `mockK version` =                           "1.9.3"
+    `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
     `viewStateStore version` =                  "1.4-beta-4"    // Released: Mar 02, 2020

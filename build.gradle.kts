@@ -30,11 +30,7 @@ plugins {
 }
 
 allprojects {
-  repositories(repos)
-    // TODO: workaround to this: https://github.com/mockk/mockk/issues/281
-    configurations.all {
-        resolutionStrategy.force("org.objenesis:objenesis:2.6")
-    }
+    repositories(repos)
 }
 
 subprojects {
