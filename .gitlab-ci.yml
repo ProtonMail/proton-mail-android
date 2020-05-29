@@ -32,10 +32,10 @@ detekt analysis:
   tags:
     - android
   script:
-    - ./gradlew detekt
+    - ./gradlew multiModuleDetekt
   artifacts:
     reports:
-        codequality: detekt/report.json
+        codequality: detekt/reports/mergedReport.json
 
 build debug:
   stage: build

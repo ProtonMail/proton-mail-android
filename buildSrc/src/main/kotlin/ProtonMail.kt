@@ -21,7 +21,7 @@
  * Params for the Application and various modules
  * @author Davide Farella
  */
-object Project {
+object ProtonMail {
     const val versionName = "1.13.7"
     const val versionCode = 724
 

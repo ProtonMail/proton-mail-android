@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-initVersions()
+import setup.setupDetekt
+import setup.setupKotlin
 
 buildscript {
+    initVersions()
     repositories(repos)
     dependencies(classpathDependencies)
 }
@@ -33,26 +33,12 @@ allprojects {
     repositories(repos)
 }
 
-subprojects {
-    // Options for Kotlin
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "1.8"
-            freeCompilerArgs = freeCompilerArgs +
-                    "-XXLanguage:+NewInference" +
-                    "-Xuse-experimental=kotlin.Experimental"
-        }
-    }
-
-    // Disable Javadoc
-    tasks.withType<Javadoc> { enabled = false }
-}
-
+setupKotlin()
+setupDetekt { "tokenAutoComplete" !in it.name }
 
 tasks.register("clean", Delete::class.java) {
     delete(rootProject.buildDir)
 }
-
 
 tasks.register("injectLicenses") {
     description = "Add license header to source code files"

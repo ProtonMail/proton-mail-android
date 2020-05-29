@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import java.io.FileInputStream
-import java.util.*
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
+import java.io.FileInputStream
+import java.util.*
 
 plugins {
     `android-application`
-    `detekt`
     `kotlin-android`
     `kotlin-android-extensions`
     `kotlin-kapt`
@@ -35,22 +34,6 @@ plugins {
 kapt {
     correctErrorTypes = true
 }
-
-detekt {
-    failFast = false
-    config = files("$rootDir/detekt/config.yml")
-
-    reports {
-        xml.enabled = false
-        html.enabled = false
-        txt.enabled = false
-        custom {
-            reportId = "DetektQualityOutputReport"
-            destination = file("$rootDir/detekt/report.json")
-        }
-    }
-}
-configurations { detekt }
 
 val privateProperties = Properties().apply {
     load(FileInputStream("privateConfig/private.properties"))
@@ -206,11 +189,6 @@ dependencies {
 
     testImplementation(project(Module.testAndroid))
     androidTestImplementation(project(Module.testAndroidInstrumented))
-
-    // Detekt
-    detekt(`detekt-cli`)
-    detektPlugins(`detekt-code-analysis`)
-    detektPlugins(`detekt-formatting`)
 }
 
 apply(from = "old.build.gradle")

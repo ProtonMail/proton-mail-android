@@ -33,6 +33,7 @@ dependencies {
     implementation(
         // Kotlin
         `kotlin-jdk7`,
+        `kotlin-reflect`,
         `coroutines-android`,
 
         // Android

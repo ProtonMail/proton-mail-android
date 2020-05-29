@@ -49,6 +49,8 @@ fun initVersions() {
     // endregion
 
     // region Others
+    `detekt version` =                          "1.9.1"         // Released: May 17, 2020
+    `detect-code-analysis version` =            "0.3.2"         // Released:
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
@@ -78,8 +80,6 @@ const val `playServices version` =          "17.0.0"        // Released: Jun 19,
 // Other
 const val `apache-commons-lang version` =   "3.4"           // Released: Apr 03, 2015
 const val `butterKnife version` =           "10.1.0"        // Released: Feb 14, 201
-const val `detekt version` =                "1.8.0"         // Released: Apr 25, 2020
-const val `detect-code-analysis version` =  "0.3.2"         // Released:
 const val `gson version` =                  "2.8.5"         // Released: May 22, 201
 const val `hugo version` =                  "1.2.1"         // Released: Feb 18, 201
 const val `jsoup version` =                 "1.8.3"         // Released: Aug 02, 2015

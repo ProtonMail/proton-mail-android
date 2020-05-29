@@ -23,7 +23,7 @@ import org.gradle.plugin.use.PluginDependencySpec
 
 val PluginDependenciesSpec.`android-application` get() =        plugin("com.android.application")
 val PluginDependenciesSpec.`android-library` get() =            plugin("com.android.library")
-val PluginDependenciesSpec.`detekt` get() =                     plugin("io.gitlab.arturbosch.detekt")
+val PluginDependenciesSpec.`detekt` get() =                     plugin(`detekt id`)
 val PluginDependenciesSpec.`hugo` get() =                       plugin("com.jakewharton.hugo")
 val PluginDependenciesSpec.`java-library` get() =               plugin("java-library")
 val PluginDependenciesSpec.`kotlin` get() =                     plugin("kotlin")
@@ -34,5 +34,6 @@ val PluginDependenciesSpec.`kotlin-serialization` get() =       kotlin("plugin.s
 val PluginDependenciesSpec.`sentry-android` get() =             plugin("io.sentry.android.gradle")
 val PluginDependenciesSpec.`sonarQube` get() =                  plugin("org.sonarqube") version `sonarQube version`
 
+val `detekt id` get() = "io.gitlab.arturbosch.detekt"
 
 private fun PluginDependenciesSpec.plugin(id: String): PluginDependencySpec = id(id)

@@ -26,11 +26,21 @@ repositories {
 }
 
 dependencies {
-    val android =       "3.5.0"         // Updated: Aug 08, 2019
-    val easyGradle =    "1.2.3-beta-4"  // Updated: Mar 01, 2020
-    val sentry =        "1.7.22"        // Updated:
+    val android =       "3.5.0"         // Released: Aug 08, 2019
+    val detekt =        "1.9.1"         // Released: May 17, 2020
+    val easyGradle =    "1.3.2"         // Released: May 22, 2020
+    val kotlin =        "1.3.72"        // Released: Apr 14, 2020
+    val sentry =        "1.7.22"        // Released:
 
+    // Needed for setup Android config
     implementation("com.android.tools.build:gradle:$android")
+    // Needed to setup Detekt config
+    implementation("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt")
+    // Needed for many utils
     implementation("studio.forface.easygradle:dsl-android:$easyGradle")
+    // Needed for setup Kotlin options
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
+
+
     implementation("io.sentry:sentry-android-gradle-plugin:$sentry")
 }
