@@ -197,8 +197,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sending_message">Sending message...</string>
     <string name="sending_message_offline">Offline, queued for sending later...</string>
 
-    <string name="mailbox_password_changed">Mailbox password changed</string>
-    <string name="go_to_mailbox_login">Go to mailbox login to enter updated mailbox password?</string>
     <string name="go_to_inbox">Go to my inbox</string>
 
     <string name="message_sent">Message Sent</string>
@@ -206,22 +204,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_sending_failures">%d message sending failures</string>
 
     <string name="storage_limit">Storage limit</string>
-    <string name="storage_limit_warning">Storage limit is approaching</string>
-    <string name="do_not_show_again">Don\'t show again</string>
     <string name="edit_settings">Edit Settings</string>
     <string name="save_settings">Save Settings</string>
     <string name="share">Share</string>
-    <string name="settings_saved">New settings saved</string>
     <string name="settings_not_saved_password"> Settings not saved - incorrect login password</string>
     <string name="settings_not_saved_email"> Settings not saved - invalid notification email</string>
-    <string name="save_settings_question">Save settings?</string>
 
     <string name="enter">Enter</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
-    <string name="passwords">Password Manager</string>
     <string name="change_password">Change Password</string>
-    <string name="change_login_password">Change Login Password</string>
     <string name="change_mailbox_password">Change Mailbox Password</string>
     <string name="eo_password_title">Set Password</string>
     <string name="eo_password_subtitle">Set a password to encrypt this message for non-ProtonMail users</string>
@@ -231,26 +223,18 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="new_login_password">New Password</string>
     <string name="confirm_new_login_password">Confirm New Password</string>
 
-    <string name="old_mailbox_password">Current Mailbox Password</string>
     <string name="new_mailbox_password">New Mailbox Password</string>
     <string name="confirm_new_mailbox_password">Confirm New Mailbox Password</string>
     <string name="no_attachments">0 Attachments</string>
-    <string name="num_attachments">%d Attachments</string>
 
     <string name="new_passwords_not_valid">Invalid input</string>
     <string name="new_passwords_do_not_match">New passwords did not match</string>
     <string name="new_login_password_saved">New login password saved</string>
     <string name="new_mailbox_password_saved">New mailbox password saved</string>
-    <string name="could_not_change_password">Password could not be changed</string>
 
-    <string name="auto_logout_option_settings">Auto Logout Options</string>
     <string name="pin_lock_option_settings">Lock App Options</string>
     <string name="pin_lock_after">Lock app after</string>
     <string name="lock_the_app">Lock the App</string>
-    <string name="no_sound_or_vibrate">No vibration or sound</string>
-    <string name="sound">Sound without vibration</string>
-    <string name="vibration">Vibration without sound</string>
-    <string name="both_sound_and_vibration">Vibration and sound</string>
     <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are not allowed</string>
     <string name="cont">Continue</string>
     <string name="email_verification_code">We will send a verification code to the email address above.</string>
@@ -265,18 +249,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Set up your account</string>
     <string name="create_account">Create Account</string>
     <string name="create_passwords">Set Password</string>
-    <string name="sign_up">Sign Up</string>
     <string name="at_pmail" translatable="false">\@protonmail.com</string>
     <string name="caps_username">Username</string>
     <string name="caps_login_password">Password</string>
-    <string name="caps_two_factor">Two Factor Code</string>
     <string name="caps_confirm_password">Confirm Password</string>
-    <string name="caps_confirm_mailbox_password">Confirm Mailbox Password</string>
-    <string name="caps_optional_notification_email">PASSWORD RECOVERY EMAIL (OPTIONAL)</string>
     <string name="caps_optional">*OPTIONAL</string>
     <string name="update_me_for_new_features">Keep me updated about new features</string>
     <string name="create_mailbox_password">Create Password</string>
-    <string name="confirm_mailbox_password">Confirm Mailbox Password</string>
     <string name="password_note"><b>Note:</b> This is used to encrypt and decrypt your messages.
         Do not lose this password, we cannot recover it. If you lose your password, you will not be able to read your emails.</string>
     <string name="username_note"><b>Note:</b> The Username is also your ProtonMail address</string>
@@ -296,12 +275,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="current_standard">The current standard</string>
     <string name="extreme_security">Extreme Security (4096 bit)</string>
     <string name="highest_security">The highest level of encryption available.<b> Can take several minutes to setup.</b></string>
-    <string name="generate_keypair">Generate Keypair</string>
     <string name="labels_title_apply">Apply Labels</string>
     <string name="labels_title_add">Add Label</string>
     <string name="labels_title">Labels</string>
 
-    <string name="labels_create">Add Label</string>
     <string name="label_name">Label Name</string>
     <string name="label_name_empty">Label must have a name</string>
     <string name="label_name_duplicate">This label name already exists</string>
@@ -309,9 +286,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="label_invalid">Label not added due to invalid name.</string>
     <string name="undo">Undo</string>
     <string name="customize_swipe_actions">Customize swipe actions</string>
-    <string name="message_details_swipe_info">You can return to the mailbox screen by
-        swiping left to right and move current message to TRASH by swiping right to left</string>
-    <string name="composing_message_scroll_info">You can scroll the composing panel up or down by scrolling the very right edge of the composing panel</string>
     <string name="message_can_not_edit">Can not reply/forward, this message isn\'t sent yet</string>
 
     <string name="label_apply">Apply</string>
@@ -327,16 +301,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="respond_inline">Respond in-line</string>
     <string name="no_connectivity_detected">No connectivity detected...</string>
     <string name="no_connectivity_detected_troubleshoot">No connectivity detected&#8230; (<u>Troubleshoot</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">No connectivity detected...
-        \nMessage not downloaded</string>
-    <string name="connectivity_arrived">Connected</string>
     <string name="connectivity_checking">Checking for connection...</string>
     <string name="sync_short">sync</string>
     <string name="draft_attachments_uploading">Draft is still uploading...</string>
     <string name="draft_label_attachments_uploading">uploading attachments…</string>
     <string name="draft_label_message_uploading">sending message…</string>
     <string name="attachment_failed">Attachment Upload Failed for message </string>
-    <string name="attachment_failed_new">Attachment Upload Failed for message %1$s %2$s</string>
     <string name="attaching_photo_failed">Attaching Photo Failed</string>
 
     <string name="empty_message">Empty message</string>
@@ -346,8 +316,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_images">Show remote content</string>
     <string name="retry">Retry</string>
     <string name="saving_failed_no_conn">Saving failed, no connection</string>
-    <string name="can_not_create_account_while_beta">Account creation is disabled in Beta</string>
-    <string name="changing_mailbox_password_disabled_while_beta">Changing Mailbox Password disabled in Beta</string>
     <string name="username_is_available">Username available!</string>
     <string name="username_is_not_available">Username already used!</string>
     <string name="username_is_too_long">Maximum length for a username is %d characters!</string>
@@ -374,33 +342,23 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_subtitle_encryption">Your inbox is now protected with end-to-end encryption. To automatically send secure emails to your contacts, invite them to use ProtonMail!  You can also manually encrypt messages to them if they don\'t use ProtonMail.</string>
     <string name="engagement_subtitle_expire">Messages you send can be set to auto delete after a certain time period.</string>
     <string name="engagement_subtitle_help">You can get help and support at protonmail.com/support. Bugs can also be reported with the app.</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail doesn\'t sell ads or abuse
-        your privacy. Your support is essential to keeping ProtonMail running. You can upgrade to a
-        paid account or donate to support ProtonMail.</string>
     <string name="attachment_exists">Attachment already attached</string>
     <string name="sending_email_success">Verification code sent</string>
     <string name="sending_email_failed">Verification code sending failed</string>
-    <string name="password_required">Enter your login password to make this change</string>
     <string name="password_not_valid">Entered password is not valid</string>
     <string name="send_code_wait">Please wait %d seconds to click again</string>
 
     <string name="eo_password_not_completed">Message Password not completed.</string>
-    <string name="delinquency_title">Access to this account is disabled due to non-payment</string>
     <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through protonmail.com to pay your unpaid invoice.</string>
     <string name="direct_disabled_subtitle">Mobile signups are temporarily disabled. Please try again later, or try signing up at <a href="https://protonmail.com">protonmail.com</a> using a desktop or laptop computer.</string>
     <string name="downloading">Downloading...</string>
     <string name="cant_download_attachment">Can\'t Download Attachment</string>
-    <string name="auto_logout">Auto Logout</string>
     <string-array name="auto_logout_options_array">
         <item>Immediately</item>
         <item>5 min inactivity</item>
         <item>15 min inactivity</item>
         <item>1h inactivity</item>
         <item>24h inactivity</item>
-    </string-array>
-    <string-array name="pin_options_array">
-        <item>Change PIN</item>
-        <item>Change PIN timeout period</item>
     </string-array>
 
     <string name="delete_label_confirmation_title">Delete selected labels?</string>
