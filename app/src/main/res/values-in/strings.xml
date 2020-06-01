@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Pesan %1$s tidak boleh memiliki lebih dari %2$d label.</string>
     <string name="max_labels_selected">Maksimum yang diizinkan adalah %d label</string>
     <string name="max_attachments_reached">Lampiran maksimum per pesan telah tercapai</string>
+    <string name="max_attachments_size_reached">Ukuran maksimum lampiran per pesan telah tercapai</string>
     <plurals name="hours_string">
         <item quantity="other">%d jam</item>
     </plurals>
@@ -436,7 +437,7 @@ akun berbayar atau menyumbang untuk mendukung ProtonMail.</string>
 ke:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Apakah Anda ingin melanjutkan?</string>
     <string name="dont_ask_again">Jangan tanya lagi</string>
     <string name="none">Tidak ada</string>
-    <string name="changes_affected_after_closing">Perubahan akan terjadi setelah Anda menutup aplikasi</string>
+    <string name="changes_affected_after_closing">Perubahan terjadi setelah aplikasi ditutup</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PIN salah, %d upaya tersisa</item>
     </plurals>
@@ -1111,6 +1112,10 @@ akses ke Telepon.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton sedang offline/down&lt;/i&gt; - Cek &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; untuk status sistem kami.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Masih tidak dapat menemukan solusi&lt;/i&gt; - Hubungi kami secara langsung melalui &lt;a href=\"https://protonmail.com/support-form\"&gt;form dukukan kami&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), atau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Gambar tidak ditemukan</string>
+    <string name="error_image_bad_url">Url gambar tidak valid</string>
     <!-- endregion -->
     <string name="allowed">Diizinkan</string>
     <string name="denied">Ditolak</string>

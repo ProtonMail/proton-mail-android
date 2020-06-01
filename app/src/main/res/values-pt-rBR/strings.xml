@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">A mensagem %1$s não pode conter mais de %2$d marcadores.</string>
     <string name="max_labels_selected">%d marcadores é o máximo permitido</string>
     <string name="max_attachments_reached">O limite máximo de anexos por mensagem foi atingido.</string>
+    <string name="max_attachments_size_reached">O limite máximo de anexos por mensagem foi atingido</string>
     <plurals name="hours_string">
         <item quantity="one">%d hora</item>
         <item quantity="other">%d horas</item>
@@ -440,7 +441,7 @@ conta paga ou uma doação para o ProtonMail.</string>
     <string name="hyperlink_confirmation_dialog_text_html">Você está prestes a ser redirecionado para para:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Você tem certeza que deseja continuar?</string>
     <string name="dont_ask_again">Não perguntar novamente</string>
     <string name="none">Nenhum</string>
-    <string name="changes_affected_after_closing">As alterações serão feitas após fechar o aplicativo</string>
+    <string name="changes_affected_after_closing">As alterações serão feitas após reiniciar o aplicativo</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorreto, %d tentativa restante</item>
         <item quantity="other">PIN incorreto, %d tentativas restantes</item>
@@ -1125,6 +1126,10 @@ acesso ao Telefone.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está em baixo&lt;/i&gt; - veja &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para conhecer o nosso estado.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - contacte-nos directamente através do nosso &lt;a href=\"https://protonmail.com/support-form\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), ou &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Imagem não encontrada</string>
+    <string name="error_image_bad_url">Url da imagem inválida</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
     <string name="denied">Negado</string>

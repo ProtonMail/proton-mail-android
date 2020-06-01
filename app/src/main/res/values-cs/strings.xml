@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Zpráva %1$s nemůže mít více než %2$d štítků.</string>
     <string name="max_labels_selected">Maximální počet štítků je: %d</string>
     <string name="max_attachments_reached">Byl dosažen maximální limit pro přílohy v jedné zprávě.</string>
+    <string name="max_attachments_size_reached">Maximum attachments size per message has been reached</string>
     <plurals name="hours_string">
         <item quantity="one">%d hodina</item>
         <item quantity="few">%d hodiny</item>
@@ -1155,6 +1156,10 @@ access to Phone.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Obrázek nebyl nalezen</string>
+    <string name="error_image_bad_url">Poškozená URL adresa obrázku</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>

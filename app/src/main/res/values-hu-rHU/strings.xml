@@ -68,7 +68,7 @@ Svájci székhellyel</string>
     <string name="contact_saved_offline">Névjegy elmentve. A kapcsolat helyreállásakor lesz szinkronizálva.</string>
     <string name="contact_exist">Már létezik névjegy ezzel az e-mail címmel</string>
     <string name="invalid_email">Érvénytelen e-mail cím</string>
-    <string name="duplicate_email">Az e-mail cím egy másodpéldány</string>
+    <string name="duplicate_email">A megadott e-mail cím már létezik</string>
     <string name="invalid_code">Érvénytelen kód</string>
     <string name="message_drafted">Az üzenet küldése sikertelen volt. A Piszkozatok mappában került mentésre.</string>
     <string name="message_drafted_reason">%s nem létezik.\nErre a címre nem tud e-mailt küldeni.</string>
@@ -153,6 +153,7 @@ Svájci székhellyel</string>
     <string name="max_labels_exceeded">Az üzenetnek (%1$s) nem lehet több, mint %2$d címkéje.</string>
     <string name="max_labels_selected">Maximálisan %d címke választható</string>
     <string name="max_attachments_reached">Az üzenethez csatolható mellékletek száma elérte a maximumot.</string>
+    <string name="max_attachments_size_reached">Az üzenethez csatolható mellékletek mérete elérte a maximumot</string>
     <plurals name="hours_string">
         <item quantity="one">%d óra</item>
         <item quantity="other">%d óra</item>
@@ -297,7 +298,7 @@ Ne veszítse el jelszavát, mert azt nem tudjuk visszaállítani. Ha jelszavát 
     <string name="no_verification_methods_found">Nem található ellenőrzési módszer</string>
     <string name="email_verification">E-mailes ellenőrzés</string>
     <string name="phone_verification">Telefonos ellenőrzés</string>
-    <string name="existing_email_address">Adjon meg létező e-mail címet</string>
+    <string name="existing_email_address">Adjon meg egy létező e-mail címet</string>
     <string name="phone_number">Adja meg a telefonszámát</string>
     <string name="encryption_setup">Titkosítás beállítása</string>
     <string name="high_security">Magas szintű biztonság (2048 bit)</string>
@@ -323,7 +324,7 @@ csúsztatással, és áthelyezheti az aktuális üzenetet a Lomtárba, jobbról-
     <string name="label_apply">Alkalmazás</string>
     <string name="label_delete">Törlés</string>
     <string name="label_add">Hozzáadás</string>
-    <string name="no_browser_found">A művelet befejezéséhez, teleptítsen egy böngésző alkalmazást</string>
+    <string name="no_browser_found">A művelet befejezéséhez, telepítsen egy böngésző alkalmazást</string>
     <string name="no_application_found">Nincs megfelelő alkalmazás a művelet elvégzésére</string>
     <string name="no_application_found_or_link_invalid">Nincs alkalmazás ehhez a művelethez vagy erénytelen URL</string>
     <string name="also_archive">Archiválás</string>
@@ -438,10 +439,10 @@ előfizetői számlára vagy támogathat minket adományokkal.</string>
     <string name="attachment_delete_failed">Melléklet törlése nem sikerült: %s</string>
     <string name="sync_attachments">Mellékletek szinkronizálása</string>
     <string name="processing_attachment">Melléklet feldolgozása</string>
-    <string name="hyperlink_confirmation_dialog_text_html">Ön hamarosan elindítja a webböngészőt ide:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Akarja folytatni?</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Megnyitja a következő címet a böngészőben:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Kívánja folytatni?</string>
     <string name="dont_ask_again">Don\'t ask again</string>
     <string name="none">Egyik sem</string>
-    <string name="changes_affected_after_closing">A módosítások az alkalmazás bezárása után lépnek érvénybe</string>
+    <string name="changes_affected_after_closing">A módosítások az alkalmazás bezárása után lépnek életbe</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Érvénytelen PIN, %d próbálkozás maradt</item>
         <item quantity="other">Érvénytelen PIN, %d próbálkozás maradt</item>
@@ -993,7 +994,7 @@ telefon névjegyek elérését.</string>
     <string name="plus_account_required_mobile_signature">A mobil aláírás szerkesztéséhez ProtonMail Plus csomag szükséges</string>
     <string name="mobile_signature_is_premium">A mobil aláírást csak elfőzető felhasználók módosíthatják</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">Halasztás</string>
+    <string name="snooze_header">Szüneteltetés</string>
     <string name="notifications_snooze">Értesítések szüneteltetése</string>
     <string name="notifications_snooze_finishing">Az értesítések $s perc múlva újra aktívak</string>
     <string name="snooze_notifications">Értesítések szüneteltetése</string>
@@ -1037,7 +1038,7 @@ telefon névjegyek elérését.</string>
     <string name="labels_and_folders">Címkék és Mappák </string>
     <string name="labels_manage">Címkék kezelése</string>
     <string name="folders_manage">Mappák kezelése</string>
-    <string name="swiping_gesture">Csúsztatási gesztus</string>
+    <string name="swiping_gesture">Csúsztatási műveletek</string>
     <string name="swipe_action_left">Csúsztatás balról jobbra</string>
     <string name="swipe_action_right">Csúsztatás jobbról balra</string>
     <!-- region Swipe Actions -->
@@ -1121,6 +1122,10 @@ telefon névjegyek elérését.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Image not found</string>
+    <string name="error_image_bad_url">Malformed image url</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>

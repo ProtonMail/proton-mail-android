@@ -89,7 +89,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="drafts">Entwürfe</string>
     <string name="sent">Gesendet</string>
     <string name="archive">Archiv</string>
-    <string name="trash">Müll</string>
+    <string name="trash">Papierkorb</string>
     <string name="spam">Spam</string>
     <string name="contacts">Kontakte</string>
     <string name="contact_groups">Kontaktgruppen</string>
@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Die Nachricht %1$s kann nicht mehr als %2$d Kategorien besitzen.</string>
     <string name="max_labels_selected">Maximal %d Kategorien erlaubt</string>
     <string name="max_attachments_reached">Die maximale Anzahl von Anhängen je Nachricht wurde erreicht.</string>
+    <string name="max_attachments_size_reached">Die maximale Größe der Anhänge pro Nachricht wurde erreicht</string>
     <plurals name="hours_string">
         <item quantity="one">%d Stunde</item>
         <item quantity="other">%d Stunden</item>
@@ -437,7 +438,7 @@ im Absender-Feld angezeigt wird.</string>
 zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten Sie fortfahren?</string>
     <string name="dont_ask_again">Nicht erneut nachfragen</string>
     <string name="none">Keine</string>
-    <string name="changes_affected_after_closing">Änderungen werden nach dem Neustart der App wirksam</string>
+    <string name="changes_affected_after_closing">Changes will take effect after closing the app</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Falscher PIN-Code, %d verbleibende(r) Versuch(e)</item>
         <item quantity="other">Falscher PIN-Code, %d verbleibende Versuche</item>
@@ -1107,6 +1108,10 @@ zur Verfügung zu stellen.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall-Profil&lt;/i&gt; - Deaktivieren Sie alle Proxys oder Firewalls, oder wenden Sie sich an Ihren Netzwerkadministrator.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton ist ausgefallen&lt;/i&gt; - Überprüfen Sie den &lt;a href=\"http://protonstatus.com/\"&gt;Status von Proton&lt;/a&gt; für unseren Systemstatus.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Noch immer keine Lösung gefunden&lt;/i&gt; - Kontaktieren Sie uns direkt über unser &lt;a href=\"https://protonmail.com/support-form\"&gt;Support-Formular&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), oder &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.</string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Grafik nicht gefunden</string>
+    <string name="error_image_bad_url">Fehlerhaftes Grafik-Adresse</string>
     <!-- endregion -->
     <string name="allowed">Zugelassen</string>
     <string name="denied">Abgelehnt</string>

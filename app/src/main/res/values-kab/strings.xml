@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Izen %1$s ur yezmir ara ad yawi ugar n %2$d n tibzimin.</string>
     <string name="max_labels_selected">%d n tibzimin d mḍan afellay yettwasirgen</string>
     <string name="max_attachments_reached">Amḍan afellay n ifuyla yeddan yewweḍ.</string>
+    <string name="max_attachments_size_reached">Maximum attachments size per message has been reached</string>
     <plurals name="hours_string">
         <item quantity="one">%d n usrag</item>
         <item quantity="other">%d n isragen</item>
@@ -1121,6 +1122,10 @@ access to Phone.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Image not found</string>
+    <string name="error_image_bad_url">Malformed image url</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>

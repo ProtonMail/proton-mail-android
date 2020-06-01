@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">A mensagem %1$s não pode conter mais de %2$d etiquetas.</string>
     <string name="max_labels_selected">O máximo permitido é %d etiquetas</string>
     <string name="max_attachments_reached">Atingido o número máximo de anexos por mensagem</string>
+    <string name="max_attachments_size_reached">Foi atingido o número máximo de anexos por mensagem</string>
     <plurals name="hours_string">
         <item quantity="one">%d hora</item>
         <item quantity="other">%d horas</item>
@@ -1125,6 +1126,10 @@ acesso ao telefone.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está em baixo&lt;/i&gt; - veja &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para conhecer o nosso estado.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Ainda sem solução&lt;/i&gt; - contacte-nos directamente através do nosso &lt;a href=\"https://protonmail.com/support-form\"&gt;formulário de suporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), ou &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Imagem não encontrada</string>
+    <string name="error_image_bad_url">URL de imagem mal formado</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
     <string name="denied">Negado</string>

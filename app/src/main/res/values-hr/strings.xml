@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Poruka %1$s ne može imati više od %2$d oznaka.</string>
     <string name="max_labels_selected">%d oznaka je najviše dozvoljeno</string>
     <string name="max_attachments_reached">Dosegnut je maksimalan broj privitaka po poruci</string>
+    <string name="max_attachments_size_reached">Dosegnuta je maksimalna veličina privitaka po poruci</string>
     <plurals name="hours_string">
         <item quantity="one">%d sat</item>
         <item quantity="few">%d sata</item>
@@ -1142,6 +1143,10 @@ pristup Telefonu.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton je nedostupan&lt;/i&gt; - Provjerite &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; za uvid u status našeg sustava.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Još uvijek ne mogu pronaći rješenje&lt;/i&gt; - Kontaktirajte nas putem &lt;a href=\"https://protonmail.com/support-form\"&gt;obrasca za podršku&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-pošte&lt;/a&gt; (support@protonmail.com), ili &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twittera&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Slika nije pronađena</string>
+    <string name="error_image_bad_url">Neispravni URL slike</string>
     <!-- endregion -->
     <string name="allowed">Dopušteno</string>
     <string name="denied">Odbijeno</string>

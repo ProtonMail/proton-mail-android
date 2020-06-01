@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">メッセージ %1$s は %2$d ラベル以上を持つことはできません。</string>
     <string name="max_labels_selected">%d ラベルが許容された最大です。</string>
     <string name="max_attachments_reached">メッセージあたりの添付ファイルの最大に達しています。</string>
+    <string name="max_attachments_size_reached">Maximum attachments size per message has been reached</string>
     <plurals name="hours_string">
         <item quantity="other">%d 時間</item>
     </plurals>
@@ -430,7 +431,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
     <string name="dont_ask_again">Don\'t ask again</string>
     <string name="none">なし</string>
-    <string name="changes_affected_after_closing">アプリを閉じた後に変更が反映されます。</string>
+    <string name="changes_affected_after_closing">Changes will take effect after closing the app</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="other">PINコードが間違っています。 あと%d回試すことができます。</item>
     </plurals>
@@ -1089,6 +1090,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Image not found</string>
+    <string name="error_image_bad_url">Malformed image url</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
