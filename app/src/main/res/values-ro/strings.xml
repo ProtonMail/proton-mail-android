@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Mesajul %1$s nu poate avea mai mult de %2$d etichete.</string>
     <string name="max_labels_selected">%d etichete este maximul permis</string>
     <string name="max_attachments_reached">S-a atins maximum permis de fișiere atașate unui mesaj</string>
+    <string name="max_attachments_size_reached">Dimensiunea maximă a atașamentelor per mesaj a fost atinsă</string>
     <plurals name="hours_string">
         <item quantity="one">O oră</item>
         <item quantity="few">%d ore</item>
@@ -1140,6 +1141,10 @@ la aplicația de telefonie.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton este căzut&lt;/i&gt; - Accesați &lt;a href=\"http://protonstatus.com/\"&gt;Stare Proton&lt;/a&gt; pentru aflarea stării sistemului nostru.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Încă nu ați găsit soluția?&lt;/i&gt; - Contactați-ne direct prin &lt;a href=\"https://protonmail.com/support-form\"&gt;formularul de suport&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;e-mail&lt;/a&gt; (support@protonmail.com) sau &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Imagine negăsită</string>
+    <string name="error_image_bad_url">Adresă eronată imagine</string>
     <!-- endregion -->
     <string name="allowed">Permis</string>
     <string name="denied">Respins</string>

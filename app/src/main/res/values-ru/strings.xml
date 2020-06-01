@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">У сообщения %1$s не может быть больше %2$d ярлыков.</string>
     <string name="max_labels_selected">Разрешено иметь максимум %d ярлыков</string>
     <string name="max_attachments_reached">Достигнуто максимальное количество вложений на одно сообщение</string>
+    <string name="max_attachments_size_reached">Достигнут максимальный размер вложений в сообщении</string>
     <plurals name="hours_string">
         <item quantity="one">%d час</item>
         <item quantity="few">%d часа</item>
@@ -237,8 +238,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="save_settings">Сохранить настройки</string>
     <string name="share">Поделиться</string>
     <string name="settings_saved">Новые настройки сохранены</string>
-    <string name="settings_not_saved_password">Настройки не сохранены - неверный пароль для входа</string>
-    <string name="settings_not_saved_email">Настройки не сохранены - неверный адрес эл. почты для уведомлений</string>
+    <string name="settings_not_saved_password"> Настройки не сохранены - неверный пароль для входа</string>
+    <string name="settings_not_saved_email"> Настройки не сохранены - неверный адрес эл. почты для уведомлений</string>
     <string name="save_settings_question">Сохранить настройки?</string>
     <string name="enter">Ввести</string>
     <string name="cancel">Отменить</string>
@@ -301,7 +302,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="terms_and_conditions">Используя ProtonMail, вы соглашаетесь с нашими\n
 <a href="https://protonmail.com/terms-and-conditions">условиями и положениями</a> и <a href="https://protonmail.com/privacy-policy">политикой конфиденциальности</a></string>
     <string name="human_verification">Проверка \"Я не робот\"</string>
-    <string name="human_verification_subtitle">Для предотвращения злоупотребления ProtonMail\nнам необходимо убедиться, что вы - человек.</string>
+    <string name="human_verification_subtitle">Для предотвращения злоупотребления ProtonMail\nнам необходимо убедиться, что вы – человек.</string>
     <string name="select_options">Пожалуйста, выберите один из вариантов:</string>
     <string name="no_verification_methods_found">Методы подтверждения не обнаружены</string>
     <string name="email_verification">Проверка адреса эл. почты</string>
@@ -325,8 +326,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="label_invalid">Ярлык не был добавлен из-за недопустимого названия.</string>
     <string name="undo">Отменить</string>
     <string name="customize_swipe_actions">Настройка жестов</string>
-    <string name="message_details_swipe_info">Смахивание вправо - вернуться к просмотру писем
-или смахивание влево - отправить письмо в Корзину</string>
+    <string name="message_details_swipe_info">Смахивание вправо – вернуться к просмотру писем
+или смахивание влево – отправить письмо в Корзину</string>
     <string name="composing_message_scroll_info">Вы можете прокручивать панель редактора вверх или вниз, протаскивая её самую правую границу</string>
     <string name="message_can_not_edit">Невозможно ответить/переслать. Это сообщение ещё не отправлено</string>
     <string name="label_apply">Применить</string>
@@ -341,7 +342,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Ошибка при удалении некоторых сообщений. Находятся ли некоторые из них в процессе отправки?!</string>
     <string name="respond_inline">Ответить с цитированием</string>
     <string name="no_connectivity_detected">Подключение не обнаружено...</string>
-    <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="no_connectivity_detected_troubleshoot">Подключение не обнаружено... (<u>Устраните неполадки</u>)</string>
     <string name="no_connectivity_message_not_downloaded">Подключение не обнаружено...
 \nСообщение не загружено</string>
     <string name="connectivity_arrived">Подключено</string>
@@ -352,7 +353,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="draft_label_message_uploading">отправка сообщения…</string>
     <string name="attachment_failed">Не удалось загрузить вложение для сообщения </string>
     <string name="attachment_failed_new">Не удалось загрузить вложение для сообщения %1$s %2$s</string>
-    <string name="attaching_photo_failed">Не удалось прикрепить фото</string>
+    <string name="attaching_photo_failed">Не удалось прикрепить фотографию</string>
     <string name="empty_message">Пустое сообщение</string>
     <string name="dismiss">Отклонить</string>
     <string name="new_message_arrived">Новое сообщение!</string>
@@ -529,7 +530,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_visio_line6">Помогите выбрать новые функции через опросы, доступные Visionary-пользователям</string>
     <string name="plan_business_line1">скоро и организации смогут пользоваться шифрованной почтой!</string>
     <string name="currency_duration">Валюта и продолжительность</string>
-    <string name="credit_card_name">Имя на кредитной/дебетовой карте</string>
+    <string name="credit_card_name">Имя на банковской карте</string>
     <string name="zip_code">Почтовый индекс</string>
     <string name="card_number">Номер карты</string>
     <string name="billing_information">Платёжная информация</string>
@@ -721,7 +722,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="verification_needed">Требуется проверка данных</string>
     <string name="verification_needed_description">Из соображений безопасности подтвердите, что вы не являетесь роботом.</string>
     <string name="verification_needed_description_notification">Пожалуйста, подтвердите, что вы являетесь человеком, прежде чем отправить сообщение: %s</string>
-    <string name="message_drafted_verification_needed">Сообщение не отправлено - требуется проверка. Ваши сообщения сохранены в папке черновиков.</string>
+    <string name="message_drafted_verification_needed">Сообщение не отправлено – требуется проверка. Ваши сообщения сохранены в папке черновиков.</string>
     <string name="error_message_zip_code_invalid">Ошибка: неправильный почтовый индекс</string>
     <string name="error_message_cvc_invalid">Ошибка: неверный номер CVC</string>
     <string name="error_message_card_name_invalid">Ошибка: недопустимое имя на карте</string>
@@ -733,7 +734,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="download_error">Ошибка скачивания</string>
     <string name="download_complete">Скачивание завершено</string>
     <string name="download_in_progress">Идёт скачивание</string>
-    <string name="expires_in">\tИcчезает через %s</string>
+    <string name="expires_in">\tИсчезнет через %s</string>
     <string name="unsaved_changes_title">Несохранённые изменения</string>
     <string name="unsaved_changes_subtitle">В форме присутствуют несохранённые данные. Вы уверены, что хотите отказаться от них?</string>
     <string name="discard">Отменить</string>
@@ -811,7 +812,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="device_contacts">Контакты устройства</string>
     <string name="print_date_template">Дата: %s</string>
     <string name="print_attachment_template">Вложение: %s;  </string>
-    <string name="pm_me_changed">Отправка сообщений с @pm.me - платная функция. Ваше сообщение будет отправлено с вашего обычного адреса %s</string>
+    <string name="pm_me_changed">Отправка сообщений с @pm.me – платная функция. Ваше сообщение будет отправлено с вашего обычного адреса %s</string>
     <string name="pm_me_can_not_be_default">Перейдите на платный тариф, чтобы получить возможность назначить свой адрес %s основным</string>
     <string name="dont_remind_again">Больше не напоминать</string>
     <string name="load_embedded_images">Показывать встроенные изображения</string>
@@ -987,9 +988,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="please_use_fingerprint">Пожалуйста, используйте отпечаток своего пальца для разблокировки приложения.</string>
     <string name="use_pin_instead">Использовать PIN-код вместо этого</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
-    <string name="log_in_using_biometric_credential">Unlock using your biometric credentials</string>
-    <string name="unlock_using_biometrics">Unlock using biometrics</string>
+    <string name="no_biometric_data_enrolled">Нет зарегистрированных биометрических данных</string>
+    <string name="log_in_using_biometric_credential">Разблокировать с помощью ваших биометрических данных</string>
+    <string name="unlock_using_biometrics">Разблокировать с помощью биометрических данных</string>
     <string name="biometric_error_hw_not_available">Биометрическое оборудование недоступно.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Скрытые получатели</string>
@@ -1149,7 +1150,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="shortcut_compose_new_message">Написать новое сообщение</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Соединение: общие проблемы и решения</string>
+    <string name="troubleshoot_dialog_title">Наиболее часто встречающиеся проблемы с соединением и их решения</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
@@ -1159,6 +1160,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
     <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Изображение не найдено</string>
+    <string name="error_image_bad_url">Некорректный URL-адрес изображения</string>
+    <!-- endregion -->
     <string name="allowed">Разрешено</string>
-    <string name="denied">Denied</string>
+    <string name="denied">Отказано</string>
 </resources>

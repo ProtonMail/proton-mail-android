@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Το μήνυμα %1$s δεν μπορεί να έχει παραπάνω απο %2$d ετικέτες.</string>
     <string name="max_labels_selected">Επιτρέπονται έως %d ετικέτες</string>
     <string name="max_attachments_reached">Έχει συμπληρωθεί ο μέγιστος αριθμός συνημμένων ανά μήνυμα</string>
+    <string name="max_attachments_size_reached">Έχει επιτευχθεί το μέγιστο μέγεθος συνημμένων ανά μήνυμα</string>
     <plurals name="hours_string">
         <item quantity="one">%d ώρα</item>
         <item quantity="other">%d ώρες</item>
@@ -440,7 +441,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
     <string name="dont_ask_again">Να μην ερωτηθώ ξανά</string>
     <string name="none">Κανένα</string>
-    <string name="changes_affected_after_closing">Οι αλλαγές θα εφαρμοστούν μετά το κλείσιμο της εφαρμογής</string>
+    <string name="changes_affected_after_closing">Οι αλλαγές θα τεθούν σε ισχύ μετά το κλείσιμο της εφαρμογής</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Λάθος κωδικός PIN, %d προσπάθεια απομένει</item>
         <item quantity="other">Λάθος κωδικός PIN, %d προσπάθειες απομένουν</item>
@@ -1126,6 +1127,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Το Proton έχει πέσει&lt;/i&gt; - Ελέγξτε &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; για την κατάσταση των συστημάτων μας.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still δεν μπορείτε να βρείτε λύση;&lt;/i&gt; - Επικοινωνήστε μαζί μας απευθείας μέσω της &lt;a href=\"https://protonmail.com/support-form\"&gt;φόρμας υποστήριξης&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), ή &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Η εικόνα δεν βρέθηκε</string>
+    <string name="error_image_bad_url">Url εικόνας με λάθος μορφή</string>
     <!-- endregion -->
     <string name="allowed">Επιτρέπεται</string>
     <string name="denied">Δεν επιτράπηκε</string>

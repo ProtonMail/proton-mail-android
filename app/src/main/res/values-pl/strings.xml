@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Wiadomość %1$s nie może posiadać więcej niż %2$d etykiet.</string>
     <string name="max_labels_selected">Maksymalna liczba etykiet wynosi %d</string>
     <string name="max_attachments_reached">Limit załączników w jednej wiadomości został osiągnięty.</string>
+    <string name="max_attachments_size_reached">Limit rozmiaru załączników w jednej wiadomości został osiągnięty</string>
     <plurals name="hours_string">
         <item quantity="one">%d godzina</item>
         <item quantity="few">%d godziny</item>
@@ -847,7 +848,7 @@ ludziom na całym świecie.</string>
     <string name="composer_lock_internal_pinned">Zaszyfrowana end-to-end do zweryfikowanego adresu</string>
     <string name="composer_lock_pgp_encrypted_pinned">Zaszyfrowana PGP</string>
     <string name="composer_lock_pgp_signed">Podpisana kluczem PGP</string>
-    <string name="recipient_not_found_and_removed">Nie odnaleziono odbiorcy: %s i został on usunięty</string>
+    <string name="recipient_not_found_and_removed">Odbiorca %s nie został znaleziony i został usunięty</string>
     <string name="recipient_error_and_removed">Wystąpił błąd podczas pobierania informacji o odbiorcy i został on usunięty: %s</string>
     <string name="send_anyway">Wyślij mimo to</string>
     <string name="expiration_error_title">Włączyłeś wygasanie wiadomości, ale nie wszyscy odbiorcy je obsługują.</string>
@@ -1150,6 +1151,10 @@ na dostęp do telefonu.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton jest niedostępny&lt;/i&gt; - Sprawdź &lt;a href=\"http://protonstatus.com/\"&gt;Status usług Proton&lt;/a&gt; na naszej stronie.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Nadal nie mogę znaleźć rozwiązania&lt;/i&gt; - Skontaktuj się z nami przez &lt;a href=\"https://protonmail.com/support-form\"&gt;formularz kontaktowy&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;wiadomość e-mail&lt;/a&gt; (support@protonmail.com) lub &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twittera&lt;/a&gt;.
 </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Obraz nie został znaleziony</string>
+    <string name="error_image_bad_url">Adres URL obrazu jest nieprawidłowy</string>
     <!-- endregion -->
     <string name="allowed">Dozwolone</string>
     <string name="denied">Niedozwolone</string>

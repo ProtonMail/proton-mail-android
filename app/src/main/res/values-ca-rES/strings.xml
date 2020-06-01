@@ -136,7 +136,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="download">DESCARREGAR</string>
     <string name="reply">Respondre</string>
     <string name="reply_all">Respon a tothom</string>
-    <string name="forward">Endavant</string>
+    <string name="forward">Reenvia</string>
     <string name="subject">Assumpte</string>
     <string name="email_subject">Assumpte del correu electrònic</string>
     <string name="define_message_password">Contrasenya del missatge</string>
@@ -152,6 +152,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">El missatge %1$s no pot tenir més de %2$d etiquetes.</string>
     <string name="max_labels_selected">%d etiquetes es el màxim permès</string>
     <string name="max_attachments_reached">S\'ha assolit el nombre màxim d\'arxius adjunts per missatge</string>
+    <string name="max_attachments_size_reached">S\'ha aconseguit el màxim de fitxers adjunts per missatge</string>
     <plurals name="hours_string">
         <item quantity="one">%d hora</item>
         <item quantity="other">%d hores</item>
@@ -1124,6 +1125,10 @@ l\'accés a l\'app Telefon.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia Proxy/Firewall&lt;/i&gt; - Deshabiliti qualsevol proxi o firewall o contacti amb el seu administrador de xarxa.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton es caigut&lt;/i&gt; - Revisi &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per sebre el nostre estat del sistema.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no hem trobat una solució&lt;/i&gt; - Contacti\'ns directament al nostre &lt;a href=\"https://protonmail.com/support-form\"&gt;Formulari de suport form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;correu electronic&lt;/a&gt; (support@protonmail.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+    <!-- endregion -->
+    <!-- region errors -->
+    <string name="error_image_not_found">Imatge no trobada</string>
+    <string name="error_image_bad_url">Url de la imatge mal formada</string>
     <!-- endregion -->
     <string name="allowed">Permés</string>
     <string name="denied">Denegat</string>
