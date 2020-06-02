@@ -1086,6 +1086,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
 
 
+    <!-- region Compose shortcut -->
+    <string name="shortcut_compose">Compose</string>
+    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <!-- endregion -->
+
+
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
     <string name="troubleshoot_dialog_message">&lt;i>No internet connection&lt;/i> - Please make sure that your internet connection is working.
