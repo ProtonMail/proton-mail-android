@@ -30,17 +30,12 @@ import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.extensions.ifNull
-import ch.protonmail.android.utils.extensions.ifNullElse
 import com.birbit.android.jobqueue.JobManager
-import com.google.gson.Gson
-import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
 // region constants
 private const val PREF_LATEST_EVENT_ID = "latest_event_id"
-private const val PREF_LATEST_EVENT = "latest_event"
 // endregion
 
 class EventManager {
@@ -94,18 +89,10 @@ class EventManager {
                 getNewId(handler.username)
             }
 
-            val lastEvent = recoverLastEvent(handler.username)
-            var response = EventResponse()
-            lastEvent.ifNullElse({
-                response = ParseUtils.parse(service.check(getLastEventId(handler.username)!!, RetrofitTag(handler.username)).execute())
-            },{
-                response = Gson().fromJson(lastEvent, EventResponse::class.java)
-            })
+            val response = ParseUtils.parse(service.check(getLastEventId(handler.username)!!, RetrofitTag(handler.username)).execute())
 
             if (response.code == Constants.RESPONSE_CODE_OK) {
-                backupLastEvent(handler.username, Gson().toJson(response))
                 handleEvents(handler, response)
-                removeLastEvent(handler.username)
                 return response.hasMore()
             } else {
                 throw ApiException(response, response.error)
@@ -159,7 +146,6 @@ class EventManager {
     }
 
     private fun handleEvents(handler: EventHandler, response: EventResponse) {
-        setLastEventId(handler.username, response.eventID)
         if (response.refreshContacts()) {
             refreshContacts(handler)
         }
@@ -171,6 +157,7 @@ class EventManager {
         handler.stage(response)
         // if we crash between these steps, we need to force refresh: our current state will become invalid
         handler.write()
+        setLastEventId(handler.username, response.eventID)
     }
 
     private fun lockState(username: String) {
@@ -189,22 +176,5 @@ class EventManager {
         val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
         Log.d("PMTAG", "EventManager backupLastEventId, user=${mUserManager.username}")
         prefs.edit().putString(PREF_LATEST_EVENT_ID, eventId).apply()
-    }
-
-    private fun recoverLastEvent(username: String): String? {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
-        return prefs.getString(PREF_LATEST_EVENT, null)
-    }
-
-    private fun backupLastEvent(username: String, event: String) {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
-        recoverLastEvent(username).ifNull {
-            prefs.edit().putString(PREF_LATEST_EVENT, event).apply()
-        }
-    }
-
-    private fun removeLastEvent(username: String) {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
-        prefs.edit().remove(PREF_LATEST_EVENT).apply()
     }
 }
