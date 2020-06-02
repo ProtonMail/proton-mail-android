@@ -367,33 +367,25 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="enter_pin">Enter your PIN to unlock your Inbox</string>
     <string name="enter_pin_message_details">Enter your PIN to unlock your Message</string>
     <string name="enter_current_pin">Enter your current PIN</string>
-    <string name="hint_pin">PIN code</string>
     <string name="pin_subtitle_create">Create your PIN here</string>
     <string name="pin_subtitle_create_new">Create your NEW PIN here</string>
     <string name="pin_subtitle_confirm">Confirm your PIN here</string>
     <string name="pin_subtitle_confirm_new">Confirm your NEW PIN here</string>
-    <string name="forgot_pin">Forgot PIN?</string>
     <string name="pin_invalid">PIN is invalid, enter correct 4 digit PIN</string>
     <string name="pin_confirmation_not_match">Confirmation PIN does not match</string>
     <string name="pin_not_match">PIN does not match</string>
     <string name="new_pin_saved">New PIN saved</string>
-    <string name="pin_settings">PIN Settings</string>
-    <string name="next">next</string>
-    <string name="back">back</string>
     <string name="new_emails">%d new emails</string>
     <string name="attachment_download_success">%s successfully downloaded to File Manager</string>
     <string name="attachment_download_failed">%s failed to download correctly</string>
-    <string name="sender_changed">Please remove attachments in order to change the sender address.</string>
 
     <string name="ringtone">Ringtone</string>
     <string name="ringtone_selected">Ringtone:</string>
-    <string name="notification_option">%1$s\nRingtone: %2$s</string>
     <string name="ringtone_invalid">Ringtone selection returned an invalid value</string>
     <string name="ringtone_no_default">Impossible to load a default Ringtone</string>
     <string name="select_tone">Select Tone</string>
     <string name="copy_link">Copy Link</string>
     <string name="share_link">Share Link</string>
-    <string name="attachment_delete_failed">Deleting %s attachment failed</string>
     <string name="sync_attachments">Syncing attachments</string>
     <string name="processing_attachment">Processing attachment</string>
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/>&lt;br/>&lt;u>%s&lt;/u>&lt;br/>&lt;br/>Do you want to continue?</string>
@@ -423,10 +415,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     capacity and continue to develop ProtonMail as free and open source software. It is only through the
     support of the community that we are able to continue providing ProtonMail to people around
     the world.</string>
-    <string name="upselling_upgrade_subtitle">Your subscription upgrade will help us add
-    capacity and continue to develop ProtonMail as free and open source. It is only through the
-    support of the community that we are able to continue providing ProtonMail to people around
-    the world.</string>
     <string name="upgrade_donate">Upgrade/Donate</string>
     <string name="upselling_donate_pick_amount">Select a donation amount or enter any amount</string>
     <string name="amount_5">5€</string>
@@ -442,8 +430,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upgrade_line3">Use your own domain</string>
     <string name="upgrade_line4">Up to 5 aliases</string>
     <string name="upgrade_line5">Priority customer support</string>
-    <string name="upgrade_plus_price">4€</string>
-    <string name="per_month">/month</string>
     <string name="upgrade">Upgrade</string>
     <string name="payment_options">Payment Option</string>
     <string name="other_plans">For plans with more storage, upgrade through
@@ -466,7 +452,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_plus_line7">Priority Customer Support</string>
     <string name="plan_free_line1">500 MB storage</string>
     <string name="plan_free_line2">150 messages per day</string>
-    <string name="plan_free_line22">%d messages per day</string>
     <string name="plan_free_line3">20 Labels</string>
     <string name="plan_free_line4">Custom domains: not supported</string>
     <string name="plan_free_line5">1 address</string>
@@ -480,7 +465,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="zip_code">Postal code</string>
     <string name="card_number">Card number</string>
     <string name="billing_information">Billing Information</string>
-    <string name="billing_upgrade_thanks">Upgrade successful! Thank you for the support!</string>
     <string name="country">Country</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">By clicking Submit, you agree
@@ -495,13 +479,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="currency_frank_sign" translatable="false">CHF</string>
     <string name="currency_dollar_sign" translatable="false">USD</string>
     <string name="duration_annual_line1">Annual Plan <font color="#C3E129">Save 20%</font></string>
-    <string name="duration_annual_line2">%s per month</string>
     <string name="per_month_text_only">per month</string>
-    <string name="per_year_text_only">per year</string>
     <string name="duration_annual_line3">Billed as %s /Year</string>
     <string name="duration_annual_line4">Billed %s /Month</string>
     <string name="duration_monthly_line1">Monthly Plan</string>
-    <string name="duration_monthly_line2">%s per month</string>
     <string name="duration_monthly_line3">Save 20%</string>
     <string name="set_cont">Set &amp; Continue</string>
     <string name="payment_error">Payment Error</string>
@@ -541,11 +522,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_approval_consumed_error_description">Payment method already used for this payment. Please check status of your subscription.</string>
     <string name="no_payment_methods">You have no saved payment methods.</string>
     <string name="edit_payment_methods">Please log in through protonmail.com to edit billing information.</string>
-    <string name="no_permission_contacts">No Read Contacts Permission</string>
     <string name="message_not_loaded">Message not loaded</string>
-    <string name="signature_on">Signature On</string>
     <string name="signature_text">Signature Text</string>
-    <string name="please_use_webapp_pass_change">Please use our web app  &lt;a href="https://protonmail.com">protonmail.com&lt;/a> using a desktop or laptop computer in order to complete this action.</string>
 
     <string name="available_addresses">Available Addresses</string>
     <string name="inactive_addresses">Inactive Addresses</string>
@@ -603,15 +581,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>12</item>
     </string-array>
 
-    <string name="contacts_groups">Groups</string>
-    <string name="phone_contact">Phone Contact</string>
     <string name="contact_details_display_name">Name</string>
     <string name="contact_details">Contact Details</string>
     <string name="email_type_home">Home</string>
-    <string name="email_type_work">Work</string>
-    <string name="option_type_custom">New type</string>
     <string name="type_title">Choose Type</string>
-    <string name="no_permission_storage">No Storage Permission</string>
     <string name="message_drafted_error_server">Message sending failed. %s</string>
     <string name="sync_local_contacts">Upload to ProtonMail</string>
     <string name="please_select_only_phone_contacts">Please select only Local Phone Contacts</string>
@@ -621,13 +594,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_vcard_hint_address">Enter Address</string>
     <string name="contact_vcard_hint_other">Enter Information</string>
     <string name="contact_vcard_hint_note">Enter Note</string>
-    <string name="contact_vcard_phone">Phone</string>
-    <string name="contact_vcard_address">Address</string>
     <string name="contact_vcard_new_row_email">add email address</string>
     <string name="contact_vcard_new_row_phone">add phone number</string>
     <string name="contact_vcard_new_row_address">add address</string>
     <string name="contact_vcard_new_row_other">add information</string>
-    <string name="contact_vcard_new_row_custom">add custom field</string>
 
     <string name="vcard_other_option_org">Organization</string>
     <string name="vcard_other_option_title">Title</string>
@@ -638,13 +608,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="vcard_other_option_role">Role</string>
     <string name="vcard_other_option_url">URL</string>
 
-    <string name="sync_question">Sync Contacts?</string>
-    <string name="sync_question_subtitle">This will synchronize the local contacts on your device to your ProtonMail contacts directory. You will then be able to access these contacts on your other devices through ProtonMail.</string>
     <string name="convert_contact">Convert Contact</string>
     <string name="upload_contacts">Upload Contacts</string>
-    <string name="encrypted_data">Encrypted Data</string>
     <string name="upgrade_encrypted_contact">Please upgrade to use encrypted contact information.</string>
-    <string name="empty_encrypted_data">Empty encrypted contact information.</string>
     <string name="uploading_contacts">Uploading contacts&#8230;</string>
     <string name="error_encrypted_data">Error retrieving encrypted contact information.</string>
 
@@ -697,19 +663,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_message_exp_date_past">Error: Expiration date is invalid</string>
     <string name="error_message_card_number_invalid">Error: Card Number invalid</string>
     <string name="print_error">Printing Error</string>
-    <string name="download_error">Download error</string>
     <string name="download_complete">Download complete</string>
     <string name="download_in_progress">Download in progress</string>
     <string name="expires_in">\tExpires in %s</string>
     <string name="unsaved_changes_title">Unsaved Changes</string>
     <string name="unsaved_changes_subtitle">There are unsaved entries in the form. Are you sure you want to discard them?</string>
-    <string name="discard">Discard</string>
-    <string name="keep_editing">Keep editing</string>
     <string name="request_timeout">Request timed out, please try again</string>
     <string name="add_folder">Add Folder</string>
     <string name="no_folders">No folders</string>
     <string name="folders_title_move">Move messages into</string>
-    <string name="move">Move</string>
     <string name="folders_manager">Folders Manager</string>
     <string name="folder_add_new">Add New Folder</string>
     <string name="folder_name">Folder Name</string>
@@ -729,7 +691,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <string name="sender_name_address">%1$s &lt; %2$s&gt; wrote:</string>
     <string name="update_label">Update Label</string>
-    <string name="folder_name_empty">Folder must have a name</string>
     <string name="max_labels_in_message">The message %1$s cannot have more than %2$d labels.</string>
     <string name="delete">Delete</string>
     <string name="subject_copied">Subject copied to clipboard</string>
@@ -746,9 +707,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_to_template">To: %s; &#160;</string>
     <string name="print_cc_template">CC: %s; &#160;</string>
     <string name="print_bcc_template">BCC: %s; &#160;</string>
-    <string name="print_multiple" translatable="false">%s; &#160;</string>
 
-    <string name="contacts_invalid_type">Invalid type</string>
     <string name="signature_error">Verification error</string>
     <string name="signature_error_desc">Verification of this content\'s signature failed</string>
     <string name="decryption_error">Decryption error</string>
@@ -764,18 +723,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="empty_subject">(No Subject)</string>
     <string name="contacts_unknown">Unknown</string>
 
-    <string name="expand_collapse">Exp/Col</string>
     <string name="learn_more"><u>Learn More</u></string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Upgrade to a paid plan to send from your %s address.</string>
-    <string name="digital_signature_verified">Digital signature verified</string>
-    <string name="encrypted_and_digital_signature_verified">Encrypted and digital signature verified</string>
     <string name="email_empty">Email address is missing</string>
     <string name="add_contact_details" translatable="false">Add Contact Details</string>
-    <string name="edit_contact_details">Edit Contact Details</string>
     <string name="encrypted_contact_details">Encrypted Contact Details</string>
-    <string name="edit_contact_toolbar_title">Edit %s</string>
-    <string name="message_sender_with_address" translatable="false">%1$s\n&lt;%2$s&gt;</string>
     <string name="convert_question">Upload local contacts</string>
     <string name="convert_question_subtitle">This will upload the local contacts on your device to your ProtonMail contacts directory. You will then be able to access these contacts on your other devices through ProtonMail.</string>
     <string name="refresh_contacts">Refresh</string>
@@ -798,10 +751,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_offline_max_storage">Sets the maximum amount storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Embedded images loading failed. Please check your network connection.</string>
     <string name="load_embedded_images_failed">Embedded images loading failed.</string>
-    <string name="attachment_storage_unlimited">%.2fMB of Unlimited</string>
     <string name="unlimited">Unlimited</string>
     <string name="local_storage_cleared">Local storage cleared</string>
-    <string name="local_storage_clear">Clear Local Storage</string>
     <string name="recipient_popup_compose_to">Compose to</string>
     <string name="recipient_popup_copy_address">Copy address</string>
     <string name="recipient_popup_see_details">See contact details</string>
@@ -817,7 +768,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sender_lock_sent_autoresponder">Sent by ProtonMail with zero access encryption</string>
     <string name="sender_lock_verification_failed">Sender verification failed</string>
     <string name="sender_lock_pgp_encrypted">PGP-encrypted message</string>
-    <string name="sender_lock_pgp_verified">PGP-signed message from verified address</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-encrypted message from verified address</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-signed message from verified address</string> <!-- External PGP signed-only message that was encrypted by the BE -->
     <string name="sender_lock_internal">End-to-end encrypted message</string>
@@ -841,7 +791,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="expiration_error_proceed">Tap send anyway to send without expiration to these recipients.</string>
     <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a></string>
     <string name="full_version_name_report_bugs" translatable="false">%s (%d)</string>
-    <string name="no_items_found">No items found</string>
     <string name="channel_name_attachments">Attachments</string>
     <string name="channel_description_attachments">Informs about attachment download status</string>
     <string name="channel_name_emails">Emails</string>
@@ -860,15 +809,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 		message to us, so we can analyze it and improve our filters. This means that we will be able
 		to see the contents of the message in full.</string>
     <string name="phishing_report_send_message_moved_to_spam">Report sent. Message moved to spam.</string>
-    <string name="report_send">Report is sent</string>
     <string name="cannot_send_report_send">Cannot send report</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
 
 
     <!-- Contact Groups Strings -->
-    <string name="email_default">Email Default</string>
-    <string name="email_private">Email Private</string>
-    <string name="phone_private">Phone Private</string>
     <string name="add_photo">Add Photo</string>
     <string name="contact_display_name">\ue91c Display Name</string>
     <string name="add_new_email">\ue914 Add Email Address</string>
@@ -877,7 +822,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="edit_contact">Edit Contact</string>
     <string name="create_contact_group">Create Contact Group</string>
     <string name="edit_contact_group">Edit Contact Group</string>
-    <string name="contact_groups_add_addresses">Add Addresses</string>
     <string name="contact_groups_manage_addresses">Manage Addresses</string>
     <string name="contact_group_display_name">\ue91a Display Name</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -909,11 +853,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_group_saved">Group saved</string>
     <string name="no_recipients">No Recipients</string>
     <string name="contact_group_selected">%d Selected</string>
-    <string name="contact_group_deleted">Group Deleted</string>
     <string name="paid_plan_needed">Please upgrade to a paid plan for these premium features</string>
-    <string name="composer_group_count">%1$s (%2$d Members)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Members)</string>
-    <string name="address_successful_update">Address successfully updated</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Are you sure you want to delete this group?</item>
         <item quantity="other">Are you sure you want to delete the selected groups?</item>
@@ -948,18 +889,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         storage.</string>
     <string name="storage_limit_approaching_text">You have reached 90% of your storage capacity.
         Consider freeing up some space or purchasing more storage before you run out of capacity.</string>
-    <string name="storage_limit_do_not_remind">DO NOT REMIND ME</string>
     <!-- endregion -->
 
     <string name="need_permissions_title">Permissions</string>
     <string name="need_storage_permissions_text">In order to add attachments you need to allow
         access to storage.</string>
-    <string name="need_phone_permissions_text">In order to call this contact you need to allow
-        access to Phone.</string>
     <string name="push_notifications_alert_title">Push notifications alert</string>
     <string name="push_notifications_alert_subtitle">Push notifications for ProtonMail do not work without updated Google Play services.</string>
     <string name="app_locked">App locked</string>
-    <string name="please_use_fingerprint">Please use your fingerprint to unlock the app.</string>
     <string name="use_pin_instead">Use PIN instead</string>
 
     <!-- strings used for biometric enrollment -->
@@ -970,7 +907,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- end strings used for biometric enrollment -->
 
     <string name="undisclosed_recipients">Undisclosed Recipients</string>
-    <string name="could_not_delete_attachment">Attachment cannot be removed while uploading</string>
     <string name="manage_accounts">Manage accounts</string>
 
 
@@ -983,7 +919,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <string name="subscription">Subscription</string>
     <string name="plan_and_user">Plan</string>
-    <string name="plan">Plan</string>
     <string name="payment_method">Payment Method</string>
 
     <string name="password_manager">Password management</string>
@@ -1000,11 +935,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_name">Display name</string>
     <string name="edit_display_name">Edit display name</string>
     <string name="signature">Signature</string>
-    <string name="edit_signature">Enable signature</string>
     <string name="mobile_signature">Mobile signature</string>
     <string name="edit_mobile_signature">Enable mobile signature</string>
     <string name="default_mobile_signature">Sent from ProtonMail mobile</string>
-    <string name="plus_account_required_mobile_signature">ProtonMail Plus is required to edit the mobile signature</string>
     <string name="mobile_signature_is_premium">Changing the Mobile Signature is allowed to Paid users only</string>
 
     <!-- region Snooze Settings -->
@@ -1020,9 +953,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>Custom</item>
         <item>Scheduled</item>
     </array>
-    <string name="notifications_snooze_finishing">Notifications will resume in $s min</string>
-    <string name="snooze_notifications">Snooze Notifications</string>
-    <string name="snooze_notifications_adjust">Adjust</string>
     <string name="notifications_snoozed">Notifications snoozed</string>
     <string name="notifications_snooze_scheduled">Scheduled</string>
     <string name="notifications_snooze_scheduled_settings">Scheduled Snooze Settings</string>
@@ -1062,7 +992,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
-    <string name="auto_download_messages_title_short">Auto-download</string>
     <string name="auto_download_messages_title">Auto-download messages</string>
     <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Background Sync</string>
@@ -1117,7 +1046,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
     <string name="change_pin_code">Change PIN code</string>
     <string name="auto_lock_timer">Auto-lock timer</string>
-    <string name="unlock_with_fingerprint">Unlock with fingerprint</string>
 
     <string name="connections_via_third_parties">Alternative routing</string>
     <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
@@ -1147,9 +1075,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
 
     <!-- region Multi Account -->
-    <string name="primary_account">Primary Account</string>
-    <string name="make_primary_account">Make %s your Primary Account?</string>
-    <string name="logout_account_question">Log out %s?</string>
     <string name="remove_account_question">Remove %s?</string>
     <string name="signed_in_with">Signed in with %s</string>
     <string name="signed_in_with_logged_out_from">Logged out from %1$s and signed in with %2$s</string>
@@ -1160,10 +1085,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
     <!-- endregion -->
 
-    <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Compose</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
-    <!-- endregion -->
 
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
