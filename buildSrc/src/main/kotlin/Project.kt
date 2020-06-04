@@ -22,8 +22,8 @@
  * @author Davide Farella
  */
 object Project {
-    const val versionName = "1.13.6"
-    const val versionCode = 723
+    const val versionName = "1.13.7"
+    const val versionCode = 724
 
     const val targetSdk = 28
     const val minSdk = 21
