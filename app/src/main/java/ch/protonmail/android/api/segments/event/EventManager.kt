@@ -35,6 +35,7 @@ import javax.inject.Inject
 
 // region constants
 private const val PREF_NEXT_EVENT_ID = "latest_event_id"
+const val PREF_LATEST_EVENT = "latest_event"
 // endregion
 
 /**
