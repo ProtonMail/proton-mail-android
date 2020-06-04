@@ -144,3 +144,15 @@ release-publish-github-tags:
     RELEASE_SYNC_TO_BRANCH: 'release'
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-tags-shared
+  
+publish-github:
+  stage: bot-release
+  needs:
+    - job: build prerelease
+      artifacts: true
+  variables:
+      RELEASE_APP: android-mail
+      RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
+  extends: .release-make-release
+
+
