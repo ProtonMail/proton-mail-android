@@ -6,8 +6,8 @@ before_script:
   - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - chmod +x ./gradlew
-  - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/Project.kt | awk '{print $3}' | sed s/\"//g)
-  - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/Project.kt | awk '{print $3}' | sed s/\"//g)
+  - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $3}' | sed s/\"//g)
+  - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $3}' | sed s/\"//g)
   - echo "App version name ${VERSION_NAME}"
   - echo "App version name ${VERSION_CODE}"
 cache:
