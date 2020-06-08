@@ -28,16 +28,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">Inloggen</string>
     <string name="sign_out">Uitloggen</string>
     <string name="sign_out_question">Weet u zeker dat u zich wilt afmelden?</string>
-    <string name="remember_me_on_device">Onthoud mijn gegevens op dit apparaat</string>
-    <string name="show_password">Wachtwoord tonen</string>
-    <string name="username">Gebruikersnaam</string>
-    <string name="password">Wachtwoord</string>
-    <string name="login_password">Inlogwachtwoord</string>
     <string name="mailbox_password">Mailbox-wachtwoord</string>
     <string name="two_factor_code">Tweestapsverificatiecode</string>
     <string name="processing_request">Uw verzoek wordt verwerkt</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">Een account nodig? Maak er nu een aan.</string>
     <string name="need_to_be_logged_in">U bent niet ingelogd!</string>
     <string name="forgot_password">Wachtwoord vergeten?</string>
     <string name="reset_mailbox_password">MAILBOX-WACHTWOORD OPNIEUW INSTELLEN</string>
@@ -60,9 +54,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app">Uw Protonmail-app kan niet worden gebruikt totdat deze is geüpdatet</string>
     <string name="api_offline_title">ProtonMail API is offline</string>
     <string name="api_offline">ProtonMail is momenteel offline. Kijk op https://protonstatus.com of https://twitter.com/protonmail voor de huidige status</string>
-    <string name="cannot_open">Kan bestand niet openen</string>
-    <string name="downloaded_attachment">%s is gedownload</string>
-    <string name="edit_contact_validation">Voer een geldige naam en e-mailadres in</string>
     <string name="contact_saved">Contact opgeslagen</string>
     <string name="contact_saved_offline">Contactpersoon opgeslagen. Het wordt gesynchroniseerd zodra er een verbinding beschikbaar is.</string>
     <string name="contact_exist">Contact met dit e-mailadres bestaat reeds</string>
@@ -70,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">E-mailadres bestaat al</string>
     <string name="invalid_code">Code is ongeldig</string>
     <string name="message_drafted">Verzenden van bericht is mislukt. Bericht is opgeslagen als concept.</string>
-    <string name="message_drafted_reason">%s bestaat niet.\nBericht kan niet bezorgd worden.</string>
     <string name="open_drawer">Open</string>
     <string name="close_drawer">Sluiten</string>
     <string name="inbox_option">INBOX</string>
@@ -80,10 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">ARCHIEF</string>
     <string name="trash_option">PRULLENBAK</string>
     <string name="spam_option">SPAM</string>
-    <string name="contacts_option">CONTACTPERSONEN</string>
-    <string name="settings_option">INSTELLINGEN</string>
-    <string name="report_bugs_option">MELD BUGS</string>
-    <string name="signout_option">UITLOGGEN</string>
     <string name="inbox">Inbox</string>
     <string name="starred">Met ster</string>
     <string name="drafts">Concepten</string>
@@ -92,7 +78,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Prullenbak</string>
     <string name="spam">Spam</string>
     <string name="contacts">Contacten</string>
-    <string name="contact_groups">Contactgroepen</string>
     <string name="search_contacts">Doorzoek contacten</string>
     <string name="fetching_contacts">Protonmail contacten ophalen...</string>
     <string name="fetching_contacts_success">Contacten succesvol vernieuwd</string>
@@ -116,7 +101,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Naar prullenbak verplaatsen</string>
     <string name="move_to_spam">Naar spam verplaatsen</string>
     <string name="move_to_inbox">Naar inbox verplaatsen</string>
-    <string name="move_message_to_trash">Bericht naar prullenbak verplaatsen?</string>
     <string name="are_you_sure_empty">Weet u zeker dat u alle berichten uit deze folder wilt verwijderen?</string>
     <string name="send">Verstuur</string>
     <string name="selected">Geselecteerd</string>
@@ -130,10 +114,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">Bcc:</string>
     <string name="from_prefix">Van:</string>
     <string name="date_prefix">Datum:</string>
-    <string name="expiration_time_prefix">Verloopt in</string>
     <string name="view_details">DETAILS</string>
     <string name="hide_details">DETAILS VERBERGEN</string>
-    <string name="download">DOWNLOAD</string>
     <string name="reply">Beantwoorden</string>
     <string name="reply_all">Allen beantwoorden</string>
     <string name="forward">Doorsturen</string>
@@ -143,7 +125,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">Wachtwoord bevestigen</string>
     <string name="define_password_hint">Hint opgeven (optioneel)</string>
     <string name="message_passwords_do_not_match">Wachtwoorden komen niet overeen</string>
-    <string name="message_mailbox_passwords_do_not_match">Mailbox-wachtwoorden komen niet overeen</string>
     <string name="eo_passwords_do_not_match">Wachtwoorden komen niet overeen</string>
     <string name="define_expiration_period">Stel vervaltijd in</string>
     <string name="set_message_expiration">Stel vervaltijd in</string>
@@ -181,16 +162,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">Er is een fout opgetreden tijdens het toevoegen van het geselecteerde bestand</string>
     <string name="add_contact">Voeg contactpersoon toe</string>
     <string name="delete_contact">Verwijder %s als contact?</string>
-    <string name="sync_contact">Synchroniseer %s met de webapplicatie?</string>
     <string name="confirm">Bevestig</string>
     <string name="confirm_destructive_action">Weet u het zeker? Dit kan niet ongedaan worden gemaakt.</string>
     <string name="create">Aanmaken</string>
-    <string name="name">Naam</string>
     <string name="email">E-mail</string>
     <string name="email_address">E-mailadres</string>
     <string name="phone">Telefoonnummer</string>
     <string name="save">Opslaan</string>
-    <string name="add">Toevoegen</string>
     <string name="syncing_messages">Synchroniseren...</string>
     <string name="sync">Contacten synchroniseren</string>
     <string name="save_message_as_draft">Bericht opslaan als concept?</string>
@@ -215,28 +193,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_limit">Bijlages kunnen maximaal %1$s groot zijn. Totaal bijgevoegd zou %2$s zijn.</string>
     <string name="sending_message">Bericht verzenden...</string>
     <string name="sending_message_offline">Offline, in de wachtrij voor het verzenden van later...</string>
-    <string name="mailbox_password_changed">Mailbox-wachtwoord is gewijzigd</string>
-    <string name="go_to_mailbox_login">Doorgaan naar de mailbox-login om het veranderde mailbox-wachtwoord in te voeren?</string>
     <string name="go_to_inbox">Ga naar mijn inbox</string>
     <string name="message_sent">Bericht verzonden</string>
     <string name="message_failed">Bericht verzenden mislukt</string>
     <string name="message_sending_failures">%d berichten verzenden fouten</string>
     <string name="storage_limit">Opslaglimiet</string>
-    <string name="storage_limit_warning">Opslaglimiet bijna bereikt</string>
-    <string name="do_not_show_again">Niet meer weergeven</string>
     <string name="edit_settings">Instellingen bewerken</string>
     <string name="save_settings">Instellingen opslaan</string>
     <string name="share">Delen</string>
-    <string name="settings_saved">Instellingen opgeslagen</string>
     <string name="settings_not_saved_password"> Instellingen niet opgeslagen - onjuist login wachtwoord</string>
     <string name="settings_not_saved_email"> Instellingen niet opgeslagen - ongeldige notificatie e-mail</string>
-    <string name="save_settings_question">Instellingen opslaan?</string>
     <string name="enter">Invoeren</string>
     <string name="cancel">Annuleren</string>
     <string name="close">Sluiten</string>
-    <string name="passwords">Wachtwoordbeheer</string>
     <string name="change_password">Wachtwoord wijzigen</string>
-    <string name="change_login_password">Loginwachtwoord wijzigen</string>
     <string name="change_mailbox_password">Wijzig mailbox-wachtwoord</string>
     <string name="eo_password_title">Wachtwoord instellen</string>
     <string name="eo_password_subtitle">Voer een wachtwoord in om dit bericht te versleutelen voor niet-ProtonMailgebruikers</string>
@@ -244,24 +214,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_login_password">Huidig loginwachtwoord</string>
     <string name="new_login_password">Nieuw wachtwoord</string>
     <string name="confirm_new_login_password">Bevestig nieuw wachtwoord</string>
-    <string name="old_mailbox_password">Huidig mailbox-wachtwoord</string>
     <string name="new_mailbox_password">Nieuw mailbox wachtwoord</string>
     <string name="confirm_new_mailbox_password">Bevestig nieuw mailbox wachtwoord</string>
     <string name="no_attachments">Geen bijlagen</string>
-    <string name="num_attachments">%d bijlagen</string>
     <string name="new_passwords_not_valid">Ongeldige invoer</string>
     <string name="new_passwords_do_not_match">Nieuwe wachtwoorden komen niet overeen</string>
     <string name="new_login_password_saved">Nieuw inlogwachtwoord opgeslagen</string>
     <string name="new_mailbox_password_saved">Nieuw mailbox-wachtwoord opgeslagen</string>
-    <string name="could_not_change_password">Wachtwoord kon niet worden gewijzigd</string>
-    <string name="auto_logout_option_settings">Automatische uitlog opties</string>
     <string name="pin_lock_option_settings">App vergrendelingsopties</string>
     <string name="pin_lock_after">App vergrendelen na</string>
     <string name="lock_the_app">App vergrendelen</string>
-    <string name="no_sound_or_vibrate">Geen trilling of geluid</string>
-    <string name="sound">Geluid zonder trilling</string>
-    <string name="vibration">Trilling zonder geluid</string>
-    <string name="both_sound_and_vibration">Trilling en geluid</string>
     <string name="display_name_banned_chars">Ongeldige weergavenaam. \'&gt;\' en \'&lt;\' zijn niet toegestaan</string>
     <string name="cont">Doorgaan</string>
     <string name="email_verification_code">We sturen een verificatiecode naar het bovenstaande e-mailadres.</string>
@@ -275,17 +237,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Account instellen</string>
     <string name="create_account">Account aanmaken</string>
     <string name="create_passwords">Wachtwoord instellen</string>
-    <string name="sign_up">Registreren</string>
     <string name="caps_username">Gebruikersnaam</string>
     <string name="caps_login_password">Wachtwoord</string>
-    <string name="caps_two_factor">Tweestapsverificatiecode</string>
     <string name="caps_confirm_password">Wachtwoord bevestigen</string>
-    <string name="caps_confirm_mailbox_password">Bevestig mailbox-wachtwoord</string>
-    <string name="caps_optional_notification_email">HERSTEL-E-MAILADRES (OPTIONEEL)</string>
     <string name="caps_optional">*OPTIONEEL</string>
     <string name="update_me_for_new_features">Houd mij op de hoogte over nieuwe functies</string>
     <string name="create_mailbox_password">Wachtwoord aanmaken</string>
-    <string name="confirm_mailbox_password">Bevestig mailbox-wachtwoord</string>
     <string name="password_note"><b>Opmerking:</b> Dit is nodig om uw berichten te versleutelen en te decoderen.
 Raak dit wachtwoord niet kwijt, wij kunnen het niet voor u herstellen. Als u dit wachtwoord verliest, hebt u geen toegang meer tot uw berichten.</string>
     <string name="username_note"><b>Opmerking:</b> uw gebruikersnaam is tevens ook uw e-mailadres</string>
@@ -304,11 +261,9 @@ Raak dit wachtwoord niet kwijt, wij kunnen het niet voor u herstellen. Als u dit
     <string name="current_standard">De huidige standaard</string>
     <string name="extreme_security">Extreem beveiligingsniveau (4096 bit)</string>
     <string name="highest_security">Het hoogste niveau van versleuteling is beschikbaar.<b> Het instellen kan enkele minuten duren.</b></string>
-    <string name="generate_keypair">Sleutelpaar genereren</string>
     <string name="labels_title_apply">Labels toepassen</string>
     <string name="labels_title_add">Label toevoegen</string>
     <string name="labels_title">Labels</string>
-    <string name="labels_create">Label toevoegen</string>
     <string name="label_name">Labelnaam</string>
     <string name="label_name_empty">Labelnaam is verplicht</string>
     <string name="label_name_duplicate">Deze labelnaam bestaat al</string>
@@ -316,8 +271,6 @@ Raak dit wachtwoord niet kwijt, wij kunnen het niet voor u herstellen. Als u dit
     <string name="label_invalid">Label niet toegevoegd vanwege een ongeldige naam.</string>
     <string name="undo">Ongedaan maken</string>
     <string name="customize_swipe_actions">Veegacties aanpassen</string>
-    <string name="message_details_swipe_info">U kunt terugkeren naar het mailbox-scherm door         van links naar rechts te vegen en u kunt een bericht verplaatsen naar de PRULLENBAK door van rechts naar links te vegen</string>
-    <string name="composing_message_scroll_info">U kunt het opstelvenster omhoog of omlaag schuiven door aan de rechterkant van het scherm te vegen</string>
     <string name="message_can_not_edit">U kunt niet antwoorden of doorsturen. Dit bericht is nog niet verstuurd.</string>
     <string name="label_apply">Toepassen</string>
     <string name="label_delete">Verwijder</string>
@@ -332,16 +285,12 @@ Raak dit wachtwoord niet kwijt, wij kunnen het niet voor u herstellen. Als u dit
     <string name="respond_inline">Inline reageren</string>
     <string name="no_connectivity_detected">Geen netwerkverbinding gedetecteerd...</string>
     <string name="no_connectivity_detected_troubleshoot">Geen verbinding gedetecteerd… (<u>Probleemoplossing</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">Geen connectiviteit gedetecteerd...
-\nBericht niet gedownload</string>
-    <string name="connectivity_arrived">Verbonden</string>
     <string name="connectivity_checking">Controleren op verbinding...</string>
     <string name="sync_short">bijwerken</string>
     <string name="draft_attachments_uploading">Concept wordt nog steeds geüpload...</string>
     <string name="draft_label_attachments_uploading">bijlagen uploaden…</string>
     <string name="draft_label_message_uploading">bericht verzenden…</string>
     <string name="attachment_failed">Bijlage uploaden mislukt voor bericht </string>
-    <string name="attachment_failed_new">Bijlage Upload mislukt voor bericht %1$s %2$s</string>
     <string name="attaching_photo_failed">Bijvoegen van foto is mislukt</string>
     <string name="empty_message">Leeg bericht</string>
     <string name="dismiss">Negeren</string>
@@ -350,8 +299,6 @@ Raak dit wachtwoord niet kwijt, wij kunnen het niet voor u herstellen. Als u dit
     <string name="display_images">Afbeelding weergeven</string>
     <string name="retry">Opnieuw proberen</string>
     <string name="saving_failed_no_conn">Opslaan mislukt, geen verbinding</string>
-    <string name="can_not_create_account_while_beta">Account aanmaken is uitgeschakeld in de bètaversie</string>
-    <string name="changing_mailbox_password_disabled_while_beta">Mailbox-wachtwoord veranderen is uitgeschakeld in de bètaversie</string>
     <string name="username_is_available">%s is beschikbaar!</string>
     <string name="username_is_not_available">%s is niet beschikbaar!</string>
     <string name="username_is_too_long">Maximale lengte voor een gebruikersnaam is %d tekens!</string>
@@ -376,20 +323,16 @@ die bij \'afzender\' verschijnt.</string>
     <string name="engagement_subtitle_encryption">Uw inbox is nu met end-to-end versleuteling beveiligd. Om automatisch beveiligde e-mails naar uw contactpersonen te sturen nodigt u hen uit voor ProtonMail! U kan ook handmatig berichten naar deze contactpersonen versleutelen wanneer zij ProtonMail niet gebruiken.</string>
     <string name="engagement_subtitle_expire">Berichten die u verstuurt kunnen worden ingesteld om na een bepaalde tijd automatisch te worden verwijderd.</string>
     <string name="engagement_subtitle_help">U kunt hulp en ondersteuning krijgen via protonmail.com/support. U kunt ook bugs melden via de app.</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail respecteert uw privacy en toont geen advertenties. Uw steun is essentieel voor ons voortbestaan. U kunt upgraden naar een betaald account of doneren ter ondersteuning van ProtonMail.</string>
     <string name="attachment_exists">Bijlage reeds toegevoegd</string>
     <string name="sending_email_success">Verificatiecode is verzonden</string>
     <string name="sending_email_failed">Verificatiecode aanvraag mislukt</string>
-    <string name="password_required">Voer uw wachtwoord in om deze verandering aan te brengen</string>
     <string name="password_not_valid">U hebt een ongeldig wachtwoord ingevoerd</string>
     <string name="send_code_wait">Wacht %d seconden om opnieuw te klikken</string>
     <string name="eo_password_not_completed">Voer wachtwoord in.</string>
-    <string name="delinquency_title">Toegang tot dit account is ontzegd wegens betalingsachterstand</string>
     <string name="delinquency_subtitle">Toegang tot dit account is geblokkeerd als gevolg van niet betaalde facturen. Gelieve aan te melden via protonmail.com om uw onbetaalde factuur te betalen.</string>
     <string name="direct_disabled_subtitle">Aanmelden via mobiel is tijdelijk uitgeschakeld. Probeer het later opnieuw of meld u aan via <a href="https://protonmail.com">protonmail.com</a> op een computer of laptop.</string>
     <string name="downloading">Downloaden...</string>
     <string name="cant_download_attachment">Kan bijlage niet downloaden</string>
-    <string name="auto_logout">Automatisch uitloggen</string>
     <string-array name="auto_logout_options_array">
         <item>Onmiddellijk</item>
         <item>5 minuten inactiviteit</item>
@@ -397,42 +340,30 @@ die bij \'afzender\' verschijnt.</string>
         <item>1 uur inactiviteit</item>
         <item>24 uur inactiviteit</item>
     </string-array>
-    <string-array name="pin_options_array">
-        <item>Wijzig PIN-code</item>
-        <item>Verander PIN-tijdsonderbreking</item>
-    </string-array>
     <string name="delete_label_confirmation_title">Geselecteerde labels verwijderen?</string>
     <string name="delete_folder_confirmation_title">Geselecteerde mappen verwijderen?</string>
     <string name="delete_label_confirmation_message">De e-mails die hier zijn opgenomen worden gevonden in <b>Alle e-mails</b></string>
     <string name="enter_pin">Voer uw pincode in om uw inbox te ontgrendelen</string>
     <string name="enter_pin_message_details">Voer uw pincode in om uw inbox te ontgrendelen</string>
     <string name="enter_current_pin">Vul uw huidige PIN-code in</string>
-    <string name="hint_pin">PIN-code</string>
     <string name="pin_subtitle_create">PIN-code hier aanmaken</string>
     <string name="pin_subtitle_create_new">Maak hier uw nieuwe PIN-code aan</string>
     <string name="pin_subtitle_confirm">Bevestig uw PIN-code</string>
     <string name="pin_subtitle_confirm_new">Bevestig uw nieuwe PIN-code</string>
-    <string name="forgot_pin">PIN-code vergeten?</string>
     <string name="pin_invalid">De PIN-code is ongeldig, voer de juiste 4-cijferige code in</string>
     <string name="pin_confirmation_not_match">De ingevoerde PIN-codes komen niet overeen</string>
     <string name="pin_not_match">PIN-codes komen niet overeen</string>
     <string name="new_pin_saved">Nieuwe PIN-code opgeslagen</string>
-    <string name="pin_settings">PIN-instellingen</string>
-    <string name="next">volgende</string>
-    <string name="back">terug</string>
     <string name="new_emails">%d nieuwe e-mails</string>
     <string name="attachment_download_success">%s succesvol gedownload naar bestandsbeheer</string>
     <string name="attachment_download_failed">%s downloaden is mislukt</string>
-    <string name="sender_changed">Verwijder bijlagen om de afzender te veranderen.</string>
     <string name="ringtone">Berichttoon</string>
     <string name="ringtone_selected">Berichttoon:</string>
-    <string name="notification_option">%1$s\nBerichttoon: %2$s</string>
     <string name="ringtone_invalid">Beltoon selectie gaf een ongeldige waarde terug</string>
     <string name="ringtone_no_default">Onmogelijk om een standaard beltoon te laden</string>
     <string name="select_tone">Selecteer toon</string>
     <string name="copy_link">Link kopiëren</string>
     <string name="share_link">Link delen</string>
-    <string name="attachment_delete_failed">Verwijderen van bijlage %s is mislukt</string>
     <string name="sync_attachments">Bijlagen synchroniseren</string>
     <string name="processing_attachment">Bijlage verwerken</string>
     <string name="hyperlink_confirmation_dialog_text_html">U staat op het punt om de webbrowser te starten en te navigeren naar:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Wilt u doorgaan?</string>
@@ -458,10 +389,6 @@ die bij \'afzender\' verschijnt.</string>
     <string name="upselling_donate_title">Doneren</string>
     <string name="upselling_upgrade_title">Upgrade naar ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">Uw donatie helpt ons bij het uitbreiden van de capaciteit en om door te gaan met het ontwikkelen van ProtonMail als vrije en open source software. Alleen dankzij de steun die wij krijgen van de gemeenschap zijn wij in staat om door te gaan met het beschikbaar stellen van ProtonMail aan mensen over de hele wereld.</string>
-    <string name="upselling_upgrade_subtitle">Met het upgraden van uw abonnement helpt u ons om
-capaciteit te blijven toevoegen en de ontwikkeling van ProtonMail als gratis en open source voort te zetten.
-Wij zijn volledig afhankelijk van de steun van de gemeenschap om ProtonMail wereldwijd aan te blijven
-aanbieden.</string>
     <string name="upgrade_donate">Upgrade/Doneren</string>
     <string name="upselling_donate_pick_amount">Selecteer een bedrag of voer een bedrag in</string>
     <string name="amount_5">€ 5,-</string>
@@ -476,8 +403,6 @@ aanbieden.</string>
     <string name="upgrade_line3">Gebruik uw eigen domein</string>
     <string name="upgrade_line4">Maximaal 5 aliassen</string>
     <string name="upgrade_line5">Ondersteuning met hoge prioriteit</string>
-    <string name="upgrade_plus_price">€ 4,-</string>
-    <string name="per_month">/maand</string>
     <string name="upgrade">Upgrade</string>
     <string name="payment_options">Betalingsmethode</string>
     <string name="other_plans">Voor abonnementen met meer opslagruimte, kunt u upgraden via de webmail interface van ProtonMail.</string>
@@ -498,7 +423,6 @@ aanbieden.</string>
     <string name="plan_plus_line7">Ondersteuning met hoge prioriteit</string>
     <string name="plan_free_line1">500 MB opslagruimte</string>
     <string name="plan_free_line2">150 berichten per dag</string>
-    <string name="plan_free_line22">%d berichten per dag</string>
     <string name="plan_free_line3">20 labels</string>
     <string name="plan_free_line4">Eigen domeinen: niet ondersteund</string>
     <string name="plan_free_line5">1 adres</string>
@@ -512,7 +436,6 @@ aanbieden.</string>
     <string name="zip_code">Postcode</string>
     <string name="card_number">Creditcardnummer</string>
     <string name="billing_information">Facturatiegegevens</string>
-    <string name="billing_upgrade_thanks">Upgrade succesvol! Bedankt voor de ondersteuning!</string>
     <string name="country">Land</string>
     <string name="cvc">CVC-code</string>
     <string name="terms_and_conditions_billing">Door op Verzenden te klikken,
@@ -521,13 +444,10 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="currency">Valuta</string>
     <string name="plan_duration">Betalingscyclus</string>
     <string name="duration_annual_line1">Jaarlijks <font color="#C3E129">bespaar 20%</font></string>
-    <string name="duration_annual_line2">%s per maand</string>
     <string name="per_month_text_only">per maand</string>
-    <string name="per_year_text_only">per jaar</string>
     <string name="duration_annual_line3">Gefactureerd als %s per jaar</string>
     <string name="duration_annual_line4">Gefactureerd als %s per maand</string>
     <string name="duration_monthly_line1">Maandelijks</string>
-    <string name="duration_monthly_line2">%s per maand</string>
     <string name="duration_monthly_line3">Bespaar 20%</string>
     <string name="set_cont">Opslaan</string>
     <string name="payment_error">Betalingsfout</string>
@@ -566,11 +486,8 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="payment_approval_consumed_error_description">Betaalmethode is al gebruikt voor deze betaling. Controleer de status van uw abonnement.</string>
     <string name="no_payment_methods">U heeft geen opgeslagen betalingsmethoden.</string>
     <string name="edit_payment_methods">Log in via protonmail.com om uw betalingsgegevens bij te werken.</string>
-    <string name="no_permission_contacts">Geen toestemming om contacten te lezen</string>
     <string name="message_not_loaded">Bericht niet geladen</string>
-    <string name="signature_on">Handtekening aan</string>
     <string name="signature_text">Handtekening</string>
-    <string name="please_use_webapp_pass_change">Gebruik alstublieft onze webapplicatie  &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; op een computer of laptop om deze actie uit te voeren.</string>
     <string name="available_addresses">Beschikbare adressen</string>
     <string name="inactive_addresses">Inactieve adressen</string>
     <string name="not_set">Niet ingesteld</string>
@@ -623,15 +540,10 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">Groepen</string>
-    <string name="phone_contact">Telefoon contact</string>
     <string name="contact_details_display_name">Naam</string>
     <string name="contact_details">Contactgegevens</string>
     <string name="email_type_home">Thuis</string>
-    <string name="email_type_work">Werk</string>
-    <string name="option_type_custom">Nieuw type</string>
     <string name="type_title">Kies type</string>
-    <string name="no_permission_storage">Geen toestemming voor opslag</string>
     <string name="message_drafted_error_server">Bericht verzenden mislukt. %s</string>
     <string name="sync_local_contacts">Uploaden naar ProtonMail</string>
     <string name="please_select_only_phone_contacts">Selecteer alleen lokale telefooncontacten</string>
@@ -640,13 +552,10 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="contact_vcard_hint_address">Adres invoeren</string>
     <string name="contact_vcard_hint_other">Informatie invoeren</string>
     <string name="contact_vcard_hint_note">Notitie invoeren</string>
-    <string name="contact_vcard_phone">Telefoon</string>
-    <string name="contact_vcard_address">Adres</string>
     <string name="contact_vcard_new_row_email">e-mailadres toevoegen</string>
     <string name="contact_vcard_new_row_phone">telefoonnummer toevoegen</string>
     <string name="contact_vcard_new_row_address">adres toevoegen</string>
     <string name="contact_vcard_new_row_other">informatie toevoegen</string>
-    <string name="contact_vcard_new_row_custom">eigen veld toevoegen</string>
     <string name="vcard_other_option_org">Organisatie</string>
     <string name="vcard_other_option_title">Titel</string>
     <string name="vcard_other_option_nickname">Bijnaam</string>
@@ -655,13 +564,9 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="vcard_other_option_gender">Geslacht</string>
     <string name="vcard_other_option_role">Rol</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="sync_question">Contacten synchroniseren?</string>
-    <string name="sync_question_subtitle">Dit synchroniseert lokale contacten op uw apparaat met uw ProtonMail-contacten. Zo krijgt u op andere apparaten toegang tot deze contacten via ProtonMail.</string>
     <string name="convert_contact">Contact converteren</string>
     <string name="upload_contacts">Contacten uploaden</string>
-    <string name="encrypted_data">Versleutelde data</string>
     <string name="upgrade_encrypted_contact">Upgrade om gebruik te maken van versleutelde contactgegevens.</string>
-    <string name="empty_encrypted_data">Leeg versleutelde contactinformatie.</string>
     <string name="uploading_contacts">Contacten uploaden…</string>
     <string name="error_encrypted_data">Fout bij het ophalen van de versleutelde contactgegevens.</string>
     <string-array name="vcard_option_phone">
@@ -707,19 +612,15 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="error_message_exp_date_past">Fout: Ongeldige vervaldatum</string>
     <string name="error_message_card_number_invalid">Fout: Ongeldig creditcardnummer</string>
     <string name="print_error">Afdrukfout</string>
-    <string name="download_error">Fout bij het downloaden</string>
     <string name="download_complete">Download voltooid</string>
     <string name="download_in_progress">Bezig met downloaden</string>
     <string name="expires_in">\tVerloopt over %s</string>
     <string name="unsaved_changes_title">Niet-opgeslagen wijzigingen</string>
     <string name="unsaved_changes_subtitle">Er zijn niet-opgeslagen gegevens aanwezig in het formulier. Weet u zeker dat u deze gegevens wil weggooien?</string>
-    <string name="discard">Weggooien</string>
-    <string name="keep_editing">Blijf bewerken</string>
     <string name="request_timeout">Aanvraag duurde te lang, probeer opnieuw</string>
     <string name="add_folder">Map Toevoegen</string>
     <string name="no_folders">Geen mappen</string>
     <string name="folders_title_move">Verplaats berichten naar</string>
-    <string name="move">Verplaatsen</string>
     <string name="folders_manager">Mapbeheer</string>
     <string name="folder_add_new">Voeg een nieuwe map toe</string>
     <string name="folder_name">Mapnaam</string>
@@ -738,7 +639,6 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="no_contacts">Geen contacten</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; schreef:</string>
     <string name="update_label">Label bijwerken</string>
-    <string name="folder_name_empty">Map moet een naam hebben</string>
     <string name="max_labels_in_message">Het bericht %1$s kan niet meer dan %2$d labels hebben.</string>
     <string name="delete">Verwijderen</string>
     <string name="subject_copied">Onderwerp gekopieerd naar klembord</string>
@@ -752,7 +652,6 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="print_to_template">Aan: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
-    <string name="contacts_invalid_type">Ongeldig type</string>
     <string name="signature_error">Verificatiefout</string>
     <string name="signature_error_desc">Verificatie van de handtekening van deze inhoud is mislukt</string>
     <string name="decryption_error">Ontsleutelingsfout</string>
@@ -767,18 +666,13 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="close_app">App sluiten</string>
     <string name="empty_subject">(Geen onderwerp)</string>
     <string name="contacts_unknown">Onbekend</string>
-    <string name="expand_collapse">Uit-/invouwen</string>
     <string name="learn_more">
         <u>Meer informatie</u>
     </string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Upgrade naar een betaald abonnement om te verzenden vanaf uw adres %s.</string>
-    <string name="digital_signature_verified">Digitale handtekening geverifieerd</string>
-    <string name="encrypted_and_digital_signature_verified">Versleuteld en digitale handtekening geverifieerd</string>
     <string name="email_empty">E-mailadres ontbreekt</string>
-    <string name="edit_contact_details">Bewerk gegevens contactpersoon</string>
     <string name="encrypted_contact_details">Versleutelde contactpersoonsgegevens</string>
-    <string name="edit_contact_toolbar_title">Wijzig %s</string>
     <string name="convert_question">Upload lokale contactpersonen</string>
     <string name="convert_question_subtitle">Dit uploadt lokale contacten op uw apparaat naar uw ProtonMail-contacten. Zo krijgt u op andere apparaten toegang tot deze contacten via ProtonMail.</string>
     <string name="refresh_contacts">Vernieuwen</string>
@@ -799,10 +693,8 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="attachment_offline_max_storage">Stelt de maximale hoeveelheid opslagruimte in die ProtonMail mag gebruiken op uw mobiele apparaat.</string>
     <string name="load_embedded_images_failed_no_network">Ingesloten afbeeldingen laden mislukt. Controleer uw netwerkverbinding.</string>
     <string name="load_embedded_images_failed">Ingesloten afbeeldingen laden mislukt.</string>
-    <string name="attachment_storage_unlimited">%.2fMB van Onbeperkt</string>
     <string name="unlimited">Onbeperkt</string>
     <string name="local_storage_cleared">Lokale opslag gewist</string>
-    <string name="local_storage_clear">Lokale opslag wissen</string>
     <string name="recipient_popup_compose_to">Opstellen aan</string>
     <string name="recipient_popup_copy_address">Adres kopiëren</string>
     <string name="recipient_popup_see_details">Contactinformatie bekijken</string>
@@ -819,7 +711,6 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="sender_lock_sent_autoresponder">Verzonden door ProtonMail met zero access versleuteling</string>
     <string name="sender_lock_verification_failed">Verificatie van afzender is mislukt</string>
     <string name="sender_lock_pgp_encrypted">PGP-versleuteld bericht</string>
-    <string name="sender_lock_pgp_verified">PGP-ondertekend bericht van geverifieerd e-mailadres</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-versleuteld bericht van geverifieerd e-mailadres</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-ondertekend bericht van geverifieerd e-mailadres</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
@@ -840,7 +731,6 @@ gaat u akkoord met\n<a href="https://protonmail.com/terms-and-conditions">Proton
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">MEER INFORMATIE</a>
     </string>
-    <string name="no_items_found">Geen items gevonden</string>
     <string name="channel_name_attachments">Bijlagen</string>
     <string name="channel_description_attachments">Informeert over de downloadstatus van de bijlage</string>
     <string name="channel_name_emails">E-mails</string>
@@ -858,13 +748,9 @@ bericht downloaden op de background</string>
 bericht naar ons, zodat wij onze filters kunnen verbeteren. Dit betekent dat wij in staat zijn
 om de volledige inhoud van de e-mail te zien.</string>
     <string name="phishing_report_send_message_moved_to_spam">Rapport verzonden. Bericht naar spam verplaatst.</string>
-    <string name="report_send">Rapport is verzonden</string>
     <string name="cannot_send_report_send">Kan rapport niet versturen</string>
     <string name="title_activity_contact_group_details">Activiteit van contactgroepen</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">Standaard e-mailadres</string>
-    <string name="email_private">Privé e-mailadres</string>
-    <string name="phone_private">Telefoonnummer Privé</string>
     <string name="add_photo">Foto toevoegen</string>
     <string name="contact_display_name">\ue91c Weergavenaam</string>
     <string name="add_new_email">\ue914 E-mailadres toevoegen</string>
@@ -873,7 +759,6 @@ om de volledige inhoud van de e-mail te zien.</string>
     <string name="edit_contact">Contactpersoon bewerken</string>
     <string name="create_contact_group">Contactgroep aanmaken</string>
     <string name="edit_contact_group">Contactgroep bewerken</string>
-    <string name="contact_groups_add_addresses">Adressen toevoegen</string>
     <string name="contact_groups_manage_addresses">Adressen beheren</string>
     <string name="contact_group_display_name">\ue91a Weergavenaam</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -905,11 +790,8 @@ om de volledige inhoud van de e-mail te zien.</string>
     <string name="contact_group_saved">Groep opgeslagen</string>
     <string name="no_recipients">Geen geadresseerde</string>
     <string name="contact_group_selected">%d Geselecteerd</string>
-    <string name="contact_group_deleted">Groep verwijderd</string>
     <string name="paid_plan_needed">Gelieve te upgraden naar een betaald plan om gebruik te kunnen maken van deze premium-features</string>
-    <string name="composer_group_count">%1$s (%2$d Leden)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Leden)</string>
-    <string name="address_successful_update">Adres met succes bijgewerkt</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Weet u zeker dat u deze groep wilt verwijderen?</item>
         <item quantity="other">Weet u zeker dat u deze groepen wilt wissen?</item>
@@ -943,17 +825,13 @@ geen e-mails verzenden of ontvangen tenzij u enkele e-mails permanent verwijdert
 koopt.</string>
     <string name="storage_limit_approaching_text">U heeft 90% van uw opslagcapaciteit bereikt.
 Overweeg om wat ruimte vrij te maken of schaf extra opslagruimte aan voordat u ruimte tekortkomt.</string>
-    <string name="storage_limit_do_not_remind">MIJ NIET HERINNEREN</string>
     <!-- endregion -->
     <string name="need_permissions_title">Rechten</string>
     <string name="need_storage_permissions_text">Om bijlagen toe te voegen moet u
 toegang tot opslag toestaan.</string>
-    <string name="need_phone_permissions_text">Om deze contactpersoon te bellen moet u
-toegang tot bellen toestaan.</string>
     <string name="push_notifications_alert_title">Pushmelding</string>
     <string name="push_notifications_alert_subtitle">Pushmeldingen voor ProtonMail werken niet zonder bijgewerkte Google Play-diensten.</string>
     <string name="app_locked">App vergrendeld</string>
-    <string name="please_use_fingerprint">Gebruik uw vingerafdruk om de app te ontgrendelen.</string>
     <string name="use_pin_instead">Gebruik PIN in de plaats</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Geen biometrische gegevens ingeschreven</string>
@@ -962,7 +840,6 @@ toegang tot bellen toestaan.</string>
     <string name="biometric_error_hw_not_available">Biometrische hardware niet beschikbaar.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Niet-openbaar gemaakte ontvangers</string>
-    <string name="could_not_delete_attachment">Bijlage kan niet worden verwijderd tijdens het uploaden</string>
     <string name="manage_accounts">Accounts beheren</string>
     <!-- region Settings -->
     <string name="settings">Instellingen</string>
@@ -971,7 +848,6 @@ toegang tot bellen toestaan.</string>
     <string name="account">Account</string>
     <string name="subscription">Abonnement</string>
     <string name="plan_and_user">Abonnement</string>
-    <string name="plan">Abonnement</string>
     <string name="payment_method">Betaalmethode</string>
     <string name="password_manager">Wachtwoordbeheer</string>
     <string name="recovery_email">Herstel e-mailadres</string>
@@ -984,18 +860,13 @@ toegang tot bellen toestaan.</string>
     <string name="display_name">Weergavenaam</string>
     <string name="edit_display_name">Weergavenaam bewerken</string>
     <string name="signature">Handtekening</string>
-    <string name="edit_signature">Handtekening inschakelen</string>
     <string name="mobile_signature">Mobiele handtekening</string>
     <string name="edit_mobile_signature">Mobiele handtekening inschakelen</string>
     <string name="default_mobile_signature">Verzonden met ProtonMail Mobile</string>
-    <string name="plus_account_required_mobile_signature">ProtonMail Plus is vereist voor het aanpassen van uw mobiele handtekening</string>
     <string name="mobile_signature_is_premium">Alleen betalende gebruikers kunnen de mobiele handtekening aanpassen</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Uitstellen</string>
     <string name="notifications_snooze">Notificaties uitstellen</string>
-    <string name="notifications_snooze_finishing">Notificaties worden over $s min hervat</string>
-    <string name="snooze_notifications">Notificaties tijdelijk uitschakelen</string>
-    <string name="snooze_notifications_adjust">Aanpassen</string>
     <string name="notifications_snoozed">Notificaties uitgesteld</string>
     <string name="notifications_snooze_scheduled">Gepland</string>
     <string name="notifications_snooze_scheduled_settings">Geplande Uitstel Instellingen</string>
@@ -1024,7 +895,6 @@ toegang tot bellen toestaan.</string>
     <!-- endregion -->
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
-    <string name="auto_download_messages_title_short">Auto-download</string>
     <string name="auto_download_messages_title">Automatisch berichten downloaden</string>
     <string name="auto_download_messages_subtitle">Wanneer deze optie is ingeschakeld, worden de berichten automatisch gedownload elke keer dat u een nieuwe e-mail melding ontvangt (dit zal meer gegevens verbruiken). Als deze optie niet is ingeschakeld, worden de berichten alleen gedownload wanneer u een e-mail opent. (Let op: met elke optie, als u de cache verwijdert of uitlogt, kunt u de berichten niet lezen terwijl u offline bent.)</string>
     <string name="settings_background_sync">Achtergrondsynchronisatie</string>
@@ -1073,7 +943,6 @@ toegang tot bellen toestaan.</string>
     <string name="auto_lock_description">Schakel deze functie in om uw\napp automatisch te vergrendelen en gebruik te maken van een PIN-code of vingerafdruk\nom deze te ontgrendelen.</string>
     <string name="change_pin_code">Wijzig PIN-code</string>
     <string name="auto_lock_timer">Tijd tot automatische vergrendeling</string>
-    <string name="unlock_with_fingerprint">Ontgrendelen met vingerafdruk</string>
     <string name="connections_via_third_parties">Alternatieve routing</string>
     <string name="allow_secure_connections_via_third_parties">Alternatieve routing toestaan</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In het geval dat Proton-sites worden geblokkeerd, stelt deze instelling de app in staat om alternatieve netwerkroutering te proberen om Proton te bereiken, wat nuttig kan zijn voor het omzeilen van firewalls of netwerkproblemen. We raden aan deze instelling aan te houden voor een grotere betrouwbaarheid.</string>
@@ -1093,9 +962,6 @@ toegang tot bellen toestaan.</string>
     <string name="app_version">App versie</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="primary_account">Primaire account</string>
-    <string name="make_primary_account">Maak %s uw primaire account?</string>
-    <string name="logout_account_question">%s uitloggen?</string>
     <string name="remove_account_question">%s verwijderen?</string>
     <string name="signed_in_with">Ingelogd met %s</string>
     <string name="signed_in_with_logged_out_from">Uitgelogd van %1$s en ingelogd met %2$s</string>

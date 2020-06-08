@@ -29,16 +29,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">Увійти</string>
     <string name="sign_out">Вийти</string>
     <string name="sign_out_question">Ви справді бажаєте вийти?</string>
-    <string name="remember_me_on_device">Запам\'ятати мене на цьому пристрої</string>
-    <string name="show_password">Показати пароль</string>
-    <string name="username">Ім\'я користувача</string>
-    <string name="password">Пароль</string>
-    <string name="login_password">Логін пароль</string>
     <string name="mailbox_password">Пароль поштової скриньки</string>
     <string name="two_factor_code">Двухфакторний код</string>
     <string name="processing_request">Ваш запит знаходиться на обробці</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">Потрібен акаунт? Зареєструйся.</string>
     <string name="need_to_be_logged_in">Ви не авторизовані!</string>
     <string name="forgot_password">Забули пароль?</string>
     <string name="reset_mailbox_password">СКИНУТИ ПАРОЛЬ ПОШТОВОЇ СКРИНЬКИ</string>
@@ -61,9 +55,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app">Програму ProtonMail не можна використовувати, поки вона не буде оновлена</string>
     <string name="api_offline_title">ProtonMail API офлайн</string>
     <string name="api_offline">На жаль, ProtonMail зараз не працює, перевірте поточний статус робіт в нашому твіттері: https://twitter.com/protonmail</string>
-    <string name="cannot_open">Не вдалося відкрити файл</string>
-    <string name="downloaded_attachment">Завантажено %s</string>
-    <string name="edit_contact_validation">Будь ласка, введіть дійсну адресу електронної пошти та ім\'я</string>
     <string name="contact_saved">Контакт збережено</string>
     <string name="contact_saved_offline">Контакт збережений і буде синхронізований, коли з\'єднання з інтернетом буде доступно</string>
     <string name="contact_exist">Така адреса поштової скиньки вже існує</string>
@@ -71,7 +62,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">Email address is a duplicate</string>
     <string name="invalid_code">Код не дійсний</string>
     <string name="message_drafted">Не вдалося відправити повідомлення. Ваші повідомлення збережені в папці Чернетки</string>
-    <string name="message_drafted_reason">не існує %s. \nНе може доставити лист.</string>
     <string name="open_drawer">Відкрити</string>
     <string name="close_drawer">Закрити</string>
     <string name="inbox_option">ВХІДНІ</string>
@@ -81,10 +71,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">АРХІВ</string>
     <string name="trash_option">КОШИК</string>
     <string name="spam_option">СПАМ</string>
-    <string name="contacts_option">КОНТАКТИ</string>
-    <string name="settings_option">НАЛАШТУВАННЯ</string>
-    <string name="report_bugs_option">ПОВІДОМИТИ ПРО ПОМИЛКУ</string>
-    <string name="signout_option">ВИЙТИ</string>
     <string name="inbox">Вхідні</string>
     <string name="starred">Вибрані</string>
     <string name="drafts">Чернетки</string>
@@ -93,7 +79,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Кошик</string>
     <string name="spam">Спам</string>
     <string name="contacts">Контакти</string>
-    <string name="contact_groups">Групи контактів</string>
     <string name="search_contacts">Пошук контактів</string>
     <string name="fetching_contacts">Отримання контактів Protonmail-а...</string>
     <string name="fetching_contacts_success">Contacts refreshed successfully</string>
@@ -117,7 +102,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Перемістити у Кошик</string>
     <string name="move_to_spam">Перемістити у Спам</string>
     <string name="move_to_inbox">Перемiстити до вхiдних</string>
-    <string name="move_message_to_trash">Видалити повідомлення?</string>
     <string name="are_you_sure_empty">Ви дійсно бажаєте видалити всі повідомлення з цієї папки?</string>
     <string name="send">Надіслати</string>
     <string name="selected">Вибрані</string>
@@ -131,10 +115,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">Прихована копія:</string>
     <string name="from_prefix">Від:</string>
     <string name="date_prefix">Дата:</string>
-    <string name="expiration_time_prefix">Закінчується через</string>
     <string name="view_details">ПОДРОБИЦІ</string>
     <string name="hide_details">ПРИХОВАТИ ПОДРОБИЦІ</string>
-    <string name="download">ЗАВАНТАЖИТИ</string>
     <string name="reply">Відповісти</string>
     <string name="reply_all">Відповісти всім</string>
     <string name="forward">Переслати</string>
@@ -144,7 +126,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">Підтвердити пароль</string>
     <string name="define_password_hint">Вкажіть підказку (необов\'язково)</string>
     <string name="message_passwords_do_not_match">Паролі для входу не збігаються</string>
-    <string name="message_mailbox_passwords_do_not_match">Паролі від поштової скриньки не збігаються</string>
     <string name="eo_passwords_do_not_match">Паролі не співпадають</string>
     <string name="define_expiration_period">Визначте період терміну дії</string>
     <string name="set_message_expiration">Встановити термін дії для повідомлення </string>
@@ -192,16 +173,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">Виникла проблема з додаванням файла.</string>
     <string name="add_contact">Додати контакт</string>
     <string name="delete_contact">Видалити %s з контактів?</string>
-    <string name="sync_contact">Синхронізувати %s з web-програмою?</string>
     <string name="confirm">Підтвердити</string>
     <string name="confirm_destructive_action">Are you sure? This cannot be undone.</string>
     <string name="create">Створити</string>
-    <string name="name">Ім\'я</string>
     <string name="email">Електронна пошта</string>
     <string name="email_address">Адрес електронної пошти</string>
     <string name="phone">Номер телефону</string>
     <string name="save">Зберегти</string>
-    <string name="add">Додати</string>
     <string name="syncing_messages">Синхронізація...</string>
     <string name="sync">Синхронізувати контакти</string>
     <string name="save_message_as_draft">Зберегти повідомлення як чернетку?</string>
@@ -226,28 +204,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_limit">Межа для вкладень - %1$s. Цілком може бути вкладено %2$s.</string>
     <string name="sending_message">Повідомлення надсилається...</string>
     <string name="sending_message_offline">Поза мережею, поставлено в чергу на відправку...</string>
-    <string name="mailbox_password_changed">Пароль поштової скриньки змінено</string>
-    <string name="go_to_mailbox_login">Go to mailbox login to enter updated mailbox password?</string>
     <string name="go_to_inbox">Перейти до вхідних</string>
     <string name="message_sent">Повідомлення відправленно</string>
     <string name="message_failed">Помилка відправки повідомлення</string>
     <string name="message_sending_failures">%d message sending failures</string>
     <string name="storage_limit">Ліміт простору</string>
-    <string name="storage_limit_warning">Storage limit is approaching</string>
-    <string name="do_not_show_again">Не показувати знову</string>
     <string name="edit_settings">Редагувати параметри</string>
     <string name="save_settings">Зберегти налаштування</string>
     <string name="share">Share</string>
-    <string name="settings_saved">Нові налаштування збережено</string>
     <string name="settings_not_saved_password"> Параметри не збережені - невірний пароль для входу</string>
     <string name="settings_not_saved_email"> Параметри не збережені - неправильна адреса ел. пошти для повідомлень</string>
-    <string name="save_settings_question">Зберегти налаштування?</string>
     <string name="enter">Увійти</string>
     <string name="cancel">Скасувати</string>
     <string name="close">Закрити</string>
-    <string name="passwords">Менеджер гасел</string>
     <string name="change_password">Змінити пароль</string>
-    <string name="change_login_password">Змінити пароль для входу</string>
     <string name="change_mailbox_password">Змінити пароль поштової скриньки</string>
     <string name="eo_password_title">Встановити пароль</string>
     <string name="eo_password_subtitle">Встановити пароль для шифрування цього повідомлення для Користувачів поза ProtonMail</string>
@@ -255,24 +225,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_login_password">Current Login Password</string>
     <string name="new_login_password">Новий пароль</string>
     <string name="confirm_new_login_password">Підтвердити новий пароль</string>
-    <string name="old_mailbox_password">Чинний пароль поштової скриньки</string>
     <string name="new_mailbox_password">Новий пароль поштової скриньки</string>
     <string name="confirm_new_mailbox_password">Підтвердити новий пароль поштової скриньки</string>
     <string name="no_attachments">0 вкладень</string>
-    <string name="num_attachments">%d вкладень</string>
     <string name="new_passwords_not_valid">Введено неправильні дані</string>
     <string name="new_passwords_do_not_match">New passwords did not match</string>
     <string name="new_login_password_saved">Новий пароль для входу збережено</string>
     <string name="new_mailbox_password_saved">Новий пароль від поштової скриньки збережений</string>
-    <string name="could_not_change_password">Пароль не може бути змінений</string>
-    <string name="auto_logout_option_settings">Налаштувати виходу</string>
     <string name="pin_lock_option_settings">Налаштування блокування програми</string>
     <string name="pin_lock_after">Блокувати після</string>
     <string name="lock_the_app">Заблокувати додаток</string>
-    <string name="no_sound_or_vibrate">Без вібрації, без звуку</string>
-    <string name="sound">Звук без вібрації</string>
-    <string name="vibration">Вібрація без звуку</string>
-    <string name="both_sound_and_vibration">Вібрація та звук</string>
     <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are notallowed</string>
     <string name="cont">Продовжити</string>
     <string name="email_verification_code">Ми надішлемо код підтвердження на адресу електронної пошти, вказану вище.</string>
@@ -286,17 +248,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Налаштувати Вашу обліковку</string>
     <string name="create_account">Створити обліковку</string>
     <string name="create_passwords">Встановити гасло</string>
-    <string name="sign_up">Зареєструватися</string>
     <string name="caps_username">Ім\'я користувача</string>
     <string name="caps_login_password">Гасло</string>
-    <string name="caps_two_factor">Код двофакторної автентифікації</string>
     <string name="caps_confirm_password">Підтвердити гасло</string>
-    <string name="caps_confirm_mailbox_password">Підтвердити гасло поштової скриньки</string>
-    <string name="caps_optional_notification_email">Е-ПОШТА ДЛЯ ВІДНОВЛЕННЯ ГАСЛА (НЕОБОВ\'ЯЗКОВО)</string>
     <string name="caps_optional">* НЕОБОВ\'ЯЗКОВО</string>
     <string name="update_me_for_new_features">Повідомляйте мене про нові можливості</string>
     <string name="create_mailbox_password">Задати гасло</string>
-    <string name="confirm_mailbox_password">Підтвердити гасло поштової скриньки</string>
     <string name="password_note"><b>Примітка:</b> Це використовується для шифрування і розшифровки повідомлень.
 Не загубіть це гасло, ми не можемо його відновити. Якщо ви втратили ваше гасло, ви не зможете читати ваші листи.</string>
     <string name="username_note"><b>Примітка:</b> Ім\'я користувача – це також ваша ProtonMail адреса</string>
@@ -315,11 +272,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="current_standard">Чинний стандарт</string>
     <string name="extreme_security">Найбільша безпека (4096 бітів)</string>
     <string name="highest_security">Доступний найвищий рівень шифрування.<b> Може забрати кілька хвилин для налаштування.</b></string>
-    <string name="generate_keypair">Згенерувати ключову пару</string>
     <string name="labels_title_apply">Застосувати Мітки</string>
     <string name="labels_title_add">Додати мітку</string>
     <string name="labels_title">Мітки</string>
-    <string name="labels_create">Додати мітку</string>
     <string name="label_name">Назва мітки</string>
     <string name="label_name_empty">Label must have a name</string>
     <string name="label_name_duplicate">Така назва мітки вже є</string>
@@ -327,9 +282,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="label_invalid">Мітку не додано через погане ім\'я.</string>
     <string name="undo">Скасувати</string>
     <string name="customize_swipe_actions">Налаштувати дії на відрухи</string>
-    <string name="message_details_swipe_info">You can return to the mailbox screen by
-swiping left to right and move current message to TRASH by swiping right to left</string>
-    <string name="composing_message_scroll_info">You can scroll the composing panel up or down by scrolling the very right edge of the composing panel</string>
     <string name="message_can_not_edit">Can not reply/forward, this message isn\'t sent yet</string>
     <string name="label_apply">Застосувати</string>
     <string name="label_delete">Стерти</string>
@@ -344,16 +296,12 @@ swiping left to right and move current message to TRASH by swiping right to left
     <string name="respond_inline">Respond in-line</string>
     <string name="no_connectivity_detected">Під\'\'днання не виявлено...</string>
     <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">Не виявлено під\'єднання...
-\nЛист не звантажено</string>
-    <string name="connectivity_arrived">Під\'єднано</string>
     <string name="connectivity_checking">Перевірка під\'єднання...</string>
     <string name="sync_short">Синхр.</string>
     <string name="draft_attachments_uploading">Чернетку все ще вивантажувано...</string>
     <string name="draft_label_attachments_uploading">uploading attachments…</string>
     <string name="draft_label_message_uploading">sending message…</string>
     <string name="attachment_failed">Вивантаження вкладення для цього листа зазнало невдачі </string>
-    <string name="attachment_failed_new">Attachment Upload Failed for message %1$s %2$s</string>
     <string name="attaching_photo_failed">Прикріплення світлини зазнало невдачі</string>
     <string name="empty_message">Порожнє повідомлення</string>
     <string name="dismiss">Відхилити</string>
@@ -362,8 +310,6 @@ swiping left to right and move current message to TRASH by swiping right to left
     <string name="display_images">Показати зображення</string>
     <string name="retry">Повторити</string>
     <string name="saving_failed_no_conn">Saving failed, no connection</string>
-    <string name="can_not_create_account_while_beta">У бета-версії створення обліковки вимкнено</string>
-    <string name="changing_mailbox_password_disabled_while_beta">У бета-версії зміну гасла поштової скриньки вимкнено</string>
     <string name="username_is_available">%s доступно!</string>
     <string name="username_is_not_available">%s НЕ доступно!</string>
     <string name="username_is_too_long">Maximum length for a username is %d characters!</string>
@@ -388,22 +334,16 @@ swiping left to right and move current message to TRASH by swiping right to left
     <string name="engagement_subtitle_encryption">Your inbox is now protected with end-to-end encryption. To automatically send secure emails to your contacts, invite them to use ProtonMail!  You can also manually encrypt messages to them if they don\'t use ProtonMail.</string>
     <string name="engagement_subtitle_expire">Messages you send can be set to auto delete after a certain time period.</string>
     <string name="engagement_subtitle_help">You can get help and support at protonmail.com/support. Bugs can also be reported with the app.</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail не продає рекламу чи зловживає вашою
-конфіденційністю. Ваша підтримка наріжна для збереження ProtonMail-а. Ви можете перейти на
-платну обліковку чи пожертвувати на підтримку ProtonMail-а.</string>
     <string name="attachment_exists">Attachment already attached</string>
     <string name="sending_email_success">Код підтвердження надіслано</string>
     <string name="sending_email_failed">Не вдалося надіслати перевірковий код</string>
-    <string name="password_required">Enter your login password to make this change</string>
     <string name="password_not_valid">Введено неприпустиме гасло</string>
     <string name="send_code_wait">Please wait %d seconds to click again</string>
     <string name="eo_password_not_completed">Гасло листа не завершене.</string>
-    <string name="delinquency_title">Access to this account is disabled due to non-payment</string>
     <string name="delinquency_subtitle">Access to this account is disabled due to non-payment. Please sign in through protonmail.com to pay your unpaid invoice.</string>
     <string name="direct_disabled_subtitle">Mobile signups are temporarily disabled. Please try again later, or try signing up at <a href="https://protonmail.com">protonmail.com</a> using a desktop or laptop computer.</string>
     <string name="downloading">Завантаження...</string>
     <string name="cant_download_attachment">Не вдається звантажити вкладення</string>
-    <string name="auto_logout">Автовихід</string>
     <string-array name="auto_logout_options_array">
         <item>Immediately</item>
         <item>5 хв бездіяльності</item>
@@ -411,42 +351,30 @@ swiping left to right and move current message to TRASH by swiping right to left
         <item>1 год бездіяльності</item>
         <item>24 год бездіяльності</item>
     </string-array>
-    <string-array name="pin_options_array">
-        <item>Змінити PIN-код</item>
-        <item>Змінити час очікування PIN-а</item>
-    </string-array>
     <string name="delete_label_confirmation_title">Delete selected labels?</string>
     <string name="delete_folder_confirmation_title">Delete selected folders?</string>
     <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b></string>
     <string name="enter_pin">Введіть PIN-код для розблокування вашої теки \"Вхідні\"</string>
     <string name="enter_pin_message_details">Введіть PIN-код щоб відімкнути ваш лист</string>
     <string name="enter_current_pin">Введіть Ваш чинний PIN</string>
-    <string name="hint_pin">PIN-код</string>
     <string name="pin_subtitle_create">Створити PIN-код тут</string>
     <string name="pin_subtitle_create_new">Створити НОВИЙ PIN-код тут</string>
     <string name="pin_subtitle_confirm">Підтвердьте свій PIN тут</string>
     <string name="pin_subtitle_confirm_new">Підтвердьте свій НОВИЙ PIN тут</string>
-    <string name="forgot_pin">Забули PIN?</string>
     <string name="pin_invalid">PIN is invalid, enter correct 4 digit PIN</string>
     <string name="pin_confirmation_not_match">PIN підтвердження не підходить</string>
     <string name="pin_not_match">PIN-коди не збігаються</string>
     <string name="new_pin_saved">Новий PIN-код збережено</string>
-    <string name="pin_settings">Налаштування PIN-кода</string>
-    <string name="next">далі</string>
-    <string name="back">назад</string>
     <string name="new_emails">%d нових листів</string>
     <string name="attachment_download_success">%s успішно завантажено до файлового менеджера</string>
     <string name="attachment_download_failed">%s не вдалося завантажити належним чином</string>
-    <string name="sender_changed">Щоб змінити адресу відправника, будь ласка, видаліть усі вкладення.</string>
     <string name="ringtone">Мелодія</string>
     <string name="ringtone_selected">Мелодія:</string>
-    <string name="notification_option">%1$s\nМелодія: %2$s</string>
     <string name="ringtone_invalid">Ringtone selection returned an invalid value</string>
     <string name="ringtone_no_default">Impossible to load a default Ringtone</string>
     <string name="select_tone">Оберіть сигнал для повідомлень</string>
     <string name="copy_link">Копіювати посилання</string>
     <string name="share_link">Поділитись посиланням</string>
-    <string name="attachment_delete_failed">Стирання %s вкладень не вдалося</string>
     <string name="sync_attachments">Синхронізуємо вкладення</string>
     <string name="processing_attachment">Обробка вкладення</string>
     <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Do you want to continue?</string>
@@ -476,10 +404,6 @@ swiping left to right and move current message to TRASH by swiping right to left
     <string name="upselling_donate_title">Пожертва</string>
     <string name="upselling_upgrade_title">Підвищітись до ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">Ваш внесок допоможе нам збільшити спроможності ProtonMail-а та продовжити розвивати його як вільний програмний продукт з відкритим початковим кодом. Лише завдяки підтримці спільноті ми можемо продовжувати надавати ProtonMail людям у всьому світі.</string>
-    <string name="upselling_upgrade_subtitle">Your subscription upgrade will help us add
-capacity and continue to develop ProtonMail as free and open source. It is only through the
-support of the community that we are able to continue providing ProtonMail to people around
-the world.</string>
     <string name="upgrade_donate">Оновлення/пожертвувати</string>
     <string name="upselling_donate_pick_amount">Виберіть суму пожертви або введіть будь-яку суму</string>
     <string name="amount_5">5€</string>
@@ -494,8 +418,6 @@ the world.</string>
     <string name="upgrade_line3">Використовуйте свій власний домен</string>
     <string name="upgrade_line4">До 5 псевдонімів</string>
     <string name="upgrade_line5">Пріоритетна служба підтримки</string>
-    <string name="upgrade_plus_price">4€</string>
-    <string name="per_month">/ місяць</string>
     <string name="upgrade">Покращити</string>
     <string name="payment_options">Варіант сплати</string>
     <string name="other_plans">Для планів з більшим сховищем, оновлюйтесь через
@@ -518,7 +440,6 @@ for the public good. You can help support online privacy by selecting a paid acc
     <string name="plan_plus_line7">Пріоритетна служба підтримки</string>
     <string name="plan_free_line1">500 МБ сховища</string>
     <string name="plan_free_line2">150 листiв на добу</string>
-    <string name="plan_free_line22">%d листiв на добу</string>
     <string name="plan_free_line3">20 міток</string>
     <string name="plan_free_line4">Користувацькі домени: не підтримуються</string>
     <string name="plan_free_line5">1 адреса</string>
@@ -532,7 +453,6 @@ for the public good. You can help support online privacy by selecting a paid acc
     <string name="zip_code">Postal code</string>
     <string name="card_number">Номер картки</string>
     <string name="billing_information">Платіжна інформація</string>
-    <string name="billing_upgrade_thanks">Upgrade successful! Thank you for the support!</string>
     <string name="country">Країна</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">By clicking Submit, you agree
@@ -541,13 +461,10 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="currency">Валюта</string>
     <string name="plan_duration">Платіжний Цикл</string>
     <string name="duration_annual_line1">Щорічний план <font color="#C3E129"> Заощадити 20%</font></string>
-    <string name="duration_annual_line2">%s на місяць</string>
     <string name="per_month_text_only">на місяць</string>
-    <string name="per_year_text_only">на рік</string>
     <string name="duration_annual_line3">Нараховано як %s/рік</string>
     <string name="duration_annual_line4">Нараховано %s/місяць</string>
     <string name="duration_monthly_line1">Місячний план</string>
-    <string name="duration_monthly_line2">%s на місяць</string>
     <string name="duration_monthly_line3">Заощадити 20%</string>
     <string name="set_cont">Установити &amp; Продовжити</string>
     <string name="payment_error">Помилка сплати</string>
@@ -586,11 +503,8 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="payment_approval_consumed_error_description">Payment method already used for this payment. Please check status of your subscription.</string>
     <string name="no_payment_methods">У вас немає збережених методiв сплати.</string>
     <string name="edit_payment_methods">Будь ласка увійти в систему через protonmail.com для редагування платіжної інформації.</string>
-    <string name="no_permission_contacts">Немає дозволу передивлятись контакти</string>
     <string name="message_not_loaded">Лист не завантажено</string>
-    <string name="signature_on">Підпис ввімкнено</string>
     <string name="signature_text">Текст підпису</string>
-    <string name="please_use_webapp_pass_change">Please use our web app  &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; using a desktop or laptop computer in order to complete this action.</string>
     <string name="available_addresses">Доступні адреси</string>
     <string name="inactive_addresses">Вимкнені адреси</string>
     <string name="not_set">Не задано</string>
@@ -645,15 +559,10 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">Групи</string>
-    <string name="phone_contact">Контакт з телефону</string>
     <string name="contact_details_display_name">Name</string>
     <string name="contact_details">Контактні дані</string>
     <string name="email_type_home">Головна</string>
-    <string name="email_type_work">Робота</string>
-    <string name="option_type_custom">Новий тип</string>
     <string name="type_title">Виберіть тип</string>
-    <string name="no_permission_storage">Нема дозволу на доступ до сховища</string>
     <string name="message_drafted_error_server">Надсилання листа не вдалося. %s</string>
     <string name="sync_local_contacts">Upload to ProtonMail</string>
     <string name="please_select_only_phone_contacts">Будь ласка, оберіть лише контакти з телефона</string>
@@ -662,13 +571,10 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="contact_vcard_hint_address">Введіть адресу</string>
     <string name="contact_vcard_hint_other">Введіть дані</string>
     <string name="contact_vcard_hint_note">Введіть примітку</string>
-    <string name="contact_vcard_phone">Телефон</string>
-    <string name="contact_vcard_address">Адреса</string>
     <string name="contact_vcard_new_row_email">додати адреси е-пошти</string>
     <string name="contact_vcard_new_row_phone">додати номер телефону</string>
     <string name="contact_vcard_new_row_address">додати адресу</string>
     <string name="contact_vcard_new_row_other">додати інформацію</string>
-    <string name="contact_vcard_new_row_custom">додати власне поле</string>
     <string name="vcard_other_option_org">Організація</string>
     <string name="vcard_other_option_title">Заголовок</string>
     <string name="vcard_other_option_nickname">Псевдонім</string>
@@ -677,13 +583,9 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="vcard_other_option_gender">Gender</string>
     <string name="vcard_other_option_role">Role</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="sync_question">Синхронізувати контакти?</string>
-    <string name="sync_question_subtitle">Це синхронізує контакти на Вашому телефоні з контактами на ProtonMail-і. Відтак ви зможете бачити ці контакти на іншому вашому пристрої через ProtonMail.</string>
     <string name="convert_contact">Перетворити контакт</string>
     <string name="upload_contacts">Вивантажити контакти</string>
-    <string name="encrypted_data">Зашифровані дані</string>
     <string name="upgrade_encrypted_contact">Будь ласка, підвищіть свій план щоб користуватись зашифрованою інофромацією про контакти.</string>
-    <string name="empty_encrypted_data">Зашифровані дані контакта порожні.</string>
     <string name="uploading_contacts">Вивантаження контактів …</string>
     <string name="error_encrypted_data">Помилка під час отримання зашифрованої інформації про контакт.</string>
     <string-array name="vcard_option_phone">
@@ -729,19 +631,15 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="error_message_exp_date_past">Error: Expiration date is invalid</string>
     <string name="error_message_card_number_invalid">Помилка: Неприпустимий номер картки</string>
     <string name="print_error">Помилка друку</string>
-    <string name="download_error">Помилка звантаження</string>
     <string name="download_complete">Звантаження завершено</string>
     <string name="download_in_progress">Звантаження триває</string>
     <string name="expires_in">\tНе буде чинною у %s</string>
     <string name="unsaved_changes_title">Незбережені зміни</string>
     <string name="unsaved_changes_subtitle">Виявлено незбереженні записи у формі. Ви дійсно бажаєте скасувати їх?</string>
-    <string name="discard">Відхилити</string>
-    <string name="keep_editing">Продовжити редагування</string>
     <string name="request_timeout">Request timed out, please try again</string>
     <string name="add_folder">Додати теку</string>
     <string name="no_folders">Немає тек</string>
     <string name="folders_title_move">Перенести листи до</string>
-    <string name="move">Перемістити</string>
     <string name="folders_manager">Менеджер тек</string>
     <string name="folder_add_new">Додати нову теку</string>
     <string name="folder_name">Ім\'я теки</string>
@@ -760,7 +658,6 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="no_contacts">Немає контактів</string>
     <string name="sender_name_address">%1$s &lt; %2$s &gt; пише:</string>
     <string name="update_label">Оновити мітку</string>
-    <string name="folder_name_empty">Folder must have a name</string>
     <string name="max_labels_in_message">%1$s повідомлення не може мати більше %2$d міток.</string>
     <string name="delete">Стерти</string>
     <string name="subject_copied">Subject copied to clipboard</string>
@@ -774,7 +671,6 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="print_to_template">Кому: %s;  </string>
     <string name="print_cc_template">Копія: %s;  </string>
     <string name="print_bcc_template">Прихована копія: %s;  </string>
-    <string name="contacts_invalid_type">Неприпустимий тип</string>
     <string name="signature_error">Помилка підтвердження</string>
     <string name="signature_error_desc">Verification of this content\'s signature failed</string>
     <string name="decryption_error">Помилка розшифрування</string>
@@ -789,18 +685,13 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="close_app">Закрити застосунок</string>
     <string name="empty_subject">(No Subject)</string>
     <string name="contacts_unknown">Unknown</string>
-    <string name="expand_collapse">Exp/Col</string>
     <string name="learn_more">
         <u>Learn More</u>
     </string>
     <string name="info">Info</string>
     <string name="error_can_not_send_from_this_address">Upgrade to a paid plan to send from your %s address.</string>
-    <string name="digital_signature_verified">Digital signature verified</string>
-    <string name="encrypted_and_digital_signature_verified">Encrypted and digital signature verified</string>
     <string name="email_empty">Email address is missing</string>
-    <string name="edit_contact_details">Edit Contact Details</string>
     <string name="encrypted_contact_details">Encrypted Contact Details</string>
-    <string name="edit_contact_toolbar_title">Edit %s</string>
     <string name="convert_question">Upload local contacts</string>
     <string name="convert_question_subtitle">This will upload the local contacts on your device to your ProtonMail contacts directory. You will then be able to access these contacts on your other devices through ProtonMail.</string>
     <string name="refresh_contacts">Refresh</string>
@@ -821,10 +712,8 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="attachment_offline_max_storage">Sets the maximum amount storage space ProtonMail can use on your mobile device.</string>
     <string name="load_embedded_images_failed_no_network">Embedded images loading failed. Please check your network connection.</string>
     <string name="load_embedded_images_failed">Embedded images loading failed.</string>
-    <string name="attachment_storage_unlimited">%.2fMB of Unlimited</string>
     <string name="unlimited">Unlimited</string>
     <string name="local_storage_cleared">Local storage cleared</string>
-    <string name="local_storage_clear">Clear Local Storage</string>
     <string name="recipient_popup_compose_to">Compose to</string>
     <string name="recipient_popup_copy_address">Copy address</string>
     <string name="recipient_popup_see_details">See contact details</string>
@@ -841,7 +730,6 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="sender_lock_sent_autoresponder">Sent by ProtonMail with zero access encryption</string>
     <string name="sender_lock_verification_failed">Sender verification failed</string>
     <string name="sender_lock_pgp_encrypted">PGP-encrypted message</string>
-    <string name="sender_lock_pgp_verified">PGP-signed message from verified address</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-encrypted message from verified address</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-signed message from verified address</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
@@ -862,7 +750,6 @@ to abide by\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail\'s
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">LEARN MORE</a>
     </string>
-    <string name="no_items_found">No items found</string>
     <string name="channel_name_attachments">Attachments</string>
     <string name="channel_description_attachments">Informs about attachment download status</string>
     <string name="channel_name_emails">Emails</string>
@@ -880,13 +767,9 @@ message download on background</string>
 message to us, so we can analyze it and improve our filters. This means that we will be able
 to see the contents of the message in full.</string>
     <string name="phishing_report_send_message_moved_to_spam">Report sent. Message moved to spam.</string>
-    <string name="report_send">Report is sent</string>
     <string name="cannot_send_report_send">Cannot send report</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">Email Default</string>
-    <string name="email_private">Email Private</string>
-    <string name="phone_private">Phone Private</string>
     <string name="add_photo">Add Photo</string>
     <string name="contact_display_name">\ue91c Display Name</string>
     <string name="add_new_email">\ue914 Add Email Address</string>
@@ -895,7 +778,6 @@ to see the contents of the message in full.</string>
     <string name="edit_contact">Edit Contact</string>
     <string name="create_contact_group">Create Contact Group</string>
     <string name="edit_contact_group">Edit Contact Group</string>
-    <string name="contact_groups_add_addresses">Add Addresses</string>
     <string name="contact_groups_manage_addresses">Manage Addresses</string>
     <string name="contact_group_display_name">\ue91a Display Name</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -929,11 +811,8 @@ to see the contents of the message in full.</string>
     <string name="contact_group_saved">Group saved</string>
     <string name="no_recipients">No Recipients</string>
     <string name="contact_group_selected">%d Selected</string>
-    <string name="contact_group_deleted">Group Deleted</string>
     <string name="paid_plan_needed">Please upgrade to a paid plan for these premium features</string>
-    <string name="composer_group_count">%1$s (%2$d Members)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Members)</string>
-    <string name="address_successful_update">Address successfully updated</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Are you sure you want to delete this group?</item>
         <item quantity="few">Are you sure you want to delete the selected groups?</item>
@@ -973,17 +852,13 @@ won’t be able to send or receive emails unless you permanently delete some ema
 storage.</string>
     <string name="storage_limit_approaching_text">You have reached 90% of your storage capacity.
 Consider freeing up some space or purchasing more storage before you run out of capacity.</string>
-    <string name="storage_limit_do_not_remind">DO NOT REMIND ME</string>
     <!-- endregion -->
     <string name="need_permissions_title">Permissions</string>
     <string name="need_storage_permissions_text">In order to add attachments you need to allow
 access to storage.</string>
-    <string name="need_phone_permissions_text">In order to call this contact you need to allow
-access to Phone.</string>
     <string name="push_notifications_alert_title">Push notifications alert</string>
     <string name="push_notifications_alert_subtitle">Push notifications for ProtonMail do not work without updated Google Play services.</string>
     <string name="app_locked">App locked</string>
-    <string name="please_use_fingerprint">Please use your fingerprint to unlock the app.</string>
     <string name="use_pin_instead">Use PIN instead</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
@@ -992,7 +867,6 @@ access to Phone.</string>
     <string name="biometric_error_hw_not_available">Biometric hardware not available.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Undisclosed Recipients</string>
-    <string name="could_not_delete_attachment">Attachment cannot be removed while uploading</string>
     <string name="manage_accounts">Manage accounts</string>
     <!-- region Settings -->
     <string name="settings">Налаштування</string>
@@ -1001,7 +875,6 @@ access to Phone.</string>
     <string name="account">Account</string>
     <string name="subscription">Підписка</string>
     <string name="plan_and_user">Тариф</string>
-    <string name="plan">Тариф</string>
     <string name="payment_method">Спосіб сплати</string>
     <string name="password_manager">Password management</string>
     <string name="recovery_email">Recovery email</string>
@@ -1014,18 +887,13 @@ access to Phone.</string>
     <string name="display_name">Display name</string>
     <string name="edit_display_name">Редагувати показуване ім\'я</string>
     <string name="signature">Підпис</string>
-    <string name="edit_signature">Enable signature</string>
     <string name="mobile_signature">Mobile signature</string>
     <string name="edit_mobile_signature">Enable mobile signature</string>
     <string name="default_mobile_signature">Надіслано з ProtonMail mobile</string>
-    <string name="plus_account_required_mobile_signature">Потрібен ProtonMail Plus щоб редагувати мобільний підпис</string>
     <string name="mobile_signature_is_premium">Changing the Mobile Signature is allowed to Paid users only</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Snooze</string>
     <string name="notifications_snooze">Затримка сповіщень</string>
-    <string name="notifications_snooze_finishing">Сповіщення відновляться за $s хв</string>
-    <string name="snooze_notifications">Притримати сповіщення</string>
-    <string name="snooze_notifications_adjust">Налаштувати</string>
     <string name="notifications_snoozed">Сповіщення затримано</string>
     <string name="notifications_snooze_scheduled">Заплановано</string>
     <string name="notifications_snooze_scheduled_settings">Налаштування запланованих затримок</string>
@@ -1056,7 +924,6 @@ access to Phone.</string>
     <!-- endregion -->
     <string name="mailbox">Mailbox</string>
     <string name="privacy">Privacy</string>
-    <string name="auto_download_messages_title_short">Автоматичне звантаження</string>
     <string name="auto_download_messages_title">Авто-звантажити листи</string>
     <string name="auto_download_messages_subtitle">When this option is enabled, messaged bodies will be automatically downloaded each time you receive a new email notification (this will consume more data). If this option is not enabled, message bodies will only be downloaded when you open an email. (Note: with either option, if you clear the cache or log out, you will not be able to read message bodies while offline.)</string>
     <string name="settings_background_sync">Синхронізація у тлі</string>
@@ -1111,7 +978,6 @@ access to Phone.</string>
     <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
     <string name="change_pin_code">Change PIN code</string>
     <string name="auto_lock_timer">Auto-lock timer</string>
-    <string name="unlock_with_fingerprint">Unlock with fingerprint</string>
     <string name="connections_via_third_parties">Alternative routing</string>
     <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
@@ -1131,9 +997,6 @@ access to Phone.</string>
     <string name="app_version">App version</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="primary_account">Primary Account</string>
-    <string name="make_primary_account">Make %s your Primary Account?</string>
-    <string name="logout_account_question">Logout %s?</string>
     <string name="remove_account_question">Remove %s?</string>
     <string name="signed_in_with">Signed in with %s</string>
     <string name="signed_in_with_logged_out_from">Logged out from %1$s and signed in with %2$s</string>
