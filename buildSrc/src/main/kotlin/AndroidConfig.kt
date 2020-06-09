@@ -28,13 +28,13 @@ import studio.forface.easygradle.dsl.android.*
  */
 fun org.gradle.api.Project.android(
 
-        appIdSuffix: String? = null,
-        minSdk: Int = Project.minSdk,
-        targetSdk: Int = Project.targetSdk,
-        version: Version? = null,
-        versionCode: Int = Project.versionCode,
-        versionName: String = Project.versionName,
-        config: ExtraConfig = {}
+    appIdSuffix: String? = null,
+    minSdk: Int = ProtonMail.minSdk,
+    targetSdk: Int = ProtonMail.targetSdk,
+    version: Version? = null,
+    versionCode: Int = ProtonMail.versionCode,
+    versionName: String = ProtonMail.versionName,
+    config: ExtraConfig = {}
 
 ) = (this as ExtensionAware).extensions.configure<TestedExtension> {
 

@@ -32,6 +32,9 @@ proguard/
 # Room database schemas
 app/schemas/
 
+# Reports
+detekt/reports
+
 # contact the lead to get access to these files
 privateConfig
 sentry.properties

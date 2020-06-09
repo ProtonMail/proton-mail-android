@@ -1,4 +1,4 @@
-# Default excluded files are `` ['**/test/**', '**/androidTest/**', 'buildSrc/**'] ``
+# Default excluded files are `` ['**/test/**', '**/androidTest/**', '**/buildSrc/**'] ``
 build:
   maxIssues: 10897 #was 11660
   excludeCorrectable: false
@@ -34,7 +34,7 @@ console-reports:
 
 comments:
   active: true
-  excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+  excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
   # do not report private function with comments
   CommentOverPrivateFunction:
     active: false
@@ -48,11 +48,11 @@ comments:
   # report public class without comments, nested / inner members are excluded, but we suppose the
   # outer documentation to be exhaustive enough
   UndocumentedPublicClass:
-    active: true
-    searchInNestedClass: false
-    searchInInnerClass: false
-    searchInInnerObject: false
-    searchInInnerInterface: false
+    active: false
+    searchInNestedClass: true
+    searchInInnerClass: true
+    searchInInnerObject: true
+    searchInInnerInterface: true
   # do not report public x, but we expect the name to exhaustive, otherwise documentation is needed
   UndocumentedPublicFunction:
     active: false
@@ -93,16 +93,16 @@ complexity:
     # ignoredLabels: ""
   LargeClass:
     active: true
-    threshold: 900
+    threshold: 500
   LongMethod:
     active: true
     threshold: 60
   LongParameterList:
     active: true
     functionThreshold: 6
-    constructorThreshold: 25
+    constructorThreshold: 16
     ignoreDefaultParameters: true
-    ignoreDataClasses: false
+    ignoreDataClasses: true
     # no annotated elements are ignored
     ignoreAnnotated: []
   MethodOverloading:
@@ -113,7 +113,7 @@ complexity:
     threshold: 4
   StringLiteralDuplication:
     active: false
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
     threshold: 2
     # do not ignore strings in annotations
     ignoreAnnotation: false
@@ -121,16 +121,16 @@ complexity:
     ignoreStringsRegex: '$^'
   TooManyFunctions:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
     thresholdInFiles: 31
-    thresholdInClasses: 21
+    thresholdInClasses: 26
     thresholdInInterfaces: 21
-    thresholdInObjects: 31
+    thresholdInObjects: 21
     # no limit for enums
-    thresholdInEnums: 999
+    thresholdInEnums: 3
     ignoreDeprecated: true
-    ignorePrivate: true
-    ignoreOverridden: true
+    ignorePrivate: false
+    ignoreOverridden: false
 
 coroutines:
   active: true
@@ -181,8 +181,8 @@ exceptions:
     methodNames: [toString, hashCode, equals, finalize]
   # reports catch blocks which check for the type of an exception via is checks or casts
   InstanceOfCheckForException:
-    active: true
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+    active: false
+    # excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
   # reports all exceptions of the type NotImplementedError and `TO\\DO(..)`
   NotImplementedDeclaration:
     active: true
@@ -194,13 +194,13 @@ exceptions:
     active: false
     # ignoreLabeled: false
   SwallowedException:
-    active: true
-    ignoredExceptionTypes:
-      - InterruptedException
-      - NumberFormatException
-      - ParseException
-      - MalformedURLException
-    allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
+    active: false
+    # ignoredExceptionTypes:
+    #  - InterruptedException
+    #  - NumberFormatException
+    #  - ParseException
+    #  - MalformedURLException
+    #  allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
   ThrowingExceptionFromFinally:
     active: false
   ThrowingExceptionInMain:
@@ -214,21 +214,20 @@ exceptions:
   ThrowingNewInstanceOfSameException:
     active: false
   TooGenericExceptionCaught:
-    active: false
-    # excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
-    # exceptionNames:
-    #  - ArrayIndexOutOfBoundsException
-    #  - Error
-    #  - Exception
-    #  - IllegalMonitorStateException
-    #  - NullPointerException
-    #  - IndexOutOfBoundsException
-    #  - RuntimeException
-    #  - Throwable
-    # allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
+    exceptionNames:
+      - ArrayIndexOutOfBoundsException
+      - Error
+      - Exception
+      - IllegalMonitorStateException
+      - NullPointerException
+      - IndexOutOfBoundsException
+      - RuntimeException
+      - Throwable
+    allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
   TooGenericExceptionThrown:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
     exceptionNames:
      - Error
      - Exception
@@ -243,8 +242,8 @@ formatting:
     active: false
     # autoCorrect: true
   ChainWrapping:
-    active: false
-    # autoCorrect: true
+    active: true
+    autoCorrect: true
   CommentSpacing:
     active: true
     autoCorrect: true
@@ -294,14 +293,15 @@ formatting:
     active: false
     # autoCorrect: true
   NoMultipleSpaces:
-    active: false
-    # autoCorrect: true
+    active: true
+    autoCorrect: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
   NoSemicolons:
     active: true
     autoCorrect: true
   NoTrailingSpaces:
-    active: false
-    # autoCorrect: true
+    active: true
+    autoCorrect: true
   NoUnitReturn:
     active: true
     autoCorrect: true
@@ -351,11 +351,11 @@ naming:
   active: true
   ClassNaming:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
     classPattern: '[A-Z$][a-zA-Z0-9$]*'
   ConstructorParameterNaming:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
     parameterPattern: '[a-z][A-Za-z0-9]*'
     privateParameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
@@ -368,14 +368,14 @@ naming:
     forbiddenName: ''
   FunctionMaxLength:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
     maximumFunctionNameLength: 40
   FunctionMinLength:
     active: false
     # minimumFunctionNameLength: 3
   FunctionNaming:
     active: true
-    functionPattern: '^([a-zA-Z$][a-zA-Z$0-9]*)|(`.*`)$'
+    functionPattern: '^([a-z$][a-zA-Z$0-9]*)|(`.*`)$'
     excludeClassPattern: '$^'
     ignoreOverridden: true
   FunctionParameterNaming:
@@ -400,10 +400,11 @@ naming:
     active: true
     packagePattern: '^[a-z]+(\.[a-z][A-Za-z0-9]*)*$'
   TopLevelPropertyNaming:
-    active: false
-    # constantPattern: '[A-Z][_A-Z0-9]*'
-    # propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
-    # privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
+    constantPattern: '[A-Z][_A-Z0-9]*'
+    propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
+    privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
   VariableMaxLength:
     active: true
     maximumVariableNameLength: 40
@@ -439,9 +440,9 @@ potential-bugs:
   EqualsWithHashCodeExist:
     active: true
   ExplicitGarbageCollectionCall:
-    active: false
+    active: true
   HasPlatformType:
-    active: false
+    active: true
   ImplicitDefaultLocale:
     active: true
   InvalidRange:
@@ -459,19 +460,19 @@ potential-bugs:
   MissingWhenCase:
     active: true
   RedundantElseInWhen:
-    active: false
+    active: true
   UnconditionalJumpStatementInLoop:
     active: false
   UnreachableCode:
     active: true
   UnsafeCallOnNullableType:
-    active: false
+    active: true
   UnsafeCast:
     active: false
   UselessPostfixExpression:
     active: false
   WrongEqualsTypeParameter:
-    active: false
+    active: true
 
 style:
   active: true
@@ -483,7 +484,7 @@ style:
   DataClassShouldBeImmutable:
     active: true
   EqualsNullCall:
-    active: false
+    active: true
   EqualsOnSignatureLine:
     active: true
   ExplicitCollectionElementAccessMethod:
@@ -491,8 +492,8 @@ style:
   ExplicitItLambdaParameter:
     active: false
   ExpressionBodySyntax:
-    active: false
-    # includeLineWrapping: false
+    active: true
+    includeLineWrapping: false
   ForbiddenComment:
     active: true
     values: ['TODO', 'FIXME', 'STOPSHIP']
@@ -512,18 +513,18 @@ style:
     ignoreOverridden: false
     ignoreUsageInGenerics: false
   FunctionOnlyReturningConstant:
-    active: false
-    # ignoreOverridableFunction: true
-    # excludedFunctions: 'describeContents'
-    # excludeAnnotatedFunction: "dagger.Provides"
+    active: true
+    ignoreOverridableFunction: true
+    excludedFunctions: 'describeContents'
+    excludeAnnotatedFunction: "dagger.Provides"
   LibraryCodeMustSpecifyReturnType:
     active: false
   LoopWithTooManyJumpStatements:
-    active: false
-    # maxJumpCount: 1
+    active: true
+    maxJumpCount: 2
   MagicNumber:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', 'buildSrc/**']
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
     ignoreNumbers: ['-1', '0', '1', '2']
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: true
@@ -538,6 +539,7 @@ style:
     active: false
   MaxLineLength:
     active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/buildSrc/**']
     maxLineLength: 120
     excludePackageStatements: true
     excludeImportStatements: true
@@ -561,7 +563,7 @@ style:
   PreferToOverPairSyntax:
     active: false
   ProtectedMemberInFinalClass:
-    active: false
+    active: true
   RedundantExplicitType:
     active: false
   RedundantVisibilityModifierRule:
@@ -618,9 +620,9 @@ style:
     # excludeAnnotatedClasses: []
     # allowVars: false
   UseIfInsteadOfWhen:
-    active: false
+    active: true
   UseRequire:
-    active: false
+    active: true
   UselessCallOnNotNull:
     active: true
   UtilityClassWithPublicConstructor:
@@ -629,4 +631,14 @@ style:
     active: true
   WildcardImport:
     active: true
-    excludeImports: ['java.util.*', 'kotlin.test.*', 'kotlinx.android.synthetic.*', 'studio.forface.easygradle.dsl.*', 'studio.forface.easygradle.dsl.android.*']
+    # NOTE!
+    # Only excluded imports are:
+    # * Synthetic imports:
+    #   Importing single reference could cause to import reference for wrong layout
+    # * Gradle related imports:
+    #   Usually Gradle files don't have imports because injected by plugin, so it's stylistically
+    #   better to have as less imports as possible.
+    #   Kotlin plugin is not smart enough for Gradle DSL yet, so for avoid import to be removed
+    #   for error, it's better to limit them as much as possible
+    # ANY OTHER EXCLUSION IS FORBIDDEN!!!!
+    excludeImports: ['kotlinx.android.synthetic.*', 'studio.forface.easygradle.dsl.*', 'studio.forface.easygradle.dsl.android.*', 'me.proton.core.util.gradle.*']
