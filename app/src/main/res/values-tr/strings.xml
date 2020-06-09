@@ -28,16 +28,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">Oturum Aç</string>
     <string name="sign_out">Oturumu Kapat</string>
     <string name="sign_out_question">Oturumu kapatmak istediğinizden emin misiniz?</string>
-    <string name="remember_me_on_device">Beni bu cihazda hatırla</string>
-    <string name="show_password">Şifreyi göster</string>
-    <string name="username">Kullanıcı adı</string>
-    <string name="password">Şifre</string>
-    <string name="login_password">Giriş Şifresi</string>
     <string name="mailbox_password">Posta Kutusu Şifresi</string>
     <string name="two_factor_code">İki Adımlı Doğrulama Kodu</string>
     <string name="processing_request">İsteğiniz işleniyor</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">Bir hesaba mı ihtiyacınız var? Kaydolun.</string>
     <string name="need_to_be_logged_in">Oturum açmadınız!</string>
     <string name="forgot_password">Şifrenizi mi unuttunuz?</string>
     <string name="reset_mailbox_password">POSTA KUTUSU ŞİFRESİNİ SIFIRLA</string>
@@ -60,9 +54,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app">ProtonMail uygulamanız güncellenene kadar kullanılamaz.</string>
     <string name="api_offline_title">ProtonMail API\'si çevrimdışı</string>
     <string name="api_offline">ProtonMail şu anda çevrimdışı. Lütfen mevcut durum için https://protonstatus.com veya https://twitter.com/protonmail adresini kontrol edin.</string>
-    <string name="cannot_open">Dosya açılamıyor</string>
-    <string name="downloaded_attachment">%s indirildi</string>
-    <string name="edit_contact_validation">Lütfen geçerli bir isim ve e-posta adresi girin</string>
     <string name="contact_saved">Kişi kaydedildi</string>
     <string name="contact_saved_offline">Kişi kaydedildi. Bir bağlantı sağlandığında eşitlenecek.</string>
     <string name="contact_exist">Kişi e-postası zaten mevcut</string>
@@ -70,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">E-posta adresi bir kopyadır</string>
     <string name="invalid_code">Geçersiz kod</string>
     <string name="message_drafted">İleti gönderilemedi. İletileriniz Taslaklar klasörüne kaydedilir.</string>
-    <string name="message_drafted_reason">%s mevcut değil.\nE-posta gönderilemiyor.</string>
     <string name="open_drawer">Aç</string>
     <string name="close_drawer">Kapat</string>
     <string name="inbox_option">GELEN KUTUSU</string>
@@ -80,10 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">ARŞİV</string>
     <string name="trash_option">ÇÖP KUTUSU</string>
     <string name="spam_option">GEREKSİZ</string>
-    <string name="contacts_option">KİŞİLER</string>
-    <string name="settings_option">AYARLAR</string>
-    <string name="report_bugs_option">HATALARI BİLDİR</string>
-    <string name="signout_option">OTURUMU KAPAT</string>
     <string name="inbox">Gelen Kutusu</string>
     <string name="starred">Yıldızlı</string>
     <string name="drafts">Taslaklar</string>
@@ -92,7 +78,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Çöp Kutusu</string>
     <string name="spam">Gereksiz</string>
     <string name="contacts">Kişiler</string>
-    <string name="contact_groups">Kişi Grupları</string>
     <string name="search_contacts">Kişilerde ara</string>
     <string name="fetching_contacts">ProtonMail kişileri alınıyor...</string>
     <string name="fetching_contacts_success">Kişiler başarıyla yenilendi</string>
@@ -116,7 +101,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Çöp kutusuna taşı</string>
     <string name="move_to_spam">Gereksiz kutusuna taşı</string>
     <string name="move_to_inbox">Gelen kutusuna taşı</string>
-    <string name="move_message_to_trash">İleti, çöp kutusuna taşınsın mı?</string>
     <string name="are_you_sure_empty">Bu klasördeki tüm iletileri silmek istediğinizden emin misiniz?</string>
     <string name="send">Gönder</string>
     <string name="selected">Seçildi</string>
@@ -130,10 +114,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">Bcc:</string>
     <string name="from_prefix">Kimden:</string>
     <string name="date_prefix">Tarih:</string>
-    <string name="expiration_time_prefix">Bitiş süresi</string>
     <string name="view_details">AYRINTILAR</string>
     <string name="hide_details">AYRINTILARI GİZLE</string>
-    <string name="download">İNDİR</string>
     <string name="reply">Yanıtla</string>
     <string name="reply_all">Tümünü Yanıtla</string>
     <string name="forward">Yönlendir</string>
@@ -143,7 +125,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">Şifreyi Doğrula</string>
     <string name="define_password_hint">İpucu tanımla (İsteğe bağlı)</string>
     <string name="message_passwords_do_not_match">Giriş şifreleri uyuşmuyor</string>
-    <string name="message_mailbox_passwords_do_not_match">Posta kutusu şifreleri eşleşmiyor</string>
     <string name="eo_passwords_do_not_match">Şifreler eşleşmiyor</string>
     <string name="define_expiration_period">Sona erme süresini tanımlayın</string>
     <string name="set_message_expiration">İleti sona ermesini ayarla</string>
@@ -181,16 +162,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">Seçili dosyayı eklerken bir sorun oluştu</string>
     <string name="add_contact">Kişi Ekle</string>
     <string name="delete_contact">%s, kişilerden kaldırılsın mı?</string>
-    <string name="sync_contact">%s web uygulaması ile eşitlensin mi?</string>
     <string name="confirm">Onayla</string>
     <string name="confirm_destructive_action">Emin misiniz? Bu geri alınamaz.</string>
     <string name="create">Oluştur</string>
-    <string name="name">İsim</string>
     <string name="email">E-posta</string>
     <string name="email_address">E-posta adresi</string>
     <string name="phone">Telefon numarası</string>
     <string name="save">Kaydet</string>
-    <string name="add">Ekle</string>
     <string name="syncing_messages">Eşitleniyor...</string>
     <string name="sync">Kişileri Eşitle</string>
     <string name="save_message_as_draft">İleti, taslak olarak kaydedilsin mi?</string>
@@ -215,28 +193,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_limit">Ekler %1$s ile sınırlıdır. Toplam ek boyutu en fazla %2$s olabilir.</string>
     <string name="sending_message">İleti gönderiliyor...</string>
     <string name="sending_message_offline">Çevrimdışı, daha sonra göndermek için sıraya alındı...</string>
-    <string name="mailbox_password_changed">Posta kutusu şifresi değiştirildi</string>
-    <string name="go_to_mailbox_login">Go to mailbox login to enter updated mailbox password?</string>
     <string name="go_to_inbox">Gelen kutuma git</string>
     <string name="message_sent">İleti gönderildi</string>
     <string name="message_failed">İleti gönderme başarısız</string>
     <string name="message_sending_failures">%d message sending failures</string>
     <string name="storage_limit">Depolama sınırı</string>
-    <string name="storage_limit_warning">Depolama sınırına yaklaşıyor</string>
-    <string name="do_not_show_again">Bir daha gösterme</string>
     <string name="edit_settings">Ayarları Düzenle</string>
     <string name="save_settings">Ayarları Kaydet</string>
     <string name="share">Paylaş</string>
-    <string name="settings_saved">Yeni ayarlar kaydedildi</string>
     <string name="settings_not_saved_password"> Ayarlar kaydedilmedi - yanlış giriş şifresi</string>
     <string name="settings_not_saved_email"> Ayarlar kaydedilmedi, geçersiz bildirim e-postası</string>
-    <string name="save_settings_question">Ayarlar kaydedilsin mi?</string>
     <string name="enter">Giriş</string>
     <string name="cancel">İptal</string>
     <string name="close">Kapat</string>
-    <string name="passwords">Şifre Yöneticisi</string>
     <string name="change_password">Şifreyi Değiştir</string>
-    <string name="change_login_password">Oturum Açma Şifresini Değiştir</string>
     <string name="change_mailbox_password">Posta Kutusu Şifresini Değiştir</string>
     <string name="eo_password_title">Şifre Ayarla</string>
     <string name="eo_password_subtitle">ProtonMail\'i olmayan kullanıcılar için bu iletiyi şifrelemek için bir şifre belirleyin</string>
@@ -244,24 +214,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_login_password">Geçerli Oturum Açma Şifresi</string>
     <string name="new_login_password">Yeni Şifre</string>
     <string name="confirm_new_login_password">Yeni Şifreyi Onayla</string>
-    <string name="old_mailbox_password">Mevcut Posta Kutusu Şifresi</string>
     <string name="new_mailbox_password">Yeni Posta Kutusu Şifresi</string>
     <string name="confirm_new_mailbox_password">Yeni Posta Kutusu Şifresini Onayla</string>
     <string name="no_attachments">0 ek</string>
-    <string name="num_attachments">%d ek</string>
     <string name="new_passwords_not_valid">Geçersiz giriş</string>
     <string name="new_passwords_do_not_match">Yeni şifreler uyuşmuyor</string>
     <string name="new_login_password_saved">Yeni oturum açma şifresi kaydedildi</string>
     <string name="new_mailbox_password_saved">Yeni posta kutusu şifresi kaydedildi</string>
-    <string name="could_not_change_password">Şifre değiştirilemedi</string>
-    <string name="auto_logout_option_settings">Otomatik Çıkış Seçenekleri</string>
     <string name="pin_lock_option_settings">Uygulama Kilit Seçenekleri</string>
     <string name="pin_lock_after">Sonrasında uygulamayı kilitle</string>
     <string name="lock_the_app">Uygulamayı kilitle</string>
-    <string name="no_sound_or_vibrate">Titreşim veya ses yok</string>
-    <string name="sound">Titreşim olmadan ses</string>
-    <string name="vibration">Ses olmadan titreşim</string>
-    <string name="both_sound_and_vibration">Titreşim ve ses</string>
     <string name="display_name_banned_chars">Geçersiz görüntü adı. \'&gt;\' ve \'&lt;\' geçersiz</string>
     <string name="cont">Devam et</string>
     <string name="email_verification_code">Yukarıdaki e-posta adresine bir doğrulama kodu göndereceğiz.</string>
@@ -275,17 +237,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Hesabınızı ayarlayın</string>
     <string name="create_account">Hesap Oluştur</string>
     <string name="create_passwords">Şifre Ayarla</string>
-    <string name="sign_up">Kaydol</string>
     <string name="caps_username">Kullanıcı adı</string>
     <string name="caps_login_password">Şifre</string>
-    <string name="caps_two_factor">İki Adımlı Doğrulama Kodu</string>
     <string name="caps_confirm_password">Şifreyi Doğrula</string>
-    <string name="caps_confirm_mailbox_password">Posta Kutusu Şifresini Onayla</string>
-    <string name="caps_optional_notification_email">ŞİFRE KURTARMA E-POSTASI (İSTEĞE BAĞLI)</string>
     <string name="caps_optional">*İSTEĞE BAĞLI</string>
     <string name="update_me_for_new_features">Yeni özellikler hakkında beni haberdar et</string>
     <string name="create_mailbox_password">Şifre Oluştur</string>
-    <string name="confirm_mailbox_password">Posta Kutusu Şifresini Onayla</string>
     <string name="password_note"><b>Not:</b> Bu, iletileriniz şifrelemek ve şifresini çözmek için kullanılır.
 Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postalarınızı okuyamazsınız.</string>
     <string name="username_note"><b>Not:</b> Kullanıcı adı aynı zamanda ProtonMail adresinizdir</string>
@@ -304,11 +261,9 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="current_standard">Mevcut standart</string>
     <string name="extreme_security">Aşırı Güvenlik (4096 bit)</string>
     <string name="highest_security">Mevcut olan en yüksek şifreleme düzeyi.<b> Kurulumu birkaç dakika sürebilir.</b></string>
-    <string name="generate_keypair">Anahtar çifti oluştur</string>
     <string name="labels_title_apply">Etiketleri Uygula</string>
     <string name="labels_title_add">Etiket Ekle</string>
     <string name="labels_title">Etiketler</string>
-    <string name="labels_create">Etiket Ekle</string>
     <string name="label_name">Etiket Adı</string>
     <string name="label_name_empty">Etiket adı gereklidir</string>
     <string name="label_name_duplicate">Bu etiket adı zaten var</string>
@@ -316,9 +271,6 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="label_invalid">Etiket geçersiz ad nedeniyle oluşturulamadı.</string>
     <string name="undo">Geri Al</string>
     <string name="customize_swipe_actions">Kaydırma eylemlerini özelleştir</string>
-    <string name="message_details_swipe_info">Soldan sağa doğru hızlıca kaydırarak posta kutusu ekranına dönebilir
-ve geçerli mesajı sağdan sola doğru kaydırarak ÇÖP\'e taşıyabilirsiniz</string>
-    <string name="composing_message_scroll_info">Oluşturma panelinin en sağ kenarını kaydırarak paneli yukarı veya aşağı doğru kaydırabilirsiniz</string>
     <string name="message_can_not_edit">Yanıtlama/iletme yapılamıyor. Bu ileti henüz gönderilmedi.</string>
     <string name="label_apply">Uygula</string>
     <string name="label_delete">Sil</string>
@@ -333,16 +285,12 @@ ve geçerli mesajı sağdan sola doğru kaydırarak ÇÖP\'e taşıyabilirsiniz<
     <string name="respond_inline">Satır içinde yanıtla</string>
     <string name="no_connectivity_detected">Bağlantı bulunamadı...</string>
     <string name="no_connectivity_detected_troubleshoot">Bağlantı algılanmadı… (<u>Sorun gider</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">Bağlantı tespit edilemedi...
-\nMesaj indirilmedi</string>
-    <string name="connectivity_arrived">Bağlandı</string>
     <string name="connectivity_checking">Bağlantı kontrol ediliyor...</string>
     <string name="sync_short">eşitleme</string>
     <string name="draft_attachments_uploading">Taslak hala yükleniyor...</string>
     <string name="draft_label_attachments_uploading">ekler yükleniyor…</string>
     <string name="draft_label_message_uploading">ileti gönderiliyor…</string>
     <string name="attachment_failed">İleti için ek yüklemesi başarısız oldu </string>
-    <string name="attachment_failed_new">İleti için ek yüklemesi başarısız oldu %1$s%2$s</string>
     <string name="attaching_photo_failed">Fotoğraf ekleme başarısız</string>
     <string name="empty_message">İletiyi boşalt</string>
     <string name="dismiss">Yoksay</string>
@@ -351,8 +299,6 @@ ve geçerli mesajı sağdan sola doğru kaydırarak ÇÖP\'e taşıyabilirsiniz<
     <string name="display_images">Uzak içeriği göster</string>
     <string name="retry">Yeniden dene</string>
     <string name="saving_failed_no_conn">Kaydetme başarısız, bağlantı yok</string>
-    <string name="can_not_create_account_while_beta">Beta sürümünde hesap oluşturma devre dışı bırakıldı</string>
-    <string name="changing_mailbox_password_disabled_while_beta">Beta sürümünden posta kutusu şifresini değiştirme devredışı bırakıldı</string>
     <string name="username_is_available">%s kullanılabilir!</string>
     <string name="username_is_not_available">%s kullanılamaz!</string>
     <string name="username_is_too_long">Maximum length for a username is %d characters!</string>
@@ -375,20 +321,16 @@ ve geçerli mesajı sağdan sola doğru kaydırarak ÇÖP\'e taşıyabilirsiniz<
     <string name="engagement_subtitle_encryption">Gelen kutunuz artık uçtan uca şifreleme ile korunmaktadır. Kişilerinize otomatik olarak güvenli e-postalar göndermek için onları ProtonMail kullanmaya davet edin! ProtonMail kullanmıyorlarsa e-postalarınızı manuel olarak da şifreleyebilirsiniz.</string>
     <string name="engagement_subtitle_expire">Gönderdiğiniz iletiler belirli bir süre sonra otomatik olarak silinebilir.</string>
     <string name="engagement_subtitle_help">protonmail.com/support adresinden yardım ve destek alabilirsiniz. Hatalar, uygulama içinden de bildirilebilir.</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail, reklam satmaz veya gizliliğinizi kötüye kullanmaz. ProtonMail\'i çalışır durumda tutmak için desteğiniz çok önemlidir. Ücretli bir hesaba geçebilir veya ProtonMail\'i desteklemek için bağışta bulunabilirsiniz.</string>
     <string name="attachment_exists">Ek zaten eklendi</string>
     <string name="sending_email_success">Doğrulama kodu gönderildi</string>
     <string name="sending_email_failed">Doğrulama kodu gönderme başarısız oldu</string>
-    <string name="password_required">Bu değişikliği yapmak için oturum açma şifrenizi girin</string>
     <string name="password_not_valid">Girilen şifre geçerli değil</string>
     <string name="send_code_wait">Lütfen tekrar tıklama için %d saniye bekleyin</string>
     <string name="eo_password_not_completed">İleti şifresi tamamlanmadı.</string>
-    <string name="delinquency_title">Ödeme yapılmadığı için bu hesaba erişim devre dışı</string>
     <string name="delinquency_subtitle">Ödeme yapılmadığı için bu hesaba erişim engellendi. Ödenmemiş faturalarınızı ödemek için lütfen protonmail.com üzerinden oturum açın.</string>
     <string name="direct_disabled_subtitle">Mobil kayıtlar geçici olarak devre dışı bırakıldı. Lütfen daha sonra tekrar deneyin veya bir masaüstü veya dizüstü bilgisayar kullanarak <a href="https://protonmail.com">protonmail.com</a> üzerinden kaydolmayı deneyin.</string>
     <string name="downloading">İndiriliyor...</string>
     <string name="cant_download_attachment">Ek indirilemiyor</string>
-    <string name="auto_logout">Otomatik Çıkış</string>
     <string-array name="auto_logout_options_array">
         <item>Hemen</item>
         <item>5 dk hareketsizlik</item>
@@ -396,42 +338,30 @@ ve geçerli mesajı sağdan sola doğru kaydırarak ÇÖP\'e taşıyabilirsiniz<
         <item>1 saat hareketsizlik</item>
         <item>24 saat hareketsizlik</item>
     </string-array>
-    <string-array name="pin_options_array">
-        <item>PIN\'i değiştir</item>
-        <item>Change PIN timeout period</item>
-    </string-array>
     <string name="delete_label_confirmation_title">Seçili etiketler silinsin mi?</string>
     <string name="delete_folder_confirmation_title">Seçili klasörler silinsin mi?</string>
     <string name="delete_label_confirmation_message">Burada bulunan e-postalar <b>Tüm Postalar</b>\'da bulunur</string>
     <string name="enter_pin">Gelen kutunuzu açmak için PIN kodunuzu girin</string>
     <string name="enter_pin_message_details">İletinizi açmak için PIN kodunuzu girin</string>
     <string name="enter_current_pin">Geçerli PIN kodunuzu girin</string>
-    <string name="hint_pin">PIN kodu</string>
     <string name="pin_subtitle_create">PIN\'inizi burada oluşturun</string>
     <string name="pin_subtitle_create_new">YENİ PIN\'inizi burada oluşturun</string>
     <string name="pin_subtitle_confirm">PIN\'inizi burada onaylayın</string>
     <string name="pin_subtitle_confirm_new">YENİ PIN\'inizi burada onaylayın</string>
-    <string name="forgot_pin">PIN\'inizi mi unuttunuz?</string>
     <string name="pin_invalid">PIN geçersiz, 4 haneli doğru PIN\'i girin</string>
     <string name="pin_confirmation_not_match">Onay PIN\'i eşleşmiyor</string>
     <string name="pin_not_match">PIN\'ler eşleşmiyor</string>
     <string name="new_pin_saved">Yeni PIN kaydedildi</string>
-    <string name="pin_settings">PIN Ayarları</string>
-    <string name="next">ileri</string>
-    <string name="back">geri</string>
     <string name="new_emails">%d yeni e-posta</string>
     <string name="attachment_download_success">%s, dosya yöneticisine başarıyla indirildi</string>
     <string name="attachment_download_failed">%s doğru şekilde indirilemedi</string>
-    <string name="sender_changed">Gönderici adresini değiştirmek için lütfen ekleri kaldırın.</string>
     <string name="ringtone">Zil sesi</string>
     <string name="ringtone_selected">Zil sesi:</string>
-    <string name="notification_option">%1$s\nZil sesi: %2$s</string>
     <string name="ringtone_invalid">Zil sesi seçimi geçersiz değere karşılık geliyor</string>
     <string name="ringtone_no_default">Varsayılan zil sesini yüklemek mümkün değil</string>
     <string name="select_tone">Bildirim sesini seçin</string>
     <string name="copy_link">Bağlantıyı Kopyala</string>
     <string name="share_link">Bağlantıyı Paylaş</string>
-    <string name="attachment_delete_failed">%s ekini silme başarısız</string>
     <string name="sync_attachments">Ekler eşitleniyor</string>
     <string name="processing_attachment">Ek işleniyor</string>
     <string name="hyperlink_confirmation_dialog_text_html">Web tarayıcısını başlatmak ve yönlendirmek üzeresiniz: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Devam etmek istiyor musunuz?</string>
@@ -457,7 +387,6 @@ ve geçerli mesajı sağdan sola doğru kaydırarak ÇÖP\'e taşıyabilirsiniz<
     <string name="upselling_donate_title">Bağış Yap</string>
     <string name="upselling_upgrade_title">ProtonMail Plus\'a Yükselt</string>
     <string name="upselling_donate_subtitle">Bağışınız, kapasite eklememize ve ücretsiz ve açık kaynaklı yazılım olarak ProtonMail\'i geliştirmeye devam etmemize yardımcı olacak. ProtonMail\'i dünyadaki insanlara sunmaya devam edebilmemiz yalnızca topluluğun desteği ile gerçekleşir.</string>
-    <string name="upselling_upgrade_subtitle">Abonelik yükseltmeniz, kapasite eklememize ve ProtonMail\'i ücretsiz ve açık kaynaklı olarak geliştirmemize yardımcı olacaktır. ProtonMail\'i dünyanın dört bir yanındaki insanlara sunmaya ancak topluluğun desteğiyle devam edebiliyoruz.</string>
     <string name="upgrade_donate">Yükseltme/Bağış</string>
     <string name="upselling_donate_pick_amount">Bağış tutarını seçin veya herhangi bir tutar girin</string>
     <string name="amount_5">5€</string>
@@ -472,8 +401,6 @@ ve geçerli mesajı sağdan sola doğru kaydırarak ÇÖP\'e taşıyabilirsiniz<
     <string name="upgrade_line3">Kendi etki alanınızı kullanın</string>
     <string name="upgrade_line4">5 adede kadar takma ad</string>
     <string name="upgrade_line5">Öncelikli müşteri desteği</string>
-    <string name="upgrade_plus_price">4€</string>
-    <string name="per_month">/ay</string>
     <string name="upgrade">Yükselt</string>
     <string name="payment_options">Ödeme Seçeneği</string>
     <string name="other_plans">Daha fazla depolama alanına sahip planlar için
@@ -495,7 +422,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="plan_plus_line7">Öncelikli Müşteri Desteği</string>
     <string name="plan_free_line1">500 MB depolama alanı</string>
     <string name="plan_free_line2">Günde 150 ileti</string>
-    <string name="plan_free_line22">Günde %d ileti</string>
     <string name="plan_free_line3">20 Etiket</string>
     <string name="plan_free_line4">Özel etki alanları: desteklenmiyor</string>
     <string name="plan_free_line5">1 e-posta adresi</string>
@@ -509,7 +435,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="zip_code">Posta kodu</string>
     <string name="card_number">Kart numarası</string>
     <string name="billing_information">Fatura Bilgisi</string>
-    <string name="billing_upgrade_thanks">Yükseltme başarılı! Desteğiniz için teşekkürler!</string>
     <string name="country">Ülke</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">Gönder\'e tıklayarak <a href="https://protonmail.com/terms-and-conditions">ProtonMail\'in şartlarına ve koşullarına</a> uymayı kabul edersiniz.</string>
@@ -517,13 +442,10 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="currency">Para birimi</string>
     <string name="plan_duration">Ücretlendirme döngüsü</string>
     <string name="duration_annual_line1">Yıllık plan <font color="#C3E129">%20 indirimli</font></string>
-    <string name="duration_annual_line2">aylık %s</string>
     <string name="per_month_text_only">her ay</string>
-    <string name="per_year_text_only">her yıl</string>
     <string name="duration_annual_line3">%s /Yıl olarak faturalandırılır</string>
     <string name="duration_annual_line4">%s /Ay olarak faturalandırılır</string>
     <string name="duration_monthly_line1">Aylık plan</string>
-    <string name="duration_monthly_line2">Ayda %s</string>
     <string name="duration_monthly_line3">%20 indirim</string>
     <string name="set_cont">Ayarla ve devam et</string>
     <string name="payment_error">Ödeme hatası</string>
@@ -562,11 +484,8 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="payment_approval_consumed_error_description">Bu ödeme için zaten kullanılan ödeme yöntemi. Lütfen aboneliğinizin durumunu kontrol edin.</string>
     <string name="no_payment_methods">Kayıtlı ödeme yönteminiz yok.</string>
     <string name="edit_payment_methods">Lütfen fatura bilgilerini düzenlemek için protonmail.com aracılığıyla giriş yapın.</string>
-    <string name="no_permission_contacts">Kişileri okuma izni yok</string>
     <string name="message_not_loaded">İleti yüklenmedi</string>
-    <string name="signature_on">İmza Açık</string>
     <string name="signature_text">İmza Metni</string>
-    <string name="please_use_webapp_pass_change">Bu işlemi tamamlamak için masaüstü veya dizüstü bilgisayar kullanarak &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; adresini ziyaret edin.</string>
     <string name="available_addresses">Kullanılabilir Adresler</string>
     <string name="inactive_addresses">Etkin Olmayan Adresler</string>
     <string name="not_set">Ayarlanmadı</string>
@@ -619,15 +538,10 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">Gruplar</string>
-    <string name="phone_contact">Telefon Rehberi</string>
     <string name="contact_details_display_name">İsim</string>
     <string name="contact_details">Kişi Ayrıntıları</string>
     <string name="email_type_home">Ev</string>
-    <string name="email_type_work">İş</string>
-    <string name="option_type_custom">Yeni tür</string>
     <string name="type_title">Tür seçin</string>
-    <string name="no_permission_storage">Depolama izni yok</string>
     <string name="message_drafted_error_server">İleti gönderilemedi. %s</string>
     <string name="sync_local_contacts">ProtonMail\'e yükle</string>
     <string name="please_select_only_phone_contacts">Lütfen sadece yerel telefon rehberini seçin</string>
@@ -636,13 +550,10 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="contact_vcard_hint_address">Adresi girin</string>
     <string name="contact_vcard_hint_other">Bilgiyi girin</string>
     <string name="contact_vcard_hint_note">Notu girin</string>
-    <string name="contact_vcard_phone">Telefon</string>
-    <string name="contact_vcard_address">Adres</string>
     <string name="contact_vcard_new_row_email">e-posta adresi ekle</string>
     <string name="contact_vcard_new_row_phone">telefon numarası ekle</string>
     <string name="contact_vcard_new_row_address">adres ekle</string>
     <string name="contact_vcard_new_row_other">bilgi ekle</string>
-    <string name="contact_vcard_new_row_custom">özel alan ekle</string>
     <string name="vcard_other_option_org">Kuruluş</string>
     <string name="vcard_other_option_title">Başlık</string>
     <string name="vcard_other_option_nickname">Takma ad</string>
@@ -651,13 +562,9 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="vcard_other_option_gender">Cinsiyet</string>
     <string name="vcard_other_option_role">Rol</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="sync_question">Kişiler eşitlensin mi?</string>
-    <string name="sync_question_subtitle">Bu işlem, cihazınızdaki kişileri ProtonMail rehber dizininizle eşitler. Sonrasında bu kişilere ProtonMail aracılığıyla diğer cihazlarınızda erişebileceksiniz.</string>
     <string name="convert_contact">Kişiyi dönüştür</string>
     <string name="upload_contacts">Kişileri yükle</string>
-    <string name="encrypted_data">Şifrelenmiş Veri</string>
     <string name="upgrade_encrypted_contact">Şifreli kişi bilgilerini kullanmak için lütfen güncelleyin.</string>
-    <string name="empty_encrypted_data">Şifrelenmiş kişi bilgilerini boşaltın.</string>
     <string name="uploading_contacts">Kişiler yükleniyor…</string>
     <string name="error_encrypted_data">Şifreli kişi bilgileri alınırken hata oluştu.</string>
     <string-array name="vcard_option_phone">
@@ -703,19 +610,15 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="error_message_exp_date_past">Hata: Sona erme tarihi geçersiz</string>
     <string name="error_message_card_number_invalid">Hata: Kart numarası geçersiz</string>
     <string name="print_error">Yazdırma Hatası</string>
-    <string name="download_error">İndirme hatası</string>
     <string name="download_complete">İndirme tamamlandı</string>
     <string name="download_in_progress">İndirme devam ediyor</string>
     <string name="expires_in">\t %s süresi doluyor</string>
     <string name="unsaved_changes_title">Kaydedilmemiş Değişiklikler</string>
     <string name="unsaved_changes_subtitle">Formda kaydedilmemiş girişler var. Onları atmak istediğinden emin misin?</string>
-    <string name="discard">Vazgeç</string>
-    <string name="keep_editing">Düzenlemeye devam et</string>
     <string name="request_timeout">İstek zaman aşımına uğradı. Lütfen tekrar deneyin</string>
     <string name="add_folder">Klasör ekle</string>
     <string name="no_folders">Klasör yok</string>
     <string name="folders_title_move">İletileri içine taşı</string>
-    <string name="move">Taşı</string>
     <string name="folders_manager">Klasör yöneticisi</string>
     <string name="folder_add_new">Yeni klasör ekle</string>
     <string name="folder_name">Klasör adı</string>
@@ -734,7 +637,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="no_contacts">Kişi yok</string>
     <string name="sender_name_address">%1$s&lt; %2$s&gt; yazdı:</string>
     <string name="update_label">Etiketi güncelle</string>
-    <string name="folder_name_empty">Klasörün bir adı olması gerekir</string>
     <string name="max_labels_in_message">%1$s iletisi %2$d adetten fazla etiket içeremez.</string>
     <string name="delete">Sil</string>
     <string name="subject_copied">Konu panoya kopyalandı</string>
@@ -748,7 +650,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="print_to_template">Kime: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
-    <string name="contacts_invalid_type">Geçersiz tür</string>
     <string name="signature_error">Doğrulama hatası</string>
     <string name="signature_error_desc">Bu içeriğin imzasının doğrulanması başarısız oldu</string>
     <string name="decryption_error">Şifre çözme hatası</string>
@@ -763,18 +664,13 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="close_app">Uygulamayı kapat</string>
     <string name="empty_subject">(Konu Yok)</string>
     <string name="contacts_unknown">Bilinmiyor</string>
-    <string name="expand_collapse">Genişlet/Daralt</string>
     <string name="learn_more">
         <u>Daha fazlasını öğrenin</u>
     </string>
     <string name="info">Bilgi</string>
     <string name="error_can_not_send_from_this_address">%s adresinizden göndermek için ücretli bir plana geçin.</string>
-    <string name="digital_signature_verified">Dijital imza doğrulandı</string>
-    <string name="encrypted_and_digital_signature_verified">Şifreli ve dijital imza doğrulandı</string>
     <string name="email_empty">E-posta adresi eksik</string>
-    <string name="edit_contact_details">Kişi Bilgilerini Düzenle</string>
     <string name="encrypted_contact_details">Şifreli Kişi Bilgileri</string>
-    <string name="edit_contact_toolbar_title">%s düzenle</string>
     <string name="convert_question">Yerel kişileri yükle</string>
     <string name="convert_question_subtitle">Bu, cihazınızdaki yerel kişileri ProtonMail kişiler dizininize yükler. Daha sonra bu kişilere ProtonMail üzerinden diğer cihazlarınızdan erişebileceksiniz.</string>
     <string name="refresh_contacts">Yenile</string>
@@ -795,10 +691,8 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="attachment_offline_max_storage">ProtonMail\'in mobil cihazınızda kullanabileceği en yüksek depolama alanı miktarını ayarlar.</string>
     <string name="load_embedded_images_failed_no_network">Gömülü resimler yüklenemedi. Lütfen ağ bağlantınızı kontrol edin.</string>
     <string name="load_embedded_images_failed">Gömülü resimler yüklenemedi.</string>
-    <string name="attachment_storage_unlimited">Sınırsız / %.2fMB</string>
     <string name="unlimited">Sınırsız</string>
     <string name="local_storage_cleared">Yerel depolama alanı temizlendi</string>
-    <string name="local_storage_clear">Yerel depolamayı temizle</string>
     <string name="recipient_popup_compose_to">Şunun için oluştur</string>
     <string name="recipient_popup_copy_address">Adresi kopyala</string>
     <string name="recipient_popup_see_details">Kişi ayrıntılarını gör</string>
@@ -815,7 +709,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="sender_lock_sent_autoresponder">ProtonMail tarafından sıfır erişim şifrelemesiyle gönderildi</string>
     <string name="sender_lock_verification_failed">Gönderen doğrulaması başarısız oldu</string>
     <string name="sender_lock_pgp_encrypted">PGP şifreli mesaj</string>
-    <string name="sender_lock_pgp_verified">Doğrulanmış adresten PGP imzalı ileti</string>
     <string name="sender_lock_pgp_encrypted_verified">Doğrulanmış adresten PGP şifreli ileti</string>
     <string name="sender_lock_pgp_signed_verified_sender">Doğrulanmış adresten PGP imzalı ileti</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
@@ -836,7 +729,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">DAHA FAZLA BİLGİ EDİN</a>
     </string>
-    <string name="no_items_found">Öğe bulunamadı</string>
     <string name="channel_name_attachments">Ekler</string>
     <string name="channel_description_attachments">Ek indirme durumu hakkında bilgi verir</string>
     <string name="channel_name_emails">E-postalar</string>
@@ -851,13 +743,9 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="phishing_dialog_title">Kimlik avı raporunu onayla</string>
     <string name="phishing_dialog_message">Bir iletiyi kimlik avı girişimi olarak bildirmek, iletiyi bize gönderir. Böylece onu analiz edebilir ve filtrelerimizi geliştirebiliriz. Bu, iletinin içeriğini tam olarak görebileceğimiz anlamına gelir.</string>
     <string name="phishing_report_send_message_moved_to_spam">Rapor gönderildi. İleti gereksiz kutusuna taşındı.</string>
-    <string name="report_send">Rapor gönderiliyor</string>
     <string name="cannot_send_report_send">Rapor gönderemezsiniz</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">Varsayılan e-posta</string>
-    <string name="email_private">Özel e-posta</string>
-    <string name="phone_private">Özel telefon</string>
     <string name="add_photo">Fotoğraf ekle</string>
     <string name="contact_display_name">\ue91c Görünen ad</string>
     <string name="add_new_email">\ue914 E-posta adresi ekle</string>
@@ -866,7 +754,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="edit_contact">Kişiyi Düzenle</string>
     <string name="create_contact_group">Kişi Grubu Oluştur</string>
     <string name="edit_contact_group">Kişi Grubunu Düzenle</string>
-    <string name="contact_groups_add_addresses">Adresler ekleyin</string>
     <string name="contact_groups_manage_addresses">Adresleri yönet</string>
     <string name="contact_group_display_name">\ue91a Görünen ad</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -898,11 +785,8 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     <string name="contact_group_saved">Grup kaydedildi</string>
     <string name="no_recipients">Alıcı yok</string>
     <string name="contact_group_selected">%d seçildi</string>
-    <string name="contact_group_deleted">Grup silindi</string>
     <string name="paid_plan_needed">Lütfen bu premium özellikler için ücretli plana geçin</string>
-    <string name="composer_group_count">%1$s (%2$d üye)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d üye)</string>
-    <string name="address_successful_update">Adres başarıyla güncellendi</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Bu grubu silmek istediğinizden emin misiniz?</item>
         <item quantity="other">Seçili grupları silmek istediğinizden emin misiniz?</item>
@@ -935,15 +819,12 @@ Daha fazla bilgi için dokunun.</string>
 Bazı e-postaları kalıcı olarak silmediğiniz veya daha fazla depolama alanı satın almadığınız sürece e-posta gönderemez veya alamazsınız.</string>
     <string name="storage_limit_approaching_text">Depolama kapasitenizin %90\'ına ulaştınız.
 Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depolama alanı satın almayı düşünün.</string>
-    <string name="storage_limit_do_not_remind">BANA HATIRLATMA</string>
     <!-- endregion -->
     <string name="need_permissions_title">İzinler</string>
     <string name="need_storage_permissions_text">Ekleri eklemek için depolamaya erişime izin vermeniz gerekir.</string>
-    <string name="need_phone_permissions_text">Bu kişiyi aramak için Telefon\'a erişime izin vermeniz gerekir.</string>
     <string name="push_notifications_alert_title">Anlık bildirim uyarıları</string>
     <string name="push_notifications_alert_subtitle">ProtonMail anlık bildirimleri, güncellenmiş Google Play hizmetleri olmadan çalışmaz.</string>
     <string name="app_locked">Uygulama kilitlendi</string>
-    <string name="please_use_fingerprint">Uygulamanın kilidini açmak için lütfen parmak izinizi kullanın.</string>
     <string name="use_pin_instead">Bunun yerine PIN kullanın</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
@@ -952,7 +833,6 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="biometric_error_hw_not_available">Biometric hardware not available.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Açıklanmayan Alıcılar</string>
-    <string name="could_not_delete_attachment">Yükleme sırasında ek kaldırılamaz</string>
     <string name="manage_accounts">Hesapları yönet</string>
     <!-- region Settings -->
     <string name="settings">Ayarlar</string>
@@ -961,7 +841,6 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="account">Hesap</string>
     <string name="subscription">Abonelik</string>
     <string name="plan_and_user">Plan</string>
-    <string name="plan">Plan</string>
     <string name="payment_method">Ödeme Yöntemi</string>
     <string name="password_manager">Şifre yönetimi</string>
     <string name="recovery_email">Kurtarma e-postası</string>
@@ -974,18 +853,13 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="display_name">Görünen ad</string>
     <string name="edit_display_name">Görünen adı düzenle</string>
     <string name="signature">İmza</string>
-    <string name="edit_signature">İmzayı etkinleştir</string>
     <string name="mobile_signature">Mobil imza</string>
     <string name="edit_mobile_signature">Mobil imzayı etkinleştir</string>
     <string name="default_mobile_signature">ProtonMail mobil ile gönderildi</string>
-    <string name="plus_account_required_mobile_signature">Mobil imzayı düzenlemek için, ProtonMail Plus planı gerekir</string>
     <string name="mobile_signature_is_premium">Mobil imza, yalnızca ücretli kullanıcılar tarafından değiştirilebilir</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Ertele</string>
     <string name="notifications_snooze">Bildirimleri Ertele</string>
-    <string name="notifications_snooze_finishing">Bildirimler $s dakika içinde devam edecek</string>
-    <string name="snooze_notifications">Bildirimleri Ertele</string>
-    <string name="snooze_notifications_adjust">Ayarla</string>
     <string name="notifications_snoozed">Bildirimler ertelendi</string>
     <string name="notifications_snooze_scheduled">Zamanlandı</string>
     <string name="notifications_snooze_scheduled_settings">Planlanmış Erteleme Ayarları</string>
@@ -1014,7 +888,6 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <!-- endregion -->
     <string name="mailbox">Posta Kutusu</string>
     <string name="privacy">Gizlilik</string>
-    <string name="auto_download_messages_title_short">Otomatik indir</string>
     <string name="auto_download_messages_title">Mesajları otomatik indir</string>
     <string name="auto_download_messages_subtitle">Bu seçenek etkinleştirildiğinde, her yeni e-posta bildirimi aldığınızda ileti gövdeleri otomatik olarak indirilir (Bu daha fazla veri tüketir). Bu seçenek etkinleştirilmezse, ileti gövdeleri yalnızca bir e-posta açtığınızda indirilir. (Not: Her iki seçenekte de önbelleği temizlerseniz veya oturumu kapatırsanız, çevrimdışı durumdayken ileti gövdelerini okuyamazsınız.)</string>
     <string name="settings_background_sync">Arkaplan Eşitlemesi</string>
@@ -1063,7 +936,6 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="auto_lock_description">Uygulamanızı otomatik olarak kilitlemek için bu özelliği açın\nve kilidi açmak için bir PIN kodu veya parmak izi kullanın.</string>
     <string name="change_pin_code">PIN kodunu değiştir</string>
     <string name="auto_lock_timer">Otomatik kilit süresi</string>
-    <string name="unlock_with_fingerprint">Parmak iziyle aç</string>
     <string name="connections_via_third_parties">Alternatif yönlendirme</string>
     <string name="allow_secure_connections_via_third_parties">Alternatif yönlendirmeye izin ver</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
@@ -1083,9 +955,6 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="app_version">Uygulama sürümü</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="primary_account">Birincil Hesap</string>
-    <string name="make_primary_account">Birincil hesabınız %s yapılsın mı?</string>
-    <string name="logout_account_question">%s oturumu kapatılsın mı?</string>
     <string name="remove_account_question">%s kaldırılsın mı?</string>
     <string name="signed_in_with">%s ile giriş yapıldı</string>
     <string name="signed_in_with_logged_out_from">%1$s oturumu kapatıldı ve %2$s ile giriş yapıldı</string>

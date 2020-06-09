@@ -28,16 +28,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">Prijavi se</string>
     <string name="sign_out">Odjava</string>
     <string name="sign_out_question">Da li ste sigurni da se želite odjaviti?</string>
-    <string name="remember_me_on_device">Zapamti me na ovom uređaju</string>
-    <string name="show_password">Prikaži lozinku</string>
-    <string name="username">Korisničko ime</string>
-    <string name="password">Lozinka</string>
-    <string name="login_password">Lozinka za prijavu</string>
     <string name="mailbox_password">Lozinka sandučića e-pošte</string>
     <string name="two_factor_code">Kôd dvofaktorske autentikacije</string>
     <string name="processing_request">Vaš zahtjev se obrađuje</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">Potreban vam je račun? Registirajte se.</string>
     <string name="need_to_be_logged_in">Niste prijavljeni!</string>
     <string name="forgot_password">Zaboravili ste lozinku?</string>
     <string name="reset_mailbox_password">PONOVNO POSTAVLJANJE LOZINKE SANDUČIĆA E-POŠTE</string>
@@ -60,9 +54,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app">Ne možete koristiti ProtonMail aplikaciju dok se ne ažurira</string>
     <string name="api_offline_title">ProtonMail API je van mreže</string>
     <string name="api_offline">ProtonMail je trenutno nedostupan, provjerite naš twitter za trenutni status: https://twitter.com/protonmail</string>
-    <string name="cannot_open">Nije moguće otvoriti datoteku</string>
-    <string name="downloaded_attachment">Preuzeto %s</string>
-    <string name="edit_contact_validation">Molimo unesite valjani naziv i adresu e-pošte</string>
     <string name="contact_saved">Kontakt je dodan</string>
     <string name="contact_saved_offline">Kontakt je spremljen, biti će sinkroniziran kada veza bude dostupna</string>
     <string name="contact_exist">Adresa e-pošte kontakta već postoji</string>
@@ -70,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">Adresa e-pošte je duplikat</string>
     <string name="invalid_code">Kôd nije ispravan</string>
     <string name="message_drafted">Slanje poruke nije uspjelo. Poruka je spremljena u skice</string>
-    <string name="message_drafted_reason">%s ne postoji.\nNije moguće dostaviti poruku e-pošte.</string>
     <string name="open_drawer">Otvori</string>
     <string name="close_drawer">Zatvori</string>
     <string name="inbox_option">PRISTIGLA POŠTA</string>
@@ -80,10 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">ARHIVA</string>
     <string name="trash_option">OTPAD</string>
     <string name="spam_option">NEŽELJENA POŠTA</string>
-    <string name="contacts_option">KONTAKTI</string>
-    <string name="settings_option">POSTAVKE</string>
-    <string name="report_bugs_option">PRIJAVA GREŠKE</string>
-    <string name="signout_option">ODJAVA</string>
     <string name="inbox">Pristigla pošta</string>
     <string name="starred">Sa zvjezdicom</string>
     <string name="drafts">Skice</string>
@@ -92,7 +78,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Otpad</string>
     <string name="spam">Neželjena pošta</string>
     <string name="contacts">Kontakti</string>
-    <string name="contact_groups">Grupe kontakata</string>
     <string name="search_contacts">Pretraži kontakte</string>
     <string name="fetching_contacts">Dohvaćanje ProtonMail kontakata...</string>
     <string name="fetching_contacts_success">Kontakti uspješno osvježeni</string>
@@ -116,7 +101,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Premjesti u otpad</string>
     <string name="move_to_spam">Premjesti u neželjenu poštu</string>
     <string name="move_to_inbox">Premjesti u pristiglu poštu</string>
-    <string name="move_message_to_trash">Premjesti poruku u otpad?</string>
     <string name="are_you_sure_empty">Jeste li sigurni da želite obrisati sve poruke iz ove mape?</string>
     <string name="send">Pošalji</string>
     <string name="selected">Odabrano</string>
@@ -130,10 +114,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">Bcc:</string>
     <string name="from_prefix">Od:</string>
     <string name="date_prefix">Datum:</string>
-    <string name="expiration_time_prefix">Ističe</string>
     <string name="view_details">DETALJI</string>
     <string name="hide_details">SAKRIJ POJEDINOSTI</string>
-    <string name="download">PREUZIMANJE</string>
     <string name="reply">Odgovor</string>
     <string name="reply_all">Odgovori svima</string>
     <string name="forward">Proslijedi</string>
@@ -143,7 +125,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">Potvrdi lozinku</string>
     <string name="define_password_hint">Odredite hint-pomoć (neobavezno)</string>
     <string name="message_passwords_do_not_match">Lozinke za prijavu se ne poklapaju</string>
-    <string name="message_mailbox_passwords_do_not_match">Lozinke sandučića e-pošte se ne podudaraju</string>
     <string name="eo_passwords_do_not_match">Lozinke se ne poklapaju</string>
     <string name="define_expiration_period">Odredite vremensko razdoblje isteka</string>
     <string name="set_message_expiration">Postavljanje isteka poruke</string>
@@ -186,16 +167,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">Došlo je do pogreške prilikom dodavanja odabrane datoteke</string>
     <string name="add_contact">Dodaj kontakt</string>
     <string name="delete_contact">Ukloni %s iz kontakata?</string>
-    <string name="sync_contact">Sinkroniziraj %s s web aplikacijom?</string>
     <string name="confirm">Potvrdi</string>
     <string name="confirm_destructive_action">Jeste li sigurni? Ova radnja se ne može poništiti.</string>
     <string name="create">Stvori</string>
-    <string name="name">Naziv</string>
     <string name="email">E-pošta</string>
     <string name="email_address">Adresa e-pošte</string>
     <string name="phone">Broj telefona</string>
     <string name="save">Spremi</string>
-    <string name="add">Dodaj</string>
     <string name="syncing_messages">Sinkronizacija...</string>
     <string name="sync">Sinkroniziraj kontakte</string>
     <string name="save_message_as_draft">Spremi poruku kao skicu?</string>
@@ -220,28 +198,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_limit">Privitci su ograničeni na %1$s. Ukupno priloženo bi bilo %2$s.</string>
     <string name="sending_message">Slanje poruke...</string>
     <string name="sending_message_offline">Izvan mreže, na čekanju za kasnije slanje...</string>
-    <string name="mailbox_password_changed">Lozinka sandučića e-pošte je promijenjena</string>
-    <string name="go_to_mailbox_login">Idi na prijavu za sandučić e-pošte, kako biste unijeli ažuriranu lozinku za sandučić e-pošte?</string>
     <string name="go_to_inbox">Idi u pristiglu poštu</string>
     <string name="message_sent">Poruka je poslana</string>
     <string name="message_failed">Neuspjelo slanje poruke</string>
     <string name="message_sending_failures">%d neuspješnih slanja poruke</string>
     <string name="storage_limit">Ograničenje prostora za pohranu</string>
-    <string name="storage_limit_warning">Približavate se maksimumu ograničenja pohrane</string>
-    <string name="do_not_show_again">Ne prikazuj ponovno</string>
     <string name="edit_settings">Uredi postavke</string>
     <string name="save_settings">Spremi postavke</string>
     <string name="share">Podijeli</string>
-    <string name="settings_saved">Nove postavke su spremljene</string>
     <string name="settings_not_saved_password"> Postavke nisu spremljene - netočna lozinka za prijavu</string>
     <string name="settings_not_saved_email"> Postavke nisu spremljene - adresa e-pošte za obavijesti nije valjana</string>
-    <string name="save_settings_question">Spremi postavke?</string>
     <string name="enter">Unesi</string>
     <string name="cancel">Poništi</string>
     <string name="close">Zatvori</string>
-    <string name="passwords">Upravitelj lozinkama</string>
     <string name="change_password">Promijeni lozinku</string>
-    <string name="change_login_password">Promijeni lozinku za prijavu</string>
     <string name="change_mailbox_password">Promijeni lozinku sandučića e-pošte</string>
     <string name="eo_password_title">Postavite lozinku</string>
     <string name="eo_password_subtitle">Postavite lozinku za šifriranje ove poruke za one koji nisu korisnici ProtonMaila</string>
@@ -249,24 +219,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_login_password">Trenutna lozinka za prijavu</string>
     <string name="new_login_password">Nova lozinka</string>
     <string name="confirm_new_login_password">Potvrdi novu lozinku</string>
-    <string name="old_mailbox_password">Trenutna lozinka sandučića e-pošte</string>
     <string name="new_mailbox_password">Nova lozinka sandučića e-pošte</string>
     <string name="confirm_new_mailbox_password">Potvrdi novu lozinku za sandučić e-pošte</string>
     <string name="no_attachments">0 privitaka</string>
-    <string name="num_attachments">%d privitaka</string>
     <string name="new_passwords_not_valid">Pogrešan unos</string>
     <string name="new_passwords_do_not_match">Nove lozinke se ne podudaraju</string>
     <string name="new_login_password_saved">Nova lozinka za prijavu je spremljena</string>
     <string name="new_mailbox_password_saved">Nova lozinka za sandučić e-pošte je spremljena</string>
-    <string name="could_not_change_password">Lozinku nije moguće promijeniti</string>
-    <string name="auto_logout_option_settings">Opcije automatske odjave</string>
     <string name="pin_lock_option_settings">Opcije zaključavanja aplikacije</string>
     <string name="pin_lock_after">Zaključaj aplikaciju nakon</string>
     <string name="lock_the_app">Zaključaj aplikaciju</string>
-    <string name="no_sound_or_vibrate">Bez vibracije i zvuka</string>
-    <string name="sound">Zvuk bez vibracije</string>
-    <string name="vibration">Vibracija bez zvuka</string>
-    <string name="both_sound_and_vibration">Vibracija i zvuk</string>
     <string name="display_name_banned_chars">Nevažeće zaslonsko ime. \'&gt;\' i \'&lt;\' nisu dozvoljeni</string>
     <string name="cont">Nastavi</string>
     <string name="email_verification_code">Poslati ćemo kôd za potvrdu na gore navedenu adresu e-pošte.</string>
@@ -280,17 +242,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Postavite vaš račun</string>
     <string name="create_account">Stvori račun</string>
     <string name="create_passwords">Postavite lozinku</string>
-    <string name="sign_up">Registracija</string>
     <string name="caps_username">Korisničko ime</string>
     <string name="caps_login_password">Lozinka</string>
-    <string name="caps_two_factor">Kôd dvofaktorske autentikacije</string>
     <string name="caps_confirm_password">Potvrdi lozinku</string>
-    <string name="caps_confirm_mailbox_password">Potvrdi lozinku za sandučić e-pošte</string>
-    <string name="caps_optional_notification_email">ADRESA E-POŠTE ZA OPORAVAK LOZINKE (NEOBAVEZNO)</string>
     <string name="caps_optional">*NEOBAVEZNO</string>
     <string name="update_me_for_new_features">Informirajte me o novim značajkama</string>
     <string name="create_mailbox_password">Stvaranje lozinke</string>
-    <string name="confirm_mailbox_password">Potvrdi lozinku za sandučić e-pošte</string>
     <string name="password_note"><b>Napomena:</b> Ovo se koristi za šifriranje i dešifriranje vaših poruka.
 Nemojte izgubiti ovu lozinku, ne možemo je vratiti. Ako izgubite lozinku, nećete moći čitati poruke e-pošte.</string>
     <string name="username_note"><b>Napomena:</b> Korisničko ime je također i vaša ProtonMail adresa</string>
@@ -309,11 +266,9 @@ Nemojte izgubiti ovu lozinku, ne možemo je vratiti. Ako izgubite lozinku, neće
     <string name="current_standard">Trenutni standard</string>
     <string name="extreme_security">Ekstremna sigurnost (4096 bita)</string>
     <string name="highest_security">Najviša dostupna razina šifriranja.<b> Postavljanje može potrajati nekoliko minuta.</b></string>
-    <string name="generate_keypair">Stvori par ključeva</string>
     <string name="labels_title_apply">Primjeni oznake</string>
     <string name="labels_title_add">Dodaj oznaku</string>
     <string name="labels_title">Oznake</string>
-    <string name="labels_create">Dodaj oznaku</string>
     <string name="label_name">Naziv oznake</string>
     <string name="label_name_empty">Oznaka mora imati naziv</string>
     <string name="label_name_duplicate">Ovaj naziv oznake već postoji</string>
@@ -321,9 +276,6 @@ Nemojte izgubiti ovu lozinku, ne možemo je vratiti. Ako izgubite lozinku, neće
     <string name="label_invalid">Oznaka nije dodana zbog nevažećeg naziva.</string>
     <string name="undo">Poništi</string>
     <string name="customize_swipe_actions">Prilagodite radnje prelaska prstom</string>
-    <string name="message_details_swipe_info">Možete se vratiti na zaslon sandučića e-pošte
-pomicanjem prsta s lijevo na desno, te pomicati trenutne poruke u otpad, pomicanjem prsta s desno na lijevo</string>
-    <string name="composing_message_scroll_info">Možete se kretati u prozoru nove poruke gore ili dolje pomicanjem desnog ruba</string>
     <string name="message_can_not_edit">Nije moguće odgovoriti/proslijediti. Ova poruka još nije poslana</string>
     <string name="label_apply">Primijeni</string>
     <string name="label_delete">Obriši</string>
@@ -338,16 +290,12 @@ pomicanjem prsta s lijevo na desno, te pomicati trenutne poruke u otpad, pomican
     <string name="respond_inline">Odgovori u ravnini s ostalim tekstom</string>
     <string name="no_connectivity_detected">Nije otkrivena veza...</string>
     <string name="no_connectivity_detected_troubleshoot">Nije otkrivena internetska veza… (<u>Rješavanje problema</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">Nije otkrivena internetska veza...
-\nPoruka nije preuzeta</string>
-    <string name="connectivity_arrived">Povezan</string>
     <string name="connectivity_checking">Provjera veze...</string>
     <string name="sync_short">sinkroniziraj</string>
     <string name="draft_attachments_uploading">Skica se još učitava...</string>
     <string name="draft_label_attachments_uploading">učitavanje privitaka…</string>
     <string name="draft_label_message_uploading">slanje poruke…</string>
     <string name="attachment_failed">Prijenos privitka nije uspio za poruku </string>
-    <string name="attachment_failed_new">Prijenos privitka nije uspio za poruku %1$s %2$s</string>
     <string name="attaching_photo_failed">Prilaganje fotografije nije uspjelo</string>
     <string name="empty_message">Prazna poruka</string>
     <string name="dismiss">Odbaci</string>
@@ -356,8 +304,6 @@ pomicanjem prsta s lijevo na desno, te pomicati trenutne poruke u otpad, pomican
     <string name="display_images">Prikaži udaljeni sadržaj</string>
     <string name="retry">Pokušaj ponovno</string>
     <string name="saving_failed_no_conn">Neuspješno spremanje, nema internetske veze</string>
-    <string name="can_not_create_account_while_beta">Izrada računa je onemogućena u Beta načinu rada</string>
-    <string name="changing_mailbox_password_disabled_while_beta">Promjena lozinke sandučića e-pošte je onemogućena u Beta načinu rada</string>
     <string name="username_is_available">Korisničko ime je dostupno!</string>
     <string name="username_is_not_available">Korisničko ime je zauzeto!</string>
     <string name="username_is_too_long">Maksimalna duljina korisničkog imena je %d znakova!</string>
@@ -382,22 +328,16 @@ koji se pojavljuje u polju pošiljatelja.</string>
     <string name="engagement_subtitle_encryption">Vaša pristigla pošta sada je zaštićena s end-to-end enkripcijom. Da biste automatski slali sigurne poruke e-pošte kontaktima, pozovite ih da koriste ProtonMail! Također možete ručno šifrirati poruke ako ne koriste ProtonMail.</string>
     <string name="engagement_subtitle_expire">Poruke koje šaljete mogu se podesiti na automatsko brisanje nakon određenog vremenskog razdoblja.</string>
     <string name="engagement_subtitle_help">Pomoć i podršku možete dobiti na protonmail.com/support. Pogreške možete prijaviti i pomoću aplikacije.</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail ne prodaje oglase niti zloupotrebljava
-vašu privatnost. Vaša podrška je ključna za održavanje ProtonMaila. Možete nadograditi na
-plaćeni račun ili donirajte za podršku ProtonMailu.</string>
     <string name="attachment_exists">Privitak je već dodan</string>
     <string name="sending_email_success">Kôd za potvrdu je poslan</string>
     <string name="sending_email_failed">Slanje koda za potvrdu nije uspjelo</string>
-    <string name="password_required">Unesite vašu lozinku za prijavu, kako biste izvršili ovu promjenu</string>
     <string name="password_not_valid">Unesena lozinka nije valjana</string>
     <string name="send_code_wait">Molimo pričekajte %d sekundi da biste ponovno pritisnuli</string>
     <string name="eo_password_not_completed">Lozinka poruke nije unešena.</string>
-    <string name="delinquency_title">Pristup ovom računu je onemogućen zbog neplaćanja</string>
     <string name="delinquency_subtitle">Pristup ovom računu onemogućen je zbog neplaćanja. Prijavite se putem protonmail.com kako biste platili neplaćenu fakturu.</string>
     <string name="direct_disabled_subtitle">Prijave za mobilne uređaje privremeno su onemogućene. Pokušajte ponovo kasnije ili se pokušajte prijaviti na <a href="https://protonmail.com">protonmail.com</a> pomoću računala ili prijenosnog računala.</string>
     <string name="downloading">Preuzimanje...</string>
     <string name="cant_download_attachment">Nije moguće preuzeti privitak</string>
-    <string name="auto_logout">Automatska odjava</string>
     <string-array name="auto_logout_options_array">
         <item>Odmah</item>
         <item>5 minuta neaktivosti</item>
@@ -405,42 +345,30 @@ plaćeni račun ili donirajte za podršku ProtonMailu.</string>
         <item>1 sat neaktivnosti</item>
         <item>24 sata neaktivnosti</item>
     </string-array>
-    <string-array name="pin_options_array">
-        <item>Promijenite PIN</item>
-        <item>Promijeni razdoblje isteka PIN-a</item>
-    </string-array>
     <string name="delete_label_confirmation_title">Ukloni odabrane oznake?</string>
     <string name="delete_folder_confirmation_title">Ukloni odabrane mape?</string>
     <string name="delete_label_confirmation_message">Poruke e-pošte koje se ovdje nalaze mogu biti pronađene u <b>Sva pošta</b></string>
     <string name="enter_pin">Unesite vaš PIN za otključavanje pristigle pošte</string>
     <string name="enter_pin_message_details">Unesite vaš PIN za otključavanje poruke</string>
     <string name="enter_current_pin">Unesi vaš trenutni PIN</string>
-    <string name="hint_pin">PIN kôd</string>
     <string name="pin_subtitle_create">Unesite svoj PIN ovdje</string>
     <string name="pin_subtitle_create_new">Izradite svoj novi PIN ovdje</string>
     <string name="pin_subtitle_confirm">Potvrdite svoj PIN ovdje</string>
     <string name="pin_subtitle_confirm_new">Potvrdite svoj NOVI PIN ovdje</string>
-    <string name="forgot_pin">Zaboravili ste PIN?</string>
     <string name="pin_invalid">PIN nije valjan. Unesite ispravan PIN s četiri znamenke</string>
     <string name="pin_confirmation_not_match">PIN potvrde ne odgovara</string>
     <string name="pin_not_match">PIN se ne podudara</string>
     <string name="new_pin_saved">Novi PIN je spremljen</string>
-    <string name="pin_settings">Postavke PIN-a</string>
-    <string name="next">sljedeće</string>
-    <string name="back">natrag</string>
     <string name="new_emails">%d novih poruka e-pošte</string>
     <string name="attachment_download_success">%s uspješno preuzeto u upravitelj datoteka</string>
     <string name="attachment_download_failed">%s nije ispravno preuzeto</string>
-    <string name="sender_changed">Molimo da uklonite privitke kako biste mogli promjeniti adresu pošiljatelja.</string>
     <string name="ringtone">Zvuk obavijesti</string>
     <string name="ringtone_selected">Zvuk obavijesti:</string>
-    <string name="notification_option">%1$s\nZvuk obavijesti: %2$s</string>
     <string name="ringtone_invalid">Izbor melodije zvona je vratio nevažeću vrijednost</string>
     <string name="ringtone_no_default">Nije moguće učitati zadanu melodiju zvona</string>
     <string name="select_tone">Odaberite zvuk</string>
     <string name="copy_link">Kopiraj poveznicu</string>
     <string name="share_link">Dijeli poveznicu</string>
-    <string name="attachment_delete_failed">Brisanje %s privitka nije uspjelo</string>
     <string name="sync_attachments">Sinkronizacija privitaka</string>
     <string name="processing_attachment">Obrada privitka</string>
     <string name="hyperlink_confirmation_dialog_text_html">Spremate se pokreniti web preglednik i ići na::&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Želite li nastaviti?</string>
@@ -471,10 +399,6 @@ plaćeni račun ili donirajte za podršku ProtonMailu.</string>
 u povećanju kapaciteta i nastavku razvoja ProtonMaila kao besplatni softver otvorenog koda. Samo uz
 podršku zajednice možemo nastaviti pružati ProtonMail ljudima
 širom svijeta.</string>
-    <string name="upselling_upgrade_subtitle">Vaša pretplata će nam pomoći
-u povećanju kapaciteta i nastavku razvoja ProtonMaila kao besplatni softver otvorenog koda. Samo uz
-podršku zajednice možemo nastaviti pružati ProtonMail ljudima
-širom svijeta.</string>
     <string name="upgrade_donate">Nadogradite/Donirajte</string>
     <string name="upselling_donate_pick_amount">Odaberite iznos donacije ili unesite bilo koji iznos</string>
     <string name="amount_5">5€</string>
@@ -489,8 +413,6 @@ podršku zajednice možemo nastaviti pružati ProtonMail ljudima
     <string name="upgrade_line3">Koristite vlastitu domenu</string>
     <string name="upgrade_line4">Do 5 aliasa</string>
     <string name="upgrade_line5">Prioritetna korisnička podrška</string>
-    <string name="upgrade_plus_price">4€</string>
-    <string name="per_month">/mjesečno</string>
     <string name="upgrade">Nadogradnja</string>
     <string name="payment_options">Način plaćanja</string>
     <string name="other_plans">Za planove s više prostora za pohranu, nadogradite putem
@@ -513,7 +435,6 @@ za javno dobro. Možete podržati internet privatnost odabirom plaćenog računa
     <string name="plan_plus_line7">Prioritetna korisnička podrška</string>
     <string name="plan_free_line1">500 MB prostora za pohranu</string>
     <string name="plan_free_line2">150 poruka dnevno</string>
-    <string name="plan_free_line22">%d poruka dnevno</string>
     <string name="plan_free_line3">20 oznaka</string>
     <string name="plan_free_line4">Prilagođene domene: nisu podržane</string>
     <string name="plan_free_line5">1 adresa</string>
@@ -527,7 +448,6 @@ za javno dobro. Možete podržati internet privatnost odabirom plaćenog računa
     <string name="zip_code">Poštanski broj</string>
     <string name="card_number">Broj kreditne kartice</string>
     <string name="billing_information">Informacije o plaćanju</string>
-    <string name="billing_upgrade_thanks">Uspješna nadogradnja! Hvala vam na podršci!</string>
     <string name="country">Država</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">Klikom na Prihvati, slažete se
@@ -536,13 +456,10 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="currency">Valuta</string>
     <string name="plan_duration">Ciklus naplate</string>
     <string name="duration_annual_line1">Godišnji plan <font color="#C3E129">Uštedite 20%</font></string>
-    <string name="duration_annual_line2">%s mjesečno</string>
     <string name="per_month_text_only">mjesečno</string>
-    <string name="per_year_text_only">godišnje</string>
     <string name="duration_annual_line3">Naplata %s /godišnje</string>
     <string name="duration_annual_line4">Naplata %s /mjesečno</string>
     <string name="duration_monthly_line1">Mjesečni plan</string>
-    <string name="duration_monthly_line2">%s mjesečno</string>
     <string name="duration_monthly_line3">Uštedite 20%</string>
     <string name="set_cont">Postavi i nastavi</string>
     <string name="payment_error">Pogreška prilikom plaćanja</string>
@@ -581,11 +498,8 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="payment_approval_consumed_error_description">Način plaćanja se već koristi za ovo plaćanje. Provjerite status svoje pretplate.</string>
     <string name="no_payment_methods">Nemate spremljenih načina plaćanja.</string>
     <string name="edit_payment_methods">Prijavite se putem protonmail.com stranice, za uređivanje podataka o naplati.</string>
-    <string name="no_permission_contacts">Nema dozvole za čitanje kontakata</string>
     <string name="message_not_loaded">Poruka nije učitana</string>
-    <string name="signature_on">Potpis je uključen</string>
     <string name="signature_text">Tekst potpisa</string>
-    <string name="please_use_webapp_pass_change">Upotrijebite našu web-aplikaciju &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; pomoću računala ili prijenosnog računala kako biste dovršili ovu radnju.</string>
     <string name="available_addresses">Dostupne adrese</string>
     <string name="inactive_addresses">Neaktivne adrese</string>
     <string name="not_set">Nije postavljeno</string>
@@ -639,15 +553,10 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">Grupe</string>
-    <string name="phone_contact">Kontakt broj</string>
     <string name="contact_details_display_name">Naziv</string>
     <string name="contact_details">Detalji o kontaktu</string>
     <string name="email_type_home">Kuća</string>
-    <string name="email_type_work">Posao</string>
-    <string name="option_type_custom">Novi tip</string>
     <string name="type_title">Odaberite vrstu</string>
-    <string name="no_permission_storage">Nema dozvole za pohranu</string>
     <string name="message_drafted_error_server">Neuspješno slanje poruke. %s</string>
     <string name="sync_local_contacts">Učitaj na ProtonMail</string>
     <string name="please_select_only_phone_contacts">Odaberite samo lokalne telefonske kontakte</string>
@@ -656,13 +565,10 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="contact_vcard_hint_address">Unesite adresu</string>
     <string name="contact_vcard_hint_other">Unesite informacije</string>
     <string name="contact_vcard_hint_note">Unesite bilješku</string>
-    <string name="contact_vcard_phone">Telefon</string>
-    <string name="contact_vcard_address">Adresa</string>
     <string name="contact_vcard_new_row_email">dodaj adresu e-pošte</string>
     <string name="contact_vcard_new_row_phone">dodaj broj telefona</string>
     <string name="contact_vcard_new_row_address">dodaj adresu</string>
     <string name="contact_vcard_new_row_other">dodavanje informacija</string>
-    <string name="contact_vcard_new_row_custom">dodaj prilagođeno polje</string>
     <string name="vcard_other_option_org">Organizacija</string>
     <string name="vcard_other_option_title">Naslov</string>
     <string name="vcard_other_option_nickname">Nadimak</string>
@@ -671,13 +577,9 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="vcard_other_option_gender">Spol</string>
     <string name="vcard_other_option_role">Uloga</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="sync_question">Sinkroniziraj kontakte?</string>
-    <string name="sync_question_subtitle">Ovo će sinkronizirati lokalne kontakte s vašeg uređaja u vaš direktorij kontakata na ProtonMailu. Tada ćete moći pristupiti tim kontaktima na drugim uređajima putem usluge ProtonMail.</string>
     <string name="convert_contact">Pretvori kontakt</string>
     <string name="upload_contacts">Učitavanje kontakata</string>
-    <string name="encrypted_data">Šifrirani podaci</string>
     <string name="upgrade_encrypted_contact">Nadogradite kako biste mogli koristiti šifrirane podatke o kontaktu.</string>
-    <string name="empty_encrypted_data">Prazni šifrirani podaci o kontaktu.</string>
     <string name="uploading_contacts">Učitavanje kontakata…</string>
     <string name="error_encrypted_data">Pogreška pri dohvaćanju šifriranih podatka o kontaktu.</string>
     <string-array name="vcard_option_phone">
@@ -723,19 +625,15 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="error_message_exp_date_past">Pogreška: Nevažeći datum isteka</string>
     <string name="error_message_card_number_invalid">Pogreška: Broj kartice nije valjan</string>
     <string name="print_error">Pogreška u ispisu</string>
-    <string name="download_error">Pogreška prilikom preuzimanja</string>
     <string name="download_complete">Preuzimanje završeno</string>
     <string name="download_in_progress">Preuzimanje u tijeku</string>
     <string name="expires_in">\tIstječe %s</string>
     <string name="unsaved_changes_title">Nespremljene promjene</string>
     <string name="unsaved_changes_subtitle">U obrascu postoje nespremljeni unosi. Jeste li sigurni da ih želite odbaciti?</string>
-    <string name="discard">Odbaci</string>
-    <string name="keep_editing">Nastavite uređivati</string>
     <string name="request_timeout">Zahtjev je istekao, molimo pokušajte ponovno</string>
     <string name="add_folder">Dodaj mapu</string>
     <string name="no_folders">Nema mapa</string>
     <string name="folders_title_move">Premjesti poruke u</string>
-    <string name="move">Premjesti</string>
     <string name="folders_manager">Upravljanje mapama</string>
     <string name="folder_add_new">Dodaj novu mapu</string>
     <string name="folder_name">Naziv mape</string>
@@ -754,7 +652,6 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="no_contacts">Nema kontakta</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; napisao/la:</string>
     <string name="update_label">Ažuriraj oznaku</string>
-    <string name="folder_name_empty">Mapa mora imati naziv</string>
     <string name="max_labels_in_message">Poruka %1$s ne može imati više od %2$d oznaka.</string>
     <string name="delete">Obriši</string>
     <string name="subject_copied">Kopirano u međuspremnik</string>
@@ -768,7 +665,6 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="print_to_template">To: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
     <string name="print_bcc_template">BCC: %s;  </string>
-    <string name="contacts_invalid_type">Nevažeći tip</string>
     <string name="signature_error">Pogreška pri provjeri valjanosti</string>
     <string name="signature_error_desc">Provjera potpisa ovog sadržaja nije uspjela</string>
     <string name="decryption_error">Pogreška pri dešifriranju</string>
@@ -783,18 +679,13 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="close_app">Zatvori aplikaciju</string>
     <string name="empty_subject">(Bez predmeta)</string>
     <string name="contacts_unknown">Nepoznato</string>
-    <string name="expand_collapse">Proširi/Suzi</string>
     <string name="learn_more">
         <u>Saznajte više</u>
     </string>
     <string name="info">Informacije</string>
     <string name="error_can_not_send_from_this_address">Nadogradite na plaćeni plan kako biste mogli slati s vaše %s adrese.</string>
-    <string name="digital_signature_verified">Digitalni potpis je ovjeren</string>
-    <string name="encrypted_and_digital_signature_verified">Šifrirano uz provjereni digitalni potpis</string>
     <string name="email_empty">Adresa e-pošte nedostaje</string>
-    <string name="edit_contact_details">Uredi detalje o kontaktu</string>
     <string name="encrypted_contact_details">Šifrirani podaci o kontaktu</string>
-    <string name="edit_contact_toolbar_title">Uredi %s</string>
     <string name="convert_question">Učitavanje lokalnih kontakata</string>
     <string name="convert_question_subtitle">Ovo će učitati lokalne kontakte s vašeg uređaja u vaš direktorij kontakata na ProtonMailu. Tada ćete moći pristupiti tim kontaktima na drugim uređajima putem usluge ProtonMail.</string>
     <string name="refresh_contacts">Osvježi</string>
@@ -815,10 +706,8 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="attachment_offline_max_storage">Postavlja maksimalni iznos prostora za pohranu koji ProtonMail može koristiti na vašem mobilnom uređaju.</string>
     <string name="load_embedded_images_failed_no_network">Učitavanje ugrađenih slika nije uspjelo. Provjerite vašu vezu.</string>
     <string name="load_embedded_images_failed">Neuspješno učitavanje ugrađenih slika.</string>
-    <string name="attachment_storage_unlimited">%.2fMB od neograničeno</string>
     <string name="unlimited">Neograničeno</string>
     <string name="local_storage_cleared">Očišćena je lokalna pohrana</string>
-    <string name="local_storage_clear">Očisti lokalnu pohranu</string>
     <string name="recipient_popup_compose_to">Nova poruka za</string>
     <string name="recipient_popup_copy_address">Kopiraj adresu</string>
     <string name="recipient_popup_see_details">Pogledajte pojedinosti o kontaktu</string>
@@ -835,7 +724,6 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="sender_lock_sent_autoresponder">Poslano putem ProtonMaila s šifriranjem nultog pristupa</string>
     <string name="sender_lock_verification_failed">Neuspjela potvrda pošiljatelja</string>
     <string name="sender_lock_pgp_encrypted">PGP-šifrirana poruka</string>
-    <string name="sender_lock_pgp_verified">PGP-potpisana poruka od potvrđene adrese</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-šifrirana poruka od potvrđene adrese</string>
     <string name="sender_lock_pgp_signed_verified_sender">PGP-potpisana poruka od potvrđene adrese</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
@@ -856,7 +744,6 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">SAZNAJTE VIŠE</a>
     </string>
-    <string name="no_items_found">Nije pronađena nijedna stavka</string>
     <string name="channel_name_attachments">Privitci</string>
     <string name="channel_description_attachments">Informira o statusu preuzimanja privitka</string>
     <string name="channel_name_emails">E-pošta</string>
@@ -874,13 +761,9 @@ preuzimanja poruka u pozadini</string>
 poruku kako bismo je mogli analizirati i poboljšati filtre. To znači da ćemo moći vidjeti
 sadržaj poruke u cijelosti.</string>
     <string name="phishing_report_send_message_moved_to_spam">Izvještaj je poslan. Poruka je premještena u neželjenu poštu.</string>
-    <string name="report_send">Izvještaj je poslan</string>
     <string name="cannot_send_report_send">Nije moguće slanje izvještaja</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">Zadana e-pošta</string>
-    <string name="email_private">Privatna e-pošta</string>
-    <string name="phone_private">Privatni broj telefona</string>
     <string name="add_photo">Dodaj fotografiju</string>
     <string name="contact_display_name">\ue91c Zaslonsko ime</string>
     <string name="add_new_email">\ue914 Dodaj adresu e-pošte</string>
@@ -889,7 +772,6 @@ sadržaj poruke u cijelosti.</string>
     <string name="edit_contact">Uredi kontakt</string>
     <string name="create_contact_group">Stvaranje grupe kontakta</string>
     <string name="edit_contact_group">Uredi grupu kontakata</string>
-    <string name="contact_groups_add_addresses">Dodaj adresu</string>
     <string name="contact_groups_manage_addresses">Upravljanje adresama</string>
     <string name="contact_group_display_name">\ue91a Zaslonsko ime</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -922,11 +804,8 @@ sadržaj poruke u cijelosti.</string>
     <string name="contact_group_saved">Grupa je spremljena</string>
     <string name="no_recipients">Nema primatelja</string>
     <string name="contact_group_selected">%d odabrano</string>
-    <string name="contact_group_deleted">Grupa je izbrisana</string>
     <string name="paid_plan_needed">Molimo nadogradite na plaćeni plan za ove premium značajke</string>
-    <string name="composer_group_count">%1$s (%2$d članova)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d članova)</string>
-    <string name="address_successful_update">Adresa uspješno ažurirana</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Jeste li sigurni da želite izbrisati ovu grupu?</item>
         <item quantity="few">Jeste li sigurni da želite izbrisati odabrane grupe?</item>
@@ -963,17 +842,13 @@ moći slati ni primati e-poštu osim ako trajno ne uklonite neke poruke e-pošte
 pohranu.</string>
     <string name="storage_limit_approaching_text">Dosegli ste 90% vašeg kapaciteta prostora za pohranu.
 Razmislite o oslobađanju prostora ili kupnji više prostora za pohranu prije nego što vam ponestane kapaciteta.</string>
-    <string name="storage_limit_do_not_remind">NE PODSJEĆAJ ME</string>
     <!-- endregion -->
     <string name="need_permissions_title">Dozvole</string>
     <string name="need_storage_permissions_text">Da biste dodali privitke, trebate dopustiti
 pristup pohrani.</string>
-    <string name="need_phone_permissions_text">Da biste nazvali ovaj kontakt, morate dopustiti
-pristup Telefonu.</string>
     <string name="push_notifications_alert_title">Upozorenja Push obavijesti</string>
     <string name="push_notifications_alert_subtitle">Push obavijesti za ProtonMail ne rade bez ažuriranih Google Play usluga.</string>
     <string name="app_locked">Aplikacija je zaključana</string>
-    <string name="please_use_fingerprint">Za otključavanje aplikacije koristite otisak prsta.</string>
     <string name="use_pin_instead">Koristi PIN</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Nema upisanih biometrijskih podataka</string>
@@ -982,7 +857,6 @@ pristup Telefonu.</string>
     <string name="biometric_error_hw_not_available">Biometrijski hardver nije dostupan.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Nisu definirani primatelji</string>
-    <string name="could_not_delete_attachment">Privitak nije moguće ukloniti tijekom prijenosa</string>
     <string name="manage_accounts">Upravljanje korisničkim računima</string>
     <!-- region Settings -->
     <string name="settings">Postavke</string>
@@ -991,7 +865,6 @@ pristup Telefonu.</string>
     <string name="account">Korisnički račun</string>
     <string name="subscription">Pretplata</string>
     <string name="plan_and_user">Plan</string>
-    <string name="plan">Plan</string>
     <string name="payment_method">Način plaćanja</string>
     <string name="password_manager">Promijenite lozinku</string>
     <string name="recovery_email">Adresa e-pošte za oporavak</string>
@@ -1004,18 +877,13 @@ pristup Telefonu.</string>
     <string name="display_name">Zaslonski naziv</string>
     <string name="edit_display_name">Uredi zaslonski naziv</string>
     <string name="signature">Potpis</string>
-    <string name="edit_signature">Omogući potpis</string>
     <string name="mobile_signature">Potpis na mobilnim uređajima</string>
     <string name="edit_mobile_signature">Omogući potpis na mobilnim uređajima</string>
     <string name="default_mobile_signature">Poslano sa ProtonMaila</string>
-    <string name="plus_account_required_mobile_signature">ProtonMail Plus je nužan za uređivanje potpisa na mobilnim uređajima</string>
     <string name="mobile_signature_is_premium">Promjena potpisa za mobilne uređaje je dopuštena samo plaćenim korisnicima</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Utišaj</string>
     <string name="notifications_snooze">Utišavanje obavijesti</string>
-    <string name="notifications_snooze_finishing">Obavijesti će nastaviti za $s minutu</string>
-    <string name="snooze_notifications">Utišaj obavijesti</string>
-    <string name="snooze_notifications_adjust">Prilagodi</string>
     <string name="notifications_snoozed">Obavijesti su utišane</string>
     <string name="notifications_snooze_scheduled">Planirano</string>
     <string name="notifications_snooze_scheduled_settings">Postavke zakazane odgode</string>
@@ -1045,7 +913,6 @@ pristup Telefonu.</string>
     <!-- endregion -->
     <string name="mailbox">Poštanski sandučić</string>
     <string name="privacy">Privatnost</string>
-    <string name="auto_download_messages_title_short">Automatsko preuzimanje</string>
     <string name="auto_download_messages_title">Automatsko preuzimanje poruka</string>
     <string name="auto_download_messages_subtitle">Kada je ova opcija omogućena, tijela poruka bit će automatski preuzeta svaki put kada primite obavijest o novoj poruci e-pošte (to će trošiti više podataka). Ako ova opcija nije omogućena, tijela poruka bit će preuzeta samo kada otvorite e-poštu. (Napomena: kod obje opcije, ako očistite predmemoriju ili se odjavite, nećete moći čitati tijela poruke dok ste izvan mreže.)</string>
     <string name="settings_background_sync">Sinkronizacija u pozadini</string>
@@ -1097,7 +964,6 @@ pristup Telefonu.</string>
     <string name="auto_lock_description">Uključite ovu značajku za automatsko\nzaključavanje aplikacije i upotrijebite\nPIN kôd ili otisak otiska.</string>
     <string name="change_pin_code">Promijenite PIN kod</string>
     <string name="auto_lock_timer">Vrijeme automatskog zaključavanja</string>
-    <string name="unlock_with_fingerprint">Otključavanje otiskom prsta</string>
     <string name="connections_via_third_parties">Alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties">Omogući alternativno usmjeravanje</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">U slučaju da su Protonove stranice blokirane, ova postavka omogućuje aplikaciji da isproba alternativno mrežno usmjeravanje do Protona, što može biti korisno u zaobilaženju vatrozida ili problema s mrežom. Preporučujemo da ovu postavku zadržite omogućenom radi veće pouzdanosti.</string>
@@ -1117,9 +983,6 @@ pristup Telefonu.</string>
     <string name="app_version">Verzija aplikacije</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="primary_account">Primarni račun</string>
-    <string name="make_primary_account">Neka %s bude vaš primarni račun?</string>
-    <string name="logout_account_question">Odjavi %s?</string>
     <string name="remove_account_question">Ukloni %s?</string>
     <string name="signed_in_with">Prijavljen kao %s</string>
     <string name="signed_in_with_logged_out_from">Odjavili ste se s %1$s i prijavili s %2$s</string>

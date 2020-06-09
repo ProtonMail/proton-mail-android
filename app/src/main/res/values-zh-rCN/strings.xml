@@ -28,16 +28,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">登录</string>
     <string name="sign_out">退出账户</string>
     <string name="sign_out_question">确定要退出账户吗？</string>
-    <string name="remember_me_on_device">在此设备自动登录</string>
-    <string name="show_password">显示密码</string>
-    <string name="username">用户名</string>
-    <string name="password">密码</string>
-    <string name="login_password">登录密码</string>
     <string name="mailbox_password">邮箱密码</string>
     <string name="two_factor_code">双重验证码</string>
     <string name="processing_request">正在处理您的请求</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">注册账户</string>
     <string name="need_to_be_logged_in">您还未登录！</string>
     <string name="forgot_password">忘记密码</string>
     <string name="reset_mailbox_password">重置邮箱密码</string>
@@ -60,9 +54,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app">ProtonMail 需要更新才能使用</string>
     <string name="api_offline_title">未能连接 ProtonMail API</string>
     <string name="api_offline">ProtonMail 目前不可用，请前往 https://protonstatus.com 或 https://twitter.com/protonmail 了解当前状况。</string>
-    <string name="cannot_open">无法打开文件</string>
-    <string name="downloaded_attachment">已下载 %s</string>
-    <string name="edit_contact_validation">请正确输入名称和邮箱地址</string>
     <string name="contact_saved">联系人已保存</string>
     <string name="contact_saved_offline">联系人已保存，联网后将同步。</string>
     <string name="contact_exist">此联系人已存在</string>
@@ -70,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">电子邮箱重复</string>
     <string name="invalid_code">验证码错误</string>
     <string name="message_drafted">邮件发送失败，已存为草稿。</string>
-    <string name="message_drafted_reason">%s不存在。\n无法发送邮件。</string>
     <string name="open_drawer">打开</string>
     <string name="close_drawer">关闭</string>
     <string name="inbox_option">收件箱</string>
@@ -80,10 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">存档</string>
     <string name="trash_option">垃圾箱</string>
     <string name="spam_option">垃圾邮件</string>
-    <string name="contacts_option">通讯录</string>
-    <string name="settings_option">设置</string>
-    <string name="report_bugs_option">反馈问题</string>
-    <string name="signout_option">退出账户</string>
     <string name="inbox">收件箱</string>
     <string name="starred">已加星标</string>
     <string name="drafts">草稿箱</string>
@@ -92,7 +78,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">垃圾箱</string>
     <string name="spam">垃圾邮件</string>
     <string name="contacts">通讯录</string>
-    <string name="contact_groups">联系人群组</string>
     <string name="search_contacts">搜索联系人</string>
     <string name="fetching_contacts">正在读取 ProtonMail 通讯录...</string>
     <string name="fetching_contacts_success">刷新联系人成功</string>
@@ -116,7 +101,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">移到垃圾箱</string>
     <string name="move_to_spam">标为垃圾邮件</string>
     <string name="move_to_inbox">移至收件箱</string>
-    <string name="move_message_to_trash">将邮件移到垃圾箱？</string>
     <string name="are_you_sure_empty">确定要删除文件夹内的所有邮件吗？</string>
     <string name="send">发送​​</string>
     <string name="selected">已选择</string>
@@ -130,10 +114,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">密送：</string>
     <string name="from_prefix">发件人：</string>
     <string name="date_prefix">日期：</string>
-    <string name="expiration_time_prefix">有效期至</string>
     <string name="view_details">详细信息</string>
     <string name="hide_details">隐藏详细信息</string>
-    <string name="download">下载</string>
     <string name="reply">回复</string>
     <string name="reply_all">回复所有人</string>
     <string name="forward">转发</string>
@@ -143,7 +125,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">确认密码</string>
     <string name="define_password_hint">密码提示（非必填）</string>
     <string name="message_passwords_do_not_match">密码不一致</string>
-    <string name="message_mailbox_passwords_do_not_match">邮箱密码不正确</string>
     <string name="eo_passwords_do_not_match">密码不正确</string>
     <string name="define_expiration_period">设置有效期</string>
     <string name="set_message_expiration">设置邮件有效期</string>
@@ -176,16 +157,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">添加选中的文件时发生错误</string>
     <string name="add_contact">添加联系人</string>
     <string name="delete_contact">确定要移除联系人 %s 吗？</string>
-    <string name="sync_contact">要与网页版同步%s吗？</string>
     <string name="confirm">确认</string>
     <string name="confirm_destructive_action">您确定吗？此操作不能撤销。</string>
     <string name="create">创建</string>
-    <string name="name">姓名</string>
     <string name="email">邮箱</string>
     <string name="email_address">邮箱地址</string>
     <string name="phone">电话号码</string>
     <string name="save">保存​​</string>
-    <string name="add">添加</string>
     <string name="syncing_messages">同步中...</string>
     <string name="sync">同步联系人</string>
     <string name="save_message_as_draft">是否将邮件存为草稿？</string>
@@ -210,28 +188,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_limit">共需上传 %2$s 个附件，但最多只能上传 %1$s 个附件。</string>
     <string name="sending_message">邮件发送中...</string>
     <string name="sending_message_offline">网络尚未连接，邮件将稍后发送</string>
-    <string name="mailbox_password_changed">邮箱密码已更改</string>
-    <string name="go_to_mailbox_login">要转到登录界面重新输入邮箱密码吗？</string>
     <string name="go_to_inbox">前往收件箱</string>
     <string name="message_sent">邮件已发送</string>
     <string name="message_failed">邮件发送失败</string>
     <string name="message_sending_failures">%d 封邮件发送失败</string>
     <string name="storage_limit">存储空间限制</string>
-    <string name="storage_limit_warning">存储空间即将用尽</string>
-    <string name="do_not_show_again">不再显示</string>
     <string name="edit_settings">修改设置</string>
     <string name="save_settings">保存设置</string>
     <string name="share">分享</string>
-    <string name="settings_saved">设置已保存</string>
     <string name="settings_not_saved_password">登录密码错误，设置未保存</string>
     <string name="settings_not_saved_email">通知邮箱无效，设置未保存</string>
-    <string name="save_settings_question">要保存设置吗？</string>
     <string name="enter">输入</string>
     <string name="cancel">取消</string>
     <string name="close">关闭</string>
-    <string name="passwords">密码管理</string>
     <string name="change_password">更改密码</string>
-    <string name="change_login_password">更改登录密码</string>
     <string name="change_mailbox_password">更改邮箱密码</string>
     <string name="eo_password_title">设置密码</string>
     <string name="eo_password_subtitle">向非 ProtonMail 用户设置邮件密码</string>
@@ -239,24 +209,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_login_password">当前登录密码</string>
     <string name="new_login_password">新密码</string>
     <string name="confirm_new_login_password">确认新密码</string>
-    <string name="old_mailbox_password">当前邮箱密码</string>
     <string name="new_mailbox_password">新邮箱密码</string>
     <string name="confirm_new_mailbox_password">确认新邮箱密码</string>
     <string name="no_attachments">0 个附件</string>
-    <string name="num_attachments">%d 个附件</string>
     <string name="new_passwords_not_valid">密码无效</string>
     <string name="new_passwords_do_not_match">两次输入的新密码不匹配</string>
     <string name="new_login_password_saved">新登录密码已保存</string>
     <string name="new_mailbox_password_saved">新邮箱密码已保存</string>
-    <string name="could_not_change_password">无法更改密码</string>
-    <string name="auto_logout_option_settings">自动退出选项</string>
     <string name="pin_lock_option_settings">程序锁定选项</string>
     <string name="pin_lock_after">之后锁定应用</string>
     <string name="lock_the_app">锁定应用</string>
-    <string name="no_sound_or_vibrate">无振动或提示音</string>
-    <string name="sound">提示音，无振动</string>
-    <string name="vibration">振动，无提示音</string>
-    <string name="both_sound_and_vibration">振动和提示音</string>
     <string name="display_name_banned_chars">此名称无效，名称不能包含 &gt; 或 &lt; 符号。</string>
     <string name="cont">继续</string>
     <string name="email_verification_code">我们将向该邮箱发送一条验证码。</string>
@@ -270,17 +232,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">配置账户</string>
     <string name="create_account">注册账户</string>
     <string name="create_passwords">设置密码</string>
-    <string name="sign_up">注册</string>
     <string name="caps_username">用户名</string>
     <string name="caps_login_password">密码</string>
-    <string name="caps_two_factor">双重验证码</string>
     <string name="caps_confirm_password">确认密码</string>
-    <string name="caps_confirm_mailbox_password">确认邮箱密码</string>
-    <string name="caps_optional_notification_email">密保邮箱（非必填）</string>
     <string name="caps_optional">*非必填</string>
     <string name="update_me_for_new_features">有新功能时通知我</string>
     <string name="create_mailbox_password">设置密码</string>
-    <string name="confirm_mailbox_password">确认邮箱密码</string>
     <string name="password_note"><b>注意：</b>加解密邮件均需要此密码，切勿遗忘，否则您将永远无法查看已加密的邮件，我们也无能为力。</string>
     <string name="username_note"><b>注意：</b>用户名即为您的 ProtonMail 邮箱地址</string>
     <string name="terms_and_conditions">使用 ProtonMail 即表示您同意我们的\n<a href="https://protonmail.com/terms-and-conditions">服务条款</a>和<a href="https://protonmail.com/privacy-policy">隐私协议</a></string>
@@ -297,11 +254,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="current_standard">当代的标准安全等级</string>
     <string name="extreme_security">安全性最高（4096 位）</string>
     <string name="highest_security">目前最安全的加密方式，<b>可能需要几分钟才能完成设置</b>。</string>
-    <string name="generate_keypair">生成密钥</string>
     <string name="labels_title_apply">应用标签</string>
     <string name="labels_title_add">添加标签</string>
     <string name="labels_title">标签</string>
-    <string name="labels_create">创建标签</string>
     <string name="label_name">标签名称</string>
     <string name="label_name_empty">必须填写标签名称</string>
     <string name="label_name_duplicate">此标签名称已存在</string>
@@ -309,8 +264,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="label_invalid">名称无效，标签未能添加。</string>
     <string name="undo">撤消</string>
     <string name="customize_swipe_actions">更改滑动操作</string>
-    <string name="message_details_swipe_info">您可以向右滑动回到收件箱，或向左滑动将邮件移至垃圾箱</string>
-    <string name="composing_message_scroll_info">在编辑区右侧上下滑动可滚动浏览编辑内容</string>
     <string name="message_can_not_edit">此邮件尚未发送，不能回复或转发。</string>
     <string name="label_apply">应用</string>
     <string name="label_delete">删除</string>
@@ -325,15 +278,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="respond_inline">纯文本引用</string>
     <string name="no_connectivity_detected">网络未连接。</string>
     <string name="no_connectivity_detected_troubleshoot">网络未连接（<u>排查故障</u>）</string>
-    <string name="no_connectivity_message_not_downloaded">网络未连接。\n邮件下载失败</string>
-    <string name="connectivity_arrived">已连接</string>
     <string name="connectivity_checking">正在连接...</string>
     <string name="sync_short">同步</string>
     <string name="draft_attachments_uploading">草稿仍在上传中...</string>
     <string name="draft_label_attachments_uploading">正在上传附件…</string>
     <string name="draft_label_message_uploading">正在发送邮件…</string>
     <string name="attachment_failed">附件上传失败 </string>
-    <string name="attachment_failed_new">邮件 %1$s %2$s 的附件上传失败</string>
     <string name="attaching_photo_failed">图片添加失败</string>
     <string name="empty_message">邮件无内容</string>
     <string name="dismiss">关闭</string>
@@ -342,8 +292,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_images">显示外链图像</string>
     <string name="retry">重试</string>
     <string name="saving_failed_no_conn">保存失败，网络已断开</string>
-    <string name="can_not_create_account_while_beta">公测版不允许创建账户</string>
-    <string name="changing_mailbox_password_disabled_while_beta">公测版不允许修改密码</string>
     <string name="username_is_available">%s 可以注册！</string>
     <string name="username_is_not_available">%s 不能注册！</string>
     <string name="username_is_too_long">用户名不应超过 %d 个字符</string>
@@ -367,20 +315,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_subtitle_encryption">您的邮箱已经过端到端加密技术保护。想和亲朋好友轻松使用加密邮件交流吗？快邀请他们使用 ProtonMail 吧！不过即使他们不用 ProtonMail，您也可以手动加密邮件。</string>
     <string name="engagement_subtitle_expire">您可以指定发出的邮件过一段时间自动销毁。</string>
     <string name="engagement_subtitle_help">您可以在 protonmail.com/support 获得帮助，也可以在本程序内反馈问题。</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail 不经营广告业务，也不侵犯用户隐私。您的支持对 ProtonMail 至关重要。您可以开通付费账户或捐款来支持 ProtonMail。</string>
     <string name="attachment_exists">附件已存在</string>
     <string name="sending_email_success">验证码已发送</string>
     <string name="sending_email_failed">验证码发送失败</string>
-    <string name="password_required">输入登录密码方可继续</string>
     <string name="password_not_valid">密码错误</string>
     <string name="send_code_wait">请等待 %d 秒后再试</string>
     <string name="eo_password_not_completed">尚未输入邮件密码</string>
-    <string name="delinquency_title">此账户因欠费已被停用</string>
     <string name="delinquency_subtitle">此账户因欠费已被停用。请登录 protonmail.com 续费。</string>
     <string name="direct_disabled_subtitle">移动端注册暂不开放，请稍后再试，或使用电脑前往 <a href="https://protonmail.com">protonmail.com</a> 注册。</string>
     <string name="downloading">下载中...</string>
     <string name="cant_download_attachment">附件下载失败</string>
-    <string name="auto_logout">自动退出账户</string>
     <string-array name="auto_logout_options_array">
         <item>立刻</item>
         <item>五分钟无操作</item>
@@ -388,42 +332,30 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>一小时无操作</item>
         <item>二十四小时无操作</item>
     </string-array>
-    <string-array name="pin_options_array">
-        <item>更改口令</item>
-        <item>更改锁定延迟</item>
-    </string-array>
     <string name="delete_label_confirmation_title">删除所选标签？</string>
     <string name="delete_folder_confirmation_title">删除所选文件夹？</string>
     <string name="delete_label_confirmation_message">其中的邮件可在<b>所有邮件</b>中找到。</string>
     <string name="enter_pin">输入口令打开邮箱</string>
     <string name="enter_pin_message_details">输入口令查看邮件</string>
     <string name="enter_current_pin">输入当前口令</string>
-    <string name="hint_pin">口令</string>
     <string name="pin_subtitle_create">创建口令</string>
     <string name="pin_subtitle_create_new">创建新口令</string>
     <string name="pin_subtitle_confirm">确认口令</string>
     <string name="pin_subtitle_confirm_new">确认新口令</string>
-    <string name="forgot_pin">忘记口令？</string>
     <string name="pin_invalid">口令无效，请输入四位数字</string>
     <string name="pin_confirmation_not_match">两次口令不一致</string>
     <string name="pin_not_match">口令错误</string>
     <string name="new_pin_saved">新口令已生效</string>
-    <string name="pin_settings">口令设置</string>
-    <string name="next">继续</string>
-    <string name="back">后退</string>
     <string name="new_emails">%d 封新邮件</string>
     <string name="attachment_download_success">%s 已成功下载到文件管理器</string>
     <string name="attachment_download_failed">无法下载 %s</string>
-    <string name="sender_changed">更改发件地址前请先移除附件。</string>
     <string name="ringtone">铃声</string>
     <string name="ringtone_selected">铃声:</string>
-    <string name="notification_option">%1$s\n铃声：%2$s</string>
     <string name="ringtone_invalid">所选铃声无效</string>
     <string name="ringtone_no_default">无法加载预设铃声</string>
     <string name="select_tone">选择音调</string>
     <string name="copy_link">复制链接</string>
     <string name="share_link">分享链接</string>
-    <string name="attachment_delete_failed">附件 %s 删除失败</string>
     <string name="sync_attachments">正在同步附件</string>
     <string name="processing_attachment">正在处理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即将在浏览器中打开：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;确定要继续吗？</string>
@@ -447,7 +379,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upselling_donate_title">捐款</string>
     <string name="upselling_upgrade_title">开通 ProtonMail 增强版</string>
     <string name="upselling_donate_subtitle">您的捐款能够帮助我们扩充服务器，并继续开发免费开源的 ProtonMail 软件。只有依靠整个社群的支持，我们才能继续向全世界提供 ProtonMail 服务。</string>
-    <string name="upselling_upgrade_subtitle">您付费升级账户能帮助我们扩充服务器，并继续开发免费开源的 ProtonMail 软件。惟有依靠整个社群的支持，我们才能继续向全世界提供 ProtonMail 服务。</string>
     <string name="upgrade_donate">升级/捐款</string>
     <string name="upselling_donate_pick_amount">选择捐款金额或直接输入</string>
     <string name="amount_5">€5</string>
@@ -462,8 +393,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upgrade_line3">可使用您自己的域名</string>
     <string name="upgrade_line4">最多 5 个邮箱地址</string>
     <string name="upgrade_line5">优先客户服务</string>
-    <string name="upgrade_plus_price">€4</string>
-    <string name="per_month">/月</string>
     <string name="upgrade">升级</string>
     <string name="payment_options">支付选项</string>
     <string name="other_plans">若要获取更多存储空间，请通过网页版 ProtonMail 升级。</string>
@@ -484,7 +413,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_plus_line7">优先客户服务</string>
     <string name="plan_free_line1">500 MB 存储空间</string>
     <string name="plan_free_line2">每天可发 150 封邮件</string>
-    <string name="plan_free_line22">每天可发 %d 封邮件</string>
     <string name="plan_free_line3">可使用 20 个标签</string>
     <string name="plan_free_line4">自有域名：不支持</string>
     <string name="plan_free_line5">一个邮箱地址</string>
@@ -498,7 +426,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="zip_code">邮编</string>
     <string name="card_number">信用卡号</string>
     <string name="billing_information">支付方式</string>
-    <string name="billing_upgrade_thanks">升级成功！感谢您的支持！</string>
     <string name="country">国家</string>
     <string name="cvc">信用卡安全码</string>
     <string name="terms_and_conditions_billing">点击提交即表示您同意\n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 服务条款</a></string>
@@ -506,13 +433,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="currency">货币</string>
     <string name="plan_duration">计费周期</string>
     <string name="duration_annual_line1">年付<font color="#C3E129">八折优惠</font></string>
-    <string name="duration_annual_line2">%s 每月</string>
     <string name="per_month_text_only">每月</string>
-    <string name="per_year_text_only">每年</string>
     <string name="duration_annual_line3">按每年 %s 收费</string>
     <string name="duration_annual_line4">按每月 %s 收费</string>
     <string name="duration_monthly_line1">月付</string>
-    <string name="duration_monthly_line2">%s 每月</string>
     <string name="duration_monthly_line3">八折</string>
     <string name="set_cont">确定</string>
     <string name="payment_error">支付失败</string>
@@ -551,11 +475,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_approval_consumed_error_description">支付已经完成，请查看您的账户等级。</string>
     <string name="no_payment_methods">您尚未添加支付方式。</string>
     <string name="edit_payment_methods">请登录 protonmail.com 更改支付方式。</string>
-    <string name="no_permission_contacts">未获得读取通讯录的权限</string>
     <string name="message_not_loaded">邮件未加载</string>
-    <string name="signature_on">启用落款</string>
     <string name="signature_text">落款内容</string>
-    <string name="please_use_webapp_pass_change">请使用电脑登录网页版 &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; 以完成此操作。</string>
     <string name="available_addresses">可用地址</string>
     <string name="inactive_addresses">闲置地址</string>
     <string name="not_set">未设置</string>
@@ -607,15 +528,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">群组</string>
-    <string name="phone_contact">手机通讯录</string>
     <string name="contact_details_display_name">名称</string>
     <string name="contact_details">联系人详情</string>
     <string name="email_type_home">家庭</string>
-    <string name="email_type_work">工作</string>
-    <string name="option_type_custom">增加类型</string>
     <string name="type_title">选择类型</string>
-    <string name="no_permission_storage">未获得设备存储读取权限</string>
     <string name="message_drafted_error_server">邮件发送失败。%s</string>
     <string name="sync_local_contacts">上传到 ProtonMail</string>
     <string name="please_select_only_phone_contacts">请选择本地手机联系人</string>
@@ -624,13 +540,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_vcard_hint_address">输入地址</string>
     <string name="contact_vcard_hint_other">输入信息</string>
     <string name="contact_vcard_hint_note">输入备注</string>
-    <string name="contact_vcard_phone">电话</string>
-    <string name="contact_vcard_address">地址</string>
     <string name="contact_vcard_new_row_email">添加邮箱地址</string>
     <string name="contact_vcard_new_row_phone">添加电话号码</string>
     <string name="contact_vcard_new_row_address">添加地址</string>
     <string name="contact_vcard_new_row_other">添加信息</string>
-    <string name="contact_vcard_new_row_custom">添加自定义条目</string>
     <string name="vcard_other_option_org">单位</string>
     <string name="vcard_other_option_title">头衔</string>
     <string name="vcard_other_option_nickname">昵称</string>
@@ -639,13 +552,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="vcard_other_option_gender">性别</string>
     <string name="vcard_other_option_role">身份</string>
     <string name="vcard_other_option_url">网址</string>
-    <string name="sync_question">同步联系人？</string>
-    <string name="sync_question_subtitle">这将把您设备上的通讯录同步到 ProtonMail 的通讯录中，以后您就可以在其他设备上通过 ProtonMail 查看这些联系人。</string>
     <string name="convert_contact">转换联系人</string>
     <string name="upload_contacts">上传联系人</string>
-    <string name="encrypted_data">已加密的数据</string>
     <string name="upgrade_encrypted_contact">升级后方可加密联系人信息。</string>
-    <string name="empty_encrypted_data">加密的联系人信息为空。</string>
     <string name="uploading_contacts">正在上传联系人…</string>
     <string name="error_encrypted_data">读取加密的联系人信息时出错。</string>
     <string-array name="vcard_option_phone">
@@ -691,19 +600,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_message_exp_date_past">错误：有效期不正确</string>
     <string name="error_message_card_number_invalid">错误：卡号无效</string>
     <string name="print_error">打印错误</string>
-    <string name="download_error">下载出错</string>
     <string name="download_complete">下载完成</string>
     <string name="download_in_progress">正在下载</string>
     <string name="expires_in">\t%s后过期</string>
     <string name="unsaved_changes_title">未保存的更改</string>
     <string name="unsaved_changes_subtitle">表单中有未保存的内容，是否要放弃？</string>
-    <string name="discard">放弃</string>
-    <string name="keep_editing">继续编辑</string>
     <string name="request_timeout">请求超时，请重试</string>
     <string name="add_folder">添加文件夹</string>
     <string name="no_folders">无文件夹</string>
     <string name="folders_title_move">将邮件移动到</string>
-    <string name="move">移动</string>
     <string name="folders_manager">文件夹管理</string>
     <string name="folder_add_new">添加文件夹</string>
     <string name="folder_name">文件夹名称</string>
@@ -722,7 +627,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_contacts">无联系人</string>
     <string name="sender_name_address">%1$s &lt;%2$s&gt; 来信：</string>
     <string name="update_label">更新标签</string>
-    <string name="folder_name_empty">必须输入文件夹名称</string>
     <string name="max_labels_in_message">%1$s 邮件的标签数不应超过 %2$d。</string>
     <string name="delete">删除</string>
     <string name="subject_copied">主题已复制</string>
@@ -736,7 +640,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_to_template">收件人：%s;  </string>
     <string name="print_cc_template">抄送：%s  </string>
     <string name="print_bcc_template">密送：%s  </string>
-    <string name="contacts_invalid_type">类型无效</string>
     <string name="signature_error">校验错误</string>
     <string name="signature_error_desc">此内容未能通过签名校验</string>
     <string name="decryption_error">解密失败</string>
@@ -751,18 +654,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close_app">关闭应用</string>
     <string name="empty_subject">(无主题)</string>
     <string name="contacts_unknown">无名</string>
-    <string name="expand_collapse">展开/收起</string>
     <string name="learn_more">
         <u>详细了解</u>
     </string>
     <string name="info">提示</string>
     <string name="error_can_not_send_from_this_address">若要使用 %s 地址发送邮件，请开通付费账户。</string>
-    <string name="digital_signature_verified">数字签名已验证</string>
-    <string name="encrypted_and_digital_signature_verified">已加密且已验证签名</string>
     <string name="email_empty">邮箱地址缺失</string>
-    <string name="edit_contact_details">更改联系人详细信息</string>
     <string name="encrypted_contact_details">已加密的联系人信息</string>
-    <string name="edit_contact_toolbar_title">编辑 %s</string>
     <string name="convert_question">上传本地联系人</string>
     <string name="convert_question_subtitle">这将把您设备上的通讯录上传到 ProtonMail 的通讯录中，以后您就可以在其他设备上通过 ProtonMail 查看这些联系人。</string>
     <string name="refresh_contacts">刷新</string>
@@ -783,10 +681,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_offline_max_storage">设置 ProtonMail 在此设备上允许使用的存储空间上限。</string>
     <string name="load_embedded_images_failed_no_network">嵌入图像载入失败，请检查网络状态。</string>
     <string name="load_embedded_images_failed">嵌入的图像加载失败。</string>
-    <string name="attachment_storage_unlimited">无限制，已使用 %.2f MB</string>
     <string name="unlimited">无限制</string>
     <string name="local_storage_cleared">已清除本地缓存</string>
-    <string name="local_storage_clear">清除本地缓存</string>
     <string name="recipient_popup_compose_to">写邮件</string>
     <string name="recipient_popup_copy_address">复制邮箱地址</string>
     <string name="recipient_popup_see_details">查看联系人详情</string>
@@ -803,7 +699,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sender_lock_sent_autoresponder">通过 ProtonMail 全封闭加密发送</string>
     <string name="sender_lock_verification_failed">发件人验证失败</string>
     <string name="sender_lock_pgp_encrypted">PGP 加密的邮件</string>
-    <string name="sender_lock_pgp_verified">来自已验证地址的 PGP 签名邮件</string>
     <string name="sender_lock_pgp_encrypted_verified">来自已验证地址的 PGP 加密邮件</string>
     <string name="sender_lock_pgp_signed_verified_sender">来自已验证地址的 PGP 签名邮件</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
@@ -824,7 +719,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">了解详情</a>
     </string>
-    <string name="no_items_found">没有结果</string>
     <string name="channel_name_attachments">附件</string>
     <string name="channel_description_attachments">附件下载状态提醒</string>
     <string name="channel_name_emails">电子邮件</string>
@@ -839,13 +733,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="phishing_dialog_title">确认举报欺诈邮件</string>
     <string name="phishing_dialog_message">举报的邮件会被上传给我们，以便改进筛选系统。这意味着我们将得知此邮件的所有内容。</string>
     <string name="phishing_report_send_message_moved_to_spam">举报完成，此邮件已归为垃圾邮件。</string>
-    <string name="report_send">举报完成</string>
     <string name="cannot_send_report_send">举报失败</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">首选邮箱</string>
-    <string name="email_private">私人邮箱</string>
-    <string name="phone_private">私人电话</string>
     <string name="add_photo">添加照片</string>
     <string name="contact_display_name">\ue91c 名称</string>
     <string name="add_new_email">\ue914 添加邮箱地址</string>
@@ -854,7 +744,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="edit_contact">更改联系人信息</string>
     <string name="create_contact_group">创建联系人群组</string>
     <string name="edit_contact_group">更改联系人群组</string>
-    <string name="contact_groups_add_addresses">添加邮箱</string>
     <string name="contact_groups_manage_addresses">管理邮箱</string>
     <string name="contact_group_display_name">\ue91a 名称</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -885,11 +774,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_group_saved">群组已保存</string>
     <string name="no_recipients">无收件人</string>
     <string name="contact_group_selected">已选择 %d 项</string>
-    <string name="contact_group_deleted">群组已删除</string>
     <string name="paid_plan_needed">开通付费账户方可使用此功能</string>
-    <string name="composer_group_count">%1$s（%2$d 人）</string>
     <string name="composer_group_count_of">%1$s（%2$d/%3$d 人）</string>
-    <string name="address_successful_update">地址已更新</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="other">确定要删除所选群组吗？</item>
     </plurals>
@@ -917,15 +803,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="storage_limit_warning_title">警告</string>
     <string name="storage_limit_reached_text">您的存储空间已用尽，必须永久删除部分邮件或购买更多存储空间才能继续收发邮件。</string>
     <string name="storage_limit_approaching_text">您已使用了 90% 的存储空间。请考虑清理一些空间或购买更大存储量，以防空间耗尽。</string>
-    <string name="storage_limit_do_not_remind">不要再提醒我</string>
     <!-- endregion -->
     <string name="need_permissions_title">权限</string>
     <string name="need_storage_permissions_text">若要添加附件，您需要允许程序读取设备存储。</string>
-    <string name="need_phone_permissions_text">若要呼叫此联系人，您需要给予程序拨打电话权限。</string>
     <string name="push_notifications_alert_title">推送通知提示</string>
     <string name="push_notifications_alert_subtitle">没有新版 Google Play 服务支持，ProtonMail 无法推送通知。</string>
     <string name="app_locked">程序已锁定</string>
-    <string name="please_use_fingerprint">请使用指纹解锁程序。</string>
     <string name="use_pin_instead">输入口令</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">未注册生物识别数据</string>
@@ -934,7 +817,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="biometric_error_hw_not_available">生物识别硬件不可用。</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">非公开收件人</string>
-    <string name="could_not_delete_attachment">上传时不能删除附件</string>
     <string name="manage_accounts">管理账户</string>
     <!-- region Settings -->
     <string name="settings">设置</string>
@@ -943,7 +825,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="account">账户</string>
     <string name="subscription">等级</string>
     <string name="plan_and_user">等级</string>
-    <string name="plan">等级</string>
     <string name="payment_method">支付方式</string>
     <string name="password_manager">密码管理</string>
     <string name="recovery_email">密保邮箱</string>
@@ -956,18 +837,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_name">对外名称</string>
     <string name="edit_display_name">更改对外名称</string>
     <string name="signature">落款</string>
-    <string name="edit_signature">使用落款</string>
     <string name="mobile_signature">移动端落款</string>
     <string name="edit_mobile_signature">使用移动端落款</string>
     <string name="default_mobile_signature">来自 ProtonMail 移动端</string>
-    <string name="plus_account_required_mobile_signature">开通 ProtonMail 增强版方可更改移动设备落款</string>
     <string name="mobile_signature_is_premium">开通付费账户方可更改移动设备落款</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">免打扰</string>
     <string name="notifications_snooze">免打扰</string>
-    <string name="notifications_snooze_finishing">$s 分钟后恢复通知</string>
-    <string name="snooze_notifications">免打扰</string>
-    <string name="snooze_notifications_adjust">调整</string>
     <string name="notifications_snoozed">免打扰已开启</string>
     <string name="notifications_snooze_scheduled">定时免打扰</string>
     <string name="notifications_snooze_scheduled_settings">定时免打扰</string>
@@ -995,7 +871,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="mailbox">邮箱</string>
     <string name="privacy">隐私</string>
-    <string name="auto_download_messages_title_short">自动下载</string>
     <string name="auto_download_messages_title">自动下载邮件</string>
     <string name="auto_download_messages_subtitle">如果开启此选项，ProtonMail 将在后台自动下载新邮件（会耗费更多流量）。如果关闭，ProtonMail 只会在打开邮件时下载邮件内容。（注意：清理缓存或退出账户后，您将无法在离线状态下查看邮件内容。）</string>
     <string name="settings_background_sync">后台同步</string>
@@ -1041,7 +916,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="auto_lock_description">开启后程序可自动锁定，需要口令或指纹解锁。</string>
     <string name="change_pin_code">更改口令</string>
     <string name="auto_lock_timer">自动锁定时间</string>
-    <string name="unlock_with_fingerprint">使用指纹解锁</string>
     <string name="connections_via_third_parties">备用线路</string>
     <string name="allow_secure_connections_via_third_parties">允许使用备用线路</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">当 Proton 网站遭到封禁时，此选项允许程序改用其他线路连接 Proton 以绕过防火墙或规避网络故障。推荐开启以增强连接稳定性。</string>
@@ -1061,9 +935,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_version">程序版本</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="primary_account">主账户</string>
-    <string name="make_primary_account">将 %s 作为主账户？</string>
-    <string name="logout_account_question">退出 %s 账户？</string>
     <string name="remove_account_question">移除 %s？</string>
     <string name="signed_in_with">已登录 %s</string>
     <string name="signed_in_with_logged_out_from">已退出 %1$s 并登录 %2$s</string>

@@ -28,16 +28,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">Войти</string>
     <string name="sign_out">Выйти</string>
     <string name="sign_out_question">Вы действительно хотите выйти?</string>
-    <string name="remember_me_on_device">Запомнить меня на этом устройстве</string>
-    <string name="show_password">Показать пароль</string>
-    <string name="username">Имя пользователя</string>
-    <string name="password">Пароль</string>
-    <string name="login_password">Пароль для входа</string>
     <string name="mailbox_password">Пароль почтового ящика</string>
-    <string name="two_factor_code">Двухфакторный код</string>
+    <string name="two_factor_code">Код двухфакторной аутентификации</string>
     <string name="processing_request">Ваш запрос обрабатывается</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">Нужен почтовый ящик? Зарегистрируйтесь.</string>
     <string name="need_to_be_logged_in">Вы не выполнили вход!</string>
     <string name="forgot_password">Забыли пароль?</string>
     <string name="reset_mailbox_password">СБРОСИТЬ ПАРОЛЬ ПОЧТОВОГО ЯЩИКА</string>
@@ -59,10 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app_title">Требуется обновление</string>
     <string name="update_app">Вашим приложением ProtonМail нельзя пользоваться, пока оно не будет обновлено</string>
     <string name="api_offline_title">API ProtonMail отключён</string>
-    <string name="api_offline">ProtonMail сейчас не работает. Проверьте наш Twitter, чтобы узнать текущее состояние: https://twitter.com/protonmail</string>
-    <string name="cannot_open">Невозможно открыть файл</string>
-    <string name="downloaded_attachment">Скачано %s</string>
-    <string name="edit_contact_validation">Пожалуйста, введите действительные имя и электронную почту</string>
+    <string name="api_offline">ProtonMail сейчас не в сети. Проверьте наш Twitter, чтобы узнать текущее состояние: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт сохранён</string>
     <string name="contact_saved_offline">Контакт сохранён. Он будет синхронизирован, когда подключение станет доступно</string>
     <string name="contact_exist">Адрес эл. почты контакта уже существует</string>
@@ -70,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">Адрес эл. почты повторяется</string>
     <string name="invalid_code">Указан неверный код</string>
     <string name="message_drafted">Сбой отправки сообщения. Ваши сообщения сохранены в папке Черновики</string>
-    <string name="message_drafted_reason">%s не существует.\nНевозможно доставить электронную почту.</string>
     <string name="open_drawer">Открыть</string>
     <string name="close_drawer">Закрыть</string>
     <string name="inbox_option">ВХОДЯЩИЕ</string>
@@ -80,10 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">АРХИВ</string>
     <string name="trash_option">КОРЗИНА</string>
     <string name="spam_option">СПАМ</string>
-    <string name="contacts_option">КОНТАКТЫ</string>
-    <string name="settings_option">НАСТРОЙКИ</string>
-    <string name="report_bugs_option">СООБЩИТЬ ОБ ОШИБКАХ</string>
-    <string name="signout_option">ВЫЙТИ</string>
     <string name="inbox">Входящие</string>
     <string name="starred">Со звёздами</string>
     <string name="drafts">Черновики</string>
@@ -92,7 +78,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Корзина</string>
     <string name="spam">Спам</string>
     <string name="contacts">Контакты</string>
-    <string name="contact_groups">Группы контактов</string>
     <string name="search_contacts">Поиск контактов</string>
     <string name="fetching_contacts">Получение контактов с ProtonMail...</string>
     <string name="fetching_contacts_success">Контакты успешно обновлены</string>
@@ -116,7 +101,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Переместить в корзину</string>
     <string name="move_to_spam">Переместить к спаму</string>
     <string name="move_to_inbox">Переместить во Входящие</string>
-    <string name="move_message_to_trash">Переместить сообщение в корзину?</string>
     <string name="are_you_sure_empty">Вы уверены, что хотите удалить все сообщения из этой папки?</string>
     <string name="send">Отправить</string>
     <string name="selected">Выбрано</string>
@@ -130,10 +114,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">Cкр:</string>
     <string name="from_prefix">От:</string>
     <string name="date_prefix">Дата:</string>
-    <string name="expiration_time_prefix">Исчезнет через</string>
     <string name="view_details">ПОДРОБНОСТИ</string>
     <string name="hide_details">СКРЫТЬ ПОДРОБНОСТИ</string>
-    <string name="download">СКАЧАТЬ</string>
     <string name="reply">Ответить</string>
     <string name="reply_all">Ответить всем</string>
     <string name="forward">Переслать</string>
@@ -143,7 +125,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">Подтвердите пароль</string>
     <string name="define_password_hint">Укажите подсказку (необязательно)</string>
     <string name="message_passwords_do_not_match">Пароли для входа не совпадают</string>
-    <string name="message_mailbox_passwords_do_not_match">Пароли от почтового ящика не совпадают</string>
     <string name="eo_passwords_do_not_match">Пароли не совпадают</string>
     <string name="define_expiration_period">Укажите срок действия</string>
     <string name="set_message_expiration">Задать срок действия для сообщения</string>
@@ -191,16 +172,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">При добавлении выбранного файла возникла проблема</string>
     <string name="add_contact">Добавить контакт</string>
     <string name="delete_contact">Удалить %s из контактов?</string>
-    <string name="sync_contact">Синхронизировать %s с веб-приложением?</string>
     <string name="confirm">Подтвердить</string>
     <string name="confirm_destructive_action">Вы уверены? Это действие не может быть отменено.</string>
     <string name="create">Создать</string>
-    <string name="name">Имя</string>
     <string name="email">Эл. почта</string>
     <string name="email_address">Адрес эл. почты</string>
     <string name="phone">Hомер телефона</string>
     <string name="save">Сохранить</string>
-    <string name="add">Добавить</string>
     <string name="syncing_messages">Синхронизация...</string>
     <string name="sync">Синхронизировать контакты</string>
     <string name="save_message_as_draft">Сохранить сообщение как черновик?</string>
@@ -225,28 +203,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_limit">Вложения ограничены %1$s. Все вложения займут: %2$s.</string>
     <string name="sending_message">Отправка сообщения...</string>
     <string name="sending_message_offline">Вы не в сети, поставлено в очередь на отправку...</string>
-    <string name="mailbox_password_changed">Пароль почтового ящика изменён</string>
-    <string name="go_to_mailbox_login">Перейти ко входу в почтовый ящик, чтобы ввести обновлённый пароль для почтового ящика?</string>
     <string name="go_to_inbox">Перейти во Входящие</string>
     <string name="message_sent">Сообщение отправлено</string>
     <string name="message_failed">Сбой отправки сообщения</string>
     <string name="message_sending_failures">%d сбоев отправки сообщений</string>
     <string name="storage_limit">Предел объёма хранилища</string>
-    <string name="storage_limit_warning">Вы приближаетесь к пределу объёма хранилища</string>
-    <string name="do_not_show_again">Больше не показывать</string>
     <string name="edit_settings">Изменить настройки</string>
     <string name="save_settings">Сохранить настройки</string>
     <string name="share">Поделиться</string>
-    <string name="settings_saved">Новые настройки сохранены</string>
     <string name="settings_not_saved_password"> Настройки не сохранены - неверный пароль для входа</string>
     <string name="settings_not_saved_email"> Настройки не сохранены - неверный адрес эл. почты для уведомлений</string>
-    <string name="save_settings_question">Сохранить настройки?</string>
     <string name="enter">Ввести</string>
     <string name="cancel">Отменить</string>
     <string name="close">Закрыть</string>
-    <string name="passwords">Менеджер паролей</string>
     <string name="change_password">Изменить пароль</string>
-    <string name="change_login_password">Изменить пароль учётной записи</string>
     <string name="change_mailbox_password">Изменить пароль почтового ящика</string>
     <string name="eo_password_title">Задать пароль</string>
     <string name="eo_password_subtitle">Задать пароль для шифрования этого сообщения для пользователей вне ProtonMail</string>
@@ -254,24 +224,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_login_password">Текущий пароль для входа</string>
     <string name="new_login_password">Новый пароль</string>
     <string name="confirm_new_login_password">Подтвердите новый пароль</string>
-    <string name="old_mailbox_password">Текущий пароль от почтового ящика</string>
     <string name="new_mailbox_password">Новый пароль почтового ящика</string>
     <string name="confirm_new_mailbox_password">Подтвердите новый пароль к почтовому ящику</string>
     <string name="no_attachments">Нет вложений</string>
-    <string name="num_attachments">Вложений: %d</string>
     <string name="new_passwords_not_valid">Ошибка ввода данных</string>
-    <string name="new_passwords_do_not_match">Новые пароли не совпадают</string>
+    <string name="new_passwords_do_not_match">Новый пароль и его подтверждение не совпали</string>
     <string name="new_login_password_saved">Новый пароль учётной записи сохранён</string>
     <string name="new_mailbox_password_saved">Новый пароль почтового ящика сохранён</string>
-    <string name="could_not_change_password">Пароль не может быть изменён</string>
-    <string name="auto_logout_option_settings">Настройки автоматического выхода</string>
     <string name="pin_lock_option_settings">Настройка блокировки приложения</string>
     <string name="pin_lock_after">Блокировка приложения после</string>
     <string name="lock_the_app">Заблокировать приложение</string>
-    <string name="no_sound_or_vibrate">Без вибрации или звука</string>
-    <string name="sound">Звук без вибрации</string>
-    <string name="vibration">Вибрация без звука</string>
-    <string name="both_sound_and_vibration">Вибрация и звук</string>
     <string name="display_name_banned_chars">Недопустимое отображаемое имя. Символы \'&gt;\' и \'&lt;\' запрещены</string>
     <string name="cont">Продолжить</string>
     <string name="email_verification_code">Мы вышлем код подтверждения на адрес электронной почты, указанный выше.</string>
@@ -285,18 +247,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Настройте свою учётную запись</string>
     <string name="create_account">Создать учётную запись</string>
     <string name="create_passwords">Задать пароль</string>
-    <string name="sign_up">Регистрация</string>
     <string name="caps_username">Имя пользователя</string>
     <string name="caps_login_password">Пароль</string>
-    <string name="caps_two_factor">Двухфакторный код</string>
     <string name="caps_confirm_password">Подтвердите пароль</string>
-    <string name="caps_confirm_mailbox_password">Подтвердите пароль почтового ящика</string>
-    <string name="caps_optional_notification_email">ПОЧТА ДЛЯ ВОССТАНОВЛЕНИЯ ПАРОЛЯ (НЕОБЯЗАТЕЛЬНО)</string>
     <string name="caps_optional">*НЕОБЯЗАТЕЛЬНО</string>
     <string name="update_me_for_new_features">Сообщайте мне о новых функциях</string>
     <string name="create_mailbox_password">Создать пароль</string>
-    <string name="confirm_mailbox_password">Подтвердите пароль почтового ящика</string>
-    <string name="password_note"><b>Примечание:</b> Используется для шифрования и расшифровки ваших сообщений.
+    <string name="password_note"><b>Примечание:</b> Этот пароль используется для шифрования и расшифровки ваших сообщений.
 Не забудьте этот пароль, мы не сможем его восстановить. Если вы забудете свой пароль, то не сможете прочитать свои письма.</string>
     <string name="username_note"><b>Примечание:</b> Имя пользователя также является вашим адресом в ProtonMail</string>
     <string name="terms_and_conditions">Используя ProtonMail, вы соглашаетесь с нашими\n
@@ -314,11 +271,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="current_standard">Текущий стандарт</string>
     <string name="extreme_security">Максимальная безопасность (4096 бит)</string>
     <string name="highest_security">Наивысший из доступных уровень шифрования.<b> Для настройки может потребоваться несколько минут.</b></string>
-    <string name="generate_keypair">Создать ключевую пару</string>
     <string name="labels_title_apply">Назначить ярлыки</string>
     <string name="labels_title_add">Добавить ярлык</string>
     <string name="labels_title">Ярлыки</string>
-    <string name="labels_create">Добавить ярлык</string>
     <string name="label_name">Название ярлыка</string>
     <string name="label_name_empty">Название ярлыка обязательно</string>
     <string name="label_name_duplicate">Такое название ярлыка уже существует</string>
@@ -326,9 +281,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="label_invalid">Ярлык не был добавлен из-за недопустимого названия.</string>
     <string name="undo">Отменить</string>
     <string name="customize_swipe_actions">Настройка жестов</string>
-    <string name="message_details_swipe_info">Смахивание вправо – вернуться к просмотру писем
-или смахивание влево – отправить письмо в Корзину</string>
-    <string name="composing_message_scroll_info">Вы можете прокручивать панель редактора вверх или вниз, протаскивая её самую правую границу</string>
     <string name="message_can_not_edit">Невозможно ответить/переслать. Это сообщение ещё не отправлено</string>
     <string name="label_apply">Применить</string>
     <string name="label_delete">Удалить</string>
@@ -343,16 +295,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="respond_inline">Ответить с цитированием</string>
     <string name="no_connectivity_detected">Подключение не обнаружено...</string>
     <string name="no_connectivity_detected_troubleshoot">Подключение не обнаружено... (<u>Устраните неполадки</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">Подключение не обнаружено...
-\nСообщение не загружено</string>
-    <string name="connectivity_arrived">Подключено</string>
     <string name="connectivity_checking">Проверка подключения...</string>
     <string name="sync_short">синхр.</string>
     <string name="draft_attachments_uploading">Черновик ещё загружается...</string>
     <string name="draft_label_attachments_uploading">добавление вложений…</string>
     <string name="draft_label_message_uploading">отправка сообщения…</string>
     <string name="attachment_failed">Не удалось загрузить вложение для сообщения </string>
-    <string name="attachment_failed_new">Не удалось загрузить вложение для сообщения %1$s %2$s</string>
     <string name="attaching_photo_failed">Не удалось прикрепить фотографию</string>
     <string name="empty_message">Пустое сообщение</string>
     <string name="dismiss">Отклонить</string>
@@ -361,8 +309,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_images">Показывать внешнее содержимое</string>
     <string name="retry">Повторить</string>
     <string name="saving_failed_no_conn">Сбой сохранения. Нет подключения</string>
-    <string name="can_not_create_account_while_beta">Создание учётной записи отключено в Бета-версии</string>
-    <string name="changing_mailbox_password_disabled_while_beta">Изменение пароля почтового ящика отключено в Бета-версии</string>
     <string name="username_is_available">Имя пользователя доступно!</string>
     <string name="username_is_not_available">Имя пользователя уже используется!</string>
     <string name="username_is_too_long">Максимальная длина имени пользователя – %d символов!</string>
@@ -387,22 +333,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_subtitle_encryption">Теперь ваш почтовый ящик защищён сквозным шифрованием. Чтобы отправлять автоматически защищённые письма своим знакомым, пригласите их пользоваться ProtonMail! Также вы сможете по желанию шифровать сообщения для них, если они не пользуются ProtonMail.</string>
     <string name="engagement_subtitle_expire">Для отправляемых вами сообщений можно назначать автоматическое удаление через определённый промежуток времени.</string>
     <string name="engagement_subtitle_help">Помощь и поддержку вы сможете получить по адресу protonmail.com/support. Об ошибках также можно сообщать через приложение.</string>
-    <string name="engagement_subtitle_support_protonmail">ProtonMail не продаёт рекламу и не нарушает
-вашу приватность. Ваша поддержка крайне важна для продолжения работы ProtonMail. Вы можете перейти
-на платный тариф или внести пожертвование, чтобы поддержать ProtonMail.</string>
     <string name="attachment_exists">Вложение уже прикреплено</string>
     <string name="sending_email_success">Код подтверждения отправлен</string>
     <string name="sending_email_failed">Сбой отправки кода подтверждения</string>
-    <string name="password_required">Чтобы внести изменения, введите свой пароль для входа</string>
     <string name="password_not_valid">Введён неверный пароль</string>
     <string name="send_code_wait">Пожалуйста, подождите %d сек. перед повторным нажатием</string>
     <string name="eo_password_not_completed">Пароль сообщения введён не полностью.</string>
-    <string name="delinquency_title">Доступ к этой учётной записи приостановлен из-за неуплаты</string>
     <string name="delinquency_subtitle">Доступ к этой учётной записи приостановлен из-за неуплаты. Пожалуйста, войдите в систему, используя protonmail.com, чтобы оплатить счёт.</string>
     <string name="direct_disabled_subtitle">Регистрация с мобильных устройств временно отключена. Пожалуйста, повторите попытку позднее, либо попробуйте зарегистрироваться на <a href="https://protonmail.com">protonmail.com</a>, используя настольный компьютер или ноутбук.</string>
     <string name="downloading">Скачивание...</string>
     <string name="cant_download_attachment">Невозможно скачать вложение</string>
-    <string name="auto_logout">Автоматический выход</string>
     <string-array name="auto_logout_options_array">
         <item>Сразу</item>
         <item>5 минут бездействия</item>
@@ -410,42 +350,30 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>1 час бездействия</item>
         <item>24 часа бездействия</item>
     </string-array>
-    <string-array name="pin_options_array">
-        <item>Изменить PIN-код</item>
-        <item>Изменить время повторного ввода PIN-кода</item>
-    </string-array>
     <string name="delete_label_confirmation_title">Удалить выбранные ярлыки?</string>
     <string name="delete_folder_confirmation_title">Удалить выбранные папки?</string>
     <string name="delete_label_confirmation_message">Письма, содержащиеся здесь, будут найдены во <b>Всех письмах</b></string>
     <string name="enter_pin">Введите ваш PIN-код, чтобы разблокировать почтовый ящик</string>
     <string name="enter_pin_message_details">Введите ваш PIN-код для разблокировки письма</string>
     <string name="enter_current_pin">Введите ваш текущий PIN-код</string>
-    <string name="hint_pin">PIN-код</string>
     <string name="pin_subtitle_create">Создайте ваш PIN-код здесь</string>
     <string name="pin_subtitle_create_new">Создайте ваш НОВЫЙ PIN-код здесь</string>
     <string name="pin_subtitle_confirm">Подтвердите ваш PIN-код здесь</string>
     <string name="pin_subtitle_confirm_new">Подтвердите ваш НОВЫЙ PIN-код здесь</string>
-    <string name="forgot_pin">Забыли PIN-код?</string>
     <string name="pin_invalid">Неверный PIN-код, введите правильный 4-значный PIN-код</string>
     <string name="pin_confirmation_not_match">Введённые PIN-коды не совпадают</string>
     <string name="pin_not_match">PIN-коды не совпадают</string>
     <string name="new_pin_saved">Новый PIN-код сохранён</string>
-    <string name="pin_settings">Настройки PIN-кода</string>
-    <string name="next">далее</string>
-    <string name="back">назад</string>
     <string name="new_emails">%d новых писем</string>
     <string name="attachment_download_success">%s успешно скачано в файловый менеджер</string>
     <string name="attachment_download_failed">Не удалось скачать %s надлежащим образом</string>
-    <string name="sender_changed">Пожалуйста, удалите прикреплённые файлы, чтобы изменить адрес отправителя.</string>
     <string name="ringtone">Мелодия вызова</string>
     <string name="ringtone_selected">Мелодия вызова:</string>
-    <string name="notification_option">%1$s\nМелодия вызова: %2$s</string>
     <string name="ringtone_invalid">Выбор мелодии вызова вернул недопустимое значение</string>
     <string name="ringtone_no_default">Невозможно загрузить мелодию вызова по умолчанию</string>
     <string name="select_tone">Звук уведомления</string>
     <string name="copy_link">Скопировать ссылку</string>
     <string name="share_link">Поделиться ссылкой</string>
-    <string name="attachment_delete_failed">Сбой при удалении %s вложений</string>
     <string name="sync_attachments">Синхронизация вложений</string>
     <string name="processing_attachment">Обработка вложений</string>
     <string name="hyperlink_confirmation_dialog_text_html">Вы собираетесь запустить веб-браузер и перейти по адресу:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Вы хотите продолжить?</string>
@@ -478,10 +406,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 вместимость и продолжать разработку ProtonMail как свободного ПО с открытым исходным кодом. Только благодаря
 поддержке сообщества мы можем продолжать предоставлять доступ к ProtonMail людям со всего
 мира.</string>
-    <string name="upselling_upgrade_subtitle">Расширение вашего тарифа поможет нам увеличить
-вместимость и продолжать разработку ProtonMail как свободного ПО с открытым исходным кодом. Только благодаря
-поддержке сообщества мы можем продолжать предоставлять доступ к ProtonMail людям со всего
-мира.</string>
     <string name="upgrade_donate">Повысить/Пожертвовать</string>
     <string name="upselling_donate_pick_amount">Выберите размер пожертвования или введите любую сумму</string>
     <string name="amount_5">5€</string>
@@ -496,8 +420,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upgrade_line3">Используйте свой домен</string>
     <string name="upgrade_line4">До 5 псевдонимов</string>
     <string name="upgrade_line5">Приоритет у службы поддержки</string>
-    <string name="upgrade_plus_price">4€</string>
-    <string name="per_month">/месяц</string>
     <string name="upgrade">Повысить</string>
     <string name="payment_options">Вариант оплаты</string>
     <string name="other_plans">Чтобы использовать тарифы с большим объёмом хранилища, переходите на них с помощью
@@ -520,7 +442,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_plus_line7">Приоритет у службы поддержки</string>
     <string name="plan_free_line1">500 МБ хранилища</string>
     <string name="plan_free_line2">150 сообщений в день</string>
-    <string name="plan_free_line22">%d сообщений в день</string>
     <string name="plan_free_line3">20 ярлыков</string>
     <string name="plan_free_line4">Свои домены: не поддерживаются</string>
     <string name="plan_free_line5">1 адрес</string>
@@ -534,7 +455,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="zip_code">Почтовый индекс</string>
     <string name="card_number">Номер карты</string>
     <string name="billing_information">Платёжная информация</string>
-    <string name="billing_upgrade_thanks">Повышение успешно! Спасибо за поддержку!</string>
     <string name="country">Страна</string>
     <string name="cvc">CVC-код</string>
     <string name="terms_and_conditions_billing">Нажимая \"Отправить\", вы соглашаетесь
@@ -543,13 +463,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="currency">Валюта</string>
     <string name="plan_duration">Платёжный цикл</string>
     <string name="duration_annual_line1">Годовой тариф <font color="#C3E129">Экономия 20%</font></string>
-    <string name="duration_annual_line2">%s в месяц</string>
     <string name="per_month_text_only">в месяц</string>
-    <string name="per_year_text_only">в год</string>
     <string name="duration_annual_line3">Оплачивается в сумме %s /год</string>
     <string name="duration_annual_line4">Оплачивается в сумме %s /месяц</string>
     <string name="duration_monthly_line1">Помесячный тариф</string>
-    <string name="duration_monthly_line2">%s в месяц</string>
     <string name="duration_monthly_line3">Скидка 20%</string>
     <string name="set_cont">Задать и продолжить</string>
     <string name="payment_error">Ошибка оплаты</string>
@@ -588,11 +505,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_approval_consumed_error_description">Способ оплаты уже использован для этого платежа. Пожалуйста, проверьте состояние своей подписки.</string>
     <string name="no_payment_methods">У вас нет сохранённых способов оплаты.</string>
     <string name="edit_payment_methods">Пожалуйста, войдите через protonmail.com, чтобы изменить платёжную информацию.</string>
-    <string name="no_permission_contacts">Нет разрешения на чтение контактов</string>
     <string name="message_not_loaded">Сообщение не загружено</string>
-    <string name="signature_on">Подпись включена</string>
     <string name="signature_text">Текст подписи</string>
-    <string name="please_use_webapp_pass_change">Пожалуйста, воспользуйтесь нашим веб-приложением &lt;a href=\"https://protonmail.com\"&gt;protonmail.com&lt;/a&gt; , используя настольный ПК или ноутбук, чтобы завершить это действие.</string>
     <string name="available_addresses">Доступные адреса</string>
     <string name="inactive_addresses">Неактивные адреса</string>
     <string name="not_set">Не задано</string>
@@ -647,15 +561,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">Группы</string>
-    <string name="phone_contact">Контакт из телефона</string>
     <string name="contact_details_display_name">Имя</string>
     <string name="contact_details">Контактные данные</string>
     <string name="email_type_home">Домашний</string>
-    <string name="email_type_work">Рабочий</string>
-    <string name="option_type_custom">Новый тип</string>
     <string name="type_title">Выберите тип</string>
-    <string name="no_permission_storage">Нет разрешения на доступ к хранилищу</string>
     <string name="message_drafted_error_server">Сбой отправки сообщения. %s</string>
     <string name="sync_local_contacts">Загрузить на ProtonMail</string>
     <string name="please_select_only_phone_contacts">Выберите, пожалуйста, только контакты из телефона</string>
@@ -664,13 +573,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_vcard_hint_address">Введите адрес</string>
     <string name="contact_vcard_hint_other">Введите информацию</string>
     <string name="contact_vcard_hint_note">Введите примечание</string>
-    <string name="contact_vcard_phone">Телефон</string>
-    <string name="contact_vcard_address">Адрес</string>
     <string name="contact_vcard_new_row_email">добавить адрес эл. почты</string>
     <string name="contact_vcard_new_row_phone">добавить номер телефона</string>
     <string name="contact_vcard_new_row_address">добавить адрес</string>
     <string name="contact_vcard_new_row_other">добавить информацию</string>
-    <string name="contact_vcard_new_row_custom">добавить произвольное поле</string>
     <string name="vcard_other_option_org">Организация</string>
     <string name="vcard_other_option_title">Название</string>
     <string name="vcard_other_option_nickname">Псевдоним</string>
@@ -679,13 +585,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="vcard_other_option_gender">Пол</string>
     <string name="vcard_other_option_role">Роль</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="sync_question">Синхронизировать контакты?</string>
-    <string name="sync_question_subtitle">Это произведёт синхронизацию локальных контактов вашего устройства со списком ваших контактов ProtonMail. В дальнейшем вы сможете получать доступ к этим контактам, используя ProtonMail на других ваших устройствах.</string>
     <string name="convert_contact">Конвертировать контакт</string>
     <string name="upload_contacts">Загрузить контакты</string>
-    <string name="encrypted_data">Зашифрованные данные</string>
     <string name="upgrade_encrypted_contact">Пожалуйста, расширьте ваш тариф, чтобы использовать зашифрованную контактную информацию.</string>
-    <string name="empty_encrypted_data">Удалить зашифрованную контактную информацию.</string>
     <string name="uploading_contacts">Загрузка контактов…</string>
     <string name="error_encrypted_data">Ошибка при получении зашифрованной контактной информации.</string>
     <string-array name="vcard_option_phone">
@@ -731,19 +633,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_message_exp_date_past">Ошибка: недопустимая дата срока действия</string>
     <string name="error_message_card_number_invalid">Ошибка: неверный номер карты</string>
     <string name="print_error">Ошибка печати</string>
-    <string name="download_error">Ошибка скачивания</string>
     <string name="download_complete">Скачивание завершено</string>
     <string name="download_in_progress">Идёт скачивание</string>
     <string name="expires_in">\tИсчезнет через %s</string>
     <string name="unsaved_changes_title">Несохранённые изменения</string>
     <string name="unsaved_changes_subtitle">В форме присутствуют несохранённые данные. Вы уверены, что хотите отказаться от них?</string>
-    <string name="discard">Отменить</string>
-    <string name="keep_editing">Продолжить редактирование</string>
     <string name="request_timeout">Истекло время ожидания запроса, пожалуйста, попробуйте ещё раз</string>
     <string name="add_folder">Добавить папку</string>
     <string name="no_folders">Нет папок</string>
     <string name="folders_title_move">Переместить сообщения в</string>
-    <string name="move">Переместить</string>
     <string name="folders_manager">Управление папками</string>
     <string name="folder_add_new">Добавить новую папку</string>
     <string name="folder_name">Название папки</string>
@@ -762,7 +660,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_contacts">Нет контактов</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; написано:</string>
     <string name="update_label">Обновить ярлык</string>
-    <string name="folder_name_empty">У папки должно быть название</string>
     <string name="max_labels_in_message">У сообщения %1$s не может быть больше %2$d ярлыков.</string>
     <string name="delete">Удалить</string>
     <string name="subject_copied">Тема скопирована в буфер обмена</string>
@@ -776,7 +673,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_to_template">Кому: %s;  </string>
     <string name="print_cc_template">Копия: %s;  </string>
     <string name="print_bcc_template">Cкр: %s;  </string>
-    <string name="contacts_invalid_type">Неправильный тип</string>
     <string name="signature_error">Ошибка подтверждения</string>
     <string name="signature_error_desc">Проверка подписи этого контакта не удалась</string>
     <string name="decryption_error">Ошибка расшифровки</string>
@@ -791,18 +687,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close_app">Закрыть приложение</string>
     <string name="empty_subject">(Без темы)</string>
     <string name="contacts_unknown">Неизвестно</string>
-    <string name="expand_collapse">Разв/Сверн</string>
     <string name="learn_more">
         <u>Узнать больше</u>
     </string>
     <string name="info">Информация</string>
     <string name="error_can_not_send_from_this_address">Перейдите на платный тариф для отправки с вашего адреса %s.</string>
-    <string name="digital_signature_verified">Цифровая подпись проверена</string>
-    <string name="encrypted_and_digital_signature_verified">Зашифровано, цифровая подпись проверена</string>
     <string name="email_empty">Адрес электронной почты отсутствует</string>
-    <string name="edit_contact_details">Изменить контактные данные</string>
     <string name="encrypted_contact_details">Зашифрованные контактные данные</string>
-    <string name="edit_contact_toolbar_title">Изменить %s</string>
     <string name="convert_question">Добавить локальные контакты</string>
     <string name="convert_question_subtitle">Будет выполнена загрузка локальных контактов из вашего устройства в список ваших контактов ProtonMail. В дальнейшем вы сможете получать доступ к этим контактам, используя ProtonMail на других ваших устройствах.</string>
     <string name="refresh_contacts">Обновить</string>
@@ -823,10 +714,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_offline_max_storage">Задаёт максимальный объём данных, который ProtonMail может хранить на вашем устройстве.</string>
     <string name="load_embedded_images_failed_no_network">Сбой загрузки встроенных изображений. Пожалуйста, проверьте своё сетевое подключение.</string>
     <string name="load_embedded_images_failed">Сбой загрузки встроенных изображений.</string>
-    <string name="attachment_storage_unlimited">%.2f МБ из неограниченного</string>
     <string name="unlimited">Неограниченное</string>
     <string name="local_storage_cleared">Локальное хранилище очищено</string>
-    <string name="local_storage_clear">Очистить локальное хранилище</string>
     <string name="recipient_popup_compose_to">Написать письмо</string>
     <string name="recipient_popup_copy_address">Копировать адрес</string>
     <string name="recipient_popup_see_details">Посмотреть контактные данные</string>
@@ -843,7 +732,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sender_lock_sent_autoresponder">Отправлено ProtonMail с применением шифрования нулевого доступа</string>
     <string name="sender_lock_verification_failed">Проверка отправителя не удалась</string>
     <string name="sender_lock_pgp_encrypted">Сообщение, зашифрованное PGP</string>
-    <string name="sender_lock_pgp_verified">Сообщение, подписанное PGP; с проверенного адреса</string>
     <string name="sender_lock_pgp_encrypted_verified">Сообщение, зашифрованное PGP; с проверенного адреса</string>
     <string name="sender_lock_pgp_signed_verified_sender">Сообщение, подписанное PGP; с проверенного адреса</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
@@ -864,7 +752,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ПОДРОБНЕЕ</a>
     </string>
-    <string name="no_items_found">Элементов не найдено</string>
     <string name="channel_name_attachments">Вложения</string>
     <string name="channel_description_attachments">Сообщает о состоянии скачивания вложения</string>
     <string name="channel_name_emails">Эл. письма</string>
@@ -882,13 +769,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 сообщение нам, чтобы мы смогли проанализировать его и улучшить наши фильтры. Это означает, что мы будем способны
 увидеть содержимое сообщения полностью.</string>
     <string name="phishing_report_send_message_moved_to_spam">Отчёт отправлен. Сообщение перемещено в спам.</string>
-    <string name="report_send">Отчёт отправлен</string>
     <string name="cannot_send_report_send">Невозможно отправить отчёт</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">Адрес эл. почты по умолчанию</string>
-    <string name="email_private">Адрес личной эл. почты</string>
-    <string name="phone_private">Личный телефон</string>
     <string name="add_photo">Добавить фото</string>
     <string name="contact_display_name">\ue91c Отображаемое имя</string>
     <string name="add_new_email">\ue914 Добавить адрес электронной почты</string>
@@ -897,7 +780,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="edit_contact">Изменить контакт</string>
     <string name="create_contact_group">Создать группу контактов</string>
     <string name="edit_contact_group">Изменить группу контактов</string>
-    <string name="contact_groups_add_addresses">Добавить адреса</string>
     <string name="contact_groups_manage_addresses">Управление адресами</string>
     <string name="contact_group_display_name">\ue91a Отображаемое имя</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -931,11 +813,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_group_saved">Группа сохранена</string>
     <string name="no_recipients">Нет получателей</string>
     <string name="contact_group_selected">Выбрано %d</string>
-    <string name="contact_group_deleted">Группа удалена</string>
     <string name="paid_plan_needed">Пожалуйста, перейдите на платный тариф для доступа к этим особым функциям</string>
-    <string name="composer_group_count">%1$s (%2$d участников)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d участников)</string>
-    <string name="address_successful_update">Адрес успешно обновлён</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Вы уверены, что хотите удалить эту группу?</item>
         <item quantity="few">Вы уверены, что хотите удалить выбранные группы?</item>
@@ -975,17 +854,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 места для хранения.</string>
     <string name="storage_limit_approaching_text">Вы достигли 90% ёмкости своего хранилища.
 Подумайте насчёт освобождения некоторого объёма или покупки большего места для хранения до того, как ваш объём закончится.</string>
-    <string name="storage_limit_do_not_remind">НЕ НАПОМИНАТЬ МНЕ</string>
     <!-- endregion -->
     <string name="need_permissions_title">Разрешения</string>
     <string name="need_storage_permissions_text">Чтобы добавлять вложения, вам нужно разрешить
 доступ к хранилищу.</string>
-    <string name="need_phone_permissions_text">Чтобы звонить этому контакту, вам нужно разрешить
-доступ к приложению Телефон.</string>
     <string name="push_notifications_alert_title">Предупреждение о push-уведомлениях</string>
     <string name="push_notifications_alert_subtitle">Push-уведомления для ProtonMail не работают без обновлённых сервисов Google Play.</string>
     <string name="app_locked">Приложение заблокировано</string>
-    <string name="please_use_fingerprint">Пожалуйста, используйте отпечаток своего пальца для разблокировки приложения.</string>
     <string name="use_pin_instead">Использовать PIN-код вместо этого</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Нет зарегистрированных биометрических данных</string>
@@ -994,7 +869,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="biometric_error_hw_not_available">Биометрическое оборудование недоступно.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Скрытые получатели</string>
-    <string name="could_not_delete_attachment">Вложение не может быть удалено во время его загрузки</string>
     <string name="manage_accounts">Управление учётными записями</string>
     <!-- region Settings -->
     <string name="settings">Настройки</string>
@@ -1003,7 +877,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="account">Учётная запись</string>
     <string name="subscription">Подписка</string>
     <string name="plan_and_user">Тариф</string>
-    <string name="plan">Тариф</string>
     <string name="payment_method">Способ оплаты</string>
     <string name="password_manager">Управление паролями</string>
     <string name="recovery_email">Адрес резервной эл. почты</string>
@@ -1016,18 +889,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_name">Отображаемое имя</string>
     <string name="edit_display_name">Изменить отображаемое имя</string>
     <string name="signature">Подпись</string>
-    <string name="edit_signature">Включить подпись</string>
     <string name="mobile_signature">Подпись для мобильного клиента</string>
     <string name="edit_mobile_signature">Добавлять мобильную подпись</string>
     <string name="default_mobile_signature">Отправлено из мобильного клиента ProtonMail</string>
-    <string name="plus_account_required_mobile_signature">Для изменения мобильной подписи необходим тариф ProtonMail Plus</string>
     <string name="mobile_signature_is_premium">Изменение мобильной подписи разрешено только пользователям на платных тарифах</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Приглушение</string>
     <string name="notifications_snooze">Приглушение уведомлений</string>
-    <string name="notifications_snooze_finishing">Уведомления будут возобновлены через $s мин.</string>
-    <string name="snooze_notifications">Приглушить уведомления</string>
-    <string name="snooze_notifications_adjust">Настроить</string>
     <string name="notifications_snoozed">Уведомления приглушены</string>
     <string name="notifications_snooze_scheduled">Расписание</string>
     <string name="notifications_snooze_scheduled_settings">Настройки приглушения по расписанию</string>
@@ -1058,7 +926,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="mailbox">Почтовый ящик</string>
     <string name="privacy">Конфиденциальность</string>
-    <string name="auto_download_messages_title_short">Авто-скачивание</string>
     <string name="auto_download_messages_title">Автозагрузка сообщений</string>
     <string name="auto_download_messages_subtitle">Если данная опция включена, тела сообщений будут скачиваться автоматически каждый раз при получении вами уведомлений о новых письмах (это израсходует больше трафика). Если данная опция выключена, тела сообщений будут скачиваться только при их открытии вами. (Примечание: независимо от опции, если вы очистите кэш или выйдете, то не сможете читать тела сообщений без подключения к Интернету.)</string>
     <string name="settings_background_sync">Фоновая синхронизация</string>
@@ -1113,7 +980,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="auto_lock_description">Включите эту функцию, чтобы автоматически блокировать своё\nприложение и применять PIN-код или отпечаток пальца\nдля разблокировки.</string>
     <string name="change_pin_code">Изменить PIN-код</string>
     <string name="auto_lock_timer">Таймер автоблокировки</string>
-    <string name="unlock_with_fingerprint">Разблокировать отпечатком пальца</string>
     <string name="connections_via_third_parties">Альтернативная маршрутизация</string>
     <string name="allow_secure_connections_via_third_parties">Разрешить альтернативную маршрутизацию</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">В случае блокировки сайтов Proton эта настройка позволяет приложению попробовать альтернативную сетевую маршрутизацию, чтобы достигнуть Proton, что может быть полезно для обхода брандмауэров или сетевых проблем. Для большей надёжности мы рекомендуем оставить эту настройку включённой.</string>
@@ -1133,9 +999,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_version">Версия приложения</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="primary_account">Основная учётная запись</string>
-    <string name="make_primary_account">Сделать %s вашей основной учётной записью?</string>
-    <string name="logout_account_question">Выйти из %s?</string>
     <string name="remove_account_question">Удалить %s?</string>
     <string name="signed_in_with">Вы вошли в %s</string>
     <string name="signed_in_with_logged_out_from">Вы вышли из %1$s и вошли в %2$s</string>

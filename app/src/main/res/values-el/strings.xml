@@ -28,16 +28,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_in">Είσοδος</string>
     <string name="sign_out">Αποσύνδεση</string>
     <string name="sign_out_question">Είστε βέβαιοι ότι θέλετε να αποσυνδεθείτε;</string>
-    <string name="remember_me_on_device">Να με θυμάσαι σε αυτή τη συσκευή</string>
-    <string name="show_password">Εμφάνιση κωδικού πρόσβασης</string>
-    <string name="username">Όνομα χρήστη</string>
-    <string name="password">Κωδικός πρόσβασης</string>
-    <string name="login_password">Κωδικός πρόσβασης σύνδεσης</string>
     <string name="mailbox_password">Κωδικός Θυρίδας</string>
     <string name="two_factor_code">Κωδικός Δύο Παραγόντων (2FA)</string>
     <string name="processing_request">Το αίτημα σας είναι σε επεξεργασία</string>
     <!-- should check for html tag -->
-    <string name="need_account_sign_up">Χρειάζεστε έναν λογαριασμό? Εγγραφείτε.</string>
     <string name="need_to_be_logged_in">Δεν είστε συνδεδεμένος/η!</string>
     <string name="forgot_password">Ξεχάσατε το κωδικό;</string>
     <string name="reset_mailbox_password">ΕΠΑΝΑΦΟΡΑ ΚΩΔΙΚΟΥ ΘΥΡΙΔΑΣ</string>
@@ -60,9 +54,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_app">Η εφαρμογή ProtonMail δεν μπορεί να χρησιμοποιηθεί μέχρι να ενημερωθεί</string>
     <string name="api_offline_title">Το API του ProtonMail είναι εκτός σύνδεσης</string>
     <string name="api_offline">Το ProtonMail είναι εκτός σύνδεσης, ελέγξτε το twitter για την τρέχουσα κατάσταση: https://twitter.com/protonmail</string>
-    <string name="cannot_open">Αδύνατο το άνοιγμα αρχείου</string>
-    <string name="downloaded_attachment">Λήφθηκε %s</string>
-    <string name="edit_contact_validation">Παρακαλώ εισάγετε ένα έγκυρο όνομα και email</string>
     <string name="contact_saved">Η επαφή αποθηκεύτηκε</string>
     <string name="contact_saved_offline">Η επαφή αποθηκεύτηκε, θα συγχρονιστεί όταν υπάρξει διαθέσιμη σύνδεση</string>
     <string name="contact_exist">Το email επικοινωνίας υπάρχει ήδη</string>
@@ -70,7 +61,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="duplicate_email">Η διεύθυνση email είναι διπλότυπη</string>
     <string name="invalid_code">Μη έγκυρος κωδικός</string>
     <string name="message_drafted">Η αποστολή μηνύματος απέτυχε. Τα μηνύματά σας αποθηκεύτηκαν στο φάκελο πρόχειρα</string>
-    <string name="message_drafted_reason">%s Δεν υπάρχει.\nΤο μήνυμα ηλεκτρονικού ταχυδρομείου δεν μπορεί να παραδοθεί.</string>
     <string name="open_drawer">Άνοιγμα</string>
     <string name="close_drawer">Κλείσιμο</string>
     <string name="inbox_option">ΕΙΣΕΡΧΟΜΕΝΑ</string>
@@ -80,10 +70,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="archive_option">ΑΡΧΕΙΟΘΕΤΗΜΕΝΑ</string>
     <string name="trash_option">ΚΑΔΟΣ ΑΠΟΡΡΙΜΑΤΩΝ</string>
     <string name="spam_option">ΑΝΕΠΙΘΥΜΗΤΑ</string>
-    <string name="contacts_option">ΕΠΑΦΕΣ</string>
-    <string name="settings_option">ΡΥΘΜΙΣΕΙΣ</string>
-    <string name="report_bugs_option">ΑΝΑΦΟΡΑ ΣΦΑΛΜΑΤΩΝ</string>
-    <string name="signout_option">ΑΠΟΣΥΝΔΕΣΗ</string>
     <string name="inbox">Εισερχόμενα</string>
     <string name="starred">Με αστέρι</string>
     <string name="drafts">Πρόχειρα</string>
@@ -92,7 +78,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="trash">Κάδος Απορριμμάτων</string>
     <string name="spam">Ανεπιθύμητα</string>
     <string name="contacts">Επαφές</string>
-    <string name="contact_groups">Ομάδες Επαφών</string>
     <string name="search_contacts">Αναζήτηση επαφών</string>
     <string name="fetching_contacts">Ανάκτηση επαφών Protonmail...</string>
     <string name="fetching_contacts_success">Οι επαφές ενημερώθηκαν με επιτυχία</string>
@@ -116,7 +101,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Μετακίνηση στον κάδο απορριμμάτων</string>
     <string name="move_to_spam">Μετακίνηση στα ανεπιθύμητα</string>
     <string name="move_to_inbox">Μετακίνηση στα Εισερχόμενα</string>
-    <string name="move_message_to_trash">Μετακίνηση μηνύματος στον κάδο απορριμμάτων;</string>
     <string name="are_you_sure_empty">Είστε σίγουροι ότι θέλετε να διαγράψετε όλα τα μηνύματα από αυτόν τον φάκελο;</string>
     <string name="send">Αποστολή</string>
     <string name="selected">Επιλεγμένα</string>
@@ -130,10 +114,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="bcc_prefix">Κρυφή κοιν:</string>
     <string name="from_prefix">Από:</string>
     <string name="date_prefix">Ημερομηνία:</string>
-    <string name="expiration_time_prefix">Λήγει σε</string>
     <string name="view_details">ΛΕΠΤΟΜΕΡΕΙΕΣ</string>
     <string name="hide_details">ΑΠΟΚΡΥΨΗ ΛΕΠΤΟΜΕΡΙΩΝ</string>
-    <string name="download">ΛΗΨΗ</string>
     <string name="reply">Απάντηση</string>
     <string name="reply_all">Απάντηση σε όλους</string>
     <string name="forward">Προώθηση</string>
@@ -143,7 +125,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="confirm_message_password">Επιβεβαίωση Κωδικού Πρόσβασης</string>
     <string name="define_password_hint">Υποδείξεις Κωδικού Πρόσβασης (Προαιρετικό)</string>
     <string name="message_passwords_do_not_match">Οι κωδικοί πρόσβασης δεν ταιριάζουν</string>
-    <string name="message_mailbox_passwords_do_not_match">Οι κωδικοί θυρίδας δεν ταιριάζουν</string>
     <string name="eo_passwords_do_not_match">Οι κωδικοί πρόσβασης δεν ταιριάζουν</string>
     <string name="define_expiration_period">Προσδιορίστε την περίοδο λήξης</string>
     <string name="set_message_expiration">Ορισμός Λήξης Μηνύματος</string>
@@ -181,16 +162,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">Υπήρξε ένα πρόβλημα κατά την προσθήκη του επιλεγμένου αρχείου</string>
     <string name="add_contact">Προσθήκη επαφής</string>
     <string name="delete_contact">Αφαίρεση %s από τις επαφές;</string>
-    <string name="sync_contact">Συγχρονισμός %s με το web app;</string>
     <string name="confirm">Επιβεβαίωση</string>
     <string name="confirm_destructive_action">Είστε σίγουρος/η; Δεν υπάρχει τρόπος επαναφοράς.</string>
     <string name="create">Δημιουργία</string>
-    <string name="name">Όνομα</string>
     <string name="email">Email</string>
     <string name="email_address">Διεύθυνση email</string>
     <string name="phone">Αριθμός τηλεφώνου</string>
     <string name="save">Αποθήκευση</string>
-    <string name="add">Προσθήκη</string>
     <string name="syncing_messages">Συγχρονισμός...</string>
     <string name="sync">Συγχρονισμός επαφών</string>
     <string name="save_message_as_draft">Αποθήκευση μηνύματος ως πρόχειρο;</string>
@@ -215,28 +193,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_limit">Τα συνημμένα είναι περιορισμένα σε %1$s. Συνολικά τα συνημμένα θα πρέπει να είναι %2$s.</string>
     <string name="sending_message">Αποστολή μηνύματος...</string>
     <string name="sending_message_offline">Εκτός σύνδεσης, τέθηκε σε σειρά προκειμένου να σταλεί αργότερα...</string>
-    <string name="mailbox_password_changed">Ο κωδικός θυρίδας έχει αλλάξει</string>
-    <string name="go_to_mailbox_login">Πηγαίνετε στην είσοδο ταχυδρομείου προκειμένου να καταχωρήσετε τον νέο κωδικό θυρίδας;</string>
     <string name="go_to_inbox">Μετάβαση στα εισερχόμενα μου</string>
     <string name="message_sent">Το μήνυμα εστάλη</string>
     <string name="message_failed">Η αποστολή μηνύματος απέτυχε</string>
     <string name="message_sending_failures">%d αποτυχίες αποστολής μηνυμάτων</string>
     <string name="storage_limit">Όρια αποθηκευτικού χώρου</string>
-    <string name="storage_limit_warning">Το όριο του χώρου αποθήκευσης πλησιάζει</string>
-    <string name="do_not_show_again">Να μην εμφανιστεί ξανά</string>
     <string name="edit_settings">Επεξεργασία Ρυθμίσεων</string>
     <string name="save_settings">Αποθήκευση Ρυθμίσεων</string>
     <string name="share">Κοινοποίηση</string>
-    <string name="settings_saved">Οι νέες ρυθμίσεις αποθηκεύτηκαν</string>
     <string name="settings_not_saved_password"> Οι ρυθμίσεις δεν αποθηκεύτηκαν - λανθασμένος κωδικός εισόδου</string>
     <string name="settings_not_saved_email"> Οι ρυθμίσεις δεν αποθηκεύτηκαν - Λανθασμένο E-mail ειδοποίησης</string>
-    <string name="save_settings_question">Αποθήκευση ρυθμίσεων;</string>
     <string name="enter">Εισαγωγή</string>
     <string name="cancel">Ακύρωση</string>
     <string name="close">Κλείσιμο</string>
-    <string name="passwords">Διαχειριστής Κωδικών Πρόσβασης</string>
     <string name="change_password">Αλλαγή Κωδικού Πρόσβασης</string>
-    <string name="change_login_password">Αλλαγή Κωδικού Πρόσβασης</string>
     <string name="change_mailbox_password">Αλλαγή Κωδικού Θυρίδας</string>
     <string name="eo_password_title">Ορισμός Κωδικού</string>
     <string name="eo_password_subtitle">Ορίστε έναν κωδικό πρόσβασης για την κρυπτογράφηση αυτού του μηνύματος, για χρήστες που δεν χρησιμοποιούν το ProtonMail</string>
@@ -244,24 +214,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="old_login_password">Τρέχων Κωδικός Σύνδεσης</string>
     <string name="new_login_password">Νέος Κωδικός Πρόσβασης</string>
     <string name="confirm_new_login_password">Επιβεβαίωση Νέου Κωδικού Πρόσβασης</string>
-    <string name="old_mailbox_password">Τρέχων Κωδικός Θυρίδας</string>
     <string name="new_mailbox_password">Νέος Κωδικός Θυρίδας</string>
     <string name="confirm_new_mailbox_password">Επιβεβαιώστε τον νέο κωδικό θυρίδας</string>
     <string name="no_attachments">0 Συνημμένα</string>
-    <string name="num_attachments">%d Συνημμένα</string>
     <string name="new_passwords_not_valid">Μη έγκυρη εισαγωγή</string>
     <string name="new_passwords_do_not_match">Οι νέοι κωδικοί δεν ταιριάζουν</string>
     <string name="new_login_password_saved">Ο νέος κωδικός σύνδεσης αποθηκεύτηκε</string>
     <string name="new_mailbox_password_saved">Ο νέος κωδικός θυρίδας αποθηκεύτηκε</string>
-    <string name="could_not_change_password">Ο κωδικός πρόσβασης δεν μπόρεσε να αλλάξει</string>
-    <string name="auto_logout_option_settings">Επιλογές Αυτόματης Αποσύνδεσης</string>
     <string name="pin_lock_option_settings">Επιλογές Κλειδώματος Εφαρμογής</string>
     <string name="pin_lock_after">Κλείδωμα εφαρμογής μετά από</string>
     <string name="lock_the_app">Κλείδωμα εφαρμογής</string>
-    <string name="no_sound_or_vibrate">Χωρίς δόνηση ή ήχο</string>
-    <string name="sound">Ήχος χωρίς δόνηση</string>
-    <string name="vibration">Δόνηση χωρίς ήχο</string>
-    <string name="both_sound_and_vibration">Δόνηση και ήχος</string>
     <string name="display_name_banned_chars">Μή Έγκυρο Εμφανιζόμενο Όνομα. &gt; και &lt; δεν επιτρέπονται</string>
     <string name="cont">Συνέχεια</string>
     <string name="email_verification_code">Θα στείλουμε έναν κωδικό επαλήθευσης στην παραπάνω διεύθυνση E-Mail.</string>
@@ -275,17 +237,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="setup_new_account">Ρυθμίστε το λογαριασμό σας</string>
     <string name="create_account">Δημιουργία Λογαριασμού</string>
     <string name="create_passwords">Ορισμός Κωδικού</string>
-    <string name="sign_up">Εγγραφή</string>
     <string name="caps_username">Όνομα χρήστη</string>
     <string name="caps_login_password">Κωδικός πρόσβασης</string>
-    <string name="caps_two_factor">Κωδικός Δύο Παραγόντων (2FA)</string>
     <string name="caps_confirm_password">Επιβεβαίωση Κωδικού Πρόσβασης</string>
-    <string name="caps_confirm_mailbox_password">Επιβεβαίωση Κωδικού θυρίδας</string>
-    <string name="caps_optional_notification_email">E-MAIL ΕΠΑΝΑΦΟΡΑΣ ΚΩΔΙΚΟΥ ΠΡΟΣΒΑΣΗΣ (ΠΡΟΑΙΡΕΤΙΚΟ)</string>
     <string name="caps_optional">*ΠΡΟΑΙΡΕΤΙΚΟ</string>
     <string name="update_me_for_new_features">Κρατήστε με ενημερωμένο σχετικά με τις νέες λειτουργίες</string>
     <string name="create_mailbox_password">Δημιουργία Κωδικού</string>
-    <string name="confirm_mailbox_password">Επιβεβαίωση Κωδικού θυρίδας</string>
     <string name="password_note"><b>Σημείωση:</b> Αυτό χρησιμοποιείται για την κρυπτογράφηση και αποκρυπτογράφηση των μηνυμάτων σας.
 Μην χάσετε αυτό τον κωδικό, δεν μπορούμε να τον ανακτήσουμε. Εάν χάσετε τον κωδικό σας, δεν θα είστε σε θέση να διαβάσετε τα E-Mail σας.</string>
     <string name="username_note"><b>Σημείωση:</b> Το όνομα χρήστη είναι επίσης και η διεύθυνση ProtonMail σας</string>
@@ -304,11 +261,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="current_standard">Το ισχύον πρότυπο</string>
     <string name="extreme_security">Ύψιστη Ασφάλεια (4096 bit)</string>
     <string name="highest_security">Το υψηλότερο επίπεδο κρυπτογράφησης που είναι διαθέσιμο.<b>Μπορεί να πάρει μερικά λεπτά προκειμένου να ολοκληρωθεί η ρύθμιση.</b></string>
-    <string name="generate_keypair">Δημιουργία Kλειδιών</string>
     <string name="labels_title_apply">Εφαρμογή Eτικετών</string>
     <string name="labels_title_add">Προσθήκη Ετικέτας</string>
     <string name="labels_title">Ετικέτες</string>
-    <string name="labels_create">Προσθήκη Ετικέτας</string>
     <string name="label_name">Όνομα Ετικέτας</string>
     <string name="label_name_empty">Η ετικέτα πρέπει να έχει όνομα</string>
     <string name="label_name_duplicate">Αυτό το όνομα ετικέτας υπάρχει ήδη</string>
@@ -316,9 +271,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="label_invalid">Η ετικέτα δεν προστέθηκε λόγο μη έγκυρου ονόματος.</string>
     <string name="undo">Αναίρεση</string>
     <string name="customize_swipe_actions">Προσαρμόστε τις επιλογές ολίσθησης</string>
-    <string name="message_details_swipe_info">Μπορείτε να επιστρέψετε στην οθόνη ταχυδρομείου με
-ολίσθηση από αριστερά προς τα δεξιά και να μεταφέρετε το παρών μήνυμα στον ΚΑΔΟ ΑΝΑΚΥΚΛΩΣΗΣ με ολίσθηση από δεξιά προς τα αριστερά</string>
-    <string name="composing_message_scroll_info">Μπορείτε να μετακινηθείτε προς τα επάνω ή προς τα κάτω στον πίνακα σύνταξης, μετακινώντας την τέρμα δεξιά γωνία του πίνακα σύνταξης</string>
     <string name="message_can_not_edit">Δεν μπορεί να απαντηθεί/προωθηθεί, αυτό το μήνυμα δεν έχει σταλεί ακόμα</string>
     <string name="label_apply">Εφαρμογή</string>
     <string name="label_delete">Διαγραφή</string>
@@ -333,16 +285,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="respond_inline">Απάντηση μέσα στην γραμμή</string>
     <string name="no_connectivity_detected">Δεν εντοπίστηκε σύνδεση...</string>
     <string name="no_connectivity_detected_troubleshoot">Δεν εντοπίστηκε σύνδεση...… (<u>Επίλυση Προβλημάτων</u>)</string>
-    <string name="no_connectivity_message_not_downloaded">Η σύνδεση δεν εντοπίστηκε...
-\nΤο μήνυμα δεν λήφθηκε</string>
-    <string name="connectivity_arrived">Συνδέθηκε</string>
     <string name="connectivity_checking">Έλεγχος σύνδεσης...</string>
     <string name="sync_short">συγχρονισμός</string>
     <string name="draft_attachments_uploading">Το πρόχειρο εξακολουθεί να μεταφορτώνεται...</string>
     <string name="draft_label_attachments_uploading">μεταφόρτωση συνημμένων…</string>
     <string name="draft_label_message_uploading">αποστολή μηνύματος…</string>
     <string name="attachment_failed">Η μεταφόρτωση συνημμένου για αυτό το μήνυμα απέτυχε </string>
-    <string name="attachment_failed_new">Η μεταφόρτωση συνημμένου για το μήνυμα απέτυχε %1$s %2$s</string>
     <string name="attaching_photo_failed">Η επισύναψη της φωτογραφίας απέτυχε</string>
     <string name="empty_message">Άδειο μήνυμα</string>
     <string name="dismiss">Απόρριψη</string>
@@ -351,8 +299,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_images">Εμφάνιση απομακρυσμένου περιεχομένου</string>
     <string name="retry">Δοκιμάστε ξανά</string>
     <string name="saving_failed_no_conn">Η αποθήκευση απέτυχε, δεν υπάρχει σύνδεση</string>
-    <string name="can_not_create_account_while_beta">Η δημιουργία λογαριασμού είναι απενεργοποιημένη στο Beta</string>
-    <string name="changing_mailbox_password_disabled_while_beta">Η αλλαγή του κωδικού πρόσβασης θυρίδας είναι απενεργοποιημένη στο Beta</string>
     <string name="username_is_available">Το όνομα χρήστη είναι διαθέσιμο!</string>
     <string name="username_is_not_available">Το όνομα χρήστη χρησιμοποιείται ήδη!</string>
     <string name="username_is_too_long">Tο μέγιστο μήκος για ένα όνομα χρήστη είναι %d χαρακτήρες!</string>
@@ -377,22 +323,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_subtitle_encryption">Τα εισερχόμενά σας προστατεύονται πλέον με κρυπτογράφηση από άκρο σε άκρο. Για να στέλνετε ασφαλή μηνύματα ηλεκτρονικού ταχυδρομείου αυτόματα  στις επαφές σας, προσκαλέστε τους φίλους σας να χρησιμοποιήσουν το ProtonMail! Μπορείτε επίσης να κρυπτογραφήσετε χειροκίνητα τα μηνύματα αυτά, εφόσον δεν χρησιμοποιούν ProtonMail.</string>
     <string name="engagement_subtitle_expire">Τα μηνύματα που στέλνετε μπορούν να ρυθμιστούν για αυτόματη διαγραφή μετά από ένα συγκεκριμένο χρονικό διάστημα.</string>
     <string name="engagement_subtitle_help">Μπορείτε να λάβετε βοήθεια και υποστήριξη στο protonmail.com/support. Μπορούν επίσης να αναφερθούν και σφάλματα σχετικά με την εφαρμογή.</string>
-    <string name="engagement_subtitle_support_protonmail">Το ProtonMail δεν πουλάει διαφημίσεις ή καταχράζεται
-την ιδιωτικότητα σας. Η υποστήριξη σας είναι πολύτιμη για να κρατήσετε το ProtonMail ενεργό. Μπορείτε να αναβαθμίσετε σε ένα
-λογαριασμό επί πληρωμής ή να κάνετε μια δωρεά προκειμένου να υποστηρίξετε το ProtonMail.</string>
     <string name="attachment_exists">Το συνημμένο έχει ήδη επισυναφθεί</string>
     <string name="sending_email_success">Ο κωδικός επαλήθευσης στάλθηκε</string>
     <string name="sending_email_failed">Η αποστολή του κωδικού επαλήθευσης απέτυχε</string>
-    <string name="password_required">Εισάγετε τον κωδικό σύνδεσης για να πραγματοποιήσετε αυτή την αλλαγή</string>
     <string name="password_not_valid">Ο κωδικός πρόσβασης που έχει εισαχθεί δεν είναι έγκυρος</string>
     <string name="send_code_wait">Παρακαλώ περιμένετε %d δευτερόλεπτα για να κάνετε κλικ ξανά</string>
     <string name="eo_password_not_completed">Το κείμενο κωδικού δεν ολοκληρώθηκε.</string>
-    <string name="delinquency_title">Η πρόσβαση σε αυτόν τον λογαριασμό είναι απενεργοποιημένη λόγω μη πληρωμής</string>
     <string name="delinquency_subtitle">Η πρόσβαση σε αυτόν τον λογαριασμό είναι απενεργοποιημένη λόγω μη πληρωμής. Συνδεθείτε μέσω του protonmail.com για να εξοφλήσετε το υπόλοιπο σας.</string>
     <string name="direct_disabled_subtitle">Οι εγγραφές λογαριασμού μέσω κινητού, είναι προσωρινά απενεργοποιημένες. Δοκιμάστε ξανά αργότερα ή δοκιμάστε να εγγραφείτε στο <a href="https://protonmail.com">protonmail.com</a> χρησιμοποιώντας έναν σταθερό ή φορητό υπολογιστή.</string>
     <string name="downloading">Γίνεται λήψη...</string>
     <string name="cant_download_attachment">Δεν ήταν δυνατή η λήψη του συννημένου</string>
-    <string name="auto_logout">Αυτόματη Αποσύνδεση</string>
     <string-array name="auto_logout_options_array">
         <item>Άμεσα</item>
         <item>5 λεπτά αδράνειας</item>
@@ -400,42 +340,30 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>1 ώρα αδράνειας</item>
         <item>24 ώρες αδράνειας</item>
     </string-array>
-    <string-array name="pin_options_array">
-        <item>Αλλαγή PIN</item>
-        <item>Αλλαγή χρόνου περιόδου PIN</item>
-    </string-array>
     <string name="delete_label_confirmation_title">Διαγραφή επιλεγμένων ετικετών;</string>
     <string name="delete_folder_confirmation_title">Διαγραφή επιλεγμένων φακέλων;</string>
     <string name="delete_label_confirmation_message">Τα E-mail που περιέχονται εδώ, θα βρεθούν στο <b>Όλη η Αλληλογραφία\"</b></string>
     <string name="enter_pin">Εισάγετε το PIN για να ξεκλειδώσετε τα εισερχόμενα</string>
     <string name="enter_pin_message_details">Εισάγετε το PIN για να ξεκλειδώσετε το μήνυμα σας</string>
     <string name="enter_current_pin">Εισάγετε το τρέχον ΡΙΝ</string>
-    <string name="hint_pin">Κωδικός PIN</string>
     <string name="pin_subtitle_create">Δημιουργήστε το PIN σας εδώ</string>
     <string name="pin_subtitle_create_new">Δημιουργήστε το ΝΕΟ PIN εδώ</string>
     <string name="pin_subtitle_confirm">Επιβεβαιώστε το PIN εδώ</string>
     <string name="pin_subtitle_confirm_new">Επιβεβαιώστε το ΝΕΟ PIN εδώ</string>
-    <string name="forgot_pin">Ξεχάσατε το PIN;</string>
     <string name="pin_invalid">Το PIN δεν είναι έγκυρο, εισάγετε ένα σωστό 4 ψήφιο PIN</string>
     <string name="pin_confirmation_not_match">Η επιβεβαίωση του PIN δε ταιριάζει</string>
     <string name="pin_not_match">Το PIN δεν ταιριάζει</string>
     <string name="new_pin_saved">Αποθηκεύτηκε Νέο PIN</string>
-    <string name="pin_settings">Ρυθμίσεις PIN</string>
-    <string name="next">επόμενο</string>
-    <string name="back">πίσω</string>
     <string name="new_emails">%d Νέα E-Mail</string>
     <string name="attachment_download_success">%s λήφθηκε επιτυχώς στον Διαχειριστή Αρχείων</string>
     <string name="attachment_download_failed">%s απέτυχε η λήψη</string>
-    <string name="sender_changed">Παρακαλώ αφαιρέστε τα συνημμένα προκειμένου να αλλάξετε την διεύθυνση αποστολέα.</string>
     <string name="ringtone">Ήχος κλήσης</string>
     <string name="ringtone_selected">Ήχος κλήσης:</string>
-    <string name="notification_option">%1$s\nΉχος Κλήσης: %2$s</string>
     <string name="ringtone_invalid">Η επιλογή Ήχου Κλήσης δεν έχει έγκυρη τιμή</string>
     <string name="ringtone_no_default">Αδύνατη η φόρτωση του προεπιλεγμένου Ήχου Κλήσης</string>
     <string name="select_tone">Επιλογή Τόνου</string>
     <string name="copy_link">Αντιγραφή Συνδέσμου</string>
     <string name="share_link">Κοινοποίηση Συνδέσμου</string>
-    <string name="attachment_delete_failed">Η διαγραφή %s συνημμένου απέτυχε</string>
     <string name="sync_attachments">Συγχρονισμός συνημμένων</string>
     <string name="processing_attachment">Επεξεργασία συνημμένου</string>
     <string name="hyperlink_confirmation_dialog_text_html">Πρόκειται να ξεκινήσει το πρόγραμμα περιήγησης ιστού και να περιηγηθείτε στο &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;;br/Θα θέλατε να συνεχίσετε;</string>
@@ -464,10 +392,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 και να συνεχίσουμε την ανάπτυξη του ProtonMail ως λογισμικό ελεύθερου και ανοικτού κώδικα. Είναι δυνατό μόνο μέσω της
 υποστήριξης απο την κοινότητα για να είμαστε σε θέση να συνεχίσουμε να παρέχουμε ProtonMail σε ανθρώπους από όλο
 τον κόσμο.</string>
-    <string name="upselling_upgrade_subtitle">Η αναβάθμιση της συνδρομής σας, θα μας βοηθήσει να προσθέσουμε
-χωρητικότητα και να συνεχίσουμε την ανάπτυξη του ProtonMail ως λογισμικό ελεύθερου και ανοικτού κώδικα. Αυτό είναι δυνατό μόνο μέσω της
-υποστήριξης απο την κοινότητα, έτσι ώστε να είμαστε σε θέση να συνεχίσουμε να παρέχουμε το ProtonMail σε ανθρώπους από όλο
-τον κόσμο.</string>
     <string name="upgrade_donate">Αναβάθμιση/Δωρεά</string>
     <string name="upselling_donate_pick_amount">Επιλέξτε ένα ποσό δωρεάς ή εισάγετε ένα οποιοδήποτε ποσό</string>
     <string name="amount_5">5€</string>
@@ -482,8 +406,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upgrade_line3">Χρησιμοποιήστε το δικό σας Domain</string>
     <string name="upgrade_line4">Έως και 5 ψευδώνυμα</string>
     <string name="upgrade_line5">Προτεραιότητα στην υποστήριξη πελατών</string>
-    <string name="upgrade_plus_price">4€</string>
-    <string name="per_month">/μήνα</string>
     <string name="upgrade">Αναβάθμιση</string>
     <string name="payment_options">Επιλογή πληρωμής</string>
     <string name="other_plans">Για πακέτα με περισσότερο χώρο αποθήκευσης, αναβαθμίστε μέσω
@@ -506,7 +428,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_plus_line7">Προτεραιότητα στην υποστήριξη πελατών</string>
     <string name="plan_free_line1">500 MB Αποθηκευτικός Χώρος</string>
     <string name="plan_free_line2">150 μηνύματα την ημέρα</string>
-    <string name="plan_free_line22">%d μηνύματα την ημέρα</string>
     <string name="plan_free_line3">20 Ετικέτες</string>
     <string name="plan_free_line4">Προσαρμοσμένοι Domains: δεν υποστηρίζονται</string>
     <string name="plan_free_line5">1 Διεύθυνση</string>
@@ -520,7 +441,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="zip_code">Ταχυδρομικός κώδικας</string>
     <string name="card_number">Αριθμός κάρτας</string>
     <string name="billing_information">Πληροφορίες Χρέωσης</string>
-    <string name="billing_upgrade_thanks">Η Αναβάθμιση Ολοκληρώθηκε! Ευχαριστούμε για την υποστήριξη!</string>
     <string name="country">Χώρα</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">Πατώντας Υποβολή, συμφωνείτε
@@ -529,13 +449,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="currency">Νόμισμα</string>
     <string name="plan_duration">Κύκλος Χρέωσης</string>
     <string name="duration_annual_line1">Ετήσιο πλάνο <font color="#C3E129">Εξοικονομήστε 20%</font></string>
-    <string name="duration_annual_line2">%s ανά μήνα</string>
     <string name="per_month_text_only">κάθε μήνα</string>
-    <string name="per_year_text_only">κάθε χρόνο</string>
     <string name="duration_annual_line3">Χρεώνεται ως %s /Έτος</string>
     <string name="duration_annual_line4">Χρεώνεται ως %s /Μήνα</string>
     <string name="duration_monthly_line1">Μηνιαίο πλάνο</string>
-    <string name="duration_monthly_line2">%s ανά μήνα</string>
     <string name="duration_monthly_line3">Εξοικονομήστε 20%</string>
     <string name="set_cont">Καθορίστε &amp; Συνέχεια</string>
     <string name="payment_error">Σφάλμα Πληρωμής</string>
@@ -574,11 +491,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_approval_consumed_error_description">Ο τρόπος πληρωμής έχει χρησιμοποιηθεί ήδη για αυτήν την πληρωμή. Ελέγξτε την κατάσταση της συνδρομής σας.</string>
     <string name="no_payment_methods">Δεν έχετε αποθηκευμένους τρόπους πληρωμής.</string>
     <string name="edit_payment_methods">Παρακαλώ συνδεθείτε μέσω του protonmail.com για να επεξεργαστείτε τα στοιχεία χρέωσης.</string>
-    <string name="no_permission_contacts">Δεν υπάρχει άδεια ανάγνωσης επαφών</string>
     <string name="message_not_loaded">Το μήνυμα δεν φορτώθηκε</string>
-    <string name="signature_on">Υπογραφή Ενεργή</string>
     <string name="signature_text">Κείμενο Υπογραφής</string>
-    <string name="please_use_webapp_pass_change">Παρακαλώ χρησιμοποιήστε την εφαρμογή web μας &lt;a href=\"https://protonmail.com\"&gt; protonmail.com&lt;/a&gt; χρησιμοποιώντας έναν σταθερό ή φορητό υπολογιστή για να ολοκληρώσετε αυτήν την ενέργεια.</string>
     <string name="available_addresses">Διαθέσιμες διευθύνσεις</string>
     <string name="inactive_addresses">Ανενεργές διευθύνσεις</string>
     <string name="not_set">Δεν έχει οριστεί</string>
@@ -631,15 +545,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>11</item>
         <item>12</item>
     </string-array>
-    <string name="contacts_groups">Ομάδες</string>
-    <string name="phone_contact">Επαφή Τηλεφώνου</string>
     <string name="contact_details_display_name">Όνομα</string>
     <string name="contact_details">Λεπτομέρειες Επαφής</string>
     <string name="email_type_home">Οικία</string>
-    <string name="email_type_work">Εργασία</string>
-    <string name="option_type_custom">Νέος τύπος</string>
     <string name="type_title">Επιλογή Τύπου</string>
-    <string name="no_permission_storage">Δεν υπάρχει Άδεια Αποθήκευσης</string>
     <string name="message_drafted_error_server">Η Αποστολή μηνύματος απέτυχε. %s</string>
     <string name="sync_local_contacts">Μεταφόρτωση στο ProtonMail</string>
     <string name="please_select_only_phone_contacts">Παρακαλώ επιλέξτε μόνο τοπικές επαφές τηλεφώνου</string>
@@ -648,13 +557,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_vcard_hint_address">Εισαγωγή Διεύθυνσης</string>
     <string name="contact_vcard_hint_other">Εισαγωγή Πληροφοριών</string>
     <string name="contact_vcard_hint_note">Εισαγωγή Σημείωσης</string>
-    <string name="contact_vcard_phone">Τηλέφωνο</string>
-    <string name="contact_vcard_address">Διεύθυνση</string>
     <string name="contact_vcard_new_row_email">προσθήκη διεύθυνσης E-mail</string>
     <string name="contact_vcard_new_row_phone">προσθήκη αριθμού τηλεφώνου</string>
     <string name="contact_vcard_new_row_address">προσθήκη διεύθυνσης</string>
     <string name="contact_vcard_new_row_other">προσθήκη πληροφοριών</string>
-    <string name="contact_vcard_new_row_custom">προσθέστε ένα προσαρμοσμένο πεδίο</string>
     <string name="vcard_other_option_org">Οργανισμός</string>
     <string name="vcard_other_option_title">Τίτλος</string>
     <string name="vcard_other_option_nickname">Ψευδώνυμο</string>
@@ -663,13 +569,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="vcard_other_option_gender">Φύλο</string>
     <string name="vcard_other_option_role">Ρόλος</string>
     <string name="vcard_other_option_url">URL</string>
-    <string name="sync_question">Συγχρονισμός επαφών;</string>
-    <string name="sync_question_subtitle">Αυτό θα συγχρονίσει τις τοπικές επαφές της συσκευή σας με τον κατάλογο επαφών ProtonMail. Στη συνέχεια, θα έχετε πρόσβαση σε αυτές τις επαφές και από τις άλλες συσκευές σας, μέσω του ProtonMail.</string>
     <string name="convert_contact">Μετατροπή επαφής</string>
     <string name="upload_contacts">Μεταφόρτωση Επαφών</string>
-    <string name="encrypted_data">Κρυπτογραφημένα Δεδομένα</string>
     <string name="upgrade_encrypted_contact">Παρακαλώ αναβαθμίστε για να χρησιμοποιήσετε κρυπτογραφημένα στοιχεία επαφής.</string>
-    <string name="empty_encrypted_data">Αδειάστε τις κρυπτογραφημένες πληροφορίες επαφής.</string>
     <string name="uploading_contacts">Μεταφόρτωση επαφών…</string>
     <string name="error_encrypted_data">Σφάλμα κατά την ανάκτηση κρυπτογραφημένων πληροφοριών επαφών.</string>
     <string-array name="vcard_option_phone">
@@ -715,19 +617,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_message_exp_date_past">Σφάλμα: Η ημερομηνία λήξης δεν είναι έγκυρη</string>
     <string name="error_message_card_number_invalid">Σφάλμα: Ο αριθμός κάρτας δεν είναι έγκυρος</string>
     <string name="print_error">Σφάλμα Εκτύπωσης</string>
-    <string name="download_error">Σφάλμα λήψης</string>
     <string name="download_complete">Η λήψη ολοκληρώθηκε</string>
     <string name="download_in_progress">Λήψη σε εξέλιξη</string>
     <string name="expires_in">\tΛήγει σε %s</string>
     <string name="unsaved_changes_title">Μη αποθηκευμένες αλλαγές</string>
     <string name="unsaved_changes_subtitle">Υπάρχουν μη αποθηκευμένες καταχωρήσεις στη φόρμα. Είστε βέβαιοι ότι θέλετε να τα απορρίψετε;</string>
-    <string name="discard">Απόρριψη</string>
-    <string name="keep_editing">Συνέχεια επεξεργασίας</string>
     <string name="request_timeout">Η σύνδεση έληξε, παρακαλώ προσπαθήστε ξανά</string>
     <string name="add_folder">Προσθήκη φακέλου</string>
     <string name="no_folders">Δεν υπάρχουν φάκελοι</string>
     <string name="folders_title_move">Μετακίνηση μηνυμάτων σε</string>
-    <string name="move">Μετακίνηση</string>
     <string name="folders_manager">Διαχειριστής Φακέλων</string>
     <string name="folder_add_new">Προσθήκη νέου φακέλου</string>
     <string name="folder_name">Όνομα φακέλου</string>
@@ -746,7 +644,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_contacts">Δεν υπάρχουν επαφές</string>
     <string name="sender_name_address">%1$s &lt; %2$s&gt; έγραψε:</string>
     <string name="update_label">Ενημέρωση Ετικέτας</string>
-    <string name="folder_name_empty">Ο φάκελος πρέπει να έχει ένα όνομα</string>
     <string name="max_labels_in_message">Το μήνυμα %1$s δεν μπορεί να έχει παραπάνω απο %2$d ετικέτες.</string>
     <string name="delete">Διαγραφή</string>
     <string name="subject_copied">Το θέμα αντιγράφηκε στο πρόχειρο</string>
@@ -760,7 +657,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_to_template">Πρός: %s  </string>
     <string name="print_cc_template">Κοιν: %s  </string>
     <string name="print_bcc_template">Κρυφή Κοιν: %s  </string>
-    <string name="contacts_invalid_type">Μη έγκυρος τύπος</string>
     <string name="signature_error">Σφάλμα επαλήθευσης</string>
     <string name="signature_error_desc">Η επαλήθευση της υπογραφής αυτού του περιεχομένου απέτυχε</string>
     <string name="decryption_error">Σφάλμα κατά την αποκρυπτογράφηση</string>
@@ -775,18 +671,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close_app">Κλείσιμο εφαρμογής</string>
     <string name="empty_subject">(Χωρίς Θέμα)</string>
     <string name="contacts_unknown">Άγνωστο</string>
-    <string name="expand_collapse">Exp/Col</string>
     <string name="learn_more">
         <u>Μάθετε Περισσότερα</u>
     </string>
     <string name="info">Πληροφορίες</string>
     <string name="error_can_not_send_from_this_address">Αναβαθμίστε σε ένα λογαριασμό επι πληρωμής για αποστολή από τη διεύθυνση %s.</string>
-    <string name="digital_signature_verified">Η ψηφιακή υπογραφή επαληθεύτηκε</string>
-    <string name="encrypted_and_digital_signature_verified">Η κρυπτογραφημένη και ψηφιακή υπογραφή επαληθεύτηκε</string>
     <string name="email_empty">Η διεύθυνση E-mail λείπει</string>
-    <string name="edit_contact_details">Επεξεργασία στοιχείων επαφής</string>
     <string name="encrypted_contact_details">Κρυπτογραφημένα στοιχεία επαφής</string>
-    <string name="edit_contact_toolbar_title">Επεξεργασία %s</string>
     <string name="convert_question">Μεταφόρτωση τοπικών επαφών</string>
     <string name="convert_question_subtitle">Αυτό θα μεταφορτώσει τις τοπικές επαφές της συσκευή σας στον κατάλογο επαφών ProtonMail. Στη συνέχεια, θα έχετε πρόσβαση σε αυτές τις επαφές από τις υπόλοιπες συσκευές σας μέσω του ProtonMail.</string>
     <string name="refresh_contacts">Ανανέωση</string>
@@ -807,10 +698,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_offline_max_storage">Ορίζει το μέγιστο αποθηκευτικό χώρο που μπορεί να χρησιμοποιήσει το ProtonMail στην κινητή συσκευή σας.</string>
     <string name="load_embedded_images_failed_no_network">Η φόρτωση των ενσωματωμένων εικόνων απέτυχε. Ελέγξτε τη σύνδεση δικτύου.</string>
     <string name="load_embedded_images_failed">Η φόρτωση των ενσωματωμένων εικόνων απέτυχε.</string>
-    <string name="attachment_storage_unlimited">%.2fMB από Απεριόριστο</string>
     <string name="unlimited">Απεριόριστο</string>
     <string name="local_storage_cleared">Έγινε εκκαθάριση στην τοπική αποθήκευση</string>
-    <string name="local_storage_clear">Καθαρισμός Τοπικής Αποθήκευσης</string>
     <string name="recipient_popup_compose_to">Σύνθεση σε</string>
     <string name="recipient_popup_copy_address">Αντιγραφή διεύθυνσης</string>
     <string name="recipient_popup_see_details">Προβολή λεπτομερειών επαφής</string>
@@ -827,7 +716,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sender_lock_sent_autoresponder">Στάλθηκε από το ProtonMail με κρυπτογράφηση μηδενικής πρόσβασης</string>
     <string name="sender_lock_verification_failed">Η επαλήθευση του αποστολέα απέτυχε</string>
     <string name="sender_lock_pgp_encrypted">Κρυπτογραφημένο μήνυμα με PGP</string>
-    <string name="sender_lock_pgp_verified">Μήνυμα υπογεγραμμένο με PGP, απο επαληθευμένη διεύθυνση</string>
     <string name="sender_lock_pgp_encrypted_verified">Κρυπτογραφημένο μήνυμα με PGP απο επαληθευμένη διεύθυνση</string>
     <string name="sender_lock_pgp_signed_verified_sender">Μήνυμα υπογεγραμμένο με PGP, απο επαληθευμένη διεύθυνση</string>
     <!-- External PGP signed-only message that was encrypted by the BE -->
@@ -848,7 +736,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ΜΑΘΕΤΕ ΠΕΡΙΣΣΟΤΕΡΑ</a>
     </string>
-    <string name="no_items_found">Δεν βρέθηκαν στοιχεία</string>
     <string name="channel_name_attachments">Συνημμένα</string>
     <string name="channel_description_attachments">Ενημερώνει για την κατάσταση λήψης των συνημμένων</string>
     <string name="channel_name_emails">Μηνύματα Email</string>
@@ -866,13 +753,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 σε εμάς, ώστε να το αναλύσουμε και να βελτιώσουμε τα φίλτρα μας. Αυτό σημαίνει ότι θα
 μπορέσουμε να δούμε το πλήρες περιεχόμενο όλου του μηνύματος.</string>
     <string name="phishing_report_send_message_moved_to_spam">Η αναφορά στάλθηκε. Το μήνυμα μεταφέρθηκε στα ανεπιθύμητα.</string>
-    <string name="report_send">Η αναφορά στάλθηκε</string>
     <string name="cannot_send_report_send">Δεν είναι δυνατή η αποστολή αναφοράς</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
-    <string name="email_default">Προεπιλογή E-mail</string>
-    <string name="email_private">Ιδιωτικό E-mail</string>
-    <string name="phone_private">Ιδιωτικό Τηλέφωνο</string>
     <string name="add_photo">Προσθήκη Φωτογραφίας</string>
     <string name="contact_display_name">\ue91c Εμφανιζόμενο όνομα</string>
     <string name="add_new_email">\ue914 Προσθήκη Διεύθυνσης E-mail</string>
@@ -881,7 +764,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="edit_contact">Επεξεργασία επαφής</string>
     <string name="create_contact_group">Δημιουργία Ομάδας Επαφών</string>
     <string name="edit_contact_group">Επεξεργασία Ομάδας Επαφών</string>
-    <string name="contact_groups_add_addresses">Προσθήκη Διευθύνσεων</string>
     <string name="contact_groups_manage_addresses">Διαχείριση Διευθύνσεων</string>
     <string name="contact_group_display_name">\ue91a Εμφανιζόμενο όνομα</string>
     <string name="contact_group_groups_icon">\ue91a </string>
@@ -913,11 +795,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_group_saved">Η ομάδα αποθηκεύτηκε</string>
     <string name="no_recipients">Δεν υπάρχουν παραλήπτες</string>
     <string name="contact_group_selected">%d Επιλεγμένο</string>
-    <string name="contact_group_deleted">Η Ομάδα Διαγράφηκε</string>
     <string name="paid_plan_needed">Παρακαλούμε αναβαθμίστε σε επί πληρωμή πρόγραμμα για αυτές τις υπηρεσίες υψηλής ποιότητας</string>
-    <string name="composer_group_count">%1$s (%2$d Μέλη)</string>
     <string name="composer_group_count_of">%1$s (%2$d/%3$d Μέλη)</string>
-    <string name="address_successful_update">Η διεύθυνση ενημερώθηκε επιτυχώς</string>
     <plurals name="are_you_sure_delete_group">
         <item quantity="one">Είστε βέβαιος ότι θέλετε να διαγράψετε αυτή την ομάδα;</item>
         <item quantity="other">Είστε βέβαιοι ότι θέλετε να διαγράψετε τις επιλεγμένες ομάδες;</item>
@@ -951,17 +830,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 χώρο αποθήκευσης.</string>
     <string name="storage_limit_approaching_text">Έχετε φτάσει το 90% της χωρητικότητας αποθήκευσης.
 Εξετάστε το ενδεχόμενο να ελευθερώσετε χώρο ή να αγοράσετε περισσότερο αποθηκευτικό χώρο πριν εξαντληθεί ο εναπομείναντας χώρος.</string>
-    <string name="storage_limit_do_not_remind">ΜΗΝ ΜΟΥ ΤΟ ΘΥΜΙΣΕΙΣ ΞΑΝΑ</string>
     <!-- endregion -->
     <string name="need_permissions_title">Δικαιώματα</string>
     <string name="need_storage_permissions_text">Για να προσθέσετε συνημμένα θα πρέπει να επιτρέψετε
 πρόσβαση στην αποθήκευση.</string>
-    <string name="need_phone_permissions_text">Για να καλέσετε αυτήν την επαφή πρέπει να επιτρέψετε
-πρόσβαση στο τηλέφωνο.</string>
     <string name="push_notifications_alert_title">Ειδοποιήσεις Push</string>
     <string name="push_notifications_alert_subtitle">Οι ειδοποιήσεις Push για το ProtonMail δεν λειτουργούν χωρίς ενημερωμένες υπηρεσίες του Google Play.</string>
     <string name="app_locked">Η εφαρμογή είναι κλειδωμένη</string>
-    <string name="please_use_fingerprint">Παρακαλώ χρησιμοποιήστε το δακτυλικό σας αποτύπωμα για να ξεκλειδώσετε την εφαρμογή.</string>
     <string name="use_pin_instead">Εναλλακτικά, χρησιμοποιήστε PIN</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">Δεν έχουν εγγραφεί βιομετρικά δεδομένα</string>
@@ -970,7 +845,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="biometric_error_hw_not_available">Το βιομετρικό υλικό δεν είναι διαθέσιμο.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Μη κοινοποιημένοι παραλήπτες</string>
-    <string name="could_not_delete_attachment">Το συνημμένο δεν μπορεί να αφαιρεθεί κατά τη μεταφόρτωση</string>
     <string name="manage_accounts">Διαχείριση λογαριασμών</string>
     <!-- region Settings -->
     <string name="settings">Ρυθμίσεις</string>
@@ -979,7 +853,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="account">Λογαριασμός</string>
     <string name="subscription">Συνδρομή</string>
     <string name="plan_and_user">Πλάνο</string>
-    <string name="plan">Πλάνο</string>
     <string name="payment_method">Τρόπος Πληρωμής</string>
     <string name="password_manager">Διαχειριστής κωδικών πρόσβασης</string>
     <string name="recovery_email">Email ανάκτησης</string>
@@ -992,18 +865,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="display_name">Εμφανιζόμενο Όνομα</string>
     <string name="edit_display_name">Επεξεργασία εμφανιζόμενου ονόματος</string>
     <string name="signature">Υπογραφή</string>
-    <string name="edit_signature">Ενεργοποίηση υπογραφής</string>
     <string name="mobile_signature">Υπογραφή κινητού</string>
     <string name="edit_mobile_signature">Ενεργοποίηση υπογραφής κινητού</string>
     <string name="default_mobile_signature">Στάλθηκε από ProtonMail mobile</string>
-    <string name="plus_account_required_mobile_signature">Το ProtonMail Plus απαιτείται για να μπορείτε να επεξεργαστείτε την υπογραφή κινητού</string>
     <string name="mobile_signature_is_premium">Η αλλαγή της υπογραφής σε συσκευή κινητού επιτρέπεται μόνο σε χρήστες επί πληρωμής</string>
     <!-- region Snooze Settings -->
     <string name="snooze_header">Αναβολή</string>
     <string name="notifications_snooze">Αναβολή Ειδοποίησης</string>
-    <string name="notifications_snooze_finishing">Οι ειδοποιήσεις θα συνεχιστούν σε $s λεπτά</string>
-    <string name="snooze_notifications">Αναβολή ειδοποιήσεων</string>
-    <string name="snooze_notifications_adjust">Προσαρμογή</string>
     <string name="notifications_snoozed">Οι ειδοποιήσεις αναβλήθηκαν</string>
     <string name="notifications_snooze_scheduled">Προγραμματισμένο</string>
     <string name="notifications_snooze_scheduled_settings">Προγραμματισμένες ρυθμίσεις αναβολής</string>
@@ -1032,7 +900,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="mailbox">Γραμματοκιβώτιο</string>
     <string name="privacy">Ιδιωτικότητα</string>
-    <string name="auto_download_messages_title_short">Αυτόματη λήψη</string>
     <string name="auto_download_messages_title">Αυτόματη-λήψη μηνυμάτων</string>
     <string name="auto_download_messages_subtitle">Όταν αυτή η επιλογή είναι ενεργοποιημένη, τα αρχεία μηνυμάτων θα κατεβάζει αυτόματα κάθε φορά που θα λάβετε μια νέα ειδοποίηση μέσω E-mail (αυτό θα καταναλώνει περισσότερα δεδομένα). Εάν η επιλογή είναι απενεργοποιημένη, τα αρχεία μηνυμάτων θα μεταφορτωθούν μόνο όταν ανοίγετε ένα E-mail. (Σημείωση: με οποιαδήποτε από τις επιλογές, εάν διαγράψετε την προσωρινή μνήμη ή αποσυνδεθείτε, δεν θα μπορείτε να διαβάσετε τα μηνύματα όταν είστε εκτός σύνδεσης.)</string>
     <string name="settings_background_sync">Συγχρονισμός στο παρασκήνιο</string>
@@ -1081,7 +948,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="auto_lock_description">Ενεργοποιήστε αυτή τη λειτουργία για να κλειδώσετε αυτόματα την \n εφαρμογή και να χρησιμοποιήσετε έναν κωδικό PIN ή ένα δακτυλικό αποτύπωμα \n για να το ξεκλειδώσετε.</string>
     <string name="change_pin_code">Αλλάξτε κωδικό PIN</string>
     <string name="auto_lock_timer">Χρονικό Όριο Αυτόματου Κλειδώματος</string>
-    <string name="unlock_with_fingerprint">Ξεκλείδωμα με δακτυλικό αποτύπωμα</string>
     <string name="connections_via_third_parties">Εναλλακτική δρομολόγηση</string>
     <string name="allow_secure_connections_via_third_parties">Επιτρέψτε εναλλακτική δρομολόγηση</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">Σε περίπτωση που μπλοκάρουν τις ιστοσελίδες Proton, αυτή η ρύθμιση θα επιτρέψει στην εφαρμογή να δοκιμάσει εναλλακτική δρομολόγηση δικτύου ώστε να φτάσει στο Proton, το οποίο μπορεί να είναι χρήσιμο για παράκαμψη τείχους προστασίας ή ζητήματα δικτύου. Συνιστούμε να διατηρήσετε αυτήν τη ρύθμιση για μεγαλύτερη αξιοπιστία.</string>
@@ -1101,9 +967,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_version">Έκδοση εφαρμογής</string>
     <!-- endregion -->
     <!-- region Multi Account -->
-    <string name="primary_account">Κύριος Λογαριασμός</string>
-    <string name="make_primary_account">Ορισμός %s ως Κύριος Λογαριασμός;</string>
-    <string name="logout_account_question">Αποσύνδεση %s;</string>
     <string name="remove_account_question">Αφαίρεση %s;</string>
     <string name="signed_in_with">Συνδέθηκε με %s</string>
     <string name="signed_in_with_logged_out_from">Αποσυνδεδεμένο από %1$s και συνδεδεμένο με %2$s</string>
