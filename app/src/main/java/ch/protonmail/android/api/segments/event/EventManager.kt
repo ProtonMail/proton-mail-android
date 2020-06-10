@@ -111,6 +111,11 @@ class EventManager {
         eventHandlers = mutableMapOf()
     }
 
+    fun clearState(username : String) {
+        sharedPrefs.remove(username)
+        eventHandlers.remove(username)
+    }
+
     @Throws(IOException::class)
     private fun refreshContacts(handler: EventHandler) {
         Log.d("PMTAG", "EventManager handler refreshContacts")

@@ -450,6 +450,7 @@ class UserManager(
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
         setUsernameAndReload(nextLoggedInAccount)
+        app.eventManager.clearState(username)
         app.clearPaymentMethods()
     }
 
