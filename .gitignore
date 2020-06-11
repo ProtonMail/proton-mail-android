@@ -33,7 +33,7 @@ proguard/
 app/schemas/
 
 # Reports
-detekt/reports
+config/detekt/reports
 
 # contact the lead to get access to these files
 privateConfig

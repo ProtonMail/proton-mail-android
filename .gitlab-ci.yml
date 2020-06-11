@@ -35,7 +35,7 @@ detekt analysis:
     - ./gradlew multiModuleDetekt
   artifacts:
     reports:
-        codequality: detekt/reports/mergedReport.json
+        codequality: config/detekt/reports/mergedReport.json
 
 build debug:
   stage: build

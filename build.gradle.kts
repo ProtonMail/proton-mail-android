@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import setup.setupDetekt
-import setup.setupKotlin
+import me.proton.core.util.gradle.setupDetekt
+import me.proton.core.util.gradle.setupKotlin
 
 buildscript {
     initVersions()
@@ -33,7 +33,11 @@ allprojects {
     repositories(repos)
 }
 
-setupKotlin()
+setupKotlin(
+    "-XXLanguage:+NewInference",
+    "-Xuse-experimental=kotlin.Experimental",
+    "-XXLanguage:+InlineClasses"
+)
 setupDetekt { "tokenAutoComplete" !in it.name }
 
 tasks.register("clean", Delete::class.java) {

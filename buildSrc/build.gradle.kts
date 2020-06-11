@@ -23,6 +23,7 @@ plugins {
 repositories {
     google()
     jcenter()
+    maven(url = "https://dl.bintray.com/proton/Core-publishing")
 }
 
 dependencies {
@@ -31,6 +32,7 @@ dependencies {
     val easyGradle =    "1.3.2"         // Released: May 22, 2020
     val kotlin =        "1.3.72"        // Released: Apr 14, 2020
     val sentry =        "1.7.22"        // Released:
+    val protonGradle =  "0.1.3"         // Released: Jun 10, 2020
 
     // Needed for setup Android config
     implementation("com.android.tools.build:gradle:$android")
@@ -40,7 +42,8 @@ dependencies {
     implementation("studio.forface.easygradle:dsl-android:$easyGradle")
     // Needed for setup Kotlin options
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
+    implementation("me.proton.core:util-gradle:$protonGradle")
 
-
-    implementation("io.sentry:sentry-android-gradle-plugin:$sentry")
+    // TODO: this should not be here!
+//    implementation("io.sentry:sentry-android-gradle-plugin:$sentry")
 }
