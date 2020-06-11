@@ -215,10 +215,10 @@ abstract class NavigationActivity : BaseActivity(),
     protected abstract fun onOtherMailBox(type: Constants.DrawerOptionType)
 
     protected abstract fun onLabelMailBox(
-            type: Constants.DrawerOptionType,
-            labelId: String,
-            labelName: String,
-            isFolder: Boolean
+        type: Constants.DrawerOptionType,
+        labelId: String,
+        labelName: String,
+        isFolder: Boolean
     )
 
     override fun onStart() {
@@ -374,7 +374,7 @@ abstract class NavigationActivity : BaseActivity(),
     private fun setUpInitialDrawerItems(user: User?) {
         val hasPin = user != null &&
                 user.isUsePin &&
-                mUserManager.mailboxPin != null
+                mUserManager.getMailboxPin() != null
 
         staticDrawerItems = mutableListOf<DrawerItemUiModel>().apply {
             add(Primary.Static(Type.INBOX, R.string.inbox, R.drawable.inbox))
@@ -495,7 +495,7 @@ abstract class NavigationActivity : BaseActivity(),
             Type.UPSELLING -> startActivity(AppUtil.decorInAppIntent(Intent(this, UpsellingActivity::class.java)))
             Type.LOCK -> {
                 val user = mUserManager.user
-                if (user.isUsePin && ProtonMailApplication.getApplication().userManager.mailboxPin != null) {
+                if (user.isUsePin && ProtonMailApplication.getApplication().userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
                     user.save()
                     val pinIntent = AppUtil.decorInAppIntent(Intent(this@NavigationActivity, ValidatePinActivity::class.java))

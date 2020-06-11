@@ -28,6 +28,9 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import com.squareup.otto.Subscribe
 
+/**
+ *
+ */
 class SettingsActivity : BaseSettingsActivity() {
 
     override fun getLayoutId(): Int {
@@ -81,7 +84,7 @@ class SettingsActivity : BaseSettingsActivity() {
             }
         }
 
-        mPinValue = user.isUsePin && !TextUtils.isEmpty(mUserManager.mailboxPin)
+        mPinValue = user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
         val autoLockSettingValue = if (mPinValue) getString(R.string.enabled) else getString(R.string.disabled)
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 

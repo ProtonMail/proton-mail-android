@@ -88,7 +88,7 @@ class UserManager(
     private val userReferences = HashMap<String, User>()
     private var mCheckTimestamp: Float = 0.toFloat()
     private var mMailboxPassword: String? = null
-    private var mMailboxPin: String? = null
+//    private var mMailboxPin: String? = null
     private val app: ProtonMailApplication = context.app
     private var mGeneratingKeyPair: Boolean = false
 
@@ -196,28 +196,6 @@ class UserManager(
             return secureSharedPreferences.getInt(PREF_PIN_INCORRECT_ATTEMPTS, 0)
         }
 
-    val mailboxPin: String?
-        get() {
-            if (mMailboxPin == null) {
-                val secureSharedPreferences = app.secureSharedPreferences
-                mMailboxPin = secureSharedPreferences.getString(PREF_PIN, null)
-            }
-            return mMailboxPin
-        }
-
-    /**
-     * Gets mailbox password for current user.
-     */
-    // migrate from global to user-specific preferences
-    // val mailboxPassword: String? /*TODO passphrase*/
-    //     get() {
-    //         if (mMailboxPassword == null) {
-    //             val secureSharedPreferences = app.getSecureSharedPreferences(username)
-    //             mMailboxPassword = secureSharedPreferences.getString(PREF_MAILBOX_PASSWORD, null)
-    //         }
-    //         return mMailboxPassword
-    //     }
-
     /**
      * Gets key salt for current user.
      */
@@ -315,7 +293,7 @@ class UserManager(
 
             // Removed check for updates where we need to logout as it was always false. See doc ref in method header
             if (false) {
-                val pin = mailboxPin
+                val pin = getMailboxPin()
                 logoutOffline()
                 savePin(pin)
             } else {
@@ -332,7 +310,7 @@ class UserManager(
         mCheckTimestamp = 0f
         userReferences.remove(username)
         mMailboxPassword = null
-        mMailboxPin = null
+//        mMailboxPin = null
         app.eventManager.clearState()
     }
 
@@ -583,7 +561,11 @@ class UserManager(
     fun savePin(mailboxPin: String?) {
         val secureSharedPreferences = app.secureSharedPreferences
         secureSharedPreferences.edit().putString(PREF_PIN, mailboxPin).apply()
-        mMailboxPin = mailboxPin
+//        mMailboxPin = mailboxPin
+    }
+
+    fun getMailboxPin(): String? {
+        return app.secureSharedPreferences.getString(PREF_PIN, "")
     }
 
     @JvmOverloads
