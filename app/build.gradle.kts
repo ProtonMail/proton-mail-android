@@ -19,7 +19,7 @@
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
     `android-application`
@@ -39,6 +39,10 @@ val privateProperties = Properties().apply {
     load(FileInputStream("privateConfig/private.properties"))
 }
 
+val experimentalProperties = Properties().apply {
+    load(FileInputStream("experimental.properties"))
+}
+
 android(appIdSuffix = "android") {
 
     useLibrary("org.apache.http.legacy")
@@ -46,7 +50,8 @@ android(appIdSuffix = "android") {
 
     defaultConfig {
         multiDexEnabled = true
-        
+
+        // Private
         buildConfigField("String", "SENTRY_DNS_1", "\"${privateProperties["sentryDNS_1"]}\"")
         buildConfigField("String", "SENTRY_DNS_2", "\"${privateProperties["sentryDNS_2"]}\"")
         buildConfigField("String", "SAFETY_NET_API_KEY", "\"${privateProperties["safetyNet_apiKey"]}\"")
@@ -54,6 +59,9 @@ android(appIdSuffix = "android") {
         buildConfigField("String", "D_ENDPOINT_URL", "\"${privateProperties["d_endpointUrl"]}\"")
         buildConfigField("String", "H_ENDPOINT_URL", "\"${privateProperties["h_endpointUrl"]}\"")
         buildConfigField("String", "PM_CLIENT_SECRET", "\"${privateProperties["pm_clientSecret"]}\"")
+
+        // Experimental
+        buildConfigField("boolean", "EXPERIMENTAL_USERS_MANAGEMENT", "${experimentalProperties["users-management"]}")
 
         buildConfigField("boolean", "FETCH_FULL_CONTACTS", "true")
         buildConfigField("boolean", "REREGISTER_FOR_PUSH", "true")
