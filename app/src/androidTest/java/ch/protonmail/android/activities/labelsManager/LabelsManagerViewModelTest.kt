@@ -24,13 +24,16 @@ import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.mapper.LabelUiModelMapper
-import ch.protonmail.android.testKotlin.CoroutinesTestRule
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.mockk
-import junit.framework.TestCase.*
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.coroutinesTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -38,10 +41,9 @@ import org.junit.Test
  * Test suite for [LabelsManagerViewModel]
  * @author Davide Farella
  */
-internal class LabelsManagerViewModelTest {
+internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
 
     @get:Rule val archRule = InstantTaskExecutorRule()
-    @get:Rule val coroutinesRule = CoroutinesTestRule()
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
