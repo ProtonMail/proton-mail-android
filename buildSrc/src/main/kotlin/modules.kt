@@ -33,5 +33,5 @@ object Module {
 object Lib {
     @Suppress("unused") const val composer = "Composer"
     @Suppress("unused") const val composerTest = "Composer-test"
-    const val protonCore = "Proton-core"
+    @Deprecated("To be removed in favour of package published on Bintray") const val protonCore = "Proton-core"
 }

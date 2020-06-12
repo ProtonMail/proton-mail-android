@@ -49,8 +49,8 @@ fun initVersions() {
     // endregion
 
     // region Others
-    `detekt version` =                          "1.9.1"         // Released: May 17, 2020
-    `detect-code-analysis version` =            "0.3.2"         // Released:
+    `detekt version` =                          "1.9.1"         // Released: May 17, 2020 // TODO: remove after util-gradle 0.1.4
+    `detect-code-analysis version` =            "0.3.2"         // Released: // TODO: remove after util-gradle 0.1.4
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
@@ -58,39 +58,44 @@ fun initVersions() {
     // endregion
 }
 
-// Proton Libs
-@Suppress("unused")
-const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
-const val `protonCore version` =            "0.2.21"        // Released: Mar 13, 2020
+// Proton Core
+// Common
+const val `Proton-kotlin-util version` =        "0.1"           // Released: Jun 10, 2020
+const val `Proton-shared-preferences version` = "0.1"           // Released: Jun 10, 2020
+const val `Proton-work-manager version` =       "0.1"           // Released: Jun 10, 2020
+// Test
+const val `Proton-android-test version` =       "0.1"           // Released: May 30, 2020
+const val `Proton-android-instr-test version` = "0.1"           // Released: May 30, 2020
+const val `Proton-kotlin-test version` =        "0.1"           // Released: Jun 10, 2020
+@Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
+@Deprecated("To be removed in favour of package published on Bintray") const val `old protonCore version` =        "0.2.21"        // Released: Mar 13, 2020
 
 // Test
-const val `assertJ version` =               "3.13.2"        // Released: Aug 04, 2019
-const val `hamcrest version` =              "1.3"           // Released:
-const val `jUnit5 version` =                "5.5.0"         // Released:
-const val `robolectric version` =           "4.3.1"         // Released: Oct 11, 2019
+const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
+const val `hamcrest version` =                  "1.3"           // Released:
+const val `jUnit5 version` =                    "5.5.0"         // Released:
+const val `robolectric version` =               "4.3.1"         // Released: Oct 11, 2019
 
 // Android
-const val `android-biometric version` =     "1.0.1"         // Released: Jan 23, 2020
-const val `android-fragment version` =      "1.2.0-rc01"    // Released: Oct 24, 2019
-const val `android-media version` =         "1.1.0"         // Released: Sep 06, 2019
-const val `android-palette version` =       "1.0.0"         // Released: Sep 22, 2018
-const val `gcm version` =                   "15.0.1"        // Released:
-const val `playServices version` =          "17.0.0"        // Released: Jun 19, 2019
+const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
+const val `android-fragment version` =          "1.2.0-rc01"    // Released: Oct 24, 2019
+const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
+const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
 
 // Other
-const val `apache-commons-lang version` =   "3.4"           // Released: Apr 03, 2015
-const val `butterKnife version` =           "10.1.0"        // Released: Feb 14, 201
-const val `gson version` =                  "2.8.5"         // Released: May 22, 201
-const val `hugo version` =                  "1.2.1"         // Released: Feb 18, 201
-const val `jsoup version` =                 "1.8.3"         // Released: Aug 02, 2015
-const val `okHttp3 version` =               "3.12.5"        // Released: Sep 11, 2019 TODO: 4.x requires some refactor / 3.13+ requires minSDK 2
-const val `rxJava version` =                "2.0.2"         // Released: Dec 02, 201
-const val `rxRelay version` =               "2.1.1"         // Released: Aug 23, 201
-const val `sentry version` =                "1.7.22"        // Released: Mar 13, 2019
-const val `sonarQube version` =             "2.7.1"         // Released: May 14, 201
-const val `stetho version` =                "1.5.1"         // Released: Mar 18, 201
-const val `timber version` =                "4.7.1"         // Released:
-const val `trustKit version` =              "1.1.2"         // Released: Jun 09, 2019
-const val `minidns version` =               "0.3.3"         // Released: Oct 14, 2018
-const val `rf2 converter version` =         "2.7.1"         // Released: Jan 02, 2020
-const val `jackson version` =               "2.10.2"        // Released: Jan 05, 2020
+const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015
+const val `butterKnife version` =               "10.1.0"        // Released: Feb 14, 201
+const val `gson version` =                      "2.8.5"         // Released: May 22, 201
+const val `hugo version` =                      "1.2.1"         // Released: Feb 18, 201
+const val `jsoup version` =                     "1.8.3"         // Released: Aug 02, 2015
+const val `okHttp3 version` =                   "3.12.5"        // Released: Sep 11, 2019 TODO: 4.x requires some refactor / 3.13+ requires minSDK 2
+const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201
+const val `rxRelay version` =                   "2.1.1"         // Released: Aug 23, 201
+const val `sentry version` =                    "1.7.22"        // Released: Mar 13, 2019
+const val `sonarQube version` =                 "2.7.1"         // Released: May 14, 201
+const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 201
+const val `timber version` =                    "4.7.1"         // Released:
+const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
+const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
+const val `rf2 converter version` =             "2.7.1"         // Released: Jan 02, 2020
+const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020

@@ -114,12 +114,6 @@ android(appIdSuffix = "android") {
 }
 
 dependencies {
-    implementation(
-        project(Module.domain),
-        rootProject.aar(Lib.protonCore, version = `protonCore version`)
-//        rootProject.aar(Lib.composer, version = `composer version`),
-//        project(Module.tokenAutoComplete)
-    )
 
     // Kapt
     kapt(
@@ -131,6 +125,16 @@ dependencies {
     kaptTest(`dagger-compiler`)
 
     implementation(
+        project(Module.domain),
+//        project(Module.tokenAutoComplete)
+
+        // Proton
+        rootProject.aar(Lib.protonCore, version = `old protonCore version`),
+//        rootProject.aar(Lib.composer, version = `composer version`),
+        `Proton-kotlin-util`,
+        `Proton-shared-preferences`,
+//        `Proton-work-manager`, TODO: not released yet
+
         // Kotlin
         `kotlin-jdk7`,
         `kotlin-reflect`,

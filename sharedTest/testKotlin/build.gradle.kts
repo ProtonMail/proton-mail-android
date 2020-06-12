@@ -24,39 +24,41 @@ plugins {
 }
 
 dependencies {
+
     // Base dependencies
     implementation(
-            `kotlin-jdk8`,
-            `coroutines-core`,
-            `serialization`
+        // Proton
+        `Proton-kotlin-util`,
+
+        // Kotlin
+        `kotlin-jdk8`,
+        `coroutines-core`,
+        `serialization`
     )
-    // endregion
 
+    // Test dependencies
+    api(
+        // Proton
+        `Proton-kotlin-test`,
 
-    // region test dependencies
-    api(`kotlin-test`, `kotlin-test-junit`)
+        // Kotlin
+        `kotlin-test`,
+        `kotlin-test-junit`,
+        `coroutines-test`,
 
-    // region jUnit 5
+        // jUnit 5
+        // (Required) Writing and executing Unit Tests on the JUnit Platform
+        `jUnit5-jupiter-api`,
+        // (Optional) If you need "Parameterized Tests"
+        `jUnit5-jupiter-params`,
+
+        // Other
+        `assertJ`,
+        `mockk`
+    )
 
     // (Required) Writing and executing Unit Tests on the JUnit Platform
-    api(`jUnit5-jupiter-api`)
     testRuntimeOnly(`jUnit5-jupiter-engine`)
-
-    // (Optional) If you need "Parameterized Tests"
-    api(`jUnit5-jupiter-params`)
-
     // (Optional) If you also have JUnit 4-based tests
     testRuntimeOnly(`jUnit5-vintage-engine`)
-
-    // endregion
-
-    // Assertion
-    api(`assertJ`)
-
-    // MockK
-    api(`mockk`)
-
-    // Kotlin
-    api(`coroutines-test`)
-    // endregion
 }

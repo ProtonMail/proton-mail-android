@@ -31,6 +31,9 @@ dependencies {
 
     // Base dependencies
     implementation(
+        // Proton
+        `Proton-kotlin-util`,
+
         // Kotlin
         `kotlin-jdk7`,
         `coroutines-android`,
@@ -43,10 +46,6 @@ dependencies {
         `lifecycle-liveData`,
         `lifecycle-viewModel`,
 
-        // Proton Libs
-        rootProject.aar(Lib.protonCore, version = `protonCore version`),
-//        rootProject.aar(Lib.composer, version = `composer version`),
-
         // Other
         `viewStateStore`,
 
@@ -57,7 +56,7 @@ dependencies {
     // Test dependencies
     api(
         project(Module.testKotlin),
-//        rootProject.aar(Lib.composerTest, version = `composer version`),
+        `Proton-android-test`,
 
         // Android
         `android-test-core`,
