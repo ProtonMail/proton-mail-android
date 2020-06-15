@@ -130,13 +130,13 @@ fun File.addLicense(): Boolean {
             val startsWithComment =
                 (reader.readLine()?.startsWith(commentStart) ?: false).also { reader.reset() }
             val initialComment = startsWithComment.takeIf { it }?.let {
-                val builder = StringBuilder()
-                while (true) {
-                    val line = reader.readLine()
-                    builder.appendln(line)
-                    if (commentEnd in line) break
+                buildString {
+                    while (true) {
+                        val line = reader.readLine()
+                        appendln(line)
+                        if (commentEnd in line) break
+                    }
                 }
-                builder.toString()
             }
 
             if (initialComment?.trim() == license.trim()) {
@@ -152,7 +152,11 @@ fun File.addLicense(): Boolean {
                 }
             }
             // copy to original file
-            temp.renameTo(this)
+            if (!temp.renameTo(this)) {
+                // Delete temp file if cannot rename it
+                temp.delete()
+            }
+            Unit
 
         } catch (e: IOException) {
             if (e.message == "File $path is empty.") {
