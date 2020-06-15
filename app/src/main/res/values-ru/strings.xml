@@ -429,8 +429,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="select_account_type_subtitle">ProtonMail представляет собой бесплатный сервис
 ради общего блага. Вы можете поддержать конфиденциальность в Интернете, выбрав платную учётную запись.</string>
     <string name="plan_free_with_price">БЕСПЛАТНЫЙ</string>
-    <string name="plan_plus_with_price">PLUS %s /Месяц</string>
-    <string name="plan_visionary_with_price">VISIONARY %s /Месяц</string>
+    <string name="plan_plus_with_price">PLUS %s /месяц</string>
+    <string name="plan_visionary_with_price">VISIONARY %s /месяц</string>
     <string name="plan_business_with_price">BUSINESS %s /месяц</string>
     <string name="plan_free_title">Базовая учётная запись с ограниченными функциями</string>
     <string name="plan_plus_title">Защищённая почта с расширенным функционалом</string>
