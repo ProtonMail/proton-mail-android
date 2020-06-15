@@ -133,7 +133,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="max_labels_exceeded">Zpráva %1$s nemůže mít více než %2$d štítků.</string>
     <string name="max_labels_selected">Maximální počet štítků je: %d</string>
     <string name="max_attachments_reached">Byl dosažen maximální limit pro přílohy v jedné zprávě.</string>
-    <string name="max_attachments_size_reached">Maximum attachments size per message has been reached</string>
+    <string name="max_attachments_size_reached">Bylo dosaženo maximální velikosti pro přílohy v jedné zprávě</string>
     <plurals name="hours_string">
         <item quantity="one">%d hodina</item>
         <item quantity="few">%d hodiny</item>

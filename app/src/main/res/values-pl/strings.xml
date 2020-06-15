@@ -221,7 +221,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="eo_password_title">Ustaw hasło</string>
     <string name="eo_password_subtitle">Ustaw hasło, aby zaszyfrować tę wiadomość dla użytkowników spoza ProtonMaila</string>
     <string name="eo_password_more_info">Więcej informacji</string>
-    <string name="old_login_password">Bieżące hasło logowania</string>
+    <string name="old_login_password">Obecne hasło logowania</string>
     <string name="new_login_password">Nowe hasło</string>
     <string name="confirm_new_login_password">Potwierdź nowe hasło</string>
     <string name="new_mailbox_password">Nowe hasło skrzynki pocztowej</string>

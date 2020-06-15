@@ -21,7 +21,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="protonmail">ProtonMail</string>
     <string name="encrypted_emails">MESSAGERIE CHIFFRÉE</string>
     <string name="secure_email_swiss">Messagerie sécurisée basée\nen Suisse</string>
-    <string name="decrypt_mailbox">Déchiffrer la <b>boîte aux lettres</b></string>
+    <string name="decrypt_mailbox">Déchiffrer la <b>boîte de réception</b></string>
     <string name="decrypt">Déchiffrer</string>
     <string name="user_sign_in">Nom d’utilisateur</string>
     <string name="two_factor_sign_in">Authentification en deux étapes</string>
@@ -97,10 +97,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="remove_star">Retirer des favoris</string>
     <string name="mark_read">Marquer comme lu</string>
     <string name="mark_unread">Marquer comme non lu</string>
-    <string name="move_to_archive">Déplacer vers les archives</string>
-    <string name="move_to_trash">Déplacer vers la corbeille</string>
-    <string name="move_to_spam">Déplacer dans les indésirables</string>
-    <string name="move_to_inbox">Déplacer vers la boîte de réception</string>
+    <string name="move_to_archive">Archiver</string>
+    <string name="move_to_trash">Déplacer vers Corbeille</string>
+    <string name="move_to_spam">Déplacer vers Spam</string>
+    <string name="move_to_inbox">Déplacer vers Boîte de réception</string>
     <string name="are_you_sure_empty">Êtes-vous sûr de vouloir supprimer tous les messages de ce dossier ?</string>
     <string name="send">Envoyer</string>
     <string name="selected">Sélectionné</string>
@@ -745,7 +745,7 @@ de respecter\n les<a href="https://protonmail.com/terms-and-conditions">conditio
     <string name="channel_name_ongoing_operations">Opérations en cours</string>
     <string name="channel_description_ongoing_operations">Affiche toutes les opérations en cours comme
 le téléchargement d\'un nouveau message en arrière-plan</string>
-    <string name="checking_mailbox">Vérification de la boîte aux lettres</string>
+    <string name="checking_mailbox">Vérification de la boîte de réception</string>
     <string name="report_phishing">Signaler l\'hameçonnage</string>
     <string name="print">Imprimer</string>
     <string name="phishing_dialog_title">Confirmer le signalement d’hameçonnage</string>
@@ -915,15 +915,15 @@ l\'accès au stockage.</string>
     <string name="swipe_action_right">Glisser de droite à gauche</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choisir une action de balayage</string>
-    <string name="swipe_action_trash">Message déplacé vers la corbeille</string>
+    <string name="swipe_action_trash">Message déplacé vers Corbeille</string>
     <string name="swipe_action_trash_short">Déplacé dans la corbeille</string>
     <string name="swipe_action_star">Message favori mis à jour</string>
     <string name="swipe_action_spam">Message marqué comme spam</string>
     <string name="swipe_action_archive">Message archivé</string>
     <string name="swipe_action_mark_read">Message marqué comme lu</string>
     <plurals name="action_move_to_trash">
-        <item quantity="one">Message déplacé vers la corbeille</item>
-        <item quantity="other">Messages déplacés vers la corbeille</item>
+        <item quantity="one">Message déplacé vers Corbeille</item>
+        <item quantity="other">Messages déplacés vers Corbeille</item>
     </plurals>
     <plurals name="action_move_to_spam">
         <item quantity="one">Message marqué comme spam</item>
