@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -137,34 +138,36 @@ public class SecureEditText extends LinearLayout {
         currentValue.append(keyValue);
         mInputField.setText(currentValue.toString());
         mInputField.setSelection(currentValue.length());
-        switch (mActionType) {
-            case CREATE:
-                if (!TextUtils.isEmpty(currentValue) && currentValue.length() >= 4) {
-                    mListener.onPinMaxDigitReached();
-                }
-                break;
-            case CONFIRM:
+        if(currentValue.length() >= 4) {
+            switch (mActionType) {
+                case CREATE:
+                    if (!TextUtils.isEmpty(currentValue) && currentValue.length() >= 4) {
+                        mListener.onPinMaxDigitReached();
+                    }
+                    break;
+                case CONFIRM:
 
-                break;
-            case VALIDATE:
-                String pin = ProtonMailApplication.getApplication().getUserManager().getMailboxPin();
-                if (pin != null && pin.equals(currentValue.toString())) {
-                    if (mListener != null) {
-                        mListener.onPinSuccess();
-                        ProtonMailApplication.getApplication().getUserManager().resetPinAttempts();
+                    break;
+                case VALIDATE:
+                    String pin = ProtonMailApplication.getApplication().getUserManager().getMailboxPin();
+                     if (pin != null && pin.equals(currentValue.toString())) {
+                        if (mListener != null) {
+                            mListener.onPinSuccess();
+                            ProtonMailApplication.getApplication().getUserManager().resetPinAttempts();
+                        }
+                    } else if (currentValue.length() == 4) {
+                        if (mListener != null) {
+                            UserManager userManager = ProtonMailApplication.getApplication().getUserManager();
+                            userManager.increaseIncorrectPinAttempt();
+                            handlePinErrorUI(userManager);
+                            mListener.onPinError();
+                        }
+                        Vibrator mVibrator = (Vibrator) ProtonMailApplication.getApplication().getSystemService(Context.VIBRATOR_SERVICE);
+                        mVibrator.vibrate(450);
+                        mEditTextHandler.postDelayed(new ClearTextRunnable(this), 350);
                     }
-                } else if (currentValue.length() == 4) {
-                    if (mListener != null) {
-                        UserManager userManager = ProtonMailApplication.getApplication().getUserManager();
-                        userManager.increaseIncorrectPinAttempt();
-                        handlePinErrorUI(userManager);
-                        mListener.onPinError();
-                    }
-                    Vibrator mVibrator = (Vibrator) ProtonMailApplication.getApplication().getSystemService(Context.VIBRATOR_SERVICE);
-                    mVibrator.vibrate(450);
-                    mEditTextHandler.postDelayed(new ClearTextRunnable(this), 350);
-                }
-                break;
+                    break;
+            }
         }
     }
 
