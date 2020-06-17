@@ -33,7 +33,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -101,13 +100,10 @@ import ch.protonmail.android.adapters.swipe.SpamSwipeHandler;
 import ch.protonmail.android.adapters.swipe.StarSwipeHandler;
 import ch.protonmail.android.adapters.swipe.SwipeAction;
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler;
-import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.models.MessageCount;
-import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.SimpleMessage;
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse;
 import ch.protonmail.android.api.models.User;
-import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.counters.CountersDatabase;
 import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
 import ch.protonmail.android.api.models.room.counters.TotalLabelCounter;
@@ -122,7 +118,6 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.AuthStatus;
@@ -163,7 +158,6 @@ import ch.protonmail.android.jobs.PostUnstarJob;
 import ch.protonmail.android.prefs.SecureSharedPreferences;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Event;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.UiUtil;
@@ -611,10 +605,7 @@ public class MailboxActivity extends NavigationActivity implements
             if (messages != null) {
                 adapter.clear();
                 adapter.addAll(messages);
-
-                refreshEmptyView(messages.size());
             }
-            setRefreshing(false);
         }
     }
 
@@ -879,7 +870,7 @@ public class MailboxActivity extends NavigationActivity implements
         swipeRefreshLayout.setOnRefreshListener(this);
     }
 
-    private void setRefreshing(boolean refreshing) {
+    void setRefreshing(boolean refreshing) {
         mSwipeRefreshLayout.setRefreshing(refreshing);
         mSpinnerSwipeRefreshLayout.setRefreshing(refreshing);
         mNoMessagesRefreshLayout.setRefreshing(refreshing);
@@ -1073,7 +1064,6 @@ public class MailboxActivity extends NavigationActivity implements
         }
         refreshMailboxJobRunning = false;
         mSyncingHandler.postDelayed(new SyncDoneRunnable(this), 1000);
-        setRefreshing(false);
         setLoadingMore(false);
         if(!isDohOngoing) {
             showToast(event.status);
@@ -1116,13 +1106,11 @@ public class MailboxActivity extends NavigationActivity implements
             TextExtensions.showToast(this, R.string.no_more_messages, Toast.LENGTH_SHORT);
             mAdapter.notifyDataSetChanged();
         }
-        setRefreshing(false);
         setLoadingMore(false);
     }
 
     @Subscribe
     public void onUpdatesLoaded(FetchUpdatesEvent event) {
-        setRefreshing(false);
         refreshDrawerHeader(mUserManager.getUser());
         mSyncingHandler.postDelayed(new SyncDoneRunnable(this), 1000);
     }
@@ -1360,6 +1348,9 @@ public class MailboxActivity extends NavigationActivity implements
         for (SimpleMessage message : selectedMessages) {
             messageIds.add(message.getMessageId());
         }
+        if( mAdapter.getItemCount() == messageIds.size()){
+            setRefreshing(true);
+        }
         int menuItemId = menuItem.getItemId();
         Job job = null;
 
@@ -1513,6 +1504,7 @@ public class MailboxActivity extends NavigationActivity implements
     @Override
     public void onRefresh() {
         if (!mSpinnerSwipeRefreshLayout.isRefreshing()) {
+            setRefreshing(true);
             fetchUpdates();
         }
     }
@@ -1527,7 +1519,6 @@ public class MailboxActivity extends NavigationActivity implements
     private final Handler mSyncingHandler = new Handler();
 
     private void syncingDone() {
-        setRefreshing(false);
         mSyncView.setVisibility(View.GONE);
     }
 
@@ -1550,6 +1541,7 @@ public class MailboxActivity extends NavigationActivity implements
     public void setupNewMessageLocation(int newLocation) {
         Constants.MessageLocationType newMessageLocationType = Constants.MessageLocationType.Companion.fromInt(newLocation);
         mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshWrapper.setVisibility(View.VISIBLE);
         getSupportLoaderManager().destroyLoader(LOADER_ID_LABELS_OFFLINE);
         mNoMessagesRefreshLayout.setVisibility(View.GONE);
