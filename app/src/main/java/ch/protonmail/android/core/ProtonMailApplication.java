@@ -126,6 +126,7 @@ import io.sentry.android.AndroidSentryClientFactory;
 import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
+import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
@@ -639,6 +640,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
                 }
                 SharedPreferences secureSharedPreferences = getSecureSharedPreferences(mUserManager.getUsername());
                 SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
+                List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
 
                 if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
                     secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING,
@@ -651,7 +653,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
                     defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
                 }
                 if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
-                    for (String user : AccountManager.Companion.getInstance(this).getLoggedInUsers()) {
+                    for (String user : loggedInUsers) {
                         SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
                         if (mUserManager.getMailboxPassword(user) == null) {
                             mUserManager.logoutAccount(user);
@@ -660,6 +662,12 @@ public class ProtonMailApplication extends Application implements HasActivityInj
                         }
                     }
                     defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
+                }
+                for (String user : loggedInUsers) {
+                    SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
+                    if (secureSharedPreferencesForUser.contains(PREF_LATEST_EVENT)) {
+                        secureSharedPreferencesForUser.edit().remove(PREF_LATEST_EVENT).apply();
+                    }
                 }
             }
         } else {

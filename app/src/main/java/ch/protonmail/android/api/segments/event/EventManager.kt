@@ -19,7 +19,6 @@
 package ch.protonmail.android.api.segments.event
 
 import android.content.SharedPreferences
-import android.text.TextUtils
 import android.util.Log
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
@@ -30,33 +29,31 @@ import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.extensions.ifNull
-import ch.protonmail.android.utils.extensions.ifNullElse
 import com.birbit.android.jobqueue.JobManager
-import com.google.gson.Gson
-import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
 // region constants
-private const val PREF_LATEST_EVENT_ID = "latest_event_id"
-private const val PREF_LATEST_EVENT = "latest_event"
+private const val PREF_NEXT_EVENT_ID = "latest_event_id"
+const val PREF_LATEST_EVENT = "latest_event"
 // endregion
 
+/**
+ * EventManager manages the fetching of the proper events and delegates their handling.
+ */
 class EventManager {
 
     @Inject
-    lateinit var mApi : ProtonMailApiManager
+    lateinit var mApi: ProtonMailApiManager
     @Inject
-    lateinit var mUserManager : UserManager
+    lateinit var mUserManager: UserManager
     @Inject
-    lateinit var mJobManager : JobManager
+    lateinit var mJobManager: JobManager
     @Inject
     lateinit var databaseProvider: DatabaseProvider
 
-    private var service : EventService
+    private var service: EventService
     private var sharedPrefs = mutableMapOf<String, SharedPreferences>()
-    private var lastEventIds = mutableMapOf<String, String?>()
     private var eventHandlers = mutableMapOf<String, EventHandler>()
 
     init {
@@ -64,48 +61,28 @@ class EventManager {
         service = mApi.getSecuredServices().event
     }
 
-    fun reconfigure(service : EventService) {
+    fun reconfigure(service: EventService) {
         this.service = service
-    }
-
-    private fun getLastEventId(username: String) : String? {
-        if (lastEventIds[username] == null) {
-            lastEventIds[username] = recoverLastEventId(username)
-        }
-        return lastEventIds[username]
-    }
-
-    private fun setLastEventId(username: String, eventId: String) {
-        lastEventIds[username] = eventId
-        backupLastEventId(username, eventId)
     }
 
     /**
      * @return if there are any more events to process
      */
     @Throws(IOException::class)
-    private fun next(handler: EventHandler): Boolean {
+    private fun nextEvent(handler: EventHandler): Boolean {
         // This must be done sequentially, parallel should not work at the same time
         synchronized(this) {
-            val eventID = getLastEventId(handler.username) // try to get the saved event Id
-            if (eventID == null) {
+            if (recoverNextEventId(handler.username) == null) {
                 refreshContacts(handler)
                 refresh(handler) // refresh other things like messages
                 getNewId(handler.username)
             }
 
-            val lastEvent = recoverLastEvent(handler.username)
-            var response = EventResponse()
-            lastEvent.ifNullElse({
-                response = ParseUtils.parse(service.check(getLastEventId(handler.username)!!, RetrofitTag(handler.username)).execute())
-            },{
-                response = Gson().fromJson(lastEvent, EventResponse::class.java)
-            })
+            val eventID = recoverNextEventId(handler.username)
+            val response = ParseUtils.parse(service.check(eventID!!, RetrofitTag(handler.username)).execute())
 
             if (response.code == Constants.RESPONSE_CODE_OK) {
-                backupLastEvent(handler.username, Gson().toJson(response))
                 handleEvents(handler, response)
-                removeLastEvent(handler.username)
                 return response.hasMore()
             } else {
                 throw ApiException(response, response.error)
@@ -114,21 +91,29 @@ class EventManager {
     }
 
     @Throws(IOException::class)
-    fun pull(loggedInUsers: List<String>) {
-        loggedInUsers.forEach {username ->
-            if (!eventHandlers.containsKey(username)) { /* TODO make EventManager aware of different users, we already parametrised "username" */
+    fun start(loggedInUsers: List<String>) {
+        loggedInUsers.forEach { username ->
+            if (!eventHandlers.containsKey(username)) {
                 eventHandlers[username] = EventHandler(mApi, databaseProvider, mUserManager, mJobManager, username)
             }
         }
 
-        // go thourh all of the logged in users and check their event separately
-        eventHandlers.forEach { while (next(it.value)); }
+        // go through all of the logged in users and check their event separately
+        eventHandlers.forEach {
+            while (nextEvent(it.value)) {
+                // iterate as long as there are more events to be fetched
+            }
+        }
     }
 
     fun clearState() {
         sharedPrefs = mutableMapOf()
-        lastEventIds = mutableMapOf()
         eventHandlers = mutableMapOf()
+    }
+
+    fun clearState(username : String) {
+        sharedPrefs.remove(username)
+        eventHandlers.remove(username)
     }
 
     @Throws(IOException::class)
@@ -152,14 +137,13 @@ class EventManager {
     private fun getNewId(username: String) {
         val response = ParseUtils.parse(service.latestID(RetrofitTag(username)).execute())
         if (response.code == Constants.RESPONSE_CODE_OK) {
-            setLastEventId(username, response.eventID)
+            backupNextEventId(username, response.eventID)
         } else {
             throw ApiException(response, response.error)
         }
     }
 
     private fun handleEvents(handler: EventHandler, response: EventResponse) {
-        setLastEventId(handler.username, response.eventID)
         if (response.refreshContacts()) {
             refreshContacts(handler)
         }
@@ -171,40 +155,28 @@ class EventManager {
         handler.stage(response)
         // if we crash between these steps, we need to force refresh: our current state will become invalid
         handler.write()
+        // Update next event id only after writing updates to local cache has finished successfully
+        backupNextEventId(handler.username, response.eventID)
     }
 
     private fun lockState(username: String) {
-        backupLastEventId(username, "")
-        lastEventIds[username] = null
+        backupNextEventId(username, "")
     }
 
-    private fun recoverLastEventId(username: String): String? {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
+    private fun recoverNextEventId(username: String): String? {
+        val prefs = sharedPrefs.getOrPut(username, {
+            ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+        })
         Log.d("PMTAG", "EventManager recoverLastEventId, user=${mUserManager.username}")
-        val lastEventId = prefs.getString(PREF_LATEST_EVENT_ID, null)
-        return if (TextUtils.isEmpty(lastEventId)) null else lastEventId
+        val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
+        return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
 
-    private fun backupLastEventId(username: String, eventId: String) {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
+    private fun backupNextEventId(username: String, eventId: String) {
+        val prefs = sharedPrefs.getOrPut(username, {
+            ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+        })
         Log.d("PMTAG", "EventManager backupLastEventId, user=${mUserManager.username}")
-        prefs.edit().putString(PREF_LATEST_EVENT_ID, eventId).apply()
-    }
-
-    private fun recoverLastEvent(username: String): String? {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
-        return prefs.getString(PREF_LATEST_EVENT, null)
-    }
-
-    private fun backupLastEvent(username: String, event: String) {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
-        recoverLastEvent(username).ifNull {
-            prefs.edit().putString(PREF_LATEST_EVENT, event).apply()
-        }
-    }
-
-    private fun removeLastEvent(username: String) {
-        val prefs = sharedPrefs.getOrPut(username, { ProtonMailApplication.getApplication().getSecureSharedPreferences(username) })
-        prefs.edit().remove(PREF_LATEST_EVENT).apply()
+        prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()
     }
 }
