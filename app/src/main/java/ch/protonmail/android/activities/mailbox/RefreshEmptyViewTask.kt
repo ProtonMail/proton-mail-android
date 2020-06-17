@@ -50,7 +50,13 @@ internal class RefreshEmptyViewTask(
             countersDatabase.findTotalLocationById(mailboxLocation.messageLocationTypeValue)
         }
 
-        val localCounter = messagesDatabase.getMessagesCountByLocation(mailboxLocation.messageLocationTypeValue)
+        val localCounter = if (listOf(
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.LABEL_FOLDER).contains(mailboxLocation)) {
+            messagesDatabase.getMessagesCountByByLabelId(labelId!!)
+        } else {
+            messagesDatabase.getMessagesCountByLocation(mailboxLocation.messageLocationTypeValue)
+        }
 
         val apiCounter = counter?.count ?: 0
         return if (localCounter > apiCounter) localCounter else apiCounter

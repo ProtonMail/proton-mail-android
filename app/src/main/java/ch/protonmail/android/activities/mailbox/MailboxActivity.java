@@ -820,8 +820,8 @@ public class MailboxActivity extends NavigationActivity implements
                 DialogInterface.OnClickListener clickListener = (dialog, which) -> {
 
                     if (which == DialogInterface.BUTTON_POSITIVE) {
+                        setRefreshing(true);
                         mJobManager.addJobInBackground(new EmptyFolderJob(mMailboxLocation.getValue(), mLabelId));
-                        setRefreshing(false);
                         setLoadingMore(false);
                     }
                     dialog.dismiss();
@@ -1348,9 +1348,6 @@ public class MailboxActivity extends NavigationActivity implements
         for (SimpleMessage message : selectedMessages) {
             messageIds.add(message.getMessageId());
         }
-        if( mAdapter.getItemCount() == messageIds.size()){
-            setRefreshing(true);
-        }
         int menuItemId = menuItem.getItemId();
         Job job = null;
 
@@ -1385,7 +1382,7 @@ public class MailboxActivity extends NavigationActivity implements
                 break;
             case R.id.add_folder:
                 actionModeRunnable = new ActionModeInteractionRunnable(mode);
-                showFoldersManagerDialog();
+                showFoldersManagerDialog(messageIds);
                 break;
             case R.id.remove_star:
                 job = new PostUnstarJob(messageIds);
@@ -1407,6 +1404,13 @@ public class MailboxActivity extends NavigationActivity implements
                 break;
         }
         if (job != null) {
+
+            //show progress bar for visual representation of work in background,
+            // if all the messages inside the folder are impacted by the action
+            if( mAdapter.getItemCount() == messageIds.size()){
+                setRefreshing(true);
+            }
+
             mJobManager.addJobInBackground(job);
         }
 
@@ -1427,7 +1431,12 @@ public class MailboxActivity extends NavigationActivity implements
 
     /* END AbsListView.MultiChoiceModeListener */
 
-    private void showFoldersManagerDialog() {
+    private void showFoldersManagerDialog(List<String> messageIds) {
+        //show progress bar for visual representation of work in background,
+        // if all the messages inside the folder are impacted by the action
+        if( mAdapter.getItemCount() == messageIds.size()){
+            setRefreshing(true);
+        }
         mCatchLabelEvents = false;
         MoveToFolderDialogFragment moveToFolderDialogFragment = MoveToFolderDialogFragment.newInstance(mMailboxLocation.getValue());
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -1816,6 +1825,7 @@ public class MailboxActivity extends NavigationActivity implements
 
             mailboxActivity.mSwipeRefreshLayout.setVisibility(View.VISIBLE);
             mailboxActivity.mSwipeRefreshWrapper.setVisibility(View.VISIBLE);
+            mailboxActivity.mSwipeRefreshLayout.setRefreshing(true);
             mailboxActivity.mNoMessagesRefreshLayout.setVisibility(View.GONE);
             mailboxActivity.mSpinnerSwipeRefreshLayout.setVisibility(View.VISIBLE);
             if (mailboxActivity.mActionMode != null) {
