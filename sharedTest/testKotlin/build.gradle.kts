@@ -54,7 +54,8 @@ dependencies {
 
         // Other
         `assertJ`,
-        `mockk`
+        `mockk`,
+        `assert4k`
     )
 
     // (Required) Writing and executing Unit Tests on the JUnit Platform

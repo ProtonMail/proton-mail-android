@@ -48,6 +48,8 @@ dependencies {
     // Test dependencies
     api(
         project(Module.testAndroid) exclude
+            // Exclude Assert4k since backtick names are not supported in Android test
+            `assert4k` exclude
             // Exclude MockK since we will use MockK-Android
             `mockk` exclude
             // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
