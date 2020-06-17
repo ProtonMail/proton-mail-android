@@ -79,7 +79,7 @@ class NetworkConfigurator(
                 }
                 result != null
             }
-            // TODO: think if this is needed, rethink about using break at all
+
             if (success == true) {
                 break
             }
@@ -113,7 +113,7 @@ class NetworkConfigurator(
 
     private fun findWorkingDomain(proxies: Proxies, timestamp: Long) {
         val proxyListReference = proxies.proxyList.proxies
-        GlobalScope.launch {
+        scope.launch {
 
             // double-check if normal API call works before resorting to use alternative routing url
             val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
@@ -122,7 +122,7 @@ class NetworkConfigurator(
                         service.pingAsync()
                     }
                 } catch (e: Exception) {
-                    Timber.e(e, "Exception while pinging normal API before using alternative routing")
+                    Timber.e(e, "Exception while pinging API before using alternative routing")
                     null
                 }
                 result != null
@@ -172,7 +172,7 @@ class NetworkConfigurator(
     }
 
     companion object {
-        var callback : INetworkConfiguratorCallback? = null
+        var callback: INetworkConfiguratorCallback? = null
 
         fun setNetworkConfiguratorCallback(callback: INetworkConfiguratorCallback) {
             this.callback = callback
