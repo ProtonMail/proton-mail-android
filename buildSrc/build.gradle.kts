@@ -28,8 +28,8 @@ repositories {
 
 dependencies {
     val android =       "3.5.0"         // Released: Aug 08, 2019
-    val easyGradle =    "1.3.2"         // Released: May 22, 2020
-    val protonGradle =  "0.1.3"         // Released: Jun 10, 2020
+    val easyGradle =    "1.5-beta-5"    // Released: Jun 17, 2020
+    val protonGradle =  "0.1.4"         // Released: Jun 16, 2020
 
     // Needed for setup Android config
     implementation("com.android.tools.build:gradle:$android")

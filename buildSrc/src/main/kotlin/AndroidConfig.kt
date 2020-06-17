@@ -20,12 +20,15 @@ import com.android.build.gradle.TestedExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.configure
+import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
 
 /**
  * Dsl for apply the android configuration to a library or application module
  * @author Davide Farella
  */
+@Suppress("LongMethod") // This is a setup for Android module, it does not contain any logic and doesn't
+//                                   make sense to split it
 fun org.gradle.api.Project.android(
 
     appIdSuffix: String? = null,
