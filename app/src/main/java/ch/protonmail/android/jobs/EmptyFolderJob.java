@@ -28,7 +28,7 @@ import ch.protonmail.android.core.Constants;
 /**
  * Created by sunny on 8/26/15.
  */
-public class EmptyFolderJob extends ProtonMailEndlessJob {
+public class EmptyFolderJob extends ProtonMailBaseJob {
 
 	private Constants.MessageLocationType location;
 	private String labelId;
@@ -64,6 +64,7 @@ public class EmptyFolderJob extends ProtonMailEndlessJob {
             mApi.emptyCustomFolder(labelId);
         }
         mJobManager.addJobInBackground(new FetchUpdatesJob());
+
 
     }
 
