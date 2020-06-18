@@ -27,7 +27,11 @@ import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.messages.*
+import ch.protonmail.android.api.models.room.messages.MessagesDao
+import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.api.models.room.messages.Label
+import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingDraft
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
@@ -35,7 +39,11 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.jobs.*
+import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.jobs.ApplyLabelJob
+import ch.protonmail.android.jobs.FetchMessageDetailJob
+import ch.protonmail.android.jobs.FetchVerificationKeysJob
+import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
@@ -44,6 +52,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -61,11 +70,13 @@ private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
  */
 
 class MessageDetailsRepository @Inject constructor(
-        private val jobManager: JobManager, private val api: ProtonMailApiManager,
-        var searchDatabaseDao: MessagesDao,
-        private var pendingActionsDatabase: PendingActionsDao,
-        private val applicationContext: Context,
-        var databaseProvider: DatabaseProvider) {
+    private val jobManager: JobManager,
+    private val api: ProtonMailApiManager,
+    var searchDatabaseDao: MessagesDao,
+    private var pendingActionsDatabase: PendingActionsDao,
+    private val applicationContext: Context,
+    var databaseProvider: DatabaseProvider
+) {
 
     private var messagesDao: MessagesDao = databaseProvider.provideMessagesDao()
 
@@ -77,9 +88,11 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao = databaseProvider.provideMessagesDao(username)
     }
 
-    fun findMessageByIdAsync(messageId: String): LiveData<Message> = messagesDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
+    fun findMessageByIdAsync(messageId: String): LiveData<Message> =
+            messagesDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
-    fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> = searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
+    fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> =
+            searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
     suspend fun findMessageById(messageId: String, dispatcher: CoroutineDispatcher) =
             withContext(dispatcher) {
@@ -97,30 +110,37 @@ class MessageDetailsRepository @Inject constructor(
                 findMessageByMessageDbId(dbId)
             }
 
-    fun findMessageById(messageId: String): Message? = messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+    fun findMessageById(messageId: String): Message? =
+            messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    fun findSearchMessageById(messageId: String): Message? = searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+    fun findSearchMessageById(messageId: String): Message? =
+            searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    fun findMessageByIdSingle(messageId: String): Single<Message> = messagesDao.findMessageByIdSingle(messageId).map(readMessageBodyFromFileIfNeeded)
+    fun findMessageByIdSingle(messageId: String): Single<Message> =
+            messagesDao.findMessageByIdSingle(messageId).map(readMessageBodyFromFileIfNeeded)
 
-    fun findMessageByIdObservable(messageId: String): Flowable<Message> = messagesDao.findMessageByIdObservable(messageId).map(readMessageBodyFromFileIfNeeded)
+    fun findMessageByIdObservable(messageId: String): Flowable<Message> =
+            messagesDao.findMessageByIdObservable(messageId).map(readMessageBodyFromFileIfNeeded)
 
-    fun findMessageByMessageDbId(messageDbId: Long): Message? = messagesDao.findMessageByMessageDbId(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+    fun findMessageByMessageDbId(messageDbId: Long): Message? =
+            messagesDao.findMessageByMessageDbId(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    fun findAllMessageByLastMessageAccessTime(laterThan:Long=0): List<Message> = messagesDao.findAllMessageByLastMessageAccessTime(laterThan).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): List<Message> =
+            messagesDao.findAllMessageByLastMessageAccessTime(laterThan).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
 
     /**
      * Helper function mapping Message with body saved in file to body in memory.
      */
     private val readMessageBodyFromFileIfNeeded: (Message?) -> Message? = { message ->
         message?.apply {
-            if (Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE && true == message.messageBody?.startsWith("file://")) {
+            if (Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE &&
+                    true == message.messageBody?.startsWith("file://")) {
                 val messageBodyFile = File(applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS, message.messageId?.replace(" ", "_")?.replace("/", ":"))
                 message.messageBody = try {
-                    Log.d("PMTAG", "reading body from file ${messageBodyFile.name}")
+                    Timber.d("Reading body from file ${messageBodyFile.name}")
                     FileInputStream(messageBodyFile).bufferedReader().use { it.readText() }
                 } catch (e: Exception) {
-                    Log.e("PMTAG", "error reading file body", e)
+                    Timber.e(e, "Error reading file body")
                     null
                 }
             }
@@ -131,13 +151,15 @@ class MessageDetailsRepository @Inject constructor(
 
     fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>> = messagesDao.getMessagesByLabelIdAsync(label)
 
-    fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>> = messagesDao.getMessagesByLocationAsync(location)
+    fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>> =
+            messagesDao.getMessagesByLocationAsync(location)
 
     fun getAllMessages(): LiveData<List<Message>> = messagesDao.getAllMessages()
 
     fun getAllSearchMessages(): LiveData<List<Message>> = searchDatabaseDao.getAllMessages()
 
-    fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message> = messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+    fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message> =
+            messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
 
     fun setFolderLocation(message: Message) = message.setFolderLocation(messagesDao)
 
@@ -183,7 +205,8 @@ class MessageDetailsRepository @Inject constructor(
     fun findPendingSendByMessageId(messageId: String) = pendingActionsDatabase.findPendingSendByMessageId(messageId)
 
 
-    @Suppress("RedundantSuspendModifier") // suspend not needed as now, but may all db operations will be wrapped into a Coroutine
+    @Suppress("RedundantSuspendModifier")
+    // suspend not needed as now, but may all db operations will be wrapped into a Coroutine
     suspend fun saveMessageInDB(message: Message, isTransient: Boolean) {
         return if (isTransient)
             saveSearchMessageInDB(message)
@@ -264,6 +287,12 @@ class MessageDetailsRepository @Inject constructor(
 
     fun deleteMessage(message:Message) = messagesDao.deleteMessage(message)
 
+    fun deleteMessagesByLocation(location: Constants.MessageLocationType) =
+            messagesDao.deleteMessagesByLocation(location.messageLocationTypeValue)
+
+    fun deleteMessagesByLabel(labelId: String) =
+            messagesDao.deleteMessagesByLabel(labelId)
+
     fun updateStarred(messageId: String, starred: Boolean) = messagesDao.updateStarred(messageId, starred)
 
     fun findAttachmentById(attachmentId: String) = messagesDao.findAttachmentById(attachmentId)
@@ -272,7 +301,12 @@ class MessageDetailsRepository @Inject constructor(
 
     fun findAllLabelsWithIds(labelIds: List<String>): List<Label> = messagesDao.findAllLabelsWithIds(labelIds)
 
-    suspend fun findAllLabelsWithIds(message: Message, checkedLabelIds: MutableList<String>, labels: List<Label>, isTransient: Boolean) {
+    suspend fun findAllLabelsWithIds(
+        message: Message,
+        checkedLabelIds: MutableList<String>,
+        labels: List<Label>,
+        isTransient: Boolean
+    ) {
         val labelsToRemove = ArrayList<String>()
         val jobList = ArrayList<Job>()
         val messageId = message.messageId
@@ -299,18 +333,19 @@ class MessageDetailsRepository @Inject constructor(
         return saveMessageInDB(message, isTransient)
     }
 
-    suspend fun prepareEditMessageIntent(messageAction: Constants.MessageActionType,
-                                         message: Message,
-                                         user: User,
-                                         newMessageTitle: String?,
-                                         content: String,
-                                         mBigContentHolder: BigContentHolder,
-                                         mImagesDisplayed: Boolean,
-                                         remoteContentDisplayed: Boolean,
-                                         embeddedImagesAttachments: MutableList<Attachment>?,
-                                         dispatcher: CoroutineDispatcher,
-                                         isTransient: Boolean): IntentExtrasData =
-            withContext(dispatcher) {
+    suspend fun prepareEditMessageIntent(
+        messageAction: Constants.MessageActionType,
+        message: Message,
+        user: User,
+        newMessageTitle: String?,
+        content: String,
+        mBigContentHolder: BigContentHolder,
+        mImagesDisplayed: Boolean,
+        remoteContentDisplayed: Boolean,
+        embeddedImagesAttachments: MutableList<Attachment>?,
+        dispatcher: CoroutineDispatcher,
+        isTransient: Boolean
+    ): IntentExtrasData = withContext(dispatcher) {
                 var toRecipientListString = ""
                 var includeCCList = false
                 val replyToEmailsFiltered = ArrayList<String>()
@@ -330,10 +365,12 @@ class MessageDetailsRepository @Inject constructor(
                     }
                     Constants.MessageActionType.REPLY_ALL -> {
                         val emailSet = HashSet(
-                                Arrays.asList(*message.toListString.split(Constants.EMAIL_DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray())
+                                Arrays.asList(*message.toListString.split(Constants.EMAIL_DELIMITER.toRegex())
+                                        .dropLastWhile { it.isEmpty() }.toTypedArray())
                         )
 
-                        val senderEmailAddress = if (message.replyToEmails.isNotEmpty()) message.replyToEmails[0] else message.sender!!.emailAddress
+                        val senderEmailAddress = if (message.replyToEmails.isNotEmpty())
+                            message.replyToEmails[0] else message.sender!!.emailAddress
                         toRecipientListString = if (emailSet.contains(senderEmailAddress)) {
                             message.toListString
                         } else {

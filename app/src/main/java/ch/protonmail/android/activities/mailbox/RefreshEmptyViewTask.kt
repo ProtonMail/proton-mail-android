@@ -28,11 +28,13 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Kamil Rajtar on 21.08.18.
  */
-internal class RefreshEmptyViewTask(private val mailboxActivityWeakReference: WeakReference<MailboxActivity>,
-                                    private val countersDatabase: CountersDatabase,
-                                    private val messagesDatabase: MessagesDatabase,
-                                    private val mailboxLocation: Constants.MessageLocationType,
-                                    private val labelId: String?) : AsyncTask<Void, Void, Int>() {
+internal class RefreshEmptyViewTask(
+    private val mailboxActivityWeakReference: WeakReference<MailboxActivity>,
+    private val countersDatabase: CountersDatabase,
+    private val messagesDatabase: MessagesDatabase,
+    private val mailboxLocation: Constants.MessageLocationType,
+    private val labelId: String?
+) : AsyncTask<Void, Void, Int>() {
 
     override fun doInBackground(vararg voids: Void): Int? {
         if (mailboxLocation == Constants.MessageLocationType.STARRED) {
@@ -40,15 +42,20 @@ internal class RefreshEmptyViewTask(private val mailboxActivityWeakReference: We
         }
         Thread.sleep(TimeUnit.SECONDS.toMillis(1))
 
-        val counter = if (listOf(Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER).contains(mailboxLocation)) {
+        val counter = if (listOf(
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.LABEL_FOLDER).contains(mailboxLocation)) {
             labelId?.let(countersDatabase::findTotalLabelById)
         } else {
             countersDatabase.findTotalLocationById(mailboxLocation.messageLocationTypeValue)
         }
 
-        var localCounter: Int = -1
-        if (mailboxLocation == Constants.MessageLocationType.ALL_DRAFT) {
-            localCounter = messagesDatabase.getMessagesCountByLocation(mailboxLocation.messageLocationTypeValue)
+        val localCounter = if (listOf(
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.LABEL_FOLDER).contains(mailboxLocation)) {
+            messagesDatabase.getMessagesCountByByLabelId(labelId!!)
+        } else {
+            messagesDatabase.getMessagesCountByLocation(mailboxLocation.messageLocationTypeValue)
         }
 
         val apiCounter = counter?.count ?: 0
@@ -59,5 +66,6 @@ internal class RefreshEmptyViewTask(private val mailboxActivityWeakReference: We
         messageCount ?: return
         val mailboxActivity = mailboxActivityWeakReference.get()
         mailboxActivity?.refreshEmptyView(messageCount)
+        mailboxActivity?.setRefreshing(false)
     }
 }
