@@ -59,7 +59,7 @@ class NetworkConfigurator(
     private suspend fun queryDomains() {
         val freshAlternativeUrls = mutableListOf<String>()
         val user = ProtonMailApplication.getApplication().userManager.user
-        if (user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
+        if (!user.allowSecureConnectionsViaThirdParties) {
             networkSwitcher.reconfigureProxy(null) // force switch to old proxy
             user.usingDefaultApi = true
             isRunning = false
