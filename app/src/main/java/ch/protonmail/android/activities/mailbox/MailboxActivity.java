@@ -1111,6 +1111,7 @@ public class MailboxActivity extends NavigationActivity implements
 
     @Subscribe
     public void onUpdatesLoaded(FetchUpdatesEvent event) {
+        syncingDone();
         refreshDrawerHeader(mUserManager.getUser());
         mSyncingHandler.postDelayed(new SyncDoneRunnable(this), 1000);
     }
