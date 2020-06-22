@@ -362,7 +362,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">正在同步附件</string>
     <string name="processing_attachment">正在處理附件</string>
     <string name="hyperlink_confirmation_dialog_text_html">您即將啟動網頁瀏覽器並導航到:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;您想繼續嗎？</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">不要再詢問</string>
     <string name="none">無</string>
     <string name="changes_affected_after_closing">變更將會在關閉應用程式後才生效</string>
     <plurals name="incorrect_pin_remaining_attempts">
@@ -373,7 +373,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="done">完成</string>
     <string name="logout">登出</string>
-    <string name="log_out">Log out %s?</string>
+    <string name="log_out">登出 %s？</string>
     <string name="logout_question">確定要登出嗎？</string>
     <string name="logout_question_next_account">您確定您想要登出目前的帳號並繼續使用 %s 嗎？</string>
     <string name="upselling">升級／捐款</string>
@@ -930,10 +930,10 @@ webmail 介面升級 ProtonMail。</string>
     <string name="auto_lock_description">啟用此功能以自動鎖定您的\n應用程式並使用 PIN 碼或指紋\n來解鎖。</string>
     <string name="change_pin_code">變更 PIN 碼</string>
     <string name="auto_lock_timer">自動鎖定計時器</string>
-    <string name="connections_via_third_parties">Alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties">Allow alternative routing</string>
-    <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
-    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
+    <string name="connections_via_third_parties">替代路由</string>
+    <string name="allow_secure_connections_via_third_parties">允許替代路由</string>
+    <string name="allow_secure_connections_via_third_parties_settings_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。</string>
+    <string name="allow_secure_connections_via_third_parties_troubleshoot_description">萬一 Proton 網站遭到封鎖，此設定允許此應用程式嘗試以替代網路路由連接 Proton，這或有助繞過防火牆或網路問題。建議保持此設定開啟，有備無患。<a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">瞭解更多</a></string>
     <string name="app_language">應用程式語言</string>
     <string name="custom_language_dialog_title">選擇應用程式語言</string>
     <string name="auto_detect">自動偵測</string>
@@ -977,6 +977,6 @@ webmail 介面升級 ProtonMail。</string>
     <string name="error_image_not_found">找不到圖片</string>
     <string name="error_image_bad_url">圖片 URL 格式錯誤</string>
     <!-- endregion -->
-    <string name="allowed">Allowed</string>
-    <string name="denied">Denied</string>
+    <string name="allowed">已允許</string>
+    <string name="denied">已拒絕</string>
 </resources>

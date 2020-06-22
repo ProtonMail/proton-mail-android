@@ -738,7 +738,7 @@ ludziom na całym świecie.</string>
     <string name="composer_lock_internal">Zaszyfrowane end-to-end</string>
     <string name="composer_lock_internal_pinned">Zaszyfrowana end-to-end do zweryfikowanego adresu</string>
     <string name="composer_lock_pgp_encrypted_pinned">Zaszyfrowana PGP</string>
-    <string name="composer_lock_pgp_signed">Podpisana kluczem PGP</string>
+    <string name="composer_lock_pgp_signed">Podpisana PGP</string>
     <string name="recipient_not_found_and_removed">Odbiorca %s nie został znaleziony i został usunięty</string>
     <string name="recipient_error_and_removed">Wystąpił błąd podczas pobierania informacji o odbiorcy i został on usunięty: %s</string>
     <string name="send_anyway">Wyślij mimo to</string>

@@ -651,7 +651,7 @@ que\n<a href="https://protonmail.com/terms-and-conditions"> termes i condicions 
     <string name="update_folder">Actualitza la carpeta</string>
     <string name="spam_score_100">Aquest correu sembla que sigui d\'una adreça de ProtonMail però ha arribat des de fora del nostre sistema i no ha passat els requisits d\'autentificació. És possible que es tracti d\'un correu falsejat o reenviat indegudament!</string>
     <string name="spam_score_101">Aquest correu no ha superat els requisits d\'autentificació del domini. Pot ser que estigui falsejat o reenviat indegudament!</string>
-    <string name="spam_score_102">Aquest missatge pot ser un intent de suplantació d\'identitat. Si us plau comprovi el remitent i continguts per assegurar-se que són legítimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SEBRE MÉS</a></string>
+    <string name="spam_score_102">Aquest missatge pot ser un intent de suplantació d\'identitat. Si us plau comprovi el remitent i continguts per assegurar-se que són legítimes. <a href="https://protonmail.com/blog/prevent-phishing-attacks/">SABER-NE MÉS</a></string>
     <string name="print_from_template">Des de: %s</string>
     <string name="print_to_template">A: %s;  </string>
     <string name="print_cc_template">CC: %s;  </string>
@@ -985,9 +985,9 @@ l\'accés a l\'emmagatzemament.</string>
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema al seu Proveïdor de Servei d\'Internet (ISP)&lt;/i&gt; - Proveu de conectar-vos a Proton des d\'una altra xarxa (o utilitzi &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueig Guvernamental block&lt;/i&gt; - El seu país pot haber-hi bloquetjat d\'acces a Proton. Proveu &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o un altre servei VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; per accedir a Proton.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia d\'Antivirus&lt;/i&gt; - Deshabiliti temporalment o esborri el seu software antivirus.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia Proxy/Firewall&lt;/i&gt; - Deshabiliti qualsevol proxi o firewall o contacti amb el seu administrador de xarxa.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton es caigut&lt;/i&gt; - Revisi &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per sebre el nostre estat del sistema.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no hem trobat una solució&lt;/i&gt; - Contacti\'ns directament al nostre &lt;a href=\"https://protonmail.com/support-form\"&gt;Formulari de suport form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;correu electronic&lt;/a&gt; (support@protonmail.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia Proxy/Firewall&lt;/i&gt; - Deshabiliti qualsevol proxy o firewall o contacti amb el seu administrador de xarxa.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton es caigut&lt;/i&gt; - Revisi &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; per saber el nostre estat del sistema.
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Encara no hem trobat una solució&lt;/i&gt; - Contacti\'ns directament al nostre &lt;a href=\"https://protonmail.com/support-form\"&gt;Formulari de suport form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;correu electrònic&lt;/a&gt; (support@protonmail.com), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>
