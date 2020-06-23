@@ -1027,6 +1027,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_image_not_found">Изображение не найдено</string>
     <string name="error_image_bad_url">Некорректный URL-адрес изображения</string>
     <!-- endregion -->
-    <string name="allowed">Разрешено</string>
-    <string name="denied">Отказано</string>
+    <string name="allowed">Разрешена</string>
+    <string name="denied">Запрещена</string>
 </resources>

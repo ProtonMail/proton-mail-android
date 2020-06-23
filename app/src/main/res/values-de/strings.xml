@@ -369,7 +369,7 @@ im Absender-Feld angezeigt wird.</string>
 zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten Sie fortfahren?</string>
     <string name="dont_ask_again">Nicht erneut nachfragen</string>
     <string name="none">Keine</string>
-    <string name="changes_affected_after_closing">Changes will take effect after closing the app</string>
+    <string name="changes_affected_after_closing">Änderungen werden erst nach dem Schließen der App wirksam</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">Falscher PIN-Code, %d verbleibende(r) Versuch(e)</item>
         <item quantity="other">Falscher PIN-Code, %d verbleibende Versuche</item>
