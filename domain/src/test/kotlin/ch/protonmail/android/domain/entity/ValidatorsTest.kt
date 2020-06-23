@@ -55,15 +55,4 @@ internal class ValidatorsTest {
         assert that ! EmailRegexValidable("somebody@123.456").isValid()
     }
 
-    @Test
-    fun `RegexValidator alt works correctly`() {
-        // Regex is representative only for this test case and not intended to properly validate an email address
-        class EmailRegexValidable(string: String) : Validable by RegexValidator(string, "\\w+@[a-z]+\\.[a-z]+") {
-            init { requireValid() }
-        }
-
-        EmailRegexValidable("somebody@protonmail.com")
-        assert that fails<ValidationException> { EmailRegexValidable("somebody@123.456") }
-    }
-
 }

@@ -35,6 +35,11 @@ package ch.protonmail.android.domain.entity
 // INTO A 'field' PACKAGE
 
 /**
+ * Represent a given number of bytes
+ */
+inline class Bytes(val l: Long)
+
+/**
  * Entity representing an email address
  * Implements [Validable] by [RegexValidator]
  */
@@ -62,5 +67,13 @@ data class Id(val s: String) : Validable by NotBlankStringValidator(s) {
  * Implements [Validable] by [NotBlankStringValidator]
  */
 data class Name(val s: String) : Validable by NotBlankStringValidator(s) {
+    init { requireValid() }
+}
+
+/**
+ * Entity representing a generic String that cannot be blank
+ * Implements [Validable] by [NotBlankStringValidator]
+ */
+data class NotBlankString(val s: String) : Validable by NotBlankStringValidator(s) {
     init { requireValid() }
 }
