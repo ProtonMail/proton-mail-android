@@ -37,11 +37,11 @@ package ch.protonmail.android.domain.entity
 /**
  * Represent a given number of bytes
  */
-inline class Bytes(val l: Long)
+inline class Bytes(val l: ULong)
 
 /**
  * Entity representing an email address
- * Implements [Validable] by [RegexValidator]
+ * [Validable] by [RegexValidator]
  */
 @Validated
 data class EmailAddress(val s: String) : Validable by RegexValidator(s, VALIDATION_REGEX) {
@@ -55,7 +55,7 @@ data class EmailAddress(val s: String) : Validable by RegexValidator(s, VALIDATI
 
 /**
  * Entity representing an id
- * Implements [Validable] by [NotBlankStringValidator]
+ * [Validable] by [NotBlankStringValidator]
  */
 @Validated
 data class Id(val s: String) : Validable by NotBlankStringValidator(s) {
@@ -64,7 +64,7 @@ data class Id(val s: String) : Validable by NotBlankStringValidator(s) {
 
 /**
  * Entity representing a generic name
- * Implements [Validable] by [NotBlankStringValidator]
+ * [Validable] by [NotBlankStringValidator]
  */
 data class Name(val s: String) : Validable by NotBlankStringValidator(s) {
     init { requireValid() }
@@ -72,7 +72,7 @@ data class Name(val s: String) : Validable by NotBlankStringValidator(s) {
 
 /**
  * Entity representing a generic String that cannot be blank
- * Implements [Validable] by [NotBlankStringValidator]
+ * [Validable] by [NotBlankStringValidator]
  */
 data class NotBlankString(val s: String) : Validable by NotBlankStringValidator(s) {
     init { requireValid() }
