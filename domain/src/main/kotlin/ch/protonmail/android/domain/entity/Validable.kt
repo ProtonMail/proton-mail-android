@@ -23,8 +23,21 @@ import ch.protonmail.android.domain.entity.Validable.Result.Success
 
 /**
  * An entity that can be validated
+ *
  * It requires a [Validator]
  * @see invoke - without args - extension on [Validator]
+ * or use standard override
+ * ```
+data class MyValidable(args...) : Validable {
+    override val validator = { validable: MyValidable ->
+        // validation logic
+    }
+}
+ * ```
+ *
+ * @see Validated annotation
+ * One entity can call [requireValid] in its `init` block, for ensure that that given entity is always valid
+ * NOTE: the `init` block must be declared after the override of [validator]
  *
  * @author Davide Farella
  */
@@ -45,8 +58,15 @@ interface Validable {
 
         object Success : Result()
         object Error : Result()
+
+        companion object {
+            operator fun invoke(isSuccess: Boolean) =
+                if (isSuccess) Result.Success else Result.Error
+        }
     }
 }
+
+// region CHECKS
 
 /**
  * @return `true` is validation is successful
@@ -71,37 +91,18 @@ fun <V : Validable> V.validate() = (validator as Validator<V>).validate(this)
 fun <V : Validable> V.requireValid() = (validator as Validator<V>).requireValid(this)
 
 /**
- * Returns an implementation of [Validable] that provide the receiver as its [Validator]
- * Example:
- * ```
-val MyValidator = { validable: MyValidable ->
-    // validation logic that return a Validable.Result
-}
-
-data class MyValidable(args..) : Validable by MyValidator()
- * ```
+ * @return [Validable] created in this lambda which is marked as [Validated] if validation is successful,
+ * otherwise `null`
+ * Example: ``  validOrNull { MyValidable("hello" }  ``
  */
-operator fun <V : Validable> Validator<V>.invoke() = object : Validable {
-    override val validator: Validator<*>
-        get() = this@invoke
-}
-
-/**
- * Entity that validates an [Validable]
- */
-typealias Validator<V> = (V) -> Validable.Result
-
-private fun <V : Validable> Validator<V>.isValid(validable: V) =
-    validate(validable) is Validable.Result.Success
-
-private fun <V : Validable> Validator<V>.validate(validable: V): Validable.Result =
-    invoke(validable)
-
-private fun <V : Validable> Validator<V>.requireValid(validable: V) = apply {
-    validate(validable).also { result ->
-        if (result is Validable.Result.Error) throw ValidationException(validable)
+inline fun <V : Validable> validOrNull(block: () -> V): V? =
+    try {
+        block()
+    } catch (e: ValidationException) {
+        null
     }
-}
+
+// endregion
 
 /**
  * An exception thrown from [Validable.requireValid] in case the validation fails
@@ -109,3 +110,25 @@ private fun <V : Validable> Validator<V>.requireValid(validable: V) = apply {
  */
 class ValidationException(validable: Validable) :
     Exception("Validable did not validate successfully: $validable")
+
+/**
+ * Represents an entity that is validated on its initialisation. ``  init { requireValid() }  ``
+ * @throws ValidationException if validation fails.
+ *
+ * This can be used on an entity that doesn't directly inherit from [Validable], but all its fields are marked as
+ * [Validated]
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR)
+annotation class Validated
+
+private fun <V : Validable> Validator<V>.isValid(validable: V) =
+    validate(validable) is Success
+
+private fun <V : Validable> Validator<V>.validate(validable: V): Validable.Result =
+    invoke(validable)
+
+private fun <V : Validable> Validator<V>.requireValid(validable: V) = apply {
+    validate(validable).also { result ->
+        if (result is Error) throw ValidationException(validable)
+    }
+}

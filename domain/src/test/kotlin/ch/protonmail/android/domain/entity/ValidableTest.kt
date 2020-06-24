@@ -48,11 +48,24 @@ internal class ValidableTest {
             EmailTestValidable("invalid").requireValid()
         } with "Validable did not validate successfully: EmailTestValidable(s=invalid)"
     }
+
+    @Test
+    fun `validOrNull return Validable if success`() {
+        assert that validOrNull { ValidatedEmail("hello@mail.com") } equals ValidatedEmail("hello@mail.com")
+    }
+
+    @Test
+    fun `validOrNull return null if failure`() {
+        assert that validOrNull { ValidatedEmail("hello") } `is` `null`
+    }
 }
 
-private data class EmailTestValidable(val s: String) : Validable by EmailTestValidator()
-
-private val EmailTestValidator = { email: EmailTestValidable ->
-    if ("@" in email.s && "." in email.s) Validable.Result.Success
-    else Validable.Result.Error
+@Validated
+private data class ValidatedEmail(val s: String) : Validable by EmailTestValidator(s) {
+    init { requireValid() }
 }
+
+private data class EmailTestValidable(val s: String) : Validable by EmailTestValidator(s)
+
+// Regex is representative only for this test case and not intended to properly validate an email address
+private fun EmailTestValidator(email: String) = RegexValidator(email, ".+@.+\\..+")
