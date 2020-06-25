@@ -96,7 +96,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
             setValue(SettingsEnum.LOCAL_STORAGE_LIMIT, String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed))
         }
 
-        mPinValue = user.isUsePin && !TextUtils.isEmpty(mUserManager.mailboxPin)
+        mPinValue = user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
         val autoLockSettingValue = if (mPinValue) getString(R.string.enabled) else getString(R.string.disabled)
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 

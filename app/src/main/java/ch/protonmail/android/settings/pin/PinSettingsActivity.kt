@@ -61,7 +61,6 @@ class PinSettingsActivity : BaseActivity() {
     private val useFingerprint by lazy { findViewById<SettingsDefaultItemView>(R.id.useFingerprint) }
     private val useFingerprintToggle by lazy { useFingerprint.getToggle() }
     private val autoLockOtherSettingsContainer by lazy { findViewById<LinearLayout>(R.id.autoLockOtherSettingsContainer) }
-    private var mNewPin: String? = null
     private var mPinTimeoutValue: Int = 0
     private val user by lazy { mUserManager.user }
 
@@ -72,22 +71,21 @@ class PinSettingsActivity : BaseActivity() {
             null
         }
     }
-    private val useFingerprintCheckListener: (CompoundButton, Boolean) -> Unit = { _, _ -> saveCurrentSettings() }
+    private val useFingerprintCheckListener: (CompoundButton, Boolean) -> Unit = { _, _ -> saveCurrentSettings(null) }
     override fun getLayoutId(): Int = R.layout.activity_pin_settings
     private val usePinCheckListener = CompoundButton.OnCheckedChangeListener { _, isChecked ->
         if (isChecked) {
-            val oldPin = mUserManager.mailboxPin
+            val oldPin = mUserManager.getMailboxPin()
             if (TextUtils.isEmpty(oldPin)) {
                 autoLockContainerToggle.setOnCheckedChangeListener(null)
                 val pinIntent = AppUtil.decorInAppIntent(Intent(this@PinSettingsActivity, CreatePinActivity::class.java))
                 startActivityForResult(pinIntent, REQUEST_CODE_SETUP_PIN)
                 autoLockContainerToggle.isChecked = false
             } else {
-                mNewPin = oldPin
                 changeItemsEnabledState(true)
                 mPinTimeoutValue = user.autoLockPINPeriod
                 autoLockTimerSpinner.setSelection(mPinTimeoutValue)
-                saveCurrentSettings()
+                saveCurrentSettings(oldPin)
             }
         } else {
             handlePinSwitchOff()
@@ -101,11 +99,11 @@ class PinSettingsActivity : BaseActivity() {
         timeoutAdapter.setDropDownViewResource(R.layout.timeout_spinner_item_dropdown)
         autoLockTimerSpinner.adapter = timeoutAdapter
         isBiometricHardwareDetected()
-        autoLockContainerToggle.isChecked = user.isUsePin && !TextUtils.isEmpty(mUserManager.mailboxPin)
+        autoLockContainerToggle.isChecked = user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
         autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
         useFingerprintToggle.isChecked = user.isUseFingerprint
         useFingerprintToggle.setOnCheckedChangeListener(useFingerprintCheckListener)
-        if (user.isUsePin && !TextUtils.isEmpty(mUserManager.mailboxPin)) {
+        if (user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())) {
             autoLockTimerSpinner.setSelection(user.autoLockPINPeriod)
             changeItemsEnabledState(true)
         } else {
@@ -162,7 +160,7 @@ class PinSettingsActivity : BaseActivity() {
         if (user.isUsePin) {
             changeItemsEnabledState(false)
             autoLockContainerToggle.isChecked = false
-            saveCurrentSettings()
+            saveCurrentSettings(null)
         }
     }
 
@@ -170,7 +168,7 @@ class PinSettingsActivity : BaseActivity() {
         override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
             mPinTimeoutValue = position
             autoLockTimerSpinner.setSelection(position)
-            saveCurrentSettings()
+            saveCurrentSettings(null)
         }
 
         override fun onNothingSelected(parent: AdapterView<*>) {
@@ -184,12 +182,11 @@ class PinSettingsActivity : BaseActivity() {
                 val pinSet = data?.getBooleanExtra(EXTRA_PIN_SET, false) ?: false
                 val newPin = data?.getStringExtra(EXTRA_PIN)
                 if (pinSet) {
-                    mNewPin = newPin
                     autoLockContainerToggle.isChecked = true
                     changeItemsEnabledState(true)
                     mPinTimeoutValue = 2
                     autoLockTimerSpinner.setSelection(mPinTimeoutValue)
-                    saveCurrentSettings()
+                    saveCurrentSettings(newPin)
                     isBiometricHardwareDetected()
                 }
                 autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
@@ -197,17 +194,16 @@ class PinSettingsActivity : BaseActivity() {
                 val pinSet = data!!.getBooleanExtra(EXTRA_NEW_PIN_SET, false)
                 val newPin = data.getStringExtra(EXTRA_PIN)
                 if (pinSet) {
-                    mNewPin = newPin
                     mUserManager.savePin(newPin)
                     showToast(R.string.new_pin_saved, Toast.LENGTH_SHORT)
                     autoLockContainerToggle.isChecked = true
-                    saveCurrentSettings()
+                    saveCurrentSettings(newPin)
                 }
                 autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
             } else if (requestCode == REQUEST_CODE_VALIDATE_PIN) {
                 val pinValid = data!!.getBooleanExtra(EXTRA_PIN_VALID, false)
                 if (pinValid) {
-                    autoLockContainerToggle.isChecked = user.isUsePin && !TextUtils.isEmpty(mUserManager.mailboxPin)
+                    autoLockContainerToggle.isChecked = user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
                     autoLockContainerToggle.setOnCheckedChangeListener(usePinCheckListener)
                     if(autoLockContainerToggle.isChecked){
                         changeItemsEnabledState(true)
@@ -229,7 +225,7 @@ class PinSettingsActivity : BaseActivity() {
 
     @Suppress("DEPRECATION")
     @SuppressLint("NewApi")
-    private fun saveCurrentSettings() {
+    private fun saveCurrentSettings(mNewPin: String?) {
         val usePinChanged = autoLockContainerToggle.isChecked != user.isUsePin
         val useFingerprintChanged = useFingerprintToggle.isChecked != user.isUseFingerprint
         if (usePinChanged) {
@@ -253,7 +249,7 @@ class PinSettingsActivity : BaseActivity() {
             user.isUseFingerprint = useFingerprintToggle.isChecked
         }
         user.autoLockPINPeriod = mPinTimeoutValue
-        val pinChanged = !TextUtils.isEmpty(mNewPin) && mNewPin != mUserManager.mailboxPin
+        val pinChanged = !TextUtils.isEmpty(mNewPin) && mNewPin != mUserManager.getMailboxPin()
         if (pinChanged) {
             mUserManager.savePin(mNewPin)
         }

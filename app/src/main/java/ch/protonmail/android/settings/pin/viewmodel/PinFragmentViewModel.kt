@@ -74,7 +74,8 @@ class PinFragmentViewModel @Inject constructor() : ViewModel() {
         fingerprintDialogListener?.onFingerprintReopen()
     }
 
-    fun nextClicked(pin: String, createdPinValid: Boolean, validationPinValid: Boolean): MutableLiveData<ValidationResult> {
+    fun nextClicked(pin: String, createdPinValid: Boolean, validationPinValid: Boolean):
+            MutableLiveData<ValidationResult> {
         if (actionType == PinAction.CREATE) {
             invalidPinObservable.postValue(ValidationResult(actionType, createdPinValid))
             if (createdPinValid) {
