@@ -38,6 +38,14 @@ fun <T> T?.ifNullElse(blockNull: () -> Unit, blockElse: () -> Unit) {
     }
 }
 
+fun <T, U> T?.ifNullElseReturn(blockNull: () -> U, blockElse: (T) -> U): U {
+    return if (this == null) {
+        blockNull()
+    } else {
+        blockElse(this)
+    }
+}
+
 fun <T> List<T>?.ifEmptyElse(blockEmpty: () -> Unit, blockElse: () -> Unit) {
     if (this == null || size == 0) {
         blockEmpty()

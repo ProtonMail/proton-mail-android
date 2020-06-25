@@ -19,18 +19,36 @@
 package ch.protonmail.android.api.segments.event
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.models.EventResponse
+import ch.protonmail.android.api.models.MailSettings
+import ch.protonmail.android.api.models.UserSettings
+import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.MessageCount
+import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.address.AddressKeyActivationWorker
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.enumerations.MessageFlag
-import ch.protonmail.android.api.models.messages.receive.*
-import ch.protonmail.android.api.models.room.contacts.*
-import ch.protonmail.android.api.models.room.messages.*
+import ch.protonmail.android.api.models.messages.receive.MessageFactory
+import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory
+import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
+import ch.protonmail.android.api.models.messages.receive.LabelFactory
+import ch.protonmail.android.api.models.messages.receive.ServerLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
+import ch.protonmail.android.api.models.room.contacts.ContactData
+import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
+import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.messages.MessagesDao
+import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.api.models.room.messages.MessageSender
+import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.api.segments.message.MessageApiSpec
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
@@ -45,20 +63,23 @@ import ch.protonmail.android.jobs.OnFirstLoginJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.MessageUtils
+import ch.protonmail.android.utils.extensions.ifNullElseReturn
 import ch.protonmail.android.utils.extensions.ifNullElse
-import ch.protonmail.android.utils.extensions.removeFirst
 import ch.protonmail.android.utils.extensions.replaceFirst
+import ch.protonmail.android.utils.extensions.removeFirst
 
 import com.birbit.android.jobqueue.JobManager
-import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import java.util.*
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.collections.set
 import kotlin.math.max
 
 // region constants
 private const val TAG_EVENT_HANDLER = "EventHandler"
+private const val RESPONSE_CODE_INVALID_ID = 2061
+private const val RESPONSE_CODE_MESSAGE_READING_RESTRICTED = 2028
+private const val RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST = 15_052
 // endregion
 
 enum class EventType(val eventType: Int) {
@@ -77,7 +98,8 @@ enum class EventType(val eventType: Int) {
 }
 
 class EventHandler(
-        private val messageApi: MessageApiSpec,
+        private val protonMailApplication: ProtonMailApplication,
+        private val protonMailApiManager: ProtonMailApiManager,
         private val databaseProvider: DatabaseProvider,
         private val userManager: UserManager,
         private val jobManager: JobManager,
@@ -90,7 +112,7 @@ class EventHandler(
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
     init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
+        protonMailApplication.appComponent.inject(this)
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
@@ -129,18 +151,20 @@ class EventHandler(
     private val stagedMessages = HashMap<String, Message>()
 
     /**
-     * Does all the preprocessing which does not change the database state
+     * Does all the pre-processing which does not change the database state
+     * @return Whether the staging process was successful or not
      */
-    fun stage(response: EventResponse) {
+    fun stage(response: EventResponse): Boolean {
         this.response = response
         stagedMessages.clear()
         val messages = response.messageUpdates
         if (messages != null) {
-            stageMessagesUpdates(messages)
+            return stageMessagesUpdates(messages)
         }
+        return true
     }
 
-    private fun stageMessagesUpdates(events: List<EventResponse.MessageEventBody>) {
+    private fun stageMessagesUpdates(events: List<EventResponse.MessageEventBody>): Boolean {
         val pendingActionsDao = databaseProvider.providePendingActionsDao(username)
         for (event in events) {
             val messageID = event.messageID
@@ -154,9 +178,34 @@ class EventHandler(
                 continue
             }
 
-            val newMessage = messageApi.messageDetail(messageID, RetrofitTag(username)).message
-            stagedMessages[messageID] = newMessage
+            val messageStaged = protonMailApiManager.messageDetail(messageID, RetrofitTag(username)).ifNullElseReturn({
+                // If the response is null, an exception has been thrown while fetching message details
+                // Return false and with that terminate processing this event any further
+                // We'll try to process the same event again next time
+                return@ifNullElseReturn false
+            }, { messageResponse ->
+                // If the response is not null, check the response code and act accordingly
+                when (messageResponse.code) {
+                    Constants.RESPONSE_CODE_OK -> {
+                        stagedMessages[messageID] = messageResponse.message
+                    }
+                    RESPONSE_CODE_INVALID_ID,
+                    RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST,
+                    RESPONSE_CODE_MESSAGE_READING_RESTRICTED -> {
+                        Timber.tag(TAG_EVENT_HANDLER).e("Error when fetching message: ${messageResponse.error}")
+                    }
+                    else -> {
+                        Timber.tag(TAG_EVENT_HANDLER).e("Error when fetching message")
+                    }
+                }
+                return@ifNullElseReturn true
+            })
+
+            if (!messageStaged) {
+                return false
+            }
         }
+        return true
     }
 
     fun write() {
@@ -176,8 +225,11 @@ class EventHandler(
     /**
      * NOTE we should not do api requests here because we are in a transaction
      */
-    private fun unsafeWrite(contactsDao: ContactsDao, messagesDao: MessagesDao,
-                            pendingActionsDao: PendingActionsDao) {
+    private fun unsafeWrite(
+            contactsDao: ContactsDao,
+            messagesDao: MessagesDao,
+            pendingActionsDao: PendingActionsDao
+    ) {
 
         val response = this.response
         val savedUser = userManager.getUser(username)
@@ -269,8 +321,11 @@ class EventHandler(
         AppUtil.postEventOnUi(UserSettingsEvent(userSettings))
     }
 
-    private fun writeMessagesUpdates(messagesDatabase: MessagesDatabase, pendingActionsDatabase: PendingActionsDatabase,
-                                     events: List<EventResponse.MessageEventBody>) {
+    private fun writeMessagesUpdates(
+            messagesDatabase: MessagesDatabase,
+            pendingActionsDatabase: PendingActionsDatabase,
+            events: List<EventResponse.MessageEventBody>
+    ) {
         var latestTimestamp = userManager.checkTimestamp
         for (event in events) {
             event.message?.let {
@@ -282,10 +337,13 @@ class EventHandler(
         userManager.checkTimestamp = latestTimestamp
     }
 
-    private fun writeMessageUpdate(event: EventResponse.MessageEventBody, pendingActionsDatabase: PendingActionsDatabase,
-                                   messageID: String, messagesDatabase: MessagesDatabase) {
+    private fun writeMessageUpdate(
+            event: EventResponse.MessageEventBody,
+            pendingActionsDatabase: PendingActionsDatabase,
+            messageID: String,
+            messagesDatabase: MessagesDatabase
+    ) {
         val type = EventType.fromInt(event.type)
-        // TODO: check if this is the correct logic
         if (type != EventType.DELETE && checkPendingForSending(pendingActionsDatabase, messageID)) {
             return
         }
@@ -338,7 +396,11 @@ class EventHandler(
         return
     }
 
-    private fun updateMessageFlags(messagesDatabase: MessagesDatabase, messageID: String, item: EventResponse.MessageEventBody) {
+    private fun updateMessageFlags(
+            messagesDatabase: MessagesDatabase,
+            messageID: String,
+            item: EventResponse.MessageEventBody
+    ) {
         val message = messageDetailsRepository.findMessageById(messageID)
         val newMessage = item.message
 
@@ -375,9 +437,10 @@ class EventHandler(
                 }
             }
             if (newMessage.Flags > 0) {
-                message.isReplied = (newMessage.Flags and MessageFlag.REPLIED.value) == MessageFlag.REPLIED.value
-                message.isRepliedAll = (newMessage.Flags and MessageFlag.REPLIED_ALL.value) == MessageFlag.REPLIED_ALL.value
-                message.isForwarded = (newMessage.Flags and MessageFlag.FORWARDED.value) == MessageFlag.FORWARDED.value
+                message.isReplied = newMessage.Flags and MessageFlag.REPLIED.value == MessageFlag.REPLIED.value
+                message.isRepliedAll =
+                        newMessage.Flags and MessageFlag.REPLIED_ALL.value == MessageFlag.REPLIED_ALL.value
+                message.isForwarded = newMessage.Flags and MessageFlag.FORWARDED.value == MessageFlag.FORWARDED.value
 
                 message.Type = MessageUtils.calculateType(newMessage.Flags)
                 message.setIsEncrypted(MessageUtils.calculateEncryption(newMessage.Flags))
@@ -459,7 +522,7 @@ class EventHandler(
             }
         }
 
-        AddressKeyActivationWorker.activateAddressKeysIfNeeded(ProtonMailApplication.getApplication(), eventAddresses, username)
+        AddressKeyActivationWorker.activateAddressKeysIfNeeded(protonMailApplication, eventAddresses, username)
         user.setAddresses(addresses)
     }
 
@@ -505,14 +568,18 @@ class EventHandler(
         }
     }
 
-    private fun writeContactEmailsUpdates(contactsDatabase: ContactsDatabase, events: List<EventResponse.ContactEmailEventBody>) {
+    private fun writeContactEmailsUpdates(
+            contactsDatabase: ContactsDatabase,
+            events: List<EventResponse.ContactEmailEventBody>
+    ) {
         for (event in events) {
             when (EventType.fromInt(event.type)) {
                 EventType.CREATE -> {
                     val contactEmail = event.contactEmail
-                    val oldContactEmail = contactsDatabase.findContactEmailById(contactEmail.contactEmailId!!) // get current contact email saved in local DB
+                    // get current contact email saved in local DB
+                    val oldContactEmail = contactsDatabase.findContactEmailById(contactEmail.contactEmailId)
                     if (oldContactEmail != null) {
-                        val contactEmailId = oldContactEmail.contactEmailId!!
+                        val contactEmailId = oldContactEmail.contactEmailId
                         val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId) as ArrayList
                         contactsDatabase.saveContactEmail(contactEmail)
                         contactsDatabase.saveContactEmailContactLabel(joins)
@@ -523,12 +590,13 @@ class EventHandler(
 
                 EventType.UPDATE -> {
                     val contactId = event.contactEmail.contactEmailId
-                    val oldContactEmail = contactsDatabase.findContactEmailById(contactId!!) // get current contact email saved in local DB
+                    // get current contact email saved in local DB
+                    val oldContactEmail = contactsDatabase.findContactEmailById(contactId)
                     if (oldContactEmail != null) {
                         val updatedContactEmail = event.contactEmail
                         val labelIds = updatedContactEmail.labelIds ?: ArrayList()
                         val contactEmailId = updatedContactEmail.contactEmailId
-                        contactEmailId?.let {
+                        contactEmailId.let {
                             val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId) as ArrayList
                             contactsDatabase.saveContactEmail(updatedContactEmail)
                             for (labelId in labelIds) {
@@ -554,7 +622,11 @@ class EventHandler(
         }
     }
 
-    private fun writeLabelsUpdates(messagesDatabase: MessagesDatabase, contactsDatabase: ContactsDatabase, events: List<EventResponse.LabelsEventBody>) {
+    private fun writeLabelsUpdates(
+            messagesDatabase: MessagesDatabase,
+            contactsDatabase: ContactsDatabase,
+            events: List<EventResponse.LabelsEventBody>
+    ) {
         for (event in events) {
             val item = event.label
             when (EventType.fromInt(event.type)) {
@@ -611,7 +683,11 @@ class EventHandler(
         }
     }
 
-    private fun writeContactGroup(currentGroup: ContactLabel?, updatedGroup: ServerLabel, contactsDatabase: ContactsDatabase) {
+    private fun writeContactGroup(
+            currentGroup: ContactLabel?,
+            updatedGroup: ServerLabel,
+            contactsDatabase: ContactsDatabase
+    ) {
         if (currentGroup != null) {
             val contactLabelFactory = ContactLabelFactory()
             val labelToSave = contactLabelFactory.createDBObjectFromServerObject(updatedGroup)
