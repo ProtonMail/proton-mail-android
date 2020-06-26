@@ -906,8 +906,8 @@ toegang tot opslag toestaan.</string>
     <string name="labels_manage">Labels manager</string>
     <string name="folders_manage">Mappen manager</string>
     <string name="swiping_gesture">Swipe gebaren</string>
-    <string name="swipe_action_left">Van links naar rechts vegen</string>
-    <string name="swipe_action_right">Veeg van rechts naar links vegen</string>
+    <string name="swipe_action_right">Van links naar rechts vegen</string>
+    <string name="swipe_action_left">Veeg van rechts naar links vegen</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Kies veegactie</string>
     <string name="swipe_action_trash">Bericht verplaatst naar de prullenbak</string>

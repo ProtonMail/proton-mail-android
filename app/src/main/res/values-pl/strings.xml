@@ -932,8 +932,8 @@ na dostęp do pamięci wewnętrznej.</string>
     <string name="labels_manage">Menedżer etykiet</string>
     <string name="folders_manage">Menedżer folderów</string>
     <string name="swiping_gesture">Gesty przeciągania</string>
-    <string name="swipe_action_left">Przesuń palcem od lewej do prawej</string>
-    <string name="swipe_action_right">Przesuń palcem od prawej do lewej</string>
+    <string name="swipe_action_right">Przesuń palcem od lewej do prawej</string>
+    <string name="swipe_action_left">Przesuń palcem od prawej do lewej</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wybierz gest przesunięcia palcem</string>
     <string name="swipe_action_trash">Wiadomość została przeniesiona do Kosza</string>

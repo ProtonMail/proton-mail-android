@@ -899,8 +899,8 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="labels_manage">Etiket yöneticisi</string>
     <string name="folders_manage">Klasör yöneticisi</string>
     <string name="swiping_gesture">Kaydırma hareketi</string>
-    <string name="swipe_action_left">Soldan sağa kaydırın</string>
-    <string name="swipe_action_right">Sağdan sola kaydırın</string>
+    <string name="swipe_action_right">Soldan sağa kaydırın</string>
+    <string name="swipe_action_left">Sağdan sola kaydırın</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Kaydırma eylemini seçin</string>
     <string name="swipe_action_trash">İleti çöpe taşındı</string>

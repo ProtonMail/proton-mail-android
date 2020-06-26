@@ -911,8 +911,8 @@ lagerpladsadgang.</string>
     <string name="labels_manage">Etikethåndtering</string>
     <string name="folders_manage">Mappehåndtering</string>
     <string name="swiping_gesture">Stryggestusser</string>
-    <string name="swipe_action_left">Stryg fra venstre mod højre</string>
-    <string name="swipe_action_right">Stryg fra højre mod venstre</string>
+    <string name="swipe_action_right">Stryg fra venstre mod højre</string>
+    <string name="swipe_action_left">Stryg fra højre mod venstre</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Vælg handling for stryg</string>
     <string name="swipe_action_trash">Besked flyttet til Papirkurv</string>

@@ -912,8 +912,8 @@ el acceso al almacenamiento.</string>
     <string name="labels_manage">Gestionar etiquetas</string>
     <string name="folders_manage">Gestionar carpetas</string>
     <string name="swiping_gesture">Gestos de deslizamiento</string>
-    <string name="swipe_action_left">Deslizar de izquierda a derecha</string>
-    <string name="swipe_action_right">Deslizar de derecha a izquierda</string>
+    <string name="swipe_action_right">Deslizar de izquierda a derecha</string>
+    <string name="swipe_action_left">Deslizar de derecha a izquierda</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Elija la acción de deslizar</string>
     <string name="swipe_action_trash">Mensaje movido a la papelera</string>

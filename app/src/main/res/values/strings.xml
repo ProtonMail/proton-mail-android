@@ -1005,8 +1005,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="folders_manage">Folders manager</string>
 
     <string name="swiping_gesture">Swiping gesture</string>
-    <string name="swipe_action_left">Swipe left to right</string>
-    <string name="swipe_action_right">Swipe right to left</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
 
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choose swipe action</string>

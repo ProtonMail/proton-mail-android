@@ -911,8 +911,8 @@ l\'accès au stockage.</string>
     <string name="labels_manage">Gestionnaire de labels</string>
     <string name="folders_manage">Gestionnaire de dossiers</string>
     <string name="swiping_gesture">Geste de balayage</string>
-    <string name="swipe_action_left">Glisser de gauche à droite</string>
-    <string name="swipe_action_right">Glisser de droite à gauche</string>
+    <string name="swipe_action_right">Glisser de gauche à droite</string>
+    <string name="swipe_action_left">Glisser de droite à gauche</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choisir une action de balayage</string>
     <string name="swipe_action_trash">Message déplacé vers Corbeille</string>

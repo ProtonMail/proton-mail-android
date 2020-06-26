@@ -935,8 +935,8 @@ access to storage.</string>
     <string name="labels_manage">Labels manager</string>
     <string name="folders_manage">Folders manager</string>
     <string name="swiping_gesture">Swiping gesture</string>
-    <string name="swipe_action_left">Swipe left to right</string>
-    <string name="swipe_action_right">Swipe right to left</string>
+    <string name="swipe_action_right">Swipe left to right</string>
+    <string name="swipe_action_left">Swipe right to left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Вибрати дію на відрух</string>
     <string name="swipe_action_trash">Message moved to trash</string>

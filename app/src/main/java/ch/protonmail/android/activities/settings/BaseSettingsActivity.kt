@@ -290,17 +290,17 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE)
                 startActivityForResult(AppUtil.decorInAppIntent(swipeGestureIntent), SettingsEnum.SWIPING_GESTURE.ordinal)
             }
-            SettingsEnum.SWIPE_FROM_RIGHT -> {
+            SettingsEnum.SWIPE_LEFT -> {
                 val swipeLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
-                swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.rightSwipeAction)
-                swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
-                startActivityForResult(AppUtil.decorInAppIntent(swipeLeftChooserIntent), SettingsEnum.SWIPE_FROM_RIGHT.ordinal)
+                swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.leftSwipeAction)
+                swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
+                startActivityForResult(AppUtil.decorInAppIntent(swipeLeftChooserIntent), SettingsEnum.SWIPE_LEFT.ordinal)
             }
-            SettingsEnum.SWIPE_FROM_LEFT -> {
+            SettingsEnum.SWIPE_RIGHT -> {
                 val rightLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
-                rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.leftSwipeAction)
-                rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
-                startActivityForResult(AppUtil.decorInAppIntent(rightLeftChooserIntent), SettingsEnum.SWIPE_FROM_LEFT.ordinal)
+                rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.rightSwipeAction)
+                rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
+                startActivityForResult(AppUtil.decorInAppIntent(rightLeftChooserIntent), SettingsEnum.SWIPE_RIGHT.ordinal)
             }
             SettingsEnum.LOCAL_STORAGE_LIMIT -> {
                 val attachmentStorageIntent = Intent(this, AttachmentStorageActivity::class.java)

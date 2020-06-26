@@ -911,8 +911,8 @@ acesso ao armazenamento.</string>
     <string name="labels_manage">Gerenciador de marcadores</string>
     <string name="folders_manage">Gerenciador de pastas</string>
     <string name="swiping_gesture">Gestos de deslizar</string>
-    <string name="swipe_action_left">Deslize da esquerda para a direita</string>
-    <string name="swipe_action_right">Deslize da direita para a esquerda</string>
+    <string name="swipe_action_right">Deslize da esquerda para a direita</string>
+    <string name="swipe_action_left">Deslize da direita para a esquerda</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Escolha a ação de deslizar</string>
     <string name="swipe_action_trash">Mensagem movida para a lixeira</string>

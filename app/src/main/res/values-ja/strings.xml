@@ -884,8 +884,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_manage">ラベルの管理</string>
     <string name="folders_manage">フォルダーの管理</string>
     <string name="swiping_gesture">スワイプ操作</string>
-    <string name="swipe_action_left">左から右へのスワイプ</string>
-    <string name="swipe_action_right">右から左へのスワイプ</string>
+    <string name="swipe_action_right">左から右へのスワイプ</string>
+    <string name="swipe_action_left">右から左へのスワイプ</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">スワイプ操作時のアクション選択</string>
     <string name="swipe_action_trash">メッセージをごみ箱に移動する</string>

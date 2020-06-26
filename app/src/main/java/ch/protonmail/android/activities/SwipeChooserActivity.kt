@@ -46,8 +46,8 @@ const val EXTRA_SWIPE_ID = "EXTRA_SWIPE_ID"
  */
 
 enum class SwipeType {
-    LEFT,
-    RIGHT
+    RIGHT,
+    LEFT
 }
 
 class SwipeChooserActivity : BaseActivity() {
@@ -57,7 +57,7 @@ class SwipeChooserActivity : BaseActivity() {
     private var mSwipeActionsIds: IntArray? = null
     private var mInflater: LayoutInflater? = null
     private var mCurrentAction: Int = 0
-    private var mSwipeId: SwipeType = SwipeType.LEFT
+    private var mSwipeId: SwipeType = SwipeType.RIGHT
 
     override fun getLayoutId(): Int {
         return R.layout.activity_swipe_chooser
@@ -122,16 +122,16 @@ class SwipeChooserActivity : BaseActivity() {
                     var actionRightSwipeChanged = false
                     var actionLeftSwipeChanged = false
 
-                    if (mSwipeId == SwipeType.RIGHT) {
-                        actionRightSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.rightSwipeAction
+                    if (mSwipeId == SwipeType.LEFT) {
+                        actionRightSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.leftSwipeAction
                         if (actionRightSwipeChanged) {
-                            mUserManager.mailSettings!!.rightSwipeAction = mCurrentAction
+                            mUserManager.mailSettings!!.leftSwipeAction = mCurrentAction
 
                         }
-                    } else if (mSwipeId == SwipeType.LEFT) {
-                        actionLeftSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.leftSwipeAction
+                    } else if (mSwipeId == SwipeType.RIGHT) {
+                        actionLeftSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.rightSwipeAction
                         if (actionLeftSwipeChanged) {
-                            mUserManager.mailSettings!!.leftSwipeAction = mCurrentAction
+                            mUserManager.mailSettings!!.rightSwipeAction = mCurrentAction
 
                         }
                     }

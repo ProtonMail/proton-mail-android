@@ -910,8 +910,8 @@ l\'accés a l\'emmagatzemament.</string>
     <string name="labels_manage">Administrador de etiquetes</string>
     <string name="folders_manage">Administrar carpetes</string>
     <string name="swiping_gesture">Gest de lliscament</string>
-    <string name="swipe_action_left">Llisca de esquerra a dreta</string>
-    <string name="swipe_action_right">Llisca de dreta a esquerra</string>
+    <string name="swipe_action_right">Llisca de esquerra a dreta</string>
+    <string name="swipe_action_left">Llisca de dreta a esquerra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Tria l\'acció de lliscar</string>
     <string name="swipe_action_trash">Missatge mogut a la paperera</string>

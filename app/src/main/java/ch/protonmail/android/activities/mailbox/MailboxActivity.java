@@ -1931,10 +1931,10 @@ public class MailboxActivity extends NavigationActivity implements
             final int swipeActionOrdinal;
             switch (direction) {
                 case ItemTouchHelper.RIGHT:
-                    swipeActionOrdinal = mUserManager.getMailSettings().getLeftSwipeAction();
+                    swipeActionOrdinal = mUserManager.getMailSettings().getRightSwipeAction();
                     break;
                 case ItemTouchHelper.LEFT:
-                    swipeActionOrdinal = mUserManager.getMailSettings().getRightSwipeAction();
+                    swipeActionOrdinal = mUserManager.getMailSettings().getLeftSwipeAction();
                     break;
                 default:
                     throw new RuntimeException("Unrecognised direction: " + direction);
@@ -1982,10 +1982,10 @@ public class MailboxActivity extends NavigationActivity implements
                 if (mMailboxLocation.getValue() == Constants.MessageLocationType.ALL_DRAFT) {
                     layoutId = SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0);
                 } else if (deltaX < 0) {
-                    layoutId = SwipeAction.values()[mUserManager.getMailSettings().getRightSwipeAction()].getActionBackgroundResource(
+                    layoutId = SwipeAction.values()[mUserManager.getMailSettings().getLeftSwipeAction()].getActionBackgroundResource(
                             false);
                 } else {
-                    layoutId = SwipeAction.values()[mUserManager.getMailSettings().getLeftSwipeAction()].getActionBackgroundResource(
+                    layoutId = SwipeAction.values()[mUserManager.getMailSettings().getRightSwipeAction()].getActionBackgroundResource(
                             true);
                 }
                 View view = getLayoutInflater().inflate(layoutId, null);

@@ -900,8 +900,8 @@ zur Verfügung zu stellen.</string>
     <string name="labels_manage">Kategorieverwaltung</string>
     <string name="folders_manage">Ordnerverwaltung</string>
     <string name="swiping_gesture">Wischgesten</string>
-    <string name="swipe_action_left">Von links nach rechts wischen</string>
-    <string name="swipe_action_right">Von rechts nach links wischen</string>
+    <string name="swipe_action_right">Von links nach rechts wischen</string>
+    <string name="swipe_action_left">Von rechts nach links wischen</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Aktion für Wischen auswählen</string>
     <string name="swipe_action_trash">Nachricht in den Papierkorb verschoben</string>

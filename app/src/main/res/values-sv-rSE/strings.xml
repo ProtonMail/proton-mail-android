@@ -903,8 +903,8 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <string name="labels_manage">Etiketthanterare</string>
     <string name="folders_manage">Mapphantering</string>
     <string name="swiping_gesture">Svepgester</string>
-    <string name="swipe_action_left">Svep vänster till höger</string>
-    <string name="swipe_action_right">Svep höger till vänster</string>
+    <string name="swipe_action_right">Svep vänster till höger</string>
+    <string name="swipe_action_left">Svep höger till vänster</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Välj svep-åtgärd</string>
     <string name="swipe_action_trash">Meddelandet flyttades till Papperskorgen</string>
