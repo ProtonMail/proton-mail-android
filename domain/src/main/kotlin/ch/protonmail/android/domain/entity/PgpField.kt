@@ -16,26 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.domain.entity.user
+package ch.protonmail.android.domain.entity
 
 /**
- * A plan for [User]
- * Plan types are exclusive; for example if [Mail.Paid] is present, [Mail.Free] cannot
- *
- * Free plan is represented on BE as `Services`, paid as `Subscribed`
- * Combination of Mail + Vpn flag is 5.
- *
- * @author Davide Farella
+ * Represent a field encrypted by PGP
+ * Format: `` "-----BEGIN PGP [type] [content]-----END PGP [type]----- ``
  */
-sealed class Plan {
+sealed class PgpField(val type: String) {
+    abstract val content: NotBlankString
+    val prefix = "-----BEGIN PGP $type-----"
+    val suffix = "-----END PGP $type-----"
+    val string get() = "$prefix$content$suffix"
 
-    sealed class Mail : Plan() { // Flag is 1 on BE
-        object Free : Mail()
-        object Paid : Mail()
-    }
-
-    sealed class Vpn : Plan() { // Flag is 4 on BE
-        object Free : Vpn()
-        object Paid : Vpn()
-    }
+    data class Message(override val content: NotBlankString) : PgpField("MESSAGE")
+    data class PublicKey(override val content: NotBlankString) : PgpField("PUBLIC_KEY_BLOCK")
+    data class PrivateKey(override val content: NotBlankString) : PgpField("PRIVATE_KEY_BLOCK")
+    data class Signature(override val content: NotBlankString) : PgpField("SIGNATURE_KEY_BLOCK")
 }

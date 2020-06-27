@@ -19,7 +19,7 @@
 package ch.protonmail.android.domain.entity.user
 
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.NotBlankString
+import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.Validable
 import ch.protonmail.android.domain.entity.Validated
 import ch.protonmail.android.domain.entity.Validator
@@ -33,7 +33,8 @@ import ch.protonmail.android.domain.entity.requireValid
 data class UserKey(
     val id: Id,
     val version: Int,
-    val privateKey: NotBlankString
+    val privateKey: PgpField.PrivateKey,
+    val token: PgpField.Message
 )
 
 /**

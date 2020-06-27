@@ -19,6 +19,7 @@
 package ch.protonmail.android.domain.entity.user
 
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.Validable
 import ch.protonmail.android.domain.entity.Validated
 import ch.protonmail.android.domain.entity.Validator
@@ -29,10 +30,22 @@ import ch.protonmail.android.domain.entity.requireValid
 /**
  * Representation of an user's address' Key
  * @author Davide Farella
+ *
+ * TODO
+ *  * add flags
+ *  * add activation
+ *  * doc version
+ *  * doc token
+ *  * doc signature
  */
 @Validated
 data class AddressKey(
-    val id: Id
+    val id: Id,
+    val version: UInt,
+    val publicKey: PgpField.PublicKey,
+    val privateKey: PgpField.PrivateKey,
+    val token: PgpField.Message?,
+    val signature: PgpField.Signature?
 )
 
 /**

@@ -20,6 +20,9 @@ package ch.protonmail.android.domain.entity.user
 
 import assert4k.*
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.NotBlankString
+import ch.protonmail.android.domain.entity.PgpField.PrivateKey
+import ch.protonmail.android.domain.entity.PgpField.PublicKey
 import ch.protonmail.android.domain.entity.ValidationException
 import kotlin.test.Test
 
@@ -32,8 +35,8 @@ internal class AddressKeyTest {
     @Test
     fun `AddressKeys can be created if valid`() {
         AddressKeys(
-            primaryKey = AddressKey(Id("id")),
-            keys = listOf(AddressKey(Id("id")), AddressKey(Id("another_id")))
+            primaryKey = dummyKey,
+            keys = listOf(dummyKey, anotherDummyKey)
         )
         AddressKeys(
             primaryKey = null,
@@ -46,7 +49,7 @@ internal class AddressKeyTest {
         assert that fails<ValidationException> {
             AddressKeys(
                 primaryKey = null,
-                keys = listOf(AddressKey(Id("id")))
+                keys = listOf(dummyKey)
             )
         }
     }
@@ -55,7 +58,7 @@ internal class AddressKeyTest {
     fun `AddressKeys fails if primaryKey is NOT null, but keys is empty`() {
         assert that fails<ValidationException> {
             AddressKeys(
-                primaryKey = AddressKey(Id("id")),
+                primaryKey = dummyKey,
                 keys = emptyList()
             )
         }
@@ -65,9 +68,28 @@ internal class AddressKeyTest {
     fun `AddressKeys fails if keys does not contain primaryKey`() {
         assert that fails<ValidationException> {
             AddressKeys(
-                primaryKey = AddressKey(Id("id")),
-                keys = listOf(AddressKey(Id("another_id")))
+                primaryKey = dummyKey,
+                keys = listOf(anotherDummyKey)
             )
         }
     }
+
+    private val dummyKey = AddressKey(
+        Id("id"),
+        4u,
+        PublicKey(NotBlankString("pub_key")),
+        PrivateKey(NotBlankString("priv_key")),
+        null,
+        null
+    )
+
+    private val anotherDummyKey = AddressKey(
+        Id("another_id"),
+        4u,
+        PublicKey(NotBlankString("pub_key")),
+        PrivateKey(NotBlankString("priv_key")),
+        null,
+        null
+    )
+
 }

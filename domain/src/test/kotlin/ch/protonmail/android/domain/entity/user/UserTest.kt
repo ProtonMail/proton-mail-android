@@ -26,6 +26,7 @@ import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
+import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.ValidationException
 import ch.protonmail.android.domain.entity.user.Plan.Mail
 import ch.protonmail.android.domain.entity.user.Plan.Vpn
@@ -169,8 +170,12 @@ internal class UserTest {
         )
     )
 
-    private val notEmptyKeys = UserKeys(
-        UserKey(Id("key"), 4, NotBlankString("key")),
-        listOf(UserKey(Id("key"), 4, NotBlankString("key")))
+    private val dummyKey = UserKey(
+        Id("key"),
+        4,
+        PgpField.PrivateKey(NotBlankString("key")),
+        PgpField.Message(NotBlankString("token"))
     )
+
+    private val notEmptyKeys = UserKeys(dummyKey, listOf(dummyKey))
 }

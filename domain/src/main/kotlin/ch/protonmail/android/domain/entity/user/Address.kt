@@ -40,18 +40,19 @@ data class Address(
 )
 
 /**
- * A set of [Address]s with a primary one
+ * An ordered set of [Address]s with a primary one
  *
- * @param primaryAddress can be `null`, as is possible that the [user] didn't set up its email address ( VPN user )
- * @param addresses can be empty only if [primaryAddress] is `null`
+ * @param primaryAddress can be `null`, as is possible that the [User] didn't set up its email address ( VPN user )
+ * @param addresses can be empty only if [primaryAddress] is `null`.
+ *   first value must be [primaryAddress]
  */
 @Validated
 data class Addresses(
     val primaryAddress: Address?,
-    val addresses: Collection<Address>
+    val addresses: List<Address>
 ) : Validable by Validator<Addresses>({
     primaryAddress == null && addresses.isEmpty() ||
-        primaryAddress in addresses
+        primaryAddress == addresses.firstOrNull()
 }) {
     init { requireValid() }
 
