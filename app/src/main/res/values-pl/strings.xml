@@ -500,7 +500,7 @@ ludziom na całym świecie.</string>
     <string name="payment_approval_unknown_error_description">Wystąpił błąd podczas weryfikowania płatności. Spróbuj ponownie lub zmień kartę.</string>
     <string name="payment_approval_cancel_error_description">Weryfikacja płatności została anulowana. Spróbuj ponownie lub zmień kartę.</string>
     <string name="payment_approval_consumed_error_description">Płatność została już wykorzystana. Sprawdź status subskrypcji.</string>
-    <string name="no_payment_methods">Nie masz zapisanych metod płatności.</string>
+    <string name="no_payment_methods">Nie posiadasz zapisanych metod płatności.</string>
     <string name="edit_payment_methods">Zaloguj się przez protonmail.com, aby edytować informacje dotyczące płatności.</string>
     <string name="message_not_loaded">Wiadomość nie została załadowana</string>
     <string name="signature_text">Treść podpisu</string>
@@ -509,8 +509,8 @@ ludziom na całym świecie.</string>
     <string name="not_set">Nie ustawiono</string>
     <string name="edit_notification_email">Edytuj adres odzyskiwania</string>
     <string name="available_swipe_actions">Dostępne działania</string>
-    <string name="no_available_addresses">Brak dostępnych adresów</string>
-    <string name="no_inactive_addresses">Brak nieaktywnych adresów</string>
+    <string name="no_available_addresses">Nie posiadasz dostępnych adresów</string>
+    <string name="no_inactive_addresses">Nie posiadasz nieaktywnych adresów</string>
     <string name="label_add_new">Dodaj nową etykietę</string>
     <string name="available_labels">Dostępne etykiety</string>
     <string name="choose_label_color">Wybierz kolor etykiety</string>
