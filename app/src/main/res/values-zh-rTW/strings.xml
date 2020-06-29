@@ -279,7 +279,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">在內文回覆</string>
     <string name="no_connectivity_detected">未偵測到網際網路連線……</string>
-    <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="no_connectivity_detected_troubleshoot">未偵測到網際網路連線……（<u>疑難排解</u>）</string>
     <string name="connectivity_checking">正在檢查網際網路連線……</string>
     <string name="sync_short">同步</string>
     <string name="draft_attachments_uploading">正在上傳草稿……</string>
@@ -959,11 +959,11 @@ webmail 介面升級 ProtonMail。</string>
     <string name="login_failure_missing_keys">您正在嘗試新增的帳號沒有已生成的金鑰。請在應用程式上新增此帳號為第一帳號，或透過網頁版本登入，以生成金鑰並在應用程式中新增其為額外的帳號。</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Compose</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <string name="shortcut_compose">撰寫郵件</string>
+    <string name="shortcut_compose_new_message">撰寫新郵件</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
+    <string name="troubleshoot_dialog_title">常見連線問題及解決方案</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.

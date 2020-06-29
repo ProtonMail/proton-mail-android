@@ -961,7 +961,7 @@ acesso ao armazenamento.</string>
     <string name="cache_cleared">Cache local atualizado</string>
     <string name="empty_cache">Limpar cache</string>
     <!-- endregion -->
-    <string name="enabled">Habilitado</string>
+    <string name="enabled">Ativado</string>
     <string name="disabled">Desabilitado</string>
     <string name="app_info">Informações do aplicativo</string>
     <string name="app_version">Versão do aplicativo</string>
