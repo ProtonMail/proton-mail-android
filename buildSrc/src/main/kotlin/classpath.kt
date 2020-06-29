@@ -27,7 +27,6 @@ import studio.forface.easygradle.dsl.android.*
  */
 val ScriptHandlerScope.classpathDependencies: DependencyHandlerScope.() -> Unit get() = {
     classpath(`android-gradle-plugin`)
-    classpath(`detekt-plugin`)
     classpath(`hugo-plugin`)
     classpath(`kotlin-gradle-plugin`)
     classpath(`serialization-gradle-plugin`)

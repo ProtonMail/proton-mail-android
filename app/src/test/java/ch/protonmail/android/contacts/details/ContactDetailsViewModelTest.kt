@@ -24,12 +24,8 @@ import ch.protonmail.android.domain.util.DispatcherProvider
 import ch.protonmail.android.exceptions.BadImageUrlError
 import ch.protonmail.android.exceptions.ImageNotFoundError
 import ch.protonmail.android.exceptions.errorStateGenerator
-import ch.protonmail.android.testAndroid.ArchTest
 import ch.protonmail.android.testAndroid.ViewStateStoreTest
 import ch.protonmail.android.testAndroid.viewStateStoreTest
-import ch.protonmail.android.testKotlin.CoroutinesTest
-import ch.protonmail.android.testKotlin.assertIs
-import ch.protonmail.android.testKotlin.coroutinesTest
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -39,9 +35,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withTimeout
+import me.proton.core.test.android.ArchTest
+import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.assertIs
+import me.proton.core.test.kotlin.coroutinesTest
 import studio.forface.viewstatestore.ViewState
 import java.io.FileNotFoundException
-import kotlin.test.*
+import kotlin.test.Test
 
 /**
  * __Unit__ test suite for [ContactDetailsViewModel]

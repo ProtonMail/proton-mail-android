@@ -16,25 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-@file:Suppress("PackageDirectoryMismatch")
-
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.kotlin.dsl.maven
 
 /**
  * Lambda that applies repositories required by the project
  * @author Davide Farella
- *
- * TODO clean up / comment with relative usage
  */
 val repos: RepositoryHandler.() -> Unit get() = {
     google()
     jcenter()
-    mavenCentral()
-    maven("https://plugins.gradle.org/m2/")
-    maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://s3.amazonaws.com/repo.commonsware.com")
-    maven("https://oss.sonatype.org/content/repositories/releases/")
-    maven("https://mint.splunk.com/gradle/")
-    maven("https://jitpack.io")
+    // Proton Core libraries
+    maven("https://dl.bintray.com/proton/Core-publishing")
 }

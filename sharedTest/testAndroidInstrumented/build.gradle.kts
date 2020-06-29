@@ -18,6 +18,7 @@
  */
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
+import org.gradle.kotlin.dsl.api as kotlinApi
 
 plugins {
     `android-library`
@@ -31,6 +32,9 @@ dependencies {
 
     // Base dependencies
     implementation(
+        // Proton
+        `Proton-kotlin-util`,
+
         // Kotlin
         `kotlin-jdk7`,
         `kotlin-reflect`,
@@ -65,5 +69,14 @@ dependencies {
         `android-test-rules`,
         `espresso`,
         `hamcrest`
+    )
+
+    (kotlinApi(`Proton-android-instrumented-test`) as ModuleDependency).exclude(
+        // Exclude MockK since we will use MockK-Android
+        `mockk`,
+        // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
+        jUnit5(`any`, `any`),
+        // Exclude Robolectric since not needed for instrumented tests
+        `robolectric`
     )
 }

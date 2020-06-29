@@ -20,6 +20,25 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
 
+// region Proton
+// Common
+val DependencyHandler.`Proton-kotlin-util` get() =                  protonUtil("kotlin") version `Proton-kotlin-util version`
+val DependencyHandler.`Proton-shared-preferences` get() =           protonUtil("android-shared-preferences") version `Proton-shared-preferences version`
+val DependencyHandler.`Proton-work-manager` get() =                 protonUtil("android-work-manager") version `Proton-work-manager version`
+// Test
+val DependencyHandler.`Proton-android-test` get() =                 protonTest("android") version `Proton-android-test version`
+val DependencyHandler.`Proton-android-instrumented-test` get() =    protonTest("android-instrumented") version `Proton-android-instr-test version`
+val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("kotlin") version `Proton-kotlin-test version`
+
+fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
+    proton("test", moduleSuffix, version)
+fun DependencyHandler.protonUtil(moduleSuffix: String, version: String? = null) =
+    proton("util", moduleSuffix, version)
+
+fun DependencyHandler.proton(module: String, moduleSuffix: String? = null, version: String? = null) =
+    dependency("me.proton.core", module = module, moduleSuffix = moduleSuffix, version = version)
+// endregion
+
 // region Android
 val DependencyHandler.`android-biometric` get() =           androidx("biometric") version `android-biometric version`
 val DependencyHandler.`android-fragment` get() =            androidx("fragment", moduleSuffix = "ktx") version `android-fragment version`
@@ -68,27 +87,21 @@ val DependencyHandler.`rxRelay` get() =                     jakeWharton("rxrelay
 val DependencyHandler.`apache-commons-lang` get() =         dependency("org.apache", "commons", moduleSuffix = "lang3") version `apache-commons-lang version`
 val DependencyHandler.`butterknife-runtime` get() =         jakeWharton(module = "butterknife") version `butterKnife version`
 val DependencyHandler.`butterknife-compiler` get() =        jakeWharton(module = "butterknife", moduleSuffix = "compiler") version `butterKnife version`
-val DependencyHandler.`detekt-plugin` get() =               detekt("gradle-plugin")
-val DependencyHandler.`detekt-cli` get() =                  detekt("cli")
-val DependencyHandler.`detekt-formatting` get() =           detekt("formatting")
-val DependencyHandler.`detekt-code-analysis` get() =        dependency("pm.algirdas", "detekt", "codeanalysis") version `detect-code-analysis version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`hugo-annotations` get() =            jakeWharton("hugo", moduleSuffix = "annotations") version `hugo version`
 val DependencyHandler.`hugo-plugin` get() =                 jakeWharton("hugo", moduleSuffix = "plugin") version `hugo version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`
 val DependencyHandler.`sentry-android` get() =              dependency("io.sentry", module = "sentry-android") version `sentry version`
-val DependencyHandler.`sentry-android-plugin` get() =       dependency("io.sentry", module = "sentry-android-gradle-plugin") version `sentry version`
+val DependencyHandler.`sentry-android-plugin` get() =       dependency("io.sentry", module = "sentry-android-gradle-plugin") version `sentry-plugin version`
 val DependencyHandler.`stetho` get() =                      dependency("com.facebook", "stetho") version `stetho version`
 val DependencyHandler.`timber` get() =                      jakeWharton("timber") version `timber version`
 val DependencyHandler.`trustKit` get() =                    dependency("com.datatheorem.android", "trustkit") version `trustKit version`
-// subregion DoH
+// region DoH
 val DependencyHandler.`minidns` get() =                     dependency("org.minidns", module = "minidns-hla") version `minidns version`
 val DependencyHandler.`retrofit2-converter` get() =         dependency("com.squareup.retrofit2", module = "converter-jackson") version `rf2 converter version`
 val DependencyHandler.`fasterxml-jackson-core` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-core") version `jackson version`
 val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-annotations") version `jackson version`
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
-// endsubregion
+// endregion
 
-fun DependencyHandler.detekt(moduleSuffix: String, version: String = `detekt version`) =
-    dependency("io.gitlab.arturbosch", groupName = "detekt", moduleSuffix = moduleSuffix, version = version)
 // endregion
