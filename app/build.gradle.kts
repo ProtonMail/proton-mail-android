@@ -111,6 +111,14 @@ android(appIdSuffix = "android") {
             signingConfig = signingConfigs["release"]
         }
     }
+
+    testOptions {
+        animationsDisabled = true
+    }
+
+    packagingOptions {
+        exclude("META-INF/INDEX.LIST")
+    }
 }
 
 dependencies {
@@ -200,7 +208,13 @@ dependencies {
     )
 
     testImplementation(project(Module.testAndroid))
-    androidTestImplementation(project(Module.testAndroidInstrumented))
+    androidTestImplementation(
+        project(Module.testAndroidInstrumented),
+        `espresso-contrib`,
+        `espresso-intents`,
+        `conditionwatcher`,
+        `aerogear`
+    )
 }
 
 apply(from = "old.build.gradle")

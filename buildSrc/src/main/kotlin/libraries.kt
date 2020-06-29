@@ -105,3 +105,10 @@ val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fast
 // endregion
 
 // endregion
+
+// region Instrumentation tests
+val DependencyHandler.`espresso-contrib` get() =  androidx("test.espresso", module = "espresso-contrib") version `espresso version`
+val DependencyHandler.`espresso-intents` get() =  androidx("test.espresso", module = "espresso-intents") version `espresso version`
+val DependencyHandler.conditionwatcher get() =  dependency("com.azimolabs.conditionwatcher", module = "conditionwatcher") version `conditionalwatcher version`
+val DependencyHandler.aerogear get() =  dependency("org.jboss.aerogear", module = "aerogear-otp-java") version `aerogear version`
+// endregion
