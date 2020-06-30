@@ -75,6 +75,7 @@ const val `assertJ version` =                   "3.13.2"        // Released: Aug
 const val `hamcrest version` =                  "1.3"           // Released:
 const val `jUnit5 version` =                    "5.5.0"         // Released:
 const val `robolectric version` =               "4.3.1"         // Released: Oct 11, 2019
+const val `conditionalwatcher version` =        "0.2"           // Released: Aug 1, 2017
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
@@ -100,3 +101,4 @@ const val `trustKit version` =                  "1.1.2"         // Released: Jun
 const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
 const val `rf2 converter version` =             "2.7.1"         // Released: Jan 02, 2020
 const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020
+const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
