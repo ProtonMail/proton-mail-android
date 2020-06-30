@@ -87,7 +87,7 @@ data class User( // TODO: consider naming UserInfo or simialar
     init { requireValid() }
 }
 
-sealed class Delinquent(val value: UInt, val mailRoutesAccessible: Boolean = true) {
+sealed class Delinquent(val i: UInt, val mailRoutesAccessible: Boolean = true) {
 
     object None : Delinquent(0u)
     object InvoiceAvailable : Delinquent(1u)
