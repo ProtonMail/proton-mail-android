@@ -41,14 +41,14 @@ internal class UserTest {
     // region addresses
     @Test
     fun `User can be created if addresses are valid`() {
-        User(plans = listOf(Vpn.Paid), addresses = Addresses(null, emptyList()))
+        User(plans = listOf(Vpn.Paid), addresses = Addresses(emptyMap()))
         User(plans = listOf(Mail.Paid), addresses = notEmptyAddresses)
     }
 
     @Test
     fun `User fails if there are no address by has Mail plan`() {
         assert that fails<ValidationException> {
-            User(plans = listOf(Mail.Paid), addresses = Addresses(null, emptyList()))
+            User(plans = listOf(Mail.Paid), addresses = Addresses(emptyMap()))
         }
     }
     // endregion
@@ -56,7 +56,7 @@ internal class UserTest {
     // region keys
     @Test
     fun `User can be created if keys are valid`() {
-        User(addresses = Addresses(null, emptyList()), keys = UserKeys(null, emptyList()))
+        User(addresses = Addresses(emptyMap()), keys = UserKeys(null, emptyList()))
         User(addresses = notEmptyAddresses, keys = notEmptyKeys)
     }
 
@@ -137,7 +137,6 @@ internal class UserTest {
     ) = User(
         Id("id"),
         Name("davide"),
-        Name("Davide"),
         addresses,
         keys,
         plans,
@@ -152,21 +151,19 @@ internal class UserTest {
     )
 
     private val notEmptyAddresses = Addresses(
-        Address(
-            Id("address"),
-            Id("domainId"),
-            EmailAddress("dav@protonmail.ch"),
-            null,
-            AddressKeys(null, emptyList())
-        ),
-        listOf(
-            Address(
-                Id("address"),
-                Id("domainId"),
-                EmailAddress("dav@protonmail.ch"),
-                null,
-                AddressKeys(null, emptyList())
-            )
+        mapOf(
+            1 to
+                Address(
+                    Id("address"),
+                    Id("domainId"),
+                    EmailAddress("dav@protonmail.ch"),
+                    null,
+                    enabled = true,
+                    type = Address.Type.ORIGINAL,
+                    allowedToSend = true,
+                    allowedToReceive = true,
+                    keys = AddressKeys(null, emptyList())
+                )
         )
     )
 

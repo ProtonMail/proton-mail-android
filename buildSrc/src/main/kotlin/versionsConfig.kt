@@ -49,7 +49,7 @@ fun initVersions() {
     // endregion
 
     // region Others
-    `assert4k version` =                        "0.2.2"         // Released: Jun 14, 2020
+    `assert4k version` =                        "0.2.4"         // Released: Jun 30, 2020
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""

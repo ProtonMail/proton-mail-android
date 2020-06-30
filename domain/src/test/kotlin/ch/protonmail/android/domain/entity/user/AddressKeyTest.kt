@@ -77,19 +77,14 @@ internal class AddressKeyTest {
     private val dummyKey = AddressKey(
         Id("id"),
         4u,
-        PublicKey(NotBlankString("pub_key")),
-        PrivateKey(NotBlankString("priv_key")),
-        null,
-        null
+        canEncrypt = true,
+        canVerifySignature = true,
+        publicKey = PublicKey(NotBlankString("pub_key")),
+        privateKey = PrivateKey(NotBlankString("priv_key")),
+        token = null,
+        signature = null,
+        activation = null
     )
 
-    private val anotherDummyKey = AddressKey(
-        Id("another_id"),
-        4u,
-        PublicKey(NotBlankString("pub_key")),
-        PrivateKey(NotBlankString("priv_key")),
-        null,
-        null
-    )
-
+    private val anotherDummyKey = dummyKey.copy(id = Id("another_id"))
 }

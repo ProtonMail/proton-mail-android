@@ -23,6 +23,8 @@ package ch.protonmail.android.domain.entity
  * Format: `` "-----BEGIN PGP [type] [content]-----END PGP [type]----- ``
  */
 sealed class PgpField(val type: String) {
+    // TODO: this might be an object instaed of a String, but must be evaluated when the business logic will receive
+    //  some refactor
     abstract val content: NotBlankString
     val prefix = "-----BEGIN PGP $type-----"
     val suffix = "-----END PGP $type-----"

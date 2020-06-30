@@ -46,7 +46,6 @@ import ch.protonmail.android.domain.entity.requireValid
 data class User( // TODO: consider naming UserInfo or simialar
     val id: Id,
     val name: Name,
-    val displayName: Name,
     val addresses: Addresses,
     val keys: UserKeys,
     val plans: Collection<Plan>,
