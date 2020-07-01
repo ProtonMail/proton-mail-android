@@ -28,6 +28,7 @@ proguard/
 .idea/
 .DS_Store
 *.iml
+ajcore.*.txt
 
 # Room database schemas
 app/schemas/
