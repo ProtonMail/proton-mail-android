@@ -18,7 +18,6 @@
  */
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
-import org.gradle.kotlin.dsl.api as kotlinApi
 
 plugins {
     `android-library`
@@ -48,16 +47,19 @@ dependencies {
 
     // Test dependencies
     api(
-        project(Module.testAndroid).apply {
-            exclude(
-                // Exclude MockK since we will use MockK-Android
-                `mockk`,
-                // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
-                jUnit5(`any`, `any`),
-                // Exclude Robolectric since not needed for instrumented tests
-                `robolectric`
-            )
-        },
+        project(Module.testAndroid) exclude
+            // Exclude Assert4k since backtick names are not supported in Android test
+            `assert4k` exclude
+            // Exclude MockK since we will use MockK-Android
+            `mockk` exclude
+            // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
+            jUnit5(`any`, `any`) exclude
+            // Exclude Robolectric since not needed for instrumented tests
+            `robolectric`,
+
+        `Proton-android-instrumented-test` exclude
+            // Exclude MockK since we will use MockK-Android
+            `mockk`,
 
         // MockK
         `mockk-android`,
@@ -69,14 +71,5 @@ dependencies {
         `android-test-rules`,
         `espresso`,
         `hamcrest`
-    )
-
-    (kotlinApi(`Proton-android-instrumented-test`) as ModuleDependency).exclude(
-        // Exclude MockK since we will use MockK-Android
-        `mockk`,
-        // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
-        jUnit5(`any`, `any`),
-        // Exclude Robolectric since not needed for instrumented tests
-        `robolectric`
     )
 }

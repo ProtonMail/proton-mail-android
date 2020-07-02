@@ -1,6 +1,8 @@
+# Integrity check *
+
 # Default excluded files are `` ['**/test/**', '**/androidTest/**', '**/buildSrc/**'] ``
 build:
-  maxIssues: 10897 #was 11660
+  maxIssues: 999999 # No threshold set
   excludeCorrectable: false
   weights:
     # complexity: 2
@@ -375,7 +377,7 @@ naming:
     # minimumFunctionNameLength: 3
   FunctionNaming:
     active: true
-    functionPattern: '^([a-z$][a-zA-Z$0-9]*)|(`.*`)$'
+    functionPattern: '^([a-zA-Z$][a-zA-Z$0-9]*)|(`.*`)$'
     excludeClassPattern: '$^'
     ignoreOverridden: true
   FunctionParameterNaming:

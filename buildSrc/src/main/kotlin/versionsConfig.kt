@@ -49,8 +49,7 @@ fun initVersions() {
     // endregion
 
     // region Others
-    `detekt version` =                          "1.9.1"         // Released: May 17, 2020 // TODO: remove after util-gradle 0.1.4
-    `detect-code-analysis version` =            "0.3.2"         // Released: // TODO: remove after util-gradle 0.1.4
+    `assert4k version` =                        "0.2.4"         // Released: Jun 30, 2020
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
@@ -60,13 +59,14 @@ fun initVersions() {
 
 // Proton Core
 // Common
-const val `Proton-kotlin-util version` =        "0.1"           // Released: Jun 10, 2020
+const val `Proton-kotlin-util version` =        "0.1.1"         // Released: Jun 17, 2020
 const val `Proton-shared-preferences version` = "0.1"           // Released: Jun 10, 2020
 const val `Proton-work-manager version` =       "0.1"           // Released: Jun 10, 2020
 // Test
 const val `Proton-android-test version` =       "0.1"           // Released: May 30, 2020
-const val `Proton-android-instr-test version` = "0.1"           // Released: May 30, 2020
+const val `Proton-android-instr-test version` = "0.1.1"         // Released: Jun 17, 2020
 const val `Proton-kotlin-test version` =        "0.1"           // Released: Jun 10, 2020
+
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 @Deprecated("To be removed in favour of package published on Bintray") const val `old protonCore version` =        "0.2.21"        // Released: Mar 13, 2020
 

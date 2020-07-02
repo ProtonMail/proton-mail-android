@@ -16,24 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-plugins {
-    `kotlin-dsl`
-}
+package ch.protonmail.android.domain.entity.user
 
-repositories {
-    google()
-    jcenter()
-    maven(url = "https://dl.bintray.com/proton/Core-publishing")
-}
+/**
+ * A plan for [User]
+ * Plan types are exclusive; for example if [Mail.Paid] is present, [Mail.Free] cannot
+ *
+ * Free plan is represented on BE as `Services`, paid as `Subscribed`
+ * Combination of Mail + Vpn flag is 5.
+ *
+ * @author Davide Farella
+ */
+sealed class Plan {
 
-dependencies {
-    val android =       "3.5.0"         // Released: Aug 08, 2019
-    val easyGradle =    "1.5-beta-6"    // Released: Jun 17, 2020
-    val protonGradle =  "0.1.7"         // Released: Jun 22, 2020
+    sealed class Mail : Plan() { // Flag is 1 on BE
+        object Free : Mail()
+        object Paid : Mail()
+    }
 
-    // Needed for setup Android config
-    implementation("com.android.tools.build:gradle:$android")
-    // Needed for many utils
-    implementation("studio.forface.easygradle:dsl-android:$easyGradle")
-    implementation("me.proton.core:util-gradle:$protonGradle")
+    sealed class Vpn : Plan() { // Flag is 4 on BE
+        object Free : Vpn()
+        object Paid : Vpn()
+    }
 }
