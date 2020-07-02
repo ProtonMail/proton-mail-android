@@ -75,8 +75,7 @@ interface MessageApiSpec {
     fun messageDetail(messageId: String): MessageResponse
 
     @WorkerThread
-    @Throws(Exception::class)
-    fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse
+    fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse?
 
     @WorkerThread
     @Throws(Exception::class)

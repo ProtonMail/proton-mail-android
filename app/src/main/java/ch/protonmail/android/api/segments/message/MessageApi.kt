@@ -34,22 +34,20 @@ import java.io.IOException
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.utils.ParseUtils
 import io.reactivex.Observable
+import timber.log.Timber
 
-
-class MessageApi (private val service : MessageService) : BaseApi(), MessageApiSpec {
-    @Throws(IOException::class)
-    override fun fetchMessagesCount(retrofitTag: RetrofitTag): UnreadTotalMessagesResponse {
-        return ParseUtils.parse(service.fetchMessagesCount(retrofitTag).execute())
-    }
+class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpec {
 
     @Throws(IOException::class)
-    override fun messages(location: Int): MessagesResponse? {
-        return ParseUtils.parse(service.messages(location, "time", "", "").execute())
-    }
+    override fun fetchMessagesCount(retrofitTag: RetrofitTag): UnreadTotalMessagesResponse =
+            ParseUtils.parse(service.fetchMessagesCount(retrofitTag).execute())
 
-    override fun messages(location: Int, retrofitTag: RetrofitTag): MessagesResponse? {
-        return ParseUtils.parse(service.messages(location, "time", "", "", retrofitTag).execute())
-    }
+    @Throws(IOException::class)
+    override fun messages(location: Int): MessagesResponse? =
+            ParseUtils.parse(service.messages(location, "time", "", "").execute())
+
+    override fun messages(location: Int, retrofitTag: RetrofitTag): MessagesResponse? =
+            ParseUtils.parse(service.messages(location, "time", "", "", retrofitTag).execute())
 
     @Throws(IOException::class)
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? {
@@ -59,10 +57,8 @@ class MessageApi (private val service : MessageService) : BaseApi(), MessageApiS
     }
 
     @Throws(IOException::class)
-    override fun fetchSingleMessageMetadata(messageId: String): MessagesResponse? {
-        return ParseUtils.parse(service.fetchSingleMessageMetadata(messageId).execute())
-    }
-
+    override fun fetchSingleMessageMetadata(messageId: String): MessagesResponse? =
+            ParseUtils.parse(service.fetchSingleMessageMetadata(messageId).execute())
 
     @Throws(IOException::class)
     override fun markMessageAsRead(messageIds: IDList) {
@@ -101,51 +97,46 @@ class MessageApi (private val service : MessageService) : BaseApi(), MessageApiS
 
     @WorkerThread
     @Throws(Exception::class)
-    override fun messageDetail(messageId: String): MessageResponse {
-        return ParseUtils.parse(service.messageDetail(messageId).execute())
-    }
+    override fun messageDetail(messageId: String): MessageResponse =
+            ParseUtils.parse(service.messageDetail(messageId).execute())
 
     @WorkerThread
-    @Throws(IOException::class)
-    override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse {
-        return ParseUtils.parse(service.messageDetail(messageId, retrofitTag).execute())
-    }
-
-    @WorkerThread
-    @Throws(Exception::class)
-    override fun messageDetailObservable(messageId: String): Observable<MessageResponse> {
-        return service.messageDetailObservable(messageId)
-    }
+    override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
+            try {
+                ParseUtils.parse(service.messageDetail(messageId, retrofitTag).execute())
+            } catch (exc: Exception) {
+                Timber.e(exc, "An exception was thrown while fetching message details")
+                null
+            }
 
     @WorkerThread
     @Throws(Exception::class)
-    override fun search(query: String, page: Int): MessagesResponse {
-        return ParseUtils.parse(service.search(query, page).execute())
-    }
+    override fun messageDetailObservable(messageId: String): Observable<MessageResponse> =
+            service.messageDetailObservable(messageId)
+
+    @WorkerThread
+    @Throws(Exception::class)
+    override fun search(query: String, page: Int): MessagesResponse =
+            ParseUtils.parse(service.search(query, page).execute())
 
     @Throws(IOException::class)
-    override fun searchByLabelAndPage(query: String, page: Int): MessagesResponse {
-        return ParseUtils.parse(service.searchByLabel(query, page).execute())
-    }
+    override fun searchByLabelAndPage(query: String, page: Int): MessagesResponse =
+            ParseUtils.parse(service.searchByLabel(query, page).execute())
 
     @Throws(IOException::class)
-    override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse {
-        return ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
-    }
+    override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse =
+            ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
 
     @Throws(IOException::class)
-    override fun createDraft(newMessage: NewMessage): MessageResponse? {
-        return ParseUtils.parse(service.createDraft(newMessage).execute())
-    }
+    override fun createDraft(newMessage: NewMessage): MessageResponse? =
+            ParseUtils.parse(service.createDraft(newMessage).execute())
 
     @Throws(IOException::class)
-    override fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse? {
-        return ParseUtils.parse(service.updateDraft(messageId, newMessage, retrofitTag).execute())
-    }
+    override fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse? =
+            ParseUtils.parse(service.updateDraft(messageId, newMessage, retrofitTag).execute())
 
-    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> {
-        return service.sendMessage(messageId, message, retrofitTag)
-    }
+    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> =
+            service.sendMessage(messageId, message, retrofitTag)
 
     @Throws(IOException::class)
     override fun unlabelMessages(idList: IDList) {
@@ -153,9 +144,6 @@ class MessageApi (private val service : MessageService) : BaseApi(), MessageApiS
     }
 
     @Throws(IOException::class)
-    override fun labelMessages(body: IDList): MoveToFolderResponse? {
-        return ParseUtils.parse(service.labelMessages(body).execute())
-    }
-
-
+    override fun labelMessages(body: IDList): MoveToFolderResponse? =
+            ParseUtils.parse(service.labelMessages(body).execute())
 }

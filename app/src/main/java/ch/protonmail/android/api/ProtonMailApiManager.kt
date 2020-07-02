@@ -218,7 +218,8 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun messageDetail(messageId: String): MessageResponse = api.messageDetail(messageId)
 
-    override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse = api.messageDetail(messageId, retrofitTag)
+    override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
+            api.messageDetail(messageId, retrofitTag)
 
     override fun messageDetailObservable(messageId: String): Observable<MessageResponse> = api.messageDetailObservable(messageId)
 

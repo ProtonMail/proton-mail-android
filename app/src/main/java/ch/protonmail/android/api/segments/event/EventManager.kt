@@ -44,13 +44,15 @@ const val PREF_LATEST_EVENT = "latest_event"
 class EventManager {
 
     @Inject
-    lateinit var mApi: ProtonMailApiManager
+    lateinit var protonMailApiManager: ProtonMailApiManager
     @Inject
-    lateinit var mUserManager: UserManager
+    lateinit var userManager: UserManager
     @Inject
-    lateinit var mJobManager: JobManager
+    lateinit var jobManager: JobManager
     @Inject
     lateinit var databaseProvider: DatabaseProvider
+    @Inject
+    lateinit var protonMailApplication: ProtonMailApplication
 
     private var service: EventService
     private var sharedPrefs = mutableMapOf<String, SharedPreferences>()
@@ -58,7 +60,7 @@ class EventManager {
 
     init {
         ProtonMailApplication.getApplication().appComponent.inject(this)
-        service = mApi.getSecuredServices().event
+        service = protonMailApiManager.getSecuredServices().event
     }
 
     fun reconfigure(service: EventService) {
@@ -94,7 +96,8 @@ class EventManager {
     fun start(loggedInUsers: List<String>) {
         loggedInUsers.forEach { username ->
             if (!eventHandlers.containsKey(username)) {
-                eventHandlers[username] = EventHandler(mApi, databaseProvider, mUserManager, mJobManager, username)
+                eventHandlers[username] = EventHandler(protonMailApplication, protonMailApiManager, databaseProvider,
+                        userManager, jobManager, username)
             }
         }
 
@@ -106,12 +109,18 @@ class EventManager {
         }
     }
 
+    /**
+     * Clears the state of the EventManager for all users.
+     */
     fun clearState() {
         sharedPrefs = mutableMapOf()
         eventHandlers = mutableMapOf()
     }
 
-    fun clearState(username : String) {
+    /**
+     * Clears the state of the EventManager for one user only.
+     */
+    fun clearState(username: String) {
         sharedPrefs.remove(username)
         eventHandlers.remove(username)
     }
@@ -152,11 +161,12 @@ class EventManager {
             return
         }
         Log.d("PMTAG", "EventManager handler stage and write")
-        handler.stage(response)
-        // if we crash between these steps, we need to force refresh: our current state will become invalid
-        handler.write()
-        // Update next event id only after writing updates to local cache has finished successfully
-        backupNextEventId(handler.username, response.eventID)
+        if (handler.stage(response)) {
+            // Write the updates since the staging was completed without any error
+            handler.write()
+            // Update next event id only after writing updates to local cache has finished successfully
+            backupNextEventId(handler.username, response.eventID)
+        }
     }
 
     private fun lockState(username: String) {
@@ -165,18 +175,18 @@ class EventManager {
 
     private fun recoverNextEventId(username: String): String? {
         val prefs = sharedPrefs.getOrPut(username, {
-            ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+            protonMailApplication.getSecureSharedPreferences(username)
         })
-        Log.d("PMTAG", "EventManager recoverLastEventId, user=${mUserManager.username}")
+        Log.d("PMTAG", "EventManager recoverLastEventId, user=${userManager.username}")
         val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
         return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
 
     private fun backupNextEventId(username: String, eventId: String) {
         val prefs = sharedPrefs.getOrPut(username, {
-            ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
+            protonMailApplication.getSecureSharedPreferences(username)
         })
-        Log.d("PMTAG", "EventManager backupLastEventId, user=${mUserManager.username}")
+        Log.d("PMTAG", "EventManager backupLastEventId, user=${userManager.username}")
         prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()
     }
 }
