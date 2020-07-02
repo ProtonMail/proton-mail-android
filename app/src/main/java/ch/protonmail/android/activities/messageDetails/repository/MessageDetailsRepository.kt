@@ -83,7 +83,7 @@ class MessageDetailsRepository @Inject constructor(
     /**
      * Reloads all statically required dependencies when currently active user changes.
      */
-    fun reloadDependenciesForUser(username: String) {
+    fun reloadDependenciesForUser(username: String?) {
         pendingActionsDatabase = databaseProvider.providePendingActionsDao(username)
         messagesDao = databaseProvider.provideMessagesDao(username)
     }
