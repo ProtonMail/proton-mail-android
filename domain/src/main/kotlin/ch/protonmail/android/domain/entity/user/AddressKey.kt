@@ -38,10 +38,12 @@ data class AddressKey(
     val version: UInt,
     /**
      * Represented on BE as 'Flags' 2
+     * It is `true` is Flags is 2 or 3 ( 2 + 1 )
      */
     val canEncrypt: Boolean,
     /**
      * Represented on BE as 'Flags' 1
+     * It is `true` is Flags is 1 or 3 ( 1 + 2 )
      */
     val canVerifySignature: Boolean,
     val publicKey: PgpField.PublicKey,
