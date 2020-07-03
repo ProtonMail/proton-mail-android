@@ -67,6 +67,8 @@ const val `Proton-android-test version` =       "0.1"           // Released: May
 const val `Proton-android-instr-test version` = "0.1.1"         // Released: Jun 17, 2020
 const val `Proton-kotlin-test version` =        "0.1"           // Released: Jun 10, 2020
 
+const val `Proton-domain version` =             "0.1"           // Released: Jul 03, 2020
+
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 @Deprecated("To be removed in favour of package published on Bintray") const val `old protonCore version` =        "0.2.21"        // Released: Mar 13, 2020
 

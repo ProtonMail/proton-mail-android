@@ -26,6 +26,7 @@ plugins {
 dependencies {
     api(
         `Proton-kotlin-util`,
+        `Proton-domain`,
 
         `kotlin-jdk7`,
         `coroutines-core`
