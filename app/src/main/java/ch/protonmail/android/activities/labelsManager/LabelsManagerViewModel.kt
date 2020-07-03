@@ -20,7 +20,12 @@ package ch.protonmail.android.activities.labelsManager
 
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
 import ch.protonmail.android.api.models.room.messages.Label
@@ -28,8 +33,8 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.jobs.DeleteLabelJob
 import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
+import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
-import ch.protonmail.libs.core.arch.map
 import com.birbit.android.jobqueue.JobManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from

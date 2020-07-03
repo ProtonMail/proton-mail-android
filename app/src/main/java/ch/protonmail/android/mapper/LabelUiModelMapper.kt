@@ -23,9 +23,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.Unsupported
-import ch.protonmail.android.utils.unsupported
-import ch.protonmail.libs.core.arch.UiModelMapper
 
 /**
  * A Mapper of [LabelUiModel]
@@ -36,16 +33,15 @@ import ch.protonmail.libs.core.arch.UiModelMapper
  *
  * @author Davide Farella
  */
-internal class LabelUiModelMapper(private val isLabelEditable: Boolean)
-    : UiModelMapper<Label, LabelUiModel, Unsupported> {
+internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiModelMapper<Label, LabelUiModel> {
 
     /** @return [LabelUiModel] from receiver [Label] Entity */
     override fun Label.toUiModel(): LabelUiModel {
 
-        val type = if ( exclusive )
+        val type = if (exclusive)
             LabelUiModel.Type.FOLDERS else LabelUiModel.Type.LABELS
 
-        val image = when( type ) {
+        val image = when (type) {
             LabelUiModel.Type.LABELS ->
                 if (isLabelEditable) R.drawable.label_edit_active else R.drawable.ic_menu_label
             LabelUiModel.Type.FOLDERS ->
@@ -53,20 +49,20 @@ internal class LabelUiModelMapper(private val isLabelEditable: Boolean)
         }
 
         val normalizedColor =
-                try { Color.parseColor( UiUtil.normalizeColor( color ) ) }
-                catch ( t: Throwable ) { Color.WHITE }
+            try {
+                Color.parseColor(UiUtil.normalizeColor(color))
+            } catch (t: Throwable) {
+                Color.WHITE
+            }
 
         return LabelUiModel(
-                labelId =               id,
-                name =                  name,
-                image =                 image,
-                color =                 normalizedColor,
-                isChecked =             false,
-                display =               display,
-                type =                  type
+            labelId = id,
+            name = name,
+            image = image,
+            color = normalizedColor,
+            isChecked = false,
+            display = display,
+            type = type
         )
     }
-
-    /** Mapping [LabelUiModel] to Entity is [Unsupported] */
-    override fun LabelUiModel.toEntity() = unsupported
 }
