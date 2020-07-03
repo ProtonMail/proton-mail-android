@@ -70,10 +70,19 @@ internal class SettingsAdapter : BaseAdapter<SettingsItemUiModel, SettingsAdapte
         }
     }
 
-    private class ItemViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
+    internal class ItemViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
+        lateinit var header: String
+
         override fun onBind(item: SettingsItemUiModel) = with(itemView as SettingsDefaultItemView) {
             super.onBind(item)
-            setSettingHeading(if (item.settingHeader.isNullOrEmpty()) getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context) else item.settingHeader)
+
+            header = if (item.settingHeader.isNullOrEmpty()){
+                getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context)
+            } else {
+                item.settingHeader!!
+            }
+
+            setSettingHeading(header)
             setHasValue(item.settingHasValue)
             setItemType(item.settingType!!.ordinal)
             if (item.settingType == EDIT_TEXT || item.settingType == TOGGLE_N_EDIT) {

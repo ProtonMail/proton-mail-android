@@ -38,6 +38,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         tools:visibility="visible"/>
 
     <RelativeLayout
+        android:id="@+id/menuItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/selectableItemBackground"

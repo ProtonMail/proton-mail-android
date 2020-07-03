@@ -24,24 +24,24 @@ import org.jetbrains.annotations.Contract
 /**
  * Created by Nikola Nolchevski on 31-Mar-20.
  */
-class TestUser @Contract(pure = true) private constructor(var name: String, var password: String, var mailboxPassword: String?, var twoFASecurityKey: String?) {
+class TestUser @Contract(pure = true) private constructor(var name: String, var email: String, var password: String, var mailboxPassword: String?, var twoFASecurityKey: String?) {
 
     val twoFACode: String get() = Totp(this.twoFASecurityKey).now()
 
     companion object {
         @Contract(value = " -> new", pure = true)
         fun twoPassUser(): TestUser {
-            return TestUser("PMAutomationRobot1", "auto123", "123", null)
+            return TestUser("PMAutomationRobot1", "PMAutomationRobot1@protonmail.com", "auto123", "123", null)
         }
 
         @Contract(value = " -> new", pure = true)
         fun onePassUser(): TestUser {
-            return TestUser("PMAutomationRobot2", "auto123", null, null)
+            return TestUser("PMAutomationRobot2", "PMAutomationRobot2@protonmail.com", "auto123", null, null)
         }
 
         @Contract(value = " -> new", pure = true)
         fun onePassUserWith2FA(): TestUser {
-            return TestUser("PMAutomationRobot5", "auto123", null, "ATBG2FIRWHEFBLKS3ANCRPN4TCHQUP5B")
+            return TestUser("PMAutomationRobot5", "PMAutomationRobot5@protonmail.com", "auto123", null, "ATBG2FIRWHEFBLKS3ANCRPN4TCHQUP5B")
         }
 
         /*
@@ -55,7 +55,7 @@ class TestUser @Contract(pure = true) private constructor(var name: String, var 
      */
         @Contract(value = " -> new", pure = true)
         fun twoPassUserWith2FA(): TestUser {
-            return TestUser("PMAutomationRobot6", "auto123", "123", "37C2M62FFPI44ZV6IE6UIBBDRIADZL67")
+            return TestUser("PMAutomationRobot6", "PMAutomationRobot6@protonmail.com", "auto123", "123", "37C2M62FFPI44ZV6IE6UIBBDRIADZL67")
         } /*
     Important: Please make sure you saved the recovery codes.
     Otherwise you can permanently lose access to your account if you lose your 2FA device.

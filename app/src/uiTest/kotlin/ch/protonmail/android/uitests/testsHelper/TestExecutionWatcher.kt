@@ -16,17 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests
+package ch.protonmail.android.uitests.testsHelper
 
-import ch.protonmail.android.uitests.tests.composer.ComposerTests
-import ch.protonmail.android.uitests.tests.login.LoginTests
-import org.junit.runner.RunWith
-import org.junit.runners.Suite
+import org.junit.rules.TestWatcher
+import org.junit.runner.Description
 
+class TestExecutionWatcher : TestWatcher() {
 
-@RunWith(Suite::class)
-@Suite.SuiteClasses(
-    LoginTests::class,
-    ComposerTests::class
-)
-class TestSuite
+    override fun failed(e: Throwable?, description: Description?) {
+        //TODO save logcat, save screenshot
+    }
+}

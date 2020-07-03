@@ -16,8 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+@file:Suppress("SameParameterValue")
+
 package ch.protonmail.android.uitests.testsHelper
 
+import android.content.Context
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ScrollView
@@ -27,13 +30,45 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.action.ViewActions.clearText
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
+import androidx.test.espresso.action.ViewActions.longClick
+import androidx.test.espresso.action.ViewActions.pressImeActionButton
+import androidx.test.espresso.action.ViewActions.pressKey
+import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.swipeLeft
+import androidx.test.espresso.action.ViewActions.swipeRight
+import androidx.test.espresso.action.ViewActions.swipeUp
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
+import androidx.test.espresso.matcher.ViewMatchers.isChecked
+import androidx.test.espresso.matcher.ViewMatchers.isClickable
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
+import androidx.test.espresso.matcher.ViewMatchers.withClassName
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withHint
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParent
+import androidx.test.espresso.matcher.ViewMatchers.withSubstring
+import androidx.test.espresso.matcher.ViewMatchers.withTagValue
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithTextAppears
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.anything
+import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.junit.Assert
@@ -50,8 +85,49 @@ open class UIActions {
     fun insertTextIntoFieldWithId(@IdRes objectId: Int, textToBeTyped: String?): ViewInteraction =
         onView(withId(objectId)).perform(replaceText(textToBeTyped), closeSoftKeyboard())
 
+    fun clickOnObjectWithId(@IdRes objectId: Int): ViewInteraction =
+        onView(withId(objectId)).perform(click())
+
+    fun clickOnObjectWithTag(tag: String): ViewInteraction =
+        onView(withTagValue(`is`(tag))).perform(click())
+
+    fun clickOnObjectWithTag(@StringRes tagStringId: Int): ViewInteraction =
+        onView(withTagValue(`is`(targetContext.resources.getString(tagStringId))))
+            .perform(click())
+
+    fun clickOnObjectWithIdAndAncestorTag(@IdRes objectId: Int, ancestorTag: String): ViewInteraction =
+        onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag))))).perform(click())
+
+    fun checkObjectWithIdAndAncestorTagIsChecked(@IdRes objectId: Int, ancestorTag: String, state: Boolean): ViewInteraction {
+        return when (state) {
+            true -> onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                .check(matches(isChecked()))
+            false -> onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                .check(matches(isNotChecked()))
+        }
+    }
+
+    fun checkObjectWithIdAndAncestorTagIsNotChecked(@IdRes objectId: Int, ancestorTag: String): ViewInteraction =
+        onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag))))).check(matches(isNotChecked()))
+
     fun ViewInteraction.insertText(textToBeTyped: String?): ViewInteraction =
         this.perform(replaceText(textToBeTyped), closeSoftKeyboard())
+
+    fun ViewInteraction.verifyChecked(): ViewInteraction =
+        this.check(matches(isChecked()))
+
+    fun ViewInteraction.verifyNotChecked(): ViewInteraction =
+        this.check(matches(isNotChecked()))
+
+    fun verifyObjectWitIdAndParentId(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes optionText: Int) {
+        if (UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isNotChecked(),
+                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText)), isDisplayed()))), 200)) {
+            onView(allOf(withId(objectId),
+                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText))))))
+                .check(matches(isDisplayed()))
+                .perform(click())
+        }
+    }
 
     fun insertTextIntoFieldWithIdAndSibling(
         @IdRes objectId: Int,
@@ -68,6 +144,14 @@ open class UIActions {
 
     protected fun typeTextIntoFieldWithIdAndPressImeAction(@IdRes objectId: Int, textToBeTyped: String?) {
         onView(withId(objectId)).perform(click(), typeText(textToBeTyped), pressImeActionButton())
+    }
+
+    protected fun setTextIntoFieldWithIdAndAncestorTag(
+        @IdRes objectId: Int,
+        ancestorTag: String,
+        textToBeTyped: String) {
+        onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+            .perform(replaceText(textToBeTyped))
     }
 
     protected fun insertTextIntoFieldWithHint(@IdRes hintText: Int, textToBeTyped: String?) {
@@ -177,7 +261,7 @@ open class UIActions {
     protected fun positionOfObjectWhichNotContainsObjectWithId(@IdRes recyclerViewId: Int, @IdRes notContainsObjectWithId: Int): Int {
         var position = 0
         while (UICustomViewActionsAndMatchers.viewExists(allOf(isDisplayed(),
-                RecyclerViewMatcher.Companion.withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsObjectWithId)), 200)) {
+                RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsObjectWithId)), 200)) {
             position++
         }
         return position
@@ -186,7 +270,7 @@ open class UIActions {
     protected fun positionOfObjectWhichContainsObjectWithIdAndText(@IdRes recyclerViewId: Int, @IdRes containsObjectWithId: Int, @StringRes containsObjectWithText: Int): Int {
         var position = 0
         while (!UICustomViewActionsAndMatchers.viewExists(allOf(isDisplayed(),
-                RecyclerViewMatcher.Companion.withRecyclerView(recyclerViewId).atPositionOnView(position, containsObjectWithId),
+                RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, containsObjectWithId),
                 withText(containsObjectWithText)), 200)) {
             position++
         }
@@ -194,7 +278,7 @@ open class UIActions {
     }
 
     protected fun checkIfObjectWithPositionInRecyclerViewIsDisplayed(@IdRes recyclerViewId: Int, position: Int, @IdRes objectId: Int) {
-        onView(RecyclerViewMatcher.Companion.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).check(matches(isDisplayed()))
+        onView(RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).check(matches(isDisplayed()))
     }
 
     protected fun checkIfObjectWithIdNotDisplayed(@IdRes objectId: Int) {
@@ -271,9 +355,9 @@ open class UIActions {
 
     protected fun scrollDownAndClickObjectWithIdAndTextIsFound(@IdRes recyclerViewId: Int, @IdRes objectId: Int, objectContainsText: String?) {
         var position = 1
-        while (!UICustomViewActionsAndMatchers.viewExists(allOf(isDisplayed(), RecyclerViewMatcher.Companion.withRecyclerView(recyclerViewId).atPosition(position),
+        while (!UICustomViewActionsAndMatchers.viewExists(allOf(isDisplayed(), RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPosition(position),
                 hasDescendant(withSubstring(objectContainsText))), 100)) {
-            onView(allOf(isDisplayed(), RecyclerViewMatcher.Companion.withRecyclerView(recyclerViewId).atPosition(position + 1), hasDescendant(withId(objectId))))
+            onView(allOf(isDisplayed(), RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPosition(position + 1), hasDescendant(withId(objectId))))
                 .perform(swipeUp())
             position++
         }
@@ -281,7 +365,7 @@ open class UIActions {
     }
 
     protected fun clickComposeToGroupButtonAtPosition(@IdRes recyclerViewId: Int, @IdRes objectId: Int, position: Int) {
-        onView(RecyclerViewMatcher.Companion.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).perform(click())
+        onView(RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).perform(click())
     }
 
     protected fun getTextFromObject(@IdRes objectId: Int): String? {
@@ -293,7 +377,7 @@ open class UIActions {
     }
 
     protected fun getTextFromObjectInRecyclerViewAtPosition(@IdRes recyclerViewId: Int, @IdRes objectId: Int, position: Int): String? {
-        return UICustomViewActionsAndMatchers.getTextFromTextView(RecyclerViewMatcher.Companion.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId))
+        return UICustomViewActionsAndMatchers.getTextFromTextView(RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId))
     }
 
     protected fun scrollDownElementInScrollView(@IdRes objectId: Int) {
@@ -349,13 +433,7 @@ open class UIActions {
         }
     }
 
-    protected fun waitUntilObjectWithContentDescriptionAppearsInView(@StringRes contentDescription: String) {
-        UICustomViewActionsAndMatchers.waitUntilObjectWithContentDescriptionAppears(contentDescription)
-    }
-
     companion object {
-        fun clickOnObjectWithId(@IdRes objectId: Int) {
-            onView(withId(objectId)).check(matches(isDisplayed())).perform(click())
-        }
+        val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
     }
 }

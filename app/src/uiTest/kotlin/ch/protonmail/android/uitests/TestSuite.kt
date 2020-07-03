@@ -16,14 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android
+package ch.protonmail.android.uitests
 
-import kotlin.test.Test
+import ch.protonmail.android.uitests.tests.composer.ComposerTests
+import ch.protonmail.android.uitests.tests.login.LoginTests
+import ch.protonmail.android.uitests.tests.settings.AccountSettingsTests
+import org.junit.runner.RunWith
+import org.junit.runners.Suite
 
-class UiTestExample {
-
-    @Test
-    fun print_device_name() {
-        println("I'm running on: ${android.os.Build.MODEL}")
-    }
-}
+@RunWith(Suite::class)
+@Suite.SuiteClasses(
+    AccountSettingsTests::class,
+    ComposerTests::class,
+    LoginTests::class
+)
+class TestSuite

@@ -16,76 +16,108 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.actions
+package ch.protonmail.android.uitests.robots.login
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.results.LoginResult
+import ch.protonmail.android.uitests.robots.composer.ComposerRobot
 import ch.protonmail.android.uitests.testsHelper.TestUser
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
  * [LoginRobot] class contains actions and verifications for login functionality.
  */
-class LoginRobot : UIActions() {
+open class LoginRobot : UIActions() {
 
-    fun loginUser(user: TestUser) {
-        username(user.name)
+    fun loginUser(user: TestUser): LoginRobot {
+        return username(user.name)
             .password(user.password)
             .signIn()
     }
 
-    fun loginTwoPasswordUser(user: TestUser) {
-        username(user.name)
+    fun loginUserWithTwoFA(user: TestUser): LoginRobot {
+        return username(user.name)
+            .password(user.password)
+            .signIn()
+            .twoFACode(user.twoFACode)
+            .confirm2FA()
+    }
+
+    fun loginTwoPasswordUser(user: TestUser): LoginRobot {
+        return username(user.name)
             .password(user.password)
             .signIn()
             .mailboxPassword(user.mailboxPassword)
             .decrypt()
     }
 
-    fun username(name: String): LoginRobot {
+    fun loginTwoPasswordUserWithTwoFA(user: TestUser): LoginRobot {
+        return username(user.name)
+            .password(user.password)
+            .signIn()
+            .twoFACode(user.twoFACode)
+            .confirm2FA()
+            .mailboxPassword(user.mailboxPassword)
+            .decrypt()
+    }
+
+    private fun username(name: String): LoginRobot {
         insertTextIntoFieldWithId(R.id.username, name)
         return this
     }
 
-    fun password(password: String?): LoginRobot {
+    private fun password(password: String?): LoginRobot {
         insertTextIntoFieldWithId(R.id.password, password)
         return this
     }
 
-    fun signIn(): LoginRobot {
+    private fun signIn(): LoginRobot {
         clickOnObjectWithIdAndText(R.id.sign_in, R.string.sign_in)
         return this
     }
 
-    fun mailboxPassword(password: String?): LoginRobot {
+    private fun mailboxPassword(password: String?): LoginRobot {
         waitUntilObjectWithIdAppearsInView(R.id.mailbox_password).insertText(password)
         return this
     }
 
-    fun decrypt() {
+    private fun decrypt(): LoginRobot {
         clickOnObjectWithIdAndText(R.id.sign_in, R.string.decrypt)
+        return this
     }
 
-    fun confirm2FA(): LoginRobot {
+    private fun confirm2FA(): LoginRobot {
         clickOnObjectWithId(android.R.id.button1)
         return this
     }
 
-    fun twoFACode(twoFACode: String?): LoginRobot {
+    private fun twoFACode(twoFACode: String?): LoginRobot {
         waitUntilObjectWithIdAppearsInView(R.id.two_factor_code)
         onView(withId(R.id.two_factor_code)).insertText(twoFACode)
         return this
     }
 
-    fun secondPass(mailboxPassword: String): LoginRobot {
+    private fun secondPass(mailboxPassword: String): LoginRobot {
         waitUntilObjectWithIdAppearsInView(R.id.mailbox_password).insertText(mailboxPassword)
         return this
     }
 
-    fun confirmSecondPass(): LoginResult {
+    private fun confirmSecondPass(): LoginRobot {
         clickOnObjectWithIdAndText(R.id.sign_in, R.string.decrypt)
-        return LoginResult()
+        return this
     }
+
+    /**
+     * Contains all the validations that can be performed by [LoginRobot].
+     */
+    class Verify : ComposerRobot() {
+
+        fun loginSuccessful(): LoginRobot {
+            waitUntilObjectWithIdAppearsInView(R.id.compose)
+            return LoginRobot()
+        }
+    }
+
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as ComposerRobot
 }

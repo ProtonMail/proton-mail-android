@@ -126,6 +126,7 @@ internal class DrawerAdapter : BaseAdapter<
             super.onBind( item )
             label.setText( item.labelRes )
             icon.setImageResource( item.iconRes )
+            menuItem.tag = resources.getString(item.labelRes)
         }
     }
 

@@ -16,19 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.actions
+package ch.protonmail.android.uitests.robots.composer
 
 import android.widget.LinearLayout
 import android.widget.NumberPicker
-import androidx.annotation.IdRes
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.results.ComposerResult
-import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent
+import ch.protonmail.android.uitests.robots.composer.ComposerRobot.MessageExpirationRobot
+import ch.protonmail.android.uitests.robots.composer.ComposerRobot.MessagePasswordRobot
+import ch.protonmail.android.uitests.robots.shared.SharedRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.isChildOf
@@ -42,19 +39,19 @@ import org.hamcrest.CoreMatchers.allOf
  */
 open class ComposerRobot : UIActions() {
 
-    fun sendMessageToInternalTrustedAddress(composerData: TestData): ComposerResult =
+    fun sendMessageToInternalTrustedAddress(composerData: TestData): ComposerRobot =
         composeMessageToInternalTrustedAddress(composerData).send()
 
-    fun sendMessageToInternalNotTrustedAddress(composerData: TestData): ComposerResult =
+    fun sendMessageToInternalNotTrustedAddress(composerData: TestData): ComposerRobot =
         composeMessageToInternalNotTrustedAddress(composerData).send()
 
-    fun sendMessageToExternalAddressPGPEncrypted(composerData: TestData): ComposerResult =
+    fun sendMessageToExternalAddressPGPEncrypted(composerData: TestData): ComposerRobot =
         composeMessageToExternalAddressPGPEncrypted(composerData).send()
 
-    fun sendMessageToExternalAddressPGPSigned(composerData: TestData): ComposerResult =
+    fun sendMessageToExternalAddressPGPSigned(composerData: TestData): ComposerRobot =
         composeMessageToExternalAddressPGPSigned(composerData).send()
 
-    fun sendMessageTOandCC(composerData: TestData): ComposerResult =
+    fun sendMessageTOandCC(composerData: TestData): ComposerRobot =
         recipients(composerData.internalEmailAddressTrustedKeys)
             .showAdditionalRows()
             .ccRecipients(composerData.externalEmailAddressPGPEncrypted)
@@ -62,7 +59,7 @@ open class ComposerRobot : UIActions() {
             .body(composerData.messageBody)
             .send()
 
-    fun sendMessageTOandCCandBCC(composerData: TestData): ComposerResult =
+    fun sendMessageTOandCCandBCC(composerData: TestData): ComposerRobot =
         recipients(composerData.internalEmailAddressTrustedKeys)
             .showAdditionalRows()
             .ccRecipients(composerData.externalEmailAddressPGPEncrypted)
@@ -71,20 +68,20 @@ open class ComposerRobot : UIActions() {
             .body(composerData.messageBody)
             .send()
 
-    fun sendMessageWithPassword(composerData: TestData): ComposerResult =
+    fun sendMessageWithPassword(composerData: TestData): ComposerRobot =
         composeMessageToExternalAddressPGPSigned(composerData)
             .setMessagePassword()
             .definePasswordWithHint()
             .send()
 
-    fun sendMessageExpiryTimeInDays(composerData: TestData, days: Int): ComposerResult =
+    fun sendMessageExpiryTimeInDays(composerData: TestData, days: Int): ComposerRobot =
         composeMessageToInternalTrustedAddress(composerData)
             .messageExpiration()
             .setExpirationInDays(days)
             .verifyExpirationTimeShown(days)
             .send()
 
-    fun sendMessageEOAndExpiryTime(composerData: TestData, days: Int): ComposerResult {
+    fun sendMessageEOAndExpiryTime(composerData: TestData, days: Int): ComposerRobot {
         composeMessageToExternalAddressPGPSigned(composerData)
             .setMessagePassword()
             .definePasswordWithHint()
@@ -92,10 +89,22 @@ open class ComposerRobot : UIActions() {
             .setExpirationInDays(days)
             .verifyExpirationTimeShown(days)
             .send()
-        return ComposerResult()
+        return ComposerRobot()
     }
 
-    fun sendMessageEOAndExpiryTimeWithAttachment(composerData: TestData, days: Int): ComposerResult {
+    fun sendMessageEOAndExpiryTimeAndPGPConfirmation(composerData: TestData, days: Int): ComposerRobot {
+        composeMessageToExternalAddressPGPSigned(composerData)
+            .setMessagePassword()
+            .definePasswordWithHint()
+            .messageExpiration()
+            .setExpirationInDays(days)
+            .verifyExpirationTimeShown(days)
+            .sendWithPGPConfirmation()
+            .confirmSendingWithPGP()
+        return ComposerRobot()
+    }
+
+    fun sendMessageEOAndExpiryTimeWithAttachment(composerData: TestData, days: Int): ComposerRobot {
         composeMessageToExternalAddressPGPSigned(composerData)
             .setMessagePassword()
             .definePasswordWithHint()
@@ -106,48 +115,64 @@ open class ComposerRobot : UIActions() {
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
             .send()
-
-        return ComposerResult()
+        return ComposerRobot()
     }
 
-    fun sendMessageCameraCaptureAttachment(composerData: TestData): ComposerResult {
+    fun sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(
+        composerData: TestData,
+        days: Int): ComposerRobot {
+        composeMessageToExternalAddressPGPSigned(composerData)
+            .setMessagePassword()
+            .definePasswordWithHint()
+            .messageExpiration()
+            .setExpirationInDays(days)
+            .verifyExpirationTimeShown(days)
+            .hideExpirationView()
+            .attachments()
+            .addImageCaptureAttachment(R.drawable.logo)
+            .sendWithPGPConfirmation()
+            .confirmSendingWithPGP()
+        return ComposerRobot()
+    }
+
+    fun sendMessageCameraCaptureAttachment(composerData: TestData): ComposerRobot {
         composeMessageToInternalTrustedAddress(composerData)
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
             .send()
-        return ComposerResult()
+        return ComposerRobot()
     }
 
-    fun sendMessageChooseAttachment(composerData: TestData): ComposerResult {
+    fun sendMessageChooseAttachment(composerData: TestData): ComposerRobot {
         composeMessageToInternalNotTrustedAddress(composerData)
             .attachments()
             .addFileAttachment(R.drawable.logo)
             .send()
-        return ComposerResult()
+        return ComposerRobot()
     }
 
-    fun sendMessageToInternalContactWithTwoAttachments(composerData: TestData): ComposerResult {
+    fun sendMessageToInternalContactWithTwoAttachments(composerData: TestData): ComposerRobot {
         composeMessageToInternalTrustedAddress(composerData)
             .attachments()
             .addTwoImageCaptureAttachments(R.drawable.logo, R.drawable.welcome)
             .send()
-        return ComposerResult()
+        return ComposerRobot()
     }
 
-    fun sendMessageToExternalContactWithOneAttachment(composerData: TestData): ComposerResult {
+    fun sendMessageToExternalContactWithOneAttachment(composerData: TestData): ComposerRobot {
         composeMessageToExternalAddressPGPEncrypted(composerData)
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
             .send()
-        return ComposerResult()
+        return ComposerRobot()
     }
 
-    fun sendMessageToExternalContactWithTwoAttachments(composerData: TestData): ComposerResult {
+    fun sendMessageToExternalContactWithTwoAttachments(composerData: TestData): ComposerRobot {
         composeMessageToExternalAddressPGPSigned(composerData)
             .attachments()
             .addTwoImageCaptureAttachments(R.drawable.logo, R.drawable.welcome)
             .send()
-        return ComposerResult()
+        return ComposerRobot()
     }
 
     private fun recipients(emails: String): ComposerRobot {
@@ -171,7 +196,7 @@ open class ComposerRobot : UIActions() {
     }
 
     private fun body(text: String): ComposerRobot {
-        typeTextIntoField(R.id.message_body, text)
+        insertTextIntoFieldWithId(R.id.message_body, text)
         return this
     }
 
@@ -200,9 +225,9 @@ open class ComposerRobot : UIActions() {
         return MessageAttachmentsRobot()
     }
 
-    private fun send(): ComposerResult {
+    private fun send(): ComposerRobot {
         clickOnObjectWithId(R.id.send_message)
-        return ComposerResult()
+        return ComposerRobot()
     }
 
     private fun sendWithPGPConfirmation(): PGPConfirmationRobot {
@@ -278,50 +303,16 @@ open class ComposerRobot : UIActions() {
 
         private fun expirationDays(days: Int): MessageExpirationRobot {
             onView(allOf(withClassName(`is`(NumberPicker::class.java.canonicalName)),
-                isChildOf(withClassName(`is`(LinearLayout::class.java.canonicalName)), 0)))
-                .check(matches(ViewMatchers.isDisplayed()))
+                isChildOf(withClassName(`is`(
+                    LinearLayout::class.java.canonicalName)),
+                    0)))
                 .perform(setValueInNumberPicker(days))
             return this
         }
 
         private fun confirmMessageExpiration(): ComposerRobot {
-            clickOnObjectWithId(android.R.id.button1)
+            SharedRobot.clickPositiveDialogButton()
             return ComposerRobot()
-        }
-    }
-
-    /**
-     * Class represents Message Attachments.
-     */
-    inner class MessageAttachmentsRobot {
-
-        fun addImageCaptureAttachment(@IdRes drawable: Int): ComposerRobot =
-            mockCameraImageCapture(drawable)
-                .navigateUpToComposerView()
-
-        fun addTwoImageCaptureAttachments(
-            @IdRes firstDrawable: Int,
-            @IdRes secondDrawable: Int): ComposerRobot =
-            mockCameraImageCapture(firstDrawable)
-                .mockCameraImageCapture(secondDrawable)
-                .navigateUpToComposerView()
-
-        fun addFileAttachment(@IdRes drawable: Int): ComposerRobot =
-            mockFileAttachment(drawable).navigateUpToComposerView()
-
-        private fun navigateUpToComposerView(): ComposerRobot {
-            clickObjectWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
-            return ComposerRobot()
-        }
-
-        private fun mockCameraImageCapture(@IdRes drawableId: Int): MessageAttachmentsRobot {
-            MockAddAttachmentIntent.mockCameraImageCapture(R.id.take_photo, drawableId)
-            return this
-        }
-
-        private fun mockFileAttachment(@IdRes drawable: Int): MessageAttachmentsRobot {
-            MockAddAttachmentIntent.mockChooseAttachment(R.id.attach_file, drawable)
-            return this
         }
     }
 
@@ -330,9 +321,31 @@ open class ComposerRobot : UIActions() {
      */
     inner class PGPConfirmationRobot {
 
-        fun confirmSendingWithPGP(): ComposerResult {
+        fun confirmSendingWithPGP(): ComposerRobot {
             clickOnObjectWithId(R.id.ok)
-            return ComposerResult()
+            return ComposerRobot()
         }
     }
+
+    /**
+     * Contains all the validations that can be performed by [ComposerRobot].
+     */
+    class Verify : ComposerRobot() {
+
+        fun defaultEmailAddressViewShown(): ComposerRobot {
+            return ComposerRobot()
+        }
+
+        fun sendingMessageToastShown(): ComposerRobot {
+            checkIfToastMessageIsDisplayed(R.string.sending_message)
+            return ComposerRobot()
+        }
+
+        fun messageSentToastShown(): ComposerRobot {
+            checkIfToastMessageIsDisplayed(R.string.message_sent)
+            return ComposerRobot()
+        }
+    }
+
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as ComposerRobot
 }
