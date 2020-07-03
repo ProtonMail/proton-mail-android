@@ -30,13 +30,13 @@ class TestUser @Contract(pure = true) private constructor(var name: String, var 
 
     companion object {
         @Contract(value = " -> new", pure = true)
-        fun twoPassUser(): TestUser {
-            return TestUser("PMAutomationRobot1", "PMAutomationRobot1@protonmail.com", "auto123", "123", null)
+        fun onePassUser(): TestUser {
+            return TestUser("PMAutomationRobot1", "PMAutomationRobot1@protonmail.com", "auto123", null, null)
         }
 
         @Contract(value = " -> new", pure = true)
-        fun onePassUser(): TestUser {
-            return TestUser("PMAutomationRobot2", "PMAutomationRobot2@protonmail.com", "auto123", null, null)
+        fun twoPassUser(): TestUser {
+            return TestUser("PMAutomationRobot2", "PMAutomationRobot2@protonmail.com", "auto123", "123", null)
         }
 
         @Contract(value = " -> new", pure = true)
