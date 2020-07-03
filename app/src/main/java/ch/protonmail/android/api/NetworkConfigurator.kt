@@ -24,21 +24,25 @@ import ch.protonmail.android.api.models.doh.ProxyItem
 import ch.protonmail.android.api.models.doh.ProxyList
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
-import ch.protonmail.android.utils.Logger
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 // region constants
-const val DOH_PROVIDER_TIMEOUT = 10000L
+const val DOH_PROVIDER_TIMEOUT = 20_000L
 private const val TAG = "NetworkConfigurator"
 // endregion
 
 /**
  * Created by dinokadrikj on 3/3/20.
  */
+
+/**
+ * NetworkConfigurator - used to retrieve and switch to alternative routing domains
+ */
 class NetworkConfigurator(
-        private val dohProviders: Array<DnsOverHttpsProviderRFC8484>,
-        private val prefs: SharedPreferences,
-        private val scope: CoroutineScope = GlobalScope
+    private val dohProviders: Array<DnsOverHttpsProviderRFC8484>,
+    private val prefs: SharedPreferences,
+    private val scope: CoroutineScope = GlobalScope
 ) {
 
     lateinit var networkSwitcher: INetworkSwitcher
@@ -46,7 +50,6 @@ class NetworkConfigurator(
 
     fun refreshDomainsAsync() = scope.async {
         if (!isRunning) {
-            Logger.doLog(TAG, "Setting running to true")
             isRunning = true
             callback?.startDohSignal()
             queryDomains()
@@ -56,7 +59,7 @@ class NetworkConfigurator(
     private suspend fun queryDomains() {
         val freshAlternativeUrls = mutableListOf<String>()
         val user = ProtonMailApplication.getApplication().userManager.user
-        if (user.allowSecureConnectionsViaThirdParties && !user.usingDefaultApi) {
+        if (!user.allowSecureConnectionsViaThirdParties) {
             networkSwitcher.reconfigureProxy(null) // force switch to old proxy
             user.usingDefaultApi = true
             isRunning = false
@@ -64,7 +67,7 @@ class NetworkConfigurator(
             return
         }
         for (provider in dohProviders) {
-            Logger.doLog(TAG, "Querying provider: " + dohProviders.indexOf(provider)) // 0 is quad9, 1 is google, 2 is cloudflare
+            // 0 is quad9, 1 is google, 2 is cloudflare
             val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                 val result = try {
                     provider.getAlternativeBaseUrls()
@@ -72,14 +75,12 @@ class NetworkConfigurator(
                     null
                 }
                 if (result != null) {
-                    Logger.doLog(TAG, "Result is: $result")
                     freshAlternativeUrls.addAll(result)
                 }
                 result != null
             }
-            // TODO: think if this is needed, rethink about using break at all
+
             if (success == true) {
-                Logger.doLog(TAG, "Success")
                 break
             }
         }
@@ -92,12 +93,13 @@ class NetworkConfigurator(
         val proxies =
         if (alternativeProxyList.isEmpty()) {
             // if the new list is empty, try with the old list perhaps there will be an api url available there
-            Logger.doLog(TAG, "New DoH list is empty, trying with cached alternative proxy urls")
             Proxies.getInstance(null, prefs) // or just try the last used proxy
         } else {
             Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
         }
-        // val proxies = Proxies.getInstance(ProxyList(alternativeProxyList), prefs) // supplying proxy list means that the savings will be invalidated
+
+        // supplying proxy list means that the savings will be invalidated
+        // val proxies = Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
         findWorkingDomain(proxies, currentTimestamp)
     }
 
@@ -111,57 +113,66 @@ class NetworkConfigurator(
 
     private fun findWorkingDomain(proxies: Proxies, timestamp: Long) {
         val proxyListReference = proxies.proxyList.proxies
-        GlobalScope.launch {
+        scope.launch {
+
+            // double-check if normal API call works before resorting to use alternative routing url
+            val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
+                val result = try {
+                    networkSwitcher.tryRequest { service ->
+                        service.pingAsync()
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Exception while pinging API before using alternative routing")
+                    null
+                }
+                result != null
+            }
+            if (success == true) {
+                callback?.stopAutoRetry()
+                networkSwitcher.reconfigureProxy(null)
+                ProtonMailApplication.getApplication().userManager.user.usingDefaultApi = true
+                isRunning = false
+                callback?.stopDohSignal()
+                return@launch
+            }
+
             proxyListReference.forEach {
-                Logger.doLog(TAG, "ProxyItem baseUrl is: " + it.baseUrl)
                 proxies.updateActive(it.baseUrl, timestamp)
                 networkSwitcher.reconfigureProxy(proxies)
                 val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                     val result = try {
-                        Logger.doLog(TAG, "Before ping async")
                         networkSwitcher.tryRequest { service ->
                             service.pingAsync()
                         }
-                        Logger.doLog(TAG, "Pinged async")
                     } catch (e: Exception) {
-                        Logger.doLog(TAG, "Pinged async: exception")
+                        Timber.e(e, "Exception while pinging alternative routing URL")
                         null
                     }
                     result != null // && result.code == 1000
                 }
                 if (success == true) {
-                    Logger.doLog(TAG, "Working alternative api url found")
-                    // now we have working api
                     proxies.updateSuccess(it.baseUrl, timestamp)
-                    // update api url that we are currently using
                     proxies.saveCurrentWorkingProxyDomain(proxies.getCurrentActiveProxy().baseUrl)
                     proxies.save()
-                    Logger.doLog(TAG, "Success: setting DOH running to: false")
                     isRunning = false
-                    Logger.doLog(TAG, "Success: setting usingOldApi to: false")
                     ProtonMailApplication.getApplication().userManager.user.usingDefaultApi = false
                     callback?.startAutoRetry()
                     callback?.stopDohSignal()
                     return@launch
                 } else {
-                    Logger.doLog(TAG, "Alternative api url NOT working")
-                    // try with other
                     proxies.updateFailed(it.baseUrl, timestamp)
                 }
             }
             callback?.stopAutoRetry()
-            //
-            networkSwitcher.reconfigureProxy(null) // TODO: DoH, if all the new proxies failed, revert back to using the old api
-            Logger.doLog(TAG, "Failure: setting usingOldApi to: false") //
-            ProtonMailApplication.getApplication().userManager.user.usingDefaultApi = true // TODO: DoH, should we use this here? maybe to true, since we can't use the new api anyways...
-            Logger.doLog(TAG, "Failure: setting DOH running to: false")
+            networkSwitcher.reconfigureProxy(null)
+            ProtonMailApplication.getApplication().userManager.user.usingDefaultApi = true
             isRunning = false
             callback?.stopDohSignal()
         }
     }
 
     companion object {
-        var callback : INetworkConfiguratorCallback? = null
+        var callback: INetworkConfiguratorCallback? = null
 
         fun setNetworkConfiguratorCallback(callback: INetworkConfiguratorCallback) {
             this.callback = callback
