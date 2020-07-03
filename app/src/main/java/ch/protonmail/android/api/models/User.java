@@ -467,6 +467,10 @@ public class User {
         return usedSpace;
     }
 
+    public int getRole() {
+        return role;
+    }
+
     public boolean isPaidUserSignatureEdit() {
         boolean allowMobileSignatureEdit = ProtonMailApplication.getApplication().getResources().getBoolean(R.bool.allow_mobile_signature_edit);
         return allowMobileSignatureEdit || role > 0;
