@@ -16,16 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.results
+package ch.protonmail.android.uitests.robots.shared
 
+import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
+/**
+ * [SharedRobot] class contains commonly used actions that usually depend on system UI components.
+ * Examples: UP button click, confirming or cancelling dialogs and similar.
+ */
+object SharedRobot : UIActions() {
 
-class LoginResult : UIActions() {
+    fun clickHamburgerOrUpButton() =
+        clickObjectWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
 
-    val isLoginSuccessful: Unit
-        get() {
-            waitUntilObjectWithIdAppearsInView(R.id.compose)
-        }
+    fun clickPositiveDialogButton() = clickOnObjectWithId(android.R.id.button1)
 }

@@ -16,17 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.results
+package ch.protonmail.android.uitests.testsHelper
 
-import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import androidx.annotation.IdRes
+import androidx.test.platform.app.InstrumentationRegistry
+import java.util.*
 
+object StringUtils {
 
-class ComposerResult : UIActions() {
+    private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-    val isMessageSent: Unit
-        get() {
-            checkIfToastMessageIsDisplayed(R.string.sending_message)
-            checkIfToastMessageIsDisplayed(R.string.message_sent)
-        }
+    fun stringFromResource(@IdRes id: Int): String {
+        return targetContext.getString(id)
+    }
+
+    fun getAlphaNumericStringWithSpecialCharacters(length: Long = 10): String {
+        val source = "aäbcdeëfghijklmnoöpqrstuuüvwxyz1234567890!@+_)(*&^%$#@!"
+        return Random().ints(length, 0, source.length)
+            .toArray()
+            .map(source::get)
+            .joinToString("")
+    }
 }

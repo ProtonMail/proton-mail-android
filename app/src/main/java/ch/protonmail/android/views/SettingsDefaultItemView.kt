@@ -73,6 +73,7 @@ class SettingsDefaultItemView @JvmOverloads constructor(context: Context, attrs:
             setSettingHeading(mHeading.toString())
             setHasValue(mHasValue)
             setItemType(mType)
+            setItemTag(mHeading)
         }
     }
 
@@ -252,6 +253,10 @@ class SettingsDefaultItemView @JvmOverloads constructor(context: Context, attrs:
                 buttonsContainer.gravity = Gravity.TOP
             }
         }
+    }
+
+    private fun setItemTag(tag: CharSequence?) {
+        this.tag = tag?.toString()
     }
 
     private fun setConstraints(view: View, startToStart: Boolean, endToStart: Boolean, endToEnd: Boolean, bottomToBottom: Boolean, viewId: Int) {
