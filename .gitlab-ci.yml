@@ -53,6 +53,7 @@ build prerelease:
   stage: build
   only:
     - prerelease
+    - tags
   tags:
     - android
   script:
