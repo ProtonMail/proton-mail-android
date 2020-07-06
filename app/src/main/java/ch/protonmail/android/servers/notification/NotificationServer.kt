@@ -500,7 +500,7 @@ class NotificationServer(private val context: Context,
 
         // Create content Intent to open Drafts
         val contentIntent = Intent(context, MailboxActivity::class.java)
-        contentIntent.putExtra(EXTRA_MAILBOX_LOCATION, Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue)
+        contentIntent.putExtra(EXTRA_MAILBOX_LOCATION, Constants.MessageLocationType.DRAFT.messageLocationTypeValue)
         contentIntent.putExtra(EXTRA_USERNAME, user.username)
 
         val stackBuilder = TaskStackBuilder.create(context)

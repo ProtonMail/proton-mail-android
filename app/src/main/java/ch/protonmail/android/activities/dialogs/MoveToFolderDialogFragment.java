@@ -105,7 +105,7 @@ public class MoveToFolderDialogFragment extends AbstractDialogFragment implement
 
     private List<FoldersAdapter.FolderItem> prepareUI() {
         return buildDefaultFolders(mMailboxLocation != Constants.MessageLocationType.INBOX, mMailboxLocation != Constants.MessageLocationType.ARCHIVE,
-                mMailboxLocation != Constants.MessageLocationType.SPAM, mMailboxLocation != Constants.MessageLocationType.TRASH && mMailboxLocation != Constants.MessageLocationType.ALL_DRAFT);
+                mMailboxLocation != Constants.MessageLocationType.SPAM, mMailboxLocation != Constants.MessageLocationType.TRASH && mMailboxLocation != Constants.MessageLocationType.DRAFT);
     }
 
     private FoldersAdapter.FolderItem createFolderItem(String labelId, String labelName,

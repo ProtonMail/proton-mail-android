@@ -132,7 +132,7 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         message.setLabelIDs(draftResponse.getMessage().getEventLabelIDs());
         message.setIsRead(true);
         message.setDownloaded(true);
-        message.setLocation(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue());
+        message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
         saveMessage(message, pendingActionsDatabase);
     }
 

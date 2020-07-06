@@ -22,7 +22,6 @@ import android.text.TextUtils;
 
 import com.birbit.android.jobqueue.Params;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,7 +66,7 @@ public class PostArchiveJob extends ProtonMailCounterJob {
                 if (mFolderIds != null) {
                     for (String folderId : mFolderIds) {
                         if (!TextUtils.isEmpty(folderId)) {
-                            message.removeLabels(Arrays.asList(folderId));
+                            message.removeLabels(Collections.singletonList(folderId));
                         }
                     }
                 }
@@ -95,9 +94,11 @@ public class PostArchiveJob extends ProtonMailCounterJob {
             }
             unreadIncrease = true;
         }
-        if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_SENT) {
-            message.setLocation(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue());
-            message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue())));
+        if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
+            message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
+            message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
+            message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue())));
+
         } else {
             message.setLocation(Constants.MessageLocationType.ARCHIVE.getMessageLocationTypeValue());
         }

@@ -22,7 +22,7 @@ import android.text.TextUtils;
 
 import com.birbit.android.jobqueue.Params;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
@@ -33,7 +33,6 @@ import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
-import timber.log.Timber;
 
 public class PostTrashJob extends ProtonMailCounterJob {
 
@@ -64,12 +63,14 @@ public class PostTrashJob extends ProtonMailCounterJob {
                     }
                     totalUnread++;
                 }
-                if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_SENT) {
-                    message.addLabels(Arrays.asList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
+                if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
+                    message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
+                    message.removeLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
+                    message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue())));
                 } else {
-                    message.addLabels(Arrays.asList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
+                    message.addLabels(Collections.singletonList(String.valueOf(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue())));
                     if (!TextUtils.isEmpty(mLabelId)) {
-                        message.removeLabels(Arrays.asList(mLabelId));
+                        message.removeLabels(Collections.singletonList(mLabelId));
                     }
                     message.setLocation(Constants.MessageLocationType.TRASH.getMessageLocationTypeValue());
                 }

@@ -150,7 +150,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 StringBuilder exceptionStringBuilder = getExceptionStringBuilder(throwable);
                 Sentry.capture(eventBuilder.withMessage(exceptionStringBuilder.toString()).build());
             }
-            message.setLocation(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue());
+            message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
             message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
             message.setTime(ServerTime.currentTimeMillis() / 1000);
             messageDetailsRepository.saveMessageInDB(message);
@@ -416,7 +416,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     messageSendResponse.getSent().writeTo(message);
                 }
                 // success
-                message.setLocation(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue());
+                message.setLocation(Constants.MessageLocationType.SENT.getMessageLocationTypeValue());
                 message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
                 message.removeLabels(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
                 messageDetailsRepository.saveMessageInDB(message);

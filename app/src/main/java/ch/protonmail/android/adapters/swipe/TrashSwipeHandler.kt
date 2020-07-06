@@ -29,7 +29,7 @@ import com.birbit.android.jobqueue.Job
 class TrashSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
-        return if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.ALL_DRAFT) {
+        return if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.DRAFT) {
             PostDeleteJob(listOf(message.messageId))
         } else {
             PostTrashJob(listOf(message.messageId), currentLocation)

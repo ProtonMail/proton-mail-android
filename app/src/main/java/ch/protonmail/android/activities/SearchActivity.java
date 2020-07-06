@@ -140,7 +140,8 @@ public class SearchActivity extends BaseActivity {
         });
 
         mAdapter.setItemClick(message -> {
-           if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_DRAFT) {
+           if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_DRAFT ||
+                   Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.DRAFT) {
                new CheckPendingUploadsAndStartComposeTask(
                        new WeakReference<>(SearchActivity.this), pendingActionsDatabase, message.getMessageId(), message.isInline()).execute();
            } else {
