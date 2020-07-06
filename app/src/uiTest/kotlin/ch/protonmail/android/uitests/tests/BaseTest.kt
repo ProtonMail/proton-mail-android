@@ -53,7 +53,7 @@ open class BaseTest {
     }
 
     @After
-    fun tearDown() {
+    open fun tearDown() {
         Intents.release()
         Log.d(testTag, "Finished test execution: ${testName.methodName}")
     }

@@ -30,45 +30,17 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.action.ViewActions.clearText
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.action.ViewActions.longClick
-import androidx.test.espresso.action.ViewActions.pressImeActionButton
-import androidx.test.espresso.action.ViewActions.pressKey
-import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.action.ViewActions.swipeLeft
-import androidx.test.espresso.action.ViewActions.swipeRight
-import androidx.test.espresso.action.ViewActions.swipeUp
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
-import androidx.test.espresso.matcher.ViewMatchers.Visibility
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
-import androidx.test.espresso.matcher.ViewMatchers.isClickable
-import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
-import androidx.test.espresso.matcher.ViewMatchers.isRoot
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import androidx.test.espresso.matcher.ViewMatchers.withHint
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParent
-import androidx.test.espresso.matcher.ViewMatchers.withSubstring
-import androidx.test.espresso.matcher.ViewMatchers.withTagValue
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry
+import ch.protonmail.android.uitests.testsHelper.RecyclerViewMatcher.Companion.withRecyclerView
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.viewExists
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithContentDescriptionAppears
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithTextAppears
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.anything
-import org.hamcrest.CoreMatchers.instanceOf
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.junit.Assert
@@ -81,6 +53,9 @@ open class UIActions {
 
     fun waitUntilObjectWithTextAppearsInView(objectText: String): Unit =
         waitUntilObjectWithTextAppears(objectText)
+
+    fun waitUntilObjectWithContentDescriptionAppearsInView(@StringRes contentDescription: String): Unit =
+        waitUntilObjectWithContentDescriptionAppears(contentDescription)
 
     fun insertTextIntoFieldWithId(@IdRes objectId: Int, textToBeTyped: String?): ViewInteraction =
         onView(withId(objectId)).perform(replaceText(textToBeTyped), closeSoftKeyboard())
@@ -120,7 +95,7 @@ open class UIActions {
         this.check(matches(isNotChecked()))
 
     fun verifyObjectWitIdAndParentId(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes optionText: Int) {
-        if (UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isNotChecked(),
+        if (viewExists(allOf(withId(objectId), isNotChecked(),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText)), isDisplayed()))), 200)) {
             onView(allOf(withId(objectId),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText))))))
@@ -222,37 +197,37 @@ open class UIActions {
     }
 
     protected fun waitWithTimeoutForObjectWithIdToAppear(@IdRes objectId: Int, timeout: Long) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isCompletelyDisplayed(), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
+        if (!viewExists(allOf(withId(objectId), isCompletelyDisplayed(), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
             Assert.fail(UICustomViewActionsAndMatchers.getResourceName(objectId) + " was not found")
         }
     }
 
     protected fun waitWithTimeoutForObjectWithIdIsClickable(@IdRes objectId: Int, timeout: Long) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isCompletelyDisplayed(), isClickable()), timeout)) {
+        if (!viewExists(allOf(withId(objectId), isCompletelyDisplayed(), isClickable()), timeout)) {
             Assert.fail(UICustomViewActionsAndMatchers.getResourceName(objectId) + " was not found")
         }
     }
 
     protected fun waitWithTimeoutForObjectWithTextToAppear(objectText: String, timeout: Long) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withText(objectText), isCompletelyDisplayed(), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
+        if (!viewExists(allOf(withText(objectText), isCompletelyDisplayed(), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
             Assert.fail("$objectText was not found")
         }
     }
 
     protected fun waitWithTimeoutForObjectWithIdAndTextToAppear(@IdRes objectId: Int, objectText: String, timeout: Long) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), withText(objectText), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
+        if (!viewExists(allOf(withId(objectId), withText(objectText), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
             Assert.fail("$objectText was not found")
         }
     }
 
     protected fun waitWithTimeoutForObjectWithIdAndTextToAppear(@IdRes objectId: Int, @StringRes objectText: Int, timeout: Long) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), withText(objectText), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
+        if (!viewExists(allOf(withId(objectId), withText(objectText), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
             Assert.fail(UICustomViewActionsAndMatchers.getResourceName(objectText) + " was not found")
         }
     }
 
     protected fun checkIfViewWithIdExists(@IdRes objectId: Int): Boolean {
-        return UICustomViewActionsAndMatchers.viewExists(withId(objectId), 5000)
+        return viewExists(withId(objectId), 5000)
     }
 
     /**
@@ -260,8 +235,8 @@ open class UIActions {
      */
     protected fun positionOfObjectWhichNotContainsObjectWithId(@IdRes recyclerViewId: Int, @IdRes notContainsObjectWithId: Int): Int {
         var position = 0
-        while (UICustomViewActionsAndMatchers.viewExists(allOf(isDisplayed(),
-                RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsObjectWithId)), 200)) {
+        while (viewExists(allOf(isDisplayed(),
+                withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsObjectWithId)), 200)) {
             position++
         }
         return position
@@ -269,16 +244,27 @@ open class UIActions {
 
     protected fun positionOfObjectWhichContainsObjectWithIdAndText(@IdRes recyclerViewId: Int, @IdRes containsObjectWithId: Int, @StringRes containsObjectWithText: Int): Int {
         var position = 0
-        while (!UICustomViewActionsAndMatchers.viewExists(allOf(isDisplayed(),
-                RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, containsObjectWithId),
+        while (!viewExists(allOf(isDisplayed(),
+                withRecyclerView(recyclerViewId).atPositionOnView(position, containsObjectWithId),
                 withText(containsObjectWithText)), 200)) {
             position++
         }
         return position
     }
 
+    protected fun positionOfObjectWhichNotContainsAnyOfGivenElements(@IdRes recyclerViewId: Int, @IdRes notContainsFirstElement: Int, @IdRes notContainsSecondElement: Int): Int {
+        var position = 0
+        while (viewExists(allOf(isDisplayed(),
+                withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsFirstElement)), 200) ||
+            viewExists(allOf(isDisplayed(),
+                withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsSecondElement)), 200)) {
+            position++
+        }
+        return position
+    }
+
     protected fun checkIfObjectWithPositionInRecyclerViewIsDisplayed(@IdRes recyclerViewId: Int, position: Int, @IdRes objectId: Int) {
-        onView(RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).check(matches(isDisplayed()))
+        onView(withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).check(matches(isDisplayed()))
     }
 
     protected fun checkIfObjectWithIdNotDisplayed(@IdRes objectId: Int) {
@@ -355,9 +341,9 @@ open class UIActions {
 
     protected fun scrollDownAndClickObjectWithIdAndTextIsFound(@IdRes recyclerViewId: Int, @IdRes objectId: Int, objectContainsText: String?) {
         var position = 1
-        while (!UICustomViewActionsAndMatchers.viewExists(allOf(isDisplayed(), RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPosition(position),
+        while (!viewExists(allOf(isDisplayed(), withRecyclerView(recyclerViewId).atPosition(position),
                 hasDescendant(withSubstring(objectContainsText))), 100)) {
-            onView(allOf(isDisplayed(), RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPosition(position + 1), hasDescendant(withId(objectId))))
+            onView(allOf(isDisplayed(), withRecyclerView(recyclerViewId).atPosition(position + 1), hasDescendant(withId(objectId))))
                 .perform(swipeUp())
             position++
         }
@@ -365,7 +351,7 @@ open class UIActions {
     }
 
     protected fun clickComposeToGroupButtonAtPosition(@IdRes recyclerViewId: Int, @IdRes objectId: Int, position: Int) {
-        onView(RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).perform(click())
+        onView(withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).perform(click())
     }
 
     protected fun getTextFromObject(@IdRes objectId: Int): String? {
@@ -377,7 +363,7 @@ open class UIActions {
     }
 
     protected fun getTextFromObjectInRecyclerViewAtPosition(@IdRes recyclerViewId: Int, @IdRes objectId: Int, position: Int): String? {
-        return UICustomViewActionsAndMatchers.getTextFromTextView(RecyclerViewMatcher.withRecyclerView(recyclerViewId).atPositionOnView(position, objectId))
+        return UICustomViewActionsAndMatchers.getTextFromTextView(withRecyclerView(recyclerViewId).atPositionOnView(position, objectId))
     }
 
     protected fun scrollDownElementInScrollView(@IdRes objectId: Int) {
@@ -385,14 +371,14 @@ open class UIActions {
     }
 
     protected fun checkSignatureState(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes signatureType: Int, state: Matcher<View>) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), state,
+        if (!viewExists(allOf(withId(objectId), state,
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType)), isDisplayed()))), 200)) {
             Assert.fail("Signature toggle state not saved. Expected state: $state")
         }
     }
 
     protected fun switchOnSignature(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes signatureType: Int) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isNotChecked(),
+        if (!viewExists(allOf(withId(objectId), isNotChecked(),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType)), isDisplayed()))), 200)) {
             switchOffSignature(objectId, parentId, signatureType)
         }
@@ -403,7 +389,7 @@ open class UIActions {
     }
 
     protected fun switchOffSignature(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes signatureType: Int) {
-        if (!UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isChecked(),
+        if (!viewExists(allOf(withId(objectId), isChecked(),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType)), isDisplayed()))), 200)) {
             switchOnSignature(objectId, parentId, signatureType)
         }
@@ -414,7 +400,7 @@ open class UIActions {
     }
 
     protected fun switchOnAutoShowEmbeddedImages(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes optionText: Int) {
-        if (UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isNotChecked(),
+        if (viewExists(allOf(withId(objectId), isNotChecked(),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText)), isDisplayed()))), 200)) {
             onView(allOf(withId(objectId),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText))))))
@@ -424,7 +410,7 @@ open class UIActions {
     }
 
     protected fun switchOffAutoShowEmbeddedImages(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes optionText: Int) {
-        if (UICustomViewActionsAndMatchers.viewExists(allOf(withId(objectId), isChecked(),
+        if (viewExists(allOf(withId(objectId), isChecked(),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText)), isDisplayed()))), 200)) {
             onView(allOf(withId(objectId),
                 isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText))))))
