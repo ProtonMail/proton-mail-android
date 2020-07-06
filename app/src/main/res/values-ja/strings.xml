@@ -965,6 +965,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_image_not_found">画像が見つかりませんでした</string>
     <string name="error_image_bad_url">不正な形式のイメージURL</string>
     <!-- endregion -->
-    <string name="allowed">Allowed</string>
-    <string name="denied">Denied</string>
+    <string name="allowed">許可</string>
+    <string name="denied">拒否</string>
 </resources>

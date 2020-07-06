@@ -23,7 +23,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="secure_email_swiss">Messagerie sécurisée basée\nen Suisse</string>
     <string name="decrypt_mailbox">Déchiffrer la <b>boîte de réception</b></string>
     <string name="decrypt">Déchiffrer</string>
-    <string name="user_sign_in">Nom d’utilisateur</string>
+    <string name="user_sign_in">Connexion</string>
     <string name="two_factor_sign_in">Authentification en deux étapes</string>
     <string name="sign_in">Se connecter</string>
     <string name="sign_out">Se déconnecter</string>
@@ -232,7 +232,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="resend_verification_code">Renvoyer</string>
     <string name="enter_verification_code">Saisir le code de vérification</string>
     <string name="verify">Vérifier </string>
-    <string name="reply_prefix_on">On</string>
+    <string name="reply_prefix_on">Le</string>
     <string name="create_new_account">Créer un nouveau compte</string>
     <string name="setup_new_account">Configurer votre compte</string>
     <string name="create_account">Créer un compte</string>
@@ -959,7 +959,7 @@ l\'accès au stockage.</string>
     <string name="turn_combined_contacts_on">Activez cette fonctionnalité pour compléter automatiquement les adresses email en utilisant les contacts de tous vos comptes connectés.</string>
     <string name="local_cache_management">Gestion du cache local</string>
     <string name="cache_cleared">Le cache local est actualisé</string>
-    <string name="empty_cache">Vider le cache</string>
+    <string name="empty_cache">Vider</string>
     <!-- endregion -->
     <string name="enabled">Activé</string>
     <string name="disabled">Désactivé</string>
