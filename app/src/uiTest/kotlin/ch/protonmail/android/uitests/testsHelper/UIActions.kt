@@ -196,7 +196,7 @@ open class UIActions {
         onView(allOf(withId(objectId), withText(objectText))).check(matches(isDisplayed()))
     }
 
-    protected fun waitWithTimeoutForObjectWithIdToAppear(@IdRes objectId: Int, timeout: Long) {
+    fun waitWithTimeoutForObjectWithIdToAppear(@IdRes objectId: Int, timeout: Long) {
         if (!viewExists(allOf(withId(objectId), isCompletelyDisplayed(), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
             Assert.fail(UICustomViewActionsAndMatchers.getResourceName(objectId) + " was not found")
         }

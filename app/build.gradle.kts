@@ -112,10 +112,6 @@ android(appIdSuffix = "android") {
         }
     }
 
-    testOptions {
-        animationsDisabled = true
-    }
-
     packagingOptions {
         exclude("META-INF/INDEX.LIST")
     }
@@ -208,6 +204,7 @@ dependencies {
     )
 
     testImplementation(project(Module.testAndroid))
+    androidTestUtil(`orchestrator`)
     androidTestImplementation(
         project(Module.testAndroidInstrumented),
         `aerogear`,

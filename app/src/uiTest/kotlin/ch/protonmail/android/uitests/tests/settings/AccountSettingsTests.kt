@@ -28,12 +28,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.actions.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
-import ch.protonmail.android.uitests.robots.shared.SharedRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.TestUser
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Before
@@ -50,9 +48,7 @@ class AccountSettingsTests : BaseTest() {
         super.setUp()
         loginRobot
             .loginUser(TestUser.onePassUser())
-        //TODO Denys to replace below lines with MenuRobot implementation
-        waitUntilObjectWithIdAppears(R.id.compose)
-        SharedRobot.clickHamburgerOrUpButton()
+            .openNavbar()
         onView(allOf(
             withId(R.id.menuItem),
             withTagValue(`is`(stringFromResource(R.string.settings)))))
