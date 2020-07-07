@@ -70,7 +70,7 @@ private fun <V : Validable> Validator<V>.wrap() = invoke()
  * [Validator] that accepts only strings that are not blank
  */
 fun NotBlankStringValidator(field: String) = { _: Any ->
-    require(field.isNotBlank())
+    require(field.isNotBlank()) { "String is blank" }
 }.wrap()
 
 /**

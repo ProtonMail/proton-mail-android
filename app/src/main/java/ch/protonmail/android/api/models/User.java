@@ -75,6 +75,7 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ORG_PRIVATE_KEY;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
@@ -162,6 +163,7 @@ public class User {
     public static User load(String username) {
         final SharedPreferences securePrefs = ProtonMailApplication.getApplication().getSecureSharedPreferences(username);
         final User user = new User();
+        user.name = securePrefs.getString(PREF_USER_NAME, "");
         if (!TextUtils.isEmpty(username)) {
             user.username = username;
         }
@@ -476,12 +478,44 @@ public class User {
         return allowMobileSignatureEdit || role > 0;
     }
 
+    public int getPrivate() {
+        return isPrivate;
+    }
+
+    public int getSubscribed() {
+        return subscribed;
+    }
+
+    public int getServices() {
+        return services;
+    }
+
     public boolean isPaidUser() {
         return subscribed > 0;
     }
 
+    public int getCredit() {
+        return credit;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public String getOrganizationPrivateKey() {
+        return organizationPrivateKey;
+    }
+
+    public int getDelinquentValue() {
+        return delinquent;
+    }
+
     public boolean getDelinquent() {
         return delinquent >= 3;
+    }
+
+    public int getMaxUpload() {
+        return maxUpload;
     }
 
     public void setAndSaveUsedSpace(long usedSpace) {
@@ -726,6 +760,10 @@ public class User {
         DefaultAddress = Addresses.get(0).getEmail();
         DisplayName = Addresses.get(0).getDisplayName();
         return AddressId;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {

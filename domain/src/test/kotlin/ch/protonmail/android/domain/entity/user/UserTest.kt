@@ -147,7 +147,7 @@ internal class UserTest {
         0,
         Delinquent.None,
         Bytes(5_000u),
-        UserSpace(Bytes(5_000_000u), Bytes(25_000u))
+        UserSpace(Bytes(25_000u), Bytes(5_000_000u))
     )
 
     private val notEmptyAddresses = Addresses(

@@ -71,15 +71,23 @@ data class User( // TODO: consider naming UserInfo or simialar
     val dedicatedSpace: UserSpace
 
 ) : Validable by Validator<User>({
+
+    // Addresses
     require(addresses.hasAddresses || plans.none { it is Plan.Mail }) { "Mail plan but no addresses" }
 
-    require(keys.hasKeys || !addresses.hasAddresses) { "Has addresses but not key" }
+    // Keys
+    require(keys.hasKeys || !addresses.hasAddresses) { "Has addresses but no keys" }
 
-    require(role == Role.ORGANIZATION_ADMIN && organizationPrivateKey != null ||
-        role != Role.ORGANIZATION_ADMIN && organizationPrivateKey == null) {
-        "Has organization but not organization key"
+    // Organization
+    val isAdmin = role == Role.ORGANIZATION_ADMIN
+    require(!isAdmin || isAdmin && organizationPrivateKey != null) {
+        "Is organization admin but doesn't have organization key"
+    }
+    require(isAdmin || !isAdmin && organizationPrivateKey == null) {
+        "Is not organization admin, but has organization key"
     }
 
+    // Plans
     require(plans.count { it is Plan.Mail } <= 1 &&
         plans.count { it is Plan.Vpn } <= 1) {
         "Has 2 or more plans of the same type"
@@ -104,4 +112,4 @@ enum class Role(val i: Int) {
 }
 
 // TODO can this entity be used on other spaces under a different name?
-data class UserSpace(val total: Bytes, val used: Bytes)
+data class UserSpace(val used: Bytes, val total: Bytes)

@@ -18,10 +18,29 @@
  */
 package ch.protonmail.android.mapper.bridge
 
+import android.os.SystemClock
+import android.text.TextUtils
 import assert4k.*
+import ch.protonmail.android.core.Constants.Prefs.PREF_DELINQUENT
+import ch.protonmail.android.core.Constants.Prefs.PREF_MAX_SPACE
+import ch.protonmail.android.core.Constants.Prefs.PREF_MAX_UPLOAD_FILE_SIZE
+import ch.protonmail.android.core.Constants.Prefs.PREF_ROLE
+import ch.protonmail.android.core.Constants.Prefs.PREF_SUBSCRIBED
+import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ORG_PRIVATE_KEY
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.user.Delinquent
+import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.entity.user.Role
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
 import ch.protonmail.android.api.models.User as OldUser
@@ -34,12 +53,23 @@ internal class UserBridgeMapperTest {
     private val mapper = UserBridgeMapper()
 
     @Test
-    fun `verify it transform correctly`() {
+    fun `transform from api`() {
 
         // GIVEN
         val oldUser = mockk<OldUser>(relaxed = true) {
+            every { id } returns "id"
             every { name } returns "name"
-            every { role } returns 1
+            every { services } returns 4 // TODO: use 5 when addresses are handled
+            every { subscribed } returns 4
+            every { private } returns 1
+            every { role } returns 2
+            every { organizationPrivateKey } returns "orgKey"
+            every { currency } returns "eur"
+            every { credit } returns 10
+            every { delinquentValue } returns 3
+            every { maxUpload } returns 12_345
+            every { usedSpace } returns 15_000
+            every { maxSpace } returns 30_000
         }
 
         // WHEN
@@ -47,8 +77,90 @@ internal class UserBridgeMapperTest {
 
         // THEN
         assert that newUser * {
+            +id.s equals "id"
             +name.s equals "name"
-            +role equals Role.ORGANIZATION_MEMBER
+            +(plans * {
+                +size() equals 1 // TODO use 2 when addresses are handled
+//                it contains Plan.Mail.Free // TODO uncomment when addresses are handled
+                it contains Plan.Vpn.Paid
+            })
+            +private equals true
+            +role equals Role.ORGANIZATION_ADMIN
+            +organizationPrivateKey?.s equals "orgKey"
+            +currency.s equals "eur"
+            +credits() equals 10
+            +delinquent equals Delinquent.InvoiceDelinquent
+            +totalUploadLimit.l equals 12_345uL
+            +(dedicatedSpace * {
+                +used.l() equals 15_000uL
+                +total.l() equals 30_000uL
+            })
         }
+    }
+
+    @Test
+    fun `transform from preferences`() {
+        mockkStatic(ProtonMailApplication::class, TextUtils::class, SystemClock::class)
+        every { ProtonMailApplication.getApplication() } returns mockk {
+            every { getString(any()) } returns ""
+            every { resources } returns mockk(relaxed = true)
+            every { getSecureSharedPreferences("username") } returns mockk() {
+
+                // Defaults
+                every { getBoolean(any(), any()) } returns false
+                every { getInt(any(), any()) } returns 0
+                every { getLong(any(), any()) } returns 0
+                every { getString(any(), any()) } returns ""
+
+                // Meaningful User data
+                every { getString(PREF_USER_ID, any()) } returns "id"
+                every { getString(PREF_USER_NAME, any()) } returns "username"
+                every { getInt(PREF_SUBSCRIBED, any()) } returns 4 // TODO: use 5 when addresses are handled
+                every { getInt(PREF_USER_PRIVATE, any()) } returns 1
+                every { getInt(PREF_ROLE, any()) } returns 2
+                every { getString(PREF_USER_ORG_PRIVATE_KEY, any()) } returns "orgKey"
+                every { getString(PREF_USER_CURRENCY, any()) } returns "eur"
+                every { getInt(PREF_USER_CREDIT, any()) } returns 10
+                every { getInt(PREF_DELINQUENT, any()) } returns 3
+                every { getInt(PREF_MAX_UPLOAD_FILE_SIZE, any()) } returns 12_345
+                every { getLong(PREF_USED_SPACE, any()) } returns 15_000
+                every { getLong(PREF_MAX_SPACE, any()) } returns 30_000
+
+                every { edit() } returns mockk(relaxed = true)
+            }
+            every { getSharedPreferences(any(), any()) } returns mockk(relaxed = true)
+        }
+        every { TextUtils.isEmpty(any()) } answers { firstArg<String?>().isNullOrEmpty() }
+        every { SystemClock.elapsedRealtime() } returns 0
+
+        // GIVEN
+        val oldUser = OldUser.load("username")
+
+        // WHEN
+        val newUser = mapper { oldUser.toNewModel() }
+
+        // THEN
+        assert that newUser * {
+            +id.s equals "id"
+            +name.s equals "username"
+            +(plans * {
+                +size() equals 1 // TODO use 2 when addresses are handled
+//                it contains Plan.Mail.Free // TODO uncomment when addresses are handled
+                it contains Plan.Vpn.Paid
+            })
+            +private equals true
+            +role equals Role.ORGANIZATION_ADMIN
+            +organizationPrivateKey?.s equals "orgKey"
+            +currency.s equals "eur"
+            +credits() equals 10
+            +delinquent equals Delinquent.InvoiceDelinquent
+            +totalUploadLimit.l equals 12_345uL
+            +(dedicatedSpace * {
+                +used.l() equals 15_000uL
+                +total.l() equals 30_000uL
+            })
+        }
+
+        unmockkStatic(ProtonMailApplication::class, TextUtils::class, SystemClock::class)
     }
 }
