@@ -134,7 +134,7 @@ object Constants {
         const val PREF_AUTO_LOGOUT = "auto_logout"
         const val PREF_BACKGROUND_SYNC = "background_sync"
         const val PREF_COMBINED_CONTACTS = "combined_contacts"
-        const val PREF_DELIQUENT = "deliquent"
+        const val PREF_DELINQUENT = "deliquent"
         const val PREF_DISPLAY_MOBILE = "ui_display_mobile"
         const val PREF_DISPLAY_NAME = "ui_display_name"
         const val PREF_DISPLAY_SIGNATURE = "ui_display_signature"

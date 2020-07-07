@@ -52,7 +52,7 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERI
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOGOUT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_COMBINED_CONTACTS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_DELIQUENT;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_DELINQUENT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_MOBILE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_NAME;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_SIGNATURE;
@@ -184,7 +184,7 @@ public class User {
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
         user.GcmDownloadMessageDetails = securePrefs.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
-        user.delinquent = securePrefs.getInt(PREF_DELIQUENT, 0);
+        user.delinquent = securePrefs.getInt(PREF_DELINQUENT, 0);
         user.NotificationVisibilityLockScreen = user.loadNotificationVisibilityLockScreenSettingsFromBackup();
         int maxAttachmentStorage = securePrefs.getInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.MIN_ATTACHMENT_STORAGE_IN_MB);
         if (maxAttachmentStorage <= 0) {
@@ -268,7 +268,7 @@ public class User {
                 .putInt(PREF_PREVENT_TAKING_SCREENSHOTS, PreventTakingScreenshots)
                 .putBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, GcmDownloadMessageDetails)
                 .putInt(PREF_ROLE, role)
-                .putInt(PREF_DELIQUENT, delinquent)
+                .putInt(PREF_DELINQUENT, delinquent)
                 .putInt(PREF_SUBSCRIBED, subscribed)
                 .putBoolean(PREF_AUTO_LOGOUT, AutoLogout)
                 .putBoolean(PREF_MANUALLY_LOCKED, ManuallyLocked)
