@@ -210,10 +210,11 @@ dependencies {
     testImplementation(project(Module.testAndroid))
     androidTestImplementation(
         project(Module.testAndroidInstrumented),
-        `espresso-contrib`,
-        `espresso-intents`,
+        `aerogear`,
         `conditionwatcher`,
-        `aerogear`
+        `falcon`,
+        `espresso-contrib`,
+        `espresso-intents`
     )
 }
 
