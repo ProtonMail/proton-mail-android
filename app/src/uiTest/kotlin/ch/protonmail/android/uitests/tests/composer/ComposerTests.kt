@@ -19,7 +19,6 @@
 package ch.protonmail.android.uitests.tests.composer
 
 import androidx.test.filters.LargeTest
-import ch.protonmail.android.uitests.robots.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
@@ -30,7 +29,6 @@ import org.junit.Test
 @LargeTest
 class ComposerTests : BaseTest() {
 
-    private val composerRobot = ComposerRobot()
     private val loginRobot = LoginRobot()
 
     @Test
@@ -91,7 +89,6 @@ class ComposerTests : BaseTest() {
                 sendingMessageToastShown()
                 messageSentToastShown()
             }
-
     }
 
     @Test

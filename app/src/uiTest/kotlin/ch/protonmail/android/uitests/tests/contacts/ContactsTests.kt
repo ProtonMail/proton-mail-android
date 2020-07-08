@@ -59,11 +59,6 @@ class ContactsTests : BaseTest() {
             .perform(click())
     }
 
-    @After
-    override fun tearDown() {
-        super.tearDown()
-    }
-
     @Test
     @Ignore
     //TODO resolve the error on verification

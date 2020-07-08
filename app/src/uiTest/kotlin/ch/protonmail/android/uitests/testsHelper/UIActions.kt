@@ -51,6 +51,9 @@ open class UIActions {
     fun waitUntilObjectWithIdAppearsInView(@IdRes objectId: Int): ViewInteraction =
         waitUntilObjectWithIdAppears(objectId)
 
+    fun waitUntilObjectWithIdAndTextAppearsInView(@IdRes objectId: Int, text: String): ViewInteraction =
+        waitUntilObjectWithIdAppears(objectId)
+
     fun waitUntilObjectWithTextAppearsInView(objectText: String): Unit =
         waitUntilObjectWithTextAppears(objectText)
 
@@ -59,6 +62,9 @@ open class UIActions {
 
     fun insertTextIntoFieldWithId(@IdRes objectId: Int, textToBeTyped: String?): ViewInteraction =
         onView(withId(objectId)).perform(replaceText(textToBeTyped), closeSoftKeyboard())
+
+    fun insertTextIntoFieldWithIdPressImeAction(@IdRes objectId: Int, textToBeTyped: String?): ViewInteraction =
+        onView(withId(objectId)).perform(replaceText(textToBeTyped), pressKey(KeyEvent.KEYCODE_SPACE), closeSoftKeyboard())
 
     fun clickOnObjectWithId(@IdRes objectId: Int): ViewInteraction =
         onView(withId(objectId)).perform(click())

@@ -30,6 +30,7 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -43,6 +44,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.core.ProtonMailApplication
 import com.azimolabs.conditionwatcher.ConditionWatcher
 import com.azimolabs.conditionwatcher.Instruction
+import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -133,6 +135,27 @@ internal object UICustomViewActionsAndMatchers {
             Assert.fail("$element was not found")
             e.printStackTrace()
         }
+    }
+
+    fun waitUntilObjectWithIdAndTextAppears(objectId: Int, text: String): ViewInteraction {
+        val viewInteraction = onView(allOf(withId(objectId), withText(text))).inRoot(isPlatformPopup())
+        val instruction: Instruction = object : Instruction() {
+            override fun getDescription(): String {
+                return "Waiting until object appears"
+            }
+
+            override fun checkCondition(): Boolean {
+                return try {
+                    viewInteraction.check(matches(isDisplayed()))
+                    true
+                } catch (e: NoMatchingViewException) {
+                    e.printStackTrace()
+                    false
+                }
+            }
+        }
+        ConditionWatcher.waitForCondition(instruction)
+        return viewInteraction
     }
 
     fun waitUntilObjectWithContentDescriptionAppears(contentDescription: String) {

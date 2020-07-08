@@ -38,19 +38,13 @@ import java.util.*
 @LargeTest
 class MailboxTests : BaseTest() {
 
-    private val mailboxRobot = MailboxRobot()
+    private lateinit var mailboxRobot: MailboxRobot
     private val loginRobot = LoginRobot()
 
     @Before
     override fun setUp() {
         super.setUp()
-        loginRobot
-            .loginUser(TestUser.onePassUser())
-    }
-
-    @After
-    override fun tearDown() {
-        super.tearDown()
+        mailboxRobot = loginRobot.loginUser(TestUser.onePassUser())
     }
 
     @Test
@@ -148,7 +142,7 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun saveDraft() {
-        val draftSubject = TestData.composerData().messageSubject
+        val draftSubject = "Draft ${TestData.composerData().messageSubject}"
         mailboxRobot
             .compose()
             .draftSubjectBody(draftSubject)
@@ -161,10 +155,10 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun saveDraftWithAttachment() {
-        val draftSubject = TestData.composerData().messageSubject
+        val draftSubject = "Draft ${TestData.composerData().messageSubject}"
         mailboxRobot
             .compose()
-            .draftSubjectBodyAttachment(TestData.composerData().messageSubject)
+            .draftSubjectBodyAttachment(draftSubject)
             .navigateUpToInbox()
             .confirm()
             .openNavbar()
@@ -255,8 +249,8 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun forwardMessageWithAttachment() {
-        mailboxRobot.openNavbar().openFolderAtNavbarPosition(16)
-        mailboxRobot
+        mailboxRobot.openNavbar()
+            .openFolderAtNavbarPosition(16)
             .selectMessage(Random().nextInt(5))
             .verifyMessageContainsAttachment()
             .forward()
