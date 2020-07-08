@@ -47,7 +47,6 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALIASES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOGOUT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
@@ -75,6 +74,7 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_SUBSCRIBED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 
 public class User {
 
@@ -113,15 +113,17 @@ public class User {
 
     // new
     @SerializedName(Fields.User.ID)
-    private String ID;
+    private String id;
     @SerializedName(Fields.User.CURRENCY)
-    private String Currency;
+    private String currency;
     @SerializedName(Fields.User.CREDIT)
-    private int Credit;
+    private int credit;
+    @SerializedName(Fields.User.ORG_PRIVATE_KEY)
+    private int organizationPrivateKey;
     @SerializedName(Fields.User.PRIVATE)
-    private int Private;
+    private int isPrivate;
     @SerializedName(Fields.User.SERVICES)
-    private int Services;
+    private int services;
 
     // region these are local only - do not touch them
     private boolean AutoLogout; // this can remain here, local only setting
