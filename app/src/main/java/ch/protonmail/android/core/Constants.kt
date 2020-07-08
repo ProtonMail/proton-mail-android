@@ -160,6 +160,13 @@ object Constants {
         const val PREF_USE_FINGERPRINT = "use_fingerprint_for_lock"
         const val PREF_USE_PIN = "use_pin_for_lock"
         const val PREF_USED_SPACE = "ui_used_space"
+        const val PREF_USER_CREDIT = "user_credit"
+        const val PREF_USER_CURRENCY = "user_currency"
+        const val PREF_USER_ID = "user_id"
+        const val PREF_USER_NAME = "user_name"
+        const val PREF_USER_ORG_PRIVATE_KEY = "user_organization_private_key"
+        const val PREF_USER_PRIVATE = "user_private"
+        const val PREF_USER_SERVICES = "user_services"
         const val PREF_USING_REGULAR_API = "pref_doh_using_regular_api"
 
         // permissions
