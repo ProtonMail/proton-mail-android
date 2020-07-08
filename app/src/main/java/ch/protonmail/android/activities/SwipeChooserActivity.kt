@@ -119,24 +119,25 @@ class SwipeChooserActivity : BaseActivity() {
             for (i in mSwipeActionsIds!!.indices) {
                 if (mSwipeActionsIds!![i] == selectedOption) {
                     mCurrentAction = i
-                    var actionRightSwipeChanged = false
                     var actionLeftSwipeChanged = false
+                    var actionRightSwipeChanged = false
 
                     if (mSwipeId == SwipeType.LEFT) {
-                        actionRightSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.leftSwipeAction
-                        if (actionRightSwipeChanged) {
+                        actionLeftSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.leftSwipeAction
+                        if (actionLeftSwipeChanged) {
                             mUserManager.mailSettings!!.leftSwipeAction = mCurrentAction
 
                         }
                     } else if (mSwipeId == SwipeType.RIGHT) {
-                        actionLeftSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.rightSwipeAction
-                        if (actionLeftSwipeChanged) {
+                        actionRightSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.rightSwipeAction
+                        if (actionRightSwipeChanged) {
                             mUserManager.mailSettings!!.rightSwipeAction = mCurrentAction
 
                         }
                     }
                     mUserManager.mailSettings!!.save()
-                    val job = UpdateSettingsJob(actionRightSwipeChanged = actionRightSwipeChanged, actionLeftSwipeChanged = actionLeftSwipeChanged)
+                    val job = UpdateSettingsJob(actionRightSwipeChanged = actionRightSwipeChanged,
+                            actionLeftSwipeChanged = actionLeftSwipeChanged)
                     mJobManager.addJobInBackground(job)
                     break
                 }

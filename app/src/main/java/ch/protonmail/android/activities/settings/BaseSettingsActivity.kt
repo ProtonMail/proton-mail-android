@@ -294,13 +294,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 val swipeLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
                 swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.leftSwipeAction)
                 swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
-                startActivityForResult(AppUtil.decorInAppIntent(swipeLeftChooserIntent), SettingsEnum.SWIPE_LEFT.ordinal)
+                startActivityForResult(AppUtil.decorInAppIntent(swipeLeftChooserIntent),
+                        SettingsEnum.SWIPE_LEFT.ordinal)
             }
             SettingsEnum.SWIPE_RIGHT -> {
                 val rightLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
                 rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.rightSwipeAction)
                 rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
-                startActivityForResult(AppUtil.decorInAppIntent(rightLeftChooserIntent), SettingsEnum.SWIPE_RIGHT.ordinal)
+                startActivityForResult(AppUtil.decorInAppIntent(rightLeftChooserIntent),
+                        SettingsEnum.SWIPE_RIGHT.ordinal)
             }
             SettingsEnum.LOCAL_STORAGE_LIMIT -> {
                 val attachmentStorageIntent = Intent(this, AttachmentStorageActivity::class.java)

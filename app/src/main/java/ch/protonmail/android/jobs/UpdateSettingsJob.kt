@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.jobs
 
-
 import android.text.TextUtils
 import android.util.Base64
 import ch.protonmail.android.R

@@ -1073,7 +1073,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="app_version_code_login" translatable="false">Android v.%1$s (%2$d)</string>
     <!-- endregion -->
 
-
     <!-- region Multi Account -->
     <string name="remove_account_question">Remove %s?</string>
     <string name="signed_in_with">Signed in with %s</string>
@@ -1085,12 +1084,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
     <!-- endregion -->
 
-
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Compose</string>
     <string name="shortcut_compose_new_message">Compose a new message</string>
     <!-- endregion -->
-
 
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
@@ -1111,4 +1108,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

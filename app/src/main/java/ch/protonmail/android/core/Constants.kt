@@ -23,7 +23,6 @@ import android.text.TextUtils
 
 import ch.protonmail.android.R
 
-
 object Constants {
 
     // region Urls
@@ -55,6 +54,9 @@ object Constants {
     const val STORAGE_LIMIT_WARNING_PERCENTAGE: Long = 90
 
     const val CONTACTS_PAGE_SIZE = 1000
+
+    // This is the app version in which the switch of the swipe gestures happens
+    const val SWIPE_GESTURES_CHANGED_VERSION = 728
 
     const val MAX_ATTACHMENTS = 100
     const val MAX_ATTACHMENT_FILE_SIZE_IN_BYTES = (25 * 1000 * 1000).toLong() // 25 MB
@@ -119,6 +121,7 @@ object Constants {
 
     object Prefs {
         const val PREF_APP_VERSION = "appVersion"
+        const val PREF_PREVIOUS_APP_VERSION = "previousAppVersion"
 
         const val PREF_VERIFY_CODE = "verifyCode"
         const val PREF_CONTACTS_LOADING = "contactsLoading"
@@ -175,6 +178,8 @@ object Constants {
 
         const val PREF_REGISTRATION_ID = "registration_id"
         const val PREF_SENT_TOKEN_TO_SERVER = "token_sent_to_server"
+
+        const val PREF_SWIPE_GESTURES_DIALOG_SHOWN = "swipe_gestures_dialog_shown"
 
         object UserSettings {
             const val PREF_PASSWORD_MODE = "user_settings_PasswordMode"

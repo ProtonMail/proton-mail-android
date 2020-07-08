@@ -99,13 +99,9 @@ class MailSettings : Serializable {
     var showImages: Int = 0 // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
     @SerializedName(FIELD_SHOW_MOVED)
     private val showMoved: Int = 0
-    // Back-end uses the term 'swipe left' for swiping left to right,
-    // whereas we use 'swipe right' which is the thumb-moving direction and is more logical
-    @SerializedName(FIELD_SWIPE_LEFT)
-    private var swipeRight: Int = 0
-    // Back-end uses the term 'swipe right' for swiping right to left,
-    // whereas we use 'swipe left' which is the thumb-moving direction and is more logical
     @SerializedName(FIELD_SWIPE_RIGHT)
+    private var swipeRight: Int = 0
+    @SerializedName(FIELD_SWIPE_LEFT)
     private var swipeLeft: Int = 0
     @SerializedName(FIELD_ALSO_ARCHIVE)
     private val alsoArchive: Int = 0
@@ -174,8 +170,8 @@ class MailSettings : Serializable {
                 .putInt(PREF_AUTO_WILDCARD_SEARCH, autoWildcardSearch)
                 .putInt(PREF_SHOW_IMAGES, showImages)
                 .putInt(PREF_SHOW_MOVED, showMoved)
-                .putInt(PREF_SWIPE_LEFT, swipeRight)
-                .putInt(PREF_SWIPE_RIGHT, swipeLeft)
+                .putInt(PREF_SWIPE_RIGHT, swipeRight)
+                .putInt(PREF_SWIPE_LEFT, swipeLeft)
                 .putInt(PREF_ALSO_ARCHIVE, alsoArchive)
                 .putInt(PREF_PM_SIGNATURE, pmSignature)
                 .putInt(PREF_RIGHT_TO_LEFT, rightToLeft)
@@ -199,9 +195,9 @@ class MailSettings : Serializable {
             val mailSettings = MailSettings()
             mailSettings.showImages = prefs.getInt(PREF_SHOW_IMAGES, 0)
             mailSettings.autoSaveContacts = prefs.getInt(PREF_AUTO_SAVE_CONTACTS, 0)
-            mailSettings.leftSwipeAction = prefs.getInt(PREF_SWIPE_RIGHT, 0)
+            mailSettings.leftSwipeAction = prefs.getInt(PREF_SWIPE_LEFT, 0)
             mailSettings.swipeLeft = mailSettings.leftSwipeAction
-            mailSettings.rightSwipeAction = prefs.getInt(PREF_SWIPE_LEFT, 0)
+            mailSettings.rightSwipeAction = prefs.getInt(PREF_SWIPE_RIGHT, 0)
             mailSettings.swipeRight = mailSettings.rightSwipeAction
             mailSettings.setAttachPublicKey(prefs.getInt(PREF_ATTACH_PUBLIC_KEY, 0))
             mailSettings.pgpScheme = prefs.getInt(PREF_PGP_SCHEME, 1)

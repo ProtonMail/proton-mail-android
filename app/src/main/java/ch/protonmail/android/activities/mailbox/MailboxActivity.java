@@ -79,11 +79,13 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
+import ch.protonmail.android.activities.EditSettingsItemActivity;
 import ch.protonmail.android.activities.EngagementActivity;
 import ch.protonmail.android.activities.MailboxViewModel;
 import ch.protonmail.android.activities.NavigationActivity;
 import ch.protonmail.android.activities.SearchActivity;
 import ch.protonmail.android.activities.SettingsActivity;
+import ch.protonmail.android.activities.SettingsItem;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment;
 import ch.protonmail.android.activities.dialogs.MoveToFolderDialogFragment;
@@ -92,6 +94,7 @@ import ch.protonmail.android.activities.guest.MailboxLoginActivity;
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
+import ch.protonmail.android.activities.settings.SettingsEnum;
 import ch.protonmail.android.adapters.messages.MessagesListViewHolder;
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
 import ch.protonmail.android.adapters.swipe.ArchiveSwipeHandler;
@@ -171,6 +174,7 @@ import timber.log.Timber;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING;
+import static ch.protonmail.android.activities.EditSettingsItemActivityKt.EXTRA_SETTINGS_ITEM_TYPE;
 import static ch.protonmail.android.activities.MailboxViewModelKt.FLOW_START_ACTIVITY;
 import static ch.protonmail.android.activities.MailboxViewModelKt.FLOW_TRY_COMPOSE;
 import static ch.protonmail.android.activities.MailboxViewModelKt.FLOW_USED_SPACE_CHANGED;
@@ -184,6 +188,8 @@ import static ch.protonmail.android.activities.labelsManager.LabelsManagerActivi
 import static ch.protonmail.android.activities.labelsManager.LabelsManagerActivityKt.EXTRA_POPUP_STYLE;
 import static ch.protonmail.android.activities.settings.BaseSettingsActivityKt.EXTRA_CURRENT_MAILBOX_LABEL_ID;
 import static ch.protonmail.android.activities.settings.BaseSettingsActivityKt.EXTRA_CURRENT_MAILBOX_LOCATION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN;
+import static ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION;
 import static ch.protonmail.android.servers.notification.NotificationServerKt.EXTRA_MAILBOX_LOCATION;
 import static ch.protonmail.android.servers.notification.NotificationServerKt.EXTRA_USERNAME;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_TOTAL_COUNT_EVENT;
@@ -732,6 +738,28 @@ public class MailboxActivity extends NavigationActivity implements
         }
     }
 
+    private boolean shouldShowSwipeGesturesChangedDialog() {
+        SharedPreferences prefs = ((ProtonMailApplication) getApplicationContext()).getDefaultSharedPreferences();
+        int previousVersion = prefs.getInt(Constants.Prefs.PREF_PREVIOUS_APP_VERSION, Integer.MIN_VALUE);
+        // The dialog should be shown once on the update when swiping gestures are switched
+        return previousVersion < SWIPE_GESTURES_CHANGED_VERSION && previousVersion > 0
+                && !prefs.getBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, false);
+    }
+
+    private void showSwipeGesturesChangedDialog() {
+        SharedPreferences prefs = ((ProtonMailApplication) getApplicationContext()).getDefaultSharedPreferences();
+        DialogUtils.Companion.showInfoDialogWithTwoButtons(MailboxActivity.this,
+                getString(R.string.swipe_gestures_changed),
+                getString(R.string.swipe_gestures_changed_message),
+                getString(R.string.go_to_settings), getString(R.string.okay), unit -> {
+                    Intent swipeGestureIntent = new Intent(this, EditSettingsItemActivity.class);
+                    swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE);
+                    startActivityForResult(AppUtil.decorInAppIntent(swipeGestureIntent), SettingsEnum.SWIPING_GESTURE.ordinal());
+                    return unit;
+                }, unit -> unit, true, true, true);
+        prefs.edit().putBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, true).apply();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -758,6 +786,10 @@ public class MailboxActivity extends NavigationActivity implements
 
         setUpDrawer();
         closeDrawer(true);
+
+        if (shouldShowSwipeGesturesChangedDialog()) {
+            showSwipeGesturesChangedDialog();
+        }
     }
 
     @Override
