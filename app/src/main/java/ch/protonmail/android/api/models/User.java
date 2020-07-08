@@ -72,6 +72,12 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_ROLE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SIGNATURE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SUBSCRIBED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ORG_PRIVATE_KEY;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
@@ -119,7 +125,7 @@ public class User {
     @SerializedName(Fields.User.CREDIT)
     private int credit;
     @SerializedName(Fields.User.ORG_PRIVATE_KEY)
-    private int organizationPrivateKey;
+    private String organizationPrivateKey;
     @SerializedName(Fields.User.PRIVATE)
     private int isPrivate;
     @SerializedName(Fields.User.SERVICES)
@@ -205,6 +211,13 @@ public class User {
         }
         user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
 
+        user.id = securePrefs.getString(PREF_USER_ID, "id");
+        user.currency = securePrefs.getString(PREF_USER_CURRENCY, "eur");
+        user.credit = securePrefs.getInt(PREF_USER_CREDIT, 0);
+        user.organizationPrivateKey = securePrefs.getString(PREF_USER_ORG_PRIVATE_KEY, null);
+        user.isPrivate = securePrefs.getInt(PREF_USER_PRIVATE, 0);
+        user.services = securePrefs.getInt(PREF_USER_SERVICES, 0);
+
         return user;
     }
 
@@ -276,6 +289,12 @@ public class User {
                 .putBoolean(PREF_MANUALLY_LOCKED, ManuallyLocked)
                 .putInt(PREF_MAX_ATTACHMENT_STORAGE, MaxAttachmentStorage)
                 .putBoolean(PREF_COMBINED_CONTACTS, CombinedContacts)
+                .putString(PREF_USER_ID, id)
+                .putString(PREF_USER_CURRENCY, currency)
+                .putInt(PREF_USER_CREDIT, credit)
+                .putString(PREF_USER_ORG_PRIVATE_KEY, organizationPrivateKey)
+                .putInt(PREF_USER_PRIVATE, isPrivate)
+                .putInt(PREF_USER_SERVICES, services)
                 .apply();
     }
 
