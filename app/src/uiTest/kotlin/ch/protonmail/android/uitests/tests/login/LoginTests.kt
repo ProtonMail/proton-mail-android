@@ -36,27 +36,27 @@ class LoginTests : BaseTest() {
     fun loginWithOnePass() {
         loginRobot
             .loginUser(onePassUser())
-            .verify { loginSuccessful() }
+            .verify { mailboxLayoutShown() }
     }
 
     @Test
     fun loginWithTwoPass() {
         loginRobot
             .loginTwoPasswordUser(twoPassUser())
-            .verify { loginSuccessful() }
+            .verify { mailboxLayoutShown() }
     }
 
     @Test
     fun loginWithOnePassAnd2FA() {
         loginRobot
             .loginUserWithTwoFA(onePassUserWith2FA())
-            .verify { loginSuccessful() }
+            .verify { mailboxLayoutShown() }
     }
 
     @Test
     fun loginWithTwoPassAnd2FA() {
         loginRobot
             .loginTwoPasswordUserWithTwoFA(twoPassUserWith2FA())
-            .verify { loginSuccessful() }
+            .verify { mailboxLayoutShown() }
     }
 }

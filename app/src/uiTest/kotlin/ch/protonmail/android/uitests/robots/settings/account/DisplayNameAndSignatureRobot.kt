@@ -71,12 +71,12 @@ open class DisplayNameAndSignatureRobot : UIActions() {
             .findViewById<SwitchCompat>(switchId)
             .isChecked
 
-        when (state && currentSwitchState) {
+        when (state xor currentSwitchState) {
             true -> {
-                clickOnObjectWithIdAndAncestorTag(switchId, tag)
                 clickOnObjectWithIdAndAncestorTag(switchId, tag)
             }
             false -> {
+                clickOnObjectWithIdAndAncestorTag(switchId, tag)
                 clickOnObjectWithIdAndAncestorTag(switchId, tag)
             }
         }

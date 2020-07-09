@@ -22,6 +22,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobot
 import ch.protonmail.android.uitests.testsHelper.TestUser
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
@@ -30,34 +31,34 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 open class LoginRobot : UIActions() {
 
-    fun loginUser(user: TestUser): LoginRobot {
+    fun loginUser(user: TestUser): MailboxRobot {
         return username(user.name)
             .password(user.password)
             .signIn()
     }
 
-    fun loginUserWithTwoFA(user: TestUser): LoginRobot {
+    fun loginUserWithTwoFA(user: TestUser): MailboxRobot {
         return username(user.name)
             .password(user.password)
-            .signIn()
+            .signInWithMailboxPasswordOrTwoFA()
             .twoFACode(user.twoFACode)
             .confirm2FA()
     }
 
-    fun loginTwoPasswordUser(user: TestUser): LoginRobot {
+    fun loginTwoPasswordUser(user: TestUser): MailboxRobot {
         return username(user.name)
             .password(user.password)
-            .signIn()
+            .signInWithMailboxPasswordOrTwoFA()
             .mailboxPassword(user.mailboxPassword)
             .decrypt()
     }
 
-    fun loginTwoPasswordUserWithTwoFA(user: TestUser): LoginRobot {
+    fun loginTwoPasswordUserWithTwoFA(user: TestUser): MailboxRobot {
         return username(user.name)
             .password(user.password)
-            .signIn()
+            .signInWithMailboxPasswordOrTwoFA()
             .twoFACode(user.twoFACode)
-            .confirm2FA()
+            .confirm2FAAndProvideMailboxPassword()
             .mailboxPassword(user.mailboxPassword)
             .decrypt()
     }
@@ -72,7 +73,11 @@ open class LoginRobot : UIActions() {
         return this
     }
 
-    private fun signIn(): LoginRobot {
+    private fun signIn(): MailboxRobot {
+        clickOnObjectWithIdAndText(R.id.sign_in, R.string.sign_in)
+        return MailboxRobot()
+    }
+    private fun signInWithMailboxPasswordOrTwoFA(): LoginRobot {
         clickOnObjectWithIdAndText(R.id.sign_in, R.string.sign_in)
         return this
     }
@@ -82,12 +87,17 @@ open class LoginRobot : UIActions() {
         return this
     }
 
-    private fun decrypt(): LoginRobot {
+    private fun decrypt(): MailboxRobot {
         clickOnObjectWithIdAndText(R.id.sign_in, R.string.decrypt)
-        return this
+        return MailboxRobot()
     }
 
-    private fun confirm2FA(): LoginRobot {
+    private fun confirm2FA(): MailboxRobot {
+        clickOnObjectWithId(android.R.id.button1)
+        return MailboxRobot()
+    }
+
+    private fun confirm2FAAndProvideMailboxPassword(): LoginRobot {
         clickOnObjectWithId(android.R.id.button1)
         return this
     }

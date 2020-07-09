@@ -18,30 +18,24 @@
  */
 package ch.protonmail.android.uitests.tests.composer
 
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.filters.LargeTest
-import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.twoPassUser
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
 import org.junit.Test
 
 @LargeTest
 class ComposerTests : BaseTest() {
 
-    private val composerRobot = ComposerRobot()
     private val loginRobot = LoginRobot()
 
     @Test
     fun sendMessageToInternalTrustedContact() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageToInternalTrustedAddress(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -53,8 +47,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToInternalNotTrustedContact() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageToInternalNotTrustedAddress(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -66,8 +59,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToPGPEncryptedContact() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageToExternalAddressPGPEncrypted(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -79,8 +71,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToPGPSignedContact() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageToExternalAddressPGPSigned(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -92,22 +83,19 @@ class ComposerTests : BaseTest() {
     fun sendMessageTOandCC() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageTOandCC(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
             }
-
     }
 
     @Test
     fun sendMessageTOandCCandBCC() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageTOandCCandBCC(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -119,8 +107,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageEO() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageWithPassword(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -132,8 +119,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageExpiryTime() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageExpiryTimeInDays(TestData.composerData(), 2)
             .verify {
                 sendingMessageToastShown()
@@ -145,8 +131,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageEOAndExpiryTime() {
         loginRobot
             .loginTwoPasswordUser(twoPassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageEOAndExpiryTimeAndPGPConfirmation(TestData.composerData(), 1)
             .verify {
                 sendingMessageToastShown()
@@ -158,8 +143,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageEOAndExpiryTimeWithAttachment() {
         loginRobot
             .loginTwoPasswordUser(twoPassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(TestData.composerData(), 1)
             .verify {
                 sendingMessageToastShown()
@@ -171,8 +155,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToInternalTrustedContactCameraCaptureAttachment() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageCameraCaptureAttachment(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -184,8 +167,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToInternalNotTrustedContactChooseAttachment() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageChooseAttachment(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -197,8 +179,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToInternalContactWithTwoAttachments() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageToInternalContactWithTwoAttachments(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -210,8 +191,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToExternalContactWithOneAttachment() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageToExternalContactWithOneAttachment(TestData.composerData())
             .verify {
                 sendingMessageToastShown()
@@ -223,8 +203,7 @@ class ComposerTests : BaseTest() {
     fun sendMessageToExternalContactWithTwoAttachments() {
         loginRobot
             .loginUser(onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose).perform(click())
-        composerRobot
+            .compose()
             .sendMessageToExternalContactWithTwoAttachments(TestData.composerData())
             .verify {
                 sendingMessageToastShown()

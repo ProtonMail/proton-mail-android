@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- *
+ * 
  * This file is part of ProtonMail.
- *
+ * 
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,14 +20,20 @@ package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent.mockCameraImageCapture
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
 
 /**
  * [MailboxRobot] class contains actions and verifications for Mailbox functionality.
  */
 open class MailboxRobot : UIActions() {
+
+    init {
+        waitUntilObjectWithIdAppears(R.id.compose)
+    }
 
     fun goToFolderSent(): MailboxRobot {
         clickOnObjectWithContentDescription("Open")
@@ -148,33 +154,13 @@ open class MailboxRobot : UIActions() {
         return this
     }
 
-    fun compose(): MailboxRobot {
+    fun compose(): ComposerRobot {
         clickOnObjectWithId(R.id.compose)
-        return this
-    }
-
-    fun draftSubject(messageSubject: String): MailboxRobot {
-        clickOnObjectWithId(R.id.message_title)
-        typeTextIntoField(R.id.message_title, "Draft: $messageSubject")
-        return this
+        return ComposerRobot()
     }
 
     fun body(messageBody: String?): MailboxRobot {
         insertTextIntoFieldWithId(R.id.message_body, messageBody)
-        return this
-    }
-
-    fun draftSubject(): String? {
-        return getTextFromObject(R.id.message_title)
-    }
-
-    fun navigateUpToInbox(): MailboxRobot {
-        clickChildInViewGroup(R.id.toolbar, 0)
-        return this
-    }
-
-    fun navigateUpToComposerView(): MailboxRobot {
-        clickChildInViewGroup(R.id.toolbar, 1)
         return this
     }
 
@@ -337,6 +323,11 @@ open class MailboxRobot : UIActions() {
             waitWithTimeoutForObjectWithIdAndTextToAppear(R.id.messageTitleTextView, draftSubject!!, 10000)
             checkIfObjectWithPositionInRecyclerViewIsDisplayed(R.id.messages_list_view, 0, R.id.messageAttachmentTextView)
             return this
+        }
+
+        fun mailboxLayoutShown(): MailboxRobot {
+            waitUntilObjectWithIdAppearsInView(R.id.swipe_refresh_layout)
+            return MailboxRobot()
         }
     }
 

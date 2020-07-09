@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- *
+ * 
  * This file is part of ProtonMail.
- *
+ * 
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -38,19 +38,13 @@ import java.util.*
 @LargeTest
 class MailboxTests : BaseTest() {
 
-    private val mailboxRobot = MailboxRobot()
+    private lateinit var mailboxRobot: MailboxRobot
     private val loginRobot = LoginRobot()
 
     @Before
     override fun setUp() {
         super.setUp()
-        loginRobot.loginUser(TestUser.onePassUser())
-        waitUntilObjectWithIdAppears(R.id.compose)
-    }
-
-    @After
-    override fun tearDown() {
-        super.tearDown()
+        mailboxRobot = loginRobot.loginUser(TestUser.onePassUser())
     }
 
     @Test
@@ -148,12 +142,10 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun saveDraft() {
-        val draftSubject = mailboxRobot
-            .compose()
-            .draftSubject(TestData.composerData().messageSubject)
-            .body(TestData.composerData().messageBody)
-            .draftSubject()
+        val draftSubject = "Draft ${TestData.composerData().messageSubject}"
         mailboxRobot
+            .compose()
+            .draftSubjectBody(draftSubject)
             .navigateUpToInbox()
             .confirm()
             .openNavbar()
@@ -163,16 +155,10 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun saveDraftWithAttachment() {
-        val draftSubject = mailboxRobot
-            .compose()
-            .draftSubject(TestData.composerData().messageSubject)
-            .body(TestData.composerData().messageBody)
-            .draftSubject()
-
+        val draftSubject = "Draft ${TestData.composerData().messageSubject}"
         mailboxRobot
-            .attachments()
-            .addAttachment()
-            .navigateUpToComposerView()
+            .compose()
+            .draftSubjectBodyAttachment(draftSubject)
             .navigateUpToInbox()
             .confirm()
             .openNavbar()
@@ -263,8 +249,8 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun forwardMessageWithAttachment() {
-        mailboxRobot.openNavbar().openFolderAtNavbarPosition(16)
-        mailboxRobot
+        mailboxRobot.openNavbar()
+            .openFolderAtNavbarPosition(16)
             .selectMessage(Random().nextInt(5))
             .verifyMessageContainsAttachment()
             .forward()

@@ -112,4 +112,5 @@ val DependencyHandler.conditionwatcher get() =  dependency("com.azimolabs.condit
 val DependencyHandler.`espresso-contrib` get() =  androidx("test.espresso", module = "espresso-contrib") version `espresso version`
 val DependencyHandler.`espresso-intents` get() =  androidx("test.espresso", module = "espresso-intents") version `espresso version`
 val DependencyHandler.falcon get() = dependency("com.jraska", module = "falcon") version `falcon version`
+val DependencyHandler.`orchestrator` get() =  androidx("test", module = "orchestrator") version `android-test version`
 // endregion

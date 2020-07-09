@@ -97,6 +97,8 @@ fun org.gradle.api.Project.android(
 
     testOptions {
         unitTests.isIncludeAndroidResources = true
+        animationsDisabled = true
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     packagingOptions {

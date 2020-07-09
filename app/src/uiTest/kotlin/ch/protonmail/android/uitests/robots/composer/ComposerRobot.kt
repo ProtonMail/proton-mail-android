@@ -21,15 +21,18 @@ package ch.protonmail.android.uitests.robots.composer
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.composer.ComposerRobot.MessageExpirationRobot
 import ch.protonmail.android.uitests.robots.composer.ComposerRobot.MessagePasswordRobot
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobot
 import ch.protonmail.android.uitests.robots.shared.SharedRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.isChildOf
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.setValueInNumberPicker
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAndTextAppears
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 
@@ -173,6 +176,25 @@ open class ComposerRobot : UIActions() {
             .addTwoImageCaptureAttachments(R.drawable.logo, R.drawable.welcome)
             .send()
         return ComposerRobot()
+    }
+
+    fun draftSubjectBody(messageSubject: String) : ComposerRobot {
+        subject(messageSubject)
+            .body(TestData.composerData().messageBody)
+        return this
+    }
+
+    fun draftSubjectBodyAttachment(messageSubject: String) : ComposerRobot {
+        subject(messageSubject)
+            .body(TestData.composerData().messageBody)
+            .attachments()
+            .addImageCaptureAttachment(R.drawable.logo)
+        return this
+    }
+
+    fun navigateUpToInbox(): MailboxRobot {
+        clickChildInViewGroup(R.id.toolbar, 0)
+        return MailboxRobot()
     }
 
     private fun recipients(emails: String): ComposerRobot {
