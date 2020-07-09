@@ -182,7 +182,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="syncing_messages">Trwa synchronizacja...</string>
     <string name="sync">Synchronizuj kontakty</string>
     <string name="save_message_as_draft">Zapisać wiadomość jako szkic?</string>
-    <string name="no_subject">Czy wysłać wiadomość bez tematu?</string>
+    <string name="no_subject">Wysłać wiadomość bez tematu?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="okay">Ok</string>

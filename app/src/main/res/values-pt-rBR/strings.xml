@@ -709,11 +709,11 @@ em seguir os\n<a href="https://protonmail.com/terms-and-conditions">termos e con
     <string name="resign_contact_message">A verificação de %s falhou. O contato não está assinado corretamente. Você deve assinar novamente o contato para conseguir enviar a mensagem para este endereço ou editar o contato. Isso também pode acontecer quando você recupera sua senha e redefine suas chaves.</string>
     <!-- Sender locks -->
     <string name="sender_lock_unencrypted">Mensagem não criptografada</string>
-    <string name="sender_lock_zero_access">Armazenado com criptografia de zero acesso</string>
+    <string name="sender_lock_zero_access">Armazenado com criptografia de acesso zero</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviado por você com criptografia de ponta a ponta</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Enviado por ProtonMail com criptografia de zero acesso</string>
+    <string name="sender_lock_sent_autoresponder">Enviado por ProtonMail com criptografia de acesso zero</string>
     <string name="sender_lock_verification_failed">Falha na verificação do remetente</string>
     <string name="sender_lock_pgp_encrypted">Mensagem criptografada por PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Mensagem criptografada por PGP de ponta a ponta de um endereço verificado</string>
