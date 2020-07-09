@@ -49,8 +49,8 @@ data class UserKeys(
     val primaryKey: UserKey?,
     val keys: Collection<UserKey>
 ) : Validable by Validator<UserKeys>({
-    primaryKey == null && keys.isEmpty() ||
-        primaryKey in keys
+    require(primaryKey == null && keys.isEmpty() ||
+        primaryKey in keys)
 }) {
     init { requireValid() }
 

@@ -71,17 +71,19 @@ data class User( // TODO: consider naming UserInfo or simialar
     val dedicatedSpace: UserSpace
 
 ) : Validable by Validator<User>({
-    val checkAddresses = addresses.hasAddresses || plans.none { it is Plan.Mail }
+    require(addresses.hasAddresses || plans.none { it is Plan.Mail }) { "Mail plan but no addresses" }
 
-    val checkKeys = keys.hasKeys || !addresses.hasAddresses
+    require(keys.hasKeys || !addresses.hasAddresses) { "Has addresses but not key" }
 
-    val checkOrganization = role == Role.ORGANIZATION_ADMIN && organizationPrivateKey != null ||
-        role != Role.ORGANIZATION_ADMIN && organizationPrivateKey == null
+    require(role == Role.ORGANIZATION_ADMIN && organizationPrivateKey != null ||
+        role != Role.ORGANIZATION_ADMIN && organizationPrivateKey == null) {
+        "Has organization but not organization key"
+    }
 
-    val checkPlans = plans.count { it is Plan.Mail } <= 1 &&
-        plans.count { it is Plan.Vpn } <= 1
-
-    checkAddresses && checkKeys && checkOrganization && checkPlans
+    require(plans.count { it is Plan.Mail } <= 1 &&
+        plans.count { it is Plan.Vpn } <= 1) {
+        "Has 2 or more plans of the same type"
+    }
 }) {
     init { requireValid() }
 }

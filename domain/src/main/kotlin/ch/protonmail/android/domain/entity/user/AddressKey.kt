@@ -82,8 +82,8 @@ data class AddressKeys(
     val primaryKey: AddressKey?,
     val keys: Collection<AddressKey>
 ) : Validable by Validator<AddressKeys>({
-    primaryKey == null && keys.isEmpty() ||
-        primaryKey in keys
+    require(primaryKey == null && keys.isEmpty() ||
+        primaryKey in keys)
 }) {
     init { requireValid() }
 
