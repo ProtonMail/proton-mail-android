@@ -34,23 +34,30 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ORG_PRIVATE_KEY
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.Delinquent
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.entity.user.Role
+import ch.protonmail.android.domain.entity.user.UserKeys
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
+import ch.protonmail.android.api.models.Keys as OldKeys
 import ch.protonmail.android.api.models.User as OldUser
+import ch.protonmail.android.api.models.address.Address as OldAddress
 
 /**
  * Test suite for [UserBridgeMapper]
  */
 internal class UserBridgeMapperTest {
 
-    private val mapper = UserBridgeMapper()
+    private val mapper = UserBridgeMapper(
+        mockk { every { any<Collection<OldAddress>>().toNewModel() } returns Addresses(emptyMap()) },
+        mockk { every { any<Collection<OldKeys>>().toNewModel() } returns UserKeys(null, emptyList()) }
+    )
 
     @Test
     fun `transform from api`() {
@@ -59,7 +66,7 @@ internal class UserBridgeMapperTest {
         val oldUser = mockk<OldUser>(relaxed = true) {
             every { id } returns "id"
             every { name } returns "name"
-            every { services } returns 4 // TODO: use 5 when addresses are handled
+            every { services } returns 4
             every { subscribed } returns 4
             every { private } returns 1
             every { role } returns 2
@@ -80,8 +87,7 @@ internal class UserBridgeMapperTest {
             +id.s equals "id"
             +name.s equals "name"
             +(plans * {
-                +size() equals 1 // TODO use 2 when addresses are handled
-//                it contains Plan.Mail.Free // TODO uncomment when addresses are handled
+                +size() equals 1
                 it contains Plan.Vpn.Paid
             })
             +private equals true
@@ -115,7 +121,7 @@ internal class UserBridgeMapperTest {
                 // Meaningful User data
                 every { getString(PREF_USER_ID, any()) } returns "id"
                 every { getString(PREF_USER_NAME, any()) } returns "username"
-                every { getInt(PREF_SUBSCRIBED, any()) } returns 4 // TODO: use 5 when addresses are handled
+                every { getInt(PREF_SUBSCRIBED, any()) } returns 4
                 every { getInt(PREF_USER_PRIVATE, any()) } returns 1
                 every { getInt(PREF_ROLE, any()) } returns 2
                 every { getString(PREF_USER_ORG_PRIVATE_KEY, any()) } returns "orgKey"
@@ -144,8 +150,7 @@ internal class UserBridgeMapperTest {
             +id.s equals "id"
             +name.s equals "username"
             +(plans * {
-                +size() equals 1 // TODO use 2 when addresses are handled
-//                it contains Plan.Mail.Free // TODO uncomment when addresses are handled
+                +size() equals 1
                 it contains Plan.Vpn.Paid
             })
             +private equals true

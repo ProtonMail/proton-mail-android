@@ -22,30 +22,32 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.bytes
-import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.Delinquent
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.entity.user.Role
 import ch.protonmail.android.domain.entity.user.User
-import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.domain.entity.user.UserSpace
+import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
 import me.proton.core.util.kotlin.toBoolean
 import ch.protonmail.android.api.models.User as OldUser
 
 /**
  * Transforms [ch.protonmail.android.api.models.User] to [ch.protonmail.android.domain.entity.user.User]
+ * Inherit from [BridgeMapper]
  */
-class UserBridgeMapper : BridgeMapper<OldUser, User> {
+class UserBridgeMapper(
+    private val addressMapper: AddressesBridgeMapper,
+    private val keysMapper: UserKeysBridgeMapper
+) : BridgeMapper<OldUser, User> {
 
-    // STOPSHIP FIX DUMMY FIELDS!!!
     override fun OldUser.toNewModel(): User {
 
         return User(
             id = Id(id),
             name = Name(name),
-            addresses = Addresses(emptyMap()), // TODO
-            keys = UserKeys(null, emptyList()), // TODO
+            addresses = addressMapper { addresses.toNewModel() },
+            keys = keysMapper { keys.toNewModel() },
             plans = getPlans(services, subscribed),
             private = private.toBoolean(),
             role = getRole(role),

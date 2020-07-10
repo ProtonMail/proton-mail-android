@@ -603,7 +603,6 @@ public class User {
             } else {
                 securePrefs = ProtonMailApplication.getApplication().getSecureSharedPreferences();
             }
-            Log.d("PMTAG", "tryLoadAddresses for username: `" + username + "`");
             Addresses = deserializeAddresses(securePrefs.getString(PREF_ALIASES, ""));
 
             // TODO try to verify and decrypt private key here?
