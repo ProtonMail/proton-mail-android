@@ -56,14 +56,14 @@ internal class UserTest {
     // region keys
     @Test
     fun `User can be created if keys are valid`() {
-        User(addresses = Addresses(emptyMap()), keys = UserKeys(null, emptyList()))
+        User(addresses = Addresses(emptyMap()), keys = UserKeys.Empty)
         User(addresses = notEmptyAddresses, keys = notEmptyKeys)
     }
 
     @Test
     fun `User fails if there are addresses but no keys`() {
         assert that fails<ValidationException> {
-            User(addresses = notEmptyAddresses, keys = UserKeys(null, emptyList()))
+            User(addresses = notEmptyAddresses, keys = UserKeys.Empty)
         }
     }
     // endregion

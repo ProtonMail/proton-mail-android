@@ -55,4 +55,12 @@ data class UserKeys(
     init { requireValid() }
 
     val hasKeys get() = keys.isNotEmpty()
+
+    companion object {
+
+        /**
+         * Empty [UserKeys]
+         */
+        val Empty get() = UserKeys(null, emptySet())
+    }
 }

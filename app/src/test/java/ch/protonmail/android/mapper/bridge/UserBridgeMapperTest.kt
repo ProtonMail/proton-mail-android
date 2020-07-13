@@ -56,7 +56,7 @@ internal class UserBridgeMapperTest {
 
     private val mapper = UserBridgeMapper(
         mockk { every { any<Collection<OldAddress>>().toNewModel() } returns Addresses(emptyMap()) },
-        mockk { every { any<Collection<OldKeys>>().toNewModel() } returns UserKeys(null, emptyList()) }
+        mockk { every { any<Collection<OldKeys>>().toNewModel() } returns UserKeys.Empty }
     )
 
     @Test
