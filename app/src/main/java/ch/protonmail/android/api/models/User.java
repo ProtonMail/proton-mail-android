@@ -47,12 +47,11 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALIASES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOCK_PIN_PERIOD;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_AUTO_LOGOUT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_BACKGROUND_SYNC;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_COMBINED_CONTACTS;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_DELIQUENT;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_DELINQUENT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_MOBILE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_NAME;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_DISPLAY_SIGNATURE;
@@ -73,8 +72,15 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_ROLE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SIGNATURE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SUBSCRIBED;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ORG_PRIVATE_KEY;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 
 public class User {
 
@@ -113,15 +119,17 @@ public class User {
 
     // new
     @SerializedName(Fields.User.ID)
-    private String ID;
+    private String id;
     @SerializedName(Fields.User.CURRENCY)
-    private String Currency;
+    private String currency;
     @SerializedName(Fields.User.CREDIT)
-    private int Credit;
+    private int credit;
+    @SerializedName(Fields.User.ORG_PRIVATE_KEY)
+    private String organizationPrivateKey;
     @SerializedName(Fields.User.PRIVATE)
-    private int Private;
+    private int isPrivate;
     @SerializedName(Fields.User.SERVICES)
-    private int Services;
+    private int services;
 
     // region these are local only - do not touch them
     private boolean AutoLogout; // this can remain here, local only setting
@@ -184,7 +192,7 @@ public class User {
         user.BackgroundSync = securePrefs.getBoolean(PREF_BACKGROUND_SYNC, true);
         user.PreventTakingScreenshots = securePrefs.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
         user.GcmDownloadMessageDetails = securePrefs.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
-        user.delinquent = securePrefs.getInt(PREF_DELIQUENT, 0);
+        user.delinquent = securePrefs.getInt(PREF_DELINQUENT, 0);
         user.NotificationVisibilityLockScreen = user.loadNotificationVisibilityLockScreenSettingsFromBackup();
         int maxAttachmentStorage = securePrefs.getInt(PREF_MAX_ATTACHMENT_STORAGE, Constants.MIN_ATTACHMENT_STORAGE_IN_MB);
         if (maxAttachmentStorage <= 0) {
@@ -202,6 +210,13 @@ public class User {
             user.ringtone = Uri.parse(notificationRingtone);
         }
         user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
+
+        user.id = securePrefs.getString(PREF_USER_ID, "id");
+        user.currency = securePrefs.getString(PREF_USER_CURRENCY, "eur");
+        user.credit = securePrefs.getInt(PREF_USER_CREDIT, 0);
+        user.organizationPrivateKey = securePrefs.getString(PREF_USER_ORG_PRIVATE_KEY, null);
+        user.isPrivate = securePrefs.getInt(PREF_USER_PRIVATE, 0);
+        user.services = securePrefs.getInt(PREF_USER_SERVICES, 0);
 
         return user;
     }
@@ -268,12 +283,18 @@ public class User {
                 .putInt(PREF_PREVENT_TAKING_SCREENSHOTS, PreventTakingScreenshots)
                 .putBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, GcmDownloadMessageDetails)
                 .putInt(PREF_ROLE, role)
-                .putInt(PREF_DELIQUENT, delinquent)
+                .putInt(PREF_DELINQUENT, delinquent)
                 .putInt(PREF_SUBSCRIBED, subscribed)
                 .putBoolean(PREF_AUTO_LOGOUT, AutoLogout)
                 .putBoolean(PREF_MANUALLY_LOCKED, ManuallyLocked)
                 .putInt(PREF_MAX_ATTACHMENT_STORAGE, MaxAttachmentStorage)
                 .putBoolean(PREF_COMBINED_CONTACTS, CombinedContacts)
+                .putString(PREF_USER_ID, id)
+                .putString(PREF_USER_CURRENCY, currency)
+                .putInt(PREF_USER_CREDIT, credit)
+                .putString(PREF_USER_ORG_PRIVATE_KEY, organizationPrivateKey)
+                .putInt(PREF_USER_PRIVATE, isPrivate)
+                .putInt(PREF_USER_SERVICES, services)
                 .apply();
     }
 
