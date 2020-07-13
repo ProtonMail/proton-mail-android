@@ -29,7 +29,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_out">Odjava</string>
     <string name="sign_out_question">Da li ste sigurni da se želite odjaviti?</string>
     <string name="mailbox_password">Lozinka sandučića e-pošte</string>
-    <string name="two_factor_code">Kôd dvofaktorske autentikacije</string>
+    <string name="two_factor_code">Kȏd dvofaktorske autentikacije</string>
     <string name="processing_request">Vaš zahtjev se obrađuje</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Niste prijavljeni!</string>
@@ -59,7 +59,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_exist">Adresa e-pošte kontakta već postoji</string>
     <string name="invalid_email">Adresa e-pošte nije valjana</string>
     <string name="duplicate_email">Adresa e-pošte je duplikat</string>
-    <string name="invalid_code">Kôd nije ispravan</string>
+    <string name="invalid_code">Kȏd nije ispravan</string>
     <string name="message_drafted">Slanje poruke nije uspjelo. Poruka je spremljena u skice</string>
     <string name="open_drawer">Otvori</string>
     <string name="close_drawer">Zatvori</string>
@@ -90,8 +90,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="empty_folder">Isprazni mapu</string>
     <string name="view_headers">Pregled zaglavlja</string>
     <string name="message_headers">Zaglavlje poruke</string>
-    <string name="delete_message">Obriši poruku</string>
-    <string name="delete_messages">Obriši poruke</string>
+    <string name="delete_message">Izbriši poruku</string>
+    <string name="delete_messages">Izbriši poruke</string>
     <string name="add_label">Dodaj oznaku</string>
     <string name="add_star">Dodaj zvjezdicu</string>
     <string name="remove_star">Ukloni zvjezdicu</string>
@@ -101,7 +101,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Premjesti u otpad</string>
     <string name="move_to_spam">Premjesti u neželjenu poštu</string>
     <string name="move_to_inbox">Premjesti u pristiglu poštu</string>
-    <string name="are_you_sure_empty">Jeste li sigurni da želite obrisati sve poruke iz ove mape?</string>
+    <string name="are_you_sure_empty">Jeste li sigurni da želite izbrisati sve poruke iz ove mape?</string>
     <string name="send">Pošalji</string>
     <string name="selected">Odabrano</string>
     <string name="no_messages">Nema poruka</string>
@@ -231,11 +231,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="lock_the_app">Zaključaj aplikaciju</string>
     <string name="display_name_banned_chars">Nevažeće zaslonsko ime. \'&gt;\' i \'&lt;\' nisu dozvoljeni</string>
     <string name="cont">Nastavi</string>
-    <string name="email_verification_code">Poslati ćemo kôd za potvrdu na gore navedenu adresu e-pošte.</string>
-    <string name="sms_verification_code">Poslati ćemo kôd za potvrdu na gore navedeni telefonski broj.</string>
-    <string name="send_verification_code">Pošalji kôd za potvrdu</string>
+    <string name="email_verification_code">Poslati ćemo kȏd za potvrdu na gore navedenu adresu e-pošte.</string>
+    <string name="sms_verification_code">Poslati ćemo kȏd za potvrdu na gore navedeni telefonski broj.</string>
+    <string name="send_verification_code">Pošalji kȏd za potvrdu</string>
     <string name="resend_verification_code">Ponovno pošalji</string>
-    <string name="enter_verification_code">Unesite kôd za provjeru</string>
+    <string name="enter_verification_code">Unesite kȏd za provjeru</string>
     <string name="verify">Potvrdi</string>
     <string name="reply_prefix_on">Dana</string>
     <string name="create_new_account">Stvori novi račun</string>
@@ -278,7 +278,7 @@ Nemojte izgubiti ovu lozinku, ne možemo je vratiti. Ako izgubite lozinku, neće
     <string name="customize_swipe_actions">Prilagodite radnje prelaska prstom</string>
     <string name="message_can_not_edit">Nije moguće odgovoriti/proslijediti. Ova poruka još nije poslana</string>
     <string name="label_apply">Primijeni</string>
-    <string name="label_delete">Obriši</string>
+    <string name="label_delete">Izbriši</string>
     <string name="label_add">Dodaj</string>
     <string name="no_browser_found">Molimo instalirajte aplikaciju za preglednik kako biste dovršili tu radnju</string>
     <string name="no_application_found">Nije pronađena aplikacija za upravljanje ovom radnjom</string>
@@ -329,7 +329,7 @@ koji se pojavljuje u polju pošiljatelja.</string>
     <string name="engagement_subtitle_expire">Poruke koje šaljete mogu se podesiti na automatsko brisanje nakon određenog vremenskog razdoblja.</string>
     <string name="engagement_subtitle_help">Pomoć i podršku možete dobiti na protonmail.com/support. Pogreške možete prijaviti i pomoću aplikacije.</string>
     <string name="attachment_exists">Privitak je već dodan</string>
-    <string name="sending_email_success">Kôd za potvrdu je poslan</string>
+    <string name="sending_email_success">Kȏd za potvrdu je poslan</string>
     <string name="sending_email_failed">Slanje koda za potvrdu nije uspjelo</string>
     <string name="password_not_valid">Unesena lozinka nije valjana</string>
     <string name="send_code_wait">Molimo pričekajte %d sekundi da biste ponovno pritisnuli</string>
@@ -391,7 +391,7 @@ koji se pojavljuje u polju pošiljatelja.</string>
     <string name="logout_question">Jesi li siguran da se želiš odjaviti?</string>
     <string name="logout_question_next_account">Biti će te prebačeni na %s.</string>
     <string name="upselling">Nadogradite/Donirajte</string>
-    <string name="upselling_title">ProtonMail je besplatan i otvorenog kôda</string>
+    <string name="upselling_title">ProtonMail je besplatan i otvorenog kȏda</string>
     <string name="upselling_subtitle">Potrebna nam je vaša podrška kako bismo nastavili štititi privatnost i poboljšavali ProtonMail</string>
     <string name="upselling_donate_title">Donirajte</string>
     <string name="upselling_upgrade_title">Nadogradite na ProtonMail Plus</string>
@@ -511,7 +511,7 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="available_labels">Dostupne oznake</string>
     <string name="choose_label_color">Odaberite boju oznake</string>
     <string name="save_new_label">Spremi novu oznaku</string>
-    <string name="delete_selected">Obriši odabrano</string>
+    <string name="delete_selected">Izbriši odabrano</string>
     <string name="pin_not_activated">PIN nije aktivan</string>
     <string name="available_options">Dostupne opcije</string>
     <string name="current_recovery_email">Trenutna adresa e-pošte za oporavak</string>
@@ -653,7 +653,7 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
     <string name="sender_name_address">%1$s &lt; %2$s&gt; napisao/la:</string>
     <string name="update_label">Ažuriraj oznaku</string>
     <string name="max_labels_in_message">Poruka %1$s ne može imati više od %2$d oznaka.</string>
-    <string name="delete">Obriši</string>
+    <string name="delete">Izbriši</string>
     <string name="subject_copied">Kopirano u međuspremnik</string>
     <string name="details_copied">Detalji kopirani u međuspremnik</string>
     <string name="saving">Spremanje...</string>
@@ -961,7 +961,7 @@ pristup pohrani.</string>
     <string name="notification_settings">Postavke obavijesti</string>
     <string name="auto_lock">Automatsko zaključavanje</string>
     <string name="auto_lock_app">Automatsko zaključavanje aplikacije</string>
-    <string name="auto_lock_description">Uključite ovu značajku za automatsko\nzaključavanje aplikacije i upotrijebite\nPIN kôd ili otisak otiska.</string>
+    <string name="auto_lock_description">Uključite ovu značajku za automatsko\nzaključavanje aplikacije i upotrijebite\nPIN kȏd ili otisak otiska.</string>
     <string name="change_pin_code">Promijenite PIN kod</string>
     <string name="auto_lock_timer">Vrijeme automatskog zaključavanja</string>
     <string name="connections_via_third_parties">Alternativno usmjeravanje</string>

@@ -25,7 +25,7 @@ Svájci székhellyel</string>
     <string name="decrypt_mailbox"><b>Postafiók</b> visszafejtése</string>
     <string name="decrypt">Visszafejtés</string>
     <string name="user_sign_in">Bejelentkezés</string>
-    <string name="two_factor_sign_in">Kétlépcsős azonosítás</string>
+    <string name="two_factor_sign_in">Kétlépcsős hitelesítés</string>
     <string name="sign_in">Bejelentkezés</string>
     <string name="sign_out">Kijelentkezés</string>
     <string name="sign_out_question">Biztos, hogy ki szeretne jelentkezni?</string>
