@@ -25,7 +25,7 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import ch.protonmail.android.activities.guest.LoginActivity
-import ch.protonmail.android.uitests.testRail.TestRailService
+import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import org.junit.After
 import org.junit.Before

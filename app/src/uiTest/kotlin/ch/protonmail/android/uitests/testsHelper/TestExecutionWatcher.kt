@@ -18,17 +18,27 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
+import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
+import ch.protonmail.android.uitests.tests.BaseTest.Companion.runId
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 class TestExecutionWatcher : TestWatcher() {
 
     override fun failed(e: Throwable?, description: Description?) {
-        //TODO save logcat, save screenshot, addTestCaseResult
+        //TODO save logcat, save screenshot,
+        description!!.annotations.forEach {
+            if (it is TestCaseId) {
+                TestRailService.addResultForTestCase(it.id, 5, "Failed", runId)
+            }
+        }
     }
 
     override fun succeeded(description: Description?) {
-        //TODO implement addTestCaseResult
+        description!!.annotations.forEach {
+            if (it is TestCaseId) {
+                TestRailService.addResultForTestCase(it.id, 1, "Passed", runId)
+            }
+        }
     }
-
 }

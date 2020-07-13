@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.testRail
+package ch.protonmail.android.uitests.testsHelper.testRail
 
 import org.json.simple.JSONObject
 import java.io.IOException
@@ -24,9 +24,9 @@ import java.util.*
 
 object TestRailService {
 
-    var PROJECT_ID = "" //enter your project_id or pass as property;
-    var TESTRAIL_USERNAME = ""//enter testrail username
-    var TESTRAIL_PASSWORD = ""//enter testrail password
+    var PROJECT_ID = "23" //enter your project_id or pass as property;
+    var TESTRAIL_USERNAME = "filip.gudjevski@protonmail.com"//enter testrail username
+    var TESTRAIL_PASSWORD = "Grofche0412!"//enter testrail password
     var RAILS_ENGINE_URL = "https://proton.testrail.io/"
 
     fun createTestRun(): String {

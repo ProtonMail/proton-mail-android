@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.testRail
+package ch.protonmail.android.uitests.testsHelper.testRail
 
 import org.json.simple.JSONObject
 import org.json.simple.JSONValue
