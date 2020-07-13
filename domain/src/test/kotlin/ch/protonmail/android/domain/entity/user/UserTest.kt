@@ -169,7 +169,7 @@ internal class UserTest {
 
     private val dummyKey = UserKey(
         Id("key"),
-        4,
+        4u,
         PgpField.PrivateKey(NotBlankString("key")),
         PgpField.Message(NotBlankString("token"))
     )

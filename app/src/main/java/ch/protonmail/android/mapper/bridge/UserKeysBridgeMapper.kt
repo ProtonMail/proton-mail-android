@@ -56,7 +56,7 @@ class UserKeyBridgeMapper @Inject constructor() : BridgeMapper<OldKey, UserKey> 
 
     override fun OldKey.toNewModel() = UserKey(
         id = Id(id),
-        version = 4, // TODO not implemented on old Keys
+        version = 4u, // TODO not implemented on old Keys
         privateKey = PgpField.PrivateKey(NotBlankString(privateKey)),
         token = PgpField.Message(NotBlankString(token))
     )

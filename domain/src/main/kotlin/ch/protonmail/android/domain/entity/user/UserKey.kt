@@ -32,7 +32,7 @@ import ch.protonmail.android.domain.entity.requireValid
 @Validated
 data class UserKey(
     val id: Id,
-    val version: Int,
+    val version: UInt,
     val privateKey: PgpField.PrivateKey,
     val token: PgpField.Message
 )

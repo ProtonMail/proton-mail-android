@@ -1,7 +1,11 @@
 package ch.protonmail.android.mapper.bridge
 
 import assert4k.*
+import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.domain.entity.user.AddressKeys
+import io.mockk.every
+import io.mockk.mockk
 import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
 import ch.protonmail.android.api.models.address.Address as OldAddress
@@ -11,7 +15,9 @@ import ch.protonmail.android.api.models.address.Address as OldAddress
  */
 internal class AddressesBridgeMapperTest {
 
-    private val singleMapper = AddressBridgeMapper()
+    private val singleMapper = AddressBridgeMapper(
+        mockk { every { any<Collection<Keys>>().toNewModel() } returns AddressKeys.Empty }
+    )
     private val multiMapper = AddressesBridgeMapper(singleMapper)
 
     @Test
