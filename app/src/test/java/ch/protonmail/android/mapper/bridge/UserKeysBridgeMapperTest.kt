@@ -43,7 +43,7 @@ internal class UserKeysBridgeMapperTest {
     }
 
     @Test
-    fun `does pick first keys as primary, if none is defined`() {
+    fun `does pick first Key as primary, if none is defined`() {
         val oldKeys = (1..10).map { OldKey("$it") }
 
         val newKeys = multiMapper { oldKeys.toNewModel() }

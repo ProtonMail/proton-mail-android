@@ -18,7 +18,16 @@
  */
 package ch.protonmail.android.mapper.bridge
 
+import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.domain.entity.user.Addresses
+import me.proton.core.util.kotlin.invoke
+import me.proton.core.util.kotlin.takeIfNotBlank
+import me.proton.core.util.kotlin.toBoolean
+import javax.inject.Inject
 import ch.protonmail.android.api.models.address.Address as OldAddress
 
 /**
@@ -26,9 +35,57 @@ import ch.protonmail.android.api.models.address.Address as OldAddress
  * [ch.protonmail.android.domain.entity.user.Addresses]
  * Inherit from [BridgeMapper]
  */
-class AddressesBridgeMapper : BridgeMapper<Collection<OldAddress>, Addresses> {
+class AddressesBridgeMapper @Inject constructor(
+    private val singleMapper: AddressBridgeMapper
+) : BridgeMapper<Collection<OldAddress>, Addresses> {
 
-    override fun Collection<OldAddress>.toNewModel(): Addresses {
-        TODO("Not yet implemented")
+    override fun Collection<OldAddress>.toNewModel() =
+        Addresses(mapWithFixedOrder(singleMapper) { it.toNewModel() })
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun <T> Collection<OldAddress>.mapWithFixedOrder(
+        mapper: AddressBridgeMapper,
+        map: AddressBridgeMapper.(OldAddress) -> T
+    ): Map<Int, T> {
+        val sortedOriginals = sortedBy { it.order }
+
+        // Keys is new order
+        val fixedOrders = buildMap<Int, OldAddress> {
+            for (original in sortedOriginals) {
+                var newOrder = original.order
+                while (newOrder in keys) newOrder++
+                put(newOrder, original)
+            }
+        }
+
+        return fixedOrders.mapValues { (_, original) -> mapper { map(original) } }
     }
+}
+
+/**
+ * Transforms a single of [ch.protonmail.android.api.models.address.Address] to
+ * [ch.protonmail.android.domain.entity.user.Address]
+ * Inherit from [BridgeMapper]
+ */
+class AddressBridgeMapper @Inject constructor(
+) : BridgeMapper<OldAddress, Address> {
+
+    override fun OldAddress.toNewModel(): Address {
+
+        return Address(
+            id = Id(id),
+            domainId = Id(domainId),
+            email = EmailAddress(email),
+            displayName = displayName?.takeIfNotBlank()?.let(::Name),
+            enabled = status.toBoolean(),
+            type = getType(type),
+            allowedToSend = send.toBoolean(),
+            allowedToReceive = receive.toBoolean(),
+            keys = AddressKeys.Empty // TODO
+        )
+    }
+
+    private fun getType(i: Int) =
+        Address.Type.values().find { it.i == i }
+            ?: throw IllegalArgumentException("Cannot crate Address Type from value: $i")
 }

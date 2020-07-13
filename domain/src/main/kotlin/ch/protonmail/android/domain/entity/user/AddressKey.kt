@@ -88,4 +88,12 @@ data class AddressKeys(
     init { requireValid() }
 
     val hasKeys get() = keys.isNotEmpty()
+
+    companion object {
+
+        /**
+         * Empty [AddressKeys]
+         */
+        val Empty get() = AddressKeys(null, emptySet())
+    }
 }

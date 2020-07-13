@@ -30,13 +30,14 @@ import ch.protonmail.android.domain.entity.user.UserSpace
 import me.proton.core.util.kotlin.invoke
 import me.proton.core.util.kotlin.takeIfNotBlank
 import me.proton.core.util.kotlin.toBoolean
+import javax.inject.Inject
 import ch.protonmail.android.api.models.User as OldUser
 
 /**
  * Transforms [ch.protonmail.android.api.models.User] to [ch.protonmail.android.domain.entity.user.User]
  * Inherit from [BridgeMapper]
  */
-class UserBridgeMapper(
+class UserBridgeMapper @Inject constructor(
     private val addressMapper: AddressesBridgeMapper,
     private val keysMapper: UserKeysBridgeMapper
 ) : BridgeMapper<OldUser, User> {
