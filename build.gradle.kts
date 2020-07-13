@@ -38,7 +38,7 @@ setupKotlin(
     "-XXLanguage:+InlineClasses",
     "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
 )
-setupDetekt { "TFBR4UrMiEhnEQerJeq9" !in it.name }
+setupDetekt { "tokenAutoComplete" !in it.name }
 
 tasks.register("clean", Delete::class.java) {
     delete(rootProject.buildDir)
