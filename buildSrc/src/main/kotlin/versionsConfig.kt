@@ -78,6 +78,7 @@ const val `falcon version` =                    "2.1.1"         // Released: Sep
 const val `hamcrest version` =                  "1.3"           // Released:
 const val `jUnit5 version` =                    "5.5.0"         // Released:
 const val `robolectric version` =               "4.3.1"         // Released: Oct 11, 2019
+const val `json-simple version` =               "1.1.1"         // Released: Mar 21, 2012
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020

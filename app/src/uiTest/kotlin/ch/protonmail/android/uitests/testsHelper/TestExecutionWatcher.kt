@@ -24,6 +24,11 @@ import org.junit.runner.Description
 class TestExecutionWatcher : TestWatcher() {
 
     override fun failed(e: Throwable?, description: Description?) {
-        //TODO save logcat, save screenshot
+        //TODO save logcat, save screenshot, addTestCaseResult
     }
+
+    override fun succeeded(description: Description?) {
+        //TODO implement addTestCaseResult
+    }
+
 }

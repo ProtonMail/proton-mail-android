@@ -16,36 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import me.proton.core.util.gradle.*
+package ch.protonmail.android.uitests.testsHelper;
 
-buildscript {
-    initVersions()
-    repositories(repos)
-    dependencies(classpathDependencies)
-}
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-plugins {
-    `sonarQube`
-}
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TestCase {
 
-allprojects {
-    repositories(repos)
-}
+    String testCase();
 
-setupKotlin(
-    "-XXLanguage:+NewInference",
-    "-Xuse-experimental=kotlin.Experimental",
-    "-XXLanguage:+InlineClasses",
-    "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
-)
-//setupDetekt { "TFBR4UrMiEhnEQerJeq9" !in it.name }
-
-tasks.register("clean", Delete::class.java) {
-    delete(rootProject.buildDir)
-}
-
-tasks.register("injectLicenses") {
-    description = "Add license header to source code files"
-
-    apply(from = "scripts/inject_licenses/InjectLicenses.gradle.kts")
 }
