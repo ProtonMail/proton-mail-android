@@ -23,13 +23,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="secure_email_swiss">Correu electrònic segur amb seu\nia Suïssa</string>
     <string name="decrypt_mailbox">Desxifrar la <b>bústia</b></string>
     <string name="decrypt">Desxifrar</string>
-    <string name="user_sign_in">Nom d\'usuari</string>
+    <string name="user_sign_in">Accés d’usuari</string>
     <string name="two_factor_sign_in">Autenticació de dos factors</string>
     <string name="sign_in">Iniciar sessió</string>
     <string name="sign_out">Tancar sessió</string>
     <string name="sign_out_question">Està segur que desitja tancar la sessió?</string>
     <string name="mailbox_password">Contrasenya de la bústia</string>
-    <string name="two_factor_code">Codi de dos factors</string>
+    <string name="two_factor_code">Codi de Dos Factors</string>
     <string name="processing_request">La teva sol·licitud s\'està processant</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">No heu iniciat sessió!</string>
@@ -41,17 +41,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="error_chrome_not_found">No es pot carregar el contingut. Si us plau, instal·leu Chrome</string>
     <string name="messages_load_failure">No s\'han pogut recuperar els missatges</string>
     <string name="message_details_load_failure">No s\'han pogut recuperar els missatges</string>
-    <string name="no_more_messages">No hi han més missatges</string>
+    <string name="no_more_messages">No hi ha més missatges</string>
     <string name="mailbox_login_failure">No s\'ha pogut connectar a la bústia de correu</string>
-    <string name="login_failure">No ha pogut identificar</string>
+    <string name="login_failure">Error en l\'inici de sessió</string>
     <string name="invalid_server_proof">El servidor no ha passat la prova</string>
     <string name="invalid_credentials">Credencials no vàlides</string>
     <string name="invalid_mailbox_password">Contrasenya de bústia de correu no vàlida</string>
     <string name="not_signed_up">No estàs inscrit a la Beta per Android de ProtonMail</string>
     <string name="no_network">No hi ha connexió</string>
     <string name="no_network_queued">No hi ha connexió, el missatge queda a la cua</string>
-    <string name="update_app_title">Actualització necessària</string>
-    <string name="update_app">No podeu fer servir l\'app de ProtonMail fins que no sigui actualizada</string>
+    <string name="update_app_title">Actualització requerida</string>
+    <string name="update_app">L\'aplicació de ProtonMail no pot ser utilitzada fins que no sigui actualitzada</string>
     <string name="api_offline_title">L\'API de ProtonMail està fora de línia</string>
     <string name="api_offline">Actualment ProtonMail es troba fora de línia, consulta\'n l\'estat actual al nostre twitter: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contacte desat</string>
