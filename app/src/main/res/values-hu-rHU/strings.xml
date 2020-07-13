@@ -909,8 +909,8 @@ a tárhely elérését.</string>
     <string name="labels_manage">Címkék kezelése</string>
     <string name="folders_manage">Mappák kezelése</string>
     <string name="swiping_gesture">Csúsztatási műveletek</string>
-    <string name="swipe_action_left">Csúsztatás balról jobbra</string>
-    <string name="swipe_action_right">Csúsztatás jobbról balra</string>
+    <string name="swipe_action_right">Csúsztatás balról jobbra</string>
+    <string name="swipe_action_left">Csúsztatás jobbról balra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Válasszon műveletet a csúsztatáshoz</string>
     <string name="swipe_action_trash">Áthelyezés a Lomtárba</string>

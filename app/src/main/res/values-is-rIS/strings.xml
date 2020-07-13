@@ -908,8 +908,8 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <string name="labels_manage">Sýsla með merkingar</string>
     <string name="folders_manage">Sýsla með möppur</string>
     <string name="swiping_gesture">Strokubending</string>
-    <string name="swipe_action_left">Strjúka frá vinstri-til-hægri</string>
-    <string name="swipe_action_right">Strjúka frá hægri-til-vinstri</string>
+    <string name="swipe_action_right">Strjúka frá vinstri-til-hægri</string>
+    <string name="swipe_action_left">Strjúka frá hægri-til-vinstri</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Veldu aðgerð við stroku</string>
     <string name="swipe_action_trash">Skilaboð voru færð í ruslið</string>

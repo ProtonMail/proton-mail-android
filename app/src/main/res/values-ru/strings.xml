@@ -937,8 +937,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_manage">Управление ярлыками</string>
     <string name="folders_manage">Управление папками</string>
     <string name="swiping_gesture">Жесты смахиванием</string>
-    <string name="swipe_action_left">Смахивание слева направо</string>
-    <string name="swipe_action_right">Смахивание справа налево</string>
+    <string name="swipe_action_right">Смахивание слева направо</string>
+    <string name="swipe_action_left">Смахивание справа налево</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Выберите действие смахивания</string>
     <string name="swipe_action_trash">Сообщение перемещено в корзину</string>

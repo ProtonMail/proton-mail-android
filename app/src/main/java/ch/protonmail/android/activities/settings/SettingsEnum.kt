@@ -98,13 +98,13 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.swiping_gesture)
     },
-    SWIPE_FROM_RIGHT {
-        override fun getHint(context: Context): String = ""
-        override fun getHeader(context: Context): String = context.resources.getString(R.string.swipe_action_right)
-    },
-    SWIPE_FROM_LEFT {
+    SWIPE_LEFT {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.swipe_action_left)
+    },
+    SWIPE_RIGHT {
+        override fun getHint(context: Context): String = ""
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.swipe_action_right)
     },
     LOCAL_STORAGE_LIMIT {
         override fun getHint(context: Context): String = ""

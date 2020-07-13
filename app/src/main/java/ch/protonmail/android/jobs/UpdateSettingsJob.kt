@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.jobs
 
-
 import android.text.TextUtils
 import android.util.Base64
 import ch.protonmail.android.R
@@ -115,10 +114,10 @@ class UpdateSettingsJob(private val displayChanged: Boolean = false, private val
                     user.save()
                 }
                 if (actionLeftSwipeChanged) {
-                    mApi.updateLeftSwipe(mUserManager.mailSettings!!.leftSwipeAction)
+                    mApi.updateLeftSwipe(mUserManager.mailSettings!!.rightSwipeAction)
                 }
                 if (actionRightSwipeChanged) {
-                    mApi.updateRightSwipe(mUserManager.mailSettings!!.rightSwipeAction)
+                    mApi.updateRightSwipe(mUserManager.mailSettings!!.leftSwipeAction)
                 }
                 if (mailSettings != null) {
                     mUserManager.mailSettings = mailSettings

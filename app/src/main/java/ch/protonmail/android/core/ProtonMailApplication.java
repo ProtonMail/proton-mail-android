@@ -569,6 +569,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
         //refresh local cache if new app version
         int previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
         if (previousVersion != currentAppVersion && previousVersion > 0) {
+            prefs.edit().putInt(Constants.Prefs.PREF_PREVIOUS_APP_VERSION, previousVersion).apply();
             prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, currentAppVersion).apply();
             mUpdateOccurred = true;
 

@@ -366,8 +366,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 actionBarTitle = R.string.settings_background_sync
             }
             SettingsItem.SWIPE -> {
-                setValue(SettingsEnum.SWIPE_FROM_RIGHT, getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription))
-                setValue(SettingsEnum.SWIPE_FROM_LEFT, getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription))
+                setValue(SettingsEnum.SWIPE_LEFT,
+                        getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription))
+                setValue(SettingsEnum.SWIPE_RIGHT,
+                        getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription))
                 actionBarTitle = R.string.swiping_gesture
             }
             SettingsItem.LABELS_AND_FOLDERS -> {

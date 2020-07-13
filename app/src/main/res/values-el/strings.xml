@@ -911,8 +911,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_manage">Διαχειριστής ετικετών</string>
     <string name="folders_manage">Διαχειριστής Φακέλων</string>
     <string name="swiping_gesture">Ολίσθηση gesture</string>
-    <string name="swipe_action_left">Σύρετε αριστερά προς τα δεξιά</string>
-    <string name="swipe_action_right">Σύρετε δεξιά προς τα αριστερά</string>
+    <string name="swipe_action_right">Σύρετε αριστερά προς τα δεξιά</string>
+    <string name="swipe_action_left">Σύρετε δεξιά προς τα αριστερά</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Επιλέξτε ενέργεια ολίσθησης</string>
     <string name="swipe_action_trash">Το μήνυμα μεταφέρθηκε στον κάδο απορριμμάτων</string>

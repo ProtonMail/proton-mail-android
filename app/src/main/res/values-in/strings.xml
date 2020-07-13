@@ -899,8 +899,8 @@ akses menuju penyimpanan.</string>
     <string name="labels_manage">Pengelola Label</string>
     <string name="folders_manage">Pengelola Folder</string>
     <string name="swiping_gesture">Gerakan usap</string>
-    <string name="swipe_action_left">Geser dari kiri ke kanan</string>
-    <string name="swipe_action_right">Geser dari kanan ke kiri</string>
+    <string name="swipe_action_right">Geser dari kiri ke kanan</string>
+    <string name="swipe_action_left">Geser dari kanan ke kiri</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Pilih tindakan usap</string>
     <string name="swipe_action_trash">Pesan dipindahkan ke sampah</string>

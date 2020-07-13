@@ -46,8 +46,8 @@ const val EXTRA_SWIPE_ID = "EXTRA_SWIPE_ID"
  */
 
 enum class SwipeType {
-    LEFT,
-    RIGHT
+    RIGHT,
+    LEFT
 }
 
 class SwipeChooserActivity : BaseActivity() {
@@ -57,7 +57,7 @@ class SwipeChooserActivity : BaseActivity() {
     private var mSwipeActionsIds: IntArray? = null
     private var mInflater: LayoutInflater? = null
     private var mCurrentAction: Int = 0
-    private var mSwipeId: SwipeType = SwipeType.LEFT
+    private var mSwipeId: SwipeType = SwipeType.RIGHT
 
     override fun getLayoutId(): Int {
         return R.layout.activity_swipe_chooser
@@ -119,24 +119,25 @@ class SwipeChooserActivity : BaseActivity() {
             for (i in mSwipeActionsIds!!.indices) {
                 if (mSwipeActionsIds!![i] == selectedOption) {
                     mCurrentAction = i
-                    var actionRightSwipeChanged = false
                     var actionLeftSwipeChanged = false
+                    var actionRightSwipeChanged = false
 
-                    if (mSwipeId == SwipeType.RIGHT) {
-                        actionRightSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.rightSwipeAction
-                        if (actionRightSwipeChanged) {
-                            mUserManager.mailSettings!!.rightSwipeAction = mCurrentAction
-
-                        }
-                    } else if (mSwipeId == SwipeType.LEFT) {
+                    if (mSwipeId == SwipeType.LEFT) {
                         actionLeftSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.leftSwipeAction
                         if (actionLeftSwipeChanged) {
                             mUserManager.mailSettings!!.leftSwipeAction = mCurrentAction
 
                         }
+                    } else if (mSwipeId == SwipeType.RIGHT) {
+                        actionRightSwipeChanged = mCurrentAction != mUserManager.mailSettings!!.rightSwipeAction
+                        if (actionRightSwipeChanged) {
+                            mUserManager.mailSettings!!.rightSwipeAction = mCurrentAction
+
+                        }
                     }
                     mUserManager.mailSettings!!.save()
-                    val job = UpdateSettingsJob(actionRightSwipeChanged = actionRightSwipeChanged, actionLeftSwipeChanged = actionLeftSwipeChanged)
+                    val job = UpdateSettingsJob(actionRightSwipeChanged = actionRightSwipeChanged,
+                            actionLeftSwipeChanged = actionLeftSwipeChanged)
                     mJobManager.addJobInBackground(job)
                     break
                 }
