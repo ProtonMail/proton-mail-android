@@ -111,8 +111,8 @@ public class AppUtil {
     }
 
     public static String buildUserAgent() {
-        return String.format(Locale.US, "%s/%s (Android %s; %s; %s %s; %s)", "ProtonMail",
-                BuildConfig.VERSION_NAME, Build.VERSION.RELEASE, Build.MODEL, Build.BRAND, Build.DEVICE, Locale.getDefault().getLanguage());
+        return String.format(Locale.US, "%s/%s (Android %s; %s %s)", "ProtonMail",
+                BuildConfig.VERSION_NAME, Build.VERSION.RELEASE, Build.BRAND, Build.MODEL);
     }
 
     public static String getAppVersionName(Context context) {
