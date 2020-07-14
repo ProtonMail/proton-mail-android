@@ -42,7 +42,10 @@ dependencies {
         // Android
         `lifecycle-runtime`,
         `lifecycle-liveData`,
-        `lifecycle-viewModel`
+        `lifecycle-viewModel`,
+
+        //TestRail
+         `jsonsimple`
     )
 
     // Test dependencies
@@ -70,6 +73,7 @@ dependencies {
         `android-test-runner`,
         `android-test-rules`,
         `espresso`,
-        `hamcrest`
+        `hamcrest`,
+        `jsonsimple`
     )
 }

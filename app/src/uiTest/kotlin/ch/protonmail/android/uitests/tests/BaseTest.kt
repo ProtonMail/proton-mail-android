@@ -25,9 +25,11 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import ch.protonmail.android.activities.guest.LoginActivity
+import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import org.junit.After
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
@@ -64,5 +66,12 @@ open class BaseTest {
         private val testName = TestName()
         private val testExecutionWatcher = TestExecutionWatcher()
         val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation!!
+        var runId = ""
+
+        @BeforeClass
+        @JvmStatic
+        fun setUpBeforeClass() {
+            runId = TestRailService.createTestRun();
+        }
     }
 }

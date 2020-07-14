@@ -18,27 +18,19 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
-import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
-import ch.protonmail.android.uitests.tests.BaseTest.Companion.runId
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
+import java.util.*
 
-class TestExecutionWatcher : TestWatcher() {
+class ParametersUtils {
 
-    override fun failed(e: Throwable?, description: Description?) {
-        //TODO save logcat, save screenshot,
-        description!!.annotations.forEach {
-            if (it is TestCaseId) {
-                TestRailService.addResultForTestCase(it.id, 5, "Failed", runId)
-            }
+    fun getParameters(): Map<String, String>? {
+        val myMap: MutableMap<String, String> = HashMap()
+        val pairs = System.getenv("PARAMS").split(";".toRegex()).toTypedArray()
+        for (i in pairs.indices) {
+            val pair = pairs[i]
+            val keyValue = pair.split(":".toRegex()).toTypedArray()
+            myMap[keyValue[0]] = keyValue[1]
         }
+        return myMap
     }
 
-    override fun succeeded(description: Description?) {
-        description!!.annotations.forEach {
-            if (it is TestCaseId) {
-                TestRailService.addResultForTestCase(it.id, 1, "Passed", runId)
-            }
-        }
-    }
 }
