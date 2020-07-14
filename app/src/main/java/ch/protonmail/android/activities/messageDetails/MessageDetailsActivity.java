@@ -1119,11 +1119,21 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
     }
 
 
-    private class MessageDetailsErrorObserver implements Observer<Event<Status>> {
+    private class MessageDetailsErrorObserver implements Observer<Event<String>> {
 
         @Override
-        public void onChanged(@Nullable Event<Status> status) {
-            TextExtensions.showToast(MessageDetailsActivity.this, R.string.default_error_message);
+        public void onChanged(@Nullable Event<String> status) {
+            if (status != null) {
+                String content = status.getContentIfNotHandled();
+                if (content != null) {
+                    if (content.length() == 0) {
+                        TextExtensions.showToast(MessageDetailsActivity.this, R.string.default_error_message);
+                    } else {
+                        TextExtensions.showToast(MessageDetailsActivity.this, content);
+                        mProgressView.setVisibility(View.GONE);
+                    }
+                }
+            }
         }
     }
 

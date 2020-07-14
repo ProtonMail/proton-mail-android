@@ -27,6 +27,7 @@ import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.Attachment
@@ -423,12 +424,9 @@ class MessageDetailsRepository @Inject constructor(
                 message.checkIfAttHeadersArePresent(messagesDao)
             }
 
-    @Suppress("RedundantSuspendModifier") // suspend modifier needed since we are blocking on an Observable
-    suspend fun fetchMessageDetails(messageId: String): Message {
+    fun fetchMessageDetails(messageId: String): MessageResponse {
         return try {
-            api.messageDetailObservable(messageId) // try to fetch the message details from the API
-                    .blockingFirst()
-                    .message
+            api.messageDetail(messageId) // try to fetch the message details from the API
         } catch (ioException: IOException) {
             // if there is an IO exception, meaning the connection could not be established
             // then schedule a background job for run in future
@@ -437,12 +435,8 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    @Suppress("RedundantSuspendModifier") // suspend modifier needed since we are blocking on an Observable
-    suspend fun fetchSearchMessageDetails(messageId: String): Message {
-        return api.messageDetailObservable(messageId) // try to fetch the message details from the API
-                .blockingFirst()
-                .message
-    }
+    fun fetchSearchMessageDetails(messageId: String): MessageResponse =
+        api.messageDetail(messageId) // try to fetch the message details from the API
 
     fun startDownloadEmbeddedImages(messageId: String, username: String) {
         DownloadEmbeddedAttachmentsWorker.enqueue(messageId, username)
