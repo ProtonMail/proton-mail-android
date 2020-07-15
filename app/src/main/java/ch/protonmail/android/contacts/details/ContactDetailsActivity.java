@@ -252,7 +252,12 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         mVCardAddressOptions = Arrays.asList(getResources().getStringArray(R.array.vcard_option_address_val));
         contactEditDetailsEmailGroupsAdapter = new ContactEditDetailsEmailGroupsAdapter(ContactDetailsActivity.this, new ArrayList<>());
         contactDetailsViewModel.getSetupComplete().observe(this, booleanEvent -> {
-            if (booleanEvent.getContentIfNotHandled()) {
+            Boolean didSetupCompleteBoxed = booleanEvent.getContentIfNotHandled();
+            boolean didSetupComplete;
+            if (didSetupCompleteBoxed != null) didSetupComplete = didSetupCompleteBoxed;
+            else didSetupComplete = false;
+
+            if (didSetupComplete) {
                 new ExtractFullContactDetailsTask(contactsDatabase, mContactId, fullContactDetails -> {
                     onInitialiseContact(fullContactDetails);
                     return Unit.INSTANCE;
