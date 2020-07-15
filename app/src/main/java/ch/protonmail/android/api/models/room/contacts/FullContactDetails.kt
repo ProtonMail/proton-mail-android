@@ -25,11 +25,11 @@ import androidx.room.PrimaryKey
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.enumerations.ContactEncryption
 import ch.protonmail.android.utils.VCardUtil
-import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import ch.protonmail.android.utils.crypto.UserCrypto
 import com.proton.gopenpgp.armor.Armor
 import ezvcard.Ezvcard
 import ezvcard.VCard
+import me.proton.core.util.kotlin.equalsNoCase
 
 // region constants
 const val TABLE_FULL_CONTACT_DETAILS = "fullContactsDetails"
@@ -49,109 +49,95 @@ const val COLUMN_CONTACT_ENCRYPTED_DATA = "EncryptedData"
 
 @Entity(tableName = TABLE_FULL_CONTACT_DETAILS)
 data class FullContactDetails @Ignore constructor(
-		@PrimaryKey
-		@ColumnInfo(name = COLUMN_CONTACT_ID)
-		val contactId: String,
-		@ColumnInfo(name = COLUMN_CONTACT_NAME)
-		var name: String? = null,
-		@ColumnInfo(name = COLUMN_CONTACT_UID)
-		val uid: String? = null,
-		@ColumnInfo(name = COLUMN_CONTACT_CREATE_TIME)
-		val createTime: Long = 0,
-		@ColumnInfo(name = COLUMN_CONTACT_MODIFY_TIME)
-		val modifyTime: Long = 0,
-		@ColumnInfo(name = COLUMN_CONTACT_SIZE)
-		val size: Int = 0,
-		@ColumnInfo(name = COLUMN_CONTACT_DEFAULTS)
-		val defaults: Int = 0,
-		@Ignore
-		var emails: List<ContactEmail>? = null,
-		@ColumnInfo(name = COLUMN_CONTACT_ENCRYPTED_DATA)
-		var encryptedData:MutableList<ContactEncryptedData>? = null
+
+    @PrimaryKey
+    @ColumnInfo(name = COLUMN_CONTACT_ID)
+    val contactId: String,
+
+    @ColumnInfo(name = COLUMN_CONTACT_NAME)
+    var name: String? = null,
+
+    @ColumnInfo(name = COLUMN_CONTACT_UID)
+    val uid: String? = null,
+
+    @ColumnInfo(name = COLUMN_CONTACT_CREATE_TIME)
+    val createTime: Long = 0,
+
+    @ColumnInfo(name = COLUMN_CONTACT_MODIFY_TIME)
+    val modifyTime: Long = 0,
+
+    @ColumnInfo(name = COLUMN_CONTACT_SIZE)
+    val size: Int = 0,
+
+    @ColumnInfo(name = COLUMN_CONTACT_DEFAULTS)
+    val defaults: Int = 0,
+
+    @Ignore
+    var emails: List<ContactEmail>? = null,
+
+    @ColumnInfo(name = COLUMN_CONTACT_ENCRYPTED_DATA)
+    var encryptedData: MutableList<ContactEncryptedData>? = null
 ) {
 
-	/**
-	 * Room database constructor
-	 */
-	constructor(contactId:String,
-				name:String?,
-				uid:String?,
-				createTime:Long,
-				modifyTime:Long,
-				size:Int,
-				defaults:Int,
-				encryptedData:MutableList<ContactEncryptedData>):this(
-			contactId,
-			name,
-			uid,
-			createTime,
-			modifyTime,
-			size,
-			defaults,
-			null,
-			encryptedData)
+    /**
+     * Room database constructor
+     */
+    constructor (
+        contactId: String,
+        name: String?,
+        uid: String?,
+        createTime: Long,
+        modifyTime: Long,
+        size: Int,
+        defaults: Int,
+        encryptedData: MutableList<ContactEncryptedData>
+    ) : this(
+        contactId,
+        name,
+        uid,
+        createTime,
+        modifyTime,
+        size,
+        defaults,
+        null,
+        encryptedData
+    )
 
-	fun addEncryptedData(data:ContactEncryptedData) {
-		encryptedData = ArrayList(encryptedData)
-		encryptedData!!.add(data)
-	}
+    fun addEncryptedData(data: ContactEncryptedData) {
+        encryptedData?.add(data)
+            ?: run { encryptedData = mutableListOf(data) }
+    }
 
-	fun getPublicKeys(crypto:UserCrypto,email:String):List<String> {
-		val cards=encryptedData
-		val signedData=getSignedData(crypto,cards!!)
-		val clearData=getClearData(cards)
-		if(signedData==null) {
-			return emptyList()
-		}
+    fun getPublicKeys(crypto: UserCrypto, email: String): List<String> {
+        val cards = encryptedData
+            ?: return emptyList()
+        val signedData = getSignedData(crypto, cards)
+            ?: return emptyList()
 
-		val signed=Ezvcard.parse(signedData).first()
-		val clear=if(clearData==null) VCard() else Ezvcard.parse(clearData).first()
-		val group:String
-		try {
-			group=VCardUtil.getGroup(clear,signed,email)
-		} catch(e:Exception) {
-			return emptyList()
-		}
+        val clearData = getClearData(cards)
+        val signed = Ezvcard.parse(signedData).first()
+        val clear = if (clearData == null) VCard() else Ezvcard.parse(clearData).first()
+        val group = runCatching { VCardUtil.getGroup(clear, signed, email) }
+            .getOrNull() ?: return emptyList()
 
-		val keyProps=signed.keys
-		val publicKeys=ArrayList<String>()
-		for(key in keyProps) {
-			if(!key.group.equals(group,ignoreCase=true)) {
-				continue
-			}
-			try {
-				publicKeys.add(Armor.armorKey(key.data))
-			} catch(e:Exception) {
-				return emptyList()
-			}
-		}
-		return publicKeys
-	}
+        return signed.keys
+            .filter { it.group equalsNoCase group }
+            .mapNotNull {
+                runCatching { Armor.armorKey(it.data) }.getOrNull()
+            }
+    }
 
-	private fun getSignedData(crypto:UserCrypto,cards:List<ContactEncryptedData>):String? {
-		for(card in cards) {
-			if(card.encryptionType==ContactEncryption.SIGNED) {
-				val tdr:TextDecryptionResult
-				try {
-					tdr=crypto.verify(card.data,card.signature)
-				} catch(e:Exception) {
-					return null
-				}
+    private fun getSignedData(crypto: UserCrypto, cards: List<ContactEncryptedData>): String? =
+        cards
+            .find { it.encryptionType == ContactEncryption.SIGNED }
+            ?.let {
+                runCatching { crypto.verify(it.data, it.signature) }
+                    .fold(
+                        onSuccess = { if (it.isSignatureValid) it.decryptedData else null },
+                        onFailure = { null }
+                    )
+            }
 
-				return if(tdr.isSignatureValid) {
-					tdr.decryptedData
-				} else null
-			}
-		}
-		return null
-	}
-
-	private fun getClearData(cards:List<ContactEncryptedData>):String? {
-		for(card in cards) {
-			if(card.encryptionType==ContactEncryption.CLEARTEXT) {
-				return card.data
-			}
-		}
-		return null
-	}
+    private fun getClearData(cards: List<ContactEncryptedData>): String? =
+        cards.find { it.encryptionType == ContactEncryption.CLEARTEXT }?.data
 }
