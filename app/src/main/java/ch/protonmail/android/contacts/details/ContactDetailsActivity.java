@@ -55,6 +55,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.core.view.ViewCompat;
@@ -394,11 +395,17 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         // TODO change to activity_contact_details_new. Some adjustments are needed
     }
 
-    private void decryptAndFillVCard(FullContactDetails contact) {
+    private void decryptAndFillVCard(@Nullable FullContactDetails contact) {
+        boolean hasDecryptionError = false;
 
         Crypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
-        List<ContactEncryptedData> encData = contact.getEncryptedData();
-        boolean hasDecryptionError = false;
+        List<ContactEncryptedData> encData = new ArrayList<>();
+        if (contact != null && contact.getEncryptedData() != null) {
+            encData = contact.getEncryptedData();
+        } else {
+            hasDecryptionError =  true;
+        }
+
         for (ContactEncryptedData contactEncryptedData : encData) {
             if (contactEncryptedData.getType() == 0) {
                 mVCardType0 = contactEncryptedData.getData();
@@ -594,9 +601,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 finish();
                 break;
             case ContactEvent.ERROR:
-                break;
             case ContactEvent.NOT_ALL_SYNC:
-                break;
             case ContactEvent.NO_NETWORK:
                 break;
         }
