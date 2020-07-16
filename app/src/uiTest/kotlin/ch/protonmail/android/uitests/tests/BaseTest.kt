@@ -18,12 +18,16 @@
  */
 package ch.protonmail.android.uitests.tests
 
+import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.test.espresso.intent.Intents
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
@@ -45,6 +49,7 @@ open class BaseTest {
     val ruleChain = RuleChain
         .outerRule(testName)
         .around(testExecutionWatcher)
+        .around(grantPermissionRule)
         .around(activityRule)!!
 
     @Before
@@ -73,5 +78,9 @@ open class BaseTest {
         fun setUpBeforeClass() {
             runId = TestRailService.createTestRun();
         }
+
+        private val grantPermissionRule = GrantPermissionRule.grant(
+            READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
+        )
     }
 }
