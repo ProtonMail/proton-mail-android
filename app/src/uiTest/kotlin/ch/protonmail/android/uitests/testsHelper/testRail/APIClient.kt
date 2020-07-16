@@ -20,7 +20,15 @@ package ch.protonmail.android.uitests.testsHelper.testRail
 
 import org.json.simple.JSONObject
 import org.json.simple.JSONValue
-import java.io.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
@@ -119,7 +127,7 @@ class APIClient(base_url: String) {
                     val bodyWriter = BufferedWriter(OutputStreamWriter(ostreamBody))
                     bodyWriter.write("\n\n--$boundary\r\n")
                     bodyWriter.write("Content-Disposition: form-data; name=\"attachment\"; filename=\""
-                            + uploadFile.name + "\"")
+                        + uploadFile.name + "\"")
                     bodyWriter.write("\r\n\r\n")
                     bodyWriter.flush()
 
@@ -164,8 +172,8 @@ class APIClient(base_url: String) {
             istream = conn.errorStream
             if (istream == null) {
                 throw APIException(
-                        "TestRail API return HTTP " + status +
-                                " (No additional error message received)"
+                    "TestRail API return HTTP " + status +
+                        " (No additional error message received)"
                 )
             }
         } else {
@@ -174,7 +182,7 @@ class APIClient(base_url: String) {
 
         // If 'get_attachment' (not 'get_attachments') returned valid status code, save the file
         if (istream != null
-                && uri.startsWith("get_attachment/")) {
+            && uri.startsWith("get_attachment/")) {
             val outputStream = FileOutputStream(data as String?)
             var bytesRead = 0
             val buffer = ByteArray(1024)
@@ -191,10 +199,10 @@ class APIClient(base_url: String) {
         var text = ""
         if (istream != null) {
             val reader = BufferedReader(
-                    InputStreamReader(
-                            istream,
-                            "UTF-8"
-                    )
+                InputStreamReader(
+                    istream,
+                    "UTF-8"
+                )
             )
             var line: String? = null;
 
@@ -223,8 +231,8 @@ class APIClient(base_url: String) {
                 }
             }
             throw APIException(
-                    "TestRail API returned HTTP " + status +
-                            "(" + error + ")"
+                "TestRail API returned HTTP " + status +
+                    "(" + error + ")"
             )
         }
         return result

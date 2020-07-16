@@ -18,16 +18,11 @@
  */
 package ch.protonmail.android.uitests.tests.login
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.onePassUser
-import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.onePassUserWith2FA
-import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.twoPassUser
-import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.twoPassUserWith2FA
+import ch.protonmail.android.uitests.testsHelper.TestData
 import org.junit.Test
 
-@LargeTest
 class LoginTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
@@ -35,28 +30,28 @@ class LoginTests : BaseTest() {
     @Test
     fun loginWithOnePass() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .verify { mailboxLayoutShown() }
     }
 
     @Test
     fun loginWithTwoPass() {
         loginRobot
-            .loginTwoPasswordUser(twoPassUser())
+            .loginTwoPasswordUser(TestData.twoPassUser)
             .verify { mailboxLayoutShown() }
     }
 
     @Test
     fun loginWithOnePassAnd2FA() {
         loginRobot
-            .loginUserWithTwoFA(onePassUserWith2FA())
+            .loginUserWithTwoFA(TestData.onePassUserWith2FA)
             .verify { mailboxLayoutShown() }
     }
 
     @Test
     fun loginWithTwoPassAnd2FA() {
         loginRobot
-            .loginTwoPasswordUserWithTwoFA(twoPassUserWith2FA())
+            .loginTwoPasswordUserWithTwoFA(TestData.twoPassUserWith2FA)
             .verify { mailboxLayoutShown() }
     }
 }

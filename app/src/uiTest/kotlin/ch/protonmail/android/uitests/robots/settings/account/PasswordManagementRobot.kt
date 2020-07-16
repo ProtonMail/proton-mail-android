@@ -20,15 +20,15 @@ package ch.protonmail.android.uitests.robots.settings.account
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.actions.settings.account.AccountSettingsRobot
-import ch.protonmail.android.uitests.testsHelper.TestUser
 import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.User
 
 /**
  * Class represents Password management view.
  */
 open class PasswordManagementRobot : UIActions() {
 
-    fun changePassword(user: TestUser): AccountSettingsRobot {
+    fun changePassword(user: User): AccountSettingsRobot {
         return PasswordRobot()
             .currentPassword(user.password)
             .newPassword(user.password)
@@ -36,7 +36,7 @@ open class PasswordManagementRobot : UIActions() {
             .savePassword()
     }
 
-    fun changeMailboxPassword(user: TestUser): AccountSettingsRobot {
+    fun changeMailboxPassword(user: User): AccountSettingsRobot {
         return MailboxPasswordRobot()
             .currentMailboxPassword(user.password)
             .newMailboxPassword(user.password)

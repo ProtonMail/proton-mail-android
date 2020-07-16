@@ -20,7 +20,6 @@ package ch.protonmail.android.uitests.robots.contacts
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.composer.ComposerRobot
-import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import java.util.*
 
@@ -112,11 +111,11 @@ open class ContactsRobot : UIActions() {
         return this
     }
 
-    fun composeMessage(composerData: TestData): ContactsRobot {
+    fun composeMessage(subject: String, body: String): ContactsRobot {
         waitUntilObjectWithIdAppearsInView(R.id.message_title)
         clickOnObjectWithId(R.id.message_title)
-        typeTextIntoField(R.id.message_title, composerData.messageSubject)
-        insertTextIntoFieldWithId(R.id.message_body, composerData.messageBody)
+        typeTextIntoField(R.id.message_title, subject)
+        insertTextIntoFieldWithId(R.id.message_body, body)
         return this
     }
 

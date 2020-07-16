@@ -21,6 +21,8 @@ package ch.protonmail.android.uitests.tests
 import android.Manifest.permission.READ_CONTACTS
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.content.Context
+import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.test.espresso.intent.Intents
@@ -29,8 +31,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import ch.protonmail.android.activities.guest.LoginActivity
-import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
+import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.User
+import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -70,13 +74,79 @@ open class BaseTest {
         const val testTag = "PROTON_UI_TEST"
         private val testName = TestName()
         private val testExecutionWatcher = TestExecutionWatcher()
-        val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation!!
-        var runId = ""
 
-        @BeforeClass
+        private lateinit var args: Bundle
+        const val testApp = "testApp"
+        private const val oneTimeRunFlag = "oneTimeRunFlag"
+        private const val reportToTestRail = "reportToTestRail"
+        const val testRailRunId = "testRailRunId"
+        var shouldReportToTestRail = false
+
         @JvmStatic
+        @BeforeClass
         fun setUpBeforeClass() {
-            runId = TestRailService.createTestRun();
+            getArguments()
+            populateUsers()
+            populateTestRailVariables()
+        }
+
+        private fun getArguments() {
+            val arguments = InstrumentationRegistry.getArguments()
+            if (arguments != null) {
+                args = arguments
+            } else {
+                throw NullPointerException("Test instrumentation 'arguments' must not be null")
+            }
+        }
+
+        private fun populateUsers() {
+            TestData.onePassUser = setUser("USER1")
+            TestData.twoPassUser = setUser("USER2")
+            TestData.onePassUserWith2FA = setUser("USER3")
+            TestData.twoPassUserWith2FA = setUser("USER4")
+
+            TestData.internalEmailTrustedKeys = setUser("RECIPIENT1")
+            TestData.internalEmailNotTrustedKeys = setUser("RECIPIENT2")
+            TestData.externalEmailPGPEncrypted = setUser("RECIPIENT3")
+            TestData.externalEmailPGPSigned = setUser("RECIPIENT4")
+        }
+
+        private fun setUser(key: String): User {
+            val userData = args.getString(key)
+            return if (userData != null) {
+                val user = args.getString(key)!!.split(",")
+                User(user[0], user[1], user[2], user[3])
+            } else {
+                throw NullPointerException("Test instrumentation 'argument with key: $key' must not be null")
+            }
+        }
+
+        private fun populateTestRailVariables() {
+            shouldReportToTestRail = args.getBoolean(reportToTestRail)
+            if (shouldReportToTestRail) {
+                val testRailProjectId = args.getString("TESTRAIL_PROJECT_ID")
+                val testRailUsername = args.getString("TESTRAIL_USERNAME")
+                val testRailPassword = args.getString("TESTRAIL_PASSWORD")
+                if (testRailProjectId != null || testRailUsername != null || testRailPassword != null) {
+                    TestRailService.TESTRAIL_PROJECT_ID = testRailProjectId!!
+                    TestRailService.TESTRAIL_USERNAME = testRailUsername!!
+                    TestRailService.TESTRAIL_PASSWORD = testRailPassword!!
+                } else {
+                    throw NullPointerException("Test instrumentation 'TestRail arguments' must not be null")
+                }
+
+                // BeforeClass workaround for Android Test Orchestrator - shared prefs are not cleared
+                val isFirstRun = targetContext.getSharedPreferences(testApp, Context.MODE_PRIVATE)
+                    .getBoolean(oneTimeRunFlag, true)
+                if (isFirstRun) {
+                    val runId = TestRailService.createTestRun()
+                    targetContext.getSharedPreferences(testApp, Context.MODE_PRIVATE)
+                        .edit()
+                        .putString(testRailRunId, runId)
+                        .putBoolean(oneTimeRunFlag, false)
+                        .commit()
+                }
+            }
         }
 
         private val grantPermissionRule = GrantPermissionRule.grant(

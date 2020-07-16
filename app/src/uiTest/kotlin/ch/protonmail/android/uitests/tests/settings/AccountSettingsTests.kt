@@ -31,7 +31,7 @@ import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettin
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.TestUser
+import ch.protonmail.android.uitests.testsHelper.TestData
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Before
@@ -47,7 +47,7 @@ class AccountSettingsTests : BaseTest() {
     override fun setUp() {
         super.setUp()
         loginRobot
-            .loginUser(TestUser.onePassUser())
+            .loginUser(TestData.onePassUser)
             .openNavbar()
         onView(allOf(
             withId(R.id.menuItem),
@@ -55,7 +55,7 @@ class AccountSettingsTests : BaseTest() {
             .perform(click())
         onView(withId(R.id.settingsRecyclerView))
             .perform(actionOnHolderItem(
-                withSettingsHeader(TestUser.onePassUser().name), click()))
+                withSettingsHeader(TestData.onePassUser.name), click()))
     }
 
     @Test
@@ -69,14 +69,14 @@ class AccountSettingsTests : BaseTest() {
     fun changeLoginPassword() {
         accountSettingsRobot
             .passwordManagement()
-            .changePassword(TestUser.twoPassUser())
+            .changePassword(TestData.twoPassUser)
             .verify { passwordChanged() }
     }
 
     fun changeMailboxPassword() {
         accountSettingsRobot
             .passwordManagement()
-            .changeMailboxPassword(TestUser.twoPassUser())
+            .changeMailboxPassword(TestData.twoPassUser)
             .verify { mailboxPasswordChanged() }
     }
 
@@ -84,7 +84,7 @@ class AccountSettingsTests : BaseTest() {
     fun changeRecoveryEmail() {
         accountSettingsRobot
             .recoveryEmail()
-            .changeRecoveryEmail(TestUser.twoPassUser())
+            .changeRecoveryEmail(TestData.twoPassUser)
             .verify { recoveryEmailChanged() }
     }
 
@@ -98,7 +98,7 @@ class AccountSettingsTests : BaseTest() {
 
     @Test
     fun changeDisplayName() {
-        val newDisplayName = TestUser.onePassUser().name + System.currentTimeMillis()
+        val newDisplayName = TestData.onePassUser.name + System.currentTimeMillis()
         accountSettingsRobot
             .displayNameAndSignature()
             .setDisplayNameTextTo(newDisplayName)

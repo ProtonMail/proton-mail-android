@@ -18,19 +18,7 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
-import java.util.*
-
-class ParametersUtils {
-
-    fun getParameters(): Map<String, String>? {
-        val myMap: MutableMap<String, String> = HashMap()
-        val pairs = System.getenv("PARAMS").split(";".toRegex()).toTypedArray()
-        for (i in pairs.indices) {
-            val pair = pairs[i]
-            val keyValue = pair.split(":".toRegex()).toTypedArray()
-            myMap[keyValue[0]] = keyValue[1]
-        }
-        return myMap
-    }
-
+data class User(var email: String, var password: String, var mailboxPassword: String, val twoFASecurityKey: String) {
+    val name: String
+        get() = this.email.split("@")[0]
 }

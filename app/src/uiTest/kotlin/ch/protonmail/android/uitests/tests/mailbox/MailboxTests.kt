@@ -19,14 +19,10 @@
 package ch.protonmail.android.uitests.tests.mailbox
 
 import androidx.test.filters.LargeTest
-import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.TestUser
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
-import org.junit.After
 import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Ignore
@@ -44,7 +40,7 @@ class MailboxTests : BaseTest() {
     @Before
     override fun setUp() {
         super.setUp()
-        mailboxRobot = loginRobot.loginUser(TestUser.onePassUser())
+        mailboxRobot = loginRobot.loginUser(TestData.onePassUser)
     }
 
     @Test
@@ -142,7 +138,7 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun saveDraft() {
-        val draftSubject = "Draft ${TestData.composerData().messageSubject}"
+        val draftSubject = "Draft ${TestData.messageSubject}"
         mailboxRobot
             .compose()
             .draftSubjectBody(draftSubject)
@@ -155,7 +151,7 @@ class MailboxTests : BaseTest() {
 
     @Test
     fun saveDraftWithAttachment() {
-        val draftSubject = "Draft ${TestData.composerData().messageSubject}"
+        val draftSubject = "Draft ${TestData.messageSubject}"
         mailboxRobot
             .compose()
             .draftSubjectBodyAttachment(draftSubject)
@@ -174,8 +170,8 @@ class MailboxTests : BaseTest() {
             .openSearchBar()
             .searchMessageText("Draft")
             .openDraftMessage()
-            .toRecipient(TestData.composerData().internalEmailAddressTrustedKeys)
-            .editSubject(TestData.composerData().messageSubject)
+            .toRecipient(TestData.internalEmailTrustedKeys)
+            .editSubject(TestData.messageSubject)
             .send()
             .verify {
                 sendingMessageToastShown()
@@ -237,7 +233,7 @@ class MailboxTests : BaseTest() {
             .goToFolderSent()
             .selectMessage(mailboxRobot.positionNotInTrashNoAttachment())
             .forward()
-            .toRecipient(TestData.composerData().internalEmailAddressTrustedKeys)
+            .toRecipient(TestData.internalEmailTrustedKeys)
             .editBody("Robot Forward ")
             .verifyQuotedHeaderShown()
             .send()
@@ -254,7 +250,7 @@ class MailboxTests : BaseTest() {
             .selectMessage(Random().nextInt(5))
             .verifyMessageContainsAttachment()
             .forward()
-            .toRecipient(TestData.composerData().internalEmailAddressTrustedKeys)
+            .toRecipient(TestData.internalEmailTrustedKeys)
             .editBody("Robot Forward With Attachment ")
             .verifyAttachmentsAdded()
             .verifyQuotedHeaderShown()

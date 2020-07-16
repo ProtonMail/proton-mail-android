@@ -35,6 +35,5 @@ import org.junit.runners.Suite
     NavbarTests::class,
     MailboxTests::class,
     ContactsTests::class
-
 )
 class TestSuite

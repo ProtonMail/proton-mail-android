@@ -21,7 +21,6 @@ package ch.protonmail.android.uitests.robots.composer
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.composer.ComposerRobot.MessageExpirationRobot
@@ -32,7 +31,7 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.isChildOf
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.setValueInNumberPicker
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAndTextAppears
+import ch.protonmail.android.uitests.testsHelper.User
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 
@@ -42,50 +41,50 @@ import org.hamcrest.CoreMatchers.allOf
  */
 open class ComposerRobot : UIActions() {
 
-    fun sendMessageToInternalTrustedAddress(composerData: TestData): ComposerRobot =
-        composeMessageToInternalTrustedAddress(composerData).send()
+    fun sendMessageToInternalTrustedAddress(): ComposerRobot =
+        composeMessageToInternalTrustedAddress().send()
 
-    fun sendMessageToInternalNotTrustedAddress(composerData: TestData): ComposerRobot =
-        composeMessageToInternalNotTrustedAddress(composerData).send()
+    fun sendMessageToInternalNotTrustedAddress(): ComposerRobot =
+        composeMessageToInternalNotTrustedAddress().send()
 
-    fun sendMessageToExternalAddressPGPEncrypted(composerData: TestData): ComposerRobot =
-        composeMessageToExternalAddressPGPEncrypted(composerData).send()
+    fun sendMessageToExternalAddressPGPEncrypted(): ComposerRobot =
+        composeMessageToExternalAddressPGPEncrypted().send()
 
-    fun sendMessageToExternalAddressPGPSigned(composerData: TestData): ComposerRobot =
-        composeMessageToExternalAddressPGPSigned(composerData).send()
+    fun sendMessageToExternalAddressPGPSigned(): ComposerRobot =
+        composeMessageToExternalAddressPGPSigned().send()
 
-    fun sendMessageTOandCC(composerData: TestData): ComposerRobot =
-        recipients(composerData.internalEmailAddressTrustedKeys)
+    fun sendMessageTOandCC(recipient: User, ccRecipient: User): ComposerRobot =
+        recipients(recipient)
             .showAdditionalRows()
-            .ccRecipients(composerData.externalEmailAddressPGPEncrypted)
-            .subject(composerData.messageSubject)
-            .body(composerData.messageBody)
+            .ccRecipients(ccRecipient)
+            .subject(TestData.messageSubject)
+            .body(TestData.messageBody)
             .send()
 
-    fun sendMessageTOandCCandBCC(composerData: TestData): ComposerRobot =
-        recipients(composerData.internalEmailAddressTrustedKeys)
+    fun sendMessageTOandCCandBCC(recipient: User, ccRecipient: User, bccRecipient: User): ComposerRobot =
+        recipients(recipient)
             .showAdditionalRows()
-            .ccRecipients(composerData.externalEmailAddressPGPEncrypted)
-            .bccRecipients(composerData.internalEmailAddressNotTrustedKeys)
-            .subject(composerData.messageSubject)
-            .body(composerData.messageBody)
+            .ccRecipients(ccRecipient)
+            .bccRecipients(bccRecipient)
+            .subject(TestData.messageSubject)
+            .body(TestData.messageBody)
             .send()
 
-    fun sendMessageWithPassword(composerData: TestData): ComposerRobot =
-        composeMessageToExternalAddressPGPSigned(composerData)
+    fun sendMessageWithPassword(): ComposerRobot =
+        composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
             .send()
 
-    fun sendMessageExpiryTimeInDays(composerData: TestData, days: Int): ComposerRobot =
-        composeMessageToInternalTrustedAddress(composerData)
+    fun sendMessageExpiryTimeInDays(days: Int): ComposerRobot =
+        composeMessageToInternalTrustedAddress()
             .messageExpiration()
             .setExpirationInDays(days)
             .verifyExpirationTimeShown(days)
             .send()
 
-    fun sendMessageEOAndExpiryTime(composerData: TestData, days: Int): ComposerRobot {
-        composeMessageToExternalAddressPGPSigned(composerData)
+    fun sendMessageEOAndExpiryTime(days: Int): ComposerRobot {
+        composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
             .messageExpiration()
@@ -95,8 +94,8 @@ open class ComposerRobot : UIActions() {
         return ComposerRobot()
     }
 
-    fun sendMessageEOAndExpiryTimeAndPGPConfirmation(composerData: TestData, days: Int): ComposerRobot {
-        composeMessageToExternalAddressPGPSigned(composerData)
+    fun sendMessageEOAndExpiryTimeAndPGPConfirmation(days: Int): ComposerRobot {
+        composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
             .messageExpiration()
@@ -107,8 +106,8 @@ open class ComposerRobot : UIActions() {
         return ComposerRobot()
     }
 
-    fun sendMessageEOAndExpiryTimeWithAttachment(composerData: TestData, days: Int): ComposerRobot {
-        composeMessageToExternalAddressPGPSigned(composerData)
+    fun sendMessageEOAndExpiryTimeWithAttachment(days: Int): ComposerRobot {
+        composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
             .messageExpiration()
@@ -121,10 +120,8 @@ open class ComposerRobot : UIActions() {
         return ComposerRobot()
     }
 
-    fun sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(
-        composerData: TestData,
-        days: Int): ComposerRobot {
-        composeMessageToExternalAddressPGPSigned(composerData)
+    fun sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(days: Int): ComposerRobot {
+        composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
             .messageExpiration()
@@ -138,40 +135,40 @@ open class ComposerRobot : UIActions() {
         return ComposerRobot()
     }
 
-    fun sendMessageCameraCaptureAttachment(composerData: TestData): ComposerRobot {
-        composeMessageToInternalTrustedAddress(composerData)
+    fun sendMessageCameraCaptureAttachment(): ComposerRobot {
+        composeMessageToInternalTrustedAddress()
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
             .send()
         return ComposerRobot()
     }
 
-    fun sendMessageChooseAttachment(composerData: TestData): ComposerRobot {
-        composeMessageToInternalNotTrustedAddress(composerData)
+    fun sendMessageChooseAttachment(): ComposerRobot {
+        composeMessageToInternalNotTrustedAddress()
             .attachments()
             .addFileAttachment(R.drawable.logo)
             .send()
         return ComposerRobot()
     }
 
-    fun sendMessageToInternalContactWithTwoAttachments(composerData: TestData): ComposerRobot {
-        composeMessageToInternalTrustedAddress(composerData)
+    fun sendMessageToInternalContactWithTwoAttachments(): ComposerRobot {
+        composeMessageToInternalTrustedAddress()
             .attachments()
             .addTwoImageCaptureAttachments(R.drawable.logo, R.drawable.welcome)
             .send()
         return ComposerRobot()
     }
 
-    fun sendMessageToExternalContactWithOneAttachment(composerData: TestData): ComposerRobot {
-        composeMessageToExternalAddressPGPEncrypted(composerData)
+    fun sendMessageToExternalContactWithOneAttachment(): ComposerRobot {
+        composeMessageToExternalAddressPGPEncrypted()
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
             .send()
         return ComposerRobot()
     }
 
-    fun sendMessageToExternalContactWithTwoAttachments(composerData: TestData): ComposerRobot {
-        composeMessageToExternalAddressPGPSigned(composerData)
+    fun sendMessageToExternalContactWithTwoAttachments(): ComposerRobot {
+        composeMessageToExternalAddressPGPSigned()
             .attachments()
             .addTwoImageCaptureAttachments(R.drawable.logo, R.drawable.welcome)
             .send()
@@ -180,13 +177,13 @@ open class ComposerRobot : UIActions() {
 
     fun draftSubjectBody(messageSubject: String) : ComposerRobot {
         subject(messageSubject)
-            .body(TestData.composerData().messageBody)
+            .body(TestData.messageBody)
         return this
     }
 
     fun draftSubjectBodyAttachment(messageSubject: String) : ComposerRobot {
         subject(messageSubject)
-            .body(TestData.composerData().messageBody)
+            .body(TestData.messageBody)
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
         return this
@@ -197,18 +194,18 @@ open class ComposerRobot : UIActions() {
         return MailboxRobot()
     }
 
-    private fun recipients(emails: String): ComposerRobot {
-        typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, emails)
+    private fun recipients(user: User): ComposerRobot {
+        typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, user.email)
         return this
     }
 
-    private fun ccRecipients(emails: String): ComposerRobot {
-        typeTextIntoFieldWithIdAndPressImeAction(R.id.cc_recipients, emails)
+    private fun ccRecipients(user: User): ComposerRobot {
+        typeTextIntoFieldWithIdAndPressImeAction(R.id.cc_recipients, user.email)
         return this
     }
 
-    private fun bccRecipients(emails: String): ComposerRobot {
-        typeTextIntoFieldWithIdAndPressImeAction(R.id.bcc_recipients, emails)
+    private fun bccRecipients(user: User): ComposerRobot {
+        typeTextIntoFieldWithIdAndPressImeAction(R.id.bcc_recipients, user.email)
         return this
     }
 
@@ -262,25 +259,25 @@ open class ComposerRobot : UIActions() {
         return this
     }
 
-    private fun composeMessageToInternalTrustedAddress(composerData: TestData): ComposerRobot =
-        recipients(composerData.internalEmailAddressTrustedKeys)
-            .subject(composerData.messageSubject)
-            .body(composerData.messageBody)
+    private fun composeMessageToInternalTrustedAddress(): ComposerRobot =
+        recipients(TestData.internalEmailTrustedKeys)
+            .subject(TestData.messageSubject)
+            .body(TestData.messageBody)
 
-    private fun composeMessageToInternalNotTrustedAddress(composerData: TestData): ComposerRobot =
-        recipients(composerData.internalEmailAddressNotTrustedKeys)
-            .subject(composerData.messageSubject)
-            .body(composerData.messageBody)
+    private fun composeMessageToInternalNotTrustedAddress(): ComposerRobot =
+        recipients(TestData.internalEmailNotTrustedKeys)
+            .subject(TestData.messageSubject)
+            .body(TestData.messageBody)
 
-    private fun composeMessageToExternalAddressPGPEncrypted(composerData: TestData): ComposerRobot =
-        recipients(composerData.externalEmailAddressPGPEncrypted)
-            .subject(composerData.messageSubject)
-            .body(composerData.messageBody)
+    private fun composeMessageToExternalAddressPGPEncrypted(): ComposerRobot =
+        recipients(TestData.externalEmailPGPEncrypted)
+            .subject(TestData.messageSubject)
+            .body(TestData.messageBody)
 
-    private fun composeMessageToExternalAddressPGPSigned(composerData: TestData): ComposerRobot =
-        recipients(composerData.externalEmailAddressPGPSigned)
-            .subject(composerData.messageSubject)
-            .body(composerData.messageBody)
+    private fun composeMessageToExternalAddressPGPSigned(): ComposerRobot =
+        recipients(TestData.externalEmailPGPSigned)
+            .subject(TestData.messageSubject)
+            .body(TestData.messageBody)
 
     /**
      * Class represents Message Password dialog.

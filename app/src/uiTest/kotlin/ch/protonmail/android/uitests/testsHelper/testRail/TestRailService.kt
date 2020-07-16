@@ -24,10 +24,11 @@ import java.util.*
 
 object TestRailService {
 
-    var PROJECT_ID = "" //enter your project_id or pass as property;
-    var TESTRAIL_USERNAME = ""//enter testrail username
-    var TESTRAIL_PASSWORD = ""//enter testrail password
-    var RAILS_ENGINE_URL = "https://proton.testrail.io/"
+    var TESTRAIL_PROJECT_ID = ""
+    var TESTRAIL_USERNAME = ""
+    var TESTRAIL_PASSWORD = ""
+    private const val RAILS_ENGINE_URL = "https://proton.testrail.io/"
+    private const val androidSuiteId = "23"
 
     fun createTestRun(): String {
         val client = APIClient(RAILS_ENGINE_URL)
@@ -35,9 +36,10 @@ object TestRailService {
         client.password = TESTRAIL_PASSWORD
         val data = HashMap<Any?, Any?>()
         data["name"] = "Test Run"
+        data["suite_id"] = androidSuiteId
         var newRun: JSONObject? = null
         try {
-            newRun = client.sendPost("add_run/$PROJECT_ID", data) as JSONObject
+            newRun = client.sendPost("add_run/$TESTRAIL_PROJECT_ID", data) as JSONObject
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: APIException) {
@@ -55,24 +57,11 @@ object TestRailService {
         client.password = TESTRAIL_PASSWORD
         val data = HashMap<Any?, Any?>()
         data["status_id"] = status
-        if(status == 5) {
+        if (status == 5) {
             data["comment"] = error;
         } else {
             data["comment"] = "Test Passed.";
         }
         client.sendPost("add_result_for_case/$testRunId/$testCaseId", data)
     }
-
-//    @get:Throws(APIException::class, IOException::class)
-//    val testRun: String
-//        get() {
-//            val client = APIClient(RAILS_ENGINE_URL)
-//            client.user = TESTRAIL_USERNAME
-//            client.password = TESTRAIL_PASSWORD
-//            val resp = client.sendGet("get_runs/" + 23) as JSONArray
-//            val obj = resp[0] as JSONObject
-//            val id = obj["id"] as Long
-//            return java.lang.Long.toString(id)
-//        }
-
 }
