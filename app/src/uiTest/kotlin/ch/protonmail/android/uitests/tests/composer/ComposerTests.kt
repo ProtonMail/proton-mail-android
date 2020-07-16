@@ -22,8 +22,9 @@ import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.onePassUser
-import ch.protonmail.android.uitests.testsHelper.TestUser.Companion.twoPassUser
+import ch.protonmail.android.uitests.testsHelper.TestData.externalEmailPGPEncrypted
+import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailNotTrustedKeys
+import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import org.junit.Test
 
 @LargeTest
@@ -34,9 +35,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToInternalTrustedContact() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageToInternalTrustedAddress(TestData.composerData())
+            .sendMessageToInternalTrustedAddress()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -46,9 +47,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToInternalNotTrustedContact() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageToInternalNotTrustedAddress(TestData.composerData())
+            .sendMessageToInternalNotTrustedAddress()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -58,9 +59,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToPGPEncryptedContact() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageToExternalAddressPGPEncrypted(TestData.composerData())
+            .sendMessageToExternalAddressPGPEncrypted()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -70,9 +71,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToPGPSignedContact() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageToExternalAddressPGPSigned(TestData.composerData())
+            .sendMessageToExternalAddressPGPSigned()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -82,9 +83,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageTOandCC() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageTOandCC(TestData.composerData())
+            .sendMessageTOandCC(internalEmailTrustedKeys, externalEmailPGPEncrypted)
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -94,9 +95,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageTOandCCandBCC() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageTOandCCandBCC(TestData.composerData())
+            .sendMessageTOandCCandBCC(internalEmailTrustedKeys, externalEmailPGPEncrypted, internalEmailNotTrustedKeys)
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -106,9 +107,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageEO() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageWithPassword(TestData.composerData())
+            .sendMessageWithPassword()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -118,9 +119,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageExpiryTime() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageExpiryTimeInDays(TestData.composerData(), 2)
+            .sendMessageExpiryTimeInDays(2)
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -130,9 +131,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageEOAndExpiryTime() {
         loginRobot
-            .loginTwoPasswordUser(twoPassUser())
+            .loginTwoPasswordUser(TestData.twoPassUser)
             .compose()
-            .sendMessageEOAndExpiryTimeAndPGPConfirmation(TestData.composerData(), 1)
+            .sendMessageEOAndExpiryTimeAndPGPConfirmation(1)
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -142,9 +143,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageEOAndExpiryTimeWithAttachment() {
         loginRobot
-            .loginTwoPasswordUser(twoPassUser())
+            .loginTwoPasswordUser(TestData.twoPassUser)
             .compose()
-            .sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(TestData.composerData(), 1)
+            .sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(1)
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -154,9 +155,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToInternalTrustedContactCameraCaptureAttachment() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageCameraCaptureAttachment(TestData.composerData())
+            .sendMessageCameraCaptureAttachment()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -166,9 +167,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToInternalNotTrustedContactChooseAttachment() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageChooseAttachment(TestData.composerData())
+            .sendMessageChooseAttachment()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -178,9 +179,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToInternalContactWithTwoAttachments() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageToInternalContactWithTwoAttachments(TestData.composerData())
+            .sendMessageToInternalContactWithTwoAttachments()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -190,9 +191,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToExternalContactWithOneAttachment() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageToExternalContactWithOneAttachment(TestData.composerData())
+            .sendMessageToExternalContactWithOneAttachment()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()
@@ -202,9 +203,9 @@ class ComposerTests : BaseTest() {
     @Test
     fun sendMessageToExternalContactWithTwoAttachments() {
         loginRobot
-            .loginUser(onePassUser())
+            .loginUser(TestData.onePassUser)
             .compose()
-            .sendMessageToExternalContactWithTwoAttachments(TestData.composerData())
+            .sendMessageToExternalContactWithTwoAttachments()
             .verify {
                 sendingMessageToastShown()
                 messageSentToastShown()

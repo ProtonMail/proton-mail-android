@@ -18,27 +18,38 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
+import android.content.Context
+import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
-import ch.protonmail.android.uitests.tests.BaseTest.Companion.runId
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
+/**
+ * Monitors test run results and performs actions on Success or Failure.
+ */
 class TestExecutionWatcher : TestWatcher() {
 
     override fun failed(e: Throwable?, description: Description?) {
-        //TODO save logcat, save screenshot,
-        description!!.annotations.forEach {
-            if (it is TestCaseId) {
-                TestRailService.addResultForTestCase(it.id, 5, "Failed", runId)
+        //TODO save logcat, save screenshot
+        if (BaseTest.shouldReportToTestRail) {
+            description!!.annotations.forEach {
+                if (it is TestId) {
+                    TestRailService.addResultForTestCase(it.id, 5, "Failed", getRunId())
+                }
             }
         }
     }
 
     override fun succeeded(description: Description?) {
-        description!!.annotations.forEach {
-            if (it is TestCaseId) {
-                TestRailService.addResultForTestCase(it.id, 1, "Passed", runId)
+        if (BaseTest.shouldReportToTestRail) {
+            description!!.annotations.forEach {
+                if (it is TestId) {
+                    TestRailService.addResultForTestCase(it.id, 1, "Passed", getRunId())
+                }
             }
         }
     }
+
+    private fun getRunId(): String = BaseTest.targetContext.getSharedPreferences(BaseTest.testApp, Context.MODE_PRIVATE)
+            .getString(BaseTest.testRailRunId, "")!!
 }

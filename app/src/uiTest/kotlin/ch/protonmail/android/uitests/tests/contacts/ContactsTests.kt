@@ -25,15 +25,11 @@ import androidx.test.filters.LargeTest
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
-import ch.protonmail.android.uitests.robots.shared.SharedRobot.clickHamburgerOrUpButton
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.TestUser
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers
 import org.hamcrest.CoreMatchers
 import org.hamcrest.core.AllOf.allOf
-import org.junit.After
 import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Ignore
@@ -51,7 +47,7 @@ class ContactsTests : BaseTest() {
     override fun setUp() {
         super.setUp()
         loginRobot
-            .loginUser(TestUser.onePassUser())
+            .loginUser(TestData.onePassUser)
             .openNavbar()
         onView(allOf(
             ViewMatchers.withId(R.id.menuItem),
@@ -108,7 +104,7 @@ class ContactsTests : BaseTest() {
         contactsRobot
             .chooseContactWithText("protonmail.com")
             .composeButton()
-            .composeMessage(TestData.composerData())
+            .composeMessage(TestData.messageSubject, TestData.messageBody)
             .send()
             .verify {
                 sendingMessageToastShown()
@@ -146,7 +142,7 @@ class ContactsTests : BaseTest() {
         contactsRobot
             .groupsView()
             .composeToGroup()
-            .composeMessage(TestData.composerData())
+            .composeMessage(TestData.messageSubject, TestData.messageBody)
             .send()
             .verify {
                 sendingMessageToastShown()

@@ -20,15 +20,15 @@ package ch.protonmail.android.uitests.robots.settings.account
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.shared.SharedRobot
-import ch.protonmail.android.uitests.testsHelper.TestUser
 import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.User
 
 /**
  * Class represents Email recovery view.
  */
 class RecoveryEmailRobot : UIActions() {
 
-    fun changeRecoveryEmail(user: TestUser): RecoveryEmailRobot {
+    fun changeRecoveryEmail(user: User): RecoveryEmailRobot {
         return newEmail(user.email)
             .confirmNewEmail(user.email)
             .save()

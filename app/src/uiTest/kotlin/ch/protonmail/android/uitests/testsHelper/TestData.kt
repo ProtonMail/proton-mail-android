@@ -18,60 +18,48 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
-import org.jetbrains.annotations.Contract
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
-
 /**
- * Created by Nikola Nolchevski on 12-Apr-20.
+ * Contains users and data used in UI test runs.
  */
-class TestData @Contract(pure = true) private constructor(
-    val internalEmailAddressTrustedKeys: String,
-    val internalEmailAddressNotTrustedKeys: String,
-    val externalEmailAddressPGPEncrypted: String,
-    val externalEmailAddressPGPSigned: String,
-    val messageSubject: String,
-    val messageBody: String) {
+object TestData {
 
-    companion object {
-        //SEARCH MESSAGE
-        const val searchMessageSubject = "Random Subject"
-        const val searchMessageSubjectNotFound = "MessageNotFound :O"
+    private const val emailStub = "email_stub"
+    private const val pwdStub = "pwd_stub"
+    private const val mailPwdStub = "mail_pwd_stub"
+    private const val twoFAStub = "2fa_stub"
 
-        //CONTACT DATA
-        const val newContactName = "A new contact"
-        val editContactName = "Edited on $dateAndTime"
-        const val editEmailAddress = "test@pmautomation.test"
+    /** Test Users **/
+    var onePassUser =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
+    var twoPassUser =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
+    var onePassUserWith2FA =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
+    var twoPassUserWith2FA =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
 
-        //GROUP DATA
-        private val random = Random()
-        private val randomInt = random.nextInt()
-        val newGroupName = "A New group #$randomInt"
-        val editGroupName = "Group edited on $dateAndTime"
-        private val dateAndTime: String
-            get() {
-                val cal = Calendar.getInstance()
-                val dateFormat: DateFormat = SimpleDateFormat("MMM/dd/yyyy HH:mm ")
-                return dateFormat.format(cal.time)
-            }
+    /** Message recipients **/
+    var internalEmailTrustedKeys =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
+    var internalEmailNotTrustedKeys =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
+    var externalEmailPGPEncrypted =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
+    var externalEmailPGPSigned =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
 
-        val randomWord: String
-            get() {
-                val myDictionary = RandomDictionary().dictionary
-                val index = Random().nextInt(myDictionary.size)
-                return myDictionary.removeAt(index)
-            }
+    //SEARCH MESSAGE
+    const val searchMessageSubject = "Random Subject"
+    const val searchMessageSubjectNotFound = "MessageNotFound :O"
 
-        @Contract(value = " -> new", pure = true)
-        fun composerData(): TestData {
-            return TestData(
-                "PMAutomationRobot3@protonmail.com",  //pass: auto123
-                "PMAutomationRobot4@protonmail.com",  //pass: auto123
-                "protonextaddress2@gmail.com",  //pass: Protonextaddress1!
-                "protonextaddress1@gmail.com",  //pass: Protonextaddress1!
-                "Random Subject: ${System.currentTimeMillis()}",
-                "\n\nHello ProtonMail!\nRandom body:\n\n${System.currentTimeMillis()}")
-        }
-    }
+    //CONTACT DATA
+    const val newContactName = "A new contact"
+    val editContactName = "Edited on ${System.currentTimeMillis()}"
+    const val editEmailAddress = "test@pm.test"
+
+    //GROUP DATA
+    val newGroupName = "A New group #${System.currentTimeMillis()}"
+    val editGroupName = "Group edited on ${System.currentTimeMillis()}"
+    val messageSubject = "Random Subject: ${System.currentTimeMillis()}"
+    val messageBody = "\n\nHello ProtonMail!\nRandom body:\n\n${System.currentTimeMillis()}"
 }

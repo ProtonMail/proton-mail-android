@@ -20,11 +20,11 @@ package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.composer.ComposerRobot
-import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent.mockCameraImageCapture
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
+import ch.protonmail.android.uitests.testsHelper.User
 
 /**
  * [MailboxRobot] class contains actions and verifications for Mailbox functionality.
@@ -182,9 +182,9 @@ open class MailboxRobot : UIActions() {
         return this
     }
 
-    fun toRecipient(recipient: String?): MailboxRobot {
+    fun toRecipient(recipient: User): MailboxRobot {
         clickOnObjectWithId(R.id.message_title)
-        typeTextIntoField(R.id.to_recipients, recipient)
+        typeTextIntoField(R.id.to_recipients, recipient.email)
         return this
     }
 

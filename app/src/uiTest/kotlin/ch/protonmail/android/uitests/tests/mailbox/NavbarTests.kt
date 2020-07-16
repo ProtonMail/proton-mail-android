@@ -22,7 +22,7 @@ import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.navbar.NavbarRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.TestUser
+import ch.protonmail.android.uitests.testsHelper.TestData
 import org.junit.Before
 import org.junit.Test
 
@@ -36,7 +36,7 @@ class NavbarTests : BaseTest() {
     override fun setUp() {
         super.setUp()
         loginRobot
-            .loginUser(TestUser.onePassUser())
+            .loginUser(TestData.onePassUser)
     }
 
     @Test
