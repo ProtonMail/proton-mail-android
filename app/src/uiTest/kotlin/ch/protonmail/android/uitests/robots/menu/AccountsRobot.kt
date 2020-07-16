@@ -16,24 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.settings.account
+package ch.protonmail.android.uitests.robots.menu
 
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
- * [LabelsAndFoldersRobot] class contains actions and verifications for
- * Labels & Folders functionality.
+ * [AccountsRobot] class contains actions and verifications for menu functionality.
  */
-class LabelsAndFoldersRobot {
+class AccountsRobot {
 
-    fun labelsManager(): LabelsManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.labels_manage)
-        return LabelsManagerRobot()
+    fun manageAccounts(): ManageAccountsRobot {
+        UIActions.id.clickViewWithId(R.id.manageAccounts)
+        return ManageAccountsRobot()
     }
 
-    fun foldersManager(): FoldersManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.folders_manage)
-        return FoldersManagerRobot()
+    /**
+     * Contains all the validations that can be performed by [AccountsRobot].
+     */
+    class Verify {
+
+        fun accountsListOpened() {
+            UIActions.check.viewWithIdIsDisplayed(R.id.left_drawer_users)
+        }
     }
+
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

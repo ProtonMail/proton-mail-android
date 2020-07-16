@@ -46,6 +46,24 @@ object SettingsMatchers {
         }
     }
 
+    fun withSettingsValue(value: String): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedMatcher<RecyclerView.ViewHolder,
+            SettingsAdapter.ItemViewHolder>(SettingsAdapter.ItemViewHolder::class.java) {
+
+            override fun describeTo(description: Description) {
+                description.appendText("Account Settings item that contains value: $value")
+            }
+
+            override fun matchesSafely(item: SettingsAdapter.ItemViewHolder): Boolean {
+                val valueTextView = item.itemView.findViewById<TextView>(R.id.valueText)
+                if (valueTextView != null) {
+                    return valueTextView.text.toString() == value
+                }
+                return false
+            }
+        }
+    }
+
     fun withLabelName(name: String): Matcher<RecyclerView.ViewHolder> {
         return object : BoundedMatcher<RecyclerView.ViewHolder, SelectableAdapter.ViewHolder<*>>(SelectableAdapter.ViewHolder::class.java) {
 
@@ -59,4 +77,35 @@ object SettingsMatchers {
             }
         }
     }
+
+//    fun waitForRecyclerViewBeingPopulated(): ViewAction {
+//        return object : ViewAction {
+//            override fun getDescription(): String = "Failed to wait for messages be added to recycler view."
+//
+//            override fun getConstraints(): Matcher<View> = ViewMatchers.isAssignableFrom(RecyclerView::class.java)
+//
+//            override fun perform(uiController: UiController?, view: View?) {
+//                val recyclerView = view as RecyclerView
+//                waitUntilPopulated(recyclerView)
+//            }
+//        }
+//    }
+//
+//    private fun waitUntilPopulated(recyclerViewId: Int, timeout: Int = 10000) {
+//        ConditionWatcher.setTimeoutLimit(timeout)
+//        ConditionWatcher.waitForCondition(object : Instruction() {
+//            var errorMessage = ""
+//            val activity = ActivityProvider.currentActivity
+//
+//            override fun getDescription() = "waitForElement - $errorMessage"
+//
+//            override fun checkCondition() = try {
+//
+//                recyclerView.adapter!!.itemCount > 0
+//            } catch (t: Throwable) {
+//                errorMessage = t.toString()
+//                false
+//            }
+//        })
+//    }
 }

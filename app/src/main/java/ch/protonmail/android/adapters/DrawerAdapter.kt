@@ -140,6 +140,7 @@ internal class DrawerAdapter : BaseAdapter<
             label.text = item.uiModel.name
             icon.setColorFilter( item.uiModel.color )
             icon.setImageResource( item.uiModel.image )
+            label.tag = item.uiModel.name
         }
     }
 

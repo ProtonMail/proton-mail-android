@@ -16,24 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.settings.account
+package ch.protonmail.android.uitests.robots.mailbox.spam
 
-import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
- * [LabelsAndFoldersRobot] class contains actions and verifications for
- * Labels & Folders functionality.
+ * [SpamRobot] class implements [MailboxRobotInterface],
+ * contains actions and verifications for Spam mailbox functionality.
  */
-class LabelsAndFoldersRobot {
+open class SpamRobot : MailboxRobotInterface {
 
-    fun labelsManager(): LabelsManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.labels_manage)
-        return LabelsManagerRobot()
+    override fun swipeLeftMessageAtPosition(messagePosition: Int): SpamRobot {
+        super.swipeLeftMessageAtPosition(messagePosition)
+        return this
     }
 
-    fun foldersManager(): FoldersManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.folders_manage)
-        return FoldersManagerRobot()
+    override fun longClickMessageOnPosition(position: Int): SpamRobot {
+        super.longClickMessageOnPosition(position)
+        return this
+    }
+
+    fun moreOptions(): SpamRobot {
+        UIActions.system.clickMoreOptionsButton()
+        return this
     }
 }

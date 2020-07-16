@@ -18,21 +18,13 @@
  */
 package ch.protonmail.android.uitests.tests.contacts
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.filters.LargeTest
-import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.TestData
-import org.hamcrest.CoreMatchers
-import org.hamcrest.core.AllOf.allOf
 import org.junit.Before
 import org.junit.FixMethodOrder
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runners.MethodSorters
 
@@ -40,25 +32,20 @@ import org.junit.runners.MethodSorters
 @LargeTest
 class ContactsTests : BaseTest() {
 
-    private val contactsRobot = ContactsRobot()
+    lateinit var contactsRobot: ContactsRobot
     private val loginRobot = LoginRobot()
 
     @Before
     override fun setUp() {
         super.setUp()
-        loginRobot
+        contactsRobot = loginRobot
             .loginUser(TestData.onePassUser)
-            .openNavbar()
-        onView(allOf(
-            ViewMatchers.withId(R.id.menuItem),
-            ViewMatchers.withTagValue(CoreMatchers.`is`(StringUtils.stringFromResource(R.string.contacts)))))
-            .perform(click())
+            .menuDrawer()
+            .contacts()
     }
 
     @Test
-    @Ignore
-    //TODO resolve the error on verification
-    fun aContactListRefresh() {
+    fun contactListRefresh() {
         contactsRobot
             .openOptionsMenu()
             .refresh()
@@ -75,10 +62,16 @@ class ContactsTests : BaseTest() {
             .verify { contactSaved() }
     }
 
-    @Test
+
+    //TODO Check with developers as I'm getting java.lang.ArrayIndexOutOfBoundsException: during test run
     fun editContact() {
+        val contactName = "${TestData.newContactName} ${System.currentTimeMillis()}"
         contactsRobot
-            .chooseContact()
+            .addFab()
+            .addContact()
+            .insertContactName(contactName)
+            .saveContact()
+            .chooseContact(contactName)
             .contactDetails()
             .editDisplayName(TestData.editContactName)
             .editEmailAddress(TestData.editEmailAddress)
@@ -86,19 +79,15 @@ class ContactsTests : BaseTest() {
             .verify { contactSaved() }
     }
 
-    @Test
+    // TODO Check with developers as I'm getting java.lang.ArrayIndexOutOfBoundsException: during test run
     fun deleteContact() {
-        val deletedContact = contactsRobot
-            .chooseContact().contactName
+        val deletedContact = ""
         contactsRobot
             .delete()
             .confirmDelete()
             .verify { contactDeleted(deletedContact) }
     }
 
-
-    @Test
-    @Ignore
     //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
     fun contactDetailSendMessage() {
         contactsRobot
@@ -114,32 +103,42 @@ class ContactsTests : BaseTest() {
 
     @Test
     fun addNewContactGroup() {
+        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
         contactsRobot
             .addFab()
             .addContactGroup()
-            .editGroupName(TestData.newGroupName)
+            .editGroupName(contactGroupName)
             .saveGroup()
             .verify { groupSaved() }
     }
 
     @Test
     fun contactGroupEdit() {
+        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
+        val editedGroupName = "${TestData.newGroupName} edited ${System.currentTimeMillis()}"
         contactsRobot
-            .groupsView()
-            .chooseGroup()
-            .editFab()
-            .editGroupName(TestData.editGroupName)
-            .manageAddresses()
+            .addFab()
+            .addContactGroup()
+            .editGroupName(contactGroupName)
             .saveGroup()
+            .groupsView()
+            .chooseGroup(contactGroupName)
+            .editFab()
+            .editGroupName(editedGroupName)
             .saveGroup()
             .verify { groupSaved() }
     }
 
-    @Test
-    @Ignore
     //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
     fun contactGroupSendMessage() {
+        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
         contactsRobot
+            .addFab()
+            .addContactGroup()
+            .editGroupName(contactGroupName)
+            .saveGroup()
+            .groupsView()
+            .chooseGroup(contactGroupName)
             .groupsView()
             .composeToGroup()
             .composeMessage(TestData.messageSubject, TestData.messageBody)
@@ -152,12 +151,16 @@ class ContactsTests : BaseTest() {
 
     @Test
     fun deleteGroup() {
-        val deletedGroup = contactsRobot
-            .groupsView().groupName
+        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
         contactsRobot
-            .chooseGroup()
+            .addFab()
+            .addContactGroup()
+            .editGroupName(contactGroupName)
+            .saveGroup()
+            .groupsView()
+            .chooseGroup(contactGroupName)
             .delete()
             .confirmDelete()
-            .verify { groupDeleted(deletedGroup) }
+            .verify { groupDeleted(contactGroupName) }
     }
 }

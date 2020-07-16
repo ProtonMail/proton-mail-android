@@ -29,7 +29,7 @@ import ch.protonmail.android.views.SettingsDefaultItemView
 /**
  * Class represents Display name and Signature view.
  */
-open class DisplayNameAndSignatureRobot : UIActions() {
+class DisplayNameAndSignatureRobot {
 
     fun setSignatureToggleTo(state: Boolean): DisplayNameAndSignatureRobot {
         changeToggleState(state, signature)
@@ -42,27 +42,27 @@ open class DisplayNameAndSignatureRobot : UIActions() {
     }
 
     fun setDisplayNameTextTo(text: String): DisplayNameAndSignatureRobot {
-        setTextIntoFieldWithIdAndAncestorTag(R.id.editText, displayName, text)
+        UIActions.allOf.setTextIntoFieldWithIdAndAncestorTag(R.id.editText, displayName, text)
         return this
     }
 
     /**
      * Contains all the validations that can be performed by [DisplayNameAndSignatureRobot].
      */
-    class Verify : DisplayNameAndSignatureRobot() {
+    class Verify {
 
         fun signatureToggleCheckedStateIs(state: Boolean): DisplayNameAndSignatureRobot {
-            checkObjectWithIdAndAncestorTagIsChecked(switchId, signature, state)
+            UIActions.check.viewWithIdAndAncestorTagIsChecked(switchId, signature, state)
             return DisplayNameAndSignatureRobot()
         }
 
         fun mobileSignatureToggleCheckedStateIs(state: Boolean): DisplayNameAndSignatureRobot {
-            checkObjectWithIdAndAncestorTagIsChecked(switchId, mobileSignature, state)
+            UIActions.check.viewWithIdAndAncestorTagIsChecked(switchId, mobileSignature, state)
             return DisplayNameAndSignatureRobot()
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as DisplayNameAndSignatureRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 
     private fun changeToggleState(state: Boolean, tag: String) {
         val currentSwitchState = currentActivity!!
@@ -73,11 +73,11 @@ open class DisplayNameAndSignatureRobot : UIActions() {
 
         when (state xor currentSwitchState) {
             true -> {
-                clickOnObjectWithIdAndAncestorTag(switchId, tag)
+                UIActions.allOf.clickViewWithIdAndAncestorTag(switchId, tag)
             }
             false -> {
-                clickOnObjectWithIdAndAncestorTag(switchId, tag)
-                clickOnObjectWithIdAndAncestorTag(switchId, tag)
+                UIActions.allOf.clickViewWithIdAndAncestorTag(switchId, tag)
+                UIActions.allOf.clickViewWithIdAndAncestorTag(switchId, tag)
             }
         }
     }

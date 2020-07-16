@@ -16,20 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.shared
+package ch.protonmail.android.uitests.robots.mailbox.labelfolder
 
-import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
- * [SharedRobot] class contains commonly used actions that usually depend on system UI components.
- * Examples: UP button click, confirming or cancelling dialogs and similar.
+ * [LabelFolderRobot] class implements [MailboxRobotInterface],
+ * contains actions and verifications for Labels or Folders mailbox functionality.
  */
-object SharedRobot : UIActions() {
+class LabelFolderRobot : MailboxRobotInterface {
 
-    fun clickHamburgerOrUpButton() =
-        clickObjectWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
+    /**
+     * Contains all the validations that can be performed by [LabelFolderRobot].
+     */
+    open class Verify {
 
-    fun clickPositiveDialogButton() = clickOnObjectWithId(android.R.id.button1)
+        fun messageMoved(messageSubject: String) {
+            UIActions.wait.untilViewWithIdAndTextAppears(R.id.messageTitleTextView, messageSubject)
+        }
+    }
+
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }
