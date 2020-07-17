@@ -108,8 +108,8 @@ internal sealed class DrawerItemUiModel {
             ) {
                 INBOX(Constants.MessageLocationType.INBOX.messageLocationTypeValue, Constants.DrawerOptionType.INBOX),
                 STARRED(Constants.MessageLocationType.STARRED.messageLocationTypeValue, Constants.DrawerOptionType.STARRED),
-                DRAFTS(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue, Constants.DrawerOptionType.DRAFTS),
-                SENT(Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue, Constants.DrawerOptionType.SENT),
+                DRAFTS(Constants.MessageLocationType.DRAFT.messageLocationTypeValue, Constants.DrawerOptionType.DRAFTS),
+                SENT(Constants.MessageLocationType.SENT.messageLocationTypeValue, Constants.DrawerOptionType.SENT),
                 ARCHIVE(Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue, Constants.DrawerOptionType.ARCHIVE),
                 TRASH(Constants.MessageLocationType.TRASH.messageLocationTypeValue, Constants.DrawerOptionType.TRASH),
                 SPAM(Constants.MessageLocationType.SPAM.messageLocationTypeValue, Constants.DrawerOptionType.SPAM),

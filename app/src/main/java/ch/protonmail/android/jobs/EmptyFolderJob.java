@@ -54,7 +54,7 @@ public class EmptyFolderJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        if (location == Constants.MessageLocationType.ALL_DRAFT){
+        if (location == Constants.MessageLocationType.DRAFT){
             mApi.emptyDrafts();
         } else if (location == Constants.MessageLocationType.SPAM){
             mApi.emptySpam();

@@ -77,7 +77,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     @Throws(IOException::class)
     override fun emptyDrafts() {
-        service.emptyFolder(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString()).execute()
+        service.emptyFolder(Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()).execute()
     }
 
     @Throws(IOException::class)

@@ -115,7 +115,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
             return; // sending already pressed and in process, so no need to create draft, it will be created from the post send job
         }
 
-        message.setLocation(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue());
+        message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
         AttachmentFactory attachmentFactory = new AttachmentFactory();
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
         MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);

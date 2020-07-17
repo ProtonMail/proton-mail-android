@@ -97,7 +97,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
             }
             unreadIncrease = true;
         }
-        if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_SENT) {
+        if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.SENT) {
             message.addLabels(Collections.singletonList(mLabelId));
         } else {
             message.setLocation(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue());

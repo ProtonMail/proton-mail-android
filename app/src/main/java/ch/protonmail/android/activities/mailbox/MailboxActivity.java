@@ -536,8 +536,8 @@ public class MailboxActivity extends NavigationActivity implements
             case LABEL_OFFLINE:
             case LABEL_FOLDER:
                 return messageDetailsRepository.getMessagesByLabelIdAsync(mLabelId);
-            case ALL_DRAFT:
-            case ALL_SENT:
+            case DRAFT:
+            case SENT:
             case ARCHIVE:
             case INBOX:
             case SEARCH:
@@ -817,8 +817,9 @@ public class MailboxActivity extends NavigationActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mailbox_options_menu, menu);
         final Constants.MessageLocationType mailboxLocation = mMailboxLocation.getValue();
-        menu.findItem(R.id.empty).setVisible(
-                mailboxLocation == Constants.MessageLocationType.ALL_DRAFT || mailboxLocation == Constants.MessageLocationType.SPAM || mailboxLocation == Constants.MessageLocationType.TRASH);
+        menu.findItem(R.id.empty).setVisible(mailboxLocation == Constants.MessageLocationType.DRAFT ||
+                mailboxLocation == Constants.MessageLocationType.SPAM ||
+                mailboxLocation == Constants.MessageLocationType.TRASH);
         return true;
     }
 
@@ -827,7 +828,7 @@ public class MailboxActivity extends NavigationActivity implements
         menu.clear();
         getMenuInflater().inflate(R.menu.mailbox_options_menu, menu);
         final Constants.MessageLocationType mailboxLocation = mMailboxLocation.getValue();
-        menu.findItem(R.id.empty).setVisible(mailboxLocation == Constants.MessageLocationType.ALL_DRAFT ||
+        menu.findItem(R.id.empty).setVisible(mailboxLocation == Constants.MessageLocationType.DRAFT ||
                 mailboxLocation == Constants.MessageLocationType.SPAM ||
                 mailboxLocation == Constants.MessageLocationType.TRASH ||
                 mailboxLocation == Constants.MessageLocationType.LABEL ||
@@ -976,10 +977,10 @@ public class MailboxActivity extends NavigationActivity implements
             case STARRED:
                 titleRes = R.string.starred_option;
                 break;
-            case ALL_DRAFT:
+            case DRAFT:
                 titleRes = R.string.drafts_option;
                 break;
-            case ALL_SENT:
+            case SENT:
                 titleRes = R.string.sent_option;
                 break;
             case ARCHIVE:
@@ -1273,13 +1274,13 @@ public class MailboxActivity extends NavigationActivity implements
         if (messages.size() == 1) {
             SimpleMessage message = messages.get(0);
             menu.findItem(R.id.move_to_trash).setVisible(
-                    mailboxLocation != Constants.MessageLocationType.TRASH && mailboxLocation != Constants.MessageLocationType.ALL_DRAFT);
+                    mailboxLocation != Constants.MessageLocationType.TRASH && mailboxLocation != Constants.MessageLocationType.DRAFT);
             menu.findItem(R.id.delete_message).setVisible(
-                    mailboxLocation == Constants.MessageLocationType.TRASH || mailboxLocation == Constants.MessageLocationType.ALL_DRAFT);
+                    mailboxLocation == Constants.MessageLocationType.TRASH || mailboxLocation == Constants.MessageLocationType.DRAFT);
             menu.findItem(R.id.add_star).setVisible(!message.isStarred());
             menu.findItem(R.id.remove_star).setVisible(message.isStarred());
-            menu.findItem(R.id.mark_read).setVisible(!message.isRead() && mailboxLocation != Constants.MessageLocationType.ALL_DRAFT);
-            menu.findItem(R.id.mark_unread).setVisible(message.isRead() && mailboxLocation != Constants.MessageLocationType.ALL_DRAFT);
+            menu.findItem(R.id.mark_read).setVisible(!message.isRead() && mailboxLocation != Constants.MessageLocationType.DRAFT);
+            menu.findItem(R.id.mark_unread).setVisible(message.isRead() && mailboxLocation != Constants.MessageLocationType.DRAFT);
             menu.findItem(R.id.move_to_archive).setVisible(mailboxLocation != Constants.MessageLocationType.ARCHIVE);
             MenuItem moveToInbox = menu.findItem(R.id.move_to_inbox);
             if (moveToInbox != null) {
@@ -1290,22 +1291,22 @@ public class MailboxActivity extends NavigationActivity implements
             menu.findItem(R.id.add_folder).setVisible(true);
         } else {
             menu.findItem(R.id.move_to_trash).setVisible(
-                    mailboxLocation != Constants.MessageLocationType.TRASH && mailboxLocation != Constants.MessageLocationType.ALL_DRAFT);
+                    mailboxLocation != Constants.MessageLocationType.TRASH && mailboxLocation != Constants.MessageLocationType.DRAFT);
             menu.findItem(R.id.delete_message).setVisible(
-                    mailboxLocation == Constants.MessageLocationType.TRASH || mailboxLocation == Constants.MessageLocationType.ALL_DRAFT);
+                    mailboxLocation == Constants.MessageLocationType.TRASH || mailboxLocation == Constants.MessageLocationType.DRAFT);
             if (containsUnstar(messages)) menu.findItem(R.id.add_star).setVisible(true);
             if (containsStar(messages)) menu.findItem(R.id.remove_star).setVisible(true);
             MenuItem markReadItem = menu.findItem(R.id.mark_read);
             if (MessageUtils.areAllRead(messages)) {
                 markReadItem.setVisible(false);
             } else {
-                markReadItem.setVisible(mailboxLocation != Constants.MessageLocationType.ALL_DRAFT);
+                markReadItem.setVisible(mailboxLocation != Constants.MessageLocationType.DRAFT);
             }
             MenuItem markUnreadItem = menu.findItem(R.id.mark_unread);
             if (MessageUtils.areAllUnRead(messages)) {
                 markUnreadItem.setVisible(false);
             } else {
-                markUnreadItem.setVisible(mailboxLocation != Constants.MessageLocationType.ALL_DRAFT);
+                markUnreadItem.setVisible(mailboxLocation != Constants.MessageLocationType.DRAFT);
             }
             menu.findItem(R.id.move_to_archive).setVisible(mailboxLocation != Constants.MessageLocationType.ARCHIVE);
             MenuItem moveToInbox = menu.findItem(R.id.move_to_inbox);
@@ -1695,7 +1696,8 @@ public class MailboxActivity extends NavigationActivity implements
 
     private void checkForDraftedMessages() {
         Constants.MessageLocationType mailboxLocation = mMailboxLocation.getValue();
-        if (mailboxLocation == Constants.MessageLocationType.ALL_DRAFT && mDraftedMessageSnack != null) {
+        if (mailboxLocation == Constants.MessageLocationType.ALL_DRAFT  || mailboxLocation == Constants.MessageLocationType.DRAFT
+                && mDraftedMessageSnack != null) {
             mDraftedMessageSnack.dismiss();
         }
         registerReceiver(showDraftedSnackBroadcastReceiver, new IntentFilter(ACTION_MESSAGE_DRAFTED));
@@ -1930,7 +1932,8 @@ public class MailboxActivity extends NavigationActivity implements
 
             if (viewHolder instanceof MessagesListViewHolder.MessageViewHolder) {
                 Constants.MessageLocationType mailboxLocation = mMailboxLocation.getValue();
-                if (mMailboxLocation.getValue() != null && mailboxLocation == Constants.MessageLocationType.DRAFT || mailboxLocation == Constants.MessageLocationType.ALL_DRAFT) {
+                if (mMailboxLocation.getValue() != null && mailboxLocation == Constants.MessageLocationType.DRAFT ||
+                        mailboxLocation == Constants.MessageLocationType.ALL_DRAFT) {
                     return makeMovementFlags(0, 0);
                 } else {
                     return makeMovementFlags(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
@@ -1987,7 +1990,7 @@ public class MailboxActivity extends NavigationActivity implements
                     return unit;
                 }, true);
 
-                if (!(swipeAction == SwipeAction.TRASH && mMailboxLocation.getValue() == Constants.MessageLocationType.ALL_DRAFT)) {
+                if (!(swipeAction == SwipeAction.TRASH && mMailboxLocation.getValue() == Constants.MessageLocationType.DRAFT)) {
                     undoSnack.show();
                 }
                 if (swipeCustomizeSnack != null && !mCustomizeSwipeSnackShown) {
@@ -2011,7 +2014,7 @@ public class MailboxActivity extends NavigationActivity implements
                 int height = itemView.getBottom() - itemView.getTop();
                 int width = itemView.getRight() - itemView.getLeft();
                 final int layoutId;
-                if (mMailboxLocation.getValue() == Constants.MessageLocationType.ALL_DRAFT) {
+                if (mMailboxLocation.getValue() == Constants.MessageLocationType.DRAFT) {
                     layoutId = SwipeAction.TRASH.getActionBackgroundResource(deltaX < 0);
                 } else if (deltaX < 0) {
                     layoutId = SwipeAction.values()[mUserManager.getMailSettings().getLeftSwipeAction()].getActionBackgroundResource(

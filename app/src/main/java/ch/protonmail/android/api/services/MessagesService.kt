@@ -400,8 +400,8 @@ class MessagesService : JobIntentService() {
 		private fun getPrefsNameByLocation(location: Constants.MessageLocationType, labelId: String?): String? {
 			return when (location) {
 				Constants.MessageLocationType.INBOX -> PREF_LAST_MESSAGE_TIME_INBOX
-				Constants.MessageLocationType.ALL_SENT -> PREF_LAST_MESSAGE_TIME_SENT
-				Constants.MessageLocationType.ALL_DRAFT -> PREF_LAST_MESSAGE_TIME_DRAFTS
+				Constants.MessageLocationType.SENT -> PREF_LAST_MESSAGE_TIME_SENT
+				Constants.MessageLocationType.DRAFT -> PREF_LAST_MESSAGE_TIME_DRAFTS
 				Constants.MessageLocationType.STARRED -> PREF_LAST_MESSAGE_TIME_STARRED
 				Constants.MessageLocationType.ARCHIVE -> PREF_LAST_MESSAGE_TIME_ARCHIVE
 				Constants.MessageLocationType.SPAM -> PREF_LAST_MESSAGE_TIME_SPAM

@@ -1317,8 +1317,9 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         if (isDraft) {
             message.setIsRead(true);
             message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()),
-                    String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
-            message.setLocation(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue());
+                    String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()),
+                    String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
+            message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
             message.setTime(ServerTime.currentTimeMillis() / 1000);
             message.setIsEncrypted(MessageEncryption.INTERNAL);
             message.setDownloaded(true);
