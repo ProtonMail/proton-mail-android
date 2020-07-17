@@ -25,6 +25,7 @@ import org.gradle.kotlin.dsl.maven
  */
 val repos: RepositoryHandler.() -> Unit get() = {
     google()
+    maven("https://dl.bintray.com/kotlin/kotlinx/")
     jcenter()
     // Proton Core libraries
     maven("https://dl.bintray.com/proton/Core-publishing")
