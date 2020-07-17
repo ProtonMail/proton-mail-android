@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+@file:Suppress("DEPRECATION") // Suppress deprecated usages from old entity
+
 package ch.protonmail.android.mapper.bridge
 
 import ch.protonmail.android.domain.entity.Id

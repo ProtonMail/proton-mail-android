@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+@file:Suppress("DEPRECATION") // Suppress deprecated usages from old entity
+
 package ch.protonmail.android.mapper.bridge
 
 import ch.protonmail.android.domain.entity.EmailAddress
@@ -88,4 +90,15 @@ class AddressBridgeMapper @Inject constructor(
     private fun getType(i: Int) =
         Address.Type.values().find { it.i == i }
             ?: throw IllegalArgumentException("Cannot crate Address Type from value: $i")
+
+    companion object {
+
+        /**
+         * @return default configuration for [AddressBridgeMapper]
+         * This is temporary and intended to be used ONLY where a proper DI is not possible ATM
+         */
+        @JvmStatic
+        fun buildDefault() =
+            AddressBridgeMapper(AddressKeysBridgeMapper(AddressKeyBridgeMapper()))
+    }
 }
