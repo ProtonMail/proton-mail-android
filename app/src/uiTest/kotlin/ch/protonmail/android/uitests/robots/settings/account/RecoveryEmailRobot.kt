@@ -19,14 +19,14 @@
 package ch.protonmail.android.uitests.robots.settings.account
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.shared.SharedRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.User
+import ch.protonmail.android.uitests.testsHelper.insert
 
 /**
  * Class represents Email recovery view.
  */
-class RecoveryEmailRobot : UIActions() {
+class RecoveryEmailRobot {
 
     fun changeRecoveryEmail(user: User): RecoveryEmailRobot {
         return newEmail(user.email)
@@ -37,46 +37,40 @@ class RecoveryEmailRobot : UIActions() {
     }
 
     private fun newEmail(email: String): RecoveryEmailRobot {
-        insertTextIntoFieldWithId(R.id.newRecoveryEmail, email)
+        UIActions.id.insertTextIntoFieldWithId(R.id.newRecoveryEmail, email)
         return this
     }
 
     private fun confirmNewEmail(email: String): RecoveryEmailRobot {
-        insertTextIntoFieldWithId(R.id.newRecoveryEmailConfirm, email)
+        UIActions.id.insertTextIntoFieldWithId(R.id.newRecoveryEmailConfirm, email)
         return this
     }
 
     private fun password(password: String): RecoveryEmailRobot {
-        waitUntilObjectWithIdAppearsInView(R.id.current_password).insertText(password)
+        UIActions.wait.untilViewWithIdAppears(R.id.current_password)
+            .insert(password)
         return this
     }
 
     private fun save(): RecoveryEmailRobot {
-        clickOnObjectWithId(R.id.save_new_email)
+        UIActions.id.clickViewWithId(R.id.save_new_email)
         return RecoveryEmailRobot()
     }
 
     private fun confirmSave(): RecoveryEmailRobot {
-        SharedRobot.clickPositiveDialogButton()
+        UIActions.system.clickPositiveDialogButton()
         return RecoveryEmailRobot()
     }
 
     /**
      * Contains all the validations that can be performed by [RecoveryEmailRobot].
      */
-    class Verify : DisplayNameAndSignatureRobot() {
+    class Verify {
 
-        fun recoveryEmailChanged() {
-            waitWithTimeoutForObjectWithIdAndTextToAppear(
-                R.id.newRecoveryEmail, "",
-                5000)
-            waitWithTimeoutForObjectWithIdAndTextToAppear(
-                R.id.newRecoveryEmailConfirm,
-                "",
-                5000)
+        fun recoveryEmailChangedTo(email: String) {
+            UIActions.wait.untilViewWithIdAndTextAppears(R.id.currentRecoveryEmail, email)
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) =
-        Verify().apply(block) as DisplayNameAndSignatureRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

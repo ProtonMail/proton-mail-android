@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.composer
+package ch.protonmail.android.uitests.robots.mailbox.composer
 
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.AppCompatImageButton
@@ -27,7 +27,7 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 /**
  * Class represents Message Attachments.
  */
-open class MessageAttachmentsRobot : UIActions() {
+open class MessageAttachmentsRobot {
 
     fun addImageCaptureAttachment(@IdRes drawable: Int
     ): ComposerRobot = mockCameraImageCapture(drawable).navigateUpToComposerView()
@@ -43,7 +43,7 @@ open class MessageAttachmentsRobot : UIActions() {
         mockFileAttachment(drawable).navigateUpToComposerView()
 
     private fun navigateUpToComposerView(): ComposerRobot {
-        clickObjectWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
+        UIActions.allOf.clickViewWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
         return ComposerRobot()
     }
 

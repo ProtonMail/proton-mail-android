@@ -16,24 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.settings.account
+package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
-/**
- * [LabelsAndFoldersRobot] class contains actions and verifications for
- * Labels & Folders functionality.
- */
-class LabelsAndFoldersRobot {
+interface MoveToFolderRobotInterface {
 
-    fun labelsManager(): LabelsManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.labels_manage)
-        return LabelsManagerRobot()
+    fun moveToExistingFolder(name: String): Any {
+        UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, name)
+        return Any()
     }
 
-    fun foldersManager(): FoldersManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.folders_manage)
-        return FoldersManagerRobot()
+    fun createFolder() {
+        //TODO when proper tests will be added
     }
 }

@@ -16,90 +16,83 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.tests.mailbox
+package ch.protonmail.android.uitests.tests.menu
 
 import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
-import ch.protonmail.android.uitests.robots.navbar.NavbarRobot
+import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import org.junit.Before
 import org.junit.Test
 
 @LargeTest
-class NavbarTests : BaseTest() {
+class MenuTests : BaseTest() {
 
-    private val navbarRobot = NavbarRobot()
+    private lateinit var menuRobot: MenuRobot
     private val loginRobot = LoginRobot()
 
     @Before
     override fun setUp() {
         super.setUp()
-        loginRobot
+        menuRobot = loginRobot
             .loginUser(TestData.onePassUser)
+            .menuDrawer()
     }
 
     @Test
     fun openNavigationDrawer() {
-        navbarRobot
-            .openNavbar()
-            .verify { navbarOpened() }
+        menuRobot
+            .verify { menuOpened() }
     }
 
     @Test
     fun closeNavigationDrawerWithSwipe() {
-        navbarRobot
-            .openNavbar()
-            .closeNavbarWithSwipe()
-            .verify { navbarClosed() }
+        menuRobot
+            .closeMenuWithSwipe()
+            .verify { menuClosed() }
     }
 
     @Test
     fun navigateToAccountList() {
-        navbarRobot
-            .openNavbar()
-            .accountList()
-            .verify { accountListOpened() }
+        menuRobot
+            .accountsList()
+            .verify { accountsListOpened() }
     }
 
     @Test
     fun navigateToManageAccounts() {
-        navbarRobot
-            .openNavbar()
-            .accountList()
+        menuRobot
+            .accountsList()
             .manageAccounts()
             .verify { manageAccountsOpened() }
     }
 
     @Test
     fun navigateToContacts() {
-        navbarRobot
-            .openNavbar()
-            .navigateToContacts()
-            .verify { navigatedToContacts() }
+        menuRobot
+            .contacts()
+            .verify { contactsOpened() }
     }
 
     @Test
     fun navigateToSettings() {
-        navbarRobot
-            .openNavbar()
-            .navigateToSettings()
-            .verify { navigatedToSettings() }
+        menuRobot
+            .settings()
+            .verify { settingsOpened() }
     }
 
     @Test
     fun navigateToReportBugs() {
-        navbarRobot
-            .openNavbar()
-            .navigateToReportBugs()
-            .verify { navigatedToReportBugs() }
+        menuRobot
+            .reportBugs()
+            .verify { reportBugsOpened() }
     }
 
     @Test
     fun navigateToUpgradeDonate() {
-        navbarRobot
-            .openNavbar()
-            .navigateToUpgradeDonate()
-            .verify { navigatedToUpgradeDonate() }
+        menuRobot
+            .upgradeDonate()
+            .verify { upgradeDonateOpened() }
     }
 }

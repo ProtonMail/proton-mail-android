@@ -18,190 +18,191 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
-import java.util.*
+import ch.protonmail.android.uitests.testsHelper.insert
+import com.github.clans.fab.FloatingActionButton
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.instanceOf
 
 /**
  * [ContactsRobot] class contains actions and verifications for Contacts functionality.
  */
-open class ContactsRobot : UIActions() {
+open class ContactsRobot {
 
     fun openOptionsMenu(): ContactsRobot {
-        clickOnObjectWithContentDescription("More options")
+        UIActions.contentDescription.clickViewWithContentDescription("More options")
         return this
     }
 
     fun refresh(): ContactsRobot {
-        clickOnObjectWithIdAndText(R.id.title, "Refresh")
+        UIActions.allOf.clickViewWithIdAndText(R.id.title, "Refresh")
         return this
     }
 
     fun addFab(): ContactsRobot {
-        clickChildInViewGroup(R.id.addFab, 2)
+        UIActions.allOf.clickMatchedView(allOf(
+            instanceOf(FloatingActionButton::class.java),
+            withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)
+        ))
         return this
     }
 
     fun addContact(): ContactsRobot {
-        clickOnObjectWithId(R.id.addContactItem)
+        UIActions.id.clickViewWithId(R.id.addContactItem)
         return this
     }
 
-    fun insertContactName(nameNewContact: String?): ContactsRobot {
-        waitUntilObjectWithIdAppearsInView(R.id.contact_display_name)
-        insertTextIntoFieldWithId(R.id.contact_display_name, nameNewContact)
+    fun insertContactName(nameNewContact: String): ContactsRobot {
+        UIActions.wait.untilViewWithIdAppears(R.id.contact_display_name).insert(nameNewContact)
         return this
     }
 
     fun saveContact(): ContactsRobot {
-        clickOnObjectWithIdAndText(R.id.action_save, R.string.save)
+        UIActions.allOf.clickViewWithIdAndText(R.id.action_save, R.string.save)
         return this
     }
 
     fun addContactGroup(): ContactsRobot {
-        clickOnObjectWithId(R.id.addContactGroupItem)
+        UIActions.id.clickViewWithId(R.id.addContactGroupItem)
         return this
     }
 
-    fun chooseContact(): ContactsRobot {
-        clickChildInRecyclerView(R.id.contactsRecyclerView, 1)
+    fun chooseContact(withName: String): ContactsRobot {
+        UIActions.recyclerView.clickOnContactItem(R.id.contactsRecyclerView, withName)
         return this
     }
 
     fun contactDetails(): ContactsRobot {
-        waitUntilObjectWithIdAppearsInView(R.id.add_contact_details)
-        clickOnObjectWithId(R.id.editContactDetails)
+        UIActions.wait.untilViewWithIdAppears(R.id.add_contact_details)
+        UIActions.id.clickViewWithId(R.id.editContactDetails)
         return this
     }
 
-    fun editDisplayName(displayName: String?): ContactsRobot {
-        insertTextIntoFieldWithId(R.id.contact_display_name, displayName)
+    fun editDisplayName(displayName: String): ContactsRobot {
+        UIActions.id.insertTextIntoFieldWithId(R.id.contact_display_name, displayName)
         return this
     }
 
-    fun editEmailAddress(emailAddress: String?): ContactsRobot {
-        insertTextIntoFieldWithHint(R.string.contact_vcard_hint_email, emailAddress)
+    fun editEmailAddress(emailAddress: String): ContactsRobot {
+        UIActions.hint.insertTextIntoFieldWithHint(R.string.contact_vcard_hint_email, emailAddress)
         return this
     }
-
-    val contactName: String?
-        get() = getTextFromObject(R.id.contactTitle)
 
     fun delete(): ContactsRobot {
-        waitWithTimeoutForObjectWithIdIsClickable(R.id.action_delete, 5000)
-        clickOnObjectWithId(R.id.action_delete)
+        UIActions.id.clickViewWithId(R.id.action_delete)
         return this
     }
 
     fun confirmDelete(): ContactsRobot {
-        waitWithTimeoutForObjectWithTextToAppear("YES", 5000)
-        clickOnObjectWithText("YES")
+        UIActions.wait.untilViewWithTextAppears("YES")
+        UIActions.text.clickViewWithText("YES")
         return this
     }
 
     fun chooseContactWithText(emailContainsText: String?): ContactsRobot {
-        scrollDownAndClickObjectWithIdAndTextIsFound(R.id.contactsRecyclerView, R.id.contact_email, emailContainsText)
+        //TODO implement recyclerview matcher
+        //scrollDownAndClickObjectWithIdAndTextIsFound(R.id.contactsRecyclerView, R.id.contact_email, emailContainsText)
         return this
     }
 
     fun composeButton(): ContactsRobot {
-        waitUntilObjectWithIdAppearsInView(R.id.add_contact_details)
-        clickOnObjectWithId(R.id.btnCompose)
+        UIActions.wait.untilViewWithIdAppears(R.id.add_contact_details)
+        UIActions.id.clickViewWithId(R.id.btnCompose)
         return this
     }
 
-    fun composeMessage(subject: String, body: String): ContactsRobot {
-        waitUntilObjectWithIdAppearsInView(R.id.message_title)
-        clickOnObjectWithId(R.id.message_title)
-        typeTextIntoField(R.id.message_title, subject)
-        insertTextIntoFieldWithId(R.id.message_body, body)
+    fun composeMessage(messageSubject: String, messageBody: String): ContactsRobot {
+        UIActions.wait.untilViewWithIdAppears(R.id.message_title)
+        UIActions.id.clickViewWithId(R.id.message_title)
+        UIActions.id.typeTextIntoFieldWithId(R.id.message_title, messageSubject)
+        UIActions.id.insertTextIntoFieldWithId(R.id.message_body, messageBody)
         return this
     }
 
     internal fun send(): ComposerRobot {
-        clickOnObjectWithId(R.id.send_message)
+        UIActions.id.clickViewWithId(R.id.send_message)
         return ComposerRobot()
     }
 
-    fun editGroupName(newGroupName: String?): ContactsRobot {
-        insertTextIntoFieldWithId(R.id.contactGroupName, newGroupName)
+    fun editGroupName(newGroupName: String): ContactsRobot {
+        UIActions.id.insertTextIntoFieldWithId(R.id.contactGroupName, newGroupName)
         return this
     }
 
     fun saveGroup(): ContactsRobot {
-        clickOnObjectWithIdAndText(R.id.action_save, "DONE")
+        UIActions.allOf.clickViewWithIdAndText(R.id.action_save, "DONE")
         return this
     }
 
     fun groupsView(): ContactsRobot {
-        clickOnObjectWithContentDescSubstring("Groups")
+        UIActions.contentDescription.clickViewWithContentDescSubstring("Groups")
         return this
     }
 
-    fun chooseGroup(): ContactsRobot {
-        waitWithTimeoutForObjectWithIdToAppear(R.id.contact_data_parent, 10000)
-        clickChildInRecyclerView(R.id.contactGroupsRecyclerView, 0)
+    fun chooseGroup(withName: String): ContactsRobot {
+        UIActions.recyclerView.clickOnGroupItem(R.id.contactGroupsRecyclerView, withName)
         return this
     }
 
     fun editFab(): ContactsRobot {
-        clickOnObjectWithId(R.id.editFab)
+        UIActions.id.clickViewWithId(R.id.editFab)
         return this
     }
 
     fun manageAddresses(): ContactsRobot {
-        val randomPosition = Random().nextInt(3)
-        clickOnObjectWithIdAndText(R.id.manageAddresses, R.string.contact_groups_manage_addresses)
-        waitUntilObjectWithIdAppearsInView(R.id.contactEmailsRecyclerView)
-        clickChildInRecyclerView(R.id.contactEmailsRecyclerView, randomPosition)
-        clickChildInRecyclerView(R.id.contactEmailsRecyclerView, randomPosition + 1)
+        UIActions.allOf.clickViewWithIdAndText(R.id.manageAddresses, R.string.contact_groups_manage_addresses)
+        UIActions.wait.untilViewWithIdAppears(R.id.contactEmailsRecyclerView)
         return this
     }
 
     fun composeToGroup(): ContactsRobot {
-        waitWithTimeoutForObjectWithIdToAppear(R.id.contact_data_parent, 10000)
-        clickComposeToGroupButtonAtPosition(R.id.contactGroupsRecyclerView, R.id.writeButton, 0)
+        UIActions.wait.untilViewWithIdAppears(R.id.contact_data_parent)
+        //TODO
+//        clickComposeToGroupButtonAtPosition(R.id.contactGroupsRecyclerView, R.id.writeButton, 0)
         return this
     }
-
-    val groupName: String?
-        get() = getTextFromObjectInRecyclerViewAtPosition(R.id.contactGroupsRecyclerView, R.id.contact_name, 0)
-
 
     /**
      * Contains all the validations that can be performed by [ContactsRobot].
      */
-    class Verify : ContactsRobot() {
+    class Verify {
 
         fun contactSaved(): ContactsRobot {
-            checkIfToastMessageIsDisplayed(R.string.contact_saved)
+            UIActions.check.toastMessageIsDisplayed(R.string.contact_saved)
             return ContactsRobot()
         }
 
         fun groupSaved(): ContactsRobot {
-            checkIfToastMessageIsDisplayed(R.string.contact_group_saved)
+            UIActions.check.toastMessageIsDisplayed(R.string.contact_group_saved)
             return ContactsRobot()
         }
 
         fun contactsRefreshed(): ContactsRobot {
-            checkIfToastMessageIsDisplayed(R.string.fetching_contacts_success)
+            UIActions.check.toastMessageIsDisplayed(R.string.fetching_contacts_success)
             return ContactsRobot()
         }
 
-        fun contactDeleted(deletedContact: String?): ContactsRobot {
-            waitUntilObjectWithIdAppearsInView(R.id.contactsRecyclerView)
-            checkIfObjectWithIdAndTextIsNotDisplayed(R.id.contact_name, deletedContact)
+        fun contactDeleted(deletedContact: String): ContactsRobot {
+            UIActions.wait.untilViewWithIdAppears(R.id.contactsRecyclerView)
+            UIActions.check.viewWithIdAndTextIsNotDisplayed(R.id.contact_name, deletedContact)
             return ContactsRobot()
         }
 
-        fun groupDeleted(deletedGroup: String?): ContactsRobot {
-            waitUntilObjectWithIdAppearsInView(R.id.contactGroupsRecyclerView)
-            checkIfToastMessageIsDisplayed("Group Deleted")
-            checkIfObjectWithIdAndTextIsNotDisplayed(R.id.contact_name, deletedGroup)
+        fun groupDeleted(deletedGroup: String): ContactsRobot {
+            UIActions.wait.untilViewWithIdAppears(R.id.contactGroupsRecyclerView)
+            UIActions.check.toastMessageIsDisplayed("Group Deleted")
+            UIActions.check.viewWithIdAndTextDoesNotExist(R.id.contact_name, deletedGroup)
             return ContactsRobot()
+        }
+
+        fun contactsOpened() {
+            UIActions.check.viewWithIdIsDisplayed(R.id.contactsRecyclerView)
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as ContactsRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

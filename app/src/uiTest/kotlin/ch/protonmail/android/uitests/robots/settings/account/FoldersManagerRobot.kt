@@ -28,7 +28,7 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 /**
  * [FoldersManagerRobot] class contains actions and verifications for Folders functionality.
  */
-open class FoldersManagerRobot : UIActions() {
+class FoldersManagerRobot {
 
     fun addFolder(name: String): FoldersManagerRobot {
         folderName(name)
@@ -37,25 +37,24 @@ open class FoldersManagerRobot : UIActions() {
     }
 
     private fun folderName(name: String): FoldersManagerRobot {
-        typeTextIntoField(R.id.label_name, name)
+        UIActions.id.typeTextIntoFieldWithId(R.id.label_name, name)
         return this
     }
 
     private fun saveNewFolder(): FoldersManagerRobot {
-        clickOnObjectWithId(R.id.save_new_label)
+        UIActions.id.clickViewWithId(R.id.save_new_label)
         return this
     }
 
     /**
      * Contains all the validations that can be performed by [FoldersManagerRobot].
      */
-    class Verify : FoldersManagerRobot() {
+    class Verify {
 
         fun folderWithNameShown(name: String) {
             onView(withId(R.id.labels_recycler_view)).perform(scrollToHolder(withLabelName(name)))
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) =
-        Verify().apply(block) as FoldersManagerRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

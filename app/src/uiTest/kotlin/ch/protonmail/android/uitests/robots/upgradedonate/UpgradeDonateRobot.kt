@@ -16,24 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.settings.account
+package ch.protonmail.android.uitests.robots.upgradedonate
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
- * [LabelsAndFoldersRobot] class contains actions and verifications for
- * Labels & Folders functionality.
+ * [UpgradeDonateRobot] class contains actions and verifications for Upgrade / Donate view.
  */
-class LabelsAndFoldersRobot {
+class UpgradeDonateRobot {
 
-    fun labelsManager(): LabelsManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.labels_manage)
-        return LabelsManagerRobot()
+    /**
+     * Contains all the validations that can be performed by [UpgradeDonateRobot].
+     */
+    class Verify {
+
+        fun upgradeDonateOpened() {
+            UIActions.check.viewWithIdIsDisplayed(R.id.upgrade_header)
+        }
     }
 
-    fun foldersManager(): FoldersManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.folders_manage)
-        return FoldersManagerRobot()
-    }
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

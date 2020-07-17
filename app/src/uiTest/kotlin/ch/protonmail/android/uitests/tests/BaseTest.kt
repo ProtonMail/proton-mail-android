@@ -25,14 +25,16 @@ import android.content.Context
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.intent.Intents
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import ch.protonmail.android.activities.guest.LoginActivity
-import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
+import ch.protonmail.android.uitests.testsHelper.ProtonServicesIdlingResource
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.User
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import org.junit.After
@@ -59,6 +61,7 @@ open class BaseTest {
     @Before
     open fun setUp() {
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().clear().apply()
+        IdlingRegistry.getInstance().register(ProtonServicesIdlingResource())
         Intents.init()
         Log.d(testTag, "Starting test execution for test: ${testName.methodName}")
     }
@@ -66,6 +69,12 @@ open class BaseTest {
     @After
     open fun tearDown() {
         Intents.release()
+        for (idlingResource in IdlingRegistry.getInstance().resources) {
+            if (idlingResource == null) {
+                continue
+            }
+            IdlingRegistry.getInstance().unregister(idlingResource)
+        }
         Log.d(testTag, "Finished test execution: ${testName.methodName}")
     }
 
@@ -74,7 +83,6 @@ open class BaseTest {
         const val testTag = "PROTON_UI_TEST"
         private val testName = TestName()
         private val testExecutionWatcher = TestExecutionWatcher()
-
         private lateinit var args: Bundle
         const val testApp = "testApp"
         private const val oneTimeRunFlag = "oneTimeRunFlag"
@@ -113,7 +121,7 @@ open class BaseTest {
 
         private fun setUser(key: String): User {
             val userData = args.getString(key)
-            return if (userData != null) {
+            return if (userData != null){
                 val user = args.getString(key)!!.split(",")
                 User(user[0], user[1], user[2], user[3])
             } else {

@@ -20,10 +20,11 @@ package ch.protonmail.android.uitests
 
 import ch.protonmail.android.uitests.tests.composer.ComposerTests
 import ch.protonmail.android.uitests.tests.contacts.ContactsTests
+import ch.protonmail.android.uitests.tests.inbox.InboxTests
 import ch.protonmail.android.uitests.tests.login.LoginTests
-import ch.protonmail.android.uitests.tests.mailbox.MailboxTests
-import ch.protonmail.android.uitests.tests.mailbox.NavbarTests
+import ch.protonmail.android.uitests.tests.menu.MenuTests
 import ch.protonmail.android.uitests.tests.settings.AccountSettingsTests
+import ch.protonmail.android.uitests.tests.settings.SettingsTests
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -31,9 +32,11 @@ import org.junit.runners.Suite
 @Suite.SuiteClasses(
     AccountSettingsTests::class,
     ComposerTests::class,
+    ContactsTests::class,
+    InboxTests::class,
     LoginTests::class,
-    NavbarTests::class,
-    MailboxTests::class,
-    ContactsTests::class
+    ContactsTests::class,
+    MenuTests::class,
+    SettingsTests::class
 )
 class TestSuite

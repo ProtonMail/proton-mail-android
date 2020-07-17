@@ -91,6 +91,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
         <!-- First line -->
         <LinearLayout
+            android:id="@+id/contact_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

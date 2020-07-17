@@ -38,7 +38,7 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  * [AccountSettingsRobot] class contains actions and verifications for
  * Account settings functionality.
  */
-open class AccountSettingsRobot : UIActions() {
+class AccountSettingsRobot {
 
     fun subscription(): SubscriptionRobot {
         clickOnSettingsItemWithHeader(R.string.subscription)
@@ -79,17 +79,20 @@ open class AccountSettingsRobot : UIActions() {
     /**
      * Contains all the validations that can be performed by [AccountSettingsRobot].
      */
-    class Verify : AccountSettingsRobot() {
+    class Verify {
+
+        fun accountSettingsOpened() {
+            UIActions.wait.untilViewWithTextAndParentIdAppears(R.string.account_settings, R.id.toolbar)
+        }
 
         fun passwordChanged() {
-            checkIfToastMessageIsDisplayed(R.string.new_login_password_saved)
+            UIActions.check.toastMessageIsDisplayed(R.string.new_login_password_saved)
         }
 
         fun mailboxPasswordChanged() {
-            checkIfToastMessageIsDisplayed(R.string.new_mailbox_password_saved)
+            UIActions.check.toastMessageIsDisplayed(R.string.new_mailbox_password_saved)
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) =
-        Verify().apply(block) as AccountSettingsRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

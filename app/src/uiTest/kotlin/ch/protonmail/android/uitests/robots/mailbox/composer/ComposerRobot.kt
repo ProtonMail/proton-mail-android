@@ -16,22 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.composer
+package ch.protonmail.android.uitests.robots.mailbox.composer
 
-import android.widget.LinearLayout
 import android.widget.NumberPicker
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.withClassName
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.composer.ComposerRobot.MessageExpirationRobot
-import ch.protonmail.android.uitests.robots.composer.ComposerRobot.MessagePasswordRobot
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobot
-import ch.protonmail.android.uitests.robots.shared.SharedRobot
+import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessageExpirationRobot
+import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessagePasswordRobot
+import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.isChildOf
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.setValueInNumberPicker
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.User
+import ch.protonmail.android.uitests.testsHelper.insert
+import ch.protonmail.android.uitests.testsHelper.type
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 
@@ -39,21 +39,21 @@ import org.hamcrest.CoreMatchers.allOf
  * [ComposerRobot] class contains actions and verifications for email composer functionality.
  * Inner classes: [MessagePasswordRobot], [MessageExpirationRobot], [MessageAttachmentsRobot].
  */
-open class ComposerRobot : UIActions() {
+class ComposerRobot {
 
-    fun sendMessageToInternalTrustedAddress(): ComposerRobot =
+    fun sendMessageToInternalTrustedAddress(): InboxRobot =
         composeMessageToInternalTrustedAddress().send()
 
-    fun sendMessageToInternalNotTrustedAddress(): ComposerRobot =
+    fun sendMessageToInternalNotTrustedAddress(): InboxRobot =
         composeMessageToInternalNotTrustedAddress().send()
 
-    fun sendMessageToExternalAddressPGPEncrypted(): ComposerRobot =
+    fun sendMessageToExternalAddressPGPEncrypted(): InboxRobot =
         composeMessageToExternalAddressPGPEncrypted().send()
 
-    fun sendMessageToExternalAddressPGPSigned(): ComposerRobot =
+    fun sendMessageToExternalAddressPGPSigned(): InboxRobot =
         composeMessageToExternalAddressPGPSigned().send()
 
-    fun sendMessageTOandCC(recipient: User, ccRecipient: User): ComposerRobot =
+    fun sendMessageTOandCC(recipient: User, ccRecipient: User): InboxRobot =
         recipients(recipient)
             .showAdditionalRows()
             .ccRecipients(ccRecipient)
@@ -61,7 +61,7 @@ open class ComposerRobot : UIActions() {
             .body(TestData.messageBody)
             .send()
 
-    fun sendMessageTOandCCandBCC(recipient: User, ccRecipient: User, bccRecipient: User): ComposerRobot =
+    fun sendMessageTOandCCandBCC(recipient: User, ccRecipient: User, bccRecipient: User): InboxRobot =
         recipients(recipient)
             .showAdditionalRows()
             .ccRecipients(ccRecipient)
@@ -70,20 +70,20 @@ open class ComposerRobot : UIActions() {
             .body(TestData.messageBody)
             .send()
 
-    fun sendMessageWithPassword(): ComposerRobot =
+    fun sendMessageWithPassword(): InboxRobot =
         composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
             .send()
 
-    fun sendMessageExpiryTimeInDays(days: Int): ComposerRobot =
+    fun sendMessageExpiryTimeInDays(days: Int): InboxRobot =
         composeMessageToInternalTrustedAddress()
             .messageExpiration()
             .setExpirationInDays(days)
             .verifyExpirationTimeShown(days)
             .send()
 
-    fun sendMessageEOAndExpiryTime(days: Int): ComposerRobot {
+    fun sendMessageEOAndExpiryTime(days: Int): InboxRobot {
         composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
@@ -91,10 +91,10 @@ open class ComposerRobot : UIActions() {
             .setExpirationInDays(days)
             .verifyExpirationTimeShown(days)
             .send()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
-    fun sendMessageEOAndExpiryTimeAndPGPConfirmation(days: Int): ComposerRobot {
+    fun sendMessageEOAndExpiryTimeAndPGPConfirmation(days: Int): InboxRobot {
         composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
@@ -103,7 +103,7 @@ open class ComposerRobot : UIActions() {
             .verifyExpirationTimeShown(days)
             .sendWithPGPConfirmation()
             .confirmSendingWithPGP()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
     fun sendMessageEOAndExpiryTimeWithAttachment(days: Int): ComposerRobot {
@@ -120,7 +120,7 @@ open class ComposerRobot : UIActions() {
         return ComposerRobot()
     }
 
-    fun sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(days: Int): ComposerRobot {
+    fun sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(days: Int): InboxRobot {
         composeMessageToExternalAddressPGPSigned()
             .setMessagePassword()
             .definePasswordWithHint()
@@ -132,56 +132,56 @@ open class ComposerRobot : UIActions() {
             .addImageCaptureAttachment(R.drawable.logo)
             .sendWithPGPConfirmation()
             .confirmSendingWithPGP()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
-    fun sendMessageCameraCaptureAttachment(): ComposerRobot {
+    fun sendMessageCameraCaptureAttachment(): InboxRobot {
         composeMessageToInternalTrustedAddress()
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
             .send()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
-    fun sendMessageChooseAttachment(): ComposerRobot {
+    fun sendMessageChooseAttachment(): InboxRobot {
         composeMessageToInternalNotTrustedAddress()
             .attachments()
             .addFileAttachment(R.drawable.logo)
             .send()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
-    fun sendMessageToInternalContactWithTwoAttachments(): ComposerRobot {
+    fun sendMessageToInternalContactWithTwoAttachments(): InboxRobot {
         composeMessageToInternalTrustedAddress()
             .attachments()
             .addTwoImageCaptureAttachments(R.drawable.logo, R.drawable.welcome)
             .send()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
-    fun sendMessageToExternalContactWithOneAttachment(): ComposerRobot {
+    fun sendMessageToExternalContactWithOneAttachment(): InboxRobot {
         composeMessageToExternalAddressPGPEncrypted()
             .attachments()
             .addImageCaptureAttachment(R.drawable.logo)
             .send()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
-    fun sendMessageToExternalContactWithTwoAttachments(): ComposerRobot {
+    fun sendMessageToExternalContactWithTwoAttachments(): InboxRobot {
         composeMessageToExternalAddressPGPSigned()
             .attachments()
             .addTwoImageCaptureAttachments(R.drawable.logo, R.drawable.welcome)
             .send()
-        return ComposerRobot()
+        return InboxRobot()
     }
 
-    fun draftSubjectBody(messageSubject: String) : ComposerRobot {
+    fun draftSubjectBody(messageSubject: String): ComposerRobot {
         subject(messageSubject)
             .body(TestData.messageBody)
         return this
     }
 
-    fun draftSubjectBodyAttachment(messageSubject: String) : ComposerRobot {
+    fun draftSubjectBodyAttachment(messageSubject: String): ComposerRobot {
         subject(messageSubject)
             .body(TestData.messageBody)
             .attachments()
@@ -189,73 +189,100 @@ open class ComposerRobot : UIActions() {
         return this
     }
 
-    fun navigateUpToInbox(): MailboxRobot {
-        clickChildInViewGroup(R.id.toolbar, 0)
-        return MailboxRobot()
+    fun navigateUpToInbox(): ComposerRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return this
+    }
+
+    fun confirmDraftSaving(): InboxRobot {
+        UIActions.system.clickPositiveDialogButton()
+        return InboxRobot()
+    }
+
+    fun editSubject(messageSubject: String): ComposerRobot {
+        UIActions.id.insertTextIntoFieldWithId(R.id.message_title, "Draft Edit: ")
+        UIActions.id.clickViewWithId(R.id.message_title)
+        UIActions.id.typeTextIntoFieldWithId(R.id.message_title, messageSubject)
+        return this
+    }
+
+    fun editBody(messageBody: String): ComposerRobot {
+        UIActions.wait.untilViewWithIdAppears(R.id.message_body)
+            .insert(messageBody)
+            .type(messageBody)
+        return this
+    }
+
+    fun editBodyAndSend(messageBody: String): ComposerRobot {
+        UIActions.wait.untilViewWithIdAppears(R.id.message_body)
+            .insert(messageBody)
+            .type(messageBody)
+        send()
+        return this
     }
 
     private fun recipients(user: User): ComposerRobot {
-        typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, user.email)
+        UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, user.email)
         return this
     }
 
     private fun ccRecipients(user: User): ComposerRobot {
-        typeTextIntoFieldWithIdAndPressImeAction(R.id.cc_recipients, user.email)
+        UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.cc_recipients, user.email)
         return this
     }
 
     private fun bccRecipients(user: User): ComposerRobot {
-        typeTextIntoFieldWithIdAndPressImeAction(R.id.bcc_recipients, user.email)
+        UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.bcc_recipients, user.email)
         return this
     }
 
     private fun subject(text: String): ComposerRobot {
-        typeTextIntoField(R.id.message_title, text)
+        UIActions.id.insertTextIntoFieldWithId(R.id.message_title, text)
         return this
     }
 
     private fun body(text: String): ComposerRobot {
-        insertTextIntoFieldWithId(R.id.message_body, text)
+        UIActions.id.insertTextIntoFieldWithId(R.id.message_body, text)
         return this
     }
 
     private fun showAdditionalRows(): ComposerRobot {
-        clickOnObjectWithId(R.id.show_additional_rows)
+        UIActions.id.clickViewWithId(R.id.show_additional_rows)
         return this
     }
 
     private fun setMessagePassword(): MessagePasswordRobot {
-        clickOnObjectWithId(R.id.set_message_password)
+        UIActions.id.clickViewWithId(R.id.set_message_password)
         return MessagePasswordRobot()
     }
 
     private fun messageExpiration(): MessageExpirationRobot {
-        clickOnObjectWithId(R.id.set_message_expiration)
+        UIActions.id.clickViewWithId(R.id.set_message_expiration)
         return MessageExpirationRobot()
     }
 
     private fun hideExpirationView(): ComposerRobot {
-        clickOnObjectWithId(R.id.hide_view)
+        UIActions.id.clickViewWithId(R.id.hide_view)
         return this
     }
 
     private fun attachments(): MessageAttachmentsRobot {
-        clickOnObjectWithId(R.id.add_attachments)
+        UIActions.id.clickViewWithId(R.id.add_attachments)
         return MessageAttachmentsRobot()
     }
 
-    private fun send(): ComposerRobot {
-        clickOnObjectWithId(R.id.send_message)
-        return ComposerRobot()
+    private fun send(): InboxRobot {
+        UIActions.id.clickViewWithId(R.id.send_message)
+        return InboxRobot()
     }
 
     private fun sendWithPGPConfirmation(): PGPConfirmationRobot {
-        clickOnObjectWithId(R.id.send_message)
+        UIActions.id.clickViewWithId(R.id.send_message)
         return PGPConfirmationRobot()
     }
 
     private fun verifyExpirationTimeShown(days: Int): ComposerRobot {
-        checkIfObjectWithIdAndTextSubstringIsDisplayed(R.id.expiration_time, days.toString())
+        UIActions.check.viewWithIdAndTextSubstringIsDisplayed(R.id.expiration_time, days.toString())
         return this
     }
 
@@ -292,22 +319,22 @@ open class ComposerRobot : UIActions() {
         }
 
         private fun definePassword(password: String): MessagePasswordRobot {
-            insertTextIntoFieldWithId(R.id.define_password, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.define_password, password)
             return this
         }
 
         private fun confirmPassword(password: String): MessagePasswordRobot {
-            insertTextIntoFieldWithId(R.id.confirm_password, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.confirm_password, password)
             return this
         }
 
         private fun defineHint(hint: String): MessagePasswordRobot {
-            insertTextIntoFieldWithId(R.id.define_hint, hint)
+            UIActions.id.insertTextIntoFieldWithId(R.id.define_hint, hint)
             return this
         }
 
         private fun applyPassword(): ComposerRobot {
-            clickOnObjectWithId(R.id.apply)
+            UIActions.id.clickViewWithId(R.id.apply)
             return ComposerRobot()
         }
     }
@@ -321,16 +348,13 @@ open class ComposerRobot : UIActions() {
             expirationDays(days).confirmMessageExpiration()
 
         private fun expirationDays(days: Int): MessageExpirationRobot {
-            onView(allOf(withClassName(`is`(NumberPicker::class.java.canonicalName)),
-                isChildOf(withClassName(`is`(
-                    LinearLayout::class.java.canonicalName)),
-                    0)))
+            onView(allOf(withClassName(`is`(NumberPicker::class.java.canonicalName)), withId(R.id.days_picker)))
                 .perform(setValueInNumberPicker(days))
             return this
         }
 
         private fun confirmMessageExpiration(): ComposerRobot {
-            SharedRobot.clickPositiveDialogButton()
+            UIActions.system.clickPositiveDialogButton()
             return ComposerRobot()
         }
     }
@@ -341,7 +365,7 @@ open class ComposerRobot : UIActions() {
     inner class PGPConfirmationRobot {
 
         fun confirmSendingWithPGP(): ComposerRobot {
-            clickOnObjectWithId(R.id.ok)
+            UIActions.id.clickViewWithId(R.id.ok)
             return ComposerRobot()
         }
     }
@@ -349,22 +373,22 @@ open class ComposerRobot : UIActions() {
     /**
      * Contains all the validations that can be performed by [ComposerRobot].
      */
-    class Verify : ComposerRobot() {
+    class Verify {
 
         fun defaultEmailAddressViewShown(): ComposerRobot {
             return ComposerRobot()
         }
 
         fun sendingMessageToastShown(): ComposerRobot {
-            checkIfToastMessageIsDisplayed(R.string.sending_message)
+            UIActions.check.toastMessageIsDisplayed(R.string.sending_message)
             return ComposerRobot()
         }
 
         fun messageSentToastShown(): ComposerRobot {
-            checkIfToastMessageIsDisplayed(R.string.message_sent)
+            UIActions.check.toastMessageIsDisplayed(R.string.message_sent)
             return ComposerRobot()
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as ComposerRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

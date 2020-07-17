@@ -28,7 +28,7 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 /**
  * [LabelsManagerRobot] class contains actions and verifications for Labels functionality.
  */
-open class LabelsManagerRobot : UIActions() {
+class LabelsManagerRobot {
 
     fun addLabel(name: String): LabelsManagerRobot {
         return labelName(name)
@@ -36,24 +36,24 @@ open class LabelsManagerRobot : UIActions() {
     }
 
     private fun labelName(name: String): LabelsManagerRobot {
-        typeTextIntoField(R.id.label_name, name)
+        UIActions.id.typeTextIntoFieldWithId(R.id.label_name, name)
         return this
     }
 
     private fun saveNewLabel(): LabelsManagerRobot {
-        clickOnObjectWithId(R.id.save_new_label)
+        UIActions.id.clickViewWithId(R.id.save_new_label)
         return this
     }
 
     /**
      * Contains all the validations that can be performed by [LabelsManagerRobot].
      */
-    class Verify : LabelsManagerRobot() {
+    class Verify {
 
         fun labelWithNameShown(name: String) {
             onView(withId(R.id.labels_recycler_view)).perform(scrollToHolder(withLabelName(name)))
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as LabelsManagerRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

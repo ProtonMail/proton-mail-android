@@ -23,18 +23,18 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 /**
  * Class represents Subscription view.
  */
-open class SubscriptionRobot : UIActions() {
+open class SubscriptionRobot {
 
     /**
      * Contains all the validations that can be performed by [SubscriptionRobot].
      */
-    class Verify : SubscriptionRobot() {
+    class Verify {
 
         fun subscriptionViewShown(): SubscriptionRobot {
-            checkIfObjectWithTextIsDisplayed("Subscription")
+            UIActions.check.viewWithTextIsDisplayed("Subscription")
             return SubscriptionRobot()
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as SubscriptionRobot
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

@@ -16,21 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-@file:Suppress("SameParameterValue")
-
 package ch.protonmail.android.uitests.testsHelper
+
 
 import android.content.Context
 import android.view.KeyEvent
 import android.view.View
-import android.widget.ScrollView
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.appcompat.widget.ActionMenuView
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.action.ViewActions.clearText
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.longClick
@@ -39,21 +40,20 @@ import androidx.test.espresso.action.ViewActions.pressKey
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
-import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.DrawerActions.open
+import androidx.test.espresso.contrib.RecyclerViewActions.actionOnHolderItem
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import androidx.test.espresso.contrib.RecyclerViewActions.scrollToHolder
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isClickable
-import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
-import androidx.test.espresso.matcher.ViewMatchers.isRoot
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withHint
@@ -63,400 +63,330 @@ import androidx.test.espresso.matcher.ViewMatchers.withSubstring
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
-import ch.protonmail.android.uitests.testsHelper.RecyclerViewMatcher.Companion.withRecyclerView
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.viewExists
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithContentDescriptionAppears
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithIdAppears
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActionsAndMatchers.waitUntilObjectWithTextAppears
+import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactGroupName
+import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactName
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkItemDoesNotExist
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilRecyclerViewPopulated
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilViewAppears
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilViewIsGone
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.anything
 import org.hamcrest.CoreMatchers.instanceOf
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
-import org.junit.Assert
 
 
-open class UIActions {
+fun ViewInteraction.insert(textToBeTyped: String): ViewInteraction =
+    this.perform(replaceText(textToBeTyped), closeSoftKeyboard())
 
-    fun waitUntilObjectWithIdAppearsInView(@IdRes objectId: Int): ViewInteraction =
-        waitUntilObjectWithIdAppears(objectId)
+fun ViewInteraction.click(): ViewInteraction =
+    this.perform(ViewActions.click())
 
-    fun waitUntilObjectWithIdAndTextAppearsInView(@IdRes objectId: Int, text: String): ViewInteraction =
-        waitUntilObjectWithIdAppears(objectId)
+fun ViewInteraction.type(textToBeTyped: String): ViewInteraction =
+    this.perform(typeText(textToBeTyped), closeSoftKeyboard())
 
-    fun waitUntilObjectWithTextAppearsInView(objectText: String): Unit =
-        waitUntilObjectWithTextAppears(objectText)
+fun ViewInteraction.verifyChecked(): ViewInteraction =
+    this.check(matches(isChecked()))
 
-    fun waitUntilObjectWithContentDescriptionAppearsInView(@StringRes contentDescription: String): Unit =
-        waitUntilObjectWithContentDescriptionAppears(contentDescription)
+fun ViewInteraction.verifyNotChecked(): ViewInteraction =
+    this.check(matches(isNotChecked()))
 
-    fun insertTextIntoFieldWithId(@IdRes objectId: Int, textToBeTyped: String?): ViewInteraction =
-        onView(withId(objectId)).perform(replaceText(textToBeTyped), closeSoftKeyboard())
+object UIActions {
 
-    fun insertTextIntoFieldWithIdPressImeAction(@IdRes objectId: Int, textToBeTyped: String?): ViewInteraction =
-        onView(withId(objectId)).perform(replaceText(textToBeTyped), pressKey(KeyEvent.KEYCODE_SPACE), closeSoftKeyboard())
+    private val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    fun clickOnObjectWithId(@IdRes objectId: Int): ViewInteraction =
-        onView(withId(objectId)).perform(click())
+    val allOf = AllOf()
 
-    fun clickOnObjectWithTag(tag: String): ViewInteraction =
-        onView(withTagValue(`is`(tag))).perform(click())
+    class AllOf {
+        fun clickViewWithIdAndAncestorTag(@IdRes id: Int, ancestorTag: String): ViewInteraction =
+            onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag))))).perform(click())
 
-    fun clickOnObjectWithTag(@StringRes tagStringId: Int): ViewInteraction =
-        onView(withTagValue(`is`(targetContext.resources.getString(tagStringId))))
-            .perform(click())
+        fun setTextIntoFieldWithIdAndAncestorTag(
+            @IdRes id: Int,
+            ancestorTag: String,
+            textToBeTyped: String): ViewInteraction =
+            onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                .perform(replaceText(textToBeTyped))
 
-    fun clickOnObjectWithIdAndAncestorTag(@IdRes objectId: Int, ancestorTag: String): ViewInteraction =
-        onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag))))).perform(click())
+        fun clickViewWithIdAndText(@IdRes id: Int, text: String): ViewInteraction =
+            onView(allOf(withId(id), withText(text))).perform(click())
 
-    fun checkObjectWithIdAndAncestorTagIsChecked(@IdRes objectId: Int, ancestorTag: String, state: Boolean): ViewInteraction {
-        return when (state) {
-            true -> onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
-                .check(matches(isChecked()))
-            false -> onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+        fun clickVisibleViewWithId(@IdRes id: Int): ViewInteraction =
+            onView(allOf(withId(id), withEffectiveVisibility(Visibility.VISIBLE))).perform(click())
+
+        fun clickViewWithIdAndContentDescription(@IdRes id: Int, @StringRes stringRes: Int): ViewInteraction =
+            onView(allOf(withId(id), withContentDescription(stringRes), isDisplayed())).check(matches(isDisplayed()))
+                .perform(click())
+
+        fun clickViewWithDescendantInRecyclerView(@IdRes id: Int, title: String): ViewInteraction =
+            onView(allOf(withId(id), hasDescendant(withText(title)))).perform(click())
+
+        fun clickViewWithDescendantInRecyclerView(@IdRes id: Int, @StringRes title: Int): ViewInteraction =
+            onView(allOf(withId(id), hasDescendant(withText(title)))).perform(click())
+
+        fun clickViewWithParentIdAndClass(@IdRes id: Int, clazz: Class<*>): ViewInteraction =
+            onView(allOf(instanceOf(clazz), withParent(withId(id)))).perform(click())
+
+        fun clickViewByClassAndParentClass(clazz: Class<*>, parentClazz: Class<*>) =
+            onView(allOf(instanceOf(clazz), withParent(instanceOf(parentClazz)))).perform(click())!!
+
+        fun clickViewWithIdAndText(@IdRes id: Int, @StringRes stringRes: Int): ViewInteraction =
+            onView(allOf(withId(id), withText(stringRes)))
+                .check(matches(isDisplayed()))
+                .perform(click())
+
+        fun clickEmptyCacheButton(@IdRes id: Int): ViewInteraction =
+            onView(allOf(withId(id), withEffectiveVisibility(Visibility.VISIBLE))).perform(click())
+
+        fun clickMatchedView(viewMatcher: Matcher<View>): ViewInteraction =
+            onView(viewMatcher).perform(click())
+    }
+
+    val check = Check()
+
+    class Check {
+        fun viewWithIdAndTextIsDisplayed(@IdRes id: Int, text: String) {
+            onView(allOf(withId(id), withText(text))).check(matches(isDisplayed()))
+        }
+
+        fun viewWithIdIsNotDisplayed(@IdRes id: Int) {
+            onView(withId(id)).check(matches(not(isDisplayed())))
+        }
+
+        fun viewWithIdAndTextIsNotDisplayed(@IdRes id: Int, text: String) {
+            onView(allOf(withId(id), withText(text))).check(matches(not(isDisplayed())))
+        }
+
+        fun viewWithIdAndTextDoesNotExist(@IdRes id: Int, text: String) {
+            onView(allOf(withId(id), withText(text))).check(doesNotExist())
+        }
+
+        fun viewWithIdAndAncestorTagIsChecked(@IdRes id: Int, ancestorTag: String, state: Boolean)
+            : ViewInteraction {
+            return when (state) {
+                true -> onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                    .check(matches(isChecked()))
+                false -> onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                    .check(matches(isNotChecked()))
+            }
+        }
+
+        fun viewWithIdAndAncestorTagIsNotChecked(@IdRes id: Int, ancestorTag: String): ViewInteraction =
+            onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
                 .check(matches(isNotChecked()))
+
+        fun viewWithIdIsDisplayed(@IdRes id: Int) {
+            onView(withId(id)).check(matches(isDisplayed()))
+        }
+
+        fun viewWithTextIsDisplayed(text: String) {
+            onView(withText(text)).check(matches(isDisplayed()))
+        }
+
+        fun viewWithTextIsDisplayed(@StringRes text: Int) {
+            onView(withText(text)).check(matches(isDisplayed()))
+        }
+
+        fun viewWithTextAndParentIdIsDisplayed(@StringRes text: Int, @IdRes parentId: Int) {
+            onView(allOf(withText(text), withParent(withId(parentId)))).check(matches(isDisplayed()))
+        }
+
+        fun viewWithIdAndTextSubstringIsDisplayed(@IdRes id: Int, objectText: String) {
+            onView(allOf(withId(id), withSubstring(objectText))).check(matches(isDisplayed()))
+        }
+
+        fun viewWithIdHasDescendantWithSubstring(@IdRes id: Int, text: String) {
+            onView(withId(id)).check(matches(allOf(isDisplayed(), hasDescendant(withSubstring(text)))))
+        }
+
+        fun viewWithIdHasDescendantWithId(@IdRes id: Int, @IdRes descendantId: Int) {
+            onView(withId(id)).check(matches(allOf(isDisplayed(), hasDescendant(withId(descendantId)))))
+        }
+
+        fun viewWithIdAndTextIsDisplayed(@IdRes id: Int, @StringRes text: Int) {
+            onView(allOf(withId(id), withText(text))).check(matches(isDisplayed()))
+        }
+
+        fun toastMessageIsDisplayed(@StringRes toastMessage: Int) {
+            UICustomViewActions.waitUntilToastAppears(toastMessage)
+        }
+
+        fun toastMessageIsDisplayed(toastMessage: String) {
+            UICustomViewActions.waitUntilToastAppears(toastMessage)
         }
     }
 
-    fun checkObjectWithIdAndAncestorTagIsNotChecked(@IdRes objectId: Int, ancestorTag: String): ViewInteraction =
-        onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag))))).check(matches(isNotChecked()))
+    val classInstance = ClassInstance()
 
-    fun ViewInteraction.insertText(textToBeTyped: String?): ViewInteraction =
-        this.perform(replaceText(textToBeTyped), closeSoftKeyboard())
-
-    fun ViewInteraction.verifyChecked(): ViewInteraction =
-        this.check(matches(isChecked()))
-
-    fun ViewInteraction.verifyNotChecked(): ViewInteraction =
-        this.check(matches(isNotChecked()))
-
-    fun verifyObjectWitIdAndParentId(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes optionText: Int) {
-        if (viewExists(allOf(withId(objectId), isNotChecked(),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText)), isDisplayed()))), 200)) {
-            onView(allOf(withId(objectId),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText))))))
-                .check(matches(isDisplayed()))
-                .perform(click())
+    class ClassInstance {
+        fun clickViewByClassInstance(clazz: Class<*>) {
+            onView(instanceOf(clazz)).perform(click())
         }
     }
 
-    fun insertTextIntoFieldWithIdAndSibling(
-        @IdRes objectId: Int,
-        @IdRes siblingId: Int,
-        siblingText: String?,
-        textToBeTyped: String?): ViewInteraction =
-        onView(allOf(withId(objectId), hasSibling(allOf(withId(siblingId), withText(siblingText)))))
-            .check(matches(isDisplayed()))
-            .perform(clearText(), typeText(textToBeTyped), closeSoftKeyboard())
+    val contentDescription = ContentDescription()
 
-    protected fun insertTextIntoFieldWithIdAndPressImeAction(@IdRes objectId: Int, textToBeTyped: String?) {
-        onView(withId(objectId)).check(matches(isDisplayed())).perform(replaceText(textToBeTyped), pressImeActionButton())
-    }
+    class ContentDescription {
+        fun clickViewWithContentDescription(contDesc: String) {
+            onView(withContentDescription(contDesc)).check(matches(isClickable())).perform(click())
+        }
 
-    protected fun typeTextIntoFieldWithIdAndPressImeAction(@IdRes objectId: Int, textToBeTyped: String?) {
-        onView(withId(objectId)).perform(click(), typeText(textToBeTyped), pressImeActionButton())
-    }
-
-    protected fun setTextIntoFieldWithIdAndAncestorTag(
-        @IdRes objectId: Int,
-        ancestorTag: String,
-        textToBeTyped: String) {
-        onView(allOf(withId(objectId), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
-            .perform(replaceText(textToBeTyped))
-    }
-
-    protected fun insertTextIntoFieldWithHint(@IdRes hintText: Int, textToBeTyped: String?) {
-        onView(allOf(withHint(hintText), isDisplayed())).perform(replaceText(textToBeTyped))
-    }
-
-    protected fun clickOnObjectWithText(objectText: String?) {
-        onView(withText(objectText)).check(matches(isDisplayed())).perform(click())
-    }
-
-    protected fun clickOnObjectWithText(@IdRes objectText: Int) {
-        onView(withText(objectText)).check(matches(isDisplayed())).perform(click())
-    }
-
-    protected fun clickOnObjectWithIdAndContentDescription(@IdRes objectId: Int, @StringRes stringRes: Int) {
-        onView(allOf(withId(objectId), withContentDescription(stringRes), isDisplayed())).check(matches(isDisplayed())).perform(click())
-    }
-
-    protected fun clickOnObjectWithContentDescription(contDesc: String?) {
-        onView(withContentDescription(contDesc)).check(matches(isClickable())).perform(click())
-    }
-
-    protected fun clickOnObjectWithContentDescSubstring(contDesc: String?) {
-        onView(withContentDescription(Matchers.containsString(contDesc))).perform(click())
-    }
-
-    protected fun clickOnObjectWithIdAndText(@IdRes objectId: Int, @StringRes stringRes: Int) {
-        onView(allOf(withId(objectId), withText(stringRes)))
-            .check(matches(isDisplayed()))
-            .perform(click())
-    }
-
-    protected fun clickOnObjectWithIdAndText(@IdRes objectId: Int, objectText: String?) {
-        onView(allOf(withId(objectId), withText(objectText)))
-            .perform(click())
-    }
-
-    protected fun checkIfObjectWithIdIsDisplayed(@IdRes objectId: Int) {
-        onView(withId(objectId)).check(matches(isDisplayed()))
-    }
-
-    protected fun checkIfObjectWithTextIsDisplayed(objectText: String?) {
-        onView(withText(objectText)).check(matches(isDisplayed()))
-    }
-
-    protected fun checkIfObjectWithTextIsDisplayed(@StringRes objectText: Int) {
-        onView(withText(objectText)).check(matches(isDisplayed()))
-    }
-
-    protected fun checkIfObjectWithIdAndTextSubstringIsDisplayed(@IdRes objectId: Int, objectText: String?) {
-        onView(allOf(withId(objectId), withSubstring(objectText))).check(matches(isDisplayed()))
-    }
-
-    protected fun checkIfObjectWithIdHasDescendantWithSubstring(@IdRes objectId: Int, text: String?) {
-        onView(withId(objectId)).check(matches(allOf(isDisplayed(), hasDescendant(withSubstring(text)))))
-    }
-
-    protected fun checkIfObjectWithIdHasDescendantWithId(@IdRes objectId: Int, @IdRes descendantId: Int) {
-        onView(withId(objectId)).check(matches(allOf(isDisplayed(), hasDescendant(withId(descendantId)))))
-    }
-
-    protected fun checkIfObjectWithIdAndTextIsDisplayed(@IdRes objectId: Int, text: String?) {
-        onView(allOf(withId(objectId), withText(text))).check(matches(isDisplayed()))
-    }
-
-    protected fun checkIfObjectWithIdAndTextIsDisplayed(@IdRes objectId: Int, @StringRes objectText: Int) {
-        onView(allOf(withId(objectId), withText(objectText))).check(matches(isDisplayed()))
-    }
-
-    fun waitWithTimeoutForObjectWithIdToAppear(@IdRes objectId: Int, timeout: Long) {
-        if (!viewExists(allOf(withId(objectId), isCompletelyDisplayed(), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
-            Assert.fail(UICustomViewActionsAndMatchers.getResourceName(objectId) + " was not found")
+        fun clickViewWithContentDescSubstring(contDesc: String) {
+            onView(withContentDescription(Matchers.containsString(contDesc))).perform(click())
         }
     }
 
-    protected fun waitWithTimeoutForObjectWithIdIsClickable(@IdRes objectId: Int, timeout: Long) {
-        if (!viewExists(allOf(withId(objectId), isCompletelyDisplayed(), isClickable()), timeout)) {
-            Assert.fail(UICustomViewActionsAndMatchers.getResourceName(objectId) + " was not found")
+    val hint = Hint()
+
+    class Hint() {
+        fun insertTextIntoFieldWithHint(@IdRes hintText: Int, textToBeTyped: String) {
+            onView(withHint(hintText)).perform(replaceText(textToBeTyped))
         }
     }
 
-    protected fun waitWithTimeoutForObjectWithTextToAppear(objectText: String, timeout: Long) {
-        if (!viewExists(allOf(withText(objectText), isCompletelyDisplayed(), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
-            Assert.fail("$objectText was not found")
+    val id = Id()
+
+    class Id {
+        fun insertTextIntoFieldWithId(@IdRes id: Int, textToBeTyped: String): ViewInteraction =
+            onView(withId(id)).perform(replaceText(textToBeTyped), closeSoftKeyboard())
+
+        fun clickViewWithId(@IdRes id: Int): ViewInteraction =
+            onView(withId(id)).perform(click())
+
+        fun insertTextIntoFieldWithIdPressImeAction(@IdRes id: Int, textToBeTyped: String): ViewInteraction =
+            onView(withId(id))
+                .perform(replaceText(textToBeTyped), pressKey(KeyEvent.KEYCODE_SPACE), closeSoftKeyboard())
+
+        fun insertTextIntoFieldWithIdAndPressImeAction(@IdRes id: Int, textToBeTyped: String) {
+            onView(withId(id))
+                .check(matches(isDisplayed())).perform(replaceText(textToBeTyped), pressImeActionButton())
+        }
+
+        fun typeTextIntoFieldWithIdAndPressImeAction(@IdRes id: Int, textToBeTyped: String) {
+            onView(withId(id)).perform(click(), typeText(textToBeTyped), pressImeActionButton())
+        }
+
+        fun typeTextIntoFieldWithId(@IdRes id: Int, textToBeTyped: String) {
+            onView(withId(id)).perform(click(), typeText(textToBeTyped), closeSoftKeyboard())
+        }
+
+        fun swipeLeftViewWithId(@IdRes id: Int) {
+            onView(withId(id)).perform(swipeLeft())
+        }
+
+        fun openMenuDrawerWithId(@IdRes id: Int) {
+            onView(withId(id)).perform(open())
         }
     }
 
-    protected fun waitWithTimeoutForObjectWithIdAndTextToAppear(@IdRes objectId: Int, objectText: String, timeout: Long) {
-        if (!viewExists(allOf(withId(objectId), withText(objectText), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
-            Assert.fail("$objectText was not found")
-        }
+    val listView = ListView()
+
+    class ListView {
+        fun clickChildInListView(@IdRes id: Int, childPosition: Int): ViewInteraction =
+            onData(anything()).inAdapterView(withId(id)).atPosition(childPosition).perform(click())
     }
 
-    protected fun waitWithTimeoutForObjectWithIdAndTextToAppear(@IdRes objectId: Int, @StringRes objectText: Int, timeout: Long) {
-        if (!viewExists(allOf(withId(objectId), withText(objectText), withEffectiveVisibility(Visibility.VISIBLE)), timeout)) {
-            Assert.fail(UICustomViewActionsAndMatchers.getResourceName(objectText) + " was not found")
-        }
+    val recyclerView = Recycler()
+
+    class Recycler {
+        fun clickOnRecyclerViewMatchedItem(
+            @IdRes recyclerViewId: Int,
+            withMatcher: Matcher<RecyclerView.ViewHolder>
+        ): ViewInteraction =
+            onView(withId(recyclerViewId)).perform(actionOnHolderItem(withMatcher, click()))
+
+        fun scrollToRecyclerViewMatchedItem(
+            @IdRes recyclerViewId: Int,
+            withMatcher: Matcher<RecyclerView.ViewHolder>
+        ): ViewInteraction =
+            onView(withId(recyclerViewId)).perform(scrollToHolder(withMatcher))
+
+        fun clickOnRecyclerViewItemByPosition(@IdRes recyclerViewId: Int, position: Int): ViewInteraction =
+            onView(withId(recyclerViewId)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(position, click()))
+
+        fun swipeItemLeftToRightOnPosition(@IdRes recyclerViewId: Int, childPosition: Int): ViewInteraction =
+            onView(withId(recyclerViewId))
+                .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeRight()))
+
+        fun longClickItemInRecyclerView(@IdRes recyclerViewId: Int, childPosition: Int): ViewInteraction =
+            onView(withId(recyclerViewId))
+                .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, longClick()))
+
+        fun swipeRightToLeftObjectWithIdAtPosition(@IdRes recyclerViewId: Int, childPosition: Int): ViewInteraction =
+            onView(withId(recyclerViewId))
+                .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeLeft()))
+
+        fun waitForBeingPopulated(@IdRes recyclerViewId: Int) = waitUntilRecyclerViewPopulated(recyclerViewId)
+
+        fun checkDoesNotContainItemWithText(@IdRes recyclerViewId: Int, subject: String, date: String)
+            : ViewInteraction = onView(withId(recyclerViewId)).perform(checkItemDoesNotExist(subject, date))
+
+        fun saveMessageSubjectAtPosition(@IdRes recyclerViewId: Int, position: Int, method: (String, String) -> Unit)
+            : ViewInteraction = onView(withId(recyclerViewId)).perform(saveMessageSubject(position, method))
+
+        fun clickOnContactItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction = onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactName(withName), click()))
+
+        fun clickOnGroupItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction = onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactGroupName(withName), click()))
     }
 
-    protected fun checkIfViewWithIdExists(@IdRes objectId: Int): Boolean {
-        return viewExists(withId(objectId), 5000)
+    val system = System()
+
+    class System {
+        fun clickHamburgerOrUpButton() =
+            allOf.clickViewWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
+
+        fun clickMoreOptionsButton() =
+            allOf.clickViewByClassAndParentClass(AppCompatImageView::class.java, ActionMenuView::class.java)
+
+        fun clickPositiveDialogButton() = id.clickViewWithId(android.R.id.button1)
     }
 
-    /**
-     * Returns the next position of an element in a RecyclerView which doesn't contain certain view with given resId
-     */
-    protected fun positionOfObjectWhichNotContainsObjectWithId(@IdRes recyclerViewId: Int, @IdRes notContainsObjectWithId: Int): Int {
-        var position = 0
-        while (viewExists(allOf(isDisplayed(),
-                withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsObjectWithId)), 200)) {
-            position++
-        }
-        return position
+    val tag = Tag()
+
+    class Tag {
+        fun clickViewWithTag(tag: String): ViewInteraction =
+            onView(withTagValue(`is`(tag))).perform(click())
+
+        fun clickViewWithTag(@StringRes tagStringId: Int): ViewInteraction =
+            onView(withTagValue(`is`(targetContext.resources.getString(tagStringId)))).perform(click())
     }
 
-    protected fun positionOfObjectWhichContainsObjectWithIdAndText(@IdRes recyclerViewId: Int, @IdRes containsObjectWithId: Int, @StringRes containsObjectWithText: Int): Int {
-        var position = 0
-        while (!viewExists(allOf(isDisplayed(),
-                withRecyclerView(recyclerViewId).atPositionOnView(position, containsObjectWithId),
-                withText(containsObjectWithText)), 200)) {
-            position++
-        }
-        return position
+    val text = Text()
+
+    class Text {
+        fun clickViewWithText(text: String): ViewInteraction =
+            onView(withText(text)).check(matches(isDisplayed())).perform(click())
+
+        fun clickViewWithText(@IdRes text: Int): ViewInteraction =
+            onView(withText(text)).check(matches(isDisplayed())).perform(click())
     }
 
-    protected fun positionOfObjectWhichNotContainsAnyOfGivenElements(@IdRes recyclerViewId: Int, @IdRes notContainsFirstElement: Int, @IdRes notContainsSecondElement: Int): Int {
-        var position = 0
-        while (viewExists(allOf(isDisplayed(),
-                withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsFirstElement)), 200) ||
-            viewExists(allOf(isDisplayed(),
-                withRecyclerView(recyclerViewId).atPositionOnView(position, notContainsSecondElement)), 200)) {
-            position++
-        }
-        return position
-    }
+    val wait = Wait()
 
-    protected fun checkIfObjectWithPositionInRecyclerViewIsDisplayed(@IdRes recyclerViewId: Int, position: Int, @IdRes objectId: Int) {
-        onView(withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).check(matches(isDisplayed()))
-    }
+    class Wait {
+        fun untilViewWithIdAndTextAppears(@IdRes id: Int, text: String): ViewInteraction =
+            waitUntilViewAppears(onView(allOf(withId(id), withText(text))))
 
-    protected fun checkIfObjectWithIdNotDisplayed(@IdRes objectId: Int) {
-        onView(withId(objectId)).check(UICustomViewActionsAndMatchers.isNotDisplayed)
-    }
+        fun untilViewWithIdAndTextAppears(@IdRes id: Int, textId: Int, timeout: Int = 5000): ViewInteraction =
+            waitUntilViewAppears(onView(allOf(withId(id), withText(textId))), timeout)
 
-    protected fun checkIfObjectWithIdAndTextIsNotDisplayed(@IdRes objectId: Int, objectText: String?) {
-        onView(allOf(withId(objectId), withText(objectText))).check(UICustomViewActionsAndMatchers.isNotDisplayed)
-    }
+        fun untilViewWithTextAppears(text: String): ViewInteraction =
+            waitUntilViewAppears(onView(withText(text)))
 
-    protected fun clickEmptyCacheButton(@IdRes objectId: Int) {
-        onView(allOf(withId(objectId), withEffectiveVisibility(Visibility.VISIBLE))).perform(click())
-    }
+        fun untilViewWithContentDescriptionAppears(@StringRes contentDescription: String): ViewInteraction =
+            waitUntilViewAppears(onView(withContentDescription(contentDescription)))
 
-    protected fun clickChildInViewGroup(@IdRes parentId: Int, childPosition: Int) {
-        onView(UICustomViewActionsAndMatchers.isChildOf(withId(parentId), childPosition)).check(matches(isDisplayed())).perform(click())
-    }
+        fun untilViewWithIdAppears(@IdRes id: Int): ViewInteraction =
+            waitUntilViewAppears(onView(withId(id)))
 
-    protected fun clickChildInRecyclerView(@IdRes recyclerViewId: Int, childPosition: Int) {
-        onView(withId(recyclerViewId)).check(matches(isDisplayed())).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, click()))
-    }
+        fun untilViewWithTextAndParentIdAppears(@StringRes text: Int, @IdRes parentId: Int) =
+            waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
 
-    protected fun clickObjectWithDescendantInRecyclerView(@IdRes objectID: Int, title: String?) {
-        onView(allOf(withId(objectID), hasDescendant(withText(title)))).perform(click())
-    }
-
-    protected fun clickObjectWithDescendantInRecyclerView(@IdRes objectID: Int, @StringRes title: Int) {
-        onView(allOf(withId(objectID), hasDescendant(withText(title)))).perform(click())
-    }
-
-    protected fun clickObjectWithParentIdAndClass(@IdRes objectId: Int, clazz: Class<*>) {
-        onView(allOf(instanceOf(clazz), withParent(withId(objectId)))).perform(click())
-    }
-
-    protected fun longClickItemInRecyclerView(@IdRes recyclerViewId: Int, childPosition: Int) {
-        onView(withId(recyclerViewId)).check(matches(isDisplayed())).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, longClick()))
-    }
-
-    protected fun clickChildInListView(@IdRes objectId: Int, childPosition: Int) {
-        onData(anything()).inAdapterView(withId(objectId)).atPosition(childPosition).perform(click())
-    }
-
-    protected fun swipeLeftObjectWithId(@IdRes objectId: Int) {
-        onView(withId(objectId)).perform(swipeLeft())
-    }
-
-    protected fun swipeLeftToRightObjectWithId(@IdRes objectId: Int, childPosition: Int) {
-        onView(withId(objectId)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeRight()))
-    }
-
-    protected fun swipeRightToLeftObjectWithIdAtPosition(@IdRes objectId: Int, childPosition: Int) {
-        onView(withId(objectId)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeLeft()))
-    }
-
-    protected fun scrollDownObjectWithId(@IdRes objectId: Int) {
-        onView(withId(objectId)).check(matches(isDisplayed())).perform(swipeUp())
-    }
-
-    protected fun pressSpace() {
-        onView(isRoot()).perform(pressKey(KeyEvent.KEYCODE_SPACE))
-    }
-
-    protected fun typeTextIntoField(@IdRes objectId: Int, text: String?) {
-        onView(withId(objectId)).perform(click(), typeText(text), closeSoftKeyboard())
-    }
-
-    protected fun checkIfToastMessageIsDisplayed(@StringRes toastMessage: Int) {
-        UICustomViewActionsAndMatchers.waitUntilToastAppears(toastMessage)
-    }
-
-    protected fun checkIfToastMessageIsDisplayed(toastMessage: String) {
-        UICustomViewActionsAndMatchers.waitUntilToastAppears(toastMessage)
-    }
-
-    protected fun scrollDownAndClickObjectWithIdAndTextIsFound(@IdRes recyclerViewId: Int, @IdRes objectId: Int, objectContainsText: String?) {
-        var position = 1
-        while (!viewExists(allOf(isDisplayed(), withRecyclerView(recyclerViewId).atPosition(position),
-                hasDescendant(withSubstring(objectContainsText))), 100)) {
-            onView(allOf(isDisplayed(), withRecyclerView(recyclerViewId).atPosition(position + 1), hasDescendant(withId(objectId))))
-                .perform(swipeUp())
-            position++
-        }
-        onView(withId(recyclerViewId)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(position, click()))
-    }
-
-    protected fun clickComposeToGroupButtonAtPosition(@IdRes recyclerViewId: Int, @IdRes objectId: Int, position: Int) {
-        onView(withRecyclerView(recyclerViewId).atPositionOnView(position, objectId)).perform(click())
-    }
-
-    protected fun getTextFromObject(@IdRes objectId: Int): String? {
-        return UICustomViewActionsAndMatchers.getTextFromTextView(withId(objectId))
-    }
-
-    protected fun getTextFromObject(@IdRes objectId: Int, @IdRes siblingId: Int, siblingText: String?): String? {
-        return UICustomViewActionsAndMatchers.getTextFromTextView(allOf(withId(objectId), hasSibling(allOf(withId(siblingId), withSubstring(siblingText)))))
-    }
-
-    protected fun getTextFromObjectInRecyclerViewAtPosition(@IdRes recyclerViewId: Int, @IdRes objectId: Int, position: Int): String? {
-        return UICustomViewActionsAndMatchers.getTextFromTextView(withRecyclerView(recyclerViewId).atPositionOnView(position, objectId))
-    }
-
-    protected fun scrollDownElementInScrollView(@IdRes objectId: Int) {
-        onView(allOf(hasDescendant(withId(objectId)), withClassName(Matchers.`is`(ScrollView::class.java.canonicalName)))).perform(swipeUp())
-    }
-
-    protected fun checkSignatureState(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes signatureType: Int, state: Matcher<View>) {
-        if (!viewExists(allOf(withId(objectId), state,
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType)), isDisplayed()))), 200)) {
-            Assert.fail("Signature toggle state not saved. Expected state: $state")
-        }
-    }
-
-    protected fun switchOnSignature(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes signatureType: Int) {
-        if (!viewExists(allOf(withId(objectId), isNotChecked(),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType)), isDisplayed()))), 200)) {
-            switchOffSignature(objectId, parentId, signatureType)
-        }
-        onView(allOf(withId(objectId), isNotChecked(),
-            isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType))))))
-            .check(matches(isDisplayed()))
-            .perform(click())
-    }
-
-    protected fun switchOffSignature(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes signatureType: Int) {
-        if (!viewExists(allOf(withId(objectId), isChecked(),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType)), isDisplayed()))), 200)) {
-            switchOnSignature(objectId, parentId, signatureType)
-        }
-        onView(allOf(withId(objectId), isChecked(),
-            isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(signatureType))))))
-            .check(matches(isDisplayed()))
-            .perform(click())
-    }
-
-    protected fun switchOnAutoShowEmbeddedImages(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes optionText: Int) {
-        if (viewExists(allOf(withId(objectId), isNotChecked(),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText)), isDisplayed()))), 200)) {
-            onView(allOf(withId(objectId),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText))))))
-                .check(matches(isDisplayed()))
-                .perform(click())
-        }
-    }
-
-    protected fun switchOffAutoShowEmbeddedImages(@IdRes objectId: Int, @IdRes parentId: Int, @StringRes optionText: Int) {
-        if (viewExists(allOf(withId(objectId), isChecked(),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText)), isDisplayed()))), 200)) {
-            onView(allOf(withId(objectId),
-                isDescendantOfA(allOf(withId(parentId), hasDescendant(withText(optionText))))))
-                .check(matches(isDisplayed()))
-                .perform(click())
-        }
-    }
-
-    companion object {
-        val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
+        fun untilViewWithIdIsGone(@IdRes id: Int): ViewInteraction =
+            waitUntilViewIsGone(onView(withId(id)))
     }
 }

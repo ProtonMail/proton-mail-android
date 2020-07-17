@@ -38,10 +38,9 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageToInternalTrustedAddress()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
     }
 
     @Test
@@ -50,10 +49,9 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageToInternalNotTrustedAddress()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
     }
 
     @Test
@@ -62,10 +60,9 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageToExternalAddressPGPEncrypted()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
     }
 
     @Test
@@ -74,10 +71,9 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageToExternalAddressPGPSigned()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
     }
 
     @Test
@@ -86,10 +82,9 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageTOandCC(internalEmailTrustedKeys, externalEmailPGPEncrypted)
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
     }
 
     @Test
@@ -98,10 +93,10 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageTOandCCandBCC(internalEmailTrustedKeys, externalEmailPGPEncrypted, internalEmailNotTrustedKeys)
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -110,10 +105,10 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageWithPassword()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -122,10 +117,10 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageExpiryTimeInDays(2)
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -134,10 +129,10 @@ class ComposerTests : BaseTest() {
             .loginTwoPasswordUser(TestData.twoPassUser)
             .compose()
             .sendMessageEOAndExpiryTimeAndPGPConfirmation(1)
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -146,10 +141,10 @@ class ComposerTests : BaseTest() {
             .loginTwoPasswordUser(TestData.twoPassUser)
             .compose()
             .sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(1)
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -158,10 +153,10 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageCameraCaptureAttachment()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -170,10 +165,10 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageChooseAttachment()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -182,10 +177,10 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageToInternalContactWithTwoAttachments()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
+
     }
 
     @Test
@@ -194,10 +189,9 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageToExternalContactWithOneAttachment()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
     }
 
     @Test
@@ -206,9 +200,8 @@ class ComposerTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .compose()
             .sendMessageToExternalContactWithTwoAttachments()
-            .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
-            }
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(TestData.messageSubject) }
     }
 }

@@ -18,22 +18,12 @@
  */
 package ch.protonmail.android.uitests.tests.settings
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.contrib.RecyclerViewActions.actionOnHolderItem
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withTagValue
 import androidx.test.filters.LargeTest
-import ch.protonmail.android.R
 import ch.protonmail.android.uitests.actions.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
-import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
-import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.TestData
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.allOf
 import org.junit.Before
 import org.junit.Test
 
@@ -48,14 +38,9 @@ class AccountSettingsTests : BaseTest() {
         super.setUp()
         loginRobot
             .loginUser(TestData.onePassUser)
-            .openNavbar()
-        onView(allOf(
-            withId(R.id.menuItem),
-            withTagValue(`is`(stringFromResource(R.string.settings)))))
-            .perform(click())
-        onView(withId(R.id.settingsRecyclerView))
-            .perform(actionOnHolderItem(
-                withSettingsHeader(TestData.onePassUser.name), click()))
+            .menuDrawer()
+            .settings()
+            .selectItemByValue(TestData.onePassUser.email)
     }
 
     @Test
@@ -70,9 +55,13 @@ class AccountSettingsTests : BaseTest() {
         accountSettingsRobot
             .passwordManagement()
             .changePassword(TestData.twoPassUser)
-            .verify { passwordChanged() }
+            .verify {
+                accountSettingsOpened()
+                passwordChanged()
+            }
     }
 
+    //TODO enable when multiple user login per test class will be supported
     fun changeMailboxPassword() {
         accountSettingsRobot
             .passwordManagement()
@@ -85,7 +74,7 @@ class AccountSettingsTests : BaseTest() {
         accountSettingsRobot
             .recoveryEmail()
             .changeRecoveryEmail(TestData.twoPassUser)
-            .verify { recoveryEmailChanged() }
+            .verify { recoveryEmailChangedTo(TestData.twoPassUser.email) }
     }
 
     @Test

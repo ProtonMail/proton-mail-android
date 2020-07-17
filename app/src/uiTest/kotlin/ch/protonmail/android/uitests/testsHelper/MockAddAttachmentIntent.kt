@@ -75,7 +75,7 @@ object MockAddAttachmentIntent {
         createImage(imageResourceId)
         val result = pickImageResult()
         Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
-        UIActions().clickOnObjectWithId(objectId)
+        UIActions.id.clickViewWithId(objectId)
     }
 
     fun mockCameraImageCapture(@IdRes objectId: Int, @IdRes imageResourceId: Int) {
@@ -83,7 +83,7 @@ object MockAddAttachmentIntent {
         Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE)).respondWith(result)
         val cameraCallback = intentCallback(imageResourceId)
         IntentMonitorRegistry.getInstance().addIntentCallback(cameraCallback)
-        UIActions().clickOnObjectWithId(objectId)
+        UIActions.id.clickViewWithId(objectId)
         IntentMonitorRegistry.getInstance().removeIntentCallback(cameraCallback)
     }
 

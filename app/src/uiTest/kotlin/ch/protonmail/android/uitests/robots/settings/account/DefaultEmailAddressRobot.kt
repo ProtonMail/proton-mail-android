@@ -24,24 +24,24 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 /**
  * Class represents Default Email Address view.
  */
-open class DefaultEmailAddressRobot : UIActions() {
+class DefaultEmailAddressRobot {
 
     fun showAll(): DefaultEmailAddressRobot {
-        clickOnObjectWithId(R.id.defaultAddressArrow)
+        UIActions.id.clickViewWithId(R.id.defaultAddressArrow)
         return this
     }
 
     /**
      * Contains all the validations that can be performed by [DefaultEmailAddressRobot].
      */
-    class Verify : DefaultEmailAddressRobot() {
+    class Verify {
 
         fun defaultEmailAddressViewShown(): DefaultEmailAddressRobot {
-            checkIfObjectWithIdAndTextIsDisplayed(
+            UIActions.check.viewWithIdAndTextIsDisplayed(
                 R.id.titleAvailableAddresses,
                 R.string.available_addresses
             )
-            checkIfObjectWithIdAndTextIsDisplayed(
+            UIActions.check.viewWithIdAndTextIsDisplayed(
                 R.id.titleInactiveAddresses,
                 R.string.inactive_addresses
             )
@@ -50,5 +50,5 @@ open class DefaultEmailAddressRobot : UIActions() {
     }
 
     inline fun verify(block: Verify.() -> Unit) =
-        Verify().apply(block) as DefaultEmailAddressRobot
+        Verify().apply(block)
 }

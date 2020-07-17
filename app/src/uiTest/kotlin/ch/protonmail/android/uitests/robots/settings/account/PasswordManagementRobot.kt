@@ -26,7 +26,7 @@ import ch.protonmail.android.uitests.testsHelper.User
 /**
  * Class represents Password management view.
  */
-open class PasswordManagementRobot : UIActions() {
+open class PasswordManagementRobot {
 
     fun changePassword(user: User): AccountSettingsRobot {
         return PasswordRobot()
@@ -47,22 +47,22 @@ open class PasswordManagementRobot : UIActions() {
     class PasswordRobot : PasswordManagementRobot() {
 
         internal fun currentPassword(password: String): PasswordRobot {
-            insertTextIntoFieldWithId(R.id.currentPasswordEditText, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.currentPasswordEditText, password)
             return this
         }
 
         internal fun newPassword(password: String): PasswordRobot {
-            insertTextIntoFieldWithId(R.id.newPassword, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.newPassword, password)
             return this
         }
 
         internal fun confirmNewPassword(password: String): PasswordRobot {
-            insertTextIntoFieldWithId(R.id.newPasswordConfirm, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.newPasswordConfirm, password)
             return this
         }
 
         internal fun savePassword(): AccountSettingsRobot {
-            clickOnObjectWithId(R.id.save)
+            UIActions.id.clickViewWithId(R.id.save)
             return AccountSettingsRobot()
         }
     }
@@ -70,24 +70,22 @@ open class PasswordManagementRobot : UIActions() {
     class MailboxPasswordRobot : PasswordManagementRobot() {
 
         internal fun currentMailboxPassword(password: String): MailboxPasswordRobot {
-            val id = R.id.mailboxLoginPassword
-            scrollDownElementInScrollView(id)
-            insertTextIntoFieldWithId(id, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.mailboxLoginPassword, password)
             return this
         }
 
         internal fun newMailboxPassword(password: String): MailboxPasswordRobot {
-            insertTextIntoFieldWithId(R.id.mailboxNewPassword, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.mailboxNewPassword, password)
             return this
         }
 
         internal fun confirmNewMailboxPassword(password: String): MailboxPasswordRobot {
-            insertTextIntoFieldWithId(R.id.mailboxNewPassword, password)
+            UIActions.id.insertTextIntoFieldWithId(R.id.mailboxNewPasswordConfirm, password)
             return this
         }
 
         internal fun saveMailboxPassword(): AccountSettingsRobot {
-            clickOnObjectWithId(R.id.mailbox_save)
+            UIActions.id.clickViewWithId(R.id.mailbox_save)
             return AccountSettingsRobot()
         }
     }

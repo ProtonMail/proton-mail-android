@@ -51,5 +51,5 @@ class TestExecutionWatcher : TestWatcher() {
     }
 
     private fun getRunId(): String = BaseTest.targetContext.getSharedPreferences(BaseTest.testApp, Context.MODE_PRIVATE)
-            .getString(BaseTest.testRailRunId, "")!!
+        .getString(BaseTest.testRailRunId, "")!!
 }

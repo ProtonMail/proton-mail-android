@@ -16,24 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.settings.account
+package ch.protonmail.android.uitests.robots.reportbugs
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
- * [LabelsAndFoldersRobot] class contains actions and verifications for
- * Labels & Folders functionality.
+ * [ReportBugsRobot] class contains actions and verifications for Bug report functionality.
  */
-class LabelsAndFoldersRobot {
+class ReportBugsRobot {
 
-    fun labelsManager(): LabelsManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.labels_manage)
-        return LabelsManagerRobot()
+    /**
+     * Contains all the validations that can be performed by [ReportBugsRobot].
+     */
+    class Verify {
+
+        fun reportBugsOpened() {
+            UIActions.check.viewWithIdIsDisplayed(R.id.bug_description_title)
+        }
     }
 
-    fun foldersManager(): FoldersManagerRobot {
-        UIActions.tag.clickViewWithTag(R.string.folders_manage)
-        return FoldersManagerRobot()
-    }
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }
