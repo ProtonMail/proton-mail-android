@@ -909,8 +909,8 @@ a tárhely elérését.</string>
     <string name="labels_manage">Címkék kezelése</string>
     <string name="folders_manage">Mappák kezelése</string>
     <string name="swiping_gesture">Csúsztatási műveletek</string>
-    <string name="swipe_action_right">Csúsztatás balról jobbra</string>
-    <string name="swipe_action_left">Csúsztatás jobbról balra</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Válasszon műveletet a csúsztatáshoz</string>
     <string name="swipe_action_trash">Áthelyezés a Lomtárba</string>
@@ -995,4 +995,9 @@ a tárhely elérését.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

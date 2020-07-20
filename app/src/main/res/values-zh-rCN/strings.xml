@@ -964,4 +964,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">滑动手势已更改</string>
+    <string name="swipe_gestures_changed_message">程序升级导致滑动手势发生变化。您可以在设置中将其重置。</string>
+    <string name="go_to_settings">前往设置</string>
+    <!-- endregion -->
 </resources>

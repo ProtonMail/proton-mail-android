@@ -911,8 +911,8 @@ l\'accesso all\'archiviazione.</string>
     <string name="labels_manage">Gestione etichette</string>
     <string name="folders_manage">Gestore cartelle</string>
     <string name="swiping_gesture">Gesto di scorrimento</string>
-    <string name="swipe_action_right">Scorrimento da sinistra a destra</string>
-    <string name="swipe_action_left">Scorrimento da destra a sinistra</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Scelta azione con gesti di scorrimento</string>
     <string name="swipe_action_trash">Messaggio spostato nel cestino</string>
@@ -997,4 +997,9 @@ l\'accesso all\'archiviazione.</string>
     <!-- endregion -->
     <string name="allowed">Consentito</string>
     <string name="denied">Rifiutato</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

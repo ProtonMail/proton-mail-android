@@ -910,8 +910,8 @@ l\'accés a l\'emmagatzemament.</string>
     <string name="labels_manage">Administrador de etiquetes</string>
     <string name="folders_manage">Administrar carpetes</string>
     <string name="swiping_gesture">Gest de lliscament</string>
-    <string name="swipe_action_right">Llisca de esquerra a dreta</string>
-    <string name="swipe_action_left">Llisca de dreta a esquerra</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Tria l\'acció de lliscar</string>
     <string name="swipe_action_trash">Missatge mogut a la paperera</string>
@@ -995,4 +995,9 @@ l\'accés a l\'emmagatzemament.</string>
     <!-- endregion -->
     <string name="allowed">Permés</string>
     <string name="denied">Denegat</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

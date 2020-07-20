@@ -935,8 +935,8 @@ access to storage.</string>
     <string name="labels_manage">Labels manager</string>
     <string name="folders_manage">Folders manager</string>
     <string name="swiping_gesture">Swiping gesture</string>
-    <string name="swipe_action_right">Swipe left to right</string>
-    <string name="swipe_action_left">Swipe right to left</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Вибрати дію на відрух</string>
     <string name="swipe_action_trash">Message moved to trash</string>
@@ -1027,4 +1027,9 @@ access to storage.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

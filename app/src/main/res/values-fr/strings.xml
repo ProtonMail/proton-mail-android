@@ -911,8 +911,8 @@ l\'accès au stockage.</string>
     <string name="labels_manage">Gestionnaire de labels</string>
     <string name="folders_manage">Gestionnaire de dossiers</string>
     <string name="swiping_gesture">Geste de balayage</string>
-    <string name="swipe_action_right">Glisser de gauche à droite</string>
-    <string name="swipe_action_left">Glisser de droite à gauche</string>
+    <string name="swipe_action_right">Balayer vers la droite</string>
+    <string name="swipe_action_left">Balayer vers la gauche</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Choisir une action de balayage</string>
     <string name="swipe_action_trash">Message déplacé vers Corbeille</string>
@@ -997,4 +997,9 @@ l\'accès au stockage.</string>
     <!-- endregion -->
     <string name="allowed">Autorisé</string>
     <string name="denied">Refusé</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Gestes de balayage modifiés</string>
+    <string name="swipe_gestures_changed_message">Après la dernière mise à jour, les gestes de balayage ont été changés. Si vous le souhaitez, vous pouvez les réinitialiser dans les paramètres.</string>
+    <string name="go_to_settings">Accéder aux paramètres</string>
+    <!-- endregion -->
 </resources>

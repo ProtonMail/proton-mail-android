@@ -924,8 +924,8 @@ pristup pohrani.</string>
     <string name="labels_manage">Upravljanje oznakama</string>
     <string name="folders_manage">Upravljanje mapama</string>
     <string name="swiping_gesture">Povlačenje prstom</string>
-    <string name="swipe_action_right">Prelazak prsta udesno</string>
-    <string name="swipe_action_left">Prelazak prsta ulijevo</string>
+    <string name="swipe_action_right">Prelazak prstom udesno</string>
+    <string name="swipe_action_left">Prelazak prstom ulijevo</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Odaberite radnje prelaska prstom</string>
     <string name="swipe_action_trash">Poruka premještena u otpad</string>
@@ -1013,4 +1013,9 @@ pristup pohrani.</string>
     <!-- endregion -->
     <string name="allowed">Dopušteno</string>
     <string name="denied">Odbijeno</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Radnje povlačenja prstom su promijenjene</string>
+    <string name="swipe_gestures_changed_message">Nakon zadnjeg ažuriranja, radnje povlačenja prstom su promijenjene. Ako želite, možete ih ponovno postaviti u postavkama.</string>
+    <string name="go_to_settings">Idi na postavke</string>
+    <!-- endregion -->
 </resources>

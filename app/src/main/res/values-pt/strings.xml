@@ -910,8 +910,8 @@ acesso ao armazenamento.</string>
     <string name="labels_manage">Gestor de etiquetas</string>
     <string name="folders_manage">Gestor de pastas</string>
     <string name="swiping_gesture">Gestos de deslize</string>
-    <string name="swipe_action_right">Deslizar da esquerda para a direita</string>
-    <string name="swipe_action_left">Deslizar da direita para a esquerda</string>
+    <string name="swipe_action_right">Deslizar à direita</string>
+    <string name="swipe_action_left">Deslizar à esquerda</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Escolher acção de deslizar</string>
     <string name="swipe_action_trash">Mensagem movida para o lixo</string>
@@ -996,4 +996,9 @@ acesso ao armazenamento.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
     <string name="denied">Negado</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Gestos de deslize alterados</string>
+    <string name="swipe_gestures_changed_message">Após a última actualização, os gestos de deslize foram alterados. Se desejar, pode repô-los nas definições.</string>
+    <string name="go_to_settings">Ir para as definições</string>
+    <!-- endregion -->
 </resources>

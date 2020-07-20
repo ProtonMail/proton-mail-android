@@ -819,7 +819,7 @@ ver todo el contenido del mensaje.</string>
     <string name="fab_add_contact_group">Añadir grupo de contactos nuevo</string>
     <string name="contacts_add_photo_title">Añadir imagen</string>
     <string name="contacts_add_photo_select_gallery">Desde la galería</string>
-    <string name="contacts_add_photo_select_camera">Desde la cámara</string>
+    <string name="contacts_add_photo_select_camera">Capturar desde la cámara</string>
     <string name="save_group_validation_error">Debe indicar un nombre para el grupo</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Se alcanzó el límite de almacenamiento. No se pueden enviar y recibir mensajes.
@@ -912,8 +912,8 @@ el acceso al almacenamiento.</string>
     <string name="labels_manage">Gestionar etiquetas</string>
     <string name="folders_manage">Gestionar carpetas</string>
     <string name="swiping_gesture">Gestos de deslizamiento</string>
-    <string name="swipe_action_right">Deslizar de izquierda a derecha</string>
-    <string name="swipe_action_left">Deslizar de derecha a izquierda</string>
+    <string name="swipe_action_right">Deslizar hacia la derecha</string>
+    <string name="swipe_action_left">Deslizar hacia la izquierda</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Elija la acción de deslizar</string>
     <string name="swipe_action_trash">Mensaje movido a la papelera</string>
@@ -998,4 +998,9 @@ el acceso al almacenamiento.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
     <string name="denied">Denegado</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Gestos de deslizamiento cambiados</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Ir a los ajustes</string>
+    <!-- endregion -->
 </resources>

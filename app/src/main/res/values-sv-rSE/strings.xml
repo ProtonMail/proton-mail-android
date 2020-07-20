@@ -903,8 +903,8 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <string name="labels_manage">Etiketthanterare</string>
     <string name="folders_manage">Mapphantering</string>
     <string name="swiping_gesture">Svepgester</string>
-    <string name="swipe_action_right">Svep vänster till höger</string>
-    <string name="swipe_action_left">Svep höger till vänster</string>
+    <string name="swipe_action_right">Svep höger</string>
+    <string name="swipe_action_left">Svep vänster</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Välj svep-åtgärd</string>
     <string name="swipe_action_trash">Meddelandet flyttades till Papperskorgen</string>
@@ -989,4 +989,9 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Svepgester har ändrats</string>
+    <string name="swipe_gestures_changed_message">Efter senaste uppdateringen har svepgester ändrats. Om du vill kan du återställa dem i inställningarna.</string>
+    <string name="go_to_settings">Gå till inställningar</string>
+    <!-- endregion -->
 </resources>
