@@ -35,6 +35,7 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.*
@@ -93,7 +94,7 @@ class MessageDetailsViewModel (
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _connectivityEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    private val _messageDetailsError: MutableLiveData<Event<Status>> = MutableLiveData()
+    private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
     var nonBrokenEmail: String? = null
     var bodyString: String? = null
@@ -128,7 +129,7 @@ class MessageDetailsViewModel (
     val reloadRecipientsEvent: LiveData<Event<Boolean>>
         get() = _reloadRecipientsEvent
 
-    val messageDetailsError: LiveData<Event<Status>>
+    val messageDetailsError: LiveData<Event<String>>
         get() = _messageDetailsError
 
     val downloadEmbeddedImagesResult: LiveData<Pair<String, String>>
@@ -389,31 +390,35 @@ class MessageDetailsViewModel (
                     messageDetailsResult
                             .onFailure {
                                 requestPending.set(false)
-                                _messageDetailsError.postValue(Event(Status.FAILED))
+                                _messageDetailsError.postValue(Event(""))
                             }
-                            .onSuccess { messageDetails ->
-                                with(messageDetailsRepository) {
+                            .onSuccess { messageResponse ->
+                                if (messageResponse.code == RESPONSE_CODE_OK) {
+                                    with(messageDetailsRepository) {
 
-                                    if (isTransientMessage) {
-                                        val savedMessage = findSearchMessageById(messageId, bgDispatcher)
-                                        if (savedMessage != null) {
-                                            messageDetails.writeTo(savedMessage)
-                                            saveSearchMessageInDB(savedMessage)
-                                        } else {
-                                            prepareMessage(messageDetails)
-                                        }
+                                        if (isTransientMessage) {
+                                            val savedMessage = findSearchMessageById(messageId, bgDispatcher)
+                                            if (savedMessage != null) {
+                                                messageResponse.message.writeTo(savedMessage)
+                                                saveSearchMessageInDB(savedMessage)
+                                            } else {
+                                                prepareMessage(messageResponse.message)
+                                            }
 
-                                    } else {
-                                        val savedMessage = findMessageById(messageId, bgDispatcher)
-                                        if (savedMessage != null) {
-                                            messageDetails.writeTo(savedMessage)
-                                            saveMessageInDB(savedMessage)
                                         } else {
-                                            prepareMessage(messageDetails)
-                                            setFolderLocation(messageDetails)
-                                            saveMessageInDB(messageDetails, isTransientMessage)
+                                            val savedMessage = findMessageById(messageId, bgDispatcher)
+                                            if (savedMessage != null) {
+                                                messageResponse.message.writeTo(savedMessage)
+                                                saveMessageInDB(savedMessage)
+                                            } else {
+                                                prepareMessage(messageResponse.message)
+                                                setFolderLocation(messageResponse.message)
+                                                saveMessageInDB(messageResponse.message, isTransientMessage)
+                                            }
                                         }
                                     }
+                                } else {
+                                    _messageDetailsError.postValue(Event(messageResponse.error))
                                 }
                             }
                 }
