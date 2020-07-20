@@ -906,8 +906,8 @@ toegang tot opslag toestaan.</string>
     <string name="labels_manage">Labels manager</string>
     <string name="folders_manage">Mappen manager</string>
     <string name="swiping_gesture">Swipe gebaren</string>
-    <string name="swipe_action_right">Van links naar rechts vegen</string>
-    <string name="swipe_action_left">Veeg van rechts naar links vegen</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Kies veegactie</string>
     <string name="swipe_action_trash">Bericht verplaatst naar de prullenbak</string>
@@ -992,4 +992,9 @@ toegang tot opslag toestaan.</string>
     <!-- endregion -->
     <string name="allowed">Toegestaan</string>
     <string name="denied">Geweigerd</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

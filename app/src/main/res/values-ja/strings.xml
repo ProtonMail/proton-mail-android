@@ -884,8 +884,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_manage">ラベルの管理</string>
     <string name="folders_manage">フォルダーの管理</string>
     <string name="swiping_gesture">スワイプ操作</string>
-    <string name="swipe_action_right">左から右へのスワイプ</string>
-    <string name="swipe_action_left">右から左へのスワイプ</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">スワイプ操作時のアクション選択</string>
     <string name="swipe_action_trash">メッセージをごみ箱に移動する</string>
@@ -967,4 +967,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="allowed">許可</string>
     <string name="denied">拒否</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

@@ -922,8 +922,8 @@ accesul la spațiul de stocare al telefonului.</string>
     <string name="labels_manage">Gestionare etichete</string>
     <string name="folders_manage">Gestionare foldere</string>
     <string name="swiping_gesture">Gesturi glisare</string>
-    <string name="swipe_action_right">Glisare de la stânga la dreapta</string>
-    <string name="swipe_action_left">Glisare de la dreapta la stânga</string>
+    <string name="swipe_action_right">Glisare la dreapta</string>
+    <string name="swipe_action_left">Glisare la stânga</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Alegere acțiune de glisare</string>
     <string name="swipe_action_trash">Mutare mesaj în «Gunoi»</string>
@@ -1011,4 +1011,9 @@ accesul la spațiul de stocare al telefonului.</string>
     <!-- endregion -->
     <string name="allowed">Permis</string>
     <string name="denied">Respins</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Gesturi glisare schimbate</string>
+    <string name="swipe_gestures_changed_message">După ultima actualizare gesturile de glisare au fost schimbate. Dacă doriți, le puteți reseta în setări.</string>
+    <string name="go_to_settings">Accesați setările</string>
+    <!-- endregion -->
 </resources>

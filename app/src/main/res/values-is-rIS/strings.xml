@@ -908,8 +908,8 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <string name="labels_manage">Sýsla með merkingar</string>
     <string name="folders_manage">Sýsla með möppur</string>
     <string name="swiping_gesture">Strokubending</string>
-    <string name="swipe_action_right">Strjúka frá vinstri-til-hægri</string>
-    <string name="swipe_action_left">Strjúka frá hægri-til-vinstri</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Veldu aðgerð við stroku</string>
     <string name="swipe_action_trash">Skilaboð voru færð í ruslið</string>
@@ -994,4 +994,9 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <!-- endregion -->
     <string name="allowed">Heimilað</string>
     <string name="denied">Hafnað</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

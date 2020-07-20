@@ -896,8 +896,8 @@ webmail 介面升級 ProtonMail。</string>
     <string name="labels_manage">標籤管理員</string>
     <string name="folders_manage">資料夾管理員</string>
     <string name="swiping_gesture">滑動手勢</string>
-    <string name="swipe_action_right">從左滑到右</string>
-    <string name="swipe_action_left">從右滑到左</string>
+    <string name="swipe_action_right">向右滑動</string>
+    <string name="swipe_action_left">向左滑動</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">選擇 \"滑動動作\"</string>
     <string name="swipe_action_trash">郵件移至垃圾桶</string>
@@ -979,4 +979,9 @@ webmail 介面升級 ProtonMail。</string>
     <!-- endregion -->
     <string name="allowed">已允許</string>
     <string name="denied">已拒絕</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">滑動手勢已變更</string>
+    <string name="swipe_gestures_changed_message">在上次更新後已切換滑動手勢。如果您想要的話，您可以在設定中重設它們。</string>
+    <string name="go_to_settings">前往設定頁面</string>
+    <!-- endregion -->
 </resources>

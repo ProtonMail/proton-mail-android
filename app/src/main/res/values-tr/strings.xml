@@ -899,8 +899,8 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="labels_manage">Etiket yöneticisi</string>
     <string name="folders_manage">Klasör yöneticisi</string>
     <string name="swiping_gesture">Kaydırma hareketi</string>
-    <string name="swipe_action_right">Soldan sağa kaydırın</string>
-    <string name="swipe_action_left">Sağdan sola kaydırın</string>
+    <string name="swipe_action_right">Sağa kaydır</string>
+    <string name="swipe_action_left">Sola kaydır</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Kaydırma eylemini seçin</string>
     <string name="swipe_action_trash">İleti çöpe taşındı</string>
@@ -985,4 +985,9 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <!-- endregion -->
     <string name="allowed">İzin verildi</string>
     <string name="denied">Reddedildi</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Kaydırma hareketleri değişti</string>
+    <string name="swipe_gestures_changed_message">Son güncellemeden sonra, kaydırma hareketleri değiştirildi. İsterseniz, bunları ayarlardan sıfırlayabilirsiniz.</string>
+    <string name="go_to_settings">Ayarlara git</string>
+    <!-- endregion -->
 </resources>

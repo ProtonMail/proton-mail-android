@@ -911,8 +911,8 @@ lagerpladsadgang.</string>
     <string name="labels_manage">Etikethåndtering</string>
     <string name="folders_manage">Mappehåndtering</string>
     <string name="swiping_gesture">Stryggestusser</string>
-    <string name="swipe_action_right">Stryg fra venstre mod højre</string>
-    <string name="swipe_action_left">Stryg fra højre mod venstre</string>
+    <string name="swipe_action_right">Swipe right</string>
+    <string name="swipe_action_left">Swipe left</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Vælg handling for stryg</string>
     <string name="swipe_action_trash">Besked flyttet til Papirkurv</string>
@@ -997,4 +997,9 @@ lagerpladsadgang.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Swipe gestures changed</string>
+    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="go_to_settings">Go to settings</string>
+    <!-- endregion -->
 </resources>

@@ -199,7 +199,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_email_address">Adres \'%s\' jest nieprawidłowy</string>
     <string name="invalid_email_address_removed">Adres \'%s\' jest nieprawidłowy i został usunięty</string>
     <string name="no_recipients_specified">Wpisz co najmniej jednego odbiorcę</string>
-    <string name="no_password_specified">Czas wygaśnięcia może być ustalony jedynie dla wiadomości w pełni szyfrowanych. Ustaw hasło dla odbiorców spoza ProtonMaila.</string>
+    <string name="no_password_specified">Czas wygaśnięcia może być ustawiony jedynie dla wiadomości w pełni szyfrowanych. Ustaw hasło dla odbiorców spoza ProtonMaila.</string>
     <string name="attachment_limit">Limit dla załączników to %1$s. Łączny rozmiar załączników w tej chwili to %2$s.</string>
     <string name="sending_message">Wysyłanie wiadomości...</string>
     <string name="sending_message_offline">Brak połączenia z siecią. Wiadomość zostanie wysłana później...</string>
@@ -845,7 +845,7 @@ pobieranie wiadomości w tle</string>
 Kliknij, aby dowiedzieć się więcej.</string>
     <string name="storage_limit_warning_title">Ostrzeżenie</string>
     <string name="storage_limit_reached_text">Wykorzystałeś 100% dostępnej przestrzeni dyskowej.
-Nie możesz wysyłać ani odbierać wiadomości e-mail, chyba że usuniesz część z nich lub kupisz więcej
+Nie możesz wysyłać ani odbierać wiadomości e-mail, chyba że trwale usuniesz część z nich lub kupisz więcej
 miejsca.</string>
     <string name="storage_limit_approaching_text">Wykorzystałeś 90% dostępnej przestrzeni dyskowej.
 Rozważ zwolnienie części miejsca lub zakup dodatkowej przestrzeni dyskowej, zanim skończy Ci się miejsce.</string>
@@ -932,8 +932,8 @@ na dostęp do pamięci wewnętrznej.</string>
     <string name="labels_manage">Menedżer etykiet</string>
     <string name="folders_manage">Menedżer folderów</string>
     <string name="swiping_gesture">Gesty przeciągania</string>
-    <string name="swipe_action_right">Przesuń palcem od lewej do prawej</string>
-    <string name="swipe_action_left">Przesuń palcem od prawej do lewej</string>
+    <string name="swipe_action_right">Przesuń palcem w prawo</string>
+    <string name="swipe_action_left">Przesuń palcem w lewo</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wybierz gest przesunięcia palcem</string>
     <string name="swipe_action_trash">Wiadomość została przeniesiona do Kosza</string>
@@ -1024,4 +1024,9 @@ na dostęp do pamięci wewnętrznej.</string>
     <!-- endregion -->
     <string name="allowed">Dozwolone</string>
     <string name="denied">Niedozwolone</string>
+    <!-- region Swipe gestures changed dialog -->
+    <string name="swipe_gestures_changed">Gesty przesunięcia palcem zostały zmienione</string>
+    <string name="swipe_gestures_changed_message">Gesty przesunięcia palcem zostały zmienione po ostatniej aktualizacji aplikacji. Możesz je zresetować w ustawieniach aplikacji.</string>
+    <string name="go_to_settings">Przejdź do ustawień</string>
+    <!-- endregion -->
 </resources>
