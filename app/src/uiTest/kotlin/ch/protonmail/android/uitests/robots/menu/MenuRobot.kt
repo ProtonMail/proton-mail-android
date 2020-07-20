@@ -22,9 +22,11 @@ import androidx.annotation.IdRes
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
+import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.labelfolder.LabelFolderRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.robots.mailbox.trash.TrashRobot
+import ch.protonmail.android.uitests.robots.manageaccounts.AccountManagerRobot
 import ch.protonmail.android.uitests.robots.menu.MenuMatchers.withLabelOrFolderName
 import ch.protonmail.android.uitests.robots.menu.MenuMatchers.withMenuItemTag
 import ch.protonmail.android.uitests.robots.reportbugs.ReportBugsRobot
@@ -88,9 +90,15 @@ class MenuRobot {
         return LabelFolderRobot()
     }
 
-    fun accountsList(): AccountsRobot {
+
+    fun accountsList(): MenuAccountListRobot {
         UIActions.id.clickViewWithId(R.id.drawerHeaderView)
-        return AccountsRobot()
+        return MenuAccountListRobot()
+    }
+
+    fun closeAccountsList(): MenuRobot {
+        UIActions.id.clickViewWithId(R.id.drawerHeaderView)
+        return MenuRobot()
     }
 
     private fun selectMenuItem(@IdRes menuItemName: String) {
@@ -118,8 +126,64 @@ class MenuRobot {
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 
+    /**
+     * [MenuAccountListRobot] class contains actions and verifications for Account list functionality inside Menu drawer
+     */
+    open inner class MenuAccountListRobot {
+
+        fun manageAccounts(): AccountManagerRobot {
+            UIActions.id.clickViewWithId(R.id.manageAccounts)
+            return AccountManagerRobot()
+        }
+
+        fun switchToAccount(accountPosition: Int): MenuAccountListRobot {
+            UIActions.recyclerView.clickOnRecyclerViewItemByPosition(menuDrawerUserList, accountPosition)
+            return MenuAccountListRobot()
+        }
+
+        /**
+         * Contains all the validations that can be performed by [MenuAccountListRobot].
+         */
+        inner class Verify : MenuAccountListRobot() {
+
+            fun accountsListOpened() {
+                UIActions.check.viewWithIdIsDisplayed(menuDrawerUserList)
+            }
+
+            fun accountAdded(emailAddress: String, positionInDrawer: Int) {
+                UIActions.check.viewWithIdInRecyclerViewMatchesText(menuDrawerUserList, positionInDrawer,
+                    R.id.userEmailAddress, emailAddress)
+            }
+
+            fun accountLoggedOut(username: String, positionInDrawer: Int) {
+                // Verify username is displayed in menu drawer and Sign In button is shown
+                UIActions.check.viewWithIdInRecyclerViewMatchesText(menuDrawerUserList, positionInDrawer,
+                    menuDrawerUsernameId, username)
+                UIActions.check.viewWithIdInRecyclerViewRowIsDisplayed(menuDrawerUserList, positionInDrawer,
+                    R.id.userSignIn)
+            }
+
+            fun accountRemoved(username: String, emailAddress: String) {
+                UIActions.check.viewWithIdAndTextDoesNotExist(menuDrawerUsernameId, username)
+            }
+
+            fun switchedToAccount(username: String) {
+                val signedInWith = stringFromResource(R.string.signed_in_with)
+                    .replace("%s", username)
+                UIActions.wait.untilViewWithIdAppears(R.id.snackbar_text)
+                UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, signedInWith)
+                UIActions.check.viewWithIdInRecyclerViewMatchesText(menuDrawerUserList, 0,
+                    menuDrawerUsernameId, username)
+            }
+        }
+
+        inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as MenuAccountListRobot
+    }
+
     companion object {
         const val leftDrawerNavigationId = R.id.left_drawer_navigation
+        const val menuDrawerUserList = R.id.left_drawer_users
+        const val menuDrawerUsernameId = R.id.userName
 
         val settingsText = stringFromResource(R.string.settings)
         val contactsText = stringFromResource(R.string.contacts)

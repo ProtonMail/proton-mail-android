@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
-
 import android.content.Context
 import android.view.KeyEvent
 import android.view.View
@@ -47,6 +46,7 @@ import androidx.test.espresso.contrib.DrawerActions.open
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnHolderItem
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollToHolder
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
@@ -66,6 +66,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactGroupName
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactName
+import ch.protonmail.android.uitests.testsHelper.RecyclerViewMatcher.Companion.withRecyclerView
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkItemDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilRecyclerViewPopulated
@@ -78,7 +79,6 @@ import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
-
 
 fun ViewInteraction.insert(textToBeTyped: String): ViewInteraction =
     this.perform(replaceText(textToBeTyped), closeSoftKeyboard())
@@ -108,7 +108,8 @@ object UIActions {
         fun setTextIntoFieldWithIdAndAncestorTag(
             @IdRes id: Int,
             ancestorTag: String,
-            textToBeTyped: String): ViewInteraction =
+            textToBeTyped: String
+        ): ViewInteraction =
             onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
                 .perform(replaceText(textToBeTyped))
 
@@ -165,8 +166,8 @@ object UIActions {
             onView(allOf(withId(id), withText(text))).check(doesNotExist())
         }
 
-        fun viewWithIdAndAncestorTagIsChecked(@IdRes id: Int, ancestorTag: String, state: Boolean)
-            : ViewInteraction {
+        fun viewWithIdAndAncestorTagIsChecked(@IdRes id: Int, ancestorTag: String, state: Boolean):
+            ViewInteraction {
             return when (state) {
                 true -> onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
                     .check(matches(isChecked()))
@@ -189,6 +190,34 @@ object UIActions {
 
         fun viewWithTextIsDisplayed(@StringRes text: Int) {
             onView(withText(text)).check(matches(isDisplayed()))
+        }
+
+        fun viewWithIdInRecyclerViewMatchesText(
+            @IdRes recyclerViewId: Int,
+            recyclerViewRow: Int,
+            @IdRes id: Int,
+            textToMatch: String
+        ) {
+            onView(withRecyclerView(recyclerViewId).atPositionOnView(recyclerViewRow, id))
+                .check(matches(withText(textToMatch)))
+        }
+
+        fun viewWithIdInRecyclerViewRowIsDisplayed(
+            @IdRes recyclerViewId: Int,
+            recyclerViewRow: Int,
+            @IdRes id: Int
+        ) {
+            onView(withRecyclerView(recyclerViewId).atPositionOnView(recyclerViewRow, id))
+                .check(matches(isDisplayed()))
+        }
+
+        fun viewWithTextInRecyclerViewRowIsDisplayed(
+            @IdRes recyclerViewId: Int,
+            recyclerViewRow: Int,
+            @StringRes text: Int
+        ) {
+            onView(withRecyclerView(recyclerViewId).atPositionOnView(recyclerViewRow, text))
+                .check(matches(isDisplayed()))
         }
 
         fun viewWithTextAndParentIdIsDisplayed(@StringRes text: Int, @IdRes parentId: Int) {
@@ -218,6 +247,12 @@ object UIActions {
         fun toastMessageIsDisplayed(toastMessage: String) {
             UICustomViewActions.waitUntilToastAppears(toastMessage)
         }
+
+        fun alertDialogWithTextIsDisplayed(@StringRes text: Int) {
+            onView(withText(text))
+                .inRoot(isDialog())
+                .check(matches(isDisplayed()))
+        }
     }
 
     val classInstance = ClassInstance()
@@ -242,7 +277,7 @@ object UIActions {
 
     val hint = Hint()
 
-    class Hint() {
+    class Hint {
         fun insertTextIntoFieldWithHint(@IdRes hintText: Int, textToBeTyped: String) {
             onView(withHint(hintText)).perform(replaceText(textToBeTyped))
         }
@@ -261,7 +296,7 @@ object UIActions {
             onView(withId(id))
                 .perform(replaceText(textToBeTyped), pressKey(KeyEvent.KEYCODE_SPACE), closeSoftKeyboard())
 
-        fun insertTextIntoFieldWithIdAndPressImeAction(@IdRes id: Int, textToBeTyped: String) {
+        fun insertTextInFieldWithIdAndPressImeAction(@IdRes id: Int, textToBeTyped: String) {
             onView(withId(id))
                 .check(matches(isDisplayed())).perform(replaceText(textToBeTyped), pressImeActionButton())
         }
@@ -322,15 +357,24 @@ object UIActions {
 
         fun waitForBeingPopulated(@IdRes recyclerViewId: Int) = waitUntilRecyclerViewPopulated(recyclerViewId)
 
-        fun checkDoesNotContainItemWithText(@IdRes recyclerViewId: Int, subject: String, date: String)
-            : ViewInteraction = onView(withId(recyclerViewId)).perform(checkItemDoesNotExist(subject, date))
+        fun checkDoesNotContainItemWithText(@IdRes recyclerViewId: Int, subject: String, date: String):
+            ViewInteraction = onView(withId(recyclerViewId)).perform(checkItemDoesNotExist(subject, date))
 
-        fun saveMessageSubjectAtPosition(@IdRes recyclerViewId: Int, position: Int, method: (String, String) -> Unit)
-            : ViewInteraction = onView(withId(recyclerViewId)).perform(saveMessageSubject(position, method))
+        fun saveMessageSubjectAtPosition(@IdRes recyclerViewId: Int, position: Int, method: (String, String) -> Unit):
+            ViewInteraction = onView(withId(recyclerViewId)).perform(saveMessageSubject(position, method))
 
-        fun clickOnContactItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction = onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactName(withName), click()))
+        fun clickOnContactItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction =
+            onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactName(withName), click()))
 
-        fun clickOnGroupItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction = onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactGroupName(withName), click()))
+        fun clickOnGroupItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction =
+            onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactGroupName(withName), click()))
+
+        fun clickOnObjectWithIdInRecyclerViewRow(
+            @IdRes recyclerViewId: Int,
+            @IdRes objectId: Int,
+            recyclerViewRow: Int
+        ): ViewInteraction =
+            onView(withRecyclerView(recyclerViewId).atPositionOnView(recyclerViewRow, objectId)).perform(click())
     }
 
     val system = System()
@@ -343,6 +387,8 @@ object UIActions {
             allOf.clickViewByClassAndParentClass(AppCompatImageView::class.java, ActionMenuView::class.java)
 
         fun clickPositiveDialogButton() = id.clickViewWithId(android.R.id.button1)
+
+        fun clickNegativeDialogButton() = id.clickViewWithId(android.R.id.button2)
     }
 
     val tag = Tag()

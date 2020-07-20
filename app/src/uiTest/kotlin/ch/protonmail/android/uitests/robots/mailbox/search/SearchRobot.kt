@@ -30,7 +30,7 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 class SearchRobot {
 
     fun searchMessageText(messageSubject: String): SearchRobot {
-        UIActions.id.insertTextIntoFieldWithIdAndPressImeAction(R.id.search_src_text, messageSubject)
+        UIActions.id.insertTextInFieldWithIdAndPressImeAction(R.id.search_src_text, messageSubject)
         return this
     }
 

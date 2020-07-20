@@ -42,16 +42,16 @@ class LoginTests : BaseTest() {
     }
 
     @Test
-    fun loginWithOnePassAnd2FA() {
+    fun loginWithOnePassAnd2Fa() {
         loginRobot
-            .loginUserWithTwoFA(TestData.onePassUserWith2FA)
+            .loginUserWithTwoFa(TestData.onePassUserWith2FA)
             .verify { mailboxLayoutShown() }
     }
 
     @Test
-    fun loginWithTwoPassAnd2FA() {
+    fun loginWithTwoPassAnd2Fa() {
         loginRobot
-            .loginTwoPasswordUserWithTwoFA(TestData.twoPassUserWith2FA)
+            .loginTwoPasswordUserWithTwoFa(TestData.twoPassUserWith2FA)
             .verify { mailboxLayoutShown() }
     }
 }
