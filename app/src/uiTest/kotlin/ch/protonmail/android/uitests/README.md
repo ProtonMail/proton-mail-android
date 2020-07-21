@@ -9,6 +9,15 @@ The code and data files in this distribution are licensed under the terms of the
 
 See [LICENSE](../../../../../../../../LICENSE) file
 
+### UI tests architecture:
+
+UI tests code is divided into three main packages: 
+1. **robots** package - contains ***Robot***s classes where each Robot represents a single application screen, i.e. ***Compose new email*** functionality. All pop-up modals that are triggered from this functionality belong to the same Robot and represented by inner classes within one Robot class, i.e. ***Set email password modal***. If an action triggers new Activity or Fragment start then it is considered as new Robot. 
+2. **tests** package - contains test classes split by application functionality, i.e. ***login*** or ***settings***.
+3. **testHelper** package - contains test data and helper classes.
+
+### Running UI tests:
+
 In order to run Espresso UI tests the below data should be provided as instrumentation test arguments:
 
 #### via the command line using **Android gradle wrapper**
