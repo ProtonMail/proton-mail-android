@@ -18,7 +18,11 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
+import org.jboss.aerogear.security.otp.Totp
+
 data class User(var email: String, var password: String, var mailboxPassword: String, val twoFASecurityKey: String) {
     val name: String
         get() = this.email.split("@")[0]
+    val twoFaCode: String
+        get() = Totp(this.twoFASecurityKey).now()
 }

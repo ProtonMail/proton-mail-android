@@ -37,29 +37,28 @@ class LoginRobot {
             .signIn()
     }
 
-
-    fun loginUserWithTwoFA(user: User): InboxRobot {
+    fun loginUserWithTwoFa(user: User): InboxRobot {
         return username(user.name)
             .password(user.password)
-            .signInWithMailboxPasswordOrTwoFA()
-            .twoFACode(user.twoFASecurityKey)
-            .confirm2FA()
+            .signInWithMailboxPasswordOrTwoFa()
+            .twoFaCode(user.twoFaCode)
+            .confirm2Fa()
     }
 
     fun loginTwoPasswordUser(user: User): InboxRobot {
         return username(user.name)
             .password(user.password)
-            .signInWithMailboxPasswordOrTwoFA()
+            .signInWithMailboxPasswordOrTwoFa()
             .mailboxPassword(user.mailboxPassword)
             .decrypt()
     }
 
-    fun loginTwoPasswordUserWithTwoFA(user: User): InboxRobot {
+    fun loginTwoPasswordUserWithTwoFa(user: User): InboxRobot {
         return username(user.name)
             .password(user.password)
-            .signInWithMailboxPasswordOrTwoFA()
-            .twoFACode(user.twoFASecurityKey)
-            .confirm2FAAndProvideMailboxPassword()
+            .signInWithMailboxPasswordOrTwoFa()
+            .twoFaCode(user.twoFaCode)
+            .confirm2FaAndProvideMailboxPassword()
             .mailboxPassword(user.mailboxPassword)
             .decrypt()
     }
@@ -79,7 +78,7 @@ class LoginRobot {
         return InboxRobot()
     }
 
-    private fun signInWithMailboxPasswordOrTwoFA(): LoginRobot {
+    private fun signInWithMailboxPasswordOrTwoFa(): LoginRobot {
         UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.sign_in)
         return this
     }
@@ -94,19 +93,19 @@ class LoginRobot {
         return InboxRobot()
     }
 
-    private fun confirm2FA(): InboxRobot {
+    private fun confirm2Fa(): InboxRobot {
         UIActions.id.clickViewWithId(android.R.id.button1)
         return InboxRobot()
     }
 
-    private fun confirm2FAAndProvideMailboxPassword(): LoginRobot {
+    private fun confirm2FaAndProvideMailboxPassword(): LoginRobot {
         UIActions.id.clickViewWithId(android.R.id.button1)
         return this
     }
 
-    private fun twoFACode(twoFACode: String): LoginRobot {
+    private fun twoFaCode(twoFaCode: String): LoginRobot {
         UIActions.wait.untilViewWithIdAppears(R.id.two_factor_code)
-        onView(withId(R.id.two_factor_code)).insert(twoFACode)
+        onView(withId(R.id.two_factor_code)).insert(twoFaCode)
         return this
     }
 
@@ -125,8 +124,14 @@ class LoginRobot {
      */
     class Verify {
 
-        fun loginSuccessful(): LoginRobot {
-            UIActions.wait.untilViewWithIdAppears(R.id.compose)
+        fun loginScreenDisplayed(): LoginRobot {
+            UIActions.wait.untilViewWithIdAppears(R.id.sign_in)
+            return LoginRobot()
+        }
+
+        //After Removing all accounts from AccountManager
+        fun removingAccountsToastShown(): LoginRobot {
+            UIActions.check.toastMessageIsDisplayed(R.string.account_manager_remove_all_accounts)
             return LoginRobot()
         }
     }
