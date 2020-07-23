@@ -54,7 +54,7 @@ class FetchUserSettingsJob(username: String? = null) : ProtonMailBaseJob(Params(
             if (username == mUserManager.username) {
                 // if primary
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, true)
-                mJobManager.addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX, null, true, null))
+                mJobManager.addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX, null, true, null, false))
                 mJobManager.addJobInBackground(FetchContactsEmailsJob(2000))
                 mJobManager.addJobInBackground(FetchContactsDataJob())
             } else {

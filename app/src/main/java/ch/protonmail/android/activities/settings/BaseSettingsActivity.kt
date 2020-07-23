@@ -354,7 +354,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                                 notificationsDatabase, countersDatabase, attachmentMetadataDatabase,
                                 pendingActionsDatabase, true)
                         mJobManager.addJobInBackground(OnFirstLoginJob(true))
-                        mJobManager.addJobInBackground(FetchByLocationJob(mMailboxLocation, mLabelId, true, null))
+                        mJobManager.addJobInBackground(FetchByLocationJob(mMailboxLocation, mLabelId, true, null, false))
                     }
                 }
             }

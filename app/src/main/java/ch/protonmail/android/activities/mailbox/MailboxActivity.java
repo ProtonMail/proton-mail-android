@@ -712,7 +712,7 @@ public class MailboxActivity extends NavigationActivity implements
             mFirstLogin = false;
             refreshMailboxJobRunning = true;
             ProtonMailApplication.getApplication().updateDone();
-            mJobManager.addJobInBackground(new FetchByLocationJob(mMailboxLocation.getValue(), mLabelId, false, mSyncUUID));
+            mJobManager.addJobInBackground(new FetchByLocationJob(mMailboxLocation.getValue(), mLabelId, false, mSyncUUID, false));
             return true;
         }
     }
@@ -1106,6 +1106,7 @@ public class MailboxActivity extends NavigationActivity implements
             this.mMailboxLocation.setValue(Constants.MessageLocationType.LABEL_OFFLINE);
         }
         mNetworkResults.setMailboxLoaded(new MailboxLoadedEvent(Status.SUCCESS, null));
+        setRefreshing(false);
     }
 
     @Subscribe
@@ -1555,7 +1556,7 @@ public class MailboxActivity extends NavigationActivity implements
     private void fetchUpdates() {
         mSyncUUID = UUID.randomUUID().toString();
         reloadMessageCounts();
-        mJobManager.addJobInBackground(new FetchByLocationJob(mMailboxLocation.getValue(), mLabelId, true, mSyncUUID));
+        mJobManager.addJobInBackground(new FetchByLocationJob(mMailboxLocation.getValue(), mLabelId, true, mSyncUUID, true));
     }
     /* END SwipeRefreshLayout.OnRefreshListener */
 
@@ -1603,7 +1604,7 @@ public class MailboxActivity extends NavigationActivity implements
             MessagesService.Companion.startFetchFirstPage(newMessageLocationType);
         } else {
             mSyncUUID = UUID.randomUUID().toString();
-            mJobManager.addJobInBackground(new FetchByLocationJob(newMessageLocationType, mLabelId, false, mSyncUUID));
+            mJobManager.addJobInBackground(new FetchByLocationJob(newMessageLocationType, mLabelId, false, mSyncUUID, false));
         }
         checkForDraftedMessages();
         new RefreshEmptyViewTask(new WeakReference<>(this), countersDatabase, getMessagesDatabase(), newMessageLocationType, mLabelId).execute();
@@ -1741,7 +1742,8 @@ public class MailboxActivity extends NavigationActivity implements
                 mailboxActivity.mJobManager.addJobInBackground(
                         new FetchByLocationJob(mailboxActivity.mMailboxLocation.getValue(), mailboxActivity.mLabelId,
                                 true,
-                                mailboxActivity.mSyncUUID));
+                                mailboxActivity.mSyncUUID,
+                                false));
             }
         }
     }
@@ -1884,7 +1886,7 @@ public class MailboxActivity extends NavigationActivity implements
             }
             mailboxActivity.closeDrawer();
             mailboxActivity.mMessagesListView.scrollToPosition(0);
-            MessagesService.Companion.startFetchFirstPageByLabel(Constants.MessageLocationType.Companion.fromInt(newLocation), labelId);
+            MessagesService.Companion.startFetchFirstPageByLabel(Constants.MessageLocationType.Companion.fromInt(newLocation), labelId, false);
             new RefreshEmptyViewTask(this.mailboxActivity, mailboxActivity.countersDatabase,
                     mailboxActivity.getMessagesDatabase(), locationToSet, labelId).execute();
         }
