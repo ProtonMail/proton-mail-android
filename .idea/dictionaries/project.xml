@@ -1,0 +1,50 @@
+<!--
+Copyright (c) 2020 Proton Technologies AG
+
+This file is part of ProtonMail.
+
+ProtonMail is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ProtonMail is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+-->
+<component name="ProjectDictionaryState">
+  <dictionary name="project">
+    <words>
+      <w>bintray</w>
+      <w>butterknife</w>
+      <w>detekt</w>
+      <w>dont</w>
+      <w>easygradle</w>
+      <w>farella</w>
+      <w>forface</w>
+      <w>goin</w>
+      <w>gson</w>
+      <w>jsoup</w>
+      <w>kapt</w>
+      <w>lgpl</w>
+      <w>mailand</w>
+      <w>minidns</w>
+      <w>multidex</w>
+      <w>paypal</w>
+      <w>playstore</w>
+      <w>protonmail</w>
+      <w>qube</w>
+      <w>reregister</w>
+      <w>rxjava</w>
+      <w>safetynet</w>
+      <w>stetho</w>
+      <w>subprojects</w>
+      <w>validable</w>
+      <w>xuse</w>
+    </words>
+  </dictionary>
+</component>
