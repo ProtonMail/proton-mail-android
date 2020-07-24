@@ -39,8 +39,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
 import ch.protonmail.android.core.ProtonMailApplication
-import com.azimolabs.conditionwatcher.ConditionWatcher
-import com.azimolabs.conditionwatcher.Instruction
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
@@ -54,7 +52,7 @@ import kotlin.test.*
  */
 internal object UICustomViewActions {
 
-    private const val TIMEOUT_5S = 5000
+    private const val TIMEOUT_5S = 5000L
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
     private val window: Window
         get() = ProtonMailApplication.getApplication().currentActivity.window
@@ -63,9 +61,9 @@ internal object UICustomViewActions {
         return targetContext.resources.getResourceName(objectId)
     }
 
-    fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Int = TIMEOUT_5S): ViewInteraction {
-        ConditionWatcher.setTimeoutLimit(timeout)
-        ConditionWatcher.waitForCondition(object : Instruction() {
+    fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_5S): ViewInteraction {
+        ProtonWatcher.setTimeout(timeout)
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
             var errorMessage = ""
 
             override fun getDescription() = "waitForElement - $errorMessage"
@@ -73,17 +71,20 @@ internal object UICustomViewActions {
             override fun checkCondition() = try {
                 interaction.check(matches(isDisplayed()))
                 true
-            } catch (t: Throwable) {
-                errorMessage = t.toString()
-                false
+            } catch (e: NoMatchingViewException) {
+                if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                    throw e
+                } else {
+                    false
+                }
             }
         })
         return interaction
     }
 
-    fun waitUntilRecyclerViewPopulated(@IdRes id: Int, timeout: Int = TIMEOUT_5S) {
-        ConditionWatcher.setTimeoutLimit(timeout)
-        ConditionWatcher.waitForCondition(object : Instruction() {
+    fun waitUntilRecyclerViewPopulated(@IdRes id: Int, timeout: Long = TIMEOUT_5S) {
+        ProtonWatcher.setTimeout(timeout)
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
             var errorMessage = ""
 
             override fun getDescription() =
@@ -99,9 +100,9 @@ internal object UICustomViewActions {
         })
     }
 
-    fun waitUntilViewIsGone(viewInteraction: ViewInteraction, timeout: Int = TIMEOUT_5S): ViewInteraction {
-        ConditionWatcher.setTimeoutLimit(timeout)
-        val instruction: Instruction = object : Instruction() {
+    fun waitUntilViewIsGone(viewInteraction: ViewInteraction, timeout: Long = TIMEOUT_5S): ViewInteraction {
+        ProtonWatcher.setTimeout(timeout)
+        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
             var errorMessage = ""
 
             override fun getDescription(): String {
@@ -113,18 +114,21 @@ internal object UICustomViewActions {
                     viewInteraction.check(matches(not(isDisplayed())))
                     true
                 } catch (e: NoMatchingViewException) {
-                    errorMessage = e.toString()
-                    false
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
                 }
             }
         }
-        ConditionWatcher.waitForCondition(instruction)
+        ProtonWatcher.waitForCondition(condition)
         return viewInteraction
     }
 
-    private fun checkCondition(instruction: Instruction, element: String) {
+    private fun checkCondition(condition: ProtonWatcher.Condition, element: String) {
         try {
-            ConditionWatcher.waitForCondition(instruction)
+            ProtonWatcher.waitForCondition(condition)
         } catch (e: Exception) {
             Assert.fail("$element was not found")
             e.printStackTrace()
@@ -132,7 +136,7 @@ internal object UICustomViewActions {
     }
 
     fun waitUntilToastAppears(objectId: Int) {
-        val instruction: Instruction = object : Instruction() {
+        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
             override fun getDescription(): String {
                 return "Waiting until object appears"
             }
@@ -148,11 +152,11 @@ internal object UICustomViewActions {
                 }
             }
         }
-        checkCondition(instruction, getResourceName(objectId))
+        checkCondition(condition, getResourceName(objectId))
     }
 
     fun waitUntilToastAppears(objectText: String) {
-        val instruction: Instruction = object : Instruction() {
+        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
             override fun getDescription(): String {
                 return "Waiting until object appears"
             }
@@ -168,7 +172,7 @@ internal object UICustomViewActions {
                 }
             }
         }
-        checkCondition(instruction, objectText)
+        checkCondition(condition, objectText)
     }
 
     @Contract(value = "_ -> new", pure = true)

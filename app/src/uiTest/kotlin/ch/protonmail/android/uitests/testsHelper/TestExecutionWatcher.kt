@@ -20,9 +20,12 @@ package ch.protonmail.android.uitests.testsHelper
 
 import android.content.Context
 import ch.protonmail.android.uitests.tests.BaseTest
+import ch.protonmail.android.uitests.tests.BaseTest.Companion.artifactsPath
+import ch.protonmail.android.uitests.tests.BaseTest.Companion.automation
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import java.io.File
 
 /**
  * Monitors test run results and performs actions on Success or Failure.
@@ -30,7 +33,10 @@ import org.junit.runner.Description
 class TestExecutionWatcher : TestWatcher() {
 
     override fun failed(e: Throwable?, description: Description?) {
-        //TODO save logcat, save screenshot
+
+        val logcatFile = File(artifactsPath, "${description?.methodName}-logcat.txt")
+        automation.executeShellCommand("run-as ch.protonmail.android.beta logcat -d -f $logcatFile")
+
         if (BaseTest.shouldReportToTestRail) {
             description!!.annotations.forEach {
                 if (it is TestId) {

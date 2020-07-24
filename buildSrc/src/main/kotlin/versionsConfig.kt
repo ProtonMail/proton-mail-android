@@ -73,7 +73,6 @@ const val `Proton-kotlin-test version` =        "0.1"           // Released: Jun
 // Test
 const val `aerogear version` =                  "1.0.0"         // Released: Mar 23, 2013
 const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
-const val `conditionwatcher version` =          "0.2"           // Released: Aug 01, 2017
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
 const val `jUnit5 version` =                    "5.5.0"         // Released:

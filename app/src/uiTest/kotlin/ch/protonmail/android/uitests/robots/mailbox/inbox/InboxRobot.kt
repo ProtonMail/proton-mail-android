@@ -63,7 +63,7 @@ class InboxRobot : MailboxRobotInterface {
         }
 
         fun mailboxLayoutShown() {
-            UIActions.wait.untilViewWithIdAppears(R.id.swipe_refresh_layout)
+            UIActions.wait.untilViewWithIdAppears(R.id.messages_list_view)
         }
 
         fun messageStarred() {

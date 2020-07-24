@@ -43,6 +43,8 @@ val experimentalProperties = Properties().apply {
     load(FileInputStream("experimental.properties"))
 }
 
+val adb = "${System.getenv("ANDROID_HOME")}/platform-tools/adb"
+
 android(appIdSuffix = "android") {
 
     useLibrary("org.apache.http.legacy")
@@ -115,6 +117,21 @@ android(appIdSuffix = "android") {
     packagingOptions {
         exclude("META-INF/INDEX.LIST")
     }
+}
+
+// Clear app data each time you run tests locally once before the run. Should be added in IDE run configuration.
+tasks.register("clearData", Exec::class) {
+    commandLine(adb, "shell", "pm", "clear", "ch.protonmail.android.beta")
+}
+
+// Run as ch.protonmail.android.beta and copy test artifacts to sdcard/Download location
+tasks.register("copyArtifacts", Exec::class) {
+    commandLine(adb, "shell", "run-as", "ch.protonmail.android.beta", "cp", "-R", "./files/artifacts/", "/sdcard/Download/")
+}
+
+tasks.register("pullTestArtifacts", Exec::class) {
+    dependsOn("copyArtifacts")
+    commandLine(adb, "pull", "/sdcard/Download/artifacts")
 }
 
 dependencies {
@@ -208,7 +225,6 @@ dependencies {
     androidTestImplementation(
         project(Module.testAndroidInstrumented),
         `aerogear`,
-        `conditionwatcher`,
         `falcon`,
         `espresso-contrib`,
         `espresso-intents`

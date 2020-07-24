@@ -417,7 +417,7 @@ object UIActions {
         fun untilViewWithIdAndTextAppears(@IdRes id: Int, text: String): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withId(id), withText(text))))
 
-        fun untilViewWithIdAndTextAppears(@IdRes id: Int, textId: Int, timeout: Int = 5000): ViewInteraction =
+        fun untilViewWithIdAndTextAppears(@IdRes id: Int, textId: Int, timeout: Long = 5000): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withId(id), withText(textId))), timeout)
 
         fun untilViewWithTextAppears(text: String): ViewInteraction =
