@@ -25,6 +25,7 @@ import android.content.Context
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.intent.Intents
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
@@ -32,6 +33,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import ch.protonmail.android.activities.guest.LoginActivity
+import ch.protonmail.android.uitests.testsHelper.ProtonFailureHandler
 import ch.protonmail.android.uitests.testsHelper.ProtonServicesIdlingResource
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
@@ -44,6 +46,7 @@ import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
+import java.io.File
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 open class BaseTest {
@@ -60,9 +63,11 @@ open class BaseTest {
 
     @Before
     open fun setUp() {
+        Espresso.setFailureHandler(ProtonFailureHandler(InstrumentationRegistry.getInstrumentation()))
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().clear().apply()
         IdlingRegistry.getInstance().register(ProtonServicesIdlingResource())
         Intents.init()
+        clearLogcat()
         Log.d(testTag, "Starting test execution for test: ${testName.methodName}")
     }
 
@@ -80,15 +85,18 @@ open class BaseTest {
 
     companion object {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext!!
-        const val testTag = "PROTON_UI_TEST"
-        private val testName = TestName()
-        private val testExecutionWatcher = TestExecutionWatcher()
+        var shouldReportToTestRail = false
+        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation!!
+        val testName = TestName()
         private lateinit var args: Bundle
-        const val testApp = "testApp"
+        private val testExecutionWatcher = TestExecutionWatcher()
         private const val oneTimeRunFlag = "oneTimeRunFlag"
         private const val reportToTestRail = "reportToTestRail"
+        val artifactsPath = "${targetContext.filesDir.path}/artifacts"
+        private const val downloadArtifactsPath = "/sdcard/Download/artifacts"
+        const val testApp = "testApp"
         const val testRailRunId = "testRailRunId"
-        var shouldReportToTestRail = false
+        const val testTag = "PROTON_UI_TEST"
 
         @JvmStatic
         @BeforeClass
@@ -96,6 +104,25 @@ open class BaseTest {
             getArguments()
             populateUsers()
             populateTestRailVariables()
+
+            val sharedPrefs = targetContext.getSharedPreferences(testApp, Context.MODE_PRIVATE)
+
+            // BeforeClass workaround for Android Test Orchestrator - shared prefs are not cleared
+            val isFirstRun = sharedPrefs.getBoolean(oneTimeRunFlag, true)
+            if (isFirstRun) {
+                prepareArtifactsDir(artifactsPath)
+                deleteDownloadArtifactsFolder()
+                if (shouldReportToTestRail) {
+                    sharedPrefs
+                        .edit()
+                        .putString(testRailRunId, TestRailService.createTestRun())
+                        .commit()
+                }
+                sharedPrefs
+                    .edit()
+                    .putBoolean(oneTimeRunFlag, false)
+                    .commit()
+            }
         }
 
         private fun getArguments() {
@@ -121,7 +148,7 @@ open class BaseTest {
 
         private fun setUser(key: String): User {
             val userData = args.getString(key)
-            return if (userData != null){
+            return if (userData != null) {
                 val user = args.getString(key)!!.split(",")
                 User(user[0], user[1], user[2], user[3])
             } else {
@@ -142,23 +169,30 @@ open class BaseTest {
                 } else {
                     throw NullPointerException("Test instrumentation 'TestRail arguments' must not be null")
                 }
-
-                // BeforeClass workaround for Android Test Orchestrator - shared prefs are not cleared
-                val isFirstRun = targetContext.getSharedPreferences(testApp, Context.MODE_PRIVATE)
-                    .getBoolean(oneTimeRunFlag, true)
-                if (isFirstRun) {
-                    val runId = TestRailService.createTestRun()
-                    targetContext.getSharedPreferences(testApp, Context.MODE_PRIVATE)
-                        .edit()
-                        .putString(testRailRunId, runId)
-                        .putBoolean(oneTimeRunFlag, false)
-                        .commit()
-                }
             }
         }
 
         private val grantPermissionRule = GrantPermissionRule.grant(
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
         )
+
+        private fun prepareArtifactsDir(path: String) {
+            val dir = File(path)
+            if (!dir.exists()) {
+                dir.mkdirs()
+            } else {
+                if (dir.list() != null) {
+                    dir.list().forEach { File(it).delete() }
+                }
+            }
+        }
+
+        private fun clearLogcat() {
+            automation.executeShellCommand("logcat -c")
+        }
+
+        private fun deleteDownloadArtifactsFolder() {
+            automation.executeShellCommand("rm -rf $downloadArtifactsPath")
+        }
     }
 }
