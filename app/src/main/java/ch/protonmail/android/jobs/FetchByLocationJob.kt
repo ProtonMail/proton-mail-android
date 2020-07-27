@@ -34,7 +34,8 @@ class FetchByLocationJob(
     private val location: MessageLocationType,
     private val labelId: String?,
     private val includeLabels: Boolean,
-    private val uuid: String?
+    private val uuid: String?,
+    private val refreshMessages: Boolean
 ) : ProtonMailBaseJob(Params(Priority.MEDIUM).groupBy(Constants.JOB_GROUP_MESSAGE)) {
     @Throws(Throwable::class)
     override fun onRun() {
@@ -42,12 +43,10 @@ class FetchByLocationJob(
             MessageLocationType.LABEL, MessageLocationType.LABEL_OFFLINE, MessageLocationType.LABEL_FOLDER -> {
                 // `labelId` can be null if `location` isn't any of the three options above,
                 // but should never be null at this point
-                messageDetailsRepository.deleteMessagesByLabel(labelId!!)
-                startFetchFirstPageByLabel(location, labelId)
+                startFetchFirstPageByLabel(location, labelId, refreshMessages)
             }
             else -> {
-                messageDetailsRepository.deleteMessagesByLocation(location)
-                startFetchFirstPage(location, false, uuid)
+                startFetchFirstPage(location, false, uuid, refreshMessages)
                 if (includeLabels) {
                     startFetchLabels()
                     startFetchContactGroups()

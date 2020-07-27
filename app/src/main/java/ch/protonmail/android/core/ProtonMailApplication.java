@@ -544,7 +544,7 @@ public class ProtonMailApplication extends Application implements HasActivityInj
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            MessagesService.Companion.startFetchFirstPage(Constants.MessageLocationType.INBOX, false, null);
+            MessagesService.Companion.startFetchFirstPage(Constants.MessageLocationType.INBOX, false, null, false);
         }
     }
 

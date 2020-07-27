@@ -58,6 +58,6 @@ public class OnFirstLoginJob extends ProtonMailBaseJob {
 
     private void fetchAllMailbox() {
         MessagesService.Companion.startFetchLabels();
-        MessagesService.Companion.startFetchFirstPage(Constants.MessageLocationType.INBOX, refreshDetails, null);
+        MessagesService.Companion.startFetchFirstPage(Constants.MessageLocationType.INBOX, refreshDetails, null, false);
     }
 }
