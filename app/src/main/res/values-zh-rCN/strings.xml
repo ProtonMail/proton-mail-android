@@ -68,14 +68,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="drafts_option">草稿</string>
     <string name="sent_option">已发送</string>
     <string name="archive_option">存档</string>
-    <string name="trash_option">垃圾箱</string>
+    <string name="trash_option">废件箱</string>
     <string name="spam_option">垃圾邮件</string>
     <string name="inbox">收件箱</string>
     <string name="starred">已加星标</string>
     <string name="drafts">草稿箱</string>
     <string name="sent">已发送</string>
     <string name="archive">已归档</string>
-    <string name="trash">垃圾箱</string>
+    <string name="trash">废件箱</string>
     <string name="spam">垃圾邮件</string>
     <string name="contacts">通讯录</string>
     <string name="search_contacts">搜索联系人</string>
@@ -98,7 +98,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="mark_read">标为已读</string>
     <string name="mark_unread">标为未读</string>
     <string name="move_to_archive">存档</string>
-    <string name="move_to_trash">移到垃圾箱</string>
+    <string name="move_to_trash">移至废件箱</string>
     <string name="move_to_spam">标为垃圾邮件</string>
     <string name="move_to_inbox">移至收件箱</string>
     <string name="are_you_sure_empty">确定要删除文件夹内的所有邮件吗？</string>
@@ -372,7 +372,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="logout">退出账户</string>
     <string name="log_out">退出账户 %s？</string>
     <string name="logout_question">确定要退出账户吗？</string>
-    <string name="logout_question_next_account">确定退出当前账户并继续使用 %s 吗？</string>
+    <string name="logout_question_next_account">确定退出当前账户并转到 %s 吗？</string>
     <string name="upselling">升级/捐款</string>
     <string name="upselling_title">ProtonMail 免费且开源</string>
     <string name="upselling_subtitle">我们需要您的支持来继续改进 ProtonMail，推动隐私保护。</string>
@@ -886,14 +886,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_action_left">向左滑动</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">选择滑动操作</string>
-    <string name="swipe_action_trash">邮件已移至垃圾箱</string>
-    <string name="swipe_action_trash_short">移至垃圾箱</string>
+    <string name="swipe_action_trash">邮件已移至废件箱</string>
+    <string name="swipe_action_trash_short">移至废件箱</string>
     <string name="swipe_action_star">星标已更改</string>
     <string name="swipe_action_spam">标记为垃圾邮件</string>
     <string name="swipe_action_archive">邮件已存档</string>
     <string name="swipe_action_mark_read">标记为已读的邮件</string>
     <plurals name="action_move_to_trash">
-        <item quantity="other">邮件已移至垃圾箱</item>
+        <item quantity="other">邮件已移至废件箱</item>
     </plurals>
     <plurals name="action_move_to_spam">
         <item quantity="other">已标为垃圾邮件</item>
