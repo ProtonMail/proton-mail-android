@@ -27,17 +27,16 @@ import ch.protonmail.android.api.models.SrpRequestBody;
 import ch.protonmail.android.api.utils.Fields;
 
 public class PasswordChange extends SrpRequestBody {
-    // We'd like to just use PasswordVerifier here, but Gson is problematic
-    @SerializedName(Fields.Auth.AUTH)
-    private Auth auth;
+	// We'd like to just use PasswordVerifier here, but Gson is problematic
+	@SerializedName(Fields.Auth.AUTH)
+	private Auth auth;
 
-    public PasswordChange(final String srpSession, final String clientEphemeral, final String clientProof, final String twoFactorCode, final PasswordVerifier newVerifier) {
-        super(srpSession, clientEphemeral, clientProof, twoFactorCode);
-        auth = new Auth(newVerifier.AuthVersion, newVerifier.ModulusID, newVerifier.Salt, newVerifier.SRPVerifier);
-    }
+	public PasswordChange(final String srpSession, final String clientEphemeral, final String clientProof, final String twoFactorCode, final PasswordVerifier newVerifier) {
+		super(srpSession, clientEphemeral, clientProof, twoFactorCode);
+		if (newVerifier != null)
+			auth = new Auth(newVerifier.AuthVersion, newVerifier.ModulusID, newVerifier.Salt, newVerifier.SRPVerifier);
+		else
+			auth = null;
 
-    public PasswordChange(final String srpSession, final String clientEphemeral, final String clientProof, final String twoFactorCode) {
-        super(srpSession, clientEphemeral, clientProof, twoFactorCode);
-        auth = null;
-    }
+	}
 }
