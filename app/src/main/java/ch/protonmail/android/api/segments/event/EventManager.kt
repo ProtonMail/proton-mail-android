@@ -19,7 +19,6 @@
 package ch.protonmail.android.api.segments.event
 
 import android.content.SharedPreferences
-import android.util.Log
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.interceptors.RetrofitTag
@@ -30,6 +29,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import com.birbit.android.jobqueue.JobManager
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -127,7 +127,7 @@ class EventManager {
 
     @Throws(IOException::class)
     private fun refreshContacts(handler: EventHandler) {
-        Log.d("PMTAG", "EventManager handler refreshContacts")
+        Timber.d("EventManager handler refreshContacts")
         synchronized(this) {
             handler.handleRefreshContacts()
         }
@@ -135,7 +135,7 @@ class EventManager {
 
     @Throws(IOException::class)
     private fun refresh(handler: EventHandler) {
-        Log.d("PMTAG", "EventManager handler handleRefresh")
+        Timber.d("EventManager handler handleRefresh")
         synchronized(this) {
             lockState(handler.username)
             handler.handleRefresh()
@@ -160,7 +160,7 @@ class EventManager {
             refresh(handler)
             return
         }
-        Log.d("PMTAG", "EventManager handler stage and write")
+        Timber.d("EventManager handler stage and write")
         if (handler.stage(response)) {
             // Write the updates since the staging was completed without any error
             handler.write()
@@ -177,7 +177,7 @@ class EventManager {
         val prefs = sharedPrefs.getOrPut(username, {
             protonMailApplication.getSecureSharedPreferences(username)
         })
-        Log.d("PMTAG", "EventManager recoverLastEventId, user=${userManager.username}")
+        Timber.d("EventManager recoverLastEventId")
         val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
         return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
@@ -186,7 +186,7 @@ class EventManager {
         val prefs = sharedPrefs.getOrPut(username, {
             protonMailApplication.getSecureSharedPreferences(username)
         })
-        Log.d("PMTAG", "EventManager backupLastEventId, user=${userManager.username}")
+        Timber.d("EventManager backupLastEventId")
         prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()
     }
 }
