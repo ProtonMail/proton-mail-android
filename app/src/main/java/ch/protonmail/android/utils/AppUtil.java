@@ -24,8 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -115,31 +113,20 @@ public class AppUtil {
                 BuildConfig.VERSION_NAME, Build.VERSION.RELEASE, Build.BRAND, Build.MODEL);
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Use 'BuildConfig.VERSION_NAME'")
     public static String getAppVersionName(Context context) {
-        try {
-            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return info.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            Logger.doLogException(TAG_APP_UTIL, "could not get app version name", e);
-            return "";
-        }
+        return BuildConfig.VERSION_NAME;
     }
 
     public static String getAppVersion() {
-        return
-                String.format("%s (%d) ",
-                        getAppVersionName(ProtonMailApplication.getApplication()),
-                        getAppVersionCode(ProtonMailApplication.getApplication()));
+        return String.format("%s (%d) ", BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE);
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Use 'BuildConfig.VERSION_CODE'")
     public static int getAppVersionCode(Context context) {
-        try {
-            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return info.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            Logger.doLogException(TAG_APP_UTIL, "could not get app version code", e);
-            return 0;
-        }
+        return BuildConfig.VERSION_CODE;
     }
 
     public static File createTempFileFromInputStream(Context context, @NonNull InputStream in) throws IOException {
