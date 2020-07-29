@@ -26,30 +26,35 @@ import io.sentry.Sentry
 import io.sentry.event.EventBuilder
 import timber.log.Timber
 
+/**
+ * Production variant of [Timber.Tree]
+ * Logs only [Log.INFO]+ to Logcat
+ * Logs only [Log.WARN]+ to Sentry
+ *
+ * Email addresses are obfuscated for Logcat
+ */
 internal class SentryTree : Timber.Tree() {
 
-    /**
-     * This method is called by all other logging methods. It ignores all levels up to and including DEBUG.
-     *
-     * @param message documentation says this can be null, yet annotations say otherwise, so to be
-     * on the safe side, we set it here as nullable
-     */
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        if (priority <= Log.DEBUG) {
-            return
+
+        if (priority >= Log.INFO) {
+            Log.println(priority, tag, message)
         }
-        val eventBuilder = EventBuilder()
-        eventBuilder.withMessage(message)
-        eventBuilder.withTag(TAG_ANDROID_TAG, tag ?: NO_TAG)
-        eventBuilder.withTag(TAG_APP_VERSION, AppUtil.getAppVersion())
-        eventBuilder.withTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
-        eventBuilder.withTag(TAG_DEVICE_MODEL, Build.MODEL)
-        Sentry.capture(eventBuilder.build())
+
+        if (priority >= Log.WARN) {
+            val event = EventBuilder().apply {
+                withMessage(message)
+                tag?.let { withTag(TAG_LOG, it) }
+                withTag(TAG_APP_VERSION, AppUtil.getAppVersion())
+                withTag(TAG_SDK_VERSION, "${Build.VERSION.SDK_INT}")
+                withTag(TAG_DEVICE_MODEL, Build.MODEL)
+            }.build()
+            Sentry.capture(event)
+        }
     }
 
     private companion object {
-        private const val NO_TAG = "NO_TIMBER_TAG"
-        private const val TAG_ANDROID_TAG = "TAG_ANDROID_TAG"
+        private const val TAG_LOG = "LOG_TAG"
         private const val TAG_APP_VERSION = "APP_VERSION"
         private const val TAG_SDK_VERSION = "SDK_VERSION"
         private const val TAG_DEVICE_MODEL = "DEVICE_MODEL"
