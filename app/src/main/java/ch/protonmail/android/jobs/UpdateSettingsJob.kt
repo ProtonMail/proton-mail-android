@@ -114,10 +114,10 @@ class UpdateSettingsJob(private val displayChanged: Boolean = false, private val
                     user.save()
                 }
                 if (actionLeftSwipeChanged) {
-                    mApi.updateLeftSwipe(mUserManager.mailSettings!!.rightSwipeAction)
+                    mApi.updateLeftSwipe(mUserManager.mailSettings!!.leftSwipeAction)
                 }
                 if (actionRightSwipeChanged) {
-                    mApi.updateRightSwipe(mUserManager.mailSettings!!.leftSwipeAction)
+                    mApi.updateRightSwipe(mUserManager.mailSettings!!.rightSwipeAction)
                 }
                 if (mailSettings != null) {
                     mUserManager.mailSettings = mailSettings
