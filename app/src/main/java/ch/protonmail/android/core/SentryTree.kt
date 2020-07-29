@@ -20,6 +20,7 @@ package ch.protonmail.android.core
 
 import android.os.Build
 import android.util.Log
+import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.utils.AppUtil
 import io.sentry.Sentry
 import io.sentry.event.EventBuilder
@@ -53,4 +54,14 @@ internal class SentryTree : Timber.Tree() {
         private const val TAG_SDK_VERSION = "SDK_VERSION"
         private const val TAG_DEVICE_MODEL = "DEVICE_MODEL"
     }
+
+    fun obfuscateEmails(string: String): String =
+        string.replace(EmailAddress.VALIDATION_REGEX.toRegex()) {
+            val (id, host) = it.value.split("@")
+            val limit = id.length - 3
+            val replacement = id.mapIndexed { i: Int, c: Char ->
+                if (i < limit) "*" else c
+            }.joinToString(separator = "")
+            "$replacement@$host"
+        }
 }
