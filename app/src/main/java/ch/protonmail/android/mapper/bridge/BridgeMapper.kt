@@ -16,19 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import org.gradle.api.artifacts.dsl.RepositoryHandler
-import org.gradle.kotlin.dsl.maven
+package ch.protonmail.android.mapper.bridge
+
+import me.proton.core.domain.arch.Mapper
 
 /**
- * Lambda that applies repositories required by the project
- * @author Davide Farella
+ * [Mapper] for map old model to new one.
+ * It's supposed to be used during refactor for maintain backward compatibility
  */
-val repos: RepositoryHandler.() -> Unit get() = {
-    google()
-    maven("https://dl.bintray.com/kotlin/kotlinx/")
-    jcenter()
-    // Proton Core libraries
-    maven("https://dl.bintray.com/proton/Core-publishing")
-    // Assert4k
-    maven("https://dl.bintray.com/4face/4face")
+interface BridgeMapper<in OldModel, out NewModel> : Mapper<OldModel, NewModel> {
+
+    fun OldModel.toNewModel(): NewModel
 }

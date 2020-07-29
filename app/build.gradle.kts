@@ -154,7 +154,9 @@ dependencies {
 //        rootProject.aar(Lib.composer, version = `composer version`),
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
-//        `Proton-work-manager`, TODO: not released yet
+
+        `Proton-domain`,
+        `Proton-work-manager`,
 
         // Kotlin
         `kotlin-jdk7`,

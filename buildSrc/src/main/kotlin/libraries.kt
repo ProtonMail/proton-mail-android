@@ -30,6 +30,8 @@ val DependencyHandler.`Proton-android-test` get() =                 protonTest("
 val DependencyHandler.`Proton-android-instrumented-test` get() =    protonTest("android-instrumented") version `Proton-android-instr-test version`
 val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("kotlin") version `Proton-kotlin-test version`
 
+val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
+
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)
 fun DependencyHandler.protonUtil(moduleSuffix: String, version: String? = null) =

@@ -38,6 +38,7 @@ package ch.protonmail.android.domain.entity
  * Represent a given number of bytes
  */
 inline class Bytes(val l: ULong)
+val Number.bytes get() = Bytes(toLong().toULong())
 
 /**
  * Entity representing an email address

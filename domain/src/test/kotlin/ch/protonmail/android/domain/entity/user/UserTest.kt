@@ -56,14 +56,14 @@ internal class UserTest {
     // region keys
     @Test
     fun `User can be created if keys are valid`() {
-        User(addresses = Addresses(emptyMap()), keys = UserKeys(null, emptyList()))
+        User(addresses = Addresses(emptyMap()), keys = UserKeys.Empty)
         User(addresses = notEmptyAddresses, keys = notEmptyKeys)
     }
 
     @Test
     fun `User fails if there are addresses but no keys`() {
         assert that fails<ValidationException> {
-            User(addresses = notEmptyAddresses, keys = UserKeys(null, emptyList()))
+            User(addresses = notEmptyAddresses, keys = UserKeys.Empty)
         }
     }
     // endregion
@@ -147,7 +147,7 @@ internal class UserTest {
         0,
         Delinquent.None,
         Bytes(5_000u),
-        UserSpace(Bytes(5_000_000u), Bytes(25_000u))
+        UserSpace(Bytes(25_000u), Bytes(5_000_000u))
     )
 
     private val notEmptyAddresses = Addresses(
@@ -169,7 +169,7 @@ internal class UserTest {
 
     private val dummyKey = UserKey(
         Id("key"),
-        4,
+        4u,
         PgpField.PrivateKey(NotBlankString("key")),
         PgpField.Message(NotBlankString("token"))
     )

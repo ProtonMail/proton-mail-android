@@ -20,18 +20,31 @@ package ch.protonmail.android.domain.entity
 
 /**
  * Entity that validates an [Validable]
+ * @throws ValidationException if not valid
+ *
  * @author Davide Farella
  */
-typealias Validator<V> = (V) -> Validable.Result
+typealias Validator<V> = (V) -> Any
 
 /**
- * Creates a [Validator] using a simple lambda that return `true` if validation is successful
- * ```
+ * Creates a [Validator] using a lambda that validate the entity
+ *
+ * The lambda can
+ * * throw exception
+ *   @see require
+ *   ```
+class PositiveNumber(val number: Int) : Validable by Validator<PositiveNumber>({
+    require(number >= 0) { "Number is less that 0" }
+})
+ *   ```
+ * * return a [Boolean], in that case it will be wrapper into a [require]
+ *   ```
 class PositiveNumber(val number: Int) : Validable by Validator<PositiveNumber>({ number >= 0 })
- * ```
+ *   ```
  */
-fun <V> Validator(successBlock: V.() -> Boolean) = { v: V ->
-    Validable.Result(successBlock(v))
+fun <V> Validator(validation: V.() -> Any) = { v: V ->
+    validation(v)
+        .also { if (it is Boolean) require(it) }
 }.wrap()
 
 /**
@@ -51,13 +64,13 @@ operator fun <V : Validable> Validator<V>.invoke() = object : Validable {
 }
 
 // Mirror of `invoke`. Used internally for readability purpose
-private fun <V : Validable> Validator<V>.wrap() = invoke<V>()
+private fun <V : Validable> Validator<V>.wrap() = invoke()
 
 /**
  * [Validator] that accepts only strings that are not blank
  */
 fun NotBlankStringValidator(field: String) = { _: Any ->
-    Validable.Result(field.isNotBlank())
+    require(field.isNotBlank()) { "String is blank" }
 }.wrap()
 
 /**
@@ -65,7 +78,7 @@ fun NotBlankStringValidator(field: String) = { _: Any ->
  * @param field [String] field to validate
  */
 fun RegexValidator(field: String, regex: Regex) = { _: Any ->
-    Validable.Result(regex.matches(field))
+    require(regex.matches(field)) { "Regex mismatch: <$field>, <$regex>" }
 }.wrap()
 
 /**

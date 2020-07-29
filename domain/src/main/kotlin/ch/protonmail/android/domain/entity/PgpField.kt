@@ -18,20 +18,41 @@
  */
 package ch.protonmail.android.domain.entity
 
+import me.proton.core.util.kotlin.substring
+
 /**
  * Represent a field encrypted by PGP
- * Format: `` "-----BEGIN PGP [type] [content]-----END PGP [type]----- ``
+ * Format: `` "-----BEGIN PGP [type] [input]-----END PGP [type]----- ``
  */
-sealed class PgpField(val type: String) {
-    // TODO: this might be an object instaed of a String, but must be evaluated when the business logic will receive
-    //  some refactor
-    abstract val content: NotBlankString
-    val prefix = "-----BEGIN PGP $type-----"
-    val suffix = "-----END PGP $type-----"
-    val string get() = "$prefix$content$suffix"
+@Validated
+sealed class PgpField(input: NotBlankString, val type: String) {
 
-    data class Message(override val content: NotBlankString) : PgpField("MESSAGE")
-    data class PublicKey(override val content: NotBlankString) : PgpField("PUBLIC_KEY_BLOCK")
-    data class PrivateKey(override val content: NotBlankString) : PgpField("PRIVATE_KEY_BLOCK")
-    data class Signature(override val content: NotBlankString) : PgpField("SIGNATURE_KEY_BLOCK")
+    val prefix get() = "-----BEGIN PGP $type-----"
+    val suffix get() = "-----END PGP $type-----"
+
+    val content = NotBlankString(
+        input.s.substring(
+            prefix,
+            suffix,
+            ignoreCase = true,
+            ignoreMissingStart = true,
+            ignoreMissingEnd = true
+        )
+    )
+    val string get() = "$prefix${content.s}$suffix"
+
+    class Message(input: NotBlankString) : PgpField(input, "MESSAGE")
+    class PublicKey(input: NotBlankString) : PgpField(input, "PUBLIC_KEY_BLOCK")
+    class PrivateKey(input: NotBlankString) : PgpField(input, "PRIVATE_KEY_BLOCK")
+    class Signature(input: NotBlankString) : PgpField(input, "SIGNATURE_KEY_BLOCK")
+
+
+    override fun equals(other: Any?) =
+        other is PgpField && type == other.type && content == other.content
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + content.hashCode()
+        return result
+    }
 }

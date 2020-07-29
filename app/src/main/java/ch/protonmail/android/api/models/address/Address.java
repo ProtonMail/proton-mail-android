@@ -59,6 +59,33 @@ public class Address implements Parcelable {
     public Address() {
     }
 
+    public Address(
+            String ID,
+            String domainID,
+            String email,
+            int send,
+            int receive,
+            int status,
+            int type,
+            int order,
+            String displayName,
+            String signature,
+            int hasKeys,
+            List<ch.protonmail.android.api.models.Keys> keys
+    ) {
+        this.ID = ID;
+        DomainID = domainID;
+        Email = email;
+        Send = send;
+        Receive = receive;
+        Status = status;
+        Type = type;
+        Order = order;
+        DisplayName = displayName;
+        Signature = signature;
+        HasKeys = hasKeys;
+        Keys = keys;
+    }
 
     protected Address(Parcel in) {
         ID = in.readString();
@@ -90,6 +117,10 @@ public class Address implements Parcelable {
     // region getters and setters
     public String getID() {
         return ID;
+    }
+
+    public String getDomainId() {
+        return DomainID;
     }
 
     public int getStatus() {

@@ -32,7 +32,7 @@ import ch.protonmail.android.domain.entity.requireValid
 @Validated
 data class UserKey(
     val id: Id,
-    val version: Int,
+    val version: UInt,
     val privateKey: PgpField.PrivateKey,
     val token: PgpField.Message
 )
@@ -49,10 +49,18 @@ data class UserKeys(
     val primaryKey: UserKey?,
     val keys: Collection<UserKey>
 ) : Validable by Validator<UserKeys>({
-    primaryKey == null && keys.isEmpty() ||
-        primaryKey in keys
+    require(primaryKey == null && keys.isEmpty() ||
+        primaryKey in keys)
 }) {
     init { requireValid() }
 
     val hasKeys get() = keys.isNotEmpty()
+
+    companion object {
+
+        /**
+         * Empty [UserKeys]
+         */
+        val Empty get() = UserKeys(null, emptySet())
+    }
 }
