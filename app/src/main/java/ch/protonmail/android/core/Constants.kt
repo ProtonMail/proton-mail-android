@@ -56,7 +56,7 @@ object Constants {
     const val CONTACTS_PAGE_SIZE = 1000
 
     // This is the app version in which the switch of the swipe gestures happens
-    const val SWIPE_GESTURES_CHANGED_VERSION = 728
+    const val SWIPE_GESTURES_CHANGED_VERSION = 729
 
     const val MAX_ATTACHMENTS = 100
     const val MAX_ATTACHMENT_FILE_SIZE_IN_BYTES = (25 * 1000 * 1000).toLong() // 25 MB
