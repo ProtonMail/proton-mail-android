@@ -26,6 +26,10 @@ import java.io.IOException
  * @author Davide Farella
  */
 
+val EXCLUDING_FOLDERS = listOf(
+    ".idea",
+    "build"
+).map { "${File.separator}$it${File.separator}" }
 
 /** Extension to take for apply the header */
 val EXTENSIONS = arrayOf("kt", "kts", "java", "xml")
@@ -90,7 +94,7 @@ fun File.children(): List<File> {
     return when {
 
         // skip `build` folders
-        "${File.separator}build${File.separator}" in absolutePath -> emptyList()
+        EXCLUDING_FOLDERS.any { it in absolutePath } -> emptyList()
 
         isFile -> listOf(this)
 
