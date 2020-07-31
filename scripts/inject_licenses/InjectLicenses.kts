@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -22,10 +22,16 @@ import java.io.File
 import java.io.IOException
 
 /*
+ * Run by `` kscript scripts/inject_licenses/InjectLicenses.kts `` into your CLI / terminal
+ *
  * This script will Inject the license header for all the source files who are not provided with it
  * @author Davide Farella
  */
 
+val EXCLUDING_FOLDERS = listOf(
+    ".idea",
+    "build"
+).map { "${File.separator}$it${File.separator}" }
 
 /** Extension to take for apply the header */
 val EXTENSIONS = arrayOf("kt", "kts", "java", "xml")
@@ -90,7 +96,7 @@ fun File.children(): List<File> {
     return when {
 
         // skip `build` folders
-        "${File.separator}build${File.separator}" in absolutePath -> emptyList()
+        EXCLUDING_FOLDERS.any { it in absolutePath } -> emptyList()
 
         isFile -> listOf(this)
 
