@@ -36,7 +36,17 @@ kapt {
 }
 
 val privateProperties = Properties().apply {
-    load(FileInputStream("privateConfig/private.properties"))
+    try {
+        load(FileInputStream("privateConfig/private.properties"))
+    } catch (e: Exception) {
+        put("sentryDNS_1", "")
+        put("sentryDNS_2", "")
+        put("safetyNet_apiKey", "")
+        put("b_endpointUrl", "")
+        put("d_endpointUrl", "")
+        put("h_endpointUrl", "")
+        put("pm_clientSecret", "")
+    }
 }
 
 val experimentalProperties = Properties().apply {
@@ -78,10 +88,12 @@ android(appIdSuffix = "android") {
 
     signingConfigs {
         register("release") {
-            storeFile = file("$rootDir/privateConfig/keystore/ProtonMail.keystore")
-            storePassword = "${privateProperties["keyStorePassword"]}"
-            keyAlias = "ProtonMail"
-            keyPassword = "${privateProperties["keyStoreKeyPassword"]}"
+            if (privateProperties.getProperty("sentryDNS_1").isNotEmpty()) {
+                storeFile = file("$rootDir/privateConfig/keystore/ProtonMail.keystore")
+                storePassword = "${privateProperties["keyStorePassword"]}"
+                keyAlias = "ProtonMail"
+                keyPassword = "${privateProperties["keyStoreKeyPassword"]}"
+            }
         }
     }
 
