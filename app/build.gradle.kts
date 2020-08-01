@@ -36,7 +36,17 @@ kapt {
 }
 
 val privateProperties = Properties().apply {
-    load(FileInputStream("privateConfig/private.properties"))
+    try {
+        load(FileInputStream("privateConfig/private.properties"))
+    } catch (e: Exception) {
+        put("sentryDNS_1", "")
+        put("sentryDNS_2", "")
+        put("safetyNet_apiKey", "")
+        put("b_endpointUrl", "")
+        put("d_endpointUrl", "")
+        put("h_endpointUrl", "")
+        put("pm_clientSecret", "")
+    }
 }
 
 android(appIdSuffix = "android") {
@@ -46,7 +56,7 @@ android(appIdSuffix = "android") {
 
     defaultConfig {
         multiDexEnabled = true
-        
+
         buildConfigField("String", "SENTRY_DNS_1", "\"${privateProperties["sentryDNS_1"]}\"")
         buildConfigField("String", "SENTRY_DNS_2", "\"${privateProperties["sentryDNS_2"]}\"")
         buildConfigField("String", "SAFETY_NET_API_KEY", "\"${privateProperties["safetyNet_apiKey"]}\"")
@@ -68,10 +78,12 @@ android(appIdSuffix = "android") {
 
     signingConfigs {
         register("release") {
-            storeFile = file("$rootDir/privateConfig/keystore/ProtonMail.keystore")
-            storePassword = "${privateProperties["keyStorePassword"]}"
-            keyAlias = "ProtonMail"
-            keyPassword = "${privateProperties["keyStoreKeyPassword"]}"
+            if (privateProperties.getProperty("sentryDNS_1").isNotEmpty()) {
+                storeFile = file("$rootDir/privateConfig/keystore/ProtonMail.keystore")
+                storePassword = "${privateProperties["keyStorePassword"]}"
+                keyAlias = "ProtonMail"
+                keyPassword = "${privateProperties["keyStoreKeyPassword"]}"
+            }
         }
     }
 
