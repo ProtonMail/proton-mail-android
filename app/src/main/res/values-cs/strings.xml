@@ -934,8 +934,8 @@ k úložišti.</string>
     <string name="labels_manage">Správce štítků</string>
     <string name="folders_manage">Správce složek</string>
     <string name="swiping_gesture">Swiping gesture</string>
-    <string name="swipe_action_right">Swipe right</string>
-    <string name="swipe_action_left">Swipe left</string>
+    <string name="swipe_action_right">Odsunutí doprava</string>
+    <string name="swipe_action_left">Odsunutí doleva</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Zvolit akci posunutí</string>
     <string name="swipe_action_trash">Zpráva byla přesunuta do Koše</string>
@@ -1027,8 +1027,8 @@ k úložišti.</string>
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Swipe gestures changed</string>
-    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="swipe_gestures_changed">Gesta pro přesunutí prstem byla změněna</string>
+    <string name="swipe_gestures_changed_message">Po poslední aktualizaci byla gesta pro přejetí prstem přepnuta. Pokud chcete, v nastavení je můžete obnovit.</string>
     <string name="go_to_settings">Přejít do nastavení</string>
     <!-- endregion -->
 </resources>
