@@ -1,22 +1,22 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android
+package ch.protonmail.android.crypto
 
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
@@ -24,9 +24,7 @@ import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.crypto.Crypto
 import ch.protonmail.android.utils.crypto.OpenPGP
-import ch.protonmail.android.utils.crypto.TextCiphertext
 import com.proton.gopenpgp.armor.Armor
 import io.mockk.every
 import io.mockk.mockk
@@ -782,7 +780,7 @@ internal class CryptoTest {
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
         val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
-        val result = addressCrypto.decrypt(TextCiphertext.fromArmor(encryptedMessage)).decryptedData
+        val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
     }
@@ -812,7 +810,7 @@ internal class CryptoTest {
         val decrypted = userCrypto.decrypt(encryptedAndSigned)
 
         assert(decrypted.hasSignature())
-        assert(decrypted.isSignatureValid())
+        assert(decrypted.isSignatureValid)
         assertEquals(message, decrypted.decryptedData)
     }
 
@@ -847,7 +845,7 @@ internal class CryptoTest {
 
         val addressCrypto =
             Crypto.forAddress(userManagerMock, manyAddressKeysUsername, manyAddressKeysAddressId)
-        val result = addressCrypto.decrypt(TextCiphertext.fromArmor(encryptedMessage)).decryptedData
+        val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
     }
@@ -892,7 +890,7 @@ internal class CryptoTest {
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
         val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
-        val decryptor = addressCrypto.decryptMime(TextCiphertext.fromArmor(encryptedMessage))
+        val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String
         decryptor.onBody = { eventBody: String, _ ->
@@ -1617,7 +1615,7 @@ internal class CryptoTest {
         )
 
         val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
-        val decryptor = addressCrypto.decryptMime(TextCiphertext.fromArmor(encryptedMessage))
+        val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String
         decryptor.onBody = { eventBody: String, _ ->

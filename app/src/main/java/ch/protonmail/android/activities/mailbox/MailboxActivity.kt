@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -191,7 +191,6 @@ import java.lang.ref.WeakReference
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 // region constants
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
@@ -1167,9 +1166,9 @@ class MailboxActivity : NavigationActivity(),
             return
         }
         val response = event.unreadMessagesResponse ?: return
-        val messageCountsList = response.counts
+        val messageCountsList = response.counts ?: emptyList()
         countersDatabase = CountersDatabaseFactory.getInstance(applicationContext, mUserManager.username).getDatabase()
-        OnMessageCountsListTask(WeakReference(this), countersDatabase, messageCountsList!!).execute()
+        OnMessageCountsListTask(WeakReference(this), countersDatabase, messageCountsList).execute()
         refreshDrawer()
         //endregion
     }
