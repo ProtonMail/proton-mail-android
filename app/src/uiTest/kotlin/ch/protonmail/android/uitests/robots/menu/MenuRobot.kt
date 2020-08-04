@@ -22,11 +22,12 @@ import androidx.annotation.IdRes
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
-import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.labelfolder.LabelFolderRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.robots.mailbox.trash.TrashRobot
 import ch.protonmail.android.uitests.robots.manageaccounts.AccountManagerRobot
+import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withAccountEmailInDrawer
+import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withLoggedOutAccountNameInDrawer
 import ch.protonmail.android.uitests.robots.menu.MenuMatchers.withLabelOrFolderName
 import ch.protonmail.android.uitests.robots.menu.MenuMatchers.withMenuItemTag
 import ch.protonmail.android.uitests.robots.reportbugs.ReportBugsRobot
@@ -34,6 +35,7 @@ import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.robots.upgradedonate.UpgradeDonateRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.click
 
 /**
  * [MenuRobot] class contains actions and verifications for menu functionality.
@@ -92,7 +94,7 @@ class MenuRobot {
 
 
     fun accountsList(): MenuAccountListRobot {
-        UIActions.id.clickViewWithId(R.id.drawerHeaderView)
+        UIActions.wait.forViewWithId(R.id.drawerHeaderView).click()
         return MenuAccountListRobot()
     }
 
@@ -101,27 +103,19 @@ class MenuRobot {
         return MenuRobot()
     }
 
-    private fun selectMenuItem(@IdRes menuItemName: String) {
-        UIActions.recyclerView.clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withMenuItemTag(menuItemName))
-    }
+    private fun selectMenuItem(@IdRes menuItemName: String) = UIActions.recyclerView
+        .clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withMenuItemTag(menuItemName))
 
-    private fun selectMenuLabelOrFolder(@IdRes labelOrFolderName: String) {
-        UIActions.recyclerView
-            .clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withLabelOrFolderName(labelOrFolderName))
-    }
+    private fun selectMenuLabelOrFolder(@IdRes labelOrFolderName: String) = UIActions.recyclerView
+        .clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withLabelOrFolderName(labelOrFolderName))
 
     /**
      * Contains all the validations that can be performed by [MenuRobot].
      */
     class Verify {
+        fun menuOpened() = UIActions.check.viewWithIdIsDisplayed(leftDrawerNavigationId)
 
-        fun menuOpened() {
-            UIActions.check.viewWithIdIsDisplayed(leftDrawerNavigationId)
-        }
-
-        fun menuClosed() {
-            UIActions.check.viewWithIdIsNotDisplayed(leftDrawerNavigationId)
-        }
+        fun menuClosed() = UIActions.check.viewWithIdIsNotDisplayed(leftDrawerNavigationId)
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
@@ -132,52 +126,32 @@ class MenuRobot {
     open inner class MenuAccountListRobot {
 
         fun manageAccounts(): AccountManagerRobot {
-            UIActions.id.clickViewWithId(R.id.manageAccounts)
+            UIActions.wait.forViewWithId(R.id.manageAccounts).click()
             return AccountManagerRobot()
         }
 
-        fun switchToAccount(accountPosition: Int): MenuAccountListRobot {
+        fun switchToAccount(accountPosition: Int): MenuRobot {
             UIActions.recyclerView.clickOnRecyclerViewItemByPosition(menuDrawerUserList, accountPosition)
-            return MenuAccountListRobot()
+            return MenuRobot()
         }
 
         /**
          * Contains all the validations that can be performed by [MenuAccountListRobot].
          */
-        inner class Verify : MenuAccountListRobot() {
+        inner class Verify {
+            fun accountsListOpened() = UIActions.check.viewWithIdIsDisplayed(menuDrawerUserList)
 
-            fun accountsListOpened() {
-                UIActions.check.viewWithIdIsDisplayed(menuDrawerUserList)
-            }
+            fun accountAdded(email: String) = UIActions.recyclerView
+                .scrollToRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
 
-            fun accountAdded(emailAddress: String, positionInDrawer: Int) {
-                UIActions.check.viewWithIdInRecyclerViewMatchesText(menuDrawerUserList, positionInDrawer,
-                    R.id.userEmailAddress, emailAddress)
-            }
+            fun accountLoggedOut(email: String) = UIActions.recyclerView
+                .scrollToRecyclerViewMatchedItem(menuDrawerUserList, withLoggedOutAccountNameInDrawer(email))
 
-            fun accountLoggedOut(username: String, positionInDrawer: Int) {
-                // Verify username is displayed in menu drawer and Sign In button is shown
-                UIActions.check.viewWithIdInRecyclerViewMatchesText(menuDrawerUserList, positionInDrawer,
-                    menuDrawerUsernameId, username)
-                UIActions.check.viewWithIdInRecyclerViewRowIsDisplayed(menuDrawerUserList, positionInDrawer,
-                    R.id.userSignIn)
-            }
-
-            fun accountRemoved(username: String, emailAddress: String) {
-                UIActions.check.viewWithIdAndTextDoesNotExist(menuDrawerUsernameId, username)
-            }
-
-            fun switchedToAccount(username: String) {
-                val signedInWith = stringFromResource(R.string.signed_in_with)
-                    .replace("%s", username)
-                UIActions.wait.untilViewWithIdAppears(R.id.snackbar_text)
-                UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, signedInWith)
-                UIActions.check.viewWithIdInRecyclerViewMatchesText(menuDrawerUserList, 0,
-                    menuDrawerUsernameId, username)
-            }
+            fun accountRemoved(username: String) = UIActions.check
+                .viewWithIdAndTextDoesNotExist(menuDrawerUsernameId, username)
         }
 
-        inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as MenuAccountListRobot
+        inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
     companion object {

@@ -16,11 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.testsHelper
+package ch.protonmail.android.uitests.robots.contacts
 
 /**
- * Use this annotation to annotate test cases with TestRail test case id.
+ * [GroupDetailsRobot] class contains actions and verifications for Contacts functionality.
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-annotation class TestId(val id: String)
+open class GroupDetailsRobot {
+
+    /**
+     * Contains all the validations that can be performed by [GroupDetailsRobot].
+     */
+    class Verify
+
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+}

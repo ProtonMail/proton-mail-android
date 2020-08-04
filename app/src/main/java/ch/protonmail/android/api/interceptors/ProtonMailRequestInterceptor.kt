@@ -41,24 +41,30 @@ private const val TAG = "ProtonMailRequestInterceptor"
 
 // endregion
 class ProtonMailRequestInterceptor private constructor(
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil
 ) : BaseRequestInterceptor(userManager, jobManager, networkUtil) {
 
     companion object {
+
+        var requestCount = 0
+
         @Volatile
         private var INSTANCE: ProtonMailRequestInterceptor? = null
 
-        fun getInstance(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil):
-                ProtonMailRequestInterceptor =
-                INSTANCE ?: synchronized(this) {
-                    INSTANCE
-                            ?: buildInstance(userManager, jobManager, networkUtil).also { INSTANCE = it }
-                }
+        fun getInstance(
+            userManager: UserManager,
+            jobManager: JobManager,
+            networkUtil: QueueNetworkUtil
+        ): ProtonMailRequestInterceptor =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE
+                    ?: buildInstance(userManager, jobManager, networkUtil).also { INSTANCE = it }
+            }
 
         private fun buildInstance(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil) =
-                ProtonMailRequestInterceptor(userManager, jobManager, networkUtil)
+            ProtonMailRequestInterceptor(userManager, jobManager, networkUtil)
 
     }
 
@@ -70,7 +76,7 @@ class ProtonMailRequestInterceptor private constructor(
         // try the request
         var response: Response? = null
         try {
-
+            requestCount++
             Timber.tag(TAG).d(TAG, "Intercept: advancing request with url: " + request.url())
             response = chain.proceed(request)
 
@@ -85,6 +91,7 @@ class ProtonMailRequestInterceptor private constructor(
             exception.printStackTrace()
         }
 
+        requestCount--
         if (response == null) {
             return chain.proceed(request)
         } else {

@@ -16,27 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.mailbox.labelfolder
-
-import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
-import ch.protonmail.android.uitests.testsHelper.UIActions
+package ch.protonmail.android.uitests.robots.contacts
 
 /**
- * [LabelFolderRobot] class implements [MailboxRobotInterface],
- * contains actions and verifications for Labels or Folders mailbox functionality.
+ * [ContactDetailsRobot] class contains actions and verifications for Contacts functionality.
  */
-class LabelFolderRobot : MailboxRobotInterface {
+open class ContactDetailsRobot {
 
     /**
-     * Contains all the validations that can be performed by [LabelFolderRobot].
+     * Contains all the validations that can be performed by [ContactDetailsRobot].
      */
-    open class Verify {
-
-        fun messageMoved(messageSubject: String) {
-            UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, messageSubject)
-        }
-    }
+    class Verify
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

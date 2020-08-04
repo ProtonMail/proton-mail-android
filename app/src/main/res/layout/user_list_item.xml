@@ -32,6 +32,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:background="@color/iron_gray" />
 
     <RelativeLayout
+        android:id="@+id/accItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/divider"

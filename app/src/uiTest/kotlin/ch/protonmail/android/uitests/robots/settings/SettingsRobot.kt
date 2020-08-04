@@ -47,10 +47,6 @@ class SettingsRobot {
      */
     class Verify {
 
-        fun cacheCleared() {
-            UIActions.check.toastMessageIsDisplayed(R.string.cache_cleared)
-        }
-
         fun settingsOpened() {
             UIActions.check.viewWithIdIsDisplayed(R.id.settingsRecyclerView)
         }

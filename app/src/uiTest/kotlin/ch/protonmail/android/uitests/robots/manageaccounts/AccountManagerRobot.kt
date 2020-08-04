@@ -21,6 +21,7 @@ package ch.protonmail.android.uitests.robots.manageaccounts
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
+import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withPrimaryAccountInAccountManager
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
@@ -34,30 +35,22 @@ open class AccountManagerRobot {
         return ConnectAccountRobot()
     }
 
-    fun logoutAccount(accountPosition: Int): InboxRobot {
-        return accountMoreMenu(accountPosition)
+    fun logoutAccount(email: String): InboxRobot {
+        return accountMoreMenu(email)
             .logout()
             .confirm()
     }
 
-    fun logoutOnlyRemainingAccount(): LoginRobot {
-        accountMoreMenu(0)
+    fun logoutLastAccount(email: String): LoginRobot {
+        return accountMoreMenu(email)
             .logout()
-            .confirmToLoginScreen()
-        return LoginRobot()
+            .confirmLastAccountLogout()
     }
 
-    fun removeAccount(accountPosition: Int): InboxRobot {
-        return accountMoreMenu(accountPosition)
+    fun removeAccount(email: String): InboxRobot {
+        return accountMoreMenu(email)
             .remove()
             .confirm()
-    }
-
-    fun removeOnlyRemainingAccount(): LoginRobot {
-        accountMoreMenu(0)
-            .remove()
-            .confirmToLoginScreen()
-        return LoginRobot()
     }
 
     fun removeAllAccounts(): LoginRobot {
@@ -65,12 +58,12 @@ open class AccountManagerRobot {
             .removeAll()
     }
 
-    /**
-     *  Account at [accountPosition] 0 is the current primary account, first in the list.
-     */
-    private fun accountMoreMenu(accountPosition: Int): AccountManagerRobot {
-        UIActions.recyclerView.clickOnObjectWithIdInRecyclerViewRow(accountsRecyclerViewId,
-            R.id.accUserMoreMenu, accountPosition)
+    private fun accountMoreMenu(email: String): AccountManagerRobot {
+        UIActions.recyclerView.clickAccountManagerViewItem(
+            accountsRecyclerViewId,
+            email,
+            R.id.accUserMoreMenu
+        )
         return AccountManagerRobot()
     }
 
@@ -95,12 +88,12 @@ open class AccountManagerRobot {
     }
 
     private fun confirm(): InboxRobot {
-        UIActions.system.clickPositiveDialogButton()
+        UIActions.system.clickPositiveButtonInDialogRoot()
         return InboxRobot()
     }
 
-    private fun confirmToLoginScreen(): LoginRobot {
-        UIActions.system.clickPositiveDialogButton()
+    private fun confirmLastAccountLogout(): LoginRobot {
+        UIActions.system.clickPositiveButtonInDialogRoot()
         return LoginRobot()
     }
 
@@ -114,25 +107,12 @@ open class AccountManagerRobot {
             return AccountManagerRobot()
         }
 
-        fun accountAddedInAccountManager(emailAddress: String, position: Int) {
-            UIActions.check.viewWithIdInRecyclerViewMatchesText(accountsRecyclerViewId, position,
-                accUserEmailAddressId, emailAddress)
+        fun switchedToAccount(username: String) {
+            UIActions.recyclerView
+                .scrollToRecyclerViewMatchedItem(
+                    accountsRecyclerViewId,
+                    withPrimaryAccountInAccountManager(stringFromResource(R.string.manage_accounts_user_primary, username)))
         }
-
-        fun accountLoggedOutInAccountManager(username: String, position: Int) {
-            val userLoggedOut = stringFromResource(R.string.manage_accounts_user_loggedout)
-                .replace("%s", username)
-            UIActions.check.viewWithIdInRecyclerViewMatchesText(accountsRecyclerViewId, position,
-                accUsernameId, userLoggedOut)
-        }
-
-        fun accountRemovedFromAccountManager(username: String, emailAddress: String) {
-            val userRemoved = stringFromResource(R.string.manage_accounts_user_loggedout)
-                .replace("%s", username)
-            UIActions.check.viewWithIdAndTextDoesNotExist(accUserEmailAddressId, emailAddress)
-            UIActions.check.viewWithIdAndTextDoesNotExist(accUsernameId, userRemoved)
-        }
-
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block) as AccountManagerRobot

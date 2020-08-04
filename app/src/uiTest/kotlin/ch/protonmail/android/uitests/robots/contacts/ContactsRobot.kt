@@ -22,8 +22,8 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.insert
 import com.github.clans.fab.FloatingActionButton
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.instanceOf
@@ -33,16 +33,6 @@ import org.hamcrest.CoreMatchers.instanceOf
  */
 open class ContactsRobot {
 
-    fun openOptionsMenu(): ContactsRobot {
-        UIActions.contentDescription.clickViewWithContentDescription("More options")
-        return this
-    }
-
-    fun refresh(): ContactsRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.title, "Refresh")
-        return this
-    }
-
     fun addFab(): ContactsRobot {
         UIActions.allOf.clickMatchedView(allOf(
             instanceOf(FloatingActionButton::class.java),
@@ -51,119 +41,64 @@ open class ContactsRobot {
         return this
     }
 
-    fun addContact(): ContactsRobot {
-        UIActions.id.clickViewWithId(R.id.addContactItem)
-        return this
+    fun openOptionsMenu(): ContactsMoreOptions {
+        UIActions.system.clickMoreOptionsButton()
+        return ContactsMoreOptions()
     }
 
-    fun insertContactName(nameNewContact: String): ContactsRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.contact_display_name).insert(nameNewContact)
-        return this
-    }
-
-    fun saveContact(): ContactsRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.action_save, R.string.save)
-        return this
-    }
-
-    fun addContactGroup(): ContactsRobot {
-        UIActions.id.clickViewWithId(R.id.addContactGroupItem)
-        return this
-    }
-
-    fun chooseContact(withName: String): ContactsRobot {
-        UIActions.recyclerView.clickOnContactItem(R.id.contactsRecyclerView, withName)
-        return this
-    }
-
-    fun contactDetails(): ContactsRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.add_contact_details)
-        UIActions.id.clickViewWithId(R.id.editContactDetails)
-        return this
-    }
-
-    fun editDisplayName(displayName: String): ContactsRobot {
-        UIActions.id.insertTextIntoFieldWithId(R.id.contact_display_name, displayName)
-        return this
-    }
-
-    fun editEmailAddress(emailAddress: String): ContactsRobot {
-        UIActions.hint.insertTextIntoFieldWithHint(R.string.contact_vcard_hint_email, emailAddress)
-        return this
-    }
-
-    fun delete(): ContactsRobot {
-        UIActions.id.clickViewWithId(R.id.action_delete)
-        return this
-    }
-
-    fun confirmDelete(): ContactsRobot {
-        UIActions.wait.untilViewWithTextAppears("YES")
-        UIActions.text.clickViewWithText("YES")
-        return this
-    }
-
-    fun chooseContactWithText(emailContainsText: String?): ContactsRobot {
-        //TODO implement recyclerview matcher
-        //scrollDownAndClickObjectWithIdAndTextIsFound(R.id.contactsRecyclerView, R.id.contact_email, emailContainsText)
-        return this
-    }
-
-    fun composeButton(): ContactsRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.add_contact_details)
-        UIActions.id.clickViewWithId(R.id.btnCompose)
-        return this
-    }
-
-    fun composeMessage(messageSubject: String, messageBody: String): ContactsRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.message_title)
-        UIActions.id.clickViewWithId(R.id.message_title)
-        UIActions.id.typeTextIntoFieldWithId(R.id.message_title, messageSubject)
-        UIActions.id.insertTextIntoFieldWithId(R.id.message_body, messageBody)
-        return this
-    }
-
-    internal fun send(): ComposerRobot {
-        UIActions.id.clickViewWithId(R.id.send_message)
-        return ComposerRobot()
-    }
-
-    fun editGroupName(newGroupName: String): ContactsRobot {
-        UIActions.id.insertTextIntoFieldWithId(R.id.contactGroupName, newGroupName)
-        return this
-    }
-
-    fun saveGroup(): ContactsRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.action_save, "DONE")
-        return this
-    }
-
-    fun groupsView(): ContactsRobot {
+    fun groupsView(): ContactsGroupView {
         UIActions.contentDescription.clickViewWithContentDescSubstring("Groups")
-        return this
+        return ContactsGroupView()
     }
 
-    fun chooseGroup(withName: String): ContactsRobot {
-        UIActions.recyclerView.clickOnGroupItem(R.id.contactGroupsRecyclerView, withName)
-        return this
+    fun contactsView(): ContactsView {
+        UIActions.contentDescription.clickViewWithContentDescSubstring("Contacts")
+        return ContactsView()
     }
 
-    fun editFab(): ContactsRobot {
-        UIActions.id.clickViewWithId(R.id.editFab)
-        return this
+    fun navigateUpToInbox(): InboxRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return InboxRobot()
     }
 
-    fun manageAddresses(): ContactsRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.manageAddresses, R.string.contact_groups_manage_addresses)
-        UIActions.wait.untilViewWithIdAppears(R.id.contactEmailsRecyclerView)
-        return this
+    inner class ContactsView {
+
+        fun clickContact(withEmail: String): ContactDetailsRobot {
+            UIActions.recyclerView.clickContactItem(R.id.contactsRecyclerView, withEmail)
+            return ContactDetailsRobot()
+        }
+
+        fun clickSendMessageToContact(contactName: String): ComposerRobot {
+            UIActions.recyclerView.clickContactItemView(
+                R.id.contactsRecyclerView,
+                contactName,
+                R.id.writeButton)
+            return ComposerRobot()
+        }
     }
 
-    fun composeToGroup(): ContactsRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.contact_data_parent)
-        //TODO
-//        clickComposeToGroupButtonAtPosition(R.id.contactGroupsRecyclerView, R.id.writeButton, 0)
-        return this
+    inner class ContactsGroupView {
+
+        fun clickGroup(withName: String): GroupDetailsRobot {
+            UIActions.recyclerView.clickContactsGroupItem(R.id.contactGroupsRecyclerView, withName)
+            return GroupDetailsRobot()
+        }
+
+        fun clickSendMessageToGroup(groupName: String): ComposerRobot {
+            UIActions.recyclerView.clickContactsGroupItemView(
+                R.id.contactGroupsRecyclerView,
+                groupName,
+                R.id.writeButton)
+            return ComposerRobot()
+        }
+    }
+
+    inner class ContactsMoreOptions {
+
+        fun refresh(): ContactsRobot {
+            UIActions.allOf.clickViewWithIdAndText(R.id.title, "Refresh")
+            return ContactsRobot()
+        }
     }
 
     /**
@@ -171,36 +106,13 @@ open class ContactsRobot {
      */
     class Verify {
 
-        fun contactSaved(): ContactsRobot {
-            UIActions.check.toastMessageIsDisplayed(R.string.contact_saved)
-            return ContactsRobot()
-        }
-
-        fun groupSaved(): ContactsRobot {
-            UIActions.check.toastMessageIsDisplayed(R.string.contact_group_saved)
-            return ContactsRobot()
-        }
-
-        fun contactsRefreshed(): ContactsRobot {
-            UIActions.check.toastMessageIsDisplayed(R.string.fetching_contacts_success)
-            return ContactsRobot()
-        }
-
-        fun contactDeleted(deletedContact: String): ContactsRobot {
-            UIActions.wait.untilViewWithIdAppears(R.id.contactsRecyclerView)
-            UIActions.check.viewWithIdAndTextIsNotDisplayed(R.id.contact_name, deletedContact)
-            return ContactsRobot()
-        }
-
-        fun groupDeleted(deletedGroup: String): ContactsRobot {
-            UIActions.wait.untilViewWithIdAppears(R.id.contactGroupsRecyclerView)
-            UIActions.check.toastMessageIsDisplayed("Group Deleted")
-            UIActions.check.viewWithIdAndTextDoesNotExist(R.id.contact_name, deletedGroup)
-            return ContactsRobot()
-        }
-
         fun contactsOpened() {
             UIActions.check.viewWithIdIsDisplayed(R.id.contactsRecyclerView)
+        }
+
+        fun contactsRefreshed() {
+            UIActions.wait.forViewWithText(R.string.fetching_contacts)
+            UIActions.wait.untilViewWithIdIsGone(R.id.progress_bar)
         }
     }
 

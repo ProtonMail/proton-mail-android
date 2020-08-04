@@ -18,70 +18,78 @@
  */
 package ch.protonmail.android.uitests.tests.inbox
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageDate
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageText
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageDate
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageText
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageDate
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageText
+import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
+import ch.protonmail.android.uitests.testsHelper.TestData.reSubject
 import org.junit.Before
-import org.junit.FixMethodOrder
 import org.junit.Test
-import org.junit.runners.MethodSorters
-import java.util.*
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@LargeTest
 class InboxTests : BaseTest() {
 
     private lateinit var inboxRobot: InboxRobot
     private val loginRobot = LoginRobot()
+    private lateinit var subject: String
+    private lateinit var body: String
 
     @Before
     override fun setUp() {
         super.setUp()
+        subject = TestData.messageSubject
+        body = TestData.messageBody
         inboxRobot = loginRobot.loginUser(TestData.onePassUser)
     }
 
     @Test
     fun deleteMessageLongClick() {
         inboxRobot
+            .menuDrawer()
+            .sent()
             .longClickMessageOnPosition(0)
             .moveToTrash()
             .verify {
-                messageDeleted(longClickedMessageText, longClickedMessageDate)
+                messageDeleted(longClickedMessageSubject, longClickedMessageDate)
             }
     }
 
     @Test
     fun deleteMessageWithSwipe() {
         inboxRobot
-            .deleteMessageWithSwipe(0)
+            .menuDrawer()
+            .sent()
+            .deleteMessageWithSwipe(1)
             .verify {
-                messageDeleted(swipeLeftMessageText, swipeLeftMessageDate)
+                messageDeleted(swipeLeftMessageSubject, swipeLeftMessageDate)
             }
     }
 
     @Test
     fun deleteMultipleMessages() {
         inboxRobot
+            .menuDrawer()
+            .sent()
             .longClickMessageOnPosition(0)
             .selectMessage(1)
             .moveToTrash()
             .verify {
-                messageDeleted(longClickedMessageText, longClickedMessageDate)
-                messageDeleted(selectedMessageText, selectedMessageDate)
+                messageDeleted(longClickedMessageSubject, longClickedMessageDate)
+                messageDeleted(selectedMessageSubject, selectedMessageDate)
             }
     }
 
     @Test
     fun starMessageWithSwipe() {
         inboxRobot
+            .menuDrawer()
+            .sent()
             .swipeLeftMessageAtPosition(0)
             .verify { messageStarred() }
     }
@@ -97,7 +105,7 @@ class InboxTests : BaseTest() {
             .moveToExistingFolder(folder)
             .menuDrawer()
             .labelOrFolder(folder)
-            .verify { messageMoved(longClickedMessageText) }
+            .verify { messageMoved(longClickedMessageSubject) }
     }
 
     //TODO create a bug - app hangs in loading state after trying to empty the trash folder
@@ -114,7 +122,9 @@ class InboxTests : BaseTest() {
     @Test
     fun messageDetailsViewHeaders() {
         inboxRobot
-            .selectMessage(0)
+            .menuDrawer()
+            .sent()
+            .clickMessageByPosition(0)
             .moreOptions()
             .viewHeaders()
             .verify { messageHeadersDisplayed() }
@@ -126,7 +136,7 @@ class InboxTests : BaseTest() {
         inboxRobot
             .compose()
             .draftSubjectBody(draftSubject)
-            .navigateUpToInbox()
+            .clickUpButton()
             .confirmDraftSaving()
             .menuDrawer()
             .drafts()
@@ -139,81 +149,87 @@ class InboxTests : BaseTest() {
         inboxRobot
             .compose()
             .draftSubjectBodyAttachment(draftSubject)
-            .navigateUpToInbox()
+            .clickUpButton()
             .confirmDraftSaving()
             .menuDrawer()
             .drafts()
             .verify { draftWithAttachmentSaved(draftSubject) }
     }
 
-    //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
-    fun searchDraftMessageAndSend() {
-//        inboxRobot
-//            .searchBar()
-//            .searchMessageText("Draft")
-//            .openDraftMessage()
-//            .toRecipient(TestData.composerData().internalEmailAddressTrustedKeys)
-//            .editSubject(TestData.composerData().messageSubject)
-//            .send()
-//            .verify {
-//                sendingMessageToastShown()
-//                messageSentToastShown()
-//            }
-    }
-
     @Test
     fun reply() {
+        val to = TestData.internalEmailTrustedKeys.email
         inboxRobot
-            .selectMessage(0)
+            .compose()
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .clickMessageBySubject(subject)
             .reply()
-            .editBodyAndSend("Robot Reply ")
+            .editBodyAndReply("Robot Reply")
+            .navigateUpToSent()
             .verify {
-                messageSentToastShown()
+                messageWithSubjectExists(reSubject(subject))
             }
     }
 
     @Test
     fun replyMessageWithAttachment() {
+        val to = TestData.internalEmailTrustedKeys.email
         inboxRobot
+            .compose()
+            .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
-            .labelOrFolder("Attachments")
-            .selectMessage(Random().nextInt(5))
-            .verifyMessageContainsAttachment()
+            .sent()
+            .clickMessageBySubject(subject)
             .reply()
-            .editBodyAndSend("Robot Reply With Attachment ")
-            .verify { messageSentToastShown() }
+            .editBodyAndReply("Robot Reply With Attachment ")
+            .navigateUpToSent()
+            .verify { messageWithSubjectExists(reSubject(subject)) }
     }
 
     @Test
     fun replyAll() {
+        val to = TestData.internalEmailTrustedKeys.email
         inboxRobot
+            .compose()
+            .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .selectMessage(0)
+            .clickMessageBySubject(subject)
             .replyAll()
-            .editBodyAndSend("Robot ReplyAll ")
-            .verify { messageSentToastShown() }
+            .editBodyAndReply("Robot ReplyAll ")
+            .navigateUpToSent()
+            .verify { messageWithSubjectExists(reSubject(subject)) }
     }
 
     @Test
     fun forwardMessage() {
+        val to = TestData.internalEmailTrustedKeys.email
         inboxRobot
+            .compose()
+            .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .selectMessage(0)
+            .clickMessageBySubject(subject)
             .forward()
-            .sendMessageToInternalTrustedAddress()
-            .verify { }
+            .forwardMessage(to, body)
+            .navigateUpToSent()
+            .verify { messageWithSubjectExists(fwSubject(subject)) }
     }
 
     @Test
     fun forwardMessageWithAttachment() {
+        val to = TestData.internalEmailTrustedKeys.email
         inboxRobot
+            .compose()
+            .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
-            .labelOrFolder("Attachments")
-            .selectMessage(Random().nextInt(5))
+            .sent()
+            .clickMessageBySubject(subject)
             .forward()
-            .sendMessageToInternalTrustedAddress()
-            .verify { }
+            .forwardMessage(to, body)
+            .navigateUpToSent()
+            .verify { messageWithSubjectExists(fwSubject(subject)) }
     }
 }

@@ -43,6 +43,6 @@ class SettingsTests : BaseTest() {
     fun clearCache() {
         settingsRobot
             .emptyCache()
-            .verify { cacheCleared() }
+            .verify { settingsOpened() }
     }
 }

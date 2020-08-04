@@ -48,6 +48,11 @@ object TestData {
     var externalEmailPGPSigned =
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
 
+
+    fun reSubject(subject: String): String = "Re: $subject"
+
+    fun fwSubject(subject: String): String = "Fw: $subject"
+
     //SEARCH MESSAGE
     const val searchMessageSubject = "Random Subject"
     const val searchMessageSubjectNotFound = "MessageNotFound :O"
@@ -62,4 +67,7 @@ object TestData {
     val editGroupName = "Group edited on ${System.currentTimeMillis()}"
     val messageSubject = "Random Subject: ${System.currentTimeMillis()}"
     val messageBody = "\n\nHello ProtonMail!\nRandom body:\n\n${System.currentTimeMillis()}"
+
+    const val editedPassword = "123"
+    const val editedPasswordHint = "ProtonMail"
 }

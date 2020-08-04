@@ -53,114 +53,35 @@ class ContactsTests : BaseTest() {
     }
 
     @Test
-    fun addNewContact() {
-        contactsRobot
-            .addFab()
-            .addContact()
-            .insertContactName(TestData.newContactName)
-            .saveContact()
-            .verify { contactSaved() }
-    }
-
-
-    //TODO Check with developers as I'm getting java.lang.ArrayIndexOutOfBoundsException: during test run
-    fun editContact() {
-        val contactName = "${TestData.newContactName} ${System.currentTimeMillis()}"
-        contactsRobot
-            .addFab()
-            .addContact()
-            .insertContactName(contactName)
-            .saveContact()
-            .chooseContact(contactName)
-            .contactDetails()
-            .editDisplayName(TestData.editContactName)
-            .editEmailAddress(TestData.editEmailAddress)
-            .saveContact()
-            .verify { contactSaved() }
-    }
-
-    // TODO Check with developers as I'm getting java.lang.ArrayIndexOutOfBoundsException: during test run
-    fun deleteContact() {
-        val deletedContact = ""
-        contactsRobot
-            .delete()
-            .confirmDelete()
-            .verify { contactDeleted(deletedContact) }
-    }
-
-    //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
     fun contactDetailSendMessage() {
+        val subject = TestData.messageSubject
+        val body = TestData.messageBody
         contactsRobot
-            .chooseContactWithText("protonmail.com")
-            .composeButton()
-            .composeMessage(TestData.messageSubject, TestData.messageBody)
-            .send()
+            .contactsView()
+            .clickSendMessageToContact(TestData.twoPassUser.email)
+            .sendMessageToContact(subject, body)
+            .navigateUpToInbox()
+            .menuDrawer()
+            .sent()
             .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
+                messageWithSubjectExists(subject)
             }
     }
 
     @Test
-    fun addNewContactGroup() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
-        contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
-            .verify { groupSaved() }
-    }
-
-    @Test
-    fun contactGroupEdit() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
-        val editedGroupName = "${TestData.newGroupName} edited ${System.currentTimeMillis()}"
-        contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
-            .groupsView()
-            .chooseGroup(contactGroupName)
-            .editFab()
-            .editGroupName(editedGroupName)
-            .saveGroup()
-            .verify { groupSaved() }
-    }
-
-    //TODO to be enabled when https://jira.protontech.ch/browse/MAILAND-662 is fixed
     fun contactGroupSendMessage() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
+        val subject = TestData.messageSubject
+        val body = TestData.messageBody
+        val groupName = "Second Group"
         contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
             .groupsView()
-            .chooseGroup(contactGroupName)
-            .groupsView()
-            .composeToGroup()
-            .composeMessage(TestData.messageSubject, TestData.messageBody)
-            .send()
+            .clickSendMessageToGroup(groupName)
+            .sendMessageToContact(subject, body)
+            .navigateUpToInbox()
+            .menuDrawer()
+            .sent()
             .verify {
-                sendingMessageToastShown()
-                messageSentToastShown()
+                messageWithSubjectExists(subject)
             }
-    }
-
-    @Test
-    fun deleteGroup() {
-        val contactGroupName = "${TestData.newGroupName} ${System.currentTimeMillis()}"
-        contactsRobot
-            .addFab()
-            .addContactGroup()
-            .editGroupName(contactGroupName)
-            .saveGroup()
-            .groupsView()
-            .chooseGroup(contactGroupName)
-            .delete()
-            .confirmDelete()
-            .verify { groupDeleted(contactGroupName) }
     }
 }

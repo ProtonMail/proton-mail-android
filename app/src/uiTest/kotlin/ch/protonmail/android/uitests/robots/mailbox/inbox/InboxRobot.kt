@@ -30,10 +30,6 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 class InboxRobot : MailboxRobotInterface {
 
-    init {
-        UIActions.wait.untilViewWithIdAppears(R.id.compose)
-    }
-
     override fun swipeLeftMessageAtPosition(messagePosition: Int): InboxRobot {
         super.swipeLeftMessageAtPosition(messagePosition)
         return this
@@ -52,25 +48,7 @@ class InboxRobot : MailboxRobotInterface {
     /**
      * Contains all the validations that can be performed by [InboxRobot].
      */
-    class Verify {
-
-        fun messageMoved(messageSubject: String) {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.messageTitleTextView, messageSubject)
-        }
-
-        fun messageDeleted(subject: String, date: String) {
-            UIActions.recyclerView.checkDoesNotContainItemWithText(R.id.messages_list_view, subject, date)
-        }
-
-        fun mailboxLayoutShown() {
-            UIActions.wait.untilViewWithIdAppears(R.id.messages_list_view)
-        }
-
-        fun messageStarred() {
-            UIActions.wait.untilViewWithIdAppears(R.id.snackbar_text)
-            UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, "Message star updated")
-        }
-    }
+    class Verify : MailboxRobotInterface.verify()
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 

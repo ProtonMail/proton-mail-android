@@ -19,7 +19,6 @@
 package ch.protonmail.android.uitests.robots.mailbox.sent
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MoveToFolderRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.SelectionStateRobotInterface
@@ -47,9 +46,9 @@ class SentRobot : MailboxRobotInterface {
         return this
     }
 
-    fun getMessageSubjectAtPosition(position: Int): String = ""
-//        UIActions.get.messageSubjectByPosition(R.id.messages_list_view, position)!!
-
+    /**
+     * Handles Mailbox selection state actions and verifications after user long click one of the messages.
+     */
     class SelectionStateRobot : SelectionStateRobotInterface {
 
         override fun exitMessageSelectionState(): InboxRobot {
@@ -78,6 +77,9 @@ class SentRobot : MailboxRobotInterface {
         }
     }
 
+    /**
+     * Handles Move to folder dialog actions.
+     */
     class MoveToFolderRobot : MoveToFolderRobotInterface {
 
         override fun moveToExistingFolder(name: String): InboxRobot {
@@ -89,21 +91,10 @@ class SentRobot : MailboxRobotInterface {
     /**
      * Contains all the validations that can be performed by [SentRobot].
      */
-    class Verify {
-
-        fun multipleMessagesDeleted() {
-            UIActions.wait.untilViewWithIdAppears(R.id.snackbar_text)
-            UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, "Messages moved to trash")
-            //TODO add check by message text
-        }
-
+    class Verify : MailboxRobotInterface.verify() {
         fun messageStarred() {
-            UIActions.wait.untilViewWithIdAppears(R.id.snackbar_text)
+            UIActions.wait.forViewWithId(R.id.snackbar_text)
             UIActions.check.viewWithIdAndTextIsDisplayed(R.id.snackbar_text, "Message star updated")
-        }
-
-        fun messageWithSubjectExists(subject: String) {
-            UIActions.recyclerView.scrollToRecyclerViewMatchedItem(R.id.messages_list_view, withMessageSubject(subject))
         }
     }
 

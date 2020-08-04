@@ -30,7 +30,7 @@ class ProtonWatcher {
 
     companion object {
         const val CONDITION_NOT_MET = 0
-        const val DEFAULT_TIMEOUT = 1000 * 2L
+        const val DEFAULT_TIMEOUT = 10_000L
         const val DEFAULT_INTERVAL = 250L
         const val TIMEOUT = 2
         var status = CONDITION_NOT_MET
@@ -53,6 +53,8 @@ class ProtonWatcher {
                     }
                 }
             }
+            // reset to initial state
+            status = 0
         }
 
         fun setTimeout(ms: Long) {

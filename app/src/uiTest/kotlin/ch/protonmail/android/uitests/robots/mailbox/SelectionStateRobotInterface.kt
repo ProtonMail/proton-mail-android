@@ -39,7 +39,7 @@ interface SelectionStateRobotInterface {
     }
 
     fun addFolder(): Any {
-        UIActions.wait.untilViewWithIdAppears(R.id.add_folder).click()
+        UIActions.wait.forViewWithId(R.id.add_folder).click()
         return Any()
     }
 

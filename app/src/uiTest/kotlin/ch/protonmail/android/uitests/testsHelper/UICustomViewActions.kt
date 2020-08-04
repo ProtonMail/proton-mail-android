@@ -18,71 +18,112 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
+import android.util.Log
 import android.view.View
-import android.view.Window
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.AmbiguousViewMatcherException
+import androidx.test.espresso.AppNotIdleException
+import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.NoMatchingViewException
+import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerViewAction
-import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
-import ch.protonmail.android.core.ProtonMailApplication
+import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import org.jetbrains.annotations.Contract
-import org.junit.Assert
 import kotlin.test.*
 
-/**
- * Created by Nikola Nolchevski on 12-Apr-20.
- */
-internal object UICustomViewActions {
+object UICustomViewActions {
 
-    private const val TIMEOUT_5S = 5000L
+    private const val TIMEOUT_10S = 10000L
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-    private val window: Window
-        get() = ProtonMailApplication.getApplication().currentActivity.window
 
-    private fun getResourceName(objectId: Int): String {
-        return targetContext.resources.getResourceName(objectId)
-    }
+    fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
+        try {
+            ProtonWatcher.setTimeout(timeout)
+            ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+                var errorMessage = ""
 
-    fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_5S): ViewInteraction {
-        ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-            var errorMessage = ""
+                override fun getDescription() = "UICustomViewActions.waitUntilViewAppears $errorMessage"
 
-            override fun getDescription() = "waitForElement - $errorMessage"
-
-            override fun checkCondition() = try {
-                interaction.check(matches(isDisplayed()))
-                true
-            } catch (e: NoMatchingViewException) {
-                if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                    throw e
-                } else {
-                    false
+                override fun checkCondition(): Boolean {
+                    return try {
+                        interaction.check(matches(isDisplayed()))
+                        true
+                    } catch (e: PerformException) {
+                        errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
+                        false
+                    } catch (e: NoMatchingViewException) {
+                        errorMessage = e.viewMatcherDescription
+                        false
+                    } catch (e: NoMatchingRootException) {
+                        false
+                    } catch (e: AppNotIdleException) {
+                        false
+                    } catch (e: AmbiguousViewMatcherException) {
+                        false
+                    } catch (e: AssertionFailedError) {
+                        false
+                    }
                 }
+            })
+        } catch (e: Throwable) {
+            if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                throw e
             }
-        })
+        }
         return interaction
     }
 
-    fun waitUntilRecyclerViewPopulated(@IdRes id: Int, timeout: Long = TIMEOUT_5S) {
+    fun waitUntilViewIsGone(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
+        try {
+            ProtonWatcher.setTimeout(timeout)
+            ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+                var errorMessage = ""
+
+                override fun getDescription() = "waitForElement - $errorMessage"
+
+                override fun checkCondition() = try {
+                    interaction.check(matches(not(isDisplayed())))
+                    true
+                } catch (e: PerformException) {
+                    errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
+                    false
+                } catch (e: NoMatchingViewException) {
+                    errorMessage = e.viewMatcherDescription
+                    false
+                } catch (e: NoMatchingRootException) {
+                    false
+                } catch (e: AppNotIdleException) {
+                    false
+                } catch (e: AmbiguousViewMatcherException) {
+                    false
+                } catch (e: AssertionFailedError) {
+                    false
+                }
+            })
+        } catch (e: Throwable) {
+            if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                throw e
+            }
+        }
+        return interaction
+    }
+
+    fun waitUntilRecyclerViewPopulated(@IdRes id: Int, timeout: Long = TIMEOUT_10S) {
         ProtonWatcher.setTimeout(timeout)
         ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
             var errorMessage = ""
@@ -98,81 +139,6 @@ internal object UICustomViewActions {
                 false
             }
         })
-    }
-
-    fun waitUntilViewIsGone(viewInteraction: ViewInteraction, timeout: Long = TIMEOUT_5S): ViewInteraction {
-        ProtonWatcher.setTimeout(timeout)
-        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
-            var errorMessage = ""
-
-            override fun getDescription(): String {
-                return "Waiting until view appears - $errorMessage\n"
-            }
-
-            override fun checkCondition(): Boolean {
-                return try {
-                    viewInteraction.check(matches(not(isDisplayed())))
-                    true
-                } catch (e: NoMatchingViewException) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                }
-            }
-        }
-        ProtonWatcher.waitForCondition(condition)
-        return viewInteraction
-    }
-
-    private fun checkCondition(condition: ProtonWatcher.Condition, element: String) {
-        try {
-            ProtonWatcher.waitForCondition(condition)
-        } catch (e: Exception) {
-            Assert.fail("$element was not found")
-            e.printStackTrace()
-        }
-    }
-
-    fun waitUntilToastAppears(objectId: Int) {
-        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
-            override fun getDescription(): String {
-                return "Waiting until object appears"
-            }
-
-            override fun checkCondition(): Boolean {
-                return try {
-                    onView(withText(objectId)).inRoot(withDecorView(Matchers.not(window.decorView)))
-                        .check(matches(isDisplayed()))
-                    return true
-                } catch (e: NoMatchingViewException) {
-                    e.printStackTrace()
-                    false
-                }
-            }
-        }
-        checkCondition(condition, getResourceName(objectId))
-    }
-
-    fun waitUntilToastAppears(objectText: String) {
-        val condition: ProtonWatcher.Condition = object : ProtonWatcher.Condition() {
-            override fun getDescription(): String {
-                return "Waiting until object appears"
-            }
-
-            override fun checkCondition(): Boolean {
-                return try {
-                    onView(withText(objectText)).inRoot(withDecorView(not(window.decorView)))
-                        .check(matches(isDisplayed()))
-                    true
-                } catch (e: NoMatchingViewException) {
-                    e.printStackTrace()
-                    false
-                }
-            }
-        }
-        checkCondition(condition, objectText)
     }
 
     @Contract(value = "_ -> new", pure = true)
@@ -234,6 +200,18 @@ internal object UICustomViewActions {
                 }
             }
             assertFalse(isMatches, "RecyclerView should not contain item with subject: \"$subject\"")
+        }
+    }
+
+    fun clickOnChildWithId(@IdRes id: Int): ViewAction {
+        return object : ViewAction {
+            override fun perform(uiController: UiController, view: View) {
+                view.findViewById<View>(id).callOnClick()
+            }
+
+            override fun getDescription(): String = "Click child view with id."
+
+            override fun getConstraints(): Matcher<View> = isAssignableFrom(View::class.java)
         }
     }
 }
