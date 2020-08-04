@@ -40,6 +40,7 @@ import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.PasswordChangeEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.ChangePasswordJob
+import ch.protonmail.android.jobs.user.FetchUserSettingsJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
@@ -60,9 +61,7 @@ class ChangePasswordActivity : BaseActivity() {
     private var currentPassword: ByteArray? = null
     private var currentMailboxLoginPassword: ByteArray? = null
 
-    override fun isPreventingScreenshots(): Boolean {
-        return true
-    }
+    override fun isPreventingScreenshots(): Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,6 +148,8 @@ class ChangePasswordActivity : BaseActivity() {
     fun onPasswordChangeEvent(event: PasswordChangeEvent) {
         progressContainer.visibility = View.GONE
         if (event.status == AuthStatus.SUCCESS) {
+            val username = mUserManager.username
+            mJobManager.addJobInBackground(FetchUserSettingsJob(username))
             saveLastInteraction()
             finish()
         }

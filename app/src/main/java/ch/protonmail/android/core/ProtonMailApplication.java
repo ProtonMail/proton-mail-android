@@ -412,7 +412,9 @@ public class ProtonMailApplication extends Application implements HasActivityInj
                 break;
                 default: {
                     String message = event.getStatusMessage();
-                    if (message == null || message.isEmpty()) {
+                    if (!mNetworkUtil.isConnected()) {
+                        message = getString(R.string.no_connectivity_detected);
+                    } else if (message == null || message.isEmpty()) {
                         message = getString(R.string.default_error_message);
                     }
                     TextExtensions.showToast(activity.getApplicationContext(), message);
