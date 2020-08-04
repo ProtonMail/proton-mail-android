@@ -37,20 +37,20 @@ object ContactsMatchers {
      * Matches the Mailbox message represented by [ContactListItemView.ContactView] by contact name.
      * Subject must be unique in a list in order to use this matcher.
      *
-     * @param name - contact name
+     * @param email - contact name
      */
-    fun withContactName(name: String): Matcher<RecyclerView.ViewHolder> {
+    fun withContactEmail(email: String): Matcher<RecyclerView.ViewHolder> {
         return object : BoundedMatcher<RecyclerView.ViewHolder,
             RecyclerView.ViewHolder>(RecyclerView.ViewHolder::class.java) {
 
             override fun describeTo(description: Description) {
-                description.appendText("Message item that contains subject: \"$name\"")
+                description.appendText("Contact item with email: \"$email\"")
             }
 
             override fun matchesSafely(item: RecyclerView.ViewHolder): Boolean {
                 return if (item.itemView is ContactListItemView.ContactView) {
                     val contactItem = item.itemView as ContactListItemView.ContactView
-                    contactItem.contact_name.text.toString() == name
+                    contactItem.contact_email.text.toString() == email
                 } else {
                     false
                 }
@@ -65,6 +65,29 @@ object ContactsMatchers {
      * @param name - contact group name
      */
     fun withContactGroupName(name: String): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedMatcher<RecyclerView.ViewHolder,
+            RecyclerView.ViewHolder>(RecyclerView.ViewHolder::class.java) {
+
+            override fun describeTo(description: Description) {
+                description.appendText("Message item that contains subject: \"$name\"")
+            }
+
+            override fun matchesSafely(item: RecyclerView.ViewHolder): Boolean {
+                return item.itemView
+                    .findViewById<LinearLayout>(R.id.contact_data_parent)
+                    .findViewById<LinearLayout>(R.id.contact_data)
+                    .findViewById<TextView>(R.id.contact_name).text.toString() == name
+            }
+        }
+    }
+
+    /**
+     * Matches the Contact group Item by its name.
+     * Subject must be unique in a list in order to use this matcher.
+     *
+     * @param name - contact group name
+     */
+    fun sendActionForGroup(name: String): Matcher<RecyclerView.ViewHolder> {
         return object : BoundedMatcher<RecyclerView.ViewHolder,
             RecyclerView.ViewHolder>(RecyclerView.ViewHolder::class.java) {
 

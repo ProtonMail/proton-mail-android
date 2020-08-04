@@ -34,7 +34,7 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.uitests.testsHelper.ProtonFailureHandler
-import ch.protonmail.android.uitests.testsHelper.ProtonServicesIdlingResource
+import ch.protonmail.android.uitests.testsHelper.ProtonRequestsIdlingResource
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.User
@@ -65,7 +65,7 @@ open class BaseTest {
     open fun setUp() {
         Espresso.setFailureHandler(ProtonFailureHandler(InstrumentationRegistry.getInstrumentation()))
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().clear().apply()
-        IdlingRegistry.getInstance().register(ProtonServicesIdlingResource())
+        IdlingRegistry.getInstance().register(ProtonRequestsIdlingResource())
         Intents.init()
         clearLogcat()
         Log.d(testTag, "Starting test execution for test: ${testName.methodName}")

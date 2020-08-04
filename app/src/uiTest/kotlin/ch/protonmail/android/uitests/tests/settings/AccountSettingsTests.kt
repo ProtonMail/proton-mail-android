@@ -122,7 +122,7 @@ class AccountSettingsTests : BaseTest() {
         val labelName = getAlphaNumericStringWithSpecialCharacters()
         accountSettingsRobot
             .foldersAndLabels()
-        // TODO enable after https://jira.protontech.ch/browse/MAILAND-750 will be fixed.
+        // TODO enable after MAILAND-750 will be fixed.
 //                .labelsManager()
 //                .addLabel(labelName)
 //                .verify { labelWithNameShown(labelName) }
@@ -133,7 +133,7 @@ class AccountSettingsTests : BaseTest() {
         val folderName = getAlphaNumericStringWithSpecialCharacters()
         accountSettingsRobot
             .foldersAndLabels()
-        // TODO enable after https://jira.protontech.ch/browse/MAILAND-750 will be fixed.
+        // TODO enable after MAILAND-750 will be fixed.
 //                .foldersManager()
 //                .addFolder(folderName)
 //                .verify { folderWithNameShown(folderName) }

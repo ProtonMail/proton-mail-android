@@ -74,48 +74,48 @@ class LoginRobot {
     }
 
     private fun signIn(): InboxRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.sign_in)
+        UIActions.allOf.clickViewWithIdAndText(signInButtonId, R.string.sign_in)
         return InboxRobot()
     }
 
     private fun signInWithMailboxPasswordOrTwoFa(): LoginRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.sign_in)
+        signIn()
         return this
     }
 
     private fun mailboxPassword(password: String): LoginRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.mailbox_password).insert(password)
+        UIActions.wait.forViewWithId(R.id.mailbox_password).insert(password)
         return this
     }
 
     private fun decrypt(): InboxRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.decrypt)
+        UIActions.allOf.clickViewWithIdAndText(signInButtonId, R.string.decrypt)
         return InboxRobot()
     }
 
     private fun confirm2Fa(): InboxRobot {
-        UIActions.id.clickViewWithId(android.R.id.button1)
+        UIActions.system.clickPositiveDialogButton()
         return InboxRobot()
     }
 
     private fun confirm2FaAndProvideMailboxPassword(): LoginRobot {
-        UIActions.id.clickViewWithId(android.R.id.button1)
+        UIActions.system.clickPositiveDialogButton()
         return this
     }
 
     private fun twoFaCode(twoFaCode: String): LoginRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.two_factor_code)
+        UIActions.wait.forViewWithId(R.id.two_factor_code)
         onView(withId(R.id.two_factor_code)).insert(twoFaCode)
         return this
     }
 
     private fun secondPass(mailboxPassword: String): LoginRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.mailbox_password).insert(mailboxPassword)
+        UIActions.wait.forViewWithId(R.id.mailbox_password).insert(mailboxPassword)
         return this
     }
 
     private fun confirmSecondPass(): LoginRobot {
-        UIActions.allOf.clickViewWithIdAndText(R.id.sign_in, R.string.decrypt)
+        UIActions.allOf.clickViewWithIdAndText(signInButtonId, R.string.decrypt)
         return this
     }
 
@@ -125,16 +125,14 @@ class LoginRobot {
     class Verify {
 
         fun loginScreenDisplayed(): LoginRobot {
-            UIActions.wait.untilViewWithIdAppears(R.id.sign_in)
-            return LoginRobot()
-        }
-
-        //After Removing all accounts from AccountManager
-        fun removingAccountsToastShown(): LoginRobot {
-            UIActions.check.toastMessageIsDisplayed(R.string.account_manager_remove_all_accounts)
+            UIActions.wait.forViewWithId(signInButtonId)
             return LoginRobot()
         }
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+    
+    companion object {
+        const val signInButtonId = R.id.sign_in
+    }
 }

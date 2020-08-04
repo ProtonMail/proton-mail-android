@@ -220,12 +220,15 @@ internal class AccountsAdapter : BaseAdapter<DrawerUserModel, AccountsAdapter.Vi
                 buttonUserQuickSnooze.setImageResource(R.drawable.ic_notifications_active)
             }
             if (item.loggedIn) {
+                userLoginStatusParent.visibility = View.GONE
                 userSignIn.visibility = View.GONE
                 userSignedIn.visibility = View.VISIBLE
                 userNotifications.text = "${item.notifications}"
                 userNotifications.setNotificationIndicatorSize(item.notifications)
                 userNotifications.visibility = if (item.notifications == 0) View.GONE else View.VISIBLE
             } else {
+                userLoginStatusParent.visibility = View.VISIBLE
+                userSignIn.visibility = View.VISIBLE
                 userName.setStyle(R.style.DrawerNameText_Red)
                 userEmailAddress.setStyle(R.style.DrawerEmailAddressText_Red)
                 userSignIn.setOnClickListener {

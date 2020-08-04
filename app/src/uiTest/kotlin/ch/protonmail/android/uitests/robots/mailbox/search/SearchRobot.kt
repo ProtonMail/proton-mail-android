@@ -49,7 +49,7 @@ class SearchRobot {
         }
 
         fun noSearchResults() {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.no_messages, R.string.no_search_results)
+            UIActions.wait.forViewWithIdAndText(R.id.no_messages, R.string.no_search_results)
         }
     }
 

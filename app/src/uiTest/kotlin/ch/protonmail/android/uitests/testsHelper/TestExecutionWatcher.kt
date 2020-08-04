@@ -22,6 +22,7 @@ import android.content.Context
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.artifactsPath
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.automation
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description

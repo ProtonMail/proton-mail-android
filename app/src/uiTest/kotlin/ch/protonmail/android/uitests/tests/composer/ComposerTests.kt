@@ -18,190 +18,226 @@
  */
 package ch.protonmail.android.uitests.tests.composer
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
+import ch.protonmail.android.uitests.testsHelper.TestData.editedPasswordHint
 import ch.protonmail.android.uitests.testsHelper.TestData.externalEmailPGPEncrypted
+import ch.protonmail.android.uitests.testsHelper.TestData.externalEmailPGPSigned
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailNotTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
+import org.junit.Before
 import org.junit.Test
 
-@LargeTest
 class ComposerTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
+    private lateinit var subject: String
+    private lateinit var body: String
+
+    @Before
+    override fun setUp() {
+        super.setUp()
+        subject = TestData.messageSubject
+        body = TestData.messageBody
+    }
 
     @Test
     fun sendMessageToInternalTrustedContact() {
+        val to = internalEmailTrustedKeys.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageToInternalTrustedAddress()
+            .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @Test
     fun sendMessageToInternalNotTrustedContact() {
+        val to = internalEmailNotTrustedKeys.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageToInternalNotTrustedAddress()
+            .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @Test
     fun sendMessageToPGPEncryptedContact() {
+        val to = externalEmailPGPEncrypted.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageToExternalAddressPGPEncrypted()
+            .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @Test
     fun sendMessageToPGPSignedContact() {
+        val to = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageToExternalAddressPGPSigned()
+            .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @Test
     fun sendMessageTOandCC() {
+        val to = internalEmailTrustedKeys.email
+        val cc = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageTOandCC(internalEmailTrustedKeys, externalEmailPGPEncrypted)
+            .sendMessageTOandCC(to, cc, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @Test
     fun sendMessageTOandCCandBCC() {
+        val to = internalEmailTrustedKeys.email
+        val cc = externalEmailPGPSigned.email
+        val bcc = internalEmailNotTrustedKeys.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageTOandCCandBCC(internalEmailTrustedKeys, externalEmailPGPEncrypted, internalEmailNotTrustedKeys)
+            .sendMessageTOandCCandBCC(to, cc, bcc, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
 
     }
 
     @Test
     fun sendMessageEO() {
+        val to = externalEmailPGPSigned.email
+        val password = editedPassword
+        val hint = editedPasswordHint
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageWithPassword()
+            .sendMessageWithPassword(to, subject, body, password, hint)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
 
     }
 
     @Test
     fun sendMessageExpiryTime() {
+        val to = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageExpiryTimeInDays(2)
+            .sendMessageExpiryTimeInDays(to, subject, body, 2)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
 
     }
 
     @Test
     fun sendMessageEOAndExpiryTime() {
+        val to = externalEmailPGPSigned.email
+        val password = editedPassword
+        val hint = editedPasswordHint
         loginRobot
-            .loginTwoPasswordUser(TestData.twoPassUser)
+            .loginTwoPasswordUser(twoPassUser)
             .compose()
-            .sendMessageEOAndExpiryTimeAndPGPConfirmation(1)
+            .sendMessageEOAndExpiryTime(to, subject, body, 1, password, hint)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
 
     }
 
     @Test
     fun sendMessageEOAndExpiryTimeWithAttachment() {
+        val to = externalEmailPGPSigned.email
+        val password = editedPassword
+        val hint = editedPasswordHint
         loginRobot
-            .loginTwoPasswordUser(TestData.twoPassUser)
+            .loginTwoPasswordUser(twoPassUser)
             .compose()
-            .sendMessageEOAndExpiryTimeWithAttachmentAndPGPConfirmation(1)
+            .sendMessageEOAndExpiryTimeWithAttachment(to, subject, body, 1, password, hint)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
 
     }
 
     @Test
     fun sendMessageToInternalTrustedContactCameraCaptureAttachment() {
+        val to = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageCameraCaptureAttachment()
+            .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
 
     }
 
     @Test
     fun sendMessageToInternalNotTrustedContactChooseAttachment() {
+        val to = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageChooseAttachment()
+            .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
 
     }
 
     @Test
     fun sendMessageToInternalContactWithTwoAttachments() {
+        val to = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageToInternalContactWithTwoAttachments()
+            .sendMessageWithTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
-
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @Test
     fun sendMessageToExternalContactWithOneAttachment() {
+        val to = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageToExternalContactWithOneAttachment()
+            .sendMessageToExternalContactWithOneAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @Test
     fun sendMessageToExternalContactWithTwoAttachments() {
+        val to = externalEmailPGPSigned.email
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .compose()
-            .sendMessageToExternalContactWithTwoAttachments()
+            .sendMessageToExternalContactWithTwoAttachments(to, subject, body)
             .menuDrawer()
             .sent()
-            .verify { messageWithSubjectExists(TestData.messageSubject) }
+            .verify { messageWithSubjectExists(subject) }
     }
 }

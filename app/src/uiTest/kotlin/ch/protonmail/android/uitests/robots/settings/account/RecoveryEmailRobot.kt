@@ -47,7 +47,7 @@ class RecoveryEmailRobot {
     }
 
     private fun password(password: String): RecoveryEmailRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.current_password)
+        UIActions.wait.forViewWithId(R.id.current_password)
             .insert(password)
         return this
     }
@@ -68,7 +68,7 @@ class RecoveryEmailRobot {
     class Verify {
 
         fun recoveryEmailChangedTo(email: String) {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.currentRecoveryEmail, email)
+            UIActions.wait.forViewWithIdAndText(R.id.currentRecoveryEmail, email)
         }
     }
 

@@ -32,7 +32,6 @@ class MultiuserManagementTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
 
-
     @Test
     fun connectOnePassAccount() {
         loginRobot.loginTwoPasswordUser(twoPassUser)
@@ -43,7 +42,7 @@ class MultiuserManagementTests : BaseTest() {
             .connectOnePassAccount(onePassUser)
             .menuDrawer()
             .accountsList()
-            .verify { accountAdded(onePassUser.email, 0) }
+            .verify { accountAdded(onePassUser.email) }
     }
 
     @Test
@@ -56,7 +55,7 @@ class MultiuserManagementTests : BaseTest() {
             .connectTwoPassAccount(twoPassUser)
             .menuDrawer()
             .accountsList()
-            .verify { accountAdded(twoPassUser.email, 0) }
+            .verify { accountAdded(twoPassUser.email) }
     }
 
     @Test
@@ -69,7 +68,7 @@ class MultiuserManagementTests : BaseTest() {
             .connectTwoPassAccountWithTwoFa(twoPassUserWith2FA)
             .menuDrawer()
             .accountsList()
-            .verify { accountAdded(twoPassUserWith2FA.email, 0) }
+            .verify { accountAdded(twoPassUserWith2FA.email) }
     }
 
     @Test
@@ -82,7 +81,7 @@ class MultiuserManagementTests : BaseTest() {
             .connectOnePassAccountWithTwoFa(onePassUserWith2FA)
             .menuDrawer()
             .accountsList()
-            .verify { accountAdded(onePassUserWith2FA.email, 0) }
+            .verify { accountAdded(onePassUserWith2FA.email) }
     }
 
     @Test
@@ -94,7 +93,6 @@ class MultiuserManagementTests : BaseTest() {
             .removeAllAccounts()
             .verify {
                 loginScreenDisplayed()
-                //  removingAccountsToastShown()
             }
     }
 
@@ -109,10 +107,10 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .logoutAccount(0)
+            .logoutAccount(onePassUser.email)
             .menuDrawer()
             .accountsList()
-            .verify { accountLoggedOut(twoPassUser.name, 1) }
+            .verify { accountLoggedOut(onePassUser.name) }
     }
 
     @Test
@@ -126,10 +124,10 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .logoutAccount(1)
+            .logoutAccount(onePassUser.email)
             .menuDrawer()
             .accountsList()
-            .verify { accountLoggedOut(onePassUser.name, 1) }
+            .verify { accountLoggedOut(onePassUser.name) }
     }
 
     @Test
@@ -138,7 +136,7 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .logoutOnlyRemainingAccount()
+            .logoutLastAccount(onePassUser.email)
             .verify { loginScreenDisplayed() }
     }
 
@@ -153,10 +151,10 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .removeAccount(0)
+            .removeAccount(twoPassUser.email)
             .menuDrawer()
             .accountsList()
-            .verify { accountRemoved(twoPassUser.name, twoPassUser.email) }
+            .verify { accountRemoved(twoPassUser.name) }
     }
 
     @Test
@@ -170,10 +168,10 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .removeAccount(1)
+            .removeAccount(twoPassUser.email)
             .menuDrawer()
             .accountsList()
-            .verify { accountRemoved(onePassUser.name, onePassUser.email) }
+            .verify { accountRemoved(twoPassUser.name) }
     }
 
     @Test
@@ -182,7 +180,7 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .removeOnlyRemainingAccount()
+            .logoutLastAccount(onePassUser.email)
             .verify { loginScreenDisplayed() }
     }
 
@@ -197,11 +195,11 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .logoutAccount(0)
+            .logoutAccount(twoPassUser.email)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
-            .removeOnlyRemainingAccount()
+            .logoutLastAccount(onePassUser.email)
             .verify { loginScreenDisplayed() }
     }
 
@@ -215,7 +213,7 @@ class MultiuserManagementTests : BaseTest() {
             .cancelLoginOnTwoFaPrompt(onePassUserWith2FA)
             .menuDrawer()
             .accountsList()
-            .verify { accountLoggedOut(onePassUserWith2FA.name, 1) }
+            .verify { accountLoggedOut(onePassUserWith2FA.name) }
     }
 
     @Test
@@ -240,7 +238,8 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .switchToAccount(1)
+            .accountsList()
+            .manageAccounts()
             .verify { switchedToAccount(onePassUser.name) }
     }
-
 }

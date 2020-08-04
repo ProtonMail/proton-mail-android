@@ -30,6 +30,10 @@ object StringUtils {
         return targetContext.getString(id)
     }
 
+    fun stringFromResource(@IdRes id: Int, arg1: String): String {
+        return targetContext.getString(id, arg1)
+    }
+
     fun getAlphaNumericStringWithSpecialCharacters(length: Long = 10): String {
         val source = "aäbcdeëfghijklmnoöpqrstuuüvwxyz1234567890!@+_)(*&^%$#@!"
         return Random().ints(length, 0, source.length)

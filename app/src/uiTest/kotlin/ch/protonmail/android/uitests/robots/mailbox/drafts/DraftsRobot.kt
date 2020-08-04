@@ -66,16 +66,16 @@ class DraftsRobot : MailboxRobotInterface {
 
         fun folderEmpty() {
             //TODO - remove this workaround with 20 sec waiting time when possible
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.no_messages, R.string.no_messages, 20000)
+            UIActions.wait.forViewWithIdAndText(R.id.no_messages, R.string.no_messages, 20000)
         }
 
         fun draftMessageSaved(draftSubject: String?): DraftsRobot {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.messageTitleTextView, draftSubject!!)
+            UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, draftSubject!!)
             return DraftsRobot()
         }
 
         fun draftWithAttachmentSaved(draftSubject: String) {
-            UIActions.wait.untilViewWithIdAndTextAppears(R.id.messageTitleTextView, draftSubject)
+            UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, draftSubject)
         }
     }
 

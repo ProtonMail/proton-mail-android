@@ -21,6 +21,7 @@ package ch.protonmail.android.uitests
 import ch.protonmail.android.uitests.tests.composer.ComposerTests
 import ch.protonmail.android.uitests.tests.contacts.ContactsTests
 import ch.protonmail.android.uitests.tests.inbox.InboxTests
+import ch.protonmail.android.uitests.tests.inbox.SearchTests
 import ch.protonmail.android.uitests.tests.login.LoginTests
 import ch.protonmail.android.uitests.tests.manageaccounts.MultiuserManagementTests
 import ch.protonmail.android.uitests.tests.menu.MenuTests
@@ -36,9 +37,9 @@ import org.junit.runners.Suite
     ContactsTests::class,
     InboxTests::class,
     LoginTests::class,
-    ContactsTests::class,
+    MultiuserManagementTests::class,
     MenuTests::class,
     SettingsTests::class,
-    MultiuserManagementTests::class
+    SearchTests::class
 )
 class TestSuite

@@ -118,7 +118,7 @@ open class ConnectAccountRobot {
     }
 
     private fun twoFaCode(twoFaCode: String): ConnectAccountRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.two_factor_code)
+        UIActions.wait.forViewWithId(R.id.two_factor_code)
         UIActions.id.insertTextIntoFieldWithId(R.id.two_factor_code, twoFaCode)
         return this
     }

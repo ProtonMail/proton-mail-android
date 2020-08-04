@@ -20,7 +20,9 @@ package ch.protonmail.android.uitests.robots.mailbox.message
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.click
 
 /**
  * [MessageRobot] class contains actions and verifications for Message detail view functionality.
@@ -28,24 +30,23 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 class MessageRobot {
 
     fun selectFolder(folderName: String): MessageRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.folders_list_view)
+        UIActions.wait.forViewWithId(R.id.folders_list_view)
         UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, folderName)
         return this
     }
 
     fun openFoldersModal(): MessageRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.add_folder)
-        UIActions.id.clickViewWithId(R.id.add_folder)
+        UIActions.wait.forViewWithId(R.id.add_folder).click()
         return this
     }
 
     fun reply(): ComposerRobot {
-        UIActions.id.clickViewWithId(R.id.reply)
+        UIActions.wait.forViewWithId(R.id.reply).click()
         return ComposerRobot()
     }
 
     fun replyAll(): ComposerRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.reply_all)
+        UIActions.wait.forViewWithId(R.id.reply_all)
         UIActions.id.clickViewWithId(R.id.reply_all)
         return ComposerRobot()
     }
@@ -61,12 +62,12 @@ class MessageRobot {
     }
 
     fun verifyMessageContainsAttachment(): MessageRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.attachment_title)
+        UIActions.wait.forViewWithId(R.id.attachment_title)
         return this
     }
 
     fun verifyQuotedHeaderShown(): MessageRobot {
-        UIActions.wait.untilViewWithIdAppears(R.id.quoted_header)
+        UIActions.wait.forViewWithId(R.id.quoted_header)
         return this
     }
 
@@ -78,6 +79,11 @@ class MessageRobot {
     fun verifyAttachmentsNotAdded(): MessageRobot {
         UIActions.check.viewWithIdIsNotDisplayed(R.id.attachment_count)
         return this
+    }
+
+    fun navigateUpToSent(): SentRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return SentRobot()
     }
 
     inner class MessageMoreOptions {

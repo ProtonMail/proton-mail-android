@@ -19,6 +19,7 @@
 package ch.protonmail.android.contacts.list.listView
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -47,16 +48,18 @@ class ContactsListAdapter(
         (holder).bind(
             items[position],
             onContactGroupClickListener,
-            onContactGroupSelect
+            onContactGroupSelect,
+            position
         )
     }
 
     private fun ViewHolder.bind(
         contactItem: ContactItem,
         clickListener: (ContactItem) -> Unit,
-        onContactGroupSelect: (() -> Unit)?
+        onContactGroupSelect: (() -> Unit)?,
+        position: Int
     ) {
-        val rowType = getItemType(adapterPosition)
+        val rowType = getItemType(position)
         val result = itemView as? ContactListItemView ?: when (rowType) {
             ItemType.HEADER -> ContactListItemView.ContactsHeaderView(context)
             ItemType.CONTACT -> ContactListItemView.ContactView(context)
