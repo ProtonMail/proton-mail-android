@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+@file:Suppress("DEPRECATION") // Suppress deprecated usages from old entity
+
 package ch.protonmail.android.mapper.bridge
 
 import ch.protonmail.android.domain.entity.Id
@@ -86,8 +88,18 @@ class UserBridgeMapper @Inject constructor(
         else -> throw IllegalArgumentException("Cannot get Delinquent for value $value")
     }
 
-    private companion object {
-        const val MAIL_PLAN_VALUE = 1 // 001
-        const val VPN_PLAN_VALUE = 4 // 100
+    companion object {
+        private const val MAIL_PLAN_VALUE = 1 // 001
+        private const val VPN_PLAN_VALUE = 4 // 100
+
+        /**
+         * @return default configuration for [UserBridgeMapper]
+         * This is temporary and intended to be used ONLY where a proper DI is not possible ATM
+         */
+        @JvmStatic
+        fun buildDefault() = UserBridgeMapper(
+            AddressesBridgeMapper(AddressBridgeMapper(AddressKeysBridgeMapper(AddressKeyBridgeMapper()))),
+            UserKeysBridgeMapper(UserKeyBridgeMapper())
+        )
     }
 }

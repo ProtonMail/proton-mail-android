@@ -28,8 +28,19 @@ import java.util.List;
 
 import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.utils.Fields;
+import ch.protonmail.android.mapper.bridge.AddressBridgeMapper;
 
+@Deprecated
+@kotlin.Deprecated(
+        message = "Replace with 'ch.protonmail.android.domain.entity.user.Address'.\n" +
+                "Where possible to have a proper DI use 'AddressBridgeMapper', otherwise the " +
+                "function 'toNewAddress'"
+)
 public class Address implements Parcelable {
+
+    private final static String GENERIC_DEPRECATION_MESSAGE = "Use from new Address entity " +
+            "'ch.protonmail.android.domain.entity.user.Address'\n" +
+            "Use 'toNewAddress' or replace the User directly";
 
     @SerializedName(Fields.Auth.ID)
     private String ID;
@@ -115,18 +126,27 @@ public class Address implements Parcelable {
     };
 
     // region getters and setters
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getID() {
         return ID;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getDomainId() {
         return DomainID;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getStatus() {
         return Status;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nThis must be get from parent Addresses entity")
     public int getOrder() {
         return Order;
     }
@@ -139,22 +159,32 @@ public class Address implements Parcelable {
         this.Email = email;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getEmail() {
         return Email;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public List<Keys> getKeys() {
         return Keys;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nNew field name:  'allowedToReceive'")
     public int getReceive() {
         return Receive;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getType() {
         return Type;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getDisplayName() {
         return DisplayName;
     }
@@ -171,6 +201,8 @@ public class Address implements Parcelable {
         Signature = signature;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nNew field name:  'allowedToSend'")
     public int getSend() {
         return Send;
     }
@@ -196,5 +228,13 @@ public class Address implements Parcelable {
         dest.writeString(Signature);
         dest.writeString(DomainID);
         dest.writeInt(HasKeys);
+    }
+
+    /**
+     * Convert this Address to new Address entity
+     * @return {@link ch.protonmail.android.domain.entity.user.Address}
+     */
+    public ch.protonmail.android.domain.entity.user.Address toNewAddress() {
+        return AddressBridgeMapper.buildDefault().toNewModel(this);
     }
 }

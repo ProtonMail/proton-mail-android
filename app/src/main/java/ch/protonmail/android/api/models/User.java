@@ -42,6 +42,7 @@ import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
 
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
@@ -83,7 +84,15 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_PIN;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USING_REGULAR_API;
 
+
 public class User {
+
+    private final static String GENERIC_DEPRECATION_MESSAGE = "Use from new User entity " +
+            "'ch.protonmail.android.domain.entity.user.User'\n" +
+            "Replacements options are:\n" +
+            "-  'loadNew' instead of  'load'\n" +
+            "- manual mapping with help of  'UserBridgeMapper'.\n" +
+            "- function 'toNewUser' is available when proper DI is not possible";
 
     @SerializedName(Fields.User.NAME)
     private String name;
@@ -221,6 +230,19 @@ public class User {
         user.services = securePrefs.getInt(PREF_USER_SERVICES, 0);
 
         return user;
+    }
+
+    /**
+     * Returns the new User entity.
+     * It relies on old load mechanism for load User, and then map it to new entity.
+     * This is supposed to be replaced by extracting outside of this class, and locate into a proper
+     * place
+     *
+     * @param username of the User intended to load
+     * @return new {@link ch.protonmail.android.domain.entity.user.User}
+     */
+    public ch.protonmail.android.domain.entity.user.User loadNew(String username) {
+        return load(username).toNewUser();
     }
 
     public void save() {
@@ -465,10 +487,14 @@ public class User {
         return pref.getBoolean(PREF_COMBINED_CONTACTS, false);
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public long getUsedSpace() {
         return usedSpace;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getRole() {
         return role;
     }
@@ -478,42 +504,63 @@ public class User {
         return allowMobileSignatureEdit || role > 0;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getPrivate() {
         return isPrivate;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nnew name:  'plans'")
     public int getSubscribed() {
         return subscribed;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nnew name:  'plans'")
     public int getServices() {
         return services;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\nnew name:  'plans'")
     public boolean isPaidUser() {
         return subscribed > 0;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getCredit() {
         return credit;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getCurrency() {
         return currency;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getOrganizationPrivateKey() {
         return organizationPrivateKey;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public int getDelinquentValue() {
         return delinquent;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'delinquent.mailRoutesAccessible'")
     public boolean getDelinquent() {
         return delinquent >= 3;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE + "\new name:  'totalUploadLimit'")
     public int getMaxUpload() {
         return maxUpload;
     }
@@ -565,6 +612,9 @@ public class User {
         MobileSignature = mobileSignature;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.primary?.id' for primary address id")
     public String getAddressId() {
         tryLoadAddresses();
         if (Addresses != null && Addresses.size() > 0) {
@@ -573,6 +623,9 @@ public class User {
         return AddressId;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\n from:  'addresses.primary'")
     public Address getDefaultAddress() {
         tryLoadAddresses();
         Address defaultAddress = Addresses.get(0);
@@ -585,6 +638,9 @@ public class User {
         return defaultAddress;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.primary?.email'")
     public String getDefaultEmail() {
         if (TextUtils.isEmpty(DefaultAddress)) {
             tryLoadAddresses();
@@ -610,6 +666,8 @@ public class User {
         sortAddresses();
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public CopyOnWriteArrayList<Address> getAddresses() {
         if (Addresses == null || Addresses.size() == 0) {
             tryLoadAddresses();
@@ -619,6 +677,9 @@ public class User {
         return new CopyOnWriteArrayList<>(Addresses);
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values.find { it.id == addressId }'")
     public Address getAddressById(String addressId) {
         tryLoadAddresses();
         String addrId = addressId;
@@ -639,10 +700,15 @@ public class User {
         return null;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public List<Keys> getKeys() {
         return (keys != null) ? keys : new ArrayList<>();
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values.first { it.enabled && it.allowedToSend }?.id'")
     public int getAddressByIdFromOnlySendAddresses() {
         int result = 0;
         tryLoadAddresses();
@@ -657,6 +723,11 @@ public class User {
         return result;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values\n" +
+            "  .filter { it.enabled && it.allowedToReceive }\n" +
+            "  .map { it.email }'")
     @NonNull
     public List<String> getSenderEmailAddresses() {
         List<String> result = new ArrayList<>();
@@ -669,6 +740,9 @@ public class User {
         return result;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values.filter { it.enabled && it.allowedToReceive }")
     private List<Address> getSenderAddresses() {
         List<Address> result = new ArrayList<>();
         tryLoadAddresses();
@@ -680,6 +754,9 @@ public class User {
         return result;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values.filter { it.enabled }")
     private List<Address> getSenderOnlyAddresses() {
         List<Address> result = new ArrayList<>();
         tryLoadAddresses();
@@ -691,6 +768,9 @@ public class User {
         return result;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.find { (_, v) -> v.enabled }.key")
     public int getPositionByAddressId(String addressId) {
         int result = 0;
         List<Address> senderAddresses = getSenderAddresses();
@@ -704,6 +784,9 @@ public class User {
         return result;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values.find { it.email == email }.email")
     public String getSenderAddressIdByEmail(String email) {
         String result = null;
         tryLoadAddresses();
@@ -716,6 +799,9 @@ public class User {
         return result;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values.find { it.email == email }.displayName")
     public String getSenderAddressNameByEmail(String email) {
         String result = null;
         tryLoadAddresses();
@@ -728,6 +814,9 @@ public class User {
         return result;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.find { (_, v) -> v.email == email }.key")
     public int getAddressOrderByAddress(Address address) {
         int result = 0;
         for (int i = 0; i < Addresses.size(); i++) {
@@ -761,18 +850,27 @@ public class User {
         return AddressId;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getId() {
         return id;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getName() {
         return name;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getDisplayName() {
         return DisplayName;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.values.find { it.id == addressId }?.displayName'")
     @Nullable
     public String getDisplayNameForAddress(String addressId) {
         tryLoadAddresses();
@@ -784,6 +882,8 @@ public class User {
         return DisplayName;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public long getMaxSpace() {
         return maxSpace;
     }
@@ -972,10 +1072,15 @@ public class User {
         ManuallyLocked = manuallyLocked;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getUsername() {
         return username;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
+            "\nfrom:  'addresses.sorted()'")
     private void sortAddresses() {
         List<Address> addresses = new ArrayList<>(Addresses);
         Collections.sort(addresses, (o1, o2) -> Integer.compare(o1.getOrder(), o2.getOrder()));
@@ -994,6 +1099,8 @@ public class User {
         save();
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public long getMaxAllowedAttachmentSpace() {
         return MaxAttachmentStorage; // return the value in bytes
     }
@@ -1004,5 +1111,12 @@ public class User {
         }
     }
 
+    /**
+     * Convert this User to new User entity
+     * @return {@link ch.protonmail.android.domain.entity.user.User}
+     */
+    public ch.protonmail.android.domain.entity.user.User toNewUser() {
+        return UserBridgeMapper.buildDefault().toNewModel(this);
+    }
 }
 
