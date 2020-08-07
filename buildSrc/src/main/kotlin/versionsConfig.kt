@@ -30,12 +30,12 @@ fun initVersions() {
     // endregion
 
     // region Android
-    `android-gradle-plugin version` =           "4.0.0"         // Released: May 28, 2020
+    `android-gradle-plugin version` =           "4.0.1"         // Released: Jul 14, 2020
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
-    `constraint-layout version` =               "2.0.0-beta2"   // Released: Jun 17, 2019
+    `constraint-layout version` =               "2.0.0-rc1"     // Released: Jul 30, 2020
     `dagger version` =                          "2.16"          // Released: May 04, 2018 TODO: 2.24 removed `HasActivityInjector` in favor of `HasAndroidInjector
     `espresso version` =                        "3.2.0"         // Released: May 30, 2019
     `ktx version` =                             "1.2.0-rc01"    // Released: Nov 23, 2019
@@ -53,6 +53,7 @@ fun initVersions() {
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
+    `robolectric version` =                     "4.3.1"         // Released: Oct 11, 2019
     `viewStateStore version` =                  "1.4-beta-4"    // Released: Mar 02, 2020
     // endregion
 }
@@ -78,7 +79,6 @@ const val `assertJ version` =                   "3.13.2"        // Released: Aug
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
 const val `jUnit5 version` =                    "5.5.0"         // Released:
-const val `robolectric version` =               "4.3.1"         // Released: Oct 11, 2019
 const val `json-simple version` =               "1.1.1"         // Released: Mar 21, 2012
 const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun 10, 2020
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018
