@@ -155,6 +155,7 @@ publish-github:
   variables:
       RELEASE_APP: android-mail
       RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
+      RELEASE_GITHUB_BRANCH: 'release'
   extends: .release-make-release
 
 
