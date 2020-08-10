@@ -43,7 +43,10 @@ import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
+import timber.log.Timber;
 
+import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_REASON_TAG;
+import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_TAG;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ADDRESS_ID;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_ALIASES;
@@ -687,6 +690,7 @@ public class User {
             addrId = DefaultAddress;
         }
         if (Addresses == null || Addresses.size() == 0) {
+            Timber.e(SENDING_FAILED_REASON_TAG, "Addresses is null -> " + (Addresses == null) + "or empty");
             return null;
         }
         if (TextUtils.isEmpty(addrId)) {
@@ -697,6 +701,8 @@ public class User {
                 return address;
             }
         }
+
+        Timber.e(SENDING_FAILED_TAG, "addressID not found");
         return null;
     }
 
