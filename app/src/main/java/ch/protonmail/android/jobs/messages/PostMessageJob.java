@@ -200,7 +200,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     .withTag("LOCATION", "ONRUN - NULL")
                     .withTag("EXCEPTION", "MESSAGE NULL")
                     .withTag("DBID", String.valueOf(mMessageDbId));
-            Sentry.capture(eventBuilder.withMessage("username same with primary: " + (username.equals(mUserManager.getUsername()))).build());
+            Sentry.capture(eventBuilder.withMessage("username same with primary: " + (mUsername.equals(mUserManager.getUsername()))).build());
         }
         String messageBody = message.getMessageBody();
         AddressCrypto crypto = Crypto.forAddress(mUserManager, mUsername, message.getAddressID());

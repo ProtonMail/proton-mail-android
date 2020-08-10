@@ -42,6 +42,8 @@ import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.utils.Logger;
 import timber.log.Timber;
 
+import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_TAG;
+
 /**
  * Easy utility class to do some high level encryption / decryption
  */
@@ -88,7 +90,11 @@ public abstract class Crypto {
      * Returns Address Keys for given Address.
      */
     private List<Keys> getKeysForAddress(@NonNull String username, @NonNull String addressID) {
-        return userManager.getUser(username).getAddressById(addressID).getKeys();
+        List<Keys> keysForAddress = userManager.getUser(username).getAddressById(addressID).getKeys();
+        if (keysForAddress == null) {
+            Timber.e(SENDING_FAILED_TAG, "Keys don't exist");
+        }
+        return keysForAddress;
     }
 
     /**
@@ -110,8 +116,13 @@ public abstract class Crypto {
      * Helper method dynamically selecting passphrases for currently set decryption keys. Workaround for UserKey migration.
      */
     private byte[] getPassphraseForSigningKey() throws Exception {
-        return KeyExtensionsKt.getKeyPassphrase(getDecryptionKeys().get(0), openPGP, getKeysForUser(username), userManager.getMailboxPassword(username));
-    }
+            @Nullable
+            byte[] userPassphrase = userManager.getMailboxPassword(username);
+            if (userPassphrase == null) {
+                Timber.e(SENDING_FAILED_TAG, "Passphrase doesn't exist");
+            }
+            return KeyExtensionsKt.getKeyPassphrase(getDecryptionKeys().get(0), openPGP, getKeysForUser(username), userPassphrase);
+        }
 
     byte[] getDecryptionKeysAsByteArray() throws Exception {
         System.out.println("decryption keys count: " + getDecryptionKeys().size());
