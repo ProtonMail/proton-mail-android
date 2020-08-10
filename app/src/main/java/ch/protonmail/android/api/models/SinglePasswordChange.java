@@ -22,6 +22,7 @@ import com.google.gson.annotations.SerializedName;
 
 import ch.protonmail.android.api.models.requests.PasswordChange;
 import ch.protonmail.android.api.utils.Fields;
+import io.sentry.util.Nullable;
 
 /**
  * Created by dkadrikj on 11/8/16.
@@ -38,19 +39,11 @@ public class SinglePasswordChange extends PasswordChange {
 
     public SinglePasswordChange(
             String keySalt, PrivateKeyBody[] keys, String organizationKey,
-            String srpSession, String clientEphemeral, String clientProof, String twoFactorCode, PasswordVerifier newVerifier) {
+            String srpSession, String clientEphemeral, String clientProof, String twoFactorCode, @Nullable PasswordVerifier newVerifier) {
         super(srpSession, clientEphemeral, clientProof, twoFactorCode, newVerifier);
         this.keySalt = keySalt;
         this.keys = keys;
         this.organizationKey = organizationKey;
     }
 
-    public SinglePasswordChange(
-            String keySalt, PrivateKeyBody[] keys, String organizationKey,
-            String srpSession, String clientEphemeral, String clientProof, String twoFactorCode) {
-        super(srpSession, clientEphemeral, clientProof, twoFactorCode);
-        this.keySalt = keySalt;
-        this.keys = keys;
-        this.organizationKey = organizationKey;
-    }
 }

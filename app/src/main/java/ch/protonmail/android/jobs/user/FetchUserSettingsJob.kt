@@ -28,14 +28,20 @@ import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.user.UserSettingsEvent
-import ch.protonmail.android.jobs.*
+import ch.protonmail.android.jobs.FetchByLocationJob
+import ch.protonmail.android.jobs.Priority
+import ch.protonmail.android.jobs.FetchContactsEmailsJob
+import ch.protonmail.android.jobs.FetchContactsDataJob
+import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 
 /**
  * Created by dino on 10/10/17.
  */
 
-class FetchUserSettingsJob(username: String? = null) : ProtonMailBaseJob(Params(Priority.HIGH).groupBy(Constants.JOB_GROUP_MISC), username) {
+class FetchUserSettingsJob(
+    username: String? = null
+) : ProtonMailBaseJob(Params(Priority.HIGH).groupBy(Constants.JOB_GROUP_MISC), username) {
 
     @Throws(Throwable::class)
     override fun onRun() {
@@ -49,12 +55,20 @@ class FetchUserSettingsJob(username: String? = null) : ProtonMailBaseJob(Params(
             userSettings = mApi.fetchUserSettings(username!!)
             mailSettings = mApi.fetchMailSettings(username!!)
             addresses = mApi.fetchAddresses(username!!)
-            mUserManager.setUserInfo(userInfo, username, mailSettings.mailSettings, userSettings.userSettings, addresses.addresses)
+            mUserManager.setUserInfo(userInfo, username, mailSettings.mailSettings,
+                userSettings.userSettings, addresses.addresses)
+
+            val user = mUserManager.user
+            AddressKeyActivationWorker.activateAddressKeysIfNeeded(applicationContext,
+                addresses.addresses, user.username)
+            user.notificationSetting = mUserManager.user.notificationSetting
+            user.save()
 
             if (username == mUserManager.username) {
                 // if primary
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, true)
-                mJobManager.addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX, null, true, null, false))
+                mJobManager.addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX,
+                    null, true, null, false))
                 mJobManager.addJobInBackground(FetchContactsEmailsJob(2000))
                 mJobManager.addJobInBackground(FetchContactsDataJob())
             } else {
@@ -65,10 +79,12 @@ class FetchUserSettingsJob(username: String? = null) : ProtonMailBaseJob(Params(
             userSettings = mApi.fetchUserSettings()
             mailSettings = mApi.fetchMailSettings()
             addresses = mApi.fetchAddresses()
-            mUserManager.setUserInfo(userInfo, mailSettings = mailSettings.mailSettings, userSettings = userSettings.userSettings, addresses = addresses.addresses)
+            mUserManager.setUserInfo(userInfo, mailSettings = mailSettings.mailSettings,
+                userSettings = userSettings.userSettings, addresses = addresses.addresses)
 
             val user = mUserManager.user
-            AddressKeyActivationWorker.activateAddressKeysIfNeeded(applicationContext, addresses.addresses, user.username)
+            AddressKeyActivationWorker.activateAddressKeysIfNeeded(applicationContext,
+                addresses.addresses, user.username)
             user.notificationSetting = mUserManager.user.notificationSetting
             user.save()
         }
