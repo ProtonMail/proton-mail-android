@@ -317,7 +317,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
             public void onChanged(@Nullable Boolean aBoolean) {
                 viewModel.getMessageSavedInDBResult().removeObserver(this);
                 Message message = viewModel.getDecryptedMessageData().getValue();
-                MessageUtils.moveMessage(MessageDetailsActivity.this, mJobManager, folderId, viewModel.getFolderIds(), Collections.singletonList(new SimpleMessage(message)));
+                MessageUtils.INSTANCE.moveMessage(MessageDetailsActivity.this, mJobManager, folderId, viewModel.getFolderIds(), Collections.singletonList(new SimpleMessage(message)));
                 viewModel.markRead(true);
                 onBackPressed();
             }
@@ -1026,7 +1026,7 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
 
             replyButtonsPanelView.setOnMessageActionListener(messageAction -> {
                 try {
-                    String newMessageTitle = MessageUtils.buildNewMessageTitle(MessageDetailsActivity.this, messageAction, message.getSubject());
+                    String newMessageTitle = MessageUtils.INSTANCE.buildNewMessageTitle(MessageDetailsActivity.this, messageAction, message.getSubject());
 
                     long userUsedSpace = ProtonMailApplication.getApplication().getSecureSharedPreferences(mUserManager.getUsername()).getLong(Constants.Prefs.PREF_USED_SPACE, 0);
                     long userMaxSpace = mUserManager.getUser().getMaxSpace() == 0L ? Long.MAX_VALUE : mUserManager.getUser().getMaxSpace();
@@ -1050,14 +1050,14 @@ public class MessageDetailsActivity extends BaseStoragePermissionActivity implem
                                         return;
                                     }
                                     Intent intent = AppUtil.decorInAppIntent(new Intent(MessageDetailsActivity.this, ComposeMessageActivity.class));
-                                    MessageUtils.addRecipientsToIntent(
+                                    MessageUtils.INSTANCE.addRecipientsToIntent(
                                             intent, ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
                                             editIntentExtras.getToRecipientListString(),
                                             editIntentExtras.getMessageAction(),
                                             editIntentExtras.getUserAddresses()
                                     );
                                     if (editIntentExtras.getIncludeCCList()) {
-                                        MessageUtils.addRecipientsToIntent(
+                                        MessageUtils.INSTANCE.addRecipientsToIntent(
                                                 intent, ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
                                                 editIntentExtras.getMessageCcList(),
                                                 editIntentExtras.getMessageAction(),

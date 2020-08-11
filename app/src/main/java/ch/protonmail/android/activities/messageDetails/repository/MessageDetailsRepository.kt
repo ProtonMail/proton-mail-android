@@ -53,6 +53,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.equalsNoCase
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -354,7 +355,7 @@ class MessageDetailsRepository @Inject constructor(
                     Constants.MessageActionType.REPLY -> {
                         val replyToEmails = message.replyToEmails
                         for (replyToEmail in replyToEmails) {
-                            if (!MessageUtils.matchesOneOfUserAddresses(user.addresses!!, replyToEmail)) {
+                            if (user.addresses!!.none { it.email equalsNoCase replyToEmail }) {
                                 replyToEmailsFiltered.add(replyToEmail)
                             }
                         }

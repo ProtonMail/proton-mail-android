@@ -90,8 +90,8 @@ public class PMWebViewClient extends WebViewClient {
             MailTo mt = MailTo.parse(url);
 
             User user = mUserManager.getUser();
-            MessageUtils.addRecipientsToIntent(intent, ComposeMessageActivity.EXTRA_TO_RECIPIENTS, mt.getTo(), Constants.MessageActionType.FROM_URL, user.getAddresses());
-            MessageUtils.addRecipientsToIntent(intent, ComposeMessageActivity.EXTRA_CC_RECIPIENTS, mt.getCc(), Constants.MessageActionType.FROM_URL, user.getAddresses());
+            MessageUtils.INSTANCE.addRecipientsToIntent(intent, ComposeMessageActivity.EXTRA_TO_RECIPIENTS, mt.getTo(), Constants.MessageActionType.FROM_URL, user.getAddresses());
+            MessageUtils.INSTANCE.addRecipientsToIntent(intent, ComposeMessageActivity.EXTRA_CC_RECIPIENTS, mt.getCc(), Constants.MessageActionType.FROM_URL, user.getAddresses());
             intent.putExtra(EXTRA_MAIL_TO, true);
             intent.putExtra(EXTRA_MESSAGE_TITLE, mt.getSubject());
             intent.putExtra(EXTRA_MESSAGE_BODY, mt.getBody());

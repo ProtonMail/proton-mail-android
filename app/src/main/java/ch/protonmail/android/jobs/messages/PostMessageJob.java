@@ -221,7 +221,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         Address senderAddress = user.getAddressById(addressId);
         newMessage.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
 
-        if (MessageUtils.isLocalMessageId(message.getMessageId())) {
+        if (MessageUtils.INSTANCE.isLocalMessageId(message.getMessageId())) {
             // create the draft if there was no connectivity previously for execution the create and post draft job
             // this however should not happen, because the jobs with the same ID are executed serial,
             // but just in case that there is no any bug on the JobQueue library
