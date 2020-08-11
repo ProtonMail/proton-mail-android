@@ -22,8 +22,10 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
+import org.junit.experimental.categories.Category
 
 class SearchTests : BaseTest() {
 
@@ -38,6 +40,7 @@ class SearchTests : BaseTest() {
             .searchBar()
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun searchFindMessage() {
         searchRobot

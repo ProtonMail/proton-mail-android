@@ -29,8 +29,10 @@ import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailNotTruste
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
+import org.junit.experimental.categories.Category
 
 class ComposerTests : BaseTest() {
 
@@ -69,6 +71,7 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun sendMessageToPGPEncryptedContact() {
         val to = externalEmailPGPEncrypted.email
@@ -81,6 +84,7 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun sendMessageToPGPSignedContact() {
         val to = externalEmailPGPSigned.email
@@ -106,6 +110,7 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun sendMessageTOandCCandBCC() {
         val to = internalEmailTrustedKeys.email
@@ -118,7 +123,6 @@ class ComposerTests : BaseTest() {
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }
-
     }
 
     @Test
@@ -133,7 +137,6 @@ class ComposerTests : BaseTest() {
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }
-
     }
 
     @Test
@@ -146,7 +149,6 @@ class ComposerTests : BaseTest() {
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }
-
     }
 
     @Test
@@ -156,12 +158,12 @@ class ComposerTests : BaseTest() {
         val hint = editedPasswordHint
         loginRobot
             .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(password)
             .compose()
             .sendMessageEOAndExpiryTime(to, subject, body, 1, password, hint)
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }
-
     }
 
     @Test
@@ -171,6 +173,7 @@ class ComposerTests : BaseTest() {
         val hint = editedPasswordHint
         loginRobot
             .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(password)
             .compose()
             .sendMessageEOAndExpiryTimeWithAttachment(to, subject, body, 1, password, hint)
             .menuDrawer()
@@ -211,7 +214,7 @@ class ComposerTests : BaseTest() {
         loginRobot
             .loginUser(onePassUser)
             .compose()
-            .sendMessageWithTwoImageCaptureAttachments(to, subject, body)
+            .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }
@@ -223,7 +226,7 @@ class ComposerTests : BaseTest() {
         loginRobot
             .loginUser(onePassUser)
             .compose()
-            .sendMessageToExternalContactWithOneAttachment(to, subject, body)
+            .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }
@@ -235,7 +238,7 @@ class ComposerTests : BaseTest() {
         loginRobot
             .loginUser(onePassUser)
             .compose()
-            .sendMessageToExternalContactWithTwoAttachments(to, subject, body)
+            .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
             .sent()
             .verify { messageWithSubjectExists(subject) }

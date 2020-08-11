@@ -25,6 +25,7 @@ import android.content.Context
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
+import android.widget.Toast
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.intent.Intents
@@ -69,6 +70,10 @@ open class BaseTest {
         Intents.init()
         clearLogcat()
         Log.d(testTag, "Starting test execution for test: ${testName.methodName}")
+        // Show toast with test case name for better test analysis in recorded videos especially on Firebase.
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            Toast.makeText(targetContext, testName.methodName, twoSeconds).show()
+        }
     }
 
     @After
@@ -101,6 +106,7 @@ open class BaseTest {
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
+        private const val twoSeconds = 2000
 
         @JvmStatic
         @BeforeClass

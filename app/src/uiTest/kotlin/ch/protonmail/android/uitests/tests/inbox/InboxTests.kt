@@ -30,8 +30,10 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
 import ch.protonmail.android.uitests.testsHelper.TestData.reSubject
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
+import org.junit.experimental.categories.Category
 
 class InboxTests : BaseTest() {
 
@@ -60,6 +62,7 @@ class InboxTests : BaseTest() {
             }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun deleteMessageWithSwipe() {
         inboxRobot
@@ -143,6 +146,7 @@ class InboxTests : BaseTest() {
             .verify { draftMessageSaved(draftSubject) }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun saveDraftWithAttachment() {
         val draftSubject = "Draft ${TestData.messageSubject}"
@@ -156,6 +160,7 @@ class InboxTests : BaseTest() {
             .verify { draftWithAttachmentSaved(draftSubject) }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun reply() {
         val to = TestData.internalEmailTrustedKeys.email

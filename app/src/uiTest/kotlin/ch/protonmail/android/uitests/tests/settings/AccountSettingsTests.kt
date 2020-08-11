@@ -24,8 +24,10 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
+import org.junit.experimental.categories.Category
 
 @LargeTest
 class AccountSettingsTests : BaseTest() {
@@ -50,6 +52,7 @@ class AccountSettingsTests : BaseTest() {
             .verify { subscriptionViewShown() }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun changeLoginPassword() {
         accountSettingsRobot
@@ -69,6 +72,7 @@ class AccountSettingsTests : BaseTest() {
             .verify { mailboxPasswordChanged() }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun changeRecoveryEmail() {
         accountSettingsRobot

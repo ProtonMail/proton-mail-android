@@ -23,9 +23,12 @@ import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Test
+import org.junit.experimental.categories.Category
 import org.junit.runners.MethodSorters
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -52,13 +55,14 @@ class ContactsTests : BaseTest() {
             .verify { contactsRefreshed() }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun contactDetailSendMessage() {
         val subject = TestData.messageSubject
         val body = TestData.messageBody
         contactsRobot
             .contactsView()
-            .clickSendMessageToContact(TestData.twoPassUser.email)
+            .clickSendMessageToContact(twoPassUser.email)
             .sendMessageToContact(subject, body)
             .navigateUpToInbox()
             .menuDrawer()

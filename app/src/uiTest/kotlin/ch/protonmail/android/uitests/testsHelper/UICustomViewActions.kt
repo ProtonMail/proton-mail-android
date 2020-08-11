@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
-import android.util.Log
 import android.view.View
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -33,6 +32,7 @@ import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerViewAction
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
@@ -41,14 +41,13 @@ import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 import org.jetbrains.annotations.Contract
-import kotlin.test.*
+import kotlin.test.assertFalse
 
 object UICustomViewActions {
 
-    private const val TIMEOUT_10S = 10000L
+    private const val TIMEOUT_10S = 10_000L
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
@@ -97,7 +96,7 @@ object UICustomViewActions {
                 override fun getDescription() = "waitForElement - $errorMessage"
 
                 override fun checkCondition() = try {
-                    interaction.check(matches(not(isDisplayed())))
+                    interaction.check(doesNotExist())
                     true
                 } catch (e: PerformException) {
                     errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
@@ -170,11 +169,13 @@ object UICustomViewActions {
         }
     }
 
-    fun checkItemDoesNotExist(subject: String, date: String): PositionableRecyclerViewAction {
-        return CheckItemDoesNotExist(subject, date)
-    }
+    fun checkItemDoesNotExist(subject: String, date: String): PositionableRecyclerViewAction =
+        CheckItemDoesNotExist(subject, date)
 
-    class CheckItemDoesNotExist(private val subject: String, private val date: String) : PositionableRecyclerViewAction {
+    class CheckItemDoesNotExist(
+        private val subject: String,
+        private val date: String
+    ) : PositionableRecyclerViewAction {
 
         override fun atPosition(position: Int): PositionableRecyclerViewAction =
             checkItemDoesNotExist(subject, date)
@@ -193,7 +194,7 @@ object UICustomViewActions {
                 if (item != null) {
                     messageSubject = item.findViewById<TextView>(R.id.messageTitleTextView).text.toString()
                     messageDate = item.findViewById<TextView>(R.id.messageDateTextView).text.toString()
-                    isMatches = (messageSubject == subject) && (messageDate == date)
+                    isMatches = messageSubject == subject && messageDate == date
                     if (isMatches) {
                         break
                     }

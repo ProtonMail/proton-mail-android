@@ -6,8 +6,8 @@ before_script:
   - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - chmod +x ./gradlew
-  - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $3}' | sed s/\"//g)
-  - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $3}' | sed s/\"//g)
+  - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
+  - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - echo "App version name ${VERSION_NAME}"
   - echo "App version name ${VERSION_CODE}"
 cache:
@@ -85,24 +85,35 @@ unit tests:
     - ./gradlew :domain:test
     - ./gradlew testDebugUnitTest
 
-#firebase tests:
+
+firebase tests:
+  stage: test
+  script:
+    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+    - mkdir -p /opt
+    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+    - /opt/google-cloud-sdk/install.sh --quiet
+    - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components update
+    - echo $CLOUD_PROJECT_ID
+    - gcloud config set project $CLOUD_PROJECT_ID
+    - echo $SERVICE_ACCOUNT > /tmp/service-account.json
+    - gcloud auth activate-service-account --key-file /tmp/service-account.json
+    - gcloud firebase test android run
+      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
+      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+      --device model=Pixel2,version=28
+      --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
+      --use-orchestrator
+      --num-flaky-test-attempts=2
+
+
+#UI tests:
 #  stage: test
+#  tags:
+#    - android
 #  script:
-#    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
-#    - mkdir -p /opt
-#    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
-#    - /opt/google-cloud-sdk/install.sh --quiet
-#    - source /opt/google-cloud-sdk/path.bash.inc
-#
-#    - gcloud components update
-#    - echo $CLOUD_PROJECT_ID
-#    - gcloud config set project $CLOUD_PROJECT_ID
-#    - echo $SERVICE_ACCOUNT > /tmp/service-account.json
-#    - gcloud auth activate-service-account --key-file /tmp/service-account.json
-#    - gcloud firebase test android run
-#      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
-#      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
-#      --device model=Pixel2,version=28
+#    - ./gradlew eBDTOB -PUSER1="$USER1" -PUSER2="$USER2" -PUSER3="$USER3" -PUSER4="$USER4" -PRECIPIENT1="$RECIPIENT1" -PRECIPIENT2="$RECIPIENT2" -PRECIPIENT3="$RECIPIENT3" -PRECIPIENT4="$RECIPIENT4" -PBROWSERSTACK_USER="$BROWSERSTACK_USER" -PBROWSERSTACK_KEY="$BROWSERSTACK_KEY"
 
 include:
   - project: 'translations/generator'

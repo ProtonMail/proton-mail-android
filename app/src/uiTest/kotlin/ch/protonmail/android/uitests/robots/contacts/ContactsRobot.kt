@@ -57,6 +57,7 @@ open class ContactsRobot {
     }
 
     fun navigateUpToInbox(): InboxRobot {
+        UIActions.wait.forViewWithId(R.id.contactsRecyclerView)
         UIActions.system.clickHamburgerOrUpButton()
         return InboxRobot()
     }

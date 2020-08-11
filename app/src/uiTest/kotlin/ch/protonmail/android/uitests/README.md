@@ -9,48 +9,37 @@ The code and data files in this distribution are licensed under the terms of the
 
 See [LICENSE](../../../../../../../../LICENSE) file
 
-### UI tests architecture:
+### UI tests structure:
 
 UI tests code is divided into three main packages: 
 1. **robots** package - contains ***Robot***s classes where each Robot represents a single application screen, i.e. ***Compose new email*** functionality. All pop-up modals that are triggered from this functionality belong to the same Robot and represented by inner classes within one Robot class, i.e. ***Set email password modal***. If an action triggers new Activity or Fragment start then it is considered as new Robot. 
 2. **tests** package - contains test classes split by application functionality, i.e. ***login*** or ***settings***.
-3. **testHelper** package - contains test data and helper classes.
+3. **testsHelper** package - contains test data and helper classes.
 
-### Running UI tests:
+### Running tests
 
-In order to run Espresso UI tests the below data should be provided as instrumentation test arguments:
+In order to run UI tests locally the ***private.properies*** file should contain a list of four test users and four recipients credentials in the following format
 
-#### via the command line using **Android gradle wrapper**
-- Set of 4 test users: <br>`-Pandroid.testInstrumentationRunnerArguments.USER1="email,password,mailbox_password,auth_code"`
-- Set of 4 recipients: <br>`-Pandroid.testInstrumentationRunnerArguments.RECIPIENT1="email,password,mailbox_password,auth_code"`
-- TestRail enable/disable boolean flag: <br>`-Pandroid.testInstrumentationRunnerArguments.REPORT_TO_TESTRAIL=false`
-- When above is `true` the following arguments should also be present:
+`TEST_USER1="email,password,mail_password,2fa"`
 
-    `-Pandroid.testInstrumentationRunnerArguments.TESTRAIL_PROJECT_ID=id`<br>
-     `-Pandroid.testInstrumentationRunnerArguments.TESTRAIL_USERNAME=username`<br>
-     `-Pandroid.testInstrumentationRunnerArguments.TESTRAIL_PASSWORD=password`<br>
-     
-The final command may look like the following:
+`TEST_RECIPIENT1="email,password,mail_password,2fa"`
 
-`./gradlew app:connectedBetaDebugAndroidTest \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.USER1="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.USER2="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.USER3="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.USER4="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.RECIPIENT1="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.RECIPIENT2="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.RECIPIENT3="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.RECIPIENT4="email,password,mailbox_password,auth_code" \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.REPORT_TO_TESTRAIL=true \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.TESTRAIL_PROJECT_ID=id \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.TESTRAIL_USERNAME=username \`<br>
- `-Pandroid.testInstrumentationRunnerArguments.TESTRAIL_PASSWORD=password`<br>
-     
-#### via the Android Studio **Run/Debug Configurations**
-1. In Android studio menu select **Run->Edit Configurations**.
-2. Select or create **Android Instrumented Tests** by clicking **+** button.
-3. Select **Instrumentation arguments** on the right side of **Run/Debug Configurations** window by clicking **...** button.
-3. Add **Value - Pair** arguments.
-4. Apply changes and save.
+or the same parameters must be added to the gradle command when running from terminal
 
-For the future convenience you can update **Android Instrumented Tests** template with needed arguments, so it can be used by default for any newly created run configuration.
+`./gradlew cDAT -PUSER1="email,password,mail_password,2fa" -PRECIPIENT1="email,password,mail_password,2fa"` 
+
+Similarly, in case when test results should be reported to TestRail or tests are going to be run on Browserstack, the 3rd party platforms credentials must be provided:   
+
+`TESTRAIL_PROJECT_ID="number"`
+
+`TESTRAIL_USERNAME="username"`
+
+`TESTRAIL_PASSWORD="password"`
+
+`BROWSERSTACK_USER="user"`
+
+`BROWSERSTACK_KEY="key"`
+
+or the same parameters must be added to the gradle command
+
+`./gradlew cDAT -PBROWSERSTACK_USER="user" -PBROWSERSTACK_KEY="key"`

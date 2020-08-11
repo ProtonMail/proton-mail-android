@@ -98,7 +98,7 @@ object ManageAccountsMatchers {
                 return if (drawerUserItem != null) {
                     val name = drawerUserItem.userDetailsParent.userName.text.toString()
                     val signInButtonVisible =
-                        (drawerUserItem.userLoginStatusParent.userSignIn.visibility == View.VISIBLE)
+                        drawerUserItem.userLoginStatusParent.userSignIn.visibility == View.VISIBLE
                     name == expectedName && signInButtonVisible
                 } else {
                     false

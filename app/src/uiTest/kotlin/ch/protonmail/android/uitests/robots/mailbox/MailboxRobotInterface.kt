@@ -107,6 +107,7 @@ interface MailboxRobotInterface {
 
         fun messageWithSubjectExists(subject: String) {
             UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
         }
     }

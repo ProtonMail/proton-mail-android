@@ -92,8 +92,8 @@ class ComposerRobot {
         body: String,
         days: Int,
         password: String,
-        hint: String):
-        InboxRobot {
+        hint: String
+    ): InboxRobot {
         return composeMessage(to, subject, body)
             .setMessagePassword()
             .definePasswordWithHint(password, hint)
@@ -108,7 +108,8 @@ class ComposerRobot {
         body: String,
         days: Int,
         password: String,
-        hint: String): InboxRobot {
+        hint: String
+    ): InboxRobot {
         composeMessage(to, subject, body)
             .setMessagePassword()
             .definePasswordWithHint(password, hint)
@@ -137,23 +138,7 @@ class ComposerRobot {
         return InboxRobot()
     }
 
-    fun sendMessageWithTwoImageCaptureAttachments(to: String, subject: String, body: String): InboxRobot {
-        composeMessage(to, subject, body)
-            .attachments()
-            .addTwoImageCaptureAttachments(logoDrawable, welcomeDrawable)
-            .send()
-        return InboxRobot()
-    }
-
-    fun sendMessageToExternalContactWithOneAttachment(to: String, subject: String, body: String): InboxRobot {
-        composeMessage(to, subject, body)
-            .attachments()
-            .addImageCaptureAttachment(logoDrawable)
-            .send()
-        return InboxRobot()
-    }
-
-    fun sendMessageToExternalContactWithTwoAttachments(to: String, subject: String, body: String): InboxRobot {
+    fun sendMessageTwoImageCaptureAttachments(to: String, subject: String, body: String): InboxRobot {
         composeMessage(to, subject, body)
             .attachments()
             .addTwoImageCaptureAttachments(logoDrawable, welcomeDrawable)
@@ -168,8 +153,7 @@ class ComposerRobot {
     }
 
     fun draftSubjectBodyAttachment(messageSubject: String): ComposerRobot {
-        subject(messageSubject)
-            .body(TestData.messageBody)
+        draftSubjectBody(messageSubject)
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
         return this
@@ -185,9 +169,7 @@ class ComposerRobot {
         return InboxRobot()
     }
 
-    fun editBodyAndReply(messageBody: String): MessageRobot {
-        return body(messageBody).reply()
-    }
+    fun editBodyAndReply(messageBody: String): MessageRobot = body(messageBody).reply()
 
     private fun composeMessage(to: String, subject: String, body: String): ComposerRobot =
         recipients(to)
@@ -209,7 +191,7 @@ class ComposerRobot {
         return this
     }
 
-    private fun subject(text: String): ComposerRobot {
+    fun subject(text: String): ComposerRobot {
         UIActions.wait.forViewWithId(R.id.message_title).insert(text)
         return this
     }
@@ -245,35 +227,30 @@ class ComposerRobot {
     }
 
     private fun send(): InboxRobot {
-        UIActions.id.clickViewWithId(sendMessageId)
-        UIActions.wait.untilViewWithTextIsGone(R.string.sending_message)
-        UIActions.wait.untilViewWithTextIsGone(R.string.message_sent)
+        waitForConditionAndSend()
         return InboxRobot()
     }
 
     private fun sendToContact(): ContactsRobot {
-        UIActions.id.clickViewWithId(sendMessageId)
+        waitForConditionAndSend()
         return ContactsRobot()
     }
 
     private fun reply(): MessageRobot {
-        UIActions.id.clickViewWithId(sendMessageId)
+        waitForConditionAndSend()
         return MessageRobot()
     }
 
     private fun forward(): MessageRobot {
-        UIActions.id.clickViewWithId(sendMessageId)
+        waitForConditionAndSend()
         return MessageRobot()
     }
 
-    private fun sendWithExpiryConfirmation(): MessageExpirationRobot {
+    private fun waitForConditionAndSend() {
+        UIActions.wait.forViewWithId(R.id.tokenPgpText)
         UIActions.id.clickViewWithId(sendMessageId)
-        return MessageExpirationRobot()
-    }
-
-    private fun sendWithPGPConfirmation(): PGPConfirmationRobot {
-        UIActions.id.clickViewWithId(sendMessageId)
-        return PGPConfirmationRobot()
+        UIActions.wait.forViewWithText(sendMessageId)
+        UIActions.wait.untilViewWithTextIsGone(sendMessageId)
     }
 
     /**
@@ -318,11 +295,6 @@ class ComposerRobot {
             expirationDays(days)
                 .confirmMessageExpiration()
 
-        fun sendAnyway(): InboxRobot {
-            UIActions.id.clickViewWithId(okId)
-            return InboxRobot()
-        }
-
         private fun expirationDays(days: Int): MessageExpirationRobot {
             onView(allOf(withClassName(`is`(NumberPicker::class.java.canonicalName)), withId(R.id.days_picker)))
                 .perform(setValueInNumberPicker(days))
@@ -335,20 +307,8 @@ class ComposerRobot {
         }
     }
 
-    /**
-     * Class represents PGP confirmation dialog.
-     */
-    inner class PGPConfirmationRobot {
-
-        fun confirmSendingWithPGP(): ComposerRobot {
-            UIActions.id.clickViewWithId(okId)
-            return ComposerRobot()
-        }
-    }
-
     companion object {
         const val sendMessageId = R.id.send_message
-        const val okId = R.id.ok
         const val logoDrawable = R.drawable.logo
         const val welcomeDrawable = R.drawable.welcome
     }

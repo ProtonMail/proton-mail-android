@@ -20,38 +20,50 @@ package ch.protonmail.android.uitests.tests.login
 
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUserWith2FA
+import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
+import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUserWith2FA
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Test
+import org.junit.experimental.categories.Category
 
 class LoginTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
 
+    @Category(SmokeTest::class)
     @Test
     fun loginWithOnePass() {
         loginRobot
-            .loginUser(TestData.onePassUser)
+            .loginUser(onePassUser)
             .verify { mailboxLayoutShown() }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun loginWithTwoPass() {
         loginRobot
-            .loginTwoPasswordUser(TestData.twoPassUser)
+            .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(twoPassUser.mailboxPassword)
             .verify { mailboxLayoutShown() }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun loginWithOnePassAnd2Fa() {
         loginRobot
-            .loginUserWithTwoFa(TestData.onePassUserWith2FA)
+            .loginUserWithTwoFa(onePassUserWith2FA)
+            .provideTwoFaCode(onePassUserWith2FA.twoFaCode)
             .verify { mailboxLayoutShown() }
     }
 
     @Test
     fun loginWithTwoPassAnd2Fa() {
         loginRobot
-            .loginTwoPasswordUserWithTwoFa(TestData.twoPassUserWith2FA)
+            .loginUserWithTwoFa(twoPassUserWith2FA)
+            .provideTwoFaCodeMailbox(twoPassUserWith2FA.twoFaCode)
+            .decryptMailbox(twoPassUserWith2FA.mailboxPassword)
             .verify { mailboxLayoutShown() }
     }
 }
