@@ -420,7 +420,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
             mSelectedAddressPosition = 0;
         }
 
-        if (!composeMessageViewModel.isPaidUser() && MessageUtils.isPmMeAddress(senderAddresses.get(mSelectedAddressPosition))) {
+        if (!composeMessageViewModel.isPaidUser() && MessageUtils.INSTANCE.isPmMeAddress(senderAddresses.get(mSelectedAddressPosition))) {
             composeMessageViewModel.setOldSenderAddressId(composeMessageViewModel.getMessageDataResult().getAddressId());
             mSelectedAddressPosition = composeMessageViewModel.getUserAddressByIdFromOnlySendAddresses();
             if (!TextUtils.isEmpty(composeMessageViewModel.getMessageDataResult().getAddressEmailAlias())) {
@@ -2054,7 +2054,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     composeMessageViewModel.setIsDirty(true);
                     String email = (String) mAddressesSpinner.getItemAtPosition(position);
                     boolean localAttachmentsListEmpty = composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty();
-                    if (!composeMessageViewModel.isPaidUser() && MessageUtils.isPmMeAddress(email)) {
+                    if (!composeMessageViewModel.isPaidUser() && MessageUtils.INSTANCE.isPmMeAddress(email)) {
                         mAddressesSpinner.setSelection(mSelectedAddressPosition);
                         Snackbar snack = Snackbar.make(mRootLayout, String.format(getString(R.string.error_can_not_send_from_this_address), email), Snackbar.LENGTH_LONG);
                         View snackView = snack.getView();
@@ -2154,7 +2154,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         public void onChanged(@Nullable List<LocalAttachment> attachments) {
             String draftId = composeMessageViewModel.getDraftId();
             Intent intent = AppUtil.decorInAppIntent(new Intent(ComposeMessageActivity.this, AddAttachmentsActivity.class));
-            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId) && !MessageUtils.isLocalMessageId(draftId));
+            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId) && !MessageUtils.INSTANCE.isLocalMessageId(draftId));
             intent.putParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST, new ArrayList<>(attachments));
             intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_ID, draftId);
             startActivityForResult(intent, REQUEST_CODE_ADD_ATTACHMENTS);

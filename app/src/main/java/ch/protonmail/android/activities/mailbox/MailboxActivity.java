@@ -1298,13 +1298,13 @@ public class MailboxActivity extends NavigationActivity implements
             if (containsUnstar(messages)) menu.findItem(R.id.add_star).setVisible(true);
             if (containsStar(messages)) menu.findItem(R.id.remove_star).setVisible(true);
             MenuItem markReadItem = menu.findItem(R.id.mark_read);
-            if (MessageUtils.areAllRead(messages)) {
+            if (MessageUtils.INSTANCE.areAllRead(messages)) {
                 markReadItem.setVisible(false);
             } else {
                 markReadItem.setVisible(mailboxLocation != Constants.MessageLocationType.DRAFT);
             }
             MenuItem markUnreadItem = menu.findItem(R.id.mark_unread);
-            if (MessageUtils.areAllUnRead(messages)) {
+            if (MessageUtils.INSTANCE.areAllUnRead(messages)) {
                 markUnreadItem.setVisible(false);
             } else {
                 markUnreadItem.setVisible(mailboxLocation != Constants.MessageLocationType.DRAFT);
@@ -1338,7 +1338,7 @@ public class MailboxActivity extends NavigationActivity implements
 
     @Override
     public void move(String folderId) {
-        MessageUtils.moveMessage(this, mJobManager, folderId, Arrays.asList(mLabelId), getSelectedMessages());
+        MessageUtils.INSTANCE.moveMessage(this, mJobManager, folderId, Arrays.asList(mLabelId), getSelectedMessages());
 
         if (actionModeRunnable != null) {
             actionModeRunnable.run();

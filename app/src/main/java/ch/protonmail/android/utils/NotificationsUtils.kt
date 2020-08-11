@@ -35,9 +35,11 @@ import ch.protonmail.android.receivers.NotificationReceiver
 
 /**
  * Created by dkadrikj on 12/13/15.  */
-fun Context.buildReplyIntent(message: Message,
-                             user: User,
-                             userManager: UserManager): PendingIntent? {
+fun Context.buildReplyIntent(
+    message: Message,
+    user: User,
+    userManager: UserManager
+): PendingIntent? {
     val intent = Intent(this, ComposeMessageActivity::class.java)
     MessageUtils.addRecipientsToIntent(intent, ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
             message.senderEmail, Constants.MessageActionType.REPLY, user.addresses)

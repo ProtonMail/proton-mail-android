@@ -25,9 +25,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.utils.MessageUtils
 import com.google.gson.Gson
 import retrofit2.HttpException
+import java.util.regex.Pattern
 
 fun HttpException.toPMResponseBody(): ResponseBody? {
     return response()?.errorBody()?.toPMResponseBody()
@@ -66,8 +68,6 @@ fun Uri.isEmpty() = this == Uri.EMPTY
  */
 val <T : Any?> T.exhaustive get() = this
 
-fun String.isValidEmail(): Boolean {
-    return MessageUtils.PROTON_EMAIL_ADDRESS.matcher(this).matches()
-}
+fun String.isValidEmail(): Boolean = Pattern.compile(EmailAddress.VALIDATION_REGEX).matcher(this).matches()
 
 val Context.app get() = applicationContext as ProtonMailApplication

@@ -227,16 +227,16 @@ data class Message @JvmOverloads constructor(
                     ?: Arrays.asList(sender?.emailAddress!!)
         }
     val toListString
-        get() = MessageUtils.getListString(toList)
+        get() = MessageUtils.toContactString(toList)
 
-    val toListStringGroupsAware
-        get() = MessageUtils.getListStringGroupAware(toList)
+	val toListStringGroupsAware
+		get() = MessageUtils.toContactsAndGroupsString(toList)
 
-    val ccListString
-        get() = MessageUtils.getListString(ccList)
+	val ccListString
+		get() = MessageUtils.toContactString(ccList)
 
-    val bccListString: String
-        get() = MessageUtils.getListString(bccList)
+	val bccListString:String
+		get() = MessageUtils.toContactString(bccList)
 
     fun locationFromLabel(): Constants.MessageLocationType =
             allLabelIDs
