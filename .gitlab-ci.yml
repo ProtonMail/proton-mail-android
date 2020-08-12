@@ -43,7 +43,7 @@ build debug:
     - android
   script:
     - ./gradlew assembleBetaDebug
-    - ./gradlew assembleBetaDebugAndroidTest
+    - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
   artifacts:
     expire_in: 1 week
     paths:

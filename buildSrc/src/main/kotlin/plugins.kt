@@ -33,6 +33,7 @@ val PluginDependenciesSpec.`kotlin-kapt` get() =                kotlin("kapt")
 val PluginDependenciesSpec.`kotlin-serialization` get() =       kotlin("plugin.serialization")
 val PluginDependenciesSpec.`sentry-android` get() =             plugin("io.sentry.android.gradle")
 val PluginDependenciesSpec.`sonarQube` get() =                  plugin("org.sonarqube") version `sonarQube version`
+val PluginDependenciesSpec.`browserstack` get() =               plugin("com.browserstack.gradle")
 
 val `detekt id` get() = "io.gitlab.arturbosch.detekt"
 

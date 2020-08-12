@@ -117,4 +117,5 @@ val DependencyHandler.`espresso-contrib` get() =  androidx("test.espresso", modu
 val DependencyHandler.`espresso-intents` get() =  androidx("test.espresso", module = "espresso-intents") version `espresso version`
 val DependencyHandler.falcon get() = dependency("com.jraska", module = "falcon") version `falcon version`
 val DependencyHandler.`orchestrator` get() =  androidx("test", module = "orchestrator") version `android-test version`
+val DependencyHandler.`browserstack-gradle-plugin` get() =  dependency("gradle.plugin.com.browserstack.gradle", module = "browserstack-gradle-plugin") version `browserstack-plugin version`
 // endregion
