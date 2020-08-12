@@ -26,6 +26,8 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
+import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
+import ch.protonmail.android.mapper.bridge.AddressesBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.armor.Armor
@@ -39,6 +41,7 @@ import org.junit.Test
 import javax.mail.internet.InternetHeaders
 import ch.protonmail.android.mapper.map
 import me.proton.core.domain.arch.map
+import me.proton.core.util.kotlin.invoke
 
 @LargeTest
 internal class CryptoTest {
@@ -728,6 +731,7 @@ internal class CryptoTest {
     //endregion
 
     private val addressKeyMapper = AddressKeyBridgeMapper()
+    private val addressKeysMapper = AddressKeysBridgeMapper(addressKeyMapper)
     private val userKeyMapper = UserKeyBridgeMapper()
 
     private val oneKeyUserMock: User = mockk {
@@ -751,6 +755,7 @@ internal class CryptoTest {
                 every { findBy(Id(manyAddressKeysAddressId)) } answers { addresses[1] }
                 every { addresses } returns mapOf(1 to mockk {
                     every { keys } returns mockk {
+                        every { primaryKey } returns addressKeysMapper { manyAddressKeysAddressKeys.toNewModel() }.primaryKey
                         every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
                     }
                 })
