@@ -264,7 +264,11 @@ class ProtonMailApiManager(var api: ProtonMailApi) : BaseApi(),
 
     override fun verifyPayment(body: VerifyBody): VerifyResponse = api.verifyPayment(body)
 
-    override fun createPaymentToken(body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse> = api.createPaymentToken(body)
+    override fun createPaymentToken(
+        body: CreatePaymentTokenBody,
+        token: String?,
+        tokenType: String?
+    ): Call<CreatePaymentTokenSuccessResponse> = api.createPaymentToken(body, token, tokenType)
 
     override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = api.getPaymentToken(token)
 

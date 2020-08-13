@@ -29,6 +29,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -42,11 +43,14 @@ import java.util.List;
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseConnectivityActivity;
+import ch.protonmail.android.activities.fragments.BillingFragment;
 import ch.protonmail.android.activities.fragments.CreateAccountFragment;
 import ch.protonmail.android.activities.fragments.CreatePasswordsFragment;
+import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaDialogFragment;
 import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaFragment;
-import ch.protonmail.android.activities.fragments.HumanVerificationFragment;
+import ch.protonmail.android.activities.fragments.HumanVerificationDialogFragment;
 import ch.protonmail.android.activities.fragments.SelectAccountTypeFragment;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.LoginInfoResponse;
 import ch.protonmail.android.api.models.User;
@@ -73,13 +77,17 @@ import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.NetworkUtil;
+import ch.protonmail.android.utils.UiUtil;
 
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
 /**
  * Created by dkadrikj on 16.7.15.
  */
-public class CreateAccountActivity extends BaseConnectivityActivity implements CreateAccountFragment.ICreateAccountListener {
+public class CreateAccountActivity extends BaseConnectivityActivity implements
+        CreateAccountFragment.ICreateAccountListener,
+        BillingFragment.IBillingListener,
+        HumanVerificationDialogFragment.IHumanVerificationListener {
 
     public static final String EXTRA_WINDOW_SIZE = "window_size";
     public static final String EXTRA_ADDRESS_CHOSEN = "address_chosen";
@@ -102,6 +110,8 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     private CreateAccountFragment createUsernameFragment;
     private CreatePasswordsFragment createPasswordsFragment;
     private HumanVerificationCaptchaFragment captchaFragment;
+    private BillingFragment billingFragment;
+    private HumanVerificationCaptchaDialogFragment humanVerificationCaptchaDialogFragment;
 
     private String mUserName;
     private byte[] mPassword;
@@ -132,7 +142,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
     protected int getLayoutId() {
         return R.layout.activity_fragment_container;
     }
-
 
     @Override
     protected boolean shouldCheckForAutoLogout() {
@@ -181,6 +190,14 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
         ProtonMailApplication.getApplication().getBus().register(this);
     }
 
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        if (fragment instanceof BillingFragment) {
+            billingFragment = (BillingFragment) fragment;
+            billingFragment.setActivityListener(this);
+        }
+    }
+
     @Subscribe
     public void onPlansEvent(AvailablePlansEvent event) {
         attachAccountTypeSelection(event.getAllPlans());
@@ -205,6 +222,41 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
             mJobManager.addJobInBackground(availableDomainsJob);
         }
     }
+
+    // region BillingFragment.IBillingListener
+    @Override
+    public ProtonMailApiManager getProtonMailApiManager() {
+        return mApi;
+    }
+
+    @Override
+    public void onRequestCaptchaVerification(String token) {
+        humanVerificationCaptchaDialogFragment = HumanVerificationCaptchaDialogFragment.newInstance(token);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragmentContainer, humanVerificationCaptchaDialogFragment)
+                .commitAllowingStateLoss();
+    }
+    // endregion
+
+    // region HumanVerificationDialogFragment.IHumanVerificationListener
+    @Override
+    public void verify(Constants.TokenType tokenType, String token) {
+        if (humanVerificationCaptchaDialogFragment != null && humanVerificationCaptchaDialogFragment.isAdded()) {
+            humanVerificationCaptchaDialogFragment.dismiss();
+        }
+        billingFragment.retryPaymentAfterCaptchaValidation(token, tokenType.getTokenTypeValue());
+    }
+
+    @Override
+    public void viewLoaded() {
+        UiUtil.hideKeyboard(this);
+    }
+
+    @Override
+    public void verificationOptionChose(Constants.TokenType tokenType, String token) {
+        // noop
+    }
+    // endregion
 
     @Override
     public void onAccountSelected(Constants.AccountType selectedAccountType) {
@@ -366,8 +418,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements C
 
     @Override
     public void offerFreeAccount(int windowHeight) {
-        HumanVerificationFragment verificationFragment = HumanVerificationFragment.newInstance(windowHeight, getMethods());
-        replaceFragment(verificationFragment, verificationFragment.getFragmentKey());
+        // noop
     }
 
     @Override
