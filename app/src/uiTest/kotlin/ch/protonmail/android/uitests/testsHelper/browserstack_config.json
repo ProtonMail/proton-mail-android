@@ -1,0 +1,12 @@
+{
+  "devices": [
+    "Google Pixel-7.1"
+  ],
+  "deviceLogs": true,
+  "networkLogs": false,
+  "disableAnimations": true,
+  "project": "ProtonMail",
+  "class": [
+    "ch.protonmail.android.uitests.tests.suites.SmokeSuite"
+  ]
+}

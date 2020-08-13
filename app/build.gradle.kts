@@ -29,6 +29,7 @@ plugins {
     `kotlin-serialization`
     `hugo`
     `sentry-android`
+    `browserstack`
 }
 
 kapt {
@@ -54,6 +55,19 @@ val experimentalProperties = Properties().apply {
 }
 
 val adb = "${System.getenv("ANDROID_HOME")}/platform-tools/adb"
+val browserstackUser = properties["BROWSERSTACK_USER"] ?: privateProperties["BROWSERSTACK_USER"]
+val browserstackKey = properties["BROWSERSTACK_KEY"] ?: privateProperties["BROWSERSTACK_KEY"]
+val testRecipient1 = properties["TEST_RECIPIENT1"] ?: privateProperties["TEST_RECIPIENT1"]
+val testRecipient2 = properties["TEST_RECIPIENT2"] ?: privateProperties["TEST_RECIPIENT2"]
+val testRecipient3 = properties["TEST_RECIPIENT3"] ?: privateProperties["TEST_RECIPIENT3"]
+val testRecipient4 = properties["TEST_RECIPIENT4"] ?: privateProperties["TEST_RECIPIENT4"]
+val testrailProjectId = properties["TESTRAIL_PROJECT_ID"] ?: privateProperties["TESTRAIL_PROJECT_ID"]
+val testrailUsername = properties["TESTRAIL_USERNAME"] ?: privateProperties["TESTRAIL_USERNAME"]
+val testrailPassword = properties["TESTRAIL_PASSWORD"] ?: privateProperties["TESTRAIL_PASSWORD"]
+val testUser1 = properties["TEST_USER1"] ?: privateProperties["TEST_USER1"]
+val testUser2 = properties["TEST_USER2"] ?: privateProperties["TEST_USER2"]
+val testUser3 = properties["TEST_USER3"] ?: privateProperties["TEST_USER3"]
+val testUser4 = properties["TEST_USER4"] ?: privateProperties["TEST_USER4"]
 
 android(appIdSuffix = "android") {
 
@@ -71,6 +85,19 @@ android(appIdSuffix = "android") {
         buildConfigField("String", "D_ENDPOINT_URL", "\"${privateProperties["d_endpointUrl"]}\"")
         buildConfigField("String", "H_ENDPOINT_URL", "\"${privateProperties["h_endpointUrl"]}\"")
         buildConfigField("String", "PM_CLIENT_SECRET", "\"${privateProperties["pm_clientSecret"]}\"")
+        buildConfigField("String", "BROWSERSTACK_USER", browserstackUser.toString())
+        buildConfigField("String", "BROWSERSTACK_KEY", browserstackKey.toString())
+        buildConfigField("String", "TEST_RECIPIENT1", testRecipient1.toString())
+        buildConfigField("String", "TEST_RECIPIENT2", testRecipient2.toString())
+        buildConfigField("String", "TEST_RECIPIENT3", testRecipient3.toString())
+        buildConfigField("String", "TEST_RECIPIENT4", testRecipient4.toString())
+        buildConfigField("String", "TESTRAIL_PROJECT_ID", testrailProjectId.toString())
+        buildConfigField("String", "TESTRAIL_USERNAME", testrailUsername.toString())
+        buildConfigField("String", "TESTRAIL_PASSWORD", testrailPassword.toString())
+        buildConfigField("String", "TEST_USER1", testUser1.toString())
+        buildConfigField("String", "TEST_USER2", testUser2.toString())
+        buildConfigField("String", "TEST_USER3", testUser3.toString())
+        buildConfigField("String", "TEST_USER4", testUser4.toString())
 
         // Experimental
         buildConfigField("boolean", "EXPERIMENTAL_USERS_MANAGEMENT", "${experimentalProperties["users-management"]}")
@@ -78,6 +105,8 @@ android(appIdSuffix = "android") {
         buildConfigField("boolean", "FETCH_FULL_CONTACTS", "true")
         buildConfigField("boolean", "REREGISTER_FOR_PUSH", "true")
         buildConfigField("int", "ROOM_DB_VERSION", "${properties["DATABASE_VERSION"]}")
+
+        buildConfigField("boolean", "REPORT_TO_TESTRAIL", "false")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -129,6 +158,12 @@ android(appIdSuffix = "android") {
     packagingOptions {
         exclude("META-INF/INDEX.LIST")
     }
+}
+
+browserStackConfig {
+    username = browserstackUser.toString().replace("\"", "")
+    accessKey = browserstackKey.toString().replace("\"", "")
+    configFilePath = "./app/src/uiTest/kotlin/ch/protonmail/android/uitests/testsHelper/browserstack_config.json"
 }
 
 // Clear app data each time you run tests locally once before the run. Should be added in IDE run configuration.
