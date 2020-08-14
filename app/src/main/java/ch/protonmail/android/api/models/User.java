@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -80,7 +80,6 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ORG_PRIVATE_KEY;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USE_FINGERPRINT;
@@ -137,8 +136,6 @@ public class User {
     private String currency;
     @SerializedName(Fields.User.CREDIT)
     private int credit;
-    @SerializedName(Fields.User.ORG_PRIVATE_KEY)
-    private String organizationPrivateKey;
     @SerializedName(Fields.User.PRIVATE)
     private int isPrivate;
     @SerializedName(Fields.User.SERVICES)
@@ -228,7 +225,6 @@ public class User {
         user.id = securePrefs.getString(PREF_USER_ID, "id");
         user.currency = securePrefs.getString(PREF_USER_CURRENCY, "eur");
         user.credit = securePrefs.getInt(PREF_USER_CREDIT, 0);
-        user.organizationPrivateKey = securePrefs.getString(PREF_USER_ORG_PRIVATE_KEY, null);
         user.isPrivate = securePrefs.getInt(PREF_USER_PRIVATE, 0);
         user.services = securePrefs.getInt(PREF_USER_SERVICES, 0);
 
@@ -319,7 +315,6 @@ public class User {
                 .putString(PREF_USER_ID, id)
                 .putString(PREF_USER_CURRENCY, currency)
                 .putInt(PREF_USER_CREDIT, credit)
-                .putString(PREF_USER_ORG_PRIVATE_KEY, organizationPrivateKey)
                 .putInt(PREF_USER_PRIVATE, isPrivate)
                 .putInt(PREF_USER_SERVICES, services)
                 .apply();
@@ -541,12 +536,6 @@ public class User {
     @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
     public String getCurrency() {
         return currency;
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE)
-    public String getOrganizationPrivateKey() {
-        return organizationPrivateKey;
     }
 
     @Deprecated

@@ -54,7 +54,6 @@ class UserBridgeMapper @Inject constructor(
             plans = getPlans(services, subscribed),
             private = private.toBoolean(),
             role = getRole(role),
-            organizationPrivateKey = getOrganizationKey(organizationPrivateKey),
             currency = NotBlankString(currency),
             credits = credit,
             delinquent = getDelinquent(delinquentValue),
@@ -76,8 +75,6 @@ class UserBridgeMapper @Inject constructor(
     }
 
     private fun getRole(value: Int) = Role.values().first { it.i == value }
-
-    private fun getOrganizationKey(key: String?) = key?.takeIfNotBlank()?.let(::NotBlankString)
 
     private fun getDelinquent(value: Int) = when (value.toUInt()) {
         Delinquent.None.i -> Delinquent.None
