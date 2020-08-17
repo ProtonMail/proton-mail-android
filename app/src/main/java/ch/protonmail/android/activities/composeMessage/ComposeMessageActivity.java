@@ -530,8 +530,8 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     if (recipientGroups != null && recipientGroups.size() > 0) {
                         addRecipientsToView(recipientGroups, mToRecipientsView);
                     }
-                    String[] recipientEmails = extras.getStringArray(EXTRA_TO_RECIPIENTS);
-                    if (recipientEmails != null && recipientEmails.length > 0) {
+                    ArrayList<String> recipientEmails = (ArrayList<String>) extras.getSerializable(EXTRA_TO_RECIPIENTS);
+                    if (recipientEmails != null && recipientEmails.size() > 0) {
                         addRecipientsToView(recipientEmails, mToRecipientsView);
                     }
                     mComposeBodyEditText.requestFocus();
@@ -539,7 +539,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     checkPermissionsAndKeyboardToggle();
                 }
                 if (extras.containsKey(EXTRA_CC_RECIPIENTS)) {
-                    addRecipientsToView(extras.getStringArray(EXTRA_CC_RECIPIENTS), mCcRecipientsView);
+                    addRecipientsToView((ArrayList<String>) extras.getSerializable(EXTRA_CC_RECIPIENTS), mCcRecipientsView);
                     mAreAdditionalRowsVisible = true;
                     focusRespondInline();
                 }
@@ -830,10 +830,11 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         Uri mailtoUri = intent.getData();
         if (mailtoUri != null && MailToUtils.MAILTO_SCHEME.equals(mailtoUri.getScheme())) {
             MailTo mailTo = MailToUtils.parseIntent(intent);
-            addRecipientsToView(mailTo.getAddressesArray(), mToRecipientsView);
+            ArrayList<String> recipients = new ArrayList<>(mailTo.getAddresses());
+            addRecipientsToView(recipients, mToRecipientsView);
         } else {
             try {
-                String[] emails = (String[]) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
+                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
                 addRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
                 Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Extract mail to getting extra email", e);
@@ -851,9 +852,11 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         if (stringUri.startsWith(MailToUtils.MAILTO_SCHEME)) {
             MailTo mailTo = MailToUtils.parseIntent(intent);
             // Set recipient
-            addRecipientsToView(mailTo.getAddressesArray(), mToRecipientsView);
+            ArrayList<String> recipients = new ArrayList<>(mailTo.getAddresses());
+            addRecipientsToView(recipients, mToRecipientsView);
             // Set cc
-            addRecipientsToView(mailTo.getCcArray(), mCcRecipientsView);
+            ArrayList<String> ccRecipients = new ArrayList<>(mailTo.getCc());
+            addRecipientsToView(ccRecipients, mCcRecipientsView);
             // Set subject
             mMessageTitleEditText.setText(mailTo.getSubject());
             // Set body
@@ -863,7 +866,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
 
         } else {
             try {
-                String[] emails = (String[]) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
+                ArrayList<String> emails = (ArrayList<String>) intent.getSerializableExtra(Intent.EXTRA_EMAIL);
                 addRecipientsToView(emails, mToRecipientsView);
             } catch (Exception e) {
                 Logger.doLogException(TAG_COMPOSE_MESSAGE_ACTIVITY, "Extract mail to getting extra email", e);
@@ -1747,7 +1750,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         renderViews();
     }
 
-    private void addRecipientsToView(String[] recipients, MessageRecipientView messageRecipientView) {
+    private void addRecipientsToView(ArrayList<String> recipients, MessageRecipientView messageRecipientView) {
         for (String recipient : recipients) {
             if (CommonExtensionsKt.isValidEmail(recipient)) {
                 messageRecipientView.addObject(new MessageRecipient("", recipient));
