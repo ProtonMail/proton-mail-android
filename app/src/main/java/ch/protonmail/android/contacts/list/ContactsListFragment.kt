@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -33,13 +33,15 @@ import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.contacts.*
+import ch.protonmail.android.contacts.IContactsFragment
+import ch.protonmail.android.contacts.IContactsListFragmentListener
+import ch.protonmail.android.contacts.REQUEST_CODE_CONTACT_DETAILS
+import ch.protonmail.android.contacts.REQUEST_CODE_CONVERT_CONTACT
 import ch.protonmail.android.contacts.details.ContactDetailsActivity
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity
 import ch.protonmail.android.contacts.list.listView.ContactItem
@@ -49,18 +51,17 @@ import ch.protonmail.android.contacts.list.progress.UploadProgressObserver
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModelFactory
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.toasts.ToastSimpleObserver
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.extensions.ifEmptyElse
-import ch.protonmail.android.utils.extensions.ifNullElse
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.setDefaultIfEmpty
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
+import ch.protonmail.libs.core.utils.ViewModelProvider
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.fragment_contacts.*
 
@@ -80,22 +81,22 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     private var hasContactsPermission: Boolean = false
     private var mActionMode: ActionMode? = null
 
-    val getActionMode  get() = mActionMode
+    val getActionMode get() = mActionMode
 
     private val listener: IContactsListFragmentListener by lazy {
-        ( context as? IContactsListFragmentListener )
-                ?: throw RuntimeException( "Activity must implement IContactsListFragmentListener" )
+        context as? IContactsListFragmentListener
+            ?: throw IllegalStateException("Activity must implement IContactsListFragmentListener")
     }
 
-    private fun getSelectedContactsIds():List<String> {
-        val selectedContactIds=ArrayList<String>()
-            contactsAdapter.getSelectedItems!!.forEach {
-                it.contactId?.let {contactId->
-                    if(contactId.isNotEmpty()) {
-                        selectedContactIds.add(contactId)
-                    }
+    private fun getSelectedContactsIds(): List<String> {
+        val selectedContactIds = ArrayList<String>()
+        contactsAdapter.getSelectedItems!!.forEach {
+            it.contactId?.let { contactId ->
+                if (contactId.isNotEmpty()) {
+                    selectedContactIds.add(contactId)
                 }
             }
+        }
         return selectedContactIds
     }
 
@@ -114,18 +115,19 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     }
 
     override fun onItemCheckedStateChanged(
-        mode: ActionMode, position: Int, id: Long,
+        mode: ActionMode,
+        position: Int,
+        id: Long,
         checked: Boolean
-    ) {
-    }
+    ) {}
 
     override fun onDestroyActionMode(mode: ActionMode?) {
         mActionMode!!.finish()
         mActionMode = null
         contactsAdapter.endSelectionMode()
         UiUtil.setStatusBarColor(
-            activity as AppCompatActivity,
-            ContextCompat.getColor(context!!, R.color.dark_purple_statusbar)
+            requireActivity() as AppCompatActivity,
+            ContextCompat.getColor(requireContext(), R.color.dark_purple_statusbar)
         )
 
         listener.setTitle(getString(R.string.contacts))
@@ -142,12 +144,12 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
                 viewModel.postToast(R.string.please_select_only_phone_contacts)
             } else {
                 DialogUtils.showDeleteConfirmationDialog(
-                    context!!, getString(R.string.delete),
-                    context!!.resources.getQuantityString(
+                    requireContext(), getString(R.string.delete),
+                    requireContext().resources.getQuantityString(
                         R.plurals.are_you_sure_delete_contact,
                         contactsAdapter.getSelectedItems!!.toList().size,
-                        contactsAdapter.getSelectedItems!!.toList().size))
-                {
+                        contactsAdapter.getSelectedItems!!.toList().size)
+                ) {
                     onDelete()
                     mode.finish()
                 }
@@ -156,7 +158,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
             R.id.transform_phone_contacts -> if (!allContactsLocal) {
                 viewModel.postToast(R.string.please_select_only_phone_contacts)
             } else {
-                LocalContactsConverter(listener.jobManager,viewModel).startConversion(contactsAdapter.getSelectedItems!!.toList())
+                LocalContactsConverter(listener.jobManager, viewModel)
+                    .startConversion(contactsAdapter.getSelectedItems!!.toList())
                 mode.finish()
             }
         }
@@ -175,10 +178,9 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     override fun onStop() {
         listener.unregisterObject(this)
         super.onStop()
-        val actionMode = this. mActionMode
-        if (actionMode != null) {
-            actionMode.finish()
-            this. mActionMode = null
+        if (mActionMode != null) {
+            mActionMode!!.finish()
+            mActionMode = null
         }
     }
 
@@ -188,8 +190,13 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
         val loaderManager = LoaderManager.getInstance(this)
         val application = activity!!.application
         hasContactsPermission = arguments?.getBoolean(EXTRA_PERMISSION) ?: false
-        val factory = ContactsListViewModelFactory(application, loaderManager, listener.jobManager, (application as ProtonMailApplication).api as ProtonMailApiManager)
-        viewModel = ViewModelProviders.of(this, factory).get(ContactsListViewModel::class.java)
+        val factory = ContactsListViewModelFactory(
+            application,
+            loaderManager,
+            listener.jobManager,
+            application.app.api as ProtonMailApiManager
+        )
+        viewModel = ViewModelProvider(this, factory).get(ContactsListViewModel::class.java)
 
         initAdapter()
         listener.selectPage(0)
@@ -197,32 +204,32 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     }
 
     private fun startObserving() {
-        viewModel.contactItems.observe(this, Observer<List<ContactItem>> {
-            it.ifEmptyElse({
+        viewModel.contactItems.observe(this, { contactItems ->
+            if (contactItems.isEmpty()) {
                 noResults.visibility = VISIBLE
-            }, {
+            } else {
                 noResults.visibility = GONE
-            })
+            }
             contactsAdapter.apply {
-                setData(it!!)
-                listener.dataUpdated(0, it.size - it.filter {
-                    it.contactId == "-1"
-                }.size)
+                setData(contactItems!!)
+                val count = contactItems.size - contactItems
+                    .count { contactItem -> contactItem.contactId == "-1" }
+                listener.dataUpdated(0, count)
             }
         })
-        val progressDialogFactory = ProgressDialogFactory(context!!)
+        val progressDialogFactory = ProgressDialogFactory(requireContext())
         viewModel.uploadProgress.observe(
             this,
             UploadProgressObserver(progressDialogFactory::create)
         )
         viewModel.toast.observe(
             this,
-            ToastSimpleObserver(context!!)
+            ToastSimpleObserver(requireContext())
         )
         viewModel.contactToConvert.observe(this, Observer {
             val localContact = it?.getContentIfNotHandled() ?: return@Observer
             val intent = EditContactDetailsActivity.startConvertContactActivity(
-                context!!,
+                requireContext(),
                 localContact
             )
             listener.doStartActivityForResult(intent, REQUEST_CODE_CONVERT_CONTACT)
@@ -234,8 +241,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     override fun getFragmentKey() = TAG_CONTACTS_LIST_FRAGMENT
 
     fun optionsItemSelected(item: MenuItem): Boolean {
-        val id = item.itemId
-        return when (id) {
+        return when (item.itemId) {
             R.id.action_convert -> {
                 val localContactsConverter = LocalContactsConverter(listener.jobManager, viewModel)
 
@@ -259,7 +265,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
 
     private fun Context.showConvertsContactsDialog(
         localContactsConverter: LocalContactsConverter,
-        contacts: List<ContactItem>) {
+        contacts: List<ContactItem>
+    ) {
         val clickListener = DialogInterface.OnClickListener { _, _ ->
             localContactsConverter.startConversion(contacts)
         }
@@ -288,7 +295,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     }
 
     override fun onDelete() {
-        viewModel.contactsDeleteError.observe(this, Observer {
+        viewModel.contactsDeleteError.observe(this, {
             it?.getContentIfNotHandled()?.let { message ->
                 context?.showToast(message.setDefaultIfEmpty(getString(R.string.default_error_message)))
             }
@@ -297,27 +304,28 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     }
 
     @Subscribe
+    @Suppress("unused")
     fun onContactProgress(event: ContactProgressEvent) = viewModel.setProgress(event.completed)
 
     @Subscribe
+    @Suppress("unused")
     fun onContactEvent(event: ContactEvent) {
-        if (!event.contactCreation) {
-            if (event.status == ContactEvent.SUCCESS) {
-                viewModel.setProgress(null)
-                viewModel.setProgressMax(null)
-            } else {
-                val statuses = event.statuses
-                if (statuses != null) {
-                    statuses.forEach {
-                        this.viewModel.postToast(it.statusTextId)
-                    }
-                } else {
-                    viewModel.postToast(event.status.statusTextId)
-                }
-            }
-        } else {
+        if (event.contactCreation) {
             viewModel.postToast(event.status.statusTextId)
+        } else if (event.status == ContactEvent.SUCCESS) {
+            viewModel.setProgress(null)
+            viewModel.setProgressMax(null)
+        } else {
+            val statuses = event.statuses
+            if (statuses != null) {
+                statuses.forEach {
+                    viewModel.postToast(it.statusTextId)
+                }
+            } else {
+                viewModel.postToast(event.status.statusTextId)
+            }
         }
+
     }
 
     private val Int.statusTextId: Int
@@ -342,25 +350,21 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     }
 
     private fun initAdapter() {
+        var actionMode: ActionMode? = null
         contactsAdapter = ContactsListAdapter(
-            context!!,
+            requireContext(),
             ArrayList(),
             this::onContactClick,
             this::onContactSelect,
-            onSelectionModeChange = object :
-                Function1<SelectionModeEnum, Unit> {
-                var actionMode: ActionMode? = null
-                override fun invoke(selectionModeEvent: SelectionModeEnum) {
-                    when (selectionModeEvent) {
-                        SelectionModeEnum.STARTED -> {
-                            actionMode = listener.doStartActionMode(this@ContactsListFragment)
-                        }
-                        SelectionModeEnum.ENDED -> {
-                            val actionMode = this.actionMode
-                            if (actionMode != null) {
-                                actionMode.finish()
-                                this.actionMode = null
-                            }
+            onSelectionModeChange = { selectionModeEvent ->
+                when (selectionModeEvent) {
+                    SelectionModeEnum.STARTED -> {
+                        actionMode = listener.doStartActionMode(this@ContactsListFragment)
+                    }
+                    SelectionModeEnum.ENDED -> {
+                        if (actionMode != null) {
+                            actionMode!!.finish()
+                            actionMode = null
                         }
                     }
                 }
@@ -380,12 +384,12 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     }
 
     private fun onContactSelect() {
-        val checkedItems = contactsAdapter.getSelectedItems?.size
-        checkedItems.ifNullElse({
+        val checkedItemsCount = contactsAdapter.getSelectedItems?.size
+        if (checkedItemsCount == null) {
             listener.setTitle(getString(R.string.contacts))
-        }, {
+        } else {
             mActionMode?.title =
-                    String.format(getString(R.string.contact_group_selected), checkedItems)
-        })
+                String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+        }
     }
 }

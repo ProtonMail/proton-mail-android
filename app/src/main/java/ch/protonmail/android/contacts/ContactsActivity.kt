@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,7 +20,11 @@ package ch.protonmail.android.contacts
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
@@ -41,7 +45,11 @@ import ch.protonmail.android.contacts.list.search.OnSearchClose
 import ch.protonmail.android.contacts.list.search.SearchExpandListener
 import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.events.*
+import ch.protonmail.android.events.AttachmentFailedEvent
+import ch.protonmail.android.events.ConnectivityEvent
+import ch.protonmail.android.events.ContactsFetchedEvent
+import ch.protonmail.android.events.LogoutEvent
+import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchContactsDataJob
 import ch.protonmail.android.jobs.FetchContactsEmailsJob
@@ -67,7 +75,10 @@ const val REQUEST_CODE_NEW_CONTACT = 2
 const val REQUEST_CODE_CONVERT_CONTACT = 3
 // endregion
 
-class ContactsActivity : BaseConnectivityActivity(), HasSupportFragmentInjector, IContactsListFragmentListener, ContactsActivityContract {
+class ContactsActivity : BaseConnectivityActivity(),
+    HasSupportFragmentInjector,
+    IContactsListFragmentListener,
+    ContactsActivityContract {
 
     override fun dataUpdated(position: Int, count: Int) {
         pagerAdapter.update(position, count)
@@ -255,7 +266,7 @@ class ContactsActivity : BaseConnectivityActivity(), HasSupportFragmentInjector,
             val mCursorDrawableRes = TextView::class.java.getDeclaredField("mCursorDrawableRes")
             mCursorDrawableRes.isAccessible = true
             mCursorDrawableRes.set(searchTextView, R.drawable.cursor)
-        } catch (e: Exception) {
+        } catch (ignored: Exception) {
             // NOOP
         }
         searchView.maxWidth = Integer.MAX_VALUE
@@ -268,27 +279,30 @@ class ContactsActivity : BaseConnectivityActivity(), HasSupportFragmentInjector,
     }
 
     @Subscribe
+    @Suppress("UNUSED_PARAMETER")
     fun onMailSettingsEvent(event: MailSettingsEvent) {
         loadMailSettings()
     }
 
     @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onLogoutEvent(event: LogoutEvent) {
         moveToLogin()
     }
 
     @Subscribe
+    @Suppress("unused")
     fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
         showToast(getString(R.string.attachment_failed, event.messageSubject, event.attachmentName))
     }
 
     @Subscribe
+    @Suppress("unused")
     fun onContactsFetchedEvent(event: ContactsFetchedEvent) {
         progressLayoutView!!.visibility = View.GONE
-        val toastTextId = when (event.status) {
-            Status.SUCCESS -> R.string.fetching_contacts_success
-            else -> R.string.fetching_contacts_failure
-        }
+        val toastTextId =
+            if (event.status == Status.SUCCESS) R.string.fetching_contacts_success
+            else R.string.fetching_contacts_failure
         showToast(toastTextId, Toast.LENGTH_SHORT)
     }
 
@@ -300,7 +314,7 @@ class ContactsActivity : BaseConnectivityActivity(), HasSupportFragmentInjector,
         }
     }
 
-    fun onPageSelected(position: Int) {
+    private fun onPageSelected(position: Int) {
         addFab.visibility = ViewGroup.VISIBLE
         when (position) {
             0 -> {
@@ -334,7 +348,8 @@ class ContactsActivity : BaseConnectivityActivity(), HasSupportFragmentInjector,
 
     override fun doStartActionMode(callback: ActionMode.Callback): ActionMode? = startActionMode(callback)
 
-    override fun doStartActivityForResult(intent: Intent, requestCode: Int) = startActivityForResult(intent, requestCode)
+    override fun doStartActivityForResult(intent: Intent, requestCode: Int) =
+        startActivityForResult(intent, requestCode)
 
     override fun registerObject(registerObject: Any) = mApp.bus.register(registerObject)
 
