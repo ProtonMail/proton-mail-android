@@ -39,8 +39,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- Toast messages -->
     <string name="error_chrome_disabled">コンテンツを読み込むことができません。 Chromeを有効にしてください</string>
     <string name="error_chrome_not_found">コンテンツを読み込むことができません。 Chromeをインストールしてください</string>
-    <string name="messages_load_failure">メッセージの受信ができません。</string>
-    <string name="message_details_load_failure">メッセージの詳細を回復できません。</string>
+    <string name="messages_load_failure">メッセージの取得ができません。</string>
+    <string name="message_details_load_failure">メッセージの詳細を取得できません。</string>
     <string name="no_more_messages">これ以上メッセージはありません。</string>
     <string name="mailbox_login_failure">メールボックスへのログインに失敗しました。</string>
     <string name="login_failure">ログインに失敗しました。</string>
@@ -187,7 +187,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_password_specified">有効期限は完全に暗号化されたメッセージに対してのみ設定できます。ProtonMail利用者以外のためのパスワードを設定してください。</string>
     <string name="attachment_limit">添付ファイルは、%1$s に制限されています。添付ファイルの合計は、%2$s になります。</string>
     <string name="sending_message">メッセージを送信しています...</string>
-    <string name="sending_message_offline">オフラインです。後で送信されます。</string>
+    <string name="sending_message_offline">現在オフラインのため、後ほど送信されます。</string>
     <string name="go_to_inbox">受信箱に移動</string>
     <string name="message_sent">メッセージが送信されました。</string>
     <string name="message_failed">メッセージ送信に失敗しました。</string>
@@ -230,7 +230,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="reply_prefix_on">　</string>
     <string name="create_new_account">新しいアカウントを作成</string>
     <string name="setup_new_account">アカウントの設定</string>
-    <string name="create_account">アカウントの作成\nR190316</string>
+    <string name="create_account">アカウントの作成</string>
     <string name="create_passwords">パスワードの設定</string>
     <string name="caps_username">ユーザー名</string>
     <string name="caps_login_password">パスワード</string>
@@ -239,13 +239,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_me_for_new_features">新機能に関する最新情報を受け取る</string>
     <string name="create_mailbox_password">パスワードを作成</string>
     <string name="password_note"><b>注意:</b>これはメッセージの暗号化と復号に使用されます。
-このパスワードを失くした場合、回復することはできず、あなたの電子メールを読めなくなります。</string>
-    <string name="username_note"><b>注意:</b>ユーザー名はProtonMailアドレスにも使用されます。</string>
+このパスワードを失くした場合、電子メールが読めなくなります。</string>
+    <string name="username_note"><b>注意:</b>ユーザー名はProtonMailアドレスに使用されます。</string>
     <string name="terms_and_conditions">ProtonMailを使用することによって、あなたは\n<a href="https://protonmail.com/terms-and-conditions"> 利用規約</a> と <a href="https://protonmail.com/privacy-policy"> プライバシー ポリシー</a> に同意したことになります。</string>
     <string name="human_verification">人間であることの確認</string>
-    <string name="human_verification_subtitle">ProtonMailの乱用を防ぐために、\nあなたが人間であることを検証する必要があります。</string>
+    <string name="human_verification_subtitle">ProtonMailの乱用を防ぐために、\nあなたがボットでないことを検証する必要があります。</string>
     <string name="select_options">次のオプションのいずれかを選択してください。</string>
-    <string name="no_verification_methods_found">検証方法がみつかりません。</string>
+    <string name="no_verification_methods_found">検証方法が選択されていません。</string>
     <string name="email_verification">メールによる検証</string>
     <string name="phone_verification">電話による検証</string>
     <string name="existing_email_address">既存のメールアドレスを入力してください。</string>
@@ -262,29 +262,29 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="label_name_empty">ラベル名が必要です</string>
     <string name="label_name_duplicate">このラベル名は既に存在します。</string>
     <string name="label_created">ラベルが作成されました。</string>
-    <string name="label_invalid">無効な名前ではラベルを追加できせん。</string>
+    <string name="label_invalid">無効な名前のため、ラベルを追加できせん。</string>
     <string name="undo">取り消し</string>
-    <string name="customize_swipe_actions">スワイプ時のアクションを設定</string>
+    <string name="customize_swipe_actions">スワイプ時のアクション設定</string>
     <string name="message_can_not_edit">返信/転送ができません。このメッセージはまだ送信されていません。</string>
     <string name="label_apply">適用</string>
     <string name="label_delete">削除</string>
     <string name="label_add">追加</string>
-    <string name="no_browser_found">このアクションを完了するためにブラウザーのアプリをインストールしてください。</string>
-    <string name="no_application_found">この操作を行うアプリが見つかりませんでした。</string>
-    <string name="no_application_found_or_link_invalid">このアクションを処理するアプリが見つかりませんでした。あるいは無効なURLです。</string>
+    <string name="no_browser_found">この操作を完了するために、ブラウザーをインストールしてください。</string>
+    <string name="no_application_found">この操作を処理するアプリが見つかりませんでした。</string>
+    <string name="no_application_found_or_link_invalid">この操作を処理するアプリが見つからないか、あるいは無効なURLです。</string>
     <string name="also_archive">アーカイブも行う</string>
     <string name="label_deleted">ラベルが削除されました。</string>
-    <string name="label_deleted_error">ラベル削除中のエラー</string>
+    <string name="label_deleted_error">ラベル削除中にエラーが発生しました</string>
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
     <string name="no_connectivity_detected">接続が検出できません...</string>
-    <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="no_connectivity_detected_troubleshoot">接続が検出できません… (<u>トラブルシュート</u>)</string>
     <string name="connectivity_checking">接続を確認しています...</string>
     <string name="sync_short">同期</string>
-    <string name="draft_attachments_uploading">下書きがまだアップロード中です...</string>
+    <string name="draft_attachments_uploading">まだ下書きをアップロードしている最中です...</string>
     <string name="draft_label_attachments_uploading">添付ファイルをアップロードしています…</string>
     <string name="draft_label_message_uploading">メッセージを送信しています…</string>
-    <string name="attachment_failed">メッセージの添付ファイルのアップロードに失敗しました。 </string>
+    <string name="attachment_failed">添付ファイルのアップロードに失敗しました。</string>
     <string name="attaching_photo_failed">写真の添付に失敗しました。</string>
     <string name="empty_message">空のメッセージ</string>
     <string name="dismiss">却下</string>
@@ -292,13 +292,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="please_choose_color">色を選択してください。</string>
     <string name="display_images">外部コンテンツを表示</string>
     <string name="retry">再試行</string>
-    <string name="saving_failed_no_conn">保存に失敗しました。接続がありません。</string>
-    <string name="username_is_available">%s が利用可能です。</string>
-    <string name="username_is_not_available">%s は利用できません。</string>
-    <string name="username_is_too_long">ユーザー名の最大長は %d 文字です。</string>
+    <string name="saving_failed_no_conn">保存に失敗しました。接続が切れています。</string>
+    <string name="username_is_available">ユーザー名は使用可能です。</string>
+    <string name="username_is_not_available">既に使用されているユーザー名です。</string>
+    <string name="username_is_too_long">ユーザー名は最大 %d 文字までです。</string>
     <string name="congratulation">おめでとうございます！</string>
-    <string name="new_account_ready">新しいセキュリティで保護された新しい電子メール\nアカウント
-ができました。</string>
+    <string name="new_account_ready">セキュリティで保護された新たな電子メール\nアカウント
+が用意できました。</string>
     <string name="optional_email_note">ログインパスワードを忘れた場合、オプションの回復用のメールアドレスによってリセットすることができます。</string>
     <string name="optional_display_name">メールを送信する際に、これが送信者フィールドに表示される名前になります。</string>
     <string name="error_captcha_not_valid">無効</string>
@@ -352,9 +352,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="attachment_download_failed">%s のダウンロードに失敗しました。</string>
     <string name="ringtone">着信音</string>
     <string name="ringtone_selected">着信音：</string>
-    <string name="ringtone_invalid">着信音の選択が無効な値を返しました</string>
-    <string name="ringtone_no_default">デフォルトの着信音をロードすることはできません</string>
-    <string name="select_tone">音を選ぶ</string>
+    <string name="ringtone_invalid">無効な着信音です</string>
+    <string name="ringtone_no_default">既定の着信音を読み込むことができません</string>
+    <string name="select_tone">音を選択してください</string>
     <string name="copy_link">リンクをコピーする</string>
     <string name="share_link">リンクを共有する</string>
     <string name="sync_attachments">添付ファイルを同期しています...</string>
@@ -547,12 +547,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_vcard_new_row_address">住所の追加</string>
     <string name="contact_vcard_new_row_other">情報の追加</string>
     <string name="vcard_other_option_org">組織</string>
-    <string name="vcard_other_option_title">肩書き</string>
+    <string name="vcard_other_option_title">肩書き・称号</string>
     <string name="vcard_other_option_nickname">ニックネーム</string>
     <string name="vcard_other_option_birthday">誕生日</string>
     <string name="vcard_other_option_anniversary">記念日</string>
     <string name="vcard_other_option_gender">性別</string>
-    <string name="vcard_other_option_role">役割</string>
+    <string name="vcard_other_option_role">役職</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">連絡先を変換</string>
     <string name="upload_contacts">連絡先をアップロード</string>
@@ -563,7 +563,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         <item>電話</item>
         <item>携帯電話</item>
         <item>仕事用</item>
-        <item>FAX</item>
+        <item>Fax</item>
         <item>その他</item>
     </string-array>
     <string-array name="vcard_option_email">
@@ -724,7 +724,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_name_attachments">添付ファイル</string>
     <string name="channel_description_attachments">添付ファイルのダウンロード状態を知らせる</string>
     <string name="channel_name_emails">メール</string>
-    <string name="channel_description_emails">受信メールの通知</string>
+    <string name="channel_description_emails">メール受信の通知</string>
     <string name="channel_name_account">アカウント</string>
     <string name="channel_description_account">アカウントの状態</string>
     <string name="channel_name_ongoing_operations">実行中の操作</string>
@@ -809,7 +809,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="need_permissions_title">アクセス許可</string>
     <string name="need_storage_permissions_text">添付ファイルを追加するためには、ストレージへのアクセスを許可する必要があります。</string>
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
-    <string name="push_notifications_alert_subtitle">ProtonMailのプッシュ通知は、更新されたGoogle Playサービスがないと機能しません。</string>
+    <string name="push_notifications_alert_subtitle">ProtonMailのプッシュ通知は、Google Playサービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>
     <string name="use_pin_instead">代わりにPINを使用する</string>
     <!-- strings used for biometric enrollment -->
@@ -844,11 +844,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="default_mobile_signature">ProtonMailモバイルから送信</string>
     <string name="mobile_signature_is_premium">モバイル署名の変更は有料ユーザーのみが可能です。</string>
     <!-- region Snooze Settings -->
-    <string name="snooze_header">休止</string>
-    <string name="notifications_snooze">通知の休止</string>
-    <string name="notifications_snoozed">通知は休止中です</string>
+    <string name="snooze_header">通知の停止</string>
+    <string name="notifications_snooze">通知の停止計画</string>
+    <string name="notifications_snoozed">通知は停止中です</string>
     <string name="notifications_snooze_scheduled">計画休止</string>
-    <string name="notifications_snooze_scheduled_settings">休止計画の設定</string>
+    <string name="notifications_snooze_scheduled_settings">停止計画の設定</string>
     <string name="notifications_snooze_current_status">状態</string>
     <string name="snooze_start_time">開始時刻：</string>
     <string name="snooze_end_time">終了時刻：</string>
@@ -858,16 +858,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="quick_snooze_resume_hours">通知は、%1$d時間 %2$d分後に再開されます。</string>
     <string name="minutes">分</string>
-    <string name="set_custom_quick_snooze">休止時間の設定</string>
+    <string name="set_custom_quick_snooze">停止時刻の設定</string>
     <string name="turn_off">通知を再開する</string>
-    <string name="snooze_will_repeat">休止を繰り返します</string>
-    <string name="work_days">Work days</string>
-    <string name="weekends">Weekend</string>
-    <string name="every_day">Every day</string>
-    <string name="quick_and_scheduled_enabled">クイック休止と計画休止が有効です。</string>
-    <string name="quick_only_enabled">クイック休止が有効です。</string>
-    <string name="scheduled_only_enabled">計画休止が有効です。</string>
-    <string name="quick_and_scheduled_disabled">クイック休止と計画休止が無効です。</string>
+    <string name="snooze_will_repeat">繰り返し</string>
+    <string name="work_days">平日</string>
+    <string name="weekends">週末</string>
+    <string name="every_day">毎日</string>
+    <string name="quick_and_scheduled_enabled">通知の一時停止と計画停止が有効です。</string>
+    <string name="quick_only_enabled">通知の一時停止が有効です。</string>
+    <string name="scheduled_only_enabled">計画停止が有効です。</string>
+    <string name="quick_and_scheduled_disabled">通知の停止は無効です。</string>
     <string name="scheduled_snooze_on">計画休止（ON）</string>
     <string name="scheduled_snooze_off">計画休止（OFF）</string>
     <!-- endregion -->
@@ -968,8 +968,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="allowed">許可</string>
     <string name="denied">拒否</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Swipe gestures changed</string>
-    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
+    <string name="swipe_gestures_changed">スワイプ操作が変更されました</string>
+    <string name="swipe_gestures_changed_message">最新の更新で、スワイプ操作が変更されました。必要に応じて、設定からスワイプ操作の設定をリセットできます。</string>
     <string name="go_to_settings">設定を開く</string>
     <!-- endregion -->
 </resources>
