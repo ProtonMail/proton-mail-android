@@ -30,7 +30,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.children
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
@@ -58,8 +59,8 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.NetworkUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
-import ch.protonmail.android.views.behavior.ScrollAwareFABBehavior
 import com.birbit.android.jobqueue.JobManager
+import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
@@ -314,25 +315,32 @@ class ContactsActivity : BaseConnectivityActivity(),
         }
     }
 
+    private val contactsListFragment get() = supportFragmentManager.fragments[0] as ContactsListFragment
+    private val contactGroupsFragment get() = supportFragmentManager.fragments[1] as ContactGroupsFragment
+
     private fun onPageSelected(position: Int) {
         addFab.visibility = ViewGroup.VISIBLE
+        val recyclerViewBottomPadding = {
+            val mainFab = addFab.children.first { it is FloatingActionButton }
+            mainFab.height + (window.decorView.height - addFab.bottom) * 2
+        }
         when (position) {
             0 -> {
-                val param = addFab.layoutParams as CoordinatorLayout.LayoutParams
-                param.behavior = ScrollAwareFABBehavior()
-                addFab.layoutParams = param
-                val fragmentGroups = supportFragmentManager.fragments[1] as ContactGroupsFragment
-                if (fragmentGroups.isAdded && fragmentGroups.getActionMode != null) {
-                    fragmentGroups.onDestroyActionMode(null)
+                window.decorView.doOnPreDraw {
+                    contactsListFragment.updateRecyclerViewBottomPadding(recyclerViewBottomPadding())
+                }
+                contactGroupsFragment.apply {
+                    if (isAdded && actionMode != null)
+                        onDestroyActionMode(null)
                 }
             }
             1 -> {
-                val param = addFab.layoutParams as CoordinatorLayout.LayoutParams
-                param.behavior = ScrollAwareFABBehavior()
-                addFab.layoutParams = param
-                val fragmentContacts = supportFragmentManager.fragments[0] as ContactsListFragment
-                if (fragmentContacts.isAdded && fragmentContacts.getActionMode != null) {
-                    fragmentContacts.onDestroyActionMode(null)
+                window.decorView.doOnPreDraw {
+                    contactGroupsFragment.updateRecyclerViewBottomPadding(recyclerViewBottomPadding())
+                }
+                contactsListFragment.apply {
+                    if (isAdded && actionMode != null)
+                        onDestroyActionMode(null)
                 }
             }
         }

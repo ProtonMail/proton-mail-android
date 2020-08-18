@@ -26,9 +26,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.AbsListView
+import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
@@ -61,16 +62,15 @@ private const val TAG_CONTACT_GROUPS_FRAGMENT = "ProtonMail.ContactGroupsFragmen
  * Created by kadrikj on 8/24/18.
  */
 
-class ContactGroupsFragment : BaseFragment(), IContactsFragment, AbsListView.MultiChoiceModeListener {
+class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     @Inject
     lateinit var contactGroupsViewModelFactory: ContactGroupsViewModelFactory
     private lateinit var contactGroupsViewModel: ContactGroupsViewModel
     private lateinit var contactGroupsAdapter: ContactsGroupsListAdapter
-    private var mActionMode: ActionMode? = null
-
-    val getActionMode get() = mActionMode
-
+    override var actionMode: ActionMode? = null
+        private set
+    
     private val listener: IContactsListFragmentListener by lazy {
         context as IContactsListFragmentListener
     }
@@ -103,7 +103,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment, AbsListView.Mul
     }
 
     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        mActionMode = mode
+        actionMode = mode
         UiUtil.setStatusBarColor(
             activity as Activity,
             UiUtil.scaleColor(ContextCompat.getColor(requireContext(), R.color.dark_purple_statusbar), 1f, true)
@@ -126,8 +126,8 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment, AbsListView.Mul
     }
 
     override fun onDestroyActionMode(mode: ActionMode?) {
-        mActionMode!!.finish()
-        mActionMode = null
+        actionMode!!.finish()
+        actionMode = null
         contactGroupsAdapter.endSelectionMode()
 
         UiUtil.setStatusBarColor(
@@ -192,6 +192,10 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment, AbsListView.Mul
         contactGroupsRecyclerView.adapter = contactGroupsAdapter
     }
 
+    override fun updateRecyclerViewBottomPadding(@Px size: Int) {
+        contactGroupsRecyclerView.updatePadding(bottom = size)
+    }
+
     private fun startObserving() {
         contactGroupsViewModel.contactGroupsResult.observe(this, {
             if (it.isEmpty()) {
@@ -217,7 +221,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment, AbsListView.Mul
         if (checkedItemsCount == null) {
             listener.setTitle(getString(R.string.contacts))
         } else {
-            mActionMode?.title = String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+            actionMode?.title = String.format(getString(R.string.contact_group_selected), checkedItemsCount)
         }
     }
 
@@ -263,9 +267,9 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment, AbsListView.Mul
 
     override fun onStop() {
         super.onStop()
-        if (mActionMode != null) {
-            mActionMode!!.finish()
-            mActionMode = null
+        if (actionMode != null) {
+            actionMode!!.finish()
+            actionMode = null
         }
     }
 }

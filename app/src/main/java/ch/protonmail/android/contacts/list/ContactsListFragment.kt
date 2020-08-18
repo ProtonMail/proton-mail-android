@@ -29,9 +29,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.AbsListView
+import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -74,14 +75,13 @@ private const val EXTRA_PERMISSION = "extra_permission"
  * Created by dkadrikj on 8/25/16.
  */
 
-class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.MultiChoiceModeListener {
+class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private lateinit var viewModel: ContactsListViewModel
     private lateinit var contactsAdapter: ContactsListAdapter
     private var hasContactsPermission: Boolean = false
-    private var mActionMode: ActionMode? = null
-
-    val getActionMode get() = mActionMode
+    override var actionMode: ActionMode? = null
+        private set
 
     private val listener: IContactsListFragmentListener by lazy {
         context as? IContactsListFragmentListener
@@ -109,7 +109,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     }
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-        mActionMode = mode
+        actionMode = mode
         mode.menuInflater.inflate(R.menu.contacts_selection_menu, menu)
         return true
     }
@@ -122,8 +122,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     ) {}
 
     override fun onDestroyActionMode(mode: ActionMode?) {
-        mActionMode!!.finish()
-        mActionMode = null
+        actionMode!!.finish()
+        actionMode = null
         contactsAdapter.endSelectionMode()
         UiUtil.setStatusBarColor(
             requireActivity() as AppCompatActivity,
@@ -178,9 +178,9 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
     override fun onStop() {
         listener.unregisterObject(this)
         super.onStop()
-        if (mActionMode != null) {
-            mActionMode!!.finish()
-            mActionMode = null
+        if (actionMode != null) {
+            actionMode!!.finish()
+            actionMode = null
         }
     }
 
@@ -375,6 +375,10 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
         contactsRecyclerView.adapter = contactsAdapter
     }
 
+    override fun updateRecyclerViewBottomPadding(@Px size: Int) {
+        contactsRecyclerView.updatePadding(bottom = size)
+    }
+
     private fun onContactClick(contactItem: ContactItem) {
         if (contactItem.isProtonMailContact) {
             activity?.startContactDetails(contactItem.contactId!!)
@@ -388,7 +392,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment, AbsListView.Mult
         if (checkedItemsCount == null) {
             listener.setTitle(getString(R.string.contacts))
         } else {
-            mActionMode?.title =
+            actionMode?.title =
                 String.format(getString(R.string.contact_group_selected), checkedItemsCount)
         }
     }
