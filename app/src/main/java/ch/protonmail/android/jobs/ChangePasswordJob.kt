@@ -171,6 +171,7 @@ class ChangePasswordJob(
                 RESPONSE_CODE_OLD_PASSWORD_INCORRECT,
                 RESPONSE_CODE_NEW_PASSWORD_INCORRECT,
                 RESPONSE_CODE_NEW_PASSWORD_MESSED_UP -> {
+                    resetPassphrase(AuthStatus.INVALID_CREDENTIAL)
                     AppUtil.postEventOnUi(PasswordChangeEvent(passwordType,
                         AuthStatus.INVALID_CREDENTIAL, response.error))
                 }
@@ -205,10 +206,7 @@ class ChangePasswordJob(
         }
     }
 
-    override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int, maxRunCount: Int):
-        RetryConstraint = RetryConstraint.CANCEL
-
-    override fun onProtonCancel(cancelReason: Int, throwable: Throwable?) {
+    private fun resetPassphrase(status: AuthStatus) {
         val openPGP = applicationContext.app.openPGP
         val keySalt = openPGP.createNewKeySalt()
         val generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, oldPassword)
@@ -219,7 +217,14 @@ class ChangePasswordJob(
                     mUserManager.getMailboxPassword(), generatedMailboxPassword)
             }
         }
-        AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.FAILED))
+        AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, status))
+    }
+
+    override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int, maxRunCount: Int):
+        RetryConstraint = RetryConstraint.CANCEL
+
+    override fun onProtonCancel(cancelReason: Int, throwable: Throwable?) {
+        resetPassphrase(AuthStatus.FAILED)
     }
 
     companion object {
