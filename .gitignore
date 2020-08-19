@@ -56,6 +56,7 @@ sentry.properties
 !.idea/**/dictionaries/project.xml
 .idea/**/shelf
 .idea/runConfigurations.xml
+.idea/misc.xml
 
 # Generated files
 .idea/**/contentModel.xml
