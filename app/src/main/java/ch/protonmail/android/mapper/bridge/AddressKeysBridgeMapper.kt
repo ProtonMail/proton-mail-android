@@ -66,7 +66,8 @@ class AddressKeyBridgeMapper @Inject constructor() : BridgeMapper<OldKey, Addres
         privateKey = PgpField.PrivateKey(NotBlankString(privateKey)),
         token = getToken(token),
         signature = getSignature(signature),
-        activation = getActivation(activation)
+        activation = getActivation(activation),
+        active = getActive(active)
     )
 
     private fun canEncrypt(flags: Int) =
@@ -83,6 +84,8 @@ class AddressKeyBridgeMapper @Inject constructor() : BridgeMapper<OldKey, Addres
 
     private fun getActivation(activation: String?) =
         activation?.takeIfNotBlank()?.let { PgpField.Message(NotBlankString(it)) }
+
+    private fun getActive(active: Int) = active == 1
 
     private companion object {
         const val CAN_VERIFY_SIGNATURE = 1 // 01

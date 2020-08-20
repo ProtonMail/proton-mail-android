@@ -67,7 +67,13 @@ data class AddressKey(
      * decrypt the encrypted address key.
      * The address key will be encrypted using the pwd + salt and updated.
      */
-    val activation: PgpField.Message?
+    val activation: PgpField.Message?,
+
+    /**
+     * Newly added entry in AddressKey model on API side. Designates whether a key can be decrypted or not.
+     * Non-decryptable keys should be excluded from keylists since their ownership cannot be proved
+     */
+    val active: Boolean
 )
 
 /**

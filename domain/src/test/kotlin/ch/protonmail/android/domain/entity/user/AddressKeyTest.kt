@@ -83,7 +83,8 @@ internal class AddressKeyTest {
         privateKey = PrivateKey(NotBlankString("priv_key")),
         token = null,
         signature = null,
-        activation = null
+        activation = null,
+        active = true
     )
 
     private val anotherDummyKey = dummyKey.copy(id = Id("another_id"))

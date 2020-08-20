@@ -31,6 +31,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.crypto.OpenPGP
+import com.proton.gopenpgp.helper.Helper
 import javax.inject.Inject
 
 // region constants
@@ -76,7 +77,10 @@ class AddressKeyActivationWorker(context: Context, params: WorkerParameters) : W
 
                     val newPrivateKey: String = openPgp.updatePrivateKeyPassphrase(key.privateKey, activationToken.toByteArray() /*TODO passphrase*/, mailboxPassword)
                     val keyFingerprint = openPgp.getFingerprint(key.privateKey)
-                    val keyList = "[{\"Fingerprint\": \"$keyFingerprint\", \"Primary\": 1, \"Flags\": 3}]" // one-element JSON list
+                    val keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", " +
+                            "\"SHA256Fingerprints\": " + String(Helper.getJsonSHA256Fingerprints(key.privateKey)) + ", " +
+                            "\"Primary\": 1, \"Flags\": 3}]" // one-element JSON list
+
                     val signature = openPgp.signTextDetached(keyList, newPrivateKey, mailboxPassword)
                     val signedKeyList = SignedKeyList(keyList, signature)
 

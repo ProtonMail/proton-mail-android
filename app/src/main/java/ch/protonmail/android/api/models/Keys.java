@@ -46,8 +46,9 @@ public class Keys extends ResponseBody implements Parcelable {
     String Token;
     String Signature;
     String Activation;
+    int Active;
 
-    public Keys(String ID, String privateKey, int flags, int primary, String token, String signature, String activation) {
+    public Keys(String ID, String privateKey, int flags, int primary, String token, String signature, String activation, int active) {
         this.ID = ID;
         PrivateKey = privateKey;
         Flags = flags;
@@ -55,6 +56,7 @@ public class Keys extends ResponseBody implements Parcelable {
         Token = token;
         Signature = signature;
         Activation = activation;
+        Active = active;
     }
 
     protected Keys(Parcel in) {
@@ -65,6 +67,7 @@ public class Keys extends ResponseBody implements Parcelable {
         Token = in.readString();
         Signature = in.readString();
         Activation = in.readString();
+        Active = in.readInt();
     }
 
     public static final Creator<Keys> CREATOR = new Creator<Keys>() {
@@ -123,6 +126,10 @@ public class Keys extends ResponseBody implements Parcelable {
         return Activation;
     }
 
+    public int getActive() {
+        return Active;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -137,6 +144,7 @@ public class Keys extends ResponseBody implements Parcelable {
         dest.writeString(Token);
         dest.writeString(Signature);
         dest.writeString(Activation);
+        dest.writeInt(Active);
     }
 
     /**

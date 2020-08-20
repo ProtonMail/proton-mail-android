@@ -123,7 +123,8 @@ internal class CryptoTest {
             1,
             null,
             null,
-            null
+            null,
+            1
         )
     )
     private val oneAddressKeyUserKeys = listOf(
@@ -198,7 +199,8 @@ internal class CryptoTest {
             1,
             null,
             null,
-            null
+            null,
+            1
         )
     )
     //endregion
@@ -308,7 +310,8 @@ internal class CryptoTest {
                 =68Qs
                 -----END PGP SIGNATURE-----
             """.trimIndent(),
-            null
+            null,
+            1
         ),
         Keys(
             "QtsLAEJcOo_jhThoFLMfCQrWme3lRiQ16TWHwE9O0Vr-4Qn-3xSWvHGzYesK72--nTwebC9ZK01RhMd16ymDFg==",
@@ -364,7 +367,8 @@ internal class CryptoTest {
                 =4SVY
                 -----END PGP SIGNATURE-----
             """.trimIndent(),
-            null
+            null,
+            1
         ),
         Keys(
             "Kufr0UxSSqOB6975FEPC17yNhhq6FyE_Jc18-O_Q3w7bB3yWgC-hgJrxRF2iJxfqTDAwMjtvv8_roYJhDpv8Pg==",
@@ -465,7 +469,8 @@ internal class CryptoTest {
                 =yh1P
                 -----END PGP SIGNATURE-----
             """.trimIndent(),
-            null
+            null,
+            1
         ),
         Keys(
             "v3foSmcRMfxukR9VdZH-ql-sm4lFfAkHYbgsCzUbSrHQD-49BkEQVlmgkWk1u8oxMkceVW5Loaxwma3RSFTK8w==",
@@ -566,7 +571,8 @@ internal class CryptoTest {
                 =Jrx1
                 -----END PGP SIGNATURE-----
             """.trimIndent(),
-            null
+            null,
+            1
         )
     )
     val manyAddressKeysUserKeys = listOf(
@@ -641,7 +647,8 @@ internal class CryptoTest {
             1,
             null,
             null,
-            null
+            null,
+            1
         ),
         Keys(
             "XFEG7ogZjpsk23o8AIPlzKZiqLnLlATQmbIJzt-RubRpwhNd6F2I29OSJWqwKiq73IQfctWOn9mgJ8J3Av4Xew==",
@@ -714,7 +721,8 @@ internal class CryptoTest {
             0,
             null,
             null,
-            null
+            null,
+            1
         )
     )
     //endregion
