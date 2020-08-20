@@ -33,6 +33,7 @@ import androidx.core.app.ProtonJobIntentService;
 import com.birbit.android.jobqueue.JobManager;
 import com.google.android.gms.safetynet.SafetyNet;
 import com.proton.gopenpgp.crypto.ClearTextMessage;
+import com.proton.gopenpgp.helper.Helper;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -847,6 +848,7 @@ public class LoginService extends ProtonJobIntentService {
             final String privateKey = userManager.getPrivateKey();
 
             AddressPrivateKey addressPrivateKey = new AddressPrivateKey(addressId, privateKey);
+
             addressPrivateKey.setSignedKeyList(generateSignedKeyList(privateKey));
             List<AddressPrivateKey> addressPrivateKeys = new ArrayList<>();
             addressPrivateKeys.add(addressPrivateKey);
@@ -878,7 +880,9 @@ public class LoginService extends ProtonJobIntentService {
 
     private SignedKeyList generateSignedKeyList(String key) throws Exception {
         String keyFingerprint = openPGP.getFingerprint(key);
-        String keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", \"Primary\": 1, \"Flags\": 3}]"; // one-element JSON list
+        String keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", " +
+                            "\"SHA256Fingerprints\": " + new String(Helper.getJsonSHA256Fingerprints(key)) + ", " +
+                            "\"Primary\": 1, \"Flags\": 3}]"; // one-element JSON list
         String signedKeyList = openPGP.signTextDetached(keyList, key, userManager.getMailboxPassword());
         return new SignedKeyList(keyList, signedKeyList);
     }
