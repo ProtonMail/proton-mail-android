@@ -37,13 +37,11 @@ import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.MoveToFolderJob
-import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
 import java.util.UUID
 import java.util.Locale
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
@@ -68,10 +66,10 @@ object MessageUtils {
             } as ArrayList
 
             if (list.size > 0) {
-                intent.putExtra(extraName, list)
+                intent.putExtra(extraName, list.toTypedArray())
             } else if (numberOfMatches == recipients.size && ComposeMessageActivity.EXTRA_TO_RECIPIENTS == extraName) {
                 list.add(recipients[0])
-                intent.putExtra(extraName, list)
+                intent.putExtra(extraName, list.toTypedArray())
             }
         }
     }
