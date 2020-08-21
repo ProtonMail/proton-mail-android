@@ -530,16 +530,17 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
                     if (recipientGroups != null && recipientGroups.size() > 0) {
                         addRecipientsToView(recipientGroups, mToRecipientsView);
                     }
-                    ArrayList<String> recipientEmails = (ArrayList<String>) extras.getSerializable(EXTRA_TO_RECIPIENTS);
-                    if (recipientEmails != null && recipientEmails.size() > 0) {
-                        addRecipientsToView(recipientEmails, mToRecipientsView);
+                    String[] recipientEmails = extras.getStringArray(EXTRA_TO_RECIPIENTS);
+                    if (recipientEmails != null && recipientEmails.length > 0) {
+                        addRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mToRecipientsView);
                     }
                     mComposeBodyEditText.requestFocus();
                 } else {
                     checkPermissionsAndKeyboardToggle();
                 }
                 if (extras.containsKey(EXTRA_CC_RECIPIENTS)) {
-                    addRecipientsToView((ArrayList<String>) extras.getSerializable(EXTRA_CC_RECIPIENTS), mCcRecipientsView);
+                    String[] recipientEmails = extras.getStringArray(EXTRA_CC_RECIPIENTS);
+                    addRecipientsToView(new ArrayList<>(Arrays.asList(recipientEmails)), mCcRecipientsView);
                     mAreAdditionalRowsVisible = true;
                     focusRespondInline();
                 }
