@@ -398,7 +398,7 @@ public class MailboxActivity extends NavigationActivity implements
         LiveData<List<Message>> messagesLiveData = Transformations.switchMap(mMailboxLocation, location -> getLiveDataByLocation(messageDetailsRepository, location));
         mMailboxLocation.observe(this, newLocation -> mAdapter.setNewLocation(newLocation));
         messagesLiveData.observe(this, new MessagesListObserver(mAdapter));
-        new ItemTouchHelper(new SwipeController(mUserManager.getUser())).attachToRecyclerView(mMessagesListView);
+        new ItemTouchHelper(new SwipeController()).attachToRecyclerView(mMessagesListView);
 
         if (extras != null && extras.getBoolean(EXTRA_SWITCHED_USER, false)) {
             String newUser = extras.getString(EXTRA_SWITCHED_TO_USER);
@@ -1922,11 +1922,8 @@ public class MailboxActivity extends NavigationActivity implements
     }
 
     private class SwipeController extends ItemTouchHelper.Callback {
-        private final User user;
 
-        SwipeController(User user) {
-            this.user = user;
-        }
+        SwipeController() {}
 
         @Override
         public int getMovementFlags(@NonNull RecyclerView recyclerView,
@@ -1956,6 +1953,13 @@ public class MailboxActivity extends NavigationActivity implements
                 return SwipeAction.TRASH;
             }
             return swipeAction;
+        }
+
+        @Override
+        public boolean isItemViewSwipeEnabled() {
+            if (mActionMode != null)
+                return false;
+            else return super.isItemViewSwipeEnabled();
         }
 
         @Override
