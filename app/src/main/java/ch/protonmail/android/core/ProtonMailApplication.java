@@ -86,6 +86,7 @@ import ch.protonmail.android.core.di.AppComponent;
 import ch.protonmail.android.core.di.AppModule;
 import ch.protonmail.android.core.di.DaggerAppComponent;
 import ch.protonmail.android.events.ApiOfflineEvent;
+import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -400,26 +401,20 @@ public class ProtonMailApplication extends Application implements HasActivityInj
     public void onPasswordChangeEvent(PasswordChangeEvent event) {
         if (mCurrentActivity != null) {
             final Activity activity = mCurrentActivity.get();
-
-            switch (event.getStatus()) {
-                case SUCCESS: {
-                    if (event.getPasswordType() == Constants.PASSWORD_TYPE_LOGIN) {
-                        TextExtensions.showToast(activity.getApplicationContext(), R.string.new_login_password_saved);
-                    } else if (event.getPasswordType() == Constants.PASSWORD_TYPE_MAILBOX) {
-                        TextExtensions.showToast(activity.getApplicationContext(), R.string.new_mailbox_password_saved);
-                    }
+            if (event.getStatus() == AuthStatus.SUCCESS) {
+                if (event.getPasswordType() == Constants.PASSWORD_TYPE_LOGIN) {
+                    TextExtensions.showToast(activity.getApplicationContext(), R.string.new_login_password_saved);
+                } else if (event.getPasswordType() == Constants.PASSWORD_TYPE_MAILBOX) {
+                    TextExtensions.showToast(activity.getApplicationContext(), R.string.new_mailbox_password_saved);
                 }
-                break;
-                default: {
-                    String message = event.getStatusMessage();
-                    if (!mNetworkUtil.isConnected()) {
-                        message = getString(R.string.no_connectivity_detected);
-                    } else if (message == null || message.isEmpty()) {
-                        message = getString(R.string.default_error_message);
-                    }
-                    TextExtensions.showToast(activity.getApplicationContext(), message);
+            } else {
+                String message = event.getStatusMessage();
+                if (!mNetworkUtil.isConnected()) {
+                    message = getString(R.string.no_connectivity_detected);
+                } else if (message == null || message.isEmpty()) {
+                    message = getString(R.string.default_error_message);
                 }
-                break;
+                TextExtensions.showToast(activity.getApplicationContext(), message);
             }
         }
     }
