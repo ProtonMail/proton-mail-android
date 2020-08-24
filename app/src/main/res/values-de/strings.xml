@@ -19,84 +19,84 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">VERSCHLÜSSELTE E-MAIL</string>
-    <string name="secure_email_swiss">Sichere E-Mail aus <br/> der Schweiz</string>
+    <string name="encrypted_emails">Verschlüsselte Nachricht</string>
+    <string name="secure_email_swiss">Sicherer E-Mail-Dienst\naus der Schweiz</string>
     <string name="decrypt_mailbox"><b>Postfach</b> entschlüsseln</string>
     <string name="decrypt">Entschlüsseln</string>
     <string name="user_sign_in">Benutzeranmeldung</string>
     <string name="two_factor_sign_in">Zwei-Faktor-Authentifizierung</string>
     <string name="sign_in">Anmelden</string>
     <string name="sign_out">Abmelden</string>
-    <string name="sign_out_question">Sind Sie sicher, dass Sie sich abmelden möchten?</string>
-    <string name="mailbox_password">Mailbox-Passwort</string>
+    <string name="sign_out_question">Möchtest Sie sich wirklich abmelden?</string>
+    <string name="mailbox_password">Postfach-Passwort</string>
     <string name="two_factor_code">Zwei-Faktor-Code</string>
     <string name="processing_request">Ihre Anfrage wird bearbeitet</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Sie sind nicht angemeldet!</string>
     <string name="forgot_password">Passwort vergessen?</string>
-    <string name="reset_mailbox_password">MAILBOX-PASSWORT ZURÜCKSETZEN</string>
-    <string name="forgot_mailbox_password">Um Ihr Mailbox-Passwort zurückzusetzen, nutzen Sie die webbasierte Version von ProtonMail auf protonmail.com</string>
+    <string name="reset_mailbox_password">Postfach-Passwort zurücksetzen</string>
+    <string name="forgot_mailbox_password">Um Ihr Postfach-Passwort zurückzusetzen, verwenden Sie bitte die Web-Version von ProtonMail unter protonmail.com</string>
     <!-- Toast messages -->
     <string name="error_chrome_disabled">Inhalt konnte nicht geladen werden. Bitte Chrome aktivieren</string>
     <string name="error_chrome_not_found">Inhalt konnte nicht geladen werden. Bitte Chrome installieren</string>
     <string name="messages_load_failure">Fehler beim Abrufen der Nachrichten</string>
     <string name="message_details_load_failure">Fehler beim Abrufen der Nachrichtendetails</string>
     <string name="no_more_messages">Keine weiteren Nachrichten</string>
-    <string name="mailbox_login_failure">Fehler beim Anmelden</string>
-    <string name="login_failure">Fehler beim Anmelden</string>
+    <string name="mailbox_login_failure">Anmelden am Postfach fehlgeschlagen</string>
+    <string name="login_failure">Anmelden fehlgeschlagen</string>
     <string name="invalid_server_proof">Ungültiger Server</string>
     <string name="invalid_credentials">Ungültige Zugangsdaten</string>
-    <string name="invalid_mailbox_password">Ungültiges Mailbox-Passwort</string>
-    <string name="not_signed_up">Sie sind nicht für die ProtonMail Android Beta angemeldet</string>
+    <string name="invalid_mailbox_password">Ungültiges Postfach-Passwort</string>
+    <string name="not_signed_up">Sie sind nicht für die Beta-Version von ProtonMail Android angemeldet</string>
     <string name="no_network">Keine Netzwerkverbindung</string>
     <string name="no_network_queued">Keine Netzwerkverbindung, Nachricht in Warteschlange</string>
     <string name="update_app_title">Aktualisierung erforderlich</string>
-    <string name="update_app">Ihre ProtonMail-App kann nicht verwendet werden, bis sie aktualisiert wird</string>
-    <string name="api_offline_title">ProtonMail-API offline</string>
+    <string name="update_app">Die App ProtonMail kann erst genutzt werden, nachdem diese aktualisiert wurde</string>
+    <string name="api_offline_title">Die ProtonMail-API ist derzeit nicht erreichbar</string>
     <string name="api_offline">ProtonMail ist derzeit nicht erreichbar. Den aktuellen Status finden Sie unter https://protonstatus.com oder https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt gespeichert</string>
-    <string name="contact_saved_offline">Kontakt gespeichert. Die Synchronisation erfolgt, wenn eine Verbindung verfügbar ist.</string>
-    <string name="contact_exist">Kontakt E-Mail bereits vorhanden</string>
+    <string name="contact_saved_offline">Kontakt gespeichert. Wird synchronisiert, sobald eine Verbindung verfügbar ist.</string>
+    <string name="contact_exist">E-Mai-Adresse des Kontaktes bereits vorhanden</string>
     <string name="invalid_email">Ungültige E-Mail-Adresse</string>
     <string name="duplicate_email">Die E-Mail-Adresse ist ein Duplikat</string>
     <string name="invalid_code">Ungültiger Schlüssel</string>
     <string name="message_drafted">Das Senden der Nachricht ist fehlgeschlagen. Ihre Nachrichten werden im Ordner „Entwürfe” gespeichert.</string>
     <string name="open_drawer">Öffnen</string>
     <string name="close_drawer">Schließen</string>
-    <string name="inbox_option">POSTEINGANG</string>
-    <string name="starred_option">MARKIERT</string>
-    <string name="drafts_option">ENTWÜRFE</string>
-    <string name="sent_option">GESENDET</string>
-    <string name="archive_option">ARCHIV</string>
+    <string name="inbox_option">Posteingang</string>
+    <string name="starred_option">Gekennzeichnet</string>
+    <string name="drafts_option">Entwürfe</string>
+    <string name="sent_option">Gesendet</string>
+    <string name="archive_option">Archiv</string>
     <string name="trash_option">PAPIERKORB</string>
-    <string name="spam_option">SPAM</string>
+    <string name="spam_option">Spam</string>
     <string name="inbox">Posteingang</string>
-    <string name="starred">Markiert</string>
+    <string name="starred">Gekennzeichnet</string>
     <string name="drafts">Entwürfe</string>
     <string name="sent">Gesendet</string>
     <string name="archive">Archiv</string>
     <string name="trash">Papierkorb</string>
     <string name="spam">Spam</string>
     <string name="contacts">Kontakte</string>
-    <string name="search_contacts">Nach Kontakten suchen</string>
-    <string name="fetching_contacts">ProtonMail-Kontakte abrufen …</string>
+    <string name="search_contacts">Kontakte durchsuchen</string>
+    <string name="fetching_contacts">ProtonMail-Kontakte werden abgerufen …</string>
     <string name="fetching_contacts_success">Kontakte erfolgreich aktualisiert</string>
     <string name="fetching_contacts_failure">Kontakte konnten nicht aktualisiert werden</string>
-    <string name="search">Suche</string>
-    <string name="search_messages">Nachrichten suchen</string>
+    <string name="search">Suchen</string>
+    <string name="search_messages">Nachrichten durchsuchen</string>
     <string name="no_search_results">Keine Ergebnisse gefunden</string>
     <string name="compose">Verfassen</string>
     <string name="compose_message">Nachricht verfassen</string>
     <string name="empty_folder">Ordner leeren</string>
-    <string name="view_headers">Header anzeigen</string>
-    <string name="message_headers">Kopfzeile der Nachricht</string>
+    <string name="view_headers">Kopfzeilen anzeigen</string>
+    <string name="message_headers">Kopfzeilen der Nachricht</string>
     <string name="delete_message">Nachricht löschen</string>
     <string name="delete_messages">Nachrichten löschen</string>
     <string name="add_label">Kategorie hinzufügen</string>
     <string name="add_star">Als Favorit markieren</string>
-    <string name="remove_star">Von Favoriten entfernen</string>
-    <string name="mark_read">Als gelesen markieren</string>
-    <string name="mark_unread">Als ungelesen markieren</string>
+    <string name="remove_star">Kennzeichnung entfernen</string>
+    <string name="mark_read">Als gelesen kennzeichnen</string>
+    <string name="mark_unread">Als ungelesen kennzeichnen</string>
     <string name="move_to_archive">In Archiv verschieben</string>
     <string name="move_to_trash">In Papierkorb verschieben</string>
     <string name="move_to_spam">In Spam verschieben</string>
@@ -107,30 +107,30 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_messages">Keine Nachrichten</string>
     <string name="no_labels">Keine Kategorien</string>
     <string name="to">An</string>
-    <string name="cc">Cc</string>
-    <string name="bcc">Bcc</string>
+    <string name="cc">CC</string>
+    <string name="bcc">BCC</string>
     <string name="to_prefix">An:</string>
-    <string name="cc_prefix">Cc:</string>
-    <string name="bcc_prefix">Blindkopie:</string>
+    <string name="cc_prefix">CC:</string>
+    <string name="bcc_prefix">BCC:</string>
     <string name="from_prefix">Von:</string>
     <string name="date_prefix">Datum:</string>
-    <string name="view_details">DETAILS</string>
-    <string name="hide_details">DETAILS AUSBLENDEN</string>
+    <string name="view_details">Details</string>
+    <string name="hide_details">Details ausblenden</string>
     <string name="reply">Antworten</string>
     <string name="reply_all">Allen antworten</string>
     <string name="forward">Weiterleiten</string>
     <string name="subject">Betreff</string>
     <string name="email_subject">Betreff</string>
-    <string name="define_message_password">Kennwort für diese Nachricht</string>
+    <string name="define_message_password">Passwort der Nachricht</string>
     <string name="confirm_message_password">Passwort bestätigen</string>
     <string name="define_password_hint">Hinweis angeben (optional)</string>
     <string name="message_passwords_do_not_match">Passwörter stimmen nicht überein</string>
     <string name="eo_passwords_do_not_match">Passwörter stimmen nicht überein</string>
-    <string name="define_expiration_period">Verfallszeit festlegen</string>
-    <string name="set_message_expiration">Verfallszeit der Nachricht festlegen</string>
+    <string name="define_expiration_period">Gültigkeitsdauer festlegen</string>
+    <string name="set_message_expiration">Gültigkeitsdauer der Nachricht festlegen</string>
     <string name="days">Tage</string>
     <string name="hours">Stunden</string>
-    <string name="max_labels_exceeded">Die Nachricht %1$s kann nicht mehr als %2$d Kategorien besitzen.</string>
+    <string name="max_labels_exceeded">Die Nachricht %1$s darf höchstens %2$d Kategorien enthalten.</string>
     <string name="max_labels_selected">Maximal %d Kategorien erlaubt</string>
     <string name="max_attachments_reached">Die maximale Anzahl von Anhängen je Nachricht wurde erreicht.</string>
     <string name="max_attachments_size_reached">Die maximale Größe der Anhänge pro Nachricht wurde erreicht</string>
@@ -158,16 +158,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="select_file">Datei auswählen</string>
     <string name="attach_file">Datei anhängen</string>
     <string name="take_photo">Foto aufnehmen</string>
-    <string name="problem_taking_photo">Beim Aufnehmen des Fotos ist ein Fehler aufgetreten</string>
-    <string name="problem_selecting_file">Beim Hinzufügen der gewählten Datei ist ein Fehler aufgetreten</string>
+    <string name="problem_taking_photo">Aufnehmen des Fotos fehlgeschlagen</string>
+    <string name="problem_selecting_file">Hinzufügen der ausgewählten Datei fehlgeschlagen</string>
     <string name="add_contact">Kontakt hinzufügen</string>
-    <string name="delete_contact">%s von Kontakten entfernen?</string>
+    <string name="delete_contact">%s aus Kontakten entfernen?</string>
     <string name="confirm">Bestätigen</string>
-    <string name="confirm_destructive_action">Sind Sie sicher? Diese Aktion kann nicht rückgängig gemacht werden.</string>
+    <string name="confirm_destructive_action">Sind Sie sicher? Dies kann nicht widerrufen werden.</string>
     <string name="create">Erstellen</string>
-    <string name="email">E-Mail</string>
+    <string name="email">E-Mail-Adresse</string>
     <string name="email_address">E-Mail-Adresse</string>
-    <string name="phone">Telefonnummer</string>
+    <string name="phone">Rufnummer</string>
     <string name="save">Speichern</string>
     <string name="syncing_messages">Wird synchronisiert …</string>
     <string name="sync">Kontakte synchronisieren</string>
@@ -175,73 +175,73 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_subject">Nachricht ohne Betreff senden?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
-    <string name="okay">Ok</string>
+    <string name="okay">OK</string>
     <string name="report_bugs">Fehler melden</string>
     <string name="send_report">Bericht senden</string>
     <string name="bug_title">Titel</string>
     <string name="bug_description">Fehlerbeschreibung</string>
-    <string name="sending_report">Bericht wird übermittelt …</string>
+    <string name="sending_report">Bericht wird gesendet...</string>
     <string name="received_report">Bericht empfangen</string>
     <string name="not_received_report">Bericht nicht empfangen</string>
-    <string name="not_received_report_offline">Kein Internet! Der Bericht wird übermittelt, sobald Sie wieder online sind</string>
-    <string name="forward_prefix">WG:</string>
+    <string name="not_received_report_offline">Keine Netzwerkverbindung! Der Bericht wird übermittelt, sobald Sie wieder online sind</string>
+    <string name="forward_prefix">Fw:</string>
     <string name="original_message_divider">-------- Original-Nachricht --------</string>
-    <string name="invalid_email_address">Die Adresse \"%s\" ist ungültig</string>
-    <string name="invalid_email_address_removed">Die Adresse \'%s\' ist ungültig und wurde entfernt</string>
-    <string name="no_recipients_specified">Bitte geben Sie mindestens einen Empfänger an</string>
-    <string name="no_password_specified">Die Zeit, nach der eine Nachricht verfällt, kann nur bei vollständig verschlüsselten Nachrichten gesetzt werden. Bitte tragen Sie ein Passwort für die nicht-ProtonMail-Empfänger ein.</string>
-    <string name="attachment_limit">Anhänge sind auf %1$s limitiert. Die Gesamtgröße der Anhänge wäre %2$s.</string>
+    <string name="invalid_email_address">Die Adresse „%s” ist ungültig</string>
+    <string name="invalid_email_address_removed">Die Adresse „%s” ist ungültig und wurde entfernt</string>
+    <string name="no_recipients_specified">Bitte mindestens einen Empfänger angeben</string>
+    <string name="no_password_specified">Die Zeit, nach der eine Nachricht verfällt, kann nur bei vollständig verschlüsselten Nachrichten festgelegt werden. Bitte tragen Sie ein Passwort für die nicht-ProtonMail-Empfänger ein.</string>
+    <string name="attachment_limit">Anhänge sind auf %1$s begrenzt. Die Gesamtgröße der Anhänge beträgt jedoch %2$s.</string>
     <string name="sending_message">Nachricht wird gesendet …</string>
-    <string name="sending_message_offline">Offline, in der Warteschlange, um sie später zu senden ...</string>
-    <string name="go_to_inbox">Geh zu meiner Inbox</string>
+    <string name="sending_message_offline">Offline, für späteres Senden vorgemerkt …</string>
+    <string name="go_to_inbox">Zum Posteingang wechseln</string>
     <string name="message_sent">Nachricht gesendet</string>
-    <string name="message_failed">Nachricht senden fehlgeschlagen</string>
+    <string name="message_failed">Senden der Nachricht fehlgeschlagen</string>
     <string name="message_sending_failures">%d Nachrichten konnten nicht gesendet werden</string>
-    <string name="storage_limit">Speicherlimit</string>
+    <string name="storage_limit">Speichergrenze</string>
     <string name="edit_settings">Einstellungen bearbeiten</string>
     <string name="save_settings">Einstellungen speichern</string>
     <string name="share">Teilen</string>
-    <string name="settings_not_saved_password"> Einstellungen konnten nicht gespeichert werden - falsches Login Password</string>
-    <string name="settings_not_saved_email"> Einstellungen nicht gespeichert - ungültige Benachrichtigungs-E-Mail</string>
-    <string name="enter">Übernehmen</string>
+    <string name="settings_not_saved_password"> Einstellungen konnten nicht gespeichert werden — Ungültiges Anmelde-Passwort</string>
+    <string name="settings_not_saved_email"> Einstellungen konnten nicht gespeichert werden — Ungültige Benachrichtigungs-E-Mail-Adresse</string>
+    <string name="enter">Eingeben</string>
     <string name="cancel">Abbrechen</string>
     <string name="close">Schließen</string>
     <string name="change_password">Passwort ändern</string>
     <string name="change_mailbox_password">Postfach-Passwort ändern</string>
-    <string name="eo_password_title">Passwort setzen</string>
+    <string name="eo_password_title">Passwort festlegen</string>
     <string name="eo_password_subtitle">Legen Sie ein Passwort zum Verschlüsseln dieser Nachricht für nicht-ProtonMail Benutzer fest</string>
     <string name="eo_password_more_info">Weitere Informationen</string>
-    <string name="old_login_password">Aktuelles Anmeldekennwort</string>
+    <string name="old_login_password">Aktuelles Anmeldepasswort</string>
     <string name="new_login_password">Neues Passwort</string>
     <string name="confirm_new_login_password">Neues Passwort bestätigen</string>
     <string name="new_mailbox_password">Neues Postfach-Passwort</string>
-    <string name="confirm_new_mailbox_password">Neues Mailbox-Passwort bestätigen</string>
-    <string name="no_attachments">0 Anhänge</string>
+    <string name="confirm_new_mailbox_password">Neues Postfach-Passwort bestätigen</string>
+    <string name="no_attachments">Keine Anhänge</string>
     <string name="new_passwords_not_valid">Ungültige Eingabe</string>
     <string name="new_passwords_do_not_match">Neue Passwörter stimmen nicht überein</string>
-    <string name="new_login_password_saved">Neues Login-Passwort gespeichert</string>
-    <string name="new_mailbox_password_saved">Neues Mailbox-Passwort gespeichert</string>
+    <string name="new_login_password_saved">Neues Anmeldepasswort gespeichert</string>
+    <string name="new_mailbox_password_saved">Neues Postfach-Passwort gespeichert</string>
     <string name="pin_lock_option_settings">App-Sperroptionen</string>
-    <string name="pin_lock_after">Sperr App nach</string>
-    <string name="lock_the_app">Sperr die App</string>
+    <string name="pin_lock_after">App sperren nach</string>
+    <string name="lock_the_app">App sperren</string>
     <string name="display_name_banned_chars">Ungültiger Anzeigename. Die Zeichen „&gt;” und „&lt;” sind nicht erlaubt.</string>
     <string name="cont">Weiter</string>
-    <string name="email_verification_code">Wir schicken einen Bestätigungs-Code an die obige E-Mail Adresse.</string>
-    <string name="sms_verification_code">Wir werden Ihnen einen Verifizierungscode an die oben angegebene Telefonnummer senden.</string>
-    <string name="send_verification_code">Verifizierungs-Code senden</string>
+    <string name="email_verification_code">Sie erhalten einen Verifizierungscode an die oben genannte E-Mail-Adresse.</string>
+    <string name="sms_verification_code">Sie erhalten einen Verifizierungscode an die oben genannte Rufnummer.</string>
+    <string name="send_verification_code">Bestätigungscode senden</string>
     <string name="resend_verification_code">Erneut senden</string>
-    <string name="enter_verification_code">Verifizierungs-Code eingeben</string>
-    <string name="verify">Verifizieren</string>
+    <string name="enter_verification_code">Bestätigungsschlüssel eingeben</string>
+    <string name="verify">Bestätigen</string>
     <string name="reply_prefix_on">Am</string>
-    <string name="create_new_account">Erstelle einen neuen Account</string>
+    <string name="create_new_account">Neues Konto erstellen</string>
     <string name="setup_new_account">Richten Sie Ihr Konto ein</string>
-    <string name="create_account">Account erstellen</string>
-    <string name="create_passwords">Password erstellen</string>
+    <string name="create_account">Konto erstellen</string>
+    <string name="create_passwords">Passwort festlegen</string>
     <string name="caps_username">Benutzername</string>
     <string name="caps_login_password">Passwort</string>
     <string name="caps_confirm_password">Passwort bestätigen</string>
-    <string name="caps_optional">*OPTIONAL</string>
-    <string name="update_me_for_new_features">Informiere mich über neue Features</string>
+    <string name="caps_optional">*Optional</string>
+    <string name="update_me_for_new_features">Mich über neue Funktionen Informieren</string>
     <string name="create_mailbox_password">Passwort erstellen</string>
     <string name="password_note"><b>Hinweis:</b> Dies wird verwendet, um Ihre Nachrichten zu ver- und entschlüsseln.
 Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn Sie Ihr Passwort verlieren, können Sie Ihre E-Mails nicht mehr lesen.</string>
@@ -249,34 +249,34 @@ Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn
     <string name="terms_and_conditions">Mit der Nutzung von ProtonMail erklären Sie sich mit unseren\n <a href="https://protonmail.com/terms-and-conditions">Geschäftsbedingungen</a> und <a href="https://protonmail.com/privacy-policy">Datenschutzerklärung</a> einverstanden.</string>
     <string name="human_verification">Captcha</string>
     <string name="human_verification_subtitle">Um den Missbrauch von ProtonMail zu verhindern, müssen wir sicherstellen, dass Sie ein Mensch sind.</string>
-    <string name="select_options">Bitte wählen Sie eine der folgenden Optionen:</string>
+    <string name="select_options">Bitte ein der folgenden Optionen wählen:</string>
     <string name="no_verification_methods_found">Keine Verifizierungsmethoden gefunden</string>
-    <string name="email_verification">E-Mail-Bestätigung</string>
+    <string name="email_verification">E-Mail-Adresse bestätigen</string>
     <string name="phone_verification">Telefonische Bestätigung</string>
-    <string name="existing_email_address">Geben Sie Ihre bereits existierende E-Mail-Adresse ein</string>
-    <string name="phone_number">Telefonnummer eingeben</string>
-    <string name="encryption_setup">Einrichten der Verschlüsselung</string>
+    <string name="existing_email_address">Geben Sie Ihre bereits vorhandene E-Mail-Adresse ein</string>
+    <string name="phone_number">Rufnummer eingeben</string>
+    <string name="encryption_setup">Verschlüsselung einrichten</string>
     <string name="high_security">Hohe Sicherheit (2048 Bit)</string>
     <string name="current_standard">Der aktuelle Standard</string>
-    <string name="extreme_security">Extreme Sicherheit (4096-Bit)</string>
+    <string name="extreme_security">Höchste Sicherheit (4096-Bit)</string>
     <string name="highest_security">Die höchste verfügbare Verschlüsselungsstufe.<b> Die Einrichtung kann mehrere Minuten dauern.</b></string>
-    <string name="labels_title_apply">Kategorie übernehmen</string>
+    <string name="labels_title_apply">Kategorien übernehmen</string>
     <string name="labels_title_add">Kategorie hinzufügen</string>
     <string name="labels_title">Kategorien</string>
     <string name="label_name">Kategoriename</string>
-    <string name="label_name_empty">Kategoriename ist erforderlich</string>
+    <string name="label_name_empty">Name der Kategorie erforderlich</string>
     <string name="label_name_duplicate">Dieser Kategoriename ist bereits vorhanden</string>
     <string name="label_created">Kategorie erstellt</string>
-    <string name="label_invalid">Kategorie wurde aufgrund von ungültigem Namen nicht hinzugefügt.</string>
+    <string name="label_invalid">Kategorie aufgrund eines ungültigen Namens nicht hinzugefügt.</string>
     <string name="undo">Widerrufen</string>
-    <string name="customize_swipe_actions">Benutzerdefinierte Wischgestenaktion</string>
+    <string name="customize_swipe_actions">Benutzerdefinierte Wischgeste</string>
     <string name="message_can_not_edit">Antworten/Weiterleiten nicht möglich. Diese Nachricht wurde noch nicht gesendet.</string>
-    <string name="label_apply">Anwenden</string>
+    <string name="label_apply">Übernehmen</string>
     <string name="label_delete">Löschen</string>
     <string name="label_add">Hinzufügen</string>
-    <string name="no_browser_found">Bitte installieren Sie eine Browser-App, um diese Aktion zu beenden</string>
-    <string name="no_application_found">Keine App verfügbar, um diese Aktion auszuführen</string>
-    <string name="no_application_found_or_link_invalid">Es wurde keine Anwendung gefunden, die diese Aktion oder eine ungültige URL verarbeitet</string>
+    <string name="no_browser_found">Bitte installieren Sie eine Browser-App, um diese Aktion abschließen zu können</string>
+    <string name="no_application_found">Keine App installiert, um diese Aktion auszuführen</string>
+    <string name="no_application_found_or_link_invalid">Es ist keine App installiert, die diese Aktion oder eine ungültige URL verarbeitet</string>
     <string name="also_archive">Auch archivieren</string>
     <string name="label_deleted">Kategorie gelöscht</string>
     <string name="label_deleted_error">Fehler beim Löschen der Kategorie</string>
@@ -285,52 +285,51 @@ Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn
     <string name="no_connectivity_detected">Keine Verbindung erkannt …</string>
     <string name="no_connectivity_detected_troubleshoot">Keine Netzwerkverbindung erkannt … (<u>Problembehandlung</u>)</string>
     <string name="connectivity_checking">Verbindung wird geprüft …</string>
-    <string name="sync_short">synchronisieren</string>
+    <string name="sync_short">Synchronisieren</string>
     <string name="draft_attachments_uploading">Entwurf wird noch hochgeladen …</string>
     <string name="draft_label_attachments_uploading">Anhänge werden hochgeladen …</string>
     <string name="draft_label_message_uploading">Nachricht wird gesendet …</string>
-    <string name="attachment_failed">Hochladen des Anhangs für Nachricht fehlgeschlagen </string>
+    <string name="attachment_failed">Hochladen des Anhangs der Nachricht fehlgeschlagen </string>
     <string name="attaching_photo_failed">Anhängen der Fotos fehlgeschlagen</string>
     <string name="empty_message">Nachricht leeren</string>
     <string name="dismiss">Verwerfen</string>
     <string name="new_message_arrived">Neue Nachricht!</string>
     <string name="please_choose_color">Bitte eine Farbe wählen</string>
     <string name="display_images">Inhalte aus externen Quellen anzeigen</string>
-    <string name="retry">Erneut versuchen</string>
+    <string name="retry">Wiederholen</string>
     <string name="saving_failed_no_conn">Speichern fehlgeschlagen, keine Internetverbindung</string>
-    <string name="username_is_available">%s ist verfügbar!</string>
-    <string name="username_is_not_available">%s ist nicht verfügbar!</string>
+    <string name="username_is_available">Benutzername verfügbar!</string>
+    <string name="username_is_not_available">Benutzername wird bereits verwendet!</string>
     <string name="username_is_too_long">Die Länge des Benutzernamens beträgt maximal %d Zeichen!</string>
-    <string name="congratulation">Glückwunsch!</string>
-    <string name="new_account_ready">Ihr neuer sicherer E-Mail\nAccount ist fertig.</string>
+    <string name="congratulation">Herzlichen Glückwunsch!</string>
+    <string name="new_account_ready">Ihr neues sicheres E-Mail-\nKonto ist eingerichtet.</string>
     <string name="optional_email_note">Die optionale Wiederherstellungs-E-Mail-Adresse ermöglicht es Ihnen,
 das Anmeldepasswort zurückzusetzen, sollten Sie es vergessen haben.</string>
-    <string name="optional_display_name">Wenn Sie eine E-Mail senden, ist dies der Name, der
-im Absender-Feld angezeigt wird.</string>
+    <string name="optional_display_name">Wenn Sie eine E-Mail senden, ist dies der Name, der im Absenderfeld angezeigt wird.</string>
     <string name="error_captcha_not_valid">Ungültig</string>
-    <string name="close_engagement">Führung schließen</string>
+    <string name="close_engagement">Einführung schließen</string>
     <string name="engagement_title_welcome">Willkommen bei ProtonMail!</string>
     <string name="engagement_title_swipe">Aktionen für Wischgesten</string>
-    <string name="engagement_title_labels">Kategorieverwaltung</string>
+    <string name="engagement_title_labels">Kategorien verwalten</string>
     <string name="engagement_title_encryption">Ende-zu-Ende-Verschlüsselung</string>
     <string name="engagement_title_expire">Verfallende Nachrichten</string>
-    <string name="engagement_title_help">Hilfe &amp; Support</string>
-    <string name="engagement_title_support_protonmail">Unterstütze ProtonMail</string>
+    <string name="engagement_title_help">Hilfe und Unterstützung</string>
+    <string name="engagement_title_support_protonmail">ProtonMail unterstützen</string>
     <string name="engagement_subtitle_welcome">Ihr neues verschlüsseltes E-Mail-Konto wurde eingerichtet und ist bereit, um verschlüsselte Nachrichten zu empfangen und zu senden.</string>
     <string name="engagement_subtitle_swipe">Sie können die Wischgesten in den ProtonMail-App-Einstellungen anpassen.</string>
     <string name="engagement_subtitle_labels">Kategorien erstellen und hinzufügen, um Ihren Posteingang zu organisieren. Nachricht antippen und gedrückt halten, um alle Optionen anzuzeigen.</string>
     <string name="engagement_subtitle_encryption">Ihr Posteingang ist nun mit einer End-to-End-Verschlüsselung geschützt. Um automatisch verschlüsselte E-Mails an Ihre Kontakte zu senden, laden Sie diese ein, ProtonMail zu verwenden!  Sie können Nachrichten auch manuell verschlüsseln, falls diese ProtonMail nicht verwenden.</string>
     <string name="engagement_subtitle_expire">Von Ihnen gesendete Nachrichten können so festgelegt werden, dass sie nach einem bestimmten Zeitraum automatisch gelöscht werden.</string>
-    <string name="engagement_subtitle_help">Hilfe und Unterstützung erhalten Sie unter https://protonmail.com/support/. Fehler können auch innerhalb der App gemeldet werden.</string>
+    <string name="engagement_subtitle_help">Hilfe und Unterstützung erhalten Sie unter protonmail.com/support. Fehler können auch innerhalb der App gemeldet werden.</string>
     <string name="attachment_exists">Anhang bereits hinzugefügt</string>
     <string name="sending_email_success">Bestätigungsschlüssel gesendet</string>
     <string name="sending_email_failed">Senden des Bestätigungsschlüssels fehlgeschlagen</string>
     <string name="password_not_valid">Das eingegebene Passwort ist ungültig</string>
     <string name="send_code_wait">Bitte %d Sekunden warten, bevor Sie erneut klicken</string>
-    <string name="eo_password_not_completed">Nachrichtenpasswort nicht abgeschlossen.</string>
+    <string name="eo_password_not_completed">Passwort der Nachricht unvollständig.</string>
     <string name="delinquency_subtitle">Der Zugang zu diesem Konto wurde aufgrund einer unbezahlten Rechnung deaktiviert. Bitte melden Sie sich über protonmail.com an, um Ihre fällige Rechnung zu begleichen.</string>
     <string name="direct_disabled_subtitle">Mobile Anmeldungen sind vorübergehend deaktiviert. Bitte versuchen Sie es später noch einmal oder melden Sie sich unter <a href="https://protonmail.com">protonmail.com</a> mit einem Desktop-Rechner oder Laptop an.</string>
-    <string name="downloading">Herunterladen...</string>
+    <string name="downloading">Wird heruntergeladen …</string>
     <string name="cant_download_attachment">Anhang kann nicht heruntergeladen werden</string>
     <string-array name="auto_logout_options_array">
         <item>Sofort</item>
@@ -342,13 +341,13 @@ im Absender-Feld angezeigt wird.</string>
     <string name="delete_label_confirmation_title">Ausgewählte Kategorie löschen?</string>
     <string name="delete_folder_confirmation_title">Ausgewählte Ordner löschen?</string>
     <string name="delete_label_confirmation_message">Die hier aufgeführten E-Mails finden Sie unter <b>Alle Nachrichten</b></string>
-    <string name="enter_pin">Geben Sie Ihre PIN ein, um den Posteingang zu entsperren</string>
+    <string name="enter_pin">Geben Sie Ihre PIN ein, um das Postfach zu entsperren</string>
     <string name="enter_pin_message_details">Geben Sie Ihre PIN ein, um Ihre Nachricht zu entsperren</string>
     <string name="enter_current_pin">Aktuelle PIN eingeben</string>
     <string name="pin_subtitle_create">Erstellen Sie hier Ihre PIN</string>
     <string name="pin_subtitle_create_new">Erstellen Sie hier Ihre NEUE PIN</string>
-    <string name="pin_subtitle_confirm">Bestätigen Sie Ihre PIN hier</string>
-    <string name="pin_subtitle_confirm_new">Bestätigen Sie Ihre NEUE PIN hier</string>
+    <string name="pin_subtitle_confirm">Bestätigen Sie hier Ihre PIN</string>
+    <string name="pin_subtitle_confirm_new">Bestätigen Sie hier Ihre NEUE PIN</string>
     <string name="pin_invalid">Ungültige PIN. Bitte korrekte 4-stellige PIN eingeben</string>
     <string name="pin_confirmation_not_match">Bestätigungs-PIN stimmt nicht überein</string>
     <string name="pin_not_match">PIN stimmt nicht überein</string>
@@ -371,8 +370,8 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="none">Keine</string>
     <string name="changes_affected_after_closing">Änderungen werden erst nach dem Schließen der App wirksam</string>
     <plurals name="incorrect_pin_remaining_attempts">
-        <item quantity="one">Falscher PIN-Code, %d verbleibende(r) Versuch(e)</item>
-        <item quantity="other">Falscher PIN-Code, %d verbleibende Versuche</item>
+        <item quantity="one">Ungültiger PIN-Code, %d verbleibender Versuch</item>
+        <item quantity="other">Ungültiger PIN-Code, %d verbleibende Versuche</item>
     </plurals>
     <plurals name="incorrect_pin_remaining_attempts_wipe">
         <item quantity="one">%d Versuch bis zur sicheren Datenlöschung!</item>
@@ -380,47 +379,44 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     </plurals>
     <string name="done">Fertig</string>
     <string name="logout">Abmelden</string>
-    <string name="log_out">Log out %s?</string>
-    <string name="logout_question">Sind Sie sicher, dass Sie sich abmelden möchten?</string>
-    <string name="logout_question_next_account">Möchten Sie sich wirklich vom aktuellen Konto abmelden und mit %s fortfahren?</string>
-    <string name="upselling">Upgraden/Spenden</string>
+    <string name="log_out">%s abmelden?</string>
+    <string name="logout_question">Möchten Sie sich wirklich abmelden?</string>
+    <string name="logout_question_next_account">Sie werden zu %s weitergeleitet.</string>
+    <string name="upselling">Umsteigen/Spenden</string>
     <string name="upselling_title">ProtonMail ist kostenlos und Quelloffen</string>
     <string name="upselling_subtitle">Wir benötigen Ihre Unterstützung, um die Privatsphäre weiterhin zu schützen und ProtonMail zu verbessern</string>
     <string name="upselling_donate_title">Spenden</string>
-    <string name="upselling_upgrade_title">Upgrade auf ProtonMail Plus</string>
-    <string name="upselling_donate_subtitle">Ihre Spende wird uns helfen
-die Kapazität zu erweitern und ProtonMail weiterhin als eine kostenlose Open-Source-Software zu entwickeln. Nur
-durch die Unterstützung der Community sind wir in der Lage ProtonMail weiterhin Menschen auf der ganzen Welt
-zur Verfügung zu stellen.</string>
-    <string name="upgrade_donate">Upgraden/Spenden</string>
+    <string name="upselling_upgrade_title">Auf ProtonMail Plus umsteigen</string>
+    <string name="upselling_donate_subtitle">Ihre Spende wird uns helfen die Kapazität zu erweitern und ProtonMail weiterhin als eine kostenlose Open-Source-Software zu entwickeln. Nur durch die Unterstützung der Community sind wir in der Lage ProtonMail weiterhin Menschen auf der ganzen Welt zur Verfügung zu stellen.</string>
+    <string name="upgrade_donate">Umsteigen/Spenden</string>
     <string name="upselling_donate_pick_amount">Wählen Sie einen Spendenbetrag oder geben Sie beliebigen Betrag ein</string>
     <string name="amount_5">5€</string>
     <string name="amount_15">15€</string>
     <string name="amount_50">50€</string>
     <string name="amount_100">100€</string>
-    <string name="donation_amount">Geben Sie einen Spendenbetrag ein</string>
+    <string name="donation_amount">Spendenbetrag eingeben</string>
     <string name="donate">Spenden</string>
     <string name="donate_paypal_bitcoin">Spenden Sie via PayPal oder Bitcoin</string>
     <string name="upgrade_line1">Alles in unserem kostenlosen Paket</string>
     <string name="upgrade_line2">5GB Speicherplatz</string>
     <string name="upgrade_line3">Verwenden Sie Ihre eigene Domain</string>
-    <string name="upgrade_line4">Bis zu 5 Aliase</string>
+    <string name="upgrade_line4">Bis zu 5 Aliasnamen</string>
     <string name="upgrade_line5">Vorrangiger Kunden-Support</string>
     <string name="upgrade">Aktualisieren</string>
     <string name="payment_options">Zahlungsoptionen</string>
     <string name="other_plans">Für einen Tarif mit mehr Speichervolumen, aktualisieren Sie ProtonMail über die Webmail-Oberfläche.</string>
     <string name="upgrade_paid_user">Vielen Dank, dass Sie ProtonMail finanziell unterstützen!</string>
-    <string name="select_account_type">Kontotyp auswählen</string>
+    <string name="select_account_type">Kontentyp auswählen</string>
     <string name="select_account_type_subtitle">ProtonMail ist ein kostenloser Dienst für das Gemeinwohl. Sie können helfen, den Datenschutz im Internet zu unterstützen, indem Sie ein kostenpflichtiges Konto erwerben.</string>
-    <string name="plan_free_with_price">GRATIS</string>
-    <string name="plan_plus_with_price">PLUS %s /Monat</string>
-    <string name="plan_visionary_with_price">VISIONÄR %s /Monat</string>
-    <string name="plan_business_with_price">GESCHÄFTLICH %s /Monat</string>
+    <string name="plan_free_with_price">FREE</string>
+    <string name="plan_plus_with_price">PLUS %s/Monat</string>
+    <string name="plan_visionary_with_price">Visionary %s/Monat</string>
+    <string name="plan_business_with_price">Geschäftlich %s/Monat</string>
     <string name="plan_free_title">Basiskonto mit eingeschränktem Funktionsumfang</string>
     <string name="plan_plus_title">Sichere E-Mail mit erweiterten Funktionen</string>
     <string name="plan_visionary_title">Spezielle Konten für unsere Unterstützer</string>
     <string name="plan_business_title">Spezielle Konten für unsere Unterstützer</string>
-    <string name="plan_plus_line2">Bis zu 1000 Nachrichten pro Tag senden</string>
+    <string name="plan_plus_line2">Bis zu 1.000 Nachrichten pro Tag senden</string>
     <string name="plan_plus_line3">Kategorien und benutzerdefinierte Filter</string>
     <string name="plan_plus_line4">Verschlüsselte Nachrichten an externe Empfänger senden</string>
     <string name="plan_plus_line7">Vorrangiger Kunden-Support</string>
@@ -432,26 +428,26 @@ zur Verfügung zu stellen.</string>
     <string name="plan_free_line6">Kundensupport: eingeschränkt</string>
     <string name="plan_visio_line2">Keine Sendebeschränkungen</string>
     <string name="plan_visio_line3">Frühzeitiger Zugang zu neuen Funktionen</string>
-    <string name="plan_visio_line6">Helfen Sie neue Funktionen, über nur für Visionary-Benutzer zugängliche Umfragen, auszuwählen</string>
+    <string name="plan_visio_line6">Mithelfen, neue Funktionen durch Umfragen (nur für Visionary) auszuwählen</string>
     <string name="plan_business_line1">bald auch für Organisationen verfügbar, um ihnen verschlüsselte E-Mails bereitzustellen!</string>
-    <string name="currency_duration">Währung &amp; Dauer</string>
+    <string name="currency_duration">Währung und Dauer</string>
     <string name="credit_card_name">Name auf der Kredit-/Debitkarte</string>
     <string name="zip_code">Postleitzahl</string>
     <string name="card_number">Kartennummer</string>
     <string name="billing_information">Rechnungsinformationen</string>
     <string name="country">Land</string>
     <string name="cvc">CVC</string>
-    <string name="terms_and_conditions_billing">Mit dem Klicken auf Senden erklären Sie sich damit einverstanden, die Allgemeinen Geschäftsbedingungen von \n&lt;a href=\"https://protonmail.com/terms-and-conditions\"&gt;ProtonMail anzuerkennen.</string>
-    <string name="submit">Absenden</string>
+    <string name="terms_and_conditions_billing">Indem Sie auf „Senden” klicken, erklären Sie sich mit den \n&lt;a href="https://protonmail.com/terms-and-conditions"&gt;Allgemeinen Geschäftsbedingungen von ProtonMail&gt;/a&gt; einverstanden.</string>
+    <string name="submit">Senden</string>
     <string name="currency">Währung</string>
-    <string name="plan_duration">Abrechnungszyklus</string>
+    <string name="plan_duration">Abrechnungszeitraum</string>
     <string name="duration_annual_line1">Jährliche Zahlung <font color="#C3E129">Sparen Sie 20%</font></string>
     <string name="per_month_text_only">pro Monat</string>
-    <string name="duration_annual_line3">Abgerechnet als %s /Jahr</string>
-    <string name="duration_annual_line4">Abgerechnet als %s /Monat</string>
+    <string name="duration_annual_line3">Abgerechnet %s/Jahr</string>
+    <string name="duration_annual_line4">Abgerechnet %s/Monat</string>
     <string name="duration_monthly_line1">Monatliche Zahlweise</string>
-    <string name="duration_monthly_line3">Sparen Sie 20%</string>
-    <string name="set_cont">Speichern &amp; weiter</string>
+    <string name="duration_monthly_line3">20% sparen</string>
+    <string name="set_cont">Speichern und Weiter</string>
     <string name="payment_error">Fehler bei der Bezahlung</string>
     <string name="error">Fehler</string>
     <string name="try_another_card">Versuchen Sie eine andere Karte</string>
@@ -464,22 +460,22 @@ zur Verfügung zu stellen.</string>
     <string name="payment_picker_disclaimer">Bitte eine Zahlungsmethode auswählen</string>
     <string name="payment_success_title">Zahlung erfolgreich!</string>
     <string name="payment_success_text">Ihr Konto wird jetzt aktualisiert, bitte warten Sie einen Moment. Vielen Dank für Ihre Unterstützung!</string>
-    <string name="donation_success_title">Spende erfolgreich!</string>
+    <string name="donation_success_title">Erfolgreich gespendet!</string>
     <string name="donation_success_text">Ihre Unterstützung ist unerlässlich, um ProtonMail am Laufen zu halten. Vielen Dank für die Unterstützung des Datenschutzes im Internet!</string>
     <string name="create_free_account">Kostenloses Konto erstellen</string>
     <string name="storage_gb">%d GB Speicherplatz</string>
     <string name="storage_mb">%d MB Speicherplatz</string>
-    <string name="max_addresses">Bis zu %d E-Mail-Aliase</string>
+    <string name="max_addresses">Bis zu %d E-Mail-Aliasnamen</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d eingebettete Grafiken</string>
     <string name="select">Auswählen</string>
     <string name="change_currency">Währung ändern</string>
     <string name="switch_billing_monthly">Zu monatlich wecheln</string>
     <string name="switch_billing_yearly">Zu jährlich wechseln</string>
-    <string name="warning">Warnung</string>
+    <string name="warning">Warnhinweis</string>
     <string name="empty_recovery_email_question">Warnhinweis: Sie haben keine Wiederherstellungs-E-Mail-Adresse angegeben, so dass eine Wiederherstellung des Kontos nicht möglich ist, wenn Sie Ihr Passwort vergessen haben. Ohne Wiederherstellungs-E-Mail-Adresse fortfahren?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
-    <string name="card_details_subtitle">Verfällt %s</string>
+    <string name="card_details_subtitle">Gültig bis %s</string>
     <string name="payment_methods">Zahlungsmethoden</string>
     <string name="payment_approval_activity">Genehmigung der Zahlungsmethode</string>
     <string name="payment_approval_success">Zahlungsmethode wurde genehmigt</string>
@@ -487,7 +483,7 @@ zur Verfügung zu stellen.</string>
     <string name="payment_approval_cancel_error_description">Die Überprüfung der Zahlungsmethode wurde abgebrochen. Bitte versuchen Sie es erneut oder wechseln Sie zu einer anderen Karte.</string>
     <string name="payment_approval_consumed_error_description">Zahlungsmethode, die bereits für diese Zahlung verwendet wurde. Bitte überprüfen Sie den Status Ihres Abonnements.</string>
     <string name="no_payment_methods">Sie haben keine Zahlungsmethoden gespeichert.</string>
-    <string name="edit_payment_methods">Bitte loggen Sie sich auf protonmail.com ein, um Rechnungsinformationen zu bearbeiten.</string>
+    <string name="edit_payment_methods">Bitte melden Sie sich bei protonmail.com an, um Rechnungsinformationen zu bearbeiten.</string>
     <string name="message_not_loaded">Nachricht nicht geladen</string>
     <string name="signature_text">Signaturtext</string>
     <string name="available_addresses">Verfügbare Adressen</string>
@@ -506,7 +502,7 @@ zur Verfügung zu stellen.</string>
     <string name="available_options">Verfügbare Optionen</string>
     <string name="current_recovery_email">Aktuelle Wiederherstellungs-E-Mail-Adresse</string>
     <string name="change_recovery_email">Wiederherstellungs-E-Mail-Adresse ändern</string>
-    <string name="new_recovery_email">Neue Wiederherstellungs-E-Mail-Adresse</string>
+    <string name="new_recovery_email">Neue E-Mail-Adresse zum Zurücksetzen und für Benachrichtigen</string>
     <string name="confirm_new_recovery_email">Neue Wiederherstellungs-E-Mail-Adresse bestätigen</string>
     <string name="recovery_emails_invalid">E-Mail-Adresse stimmt nicht überein oder ist ungültig</string>
     <string name="authenticate">Authentifizieren</string>
@@ -518,7 +514,7 @@ zur Verfügung zu stellen.</string>
         <item>Vibration und Ton</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Kostenlos</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -544,11 +540,11 @@ zur Verfügung zu stellen.</string>
     </string-array>
     <string name="contact_details_display_name">Name</string>
     <string name="contact_details">Kontaktdetails</string>
-    <string name="email_type_home">Zuhause</string>
+    <string name="email_type_home">Privat</string>
     <string name="type_title">Typ auswählen</string>
     <string name="message_drafted_error_server">Senden der Nachricht fehlgeschlagen. %s</string>
     <string name="sync_local_contacts">Hochladen zu ProtonMail</string>
-    <string name="please_select_only_phone_contacts">Bitte wählen Sie nur lokale Telefonkontakte</string>
+    <string name="please_select_only_phone_contacts">Bitte nur lokale Telefonkontakte auswählen</string>
     <string name="contact_vcard_hint_email">E-Mail-Adresse eingeben</string>
     <string name="contact_vcard_hint_phone">Rufnummer eingeben</string>
     <string name="contact_vcard_hint_address">Adresse eingeben</string>
@@ -568,12 +564,12 @@ zur Verfügung zu stellen.</string>
     <string name="vcard_other_option_url">URL</string>
     <string name="convert_contact">Kontakt konvertieren</string>
     <string name="upload_contacts">Kontakte hochladen</string>
-    <string name="upgrade_encrypted_contact">Bitte upgraden Sie, um verschlüsselte Kontaktinformationen zu nutzen.</string>
+    <string name="upgrade_encrypted_contact">Bitte führen Sie ein Upgrade durch, um verschlüsselte Kontaktinformationen nutzen zu können.</string>
     <string name="uploading_contacts">Kontakte werden hochgeladen …</string>
     <string name="error_encrypted_data">Fehler beim Abrufen der verschlüsselten Kontaktinformationen.</string>
     <string-array name="vcard_option_phone">
         <item>Telefon</item>
-        <item>Mobiltelefon</item>
+        <item>Mobilgerät</item>
         <item>Arbeit</item>
         <item>Fax</item>
         <item>Weitere</item>
@@ -585,7 +581,7 @@ zur Verfügung zu stellen.</string>
         <item>Weitere</item>
     </string-array>
     <string-array name="vcard_option_address">
-        <item>Anschrift</item>
+        <item>Adresse</item>
         <item>Persönlich</item>
         <item>Geschäftlich</item>
         <item>Weitere</item>
@@ -602,15 +598,15 @@ zur Verfügung zu stellen.</string>
     </string-array>
     <string name="logged_out">Abgemeldet</string>
     <string name="logged_out_description">Sie wurden abgemeldet. Bitte erneut anmelden.</string>
-    <string name="verification_needed">Verifizierung benötigt</string>
-    <string name="verification_needed_description">Aus Sicherheitsgründen - bitte bestätigen Sie, dass Sie kein Roboter sind.</string>
-    <string name="verification_needed_description_notification">Bitte verifizieren Sie, dass Sie menschlich sind bevor Sie diese Nachricht senden: %s</string>
+    <string name="verification_needed">Bestätigung benötigt</string>
+    <string name="verification_needed_description">Aus Sicherheitsgründen wird überprüft, ob Sie ein Mensch sind.</string>
+    <string name="verification_needed_description_notification">Bitte bestätigen Sie, dass Sie ein Mensch sind, bevor Sie diese Nachricht senden können: %s</string>
     <string name="message_drafted_verification_needed">Nachricht nicht gesendet - Überprüfung erforderlich. Ihre Nachrichten werden im Ordner „Entwürfe” gespeichert.</string>
     <string name="error_message_zip_code_invalid">Fehler: Ungültige Postleitzahl</string>
     <string name="error_message_cvc_invalid">Fehler: CVC-Nummer ungültig</string>
     <string name="error_message_card_name_invalid">Fehler: Kartennummer ungültig</string>
     <string name="error_message_select_country">Bitte Land auswählen</string>
-    <string name="error_message_exp_date_invalid">Fehler: Verfallsdatum ungültig</string>
+    <string name="error_message_exp_date_invalid">Fehler: Gültigkeitsdatum abgelaufen</string>
     <string name="error_message_exp_date_past">Fehler: Gültigkeitsdatum ist abgelaufen</string>
     <string name="error_message_card_number_invalid">Fehler: Kartennummer ungültig</string>
     <string name="print_error">Druckfehler</string>
@@ -629,19 +625,19 @@ zur Verfügung zu stellen.</string>
     <string name="available_folders">Verfügbare Ordner</string>
     <string name="choose_folder_color">Ordnerfarbe wählen</string>
     <string name="folder_created">Ordner erstellt</string>
-    <string name="folder_invalid">Ordner nicht erstellt aufgrund ungültigem Namen.</string>
+    <string name="folder_invalid">Ordner aufgrund eines ungültigen Namens nicht erstellt.</string>
     <string name="folder_deleted">Ordner gelöscht</string>
     <string name="folder_deleted_error">Fehler beim Löschen des Ordners</string>
     <string name="save_new_folder">Neuen Ordner speichern</string>
     <string name="create_new_folder">Ordner erstellen</string>
     <string name="all_mail">Alle Nachrichten</string>
-    <string name="allmail_option">ALLE NACHRICHTEN</string>
+    <string name="allmail_option">Ale Nachrichten</string>
     <string name="empty_emails">Keine Nachrichten</string>
     <string name="empty_email_list">Keine E-Mail-Adresse</string>
     <string name="no_contacts">Keine Kontakte</string>
     <string name="sender_name_address">%1$s&lt;%2$s&gt; schrieb:</string>
     <string name="update_label">Kategorie aktualisieren</string>
-    <string name="max_labels_in_message">Der Nachricht „%1$s” können nicht mehr als %2$d Kategorien zugeordnet werden.</string>
+    <string name="max_labels_in_message">Der Nachricht „%1$s” kann nicht mehr als %2$d Kategorien zugeordnet werden.</string>
     <string name="delete">Löschen</string>
     <string name="subject_copied">Betreff in die Zwischenablage kopiert</string>
     <string name="details_copied">Details wurden in Zwischenablage kopiert</string>
@@ -673,7 +669,7 @@ zur Verfügung zu stellen.</string>
     </string>
     <string name="info">Information</string>
     <string name="error_can_not_send_from_this_address">Auf ein kostenpflichtiges Abonnement aktualisieren, um von Ihrer %s-Adresse Nachrichten senden zu können.</string>
-    <string name="email_empty">E-Mail-Adresse fehlt</string>
+    <string name="email_empty">E-Mail-Adresse eingeben</string>
     <string name="encrypted_contact_details">Verschlüsselte Kontaktinformationen</string>
     <string name="convert_question">Lokale Kontakte hochladen</string>
     <string name="convert_question_subtitle">Dadurch werden die lokalen Kontakte von Ihrem Gerät in Ihr ProtonMail-Kontaktverzeichnis hochgeladen. Ihnen wird dadurch ermöglicht, über ProtonMail auf diese Kontakte auf Ihren anderen Geräten zuzugreifen.</string>
@@ -684,8 +680,8 @@ zur Verfügung zu stellen.</string>
     <string name="device_contacts">Gerätekontakte</string>
     <string name="print_date_template">Datum: %s</string>
     <string name="print_attachment_template">Anhang: %s;  </string>
-    <string name="pm_me_changed">Senden von Nachrichten von einer @pm.me-Adresse ist eine Funktion für bezahlte Konten. Ihre Nachricht wird von Ihrer standardmäßigen Adresse „%s” gesendet</string>
-    <string name="pm_me_can_not_be_default">Auf einen kostenpflichtigen Tarif umstellen, um Ihre %s-Adresse als Standard festlegen zu können</string>
+    <string name="pm_me_changed">Das Senden von Nachrichten von einer @pm.me-Adresse ist eine kostenpflichtige Funktion. Ihre Nachricht wird von Ihrer Standardadresse „%s” gesendet.</string>
+    <string name="pm_me_can_not_be_default">Auf ein kostenpflichtiges Paket umsteigen, damit Sie Ihre %s-Adresse als Standard festlegen können</string>
     <string name="dont_remind_again">Nicht erneut erinnern</string>
     <string name="load_embedded_images">Eingebettete Grafiken laden</string>
     <string name="remove_password">Passwort entfernen</string>
@@ -726,7 +722,7 @@ zur Verfügung zu stellen.</string>
     <string name="recipient_not_found_and_removed">Empfänger konnte nicht gefunden werden: %s wurde entfernt</string>
     <string name="recipient_error_and_removed">Fehler beim Abrufen von Empfängerinformationen. Der Empfänger „%s” wurde entfernt.</string>
     <string name="send_anyway">Dennoch senden</string>
-    <string name="expiration_error_title">Sie haben eine Verfallszeit der Nachricht angegeben, aber nicht alle Empfänger unterstützen dies.</string>
+    <string name="expiration_error_title">Sie haben eine Gültigkeitsdauer der Nachricht angegeben, aber nicht alle Empfänger unterstützen dies.</string>
     <string name="expiration_error_add_msg_password">Bitte fügen Sie ein Nachrichtenpasswort für folgende Empfänger hinzu:</string>
     <string name="expiration_error_disable_pgp_sending">Bitte deaktivieren Sie den PGP-Versand, um die Verfallszeit für die folgenden Empfänger zu aktivieren:</string>
     <string name="expiration_error_proceed">Tippen Sie auf „Trotzdem senden”, um Nachrichten auch ohne Verfallszeitpunkt an diese Empfänger zu senden.</string>
@@ -734,9 +730,9 @@ zur Verfügung zu stellen.</string>
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Weitere Informationen (engl.)</a>
     </string>
     <string name="channel_name_attachments">Anhänge</string>
-    <string name="channel_description_attachments">Informiert über den Download-Status von Anhängen</string>
+    <string name="channel_description_attachments">Informiert über den Status der herunterzuladenden Anhänge</string>
     <string name="channel_name_emails">Nachrichten</string>
-    <string name="channel_description_emails">Benachrichtigungen über eingehende E-Mails</string>
+    <string name="channel_description_emails">Benachrichtigungen über eingehende Nachrichten</string>
     <string name="channel_name_account">Konto</string>
     <string name="channel_description_account">Kontenstatus</string>
     <string name="channel_name_ongoing_operations">Laufende Aktionen</string>
@@ -804,7 +800,7 @@ zur Verfügung zu stellen.</string>
         <item quantity="other">Möchten Sie diesen Kontakte wirklich löschen?</item>
     </plurals>
     <string name="members">Mitglieder</string>
-    <string name="max_emails_in_group_title">Maximale Anzahl von E-Mails je Gruppe erreicht</string>
+    <string name="max_emails_in_group_title">Maximale Anzahl von E-Mail-Adressen je Gruppe erreicht</string>
     <string name="max_emails_in_group_subtitle">Sie haben die maximale Anzahl von E-Mail-Adressen je Gruppe erreicht (%1$d). Bitte entfernen Sie %2$d Elemente.</string>
     <string name="select_deselect_all">Alle auswählen</string>
     <string name="contact_group_name_hint">Gruppenname wählen</string>
@@ -823,15 +819,15 @@ zur Verfügung zu stellen.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Berechtigungen</string>
     <string name="need_storage_permissions_text">Um Anhänge hinzufügen zu können, müssen Sie den Zugriff auf den Datenträger erlauben.</string>
-    <string name="push_notifications_alert_title">Push-Mitteilungen</string>
+    <string name="push_notifications_alert_title">Push-Benachrichtigungen</string>
     <string name="push_notifications_alert_subtitle">Push-Benachrichtigungen für ProtonMail funktionieren nicht ohne aktualisierte Google Play-Dienste.</string>
     <string name="app_locked">App gesperrt</string>
     <string name="use_pin_instead">PIN stattdessen verwenden</string>
     <!-- strings used for biometric enrollment -->
-    <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
-    <string name="log_in_using_biometric_credential">Unlock using your biometric credentials</string>
-    <string name="unlock_using_biometrics">Unlock using biometrics</string>
-    <string name="biometric_error_hw_not_available">Biometric hardware not available.</string>
+    <string name="no_biometric_data_enrolled">Keine biometrischen Daten erfasst</string>
+    <string name="log_in_using_biometric_credential">Mit Ihren biometrischen Zugangsdaten entsperren</string>
+    <string name="unlock_using_biometrics">Mit biometrischen Daten entsperren</string>
+    <string name="biometric_error_hw_not_available">Biometrische Hardware nicht verfügbar.</string>
     <!-- end strings used for biometric enrollment -->
     <string name="undisclosed_recipients">Verborgene Empfänger</string>
     <string name="manage_accounts">Konten verwalten</string>
@@ -843,7 +839,7 @@ zur Verfügung zu stellen.</string>
     <string name="subscription">Abonnement</string>
     <string name="plan_and_user">Tarif</string>
     <string name="payment_method">Zahlungsmethode</string>
-    <string name="password_manager">Passwort-Verwaltung</string>
+    <string name="password_manager">Passwörter verwalten</string>
     <string name="recovery_email">Wiederherstellungs-E-Mail-Adresse</string>
     <string name="storage">Größe des Postfachs</string>
     <string name="storage_used">%1$s / %2$s</string>
@@ -877,39 +873,39 @@ zur Verfügung zu stellen.</string>
     <string name="set_custom_quick_snooze">Schneller „Später lesen”-Zeitpunkt festlegen</string>
     <string name="turn_off">Deaktivieren</string>
     <string name="snooze_will_repeat">„Später lesen”-Erinnerung wird wiederholt</string>
-    <string name="work_days">Work days</string>
-    <string name="weekends">Weekend</string>
-    <string name="every_day">Every day</string>
+    <string name="work_days">Werktags</string>
+    <string name="weekends">Wochenende</string>
+    <string name="every_day">Täglich</string>
     <string name="quick_and_scheduled_enabled">Schneller und geplanter „Später lesen”-Zeitpunkt sind aktiviert</string>
     <string name="quick_only_enabled">Schneller „Später lesen”-Zeitpunkt aktiv</string>
     <string name="scheduled_only_enabled">Geplante „Später lesen”-Erinnerung aktiv</string>
     <string name="quick_and_scheduled_disabled">Schneller und geplanter „Später lesen”-Zeitpunkt sind deaktiviert</string>
-    <string name="scheduled_snooze_on">Geplant (An)</string>
+    <string name="scheduled_snooze_on">Geplant (Ein)</string>
     <string name="scheduled_snooze_off">Geplant (Aus)</string>
     <!-- endregion -->
     <string name="mailbox">Postfach</string>
     <string name="privacy">Datenschutz</string>
     <string name="auto_download_messages_title">Nachrichten automatisch herunterladen</string>
     <string name="auto_download_messages_subtitle">Wenn diese Option aktiviert ist, werden die Nachrichtentexte jedes Mal automatisch heruntergeladen, wenn Sie eine neue E-Mail-Benachrichtigung erhalten (dies verbraucht mehr Daten). Wenn diese Option deaktiviert ist, werden die Nachrichtentexte nur dann heruntergeladen, wenn Sie eine E-Mail öffnen. (Hinweis: Wenn Sie mit einer der beiden Optionen den Zwischenspeicher leeren oder sich abmelden, können Sie keine Nachrichtentexte lesen, wenn keine Verbindung zum Internet besteht).</string>
-    <string name="settings_background_sync">Hintergrund-Synchronisation</string>
-    <string name="settings_auto_show_images">Entfernte Grafiken automatisch anzeigen</string>
+    <string name="settings_background_sync">Im Hintergrund synchronisieren</string>
+    <string name="settings_auto_show_images">Grafiken aus externen Quellen automatisch laden</string>
     <string name="settings_auto_show_embedded_images">Eingebettete Grafiken automatisch anzeigen</string>
-    <string name="settings_prevent_taking_screenshots">Die Aufnahme von Screenshots verhindern</string>
+    <string name="settings_prevent_taking_screenshots">Das Erstellen von Bildschirmfotos verhindern</string>
     <string name="hyperlink_confirmation">Link-Bestätigung anfordern</string>
     <string name="labels_and_folders">Kategorien und Ordner </string>
-    <string name="labels_manage">Kategorieverwaltung</string>
+    <string name="labels_manage">Kategorien verwalten</string>
     <string name="folders_manage">Ordnerverwaltung</string>
     <string name="swiping_gesture">Wischgesten</string>
     <string name="swipe_action_right">Nach rechts wischen</string>
     <string name="swipe_action_left">Nach links wischen</string>
     <!-- region Swipe Actions -->
-    <string name="swipe_action_chooser_title">Aktion für Wischen auswählen</string>
+    <string name="swipe_action_chooser_title">Wischgeste wählen</string>
     <string name="swipe_action_trash">Nachricht in den Papierkorb verschoben</string>
     <string name="swipe_action_trash_short">In Papierkorb verschoben</string>
-    <string name="swipe_action_star">Nachrichtenmarkierung aktualisiert</string>
-    <string name="swipe_action_spam">Nachricht als Spam markiert</string>
+    <string name="swipe_action_star">Kennzeichnung der Nachricht aktualisiert</string>
+    <string name="swipe_action_spam">Nachricht als Spam gekennzeichnet</string>
     <string name="swipe_action_archive">Nachricht archiviert</string>
-    <string name="swipe_action_mark_read">Nachricht als gelesen markiert</string>
+    <string name="swipe_action_mark_read">Nachricht als gelesen gekennzeichnet</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Nachricht in den Papierkorb verschoben</item>
         <item quantity="other">Nachrichten in den Papierkorb verschoben</item>
@@ -947,7 +943,7 @@ zur Verfügung zu stellen.</string>
     <string name="combined_contacts">Zusammengeführte Kontakte</string>
     <string name="turn_combined_contacts_on">Aktivieren Sie diese Funktion, um E-Mail-Adressen aus Kontakten all Ihren angemeldeten Konten automatisch zu vervollständigen.</string>
     <string name="local_cache_management">Lokalen Zwischenspeicher verwalten</string>
-    <string name="cache_cleared">Lokaler Cache ist aktualisiert</string>
+    <string name="cache_cleared">Lokaler Zwischenspeicher wurde aktualisiert</string>
     <string name="empty_cache">Zwischenspeicher leeren</string>
     <!-- endregion -->
     <string name="enabled">Aktiviert</string>
@@ -958,16 +954,16 @@ zur Verfügung zu stellen.</string>
     <!-- region Multi Account -->
     <string name="remove_account_question">%s entfernen?</string>
     <string name="signed_in_with">Angemeldet mit %s</string>
-    <string name="signed_in_with_logged_out_from">Angemeldet von %1$s und angemeldet mit %2$s</string>
+    <string name="signed_in_with_logged_out_from">Von %1$s abgemeldet und angemeldet als %2$s</string>
     <string name="connect_account_limit_title">Grenzwert erreicht</string>
     <string name="connect_account_limit_subtitle">Sie können kein weiteres kostenloses ProtonMail-Konto hinzufügen. Es kann nur ein einziges kostenloses ProtonMail-Konto hinzugefügt werden. Bitte melden Sie sich von Ihrem anderen kostenlosen Konto ab oder aktualisieren Sie eines Ihrer kostenlosen Konten auf ein bezahltes Konto.</string>
     <string name="switch_accounts_question">Konto wechseln?</string>
     <string name="switch_to_account">Wechseln zu %s</string>
-    <string name="login_failure_missing_keys">Das Konto, das Sie hinzufügen möchten, hat keine generierten Schlüssel. Bitte fügen Sie dieses Konto als erstes Konto in der App hinzu, oder melden Sie sich über die Web-Version an, um Schlüssel zu generieren und anschließend als zusätzliches Konto in der App hinzuzufügen.</string>
+    <string name="login_failure_missing_keys">Das Konto, das Sie hinzuzufügen versuchen, enthält keine generierten Schlüssel. Bitte fügen Sie dieses Konto als erstes Konto in der App hinzu oder melden Sie sich über die Web-Version an, um Schlüssel zu generieren, und fügen Sie es dann als zusätzliches Konto in der App hinzu.</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">Compose</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <string name="shortcut_compose_new_message">Neue Nachricht verfassen</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Häufige Verbindungsprobleme und Lösungen</string>
