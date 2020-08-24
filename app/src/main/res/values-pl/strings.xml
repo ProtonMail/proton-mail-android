@@ -311,7 +311,7 @@ Nie strać tego hasła - nie możemy go odzyskać. Jeśli je zgubisz, nie będzi
     <string name="saving_failed_no_conn">Zapisywanie nie powiodło się. Brak połączenia z Internetem</string>
     <string name="username_is_available">Nazwa użytkownika jest dostępna!</string>
     <string name="username_is_not_available">Nazwa użytkownika jest już zajęta!</string>
-    <string name="username_is_too_long">Maksymalna długość nazwy użytkownika wynosi %d znaków!</string>
+    <string name="username_is_too_long">Maksymalna długość nazwy użytkownika to %d znaków!</string>
     <string name="congratulation">Gratulacje!</string>
     <string name="new_account_ready">Twoje nowe bezpieczne konto\ne-mail jest gotowe.</string>
     <string name="optional_email_note">Opcjonalny adres odzyskiwania pozwoli Ci
@@ -366,7 +366,7 @@ pojawi się w polu nadawcy.</string>
     <string name="new_pin_saved">Nowy kod PIN został zapisany</string>
     <string name="new_emails">Masz nowe wiadomości (%d)</string>
     <string name="attachment_download_success">Plik %s został pobrany</string>
-    <string name="attachment_download_failed">Pobieranie pliku %s nie powiodło się</string>
+    <string name="attachment_download_failed">Nie udało się pobrać pliku %s</string>
     <string name="ringtone">Dzwonek</string>
     <string name="ringtone_selected">Dzwonek:</string>
     <string name="ringtone_invalid">Wystąpił błąd podczas wybierania dzwonka</string>
@@ -706,8 +706,8 @@ ludziom na całym świecie.</string>
     <string name="load_embedded_images">Załaduj osadzone obrazy</string>
     <string name="remove_password">Usuń hasło</string>
     <string name="remove_password_question">Usunąć hasło?</string>
-    <string name="attachment_storage_value_current">Obecnie wybrano: %d MB</string>
-    <string name="attachment_storage_value_current_unlimited">Obecnie wybrano: Bez limitu</string>
+    <string name="attachment_storage_value_current">Obecnie wybrałeś: %d MB</string>
+    <string name="attachment_storage_value_current_unlimited">Obecnie wybrałeś: Bez limitu</string>
     <string name="attachment_offline_max_storage">Ustawia maksymalną ilość miejsca, jaką aplikacja ProtonMail może używać na tym urządzeniu.</string>
     <string name="load_embedded_images_failed_no_network">Ładowanie osadzonych obrazów nie powiodło się. Sprawdź połączenie sieciowe.</string>
     <string name="load_embedded_images_failed">Ładowanie osadzonych obrazów nie powiodło się.</string>
