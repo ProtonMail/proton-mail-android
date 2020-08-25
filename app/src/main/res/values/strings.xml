@@ -869,7 +869,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="members">Members</string>
     <string name="max_emails_in_group_title">Max emails per group reached</string>
-    <string name="max_emails_in_group_subtitle">You have reached maximum number of emails per group (%1$d). Please remove %2$d items.</string>
     <string name="select_deselect_all">Select All</string>
     <string name="contact_group_name_hint">Choose a group name</string>
     <string name="contact_group_change_color">Change color</string>

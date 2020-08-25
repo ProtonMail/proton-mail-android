@@ -32,10 +32,8 @@ import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import javax.inject.Inject
@@ -48,7 +46,7 @@ const val EXTRA_CONTACT_EMAILS = "extra_contact_emails"
  * Created by kadrikj on 9/7/18.
  */
 
-class AddressChooserActivity: BaseActivity() {
+class AddressChooserActivity : BaseActivity() {
 
     @Inject
     lateinit var addressChooserViewModelFactory: AddressChooserViewModelFactory
@@ -134,18 +132,6 @@ class AddressChooserActivity: BaseActivity() {
                     addressChooserViewModel.doFilter(filterView.text.toString(), contactGroupEmailsAdapter.getSelected())
                 }
             })
-        }
-    }
-
-    inner class MaxEmailsReachedObserver : Observer<Event<Int>> {
-        override fun onChanged(t: Event<Int>?) {
-            val selectedEmailsCount = t?.getContentIfNotHandled() ?: 0
-            DialogUtils.showInfoDialog(this@AddressChooserActivity, getString(R.string.max_emails_in_group_title),
-                    String.format(getString(R.string.max_emails_in_group_subtitle), Constants.MAX_EMAILS_PER_CONTACT_GROUP,
-                            selectedEmailsCount - Constants.MAX_EMAILS_PER_CONTACT_GROUP)) {
-                // NOOP
-            }
-
         }
     }
 }

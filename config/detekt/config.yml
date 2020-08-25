@@ -11,9 +11,9 @@ build:
     # comments: 1
 
 config:
-  validation: true
-  # when writing own rules with new properties, exclude the property path e.g.: "my_rule_set,.*>.*>[my_property]"
-  excludes: ""
+  validation: false
+  # when writing own rules with new properties, exclude the property path e.g.: 'my_rule_set,.*>.*>[my_property]'
+  excludes: ''
 
 processors:
   active: true
@@ -34,7 +34,7 @@ console-reports:
   #  - 'FindingsReport'
      - 'FileBasedFindingsReport'
 
-comments:
+MailboxAccomments:
   active: true
   excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
   # do not report private function with comments
@@ -46,7 +46,7 @@ comments:
   # do not report comments with wrong end of sentence
   EndOfSentenceFormat:
     active: false
-    # endOfSentenceFormat: ([.?!][ \t\n\r\f<])|([.?!:]$)
+    # endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'
   # report public class without comments, nested / inner members are excluded, but we suppose the
   # outer documentation to be exhaustive enough
   UndocumentedPublicClass:
@@ -92,7 +92,7 @@ complexity:
   # do not report labeled expressions, like `return@something`
   LabeledExpression:
     active: false
-    # ignoredLabels: ""
+    ignoredLabels: []
   LargeClass:
     active: true
     threshold: 500
@@ -146,7 +146,7 @@ empty-blocks:
   active: true
   EmptyCatchBlock:
     active: true
-    allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
   EmptyClassBlock:
     active: true
   EmptyDefaultConstructor:
@@ -169,6 +169,8 @@ empty-blocks:
   EmptyKtFile:
     active: true
   EmptySecondaryConstructor:
+    active: true
+  EmptyTryBlock:
     active: true
   EmptyWhenBlock:
     active: true
@@ -202,13 +204,14 @@ exceptions:
     #  - NumberFormatException
     #  - ParseException
     #  - MalformedURLException
-    #  allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
+    #  allowedExceptionNameRegex: '_|(ignore|expected).*'
   ThrowingExceptionFromFinally:
     active: false
   ThrowingExceptionInMain:
     active: false
   ThrowingExceptionsWithoutMessageOrCause:
     active: true
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     exceptions:
       - IllegalArgumentException
       - IllegalStateException
@@ -257,9 +260,11 @@ formatting:
   FinalNewline:
     active: true
     autoCorrect: true
+    insertFinalNewLine: true
   ImportOrdering:
     active: false
-    autoCorrect: true
+    # autoCorrect: true
+    # layout: 'idea'
   Indentation:
     active: true
     autoCorrect: true
@@ -333,6 +338,9 @@ formatting:
   SpacingAroundDot:
     active: true
     autoCorrect: true
+  SpacingAroundDoubleColon:
+    active: false
+    autoCorrect: true
   SpacingAroundKeyword:
     active: true
     autoCorrect: true
@@ -343,6 +351,14 @@ formatting:
     active: true
     autoCorrect: true
   SpacingAroundRangeOperator:
+    active: false
+    # autoCorrect: true
+  # example compliant     `@file:JvmName(...)`
+  # example non compliant `@file: JvmName(...)`
+  SpacingBetweenDeclarationsWithAnnotations:
+    active: true
+    autoCorrect: true
+  SpacingBetweenDeclarationsWithComments:
     active: false
     # autoCorrect: true
   StringTemplate:
@@ -364,25 +380,30 @@ naming:
     ignoreOverridden: true
   EnumNaming:
     active: true
-    enumEntryPattern: '^[A-Z][_a-zA-Z0-9]*'
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    enumEntryPattern: '[A-Z][_a-zA-Z0-9]*'
   ForbiddenClassName:
     active: false
-    forbiddenName: ''
+    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    # forbiddenName: []
   FunctionMaxLength:
     active: true
     excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     maximumFunctionNameLength: 40
   FunctionMinLength:
     active: false
+    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     # minimumFunctionNameLength: 3
   FunctionNaming:
     active: true
-    excludes: ['**/**Test/**']
-    functionPattern: '^([a-zA-Z$][a-zA-Z$0-9]*)|(`.*`)$'
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    functionPattern: '([a-zA-Z][a-zA-Z0-9]*)|(`.*`)'
     excludeClassPattern: '$^'
     ignoreOverridden: true
+    ignoreAnnotated: ['Composable']
   FunctionParameterNaming:
     active: true
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
     ignoreOverridden: true
@@ -391,17 +412,20 @@ naming:
     rootPackage: ''
   MatchingDeclarationName:
     active: false
+    # mustBeFirst: true
   MemberNameEqualsClassName:
     active: true
     ignoreOverridden: true
   ObjectPropertyNaming:
     active: true
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     constantPattern: '[A-Za-z][_A-Za-z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '(_)?[A-Za-z][_A-Za-z0-9]*'
   PackageNaming:
     active: true
-    packagePattern: '^[a-z]+(\.[a-z][A-Za-z0-9]*)*$'
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
   TopLevelPropertyNaming:
     active: true
     excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
@@ -410,12 +434,15 @@ naming:
     privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
   VariableMaxLength:
     active: true
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     maximumVariableNameLength: 40
   VariableMinLength:
     active: false
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     # minimumVariableNameLength: 1
   VariableNaming:
     active: true
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
@@ -427,8 +454,10 @@ performance:
     active: true
   ForEachOnRange:
     active: true
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
   SpreadOperator:
     active: false
+    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
   UnnecessaryTemporaryInstantiation:
     active: true
 
@@ -446,8 +475,44 @@ potential-bugs:
     active: true
   HasPlatformType:
     active: true
+  # This rule warns on instances where a function, annotated with either `@CheckReturnValue` or `@CheckResult`,
+  # returns a value but that value is not used in any way. The Kotlin compiler gives no warning for this scenario
+  # normally so that's the rationale behind this rule.
+  #
+  # fun returnsValue() = 42
+  # fun returnsNoValue() {}
+  #
+  # <noncompliant>
+  #     returnsValue()
+  # </noncompliant>
+  #
+  # <compliant>
+  #     if (42 == returnsValue()) {}
+  #     val x = returnsValue()
+  # </compliant>
+  #
+  # @configuration restrictToAnnotatedMethods - if the rule should check only annotated methods. (default: `true`)
+  # @configuration returnValueAnnotations - List of glob patterns to be used as inspection annotation (default: `['*.CheckReturnValue', '*.CheckResult']`)
+  IgnoredReturnValue:
+    active: true
+    restrictToAnnotatedMethods: true
+    returnValueAnnotations: ['*.CheckReturnValue', '*.CheckResult']
   ImplicitDefaultLocale:
     active: true
+  # Functions that return `Unit` should have a block body, rather an expression one
+  # Example compliant
+  # ```
+  # fun printHelloWorld() {
+  #   println("hello world")
+  # }
+  # ```
+  # Example not compliant
+  # `fun printHelloWorld() = println("hello world")`
+  #
+  # allowExplicitReturnType says that the non compiant example would be compliant when the return type is explicit
+  ImplicitUnitReturnType:
+    active: true
+    allowExplicitReturnType: true
   InvalidRange:
     active: true
   IteratorHasNextCallsNextMethod:
@@ -456,16 +521,23 @@ potential-bugs:
     active: true
   LateinitUsage:
     active: false
-    # excludeAnnotatedProperties: ""
-    # ignoreOnClassesPattern: ""
+    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    # excludeAnnotatedProperties: []
+    # ignoreOnClassesPattern: ''
   MapGetWithNotNullAssertionOperator:
     active: false
   MissingWhenCase:
+    active: true
+  NullableToStringCall:
     active: true
   RedundantElseInWhen:
     active: true
   UnconditionalJumpStatementInLoop:
     active: false
+  UnnecessaryNotNullOperator:
+    active: true
+  UnnecessarySafeCall:
+    active: true
   UnreachableCode:
     active: true
   UnsafeCallOnNullableType:
@@ -500,14 +572,14 @@ style:
   ForbiddenComment:
     active: true
     values: ['TODO', 'FIXME', 'STOPSHIP']
-    allowedPatterns: ""
+    allowedPatterns: ''
   ForbiddenImport:
     active: true
     imports: ['ch.protonmail.libs.*']
-    forbiddenPatterns: ""
+    forbiddenPatterns: []
   ForbiddenMethodCall:
     active: false
-    methods: []
+    # methods: ['kotlin.io.println', 'kotlin.io.print']
   ForbiddenPublicDataClass:
     active: false
     # ignorePackages: '*.internal,*.internal.*'
@@ -521,6 +593,8 @@ style:
     excludedFunctions: 'describeContents'
     excludeAnnotatedFunction: "dagger.Provides"
   LibraryCodeMustSpecifyReturnType:
+    active: false
+  LibraryEntitiesShouldNotBePublic:
     active: false
   LoopWithTooManyJumpStatements:
     active: true
@@ -540,6 +614,8 @@ style:
     ignoreRanges: false
   MandatoryBracesIfStatements:
     active: false
+  MandatoryBracesLoops:
+    active: true
   MaxLineLength:
     active: true
     excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
@@ -619,9 +695,13 @@ style:
   UseCheckOrError:
     active: false
   UseDataClass:
-    active: false
-    # excludeAnnotatedClasses: []
-    # allowVars: false
+    active: true
+    excludeAnnotatedClasses: []
+    allowVars: false
+  # Example compliant     `emptyList<String>()`
+  # Example not complient `listOf<String>()`
+  UseEmptyCounterpart:
+    active: true
   UseIfInsteadOfWhen:
     active: true
   UseRequire:
@@ -634,6 +714,10 @@ style:
     active: true
   WildcardImport:
     active: true
+    # We can exclude tests and Gradle files and that would be great, but it will make our Code Style incoherent with IDE setup,
+    # since we cannot set different import rules across the project
+    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    #
     # NOTE!
     # Only excluded imports are:
     # * Synthetic imports:
