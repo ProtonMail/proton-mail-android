@@ -25,7 +25,9 @@ import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUserWith2FA
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUserWith2FA
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Test
+import org.junit.experimental.categories.Category
 
 @LargeTest
 class MultiuserManagementTests : BaseTest() {
@@ -34,7 +36,9 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun connectOnePassAccount() {
-        loginRobot.loginTwoPasswordUser(twoPassUser)
+        loginRobot
+            .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(twoPassUser.mailboxPassword)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -47,7 +51,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun connectTwoPassAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -60,7 +65,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun connectTwoPassAccountWithTwoFa() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -73,7 +79,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun connectOnePassAccountWithTwoFa() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -86,7 +93,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun removeAllAccounts() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -96,9 +104,11 @@ class MultiuserManagementTests : BaseTest() {
             }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun logoutPrimaryAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -115,7 +125,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun logoutSecondaryAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -132,7 +143,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun logoutOnlyRemainingAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -140,6 +152,7 @@ class MultiuserManagementTests : BaseTest() {
             .verify { loginScreenDisplayed() }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun removePrimaryAccount() {
         loginRobot.loginUser(onePassUser)
@@ -159,7 +172,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun removeSecondaryAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -176,7 +190,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun removeOnlyRemainingAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -186,7 +201,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun logoutOneRemoveAnotherAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -205,7 +221,8 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun cancelLoginOnTwoFaPrompt() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -218,7 +235,9 @@ class MultiuserManagementTests : BaseTest() {
 
     @Test
     fun addTwoFreeAccounts() {
-        loginRobot.loginTwoPasswordUserWithTwoFa(twoPassUserWith2FA)
+        loginRobot
+            .loginTwoPasswordUser(twoPassUserWith2FA)
+            .decryptMailbox(twoPassUserWith2FA.mailboxPassword)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -227,9 +246,11 @@ class MultiuserManagementTests : BaseTest() {
             .verify { limitReachedDialogDisplayed() }
     }
 
+    @Category(SmokeTest::class)
     @Test
     fun switchAccount() {
-        loginRobot.loginUser(onePassUser)
+        loginRobot
+            .loginUser(onePassUser)
             .menuDrawer()
             .accountsList()
             .manageAccounts()
@@ -238,6 +259,7 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .switchToAccount(1)
+            .menuDrawer()
             .accountsList()
             .manageAccounts()
             .verify { switchedToAccount(onePassUser.name) }

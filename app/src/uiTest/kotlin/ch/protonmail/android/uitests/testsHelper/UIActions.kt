@@ -107,7 +107,7 @@ object UIActions {
         fun clickViewWithParentIdAndClass(@IdRes id: Int, clazz: Class<*>): ViewInteraction =
             onView(allOf(instanceOf(clazz), withParent(withId(id)))).perform(click())
 
-        fun clickViewByClassAndParentClass(clazz: Class<*>, parentClazz: Class<*>) =
+        fun clickViewByClassAndParentClass(clazz: Class<*>, parentClazz: Class<*>): ViewInteraction =
             onView(allOf(instanceOf(clazz), withParent(instanceOf(parentClazz)))).perform(click())!!
 
         fun clickViewWithIdAndText(@IdRes id: Int, @StringRes stringRes: Int): ViewInteraction =
@@ -133,19 +133,21 @@ object UIActions {
         fun viewWithIdIsNotDisplayed(@IdRes id: Int): ViewInteraction =
             onView(withId(id)).check(matches(not(isDisplayed())))
 
-        fun viewWithIdAndTextIsNotDisplayed(@IdRes id: Int, text: String): ViewInteraction =
-            onView(allOf(withId(id), withText(text))).check(matches(not(isDisplayed())))
-
         fun viewWithIdAndTextDoesNotExist(@IdRes id: Int, text: String): ViewInteraction =
             onView(allOf(withId(id), withText(text))).check(doesNotExist())
 
-        fun viewWithIdAndAncestorTagIsChecked(@IdRes id: Int, ancestorTag: String, state: Boolean):
-            ViewInteraction {
+        fun viewWithIdAndAncestorTagIsChecked(
+            @IdRes id: Int,
+            ancestorTag: String,
+            state: Boolean
+        ): ViewInteraction {
             return when (state) {
-                true -> onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
-                    .check(matches(isChecked()))
-                false -> onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
-                    .check(matches(isNotChecked()))
+                true ->
+                    onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                        .check(matches(isChecked()))
+                false ->
+                    onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                        .check(matches(isNotChecked()))
             }
         }
 
@@ -154,11 +156,14 @@ object UIActions {
         fun viewWithTextIsDisplayed(text: String): ViewInteraction =
             onView(withText(text)).check(matches(isDisplayed()))
 
+        fun viewWithTextDoesNotExist(@StringRes textId: Int): ViewInteraction =
+            onView(withText(stringFromResource(textId))).check(doesNotExist())
+
         fun viewWithIdAndTextIsDisplayed(@IdRes id: Int, @StringRes text: Int): ViewInteraction =
             onView(allOf(withId(id), withText(text))).check(matches(isDisplayed()))
 
-        fun alertDialogWithTextIsDisplayed(@StringRes text: Int): ViewInteraction =
-            onView(withText(text)).inRoot(isDialog()).check(matches(isDisplayed()))
+        fun alertDialogWithTextIsDisplayed(@StringRes textId: Int): ViewInteraction =
+            onView(withText(textId)).inRoot(isDialog()).check(matches(isDisplayed()))
     }
 
     val contentDescription = ContentDescription()
@@ -214,22 +219,16 @@ object UIActions {
         fun clickContactItemView(
             @IdRes recyclerViewId: Int,
             withEmail: String,
-            @IdRes childViewId: Int):
-            ViewInteraction =
-            onView(withId(recyclerViewId))
-                .perform(actionOnHolderItem(
-                    withContactEmail(withEmail), clickOnChildWithId(childViewId))
-                )
+            @IdRes childViewId: Int
+        ): ViewInteraction = onView(withId(recyclerViewId))
+            .perform(actionOnHolderItem(withContactEmail(withEmail), clickOnChildWithId(childViewId)))
 
         fun clickContactsGroupItemView(
             @IdRes recyclerViewId: Int,
             withName: String,
-            @IdRes childViewId: Int):
-            ViewInteraction =
-            onView(withId(recyclerViewId))
-                .perform(actionOnHolderItem(
-                    withContactGroupName(withName), clickOnChildWithId(childViewId))
-                )
+            @IdRes childViewId: Int
+        ): ViewInteraction = onView(withId(recyclerViewId))
+            .perform(actionOnHolderItem(withContactGroupName(withName), clickOnChildWithId(childViewId)))
 
         fun checkDoesNotContainItemWithText(@IdRes recyclerViewId: Int, subject: String, date: String):
             ViewInteraction = onView(withId(recyclerViewId)).perform(checkItemDoesNotExist(subject, date))
@@ -240,12 +239,9 @@ object UIActions {
         fun clickAccountManagerViewItem(
             @IdRes recyclerViewId: Int,
             email: String,
-            @IdRes childViewId: Int):
-            ViewInteraction =
-            onView(withId(recyclerViewId))
-                .perform(actionOnHolderItem(
-                    withAccountEmailInAccountManager(email), clickOnChildWithId(childViewId))
-                )
+            @IdRes childViewId: Int
+        ): ViewInteraction = onView(withId(recyclerViewId))
+            .perform(actionOnHolderItem(withAccountEmailInAccountManager(email), clickOnChildWithId(childViewId)))
 
         fun clickOnRecyclerViewItemByPosition(@IdRes recyclerViewId: Int, position: Int): ViewInteraction =
             onView(withId(recyclerViewId)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(position, click()))
@@ -254,8 +250,11 @@ object UIActions {
             onView(withId(recyclerViewId))
                 .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, longClick()))
 
-        fun saveMessageSubjectAtPosition(@IdRes recyclerViewId: Int, position: Int, method: (String, String) -> Unit):
-            ViewInteraction = onView(withId(recyclerViewId)).perform(saveMessageSubject(position, method))
+        fun saveMessageSubjectAtPosition(
+            @IdRes recyclerViewId: Int,
+            position: Int,
+            method: (String, String) -> Unit
+        ): ViewInteraction = onView(withId(recyclerViewId)).perform(saveMessageSubject(position, method))
 
         fun scrollToRecyclerViewMatchedItem(
             @IdRes recyclerViewId: Int,
@@ -277,17 +276,17 @@ object UIActions {
     val system = System()
 
     class System {
-        fun clickHamburgerOrUpButton() =
+        fun clickHamburgerOrUpButton(): ViewInteraction =
             allOf.clickViewWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
 
-        fun clickMoreOptionsButton() =
+        fun clickMoreOptionsButton(): ViewInteraction =
             allOf.clickViewByClassAndParentClass(AppCompatImageView::class.java, ActionMenuView::class.java)
 
-        fun clickNegativeDialogButton() = id.clickViewWithId(android.R.id.button2)
+        fun clickNegativeDialogButton(): ViewInteraction = id.clickViewWithId(android.R.id.button2)
 
-        fun clickPositiveDialogButton() = id.clickViewWithId(android.R.id.button1)
+        fun clickPositiveDialogButton(): ViewInteraction = id.clickViewWithId(android.R.id.button1)
 
-        fun clickPositiveButtonInDialogRoot() = id.clickViewWithId(android.R.id.button1)
+        fun clickPositiveButtonInDialogRoot(): ViewInteraction = id.clickViewWithId(android.R.id.button1)
     }
 
     val tag = Tag()
@@ -300,9 +299,6 @@ object UIActions {
     val text = Text()
 
     class Text {
-        fun clickViewWithText(text: String): ViewInteraction =
-            onView(withText(text)).check(matches(isDisplayed())).perform(click())
-
         fun clickViewWithText(@IdRes text: Int): ViewInteraction =
             onView(withText(text)).check(matches(isDisplayed())).perform(click())
     }
@@ -316,22 +312,16 @@ object UIActions {
         fun forViewWithIdAndText(@IdRes id: Int, textId: Int, timeout: Long = 5000): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withId(id), withText(textId))), timeout)
 
-//        fun forViewWithText(text: String): ViewInteraction =
-//            waitUntilViewAppears(onView(withText(text)))
-
         fun forViewWithText(@StringRes textId: Int): ViewInteraction =
             waitUntilViewAppears(onView(withText(stringFromResource(textId))))
 
-//        fun forViewWithContentDescription(@StringRes contentDescription: String): ViewInteraction =
-//            waitUntilViewAppears(onView(withContentDescription(contentDescription)))
+        fun forViewWithText(text: String): ViewInteraction =
+            waitUntilViewAppears(onView(withText(text)))
 
         fun forViewWithId(@IdRes id: Int): ViewInteraction =
             waitUntilViewAppears(onView(withId(id)))
 
-        fun forViewWithParentAndClass(@IdRes id: Int, clazz: Class<*>): ViewInteraction =
-            waitUntilViewAppears(onView(allOf(instanceOf(clazz), withParent(withId(id)))))
-
-        fun forViewWithTextAndParentId(@StringRes text: Int, @IdRes parentId: Int) =
+        fun forViewWithTextAndParentId(@StringRes text: Int, @IdRes parentId: Int): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
 
         fun untilViewWithIdIsGone(@IdRes id: Int): ViewInteraction =

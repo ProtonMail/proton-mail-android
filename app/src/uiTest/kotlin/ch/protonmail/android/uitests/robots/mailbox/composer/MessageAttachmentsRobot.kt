@@ -29,12 +29,13 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 open class MessageAttachmentsRobot {
 
-    fun addImageCaptureAttachment(@IdRes drawable: Int
-    ): ComposerRobot = mockCameraImageCapture(drawable).navigateUpToComposerView()
+    fun addImageCaptureAttachment(@IdRes drawable: Int): ComposerRobot =
+        mockCameraImageCapture(drawable).navigateUpToComposerView()
 
     fun addTwoImageCaptureAttachments(
         @IdRes firstDrawable: Int,
-        @IdRes secondDrawable: Int): ComposerRobot =
+        @IdRes secondDrawable: Int
+    ): ComposerRobot =
         mockCameraImageCapture(firstDrawable)
             .mockCameraImageCapture(secondDrawable)
             .navigateUpToComposerView()
@@ -48,12 +49,19 @@ open class MessageAttachmentsRobot {
     }
 
     private fun mockCameraImageCapture(@IdRes drawableId: Int): MessageAttachmentsRobot {
-        MockAddAttachmentIntent.mockCameraImageCapture(R.id.take_photo, drawableId)
+        UIActions.wait.forViewWithId(takePhotoIconId)
+        MockAddAttachmentIntent.mockCameraImageCapture(takePhotoIconId, drawableId)
         return this
     }
 
     private fun mockFileAttachment(@IdRes drawable: Int): MessageAttachmentsRobot {
-        MockAddAttachmentIntent.mockChooseAttachment(R.id.attach_file, drawable)
+        UIActions.wait.forViewWithId(addAttachmentIconId)
+        MockAddAttachmentIntent.mockChooseAttachment(addAttachmentIconId, drawable)
         return this
+    }
+
+    companion object {
+        private const val takePhotoIconId = R.id.take_photo
+        private const val addAttachmentIconId = R.id.attach_file
     }
 }

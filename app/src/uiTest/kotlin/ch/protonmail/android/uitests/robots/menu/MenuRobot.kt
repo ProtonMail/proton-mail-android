@@ -22,6 +22,7 @@ import androidx.annotation.IdRes
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
+import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.labelfolder.LabelFolderRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.robots.mailbox.trash.TrashRobot
@@ -130,9 +131,9 @@ class MenuRobot {
             return AccountManagerRobot()
         }
 
-        fun switchToAccount(accountPosition: Int): MenuRobot {
+        fun switchToAccount(accountPosition: Int): InboxRobot {
             UIActions.recyclerView.clickOnRecyclerViewItemByPosition(menuDrawerUserList, accountPosition)
-            return MenuRobot()
+            return InboxRobot()
         }
 
         /**
