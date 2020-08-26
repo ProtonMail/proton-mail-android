@@ -23,6 +23,7 @@ import android.content.SharedPreferences
 import ch.protonmail.android.domain.entity.Credential
 import ch.protonmail.android.domain.entity.Credential.NotFound
 import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.domain.repository.CredentialRepository
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.minusAssign
 import me.proton.core.util.android.sharedpreferences.set
@@ -30,22 +31,22 @@ import me.proton.core.util.kotlin.deserialize
 
 internal class SharedPreferencesCredentialRepository(
     private val preferences: SharedPreferences
-) {
+) : CredentialRepository {
 
-    fun getAll(): Map<EmailAddress, Credential> =
+    override fun getAll(): Map<EmailAddress, Credential> =
         preferences.all.map { (k, v) ->
             EmailAddress(k) to (v as String).deserialize(Credential.serializer())
         }.toMap()
 
-    operator fun get(address: EmailAddress): Credential =
+    override operator fun get(address: EmailAddress): Credential =
         preferences[address.s] ?: NotFound
 
-    operator fun set(address: EmailAddress, credential: Credential) {
+    override operator fun set(address: EmailAddress, credential: Credential) {
         require(credential != NotFound) { "Cannot set 'NotFound' as credential" }
         preferences[address.s] = credential
     }
 
-    operator fun minusAssign(address: EmailAddress) {
+    override operator fun minusAssign(address: EmailAddress) {
         preferences -= address.s
     }
 }
