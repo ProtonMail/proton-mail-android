@@ -34,9 +34,19 @@ console-reports:
   #  - 'FindingsReport'
      - 'FileBasedFindingsReport'
 
-MailboxAccomments:
+# output-reports:
+#   active: true
+#   exclude:
+#   # - 'TxtOutputReport'
+#   # - 'XmlOutputReport'
+#   # - 'HtmlOutputReport'
+
+comments:
   active: true
   excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+  AbsentOrWrongFileLicense:
+    active: false
+    # licenseTemplateFile: 'license.template'
   # do not report private function with comments
   CommentOverPrivateFunction:
     active: false
