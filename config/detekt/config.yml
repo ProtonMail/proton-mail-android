@@ -586,7 +586,7 @@ style:
   ForbiddenImport:
     active: true
     imports: ['ch.protonmail.libs.*']
-    forbiddenPatterns: []
+    forbiddenPatterns: ''
   ForbiddenMethodCall:
     active: false
     # methods: ['kotlin.io.println', 'kotlin.io.print']
