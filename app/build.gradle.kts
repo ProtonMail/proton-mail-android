@@ -202,6 +202,14 @@ dependencies {
     )
     kaptTest(`dagger-compiler`)
 
+    // Dagger modules
+    // These dependency can be resolved at compile-time only.
+    // We should not use include any of them in the run-time of this module, we need this dependency for of being able
+    // to build the Dagger's dependency graph
+    compileOnly(
+        project(Module.credentials)
+    )
+
     implementation(
 
         // Core
