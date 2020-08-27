@@ -20,6 +20,10 @@
 
 package ch.protonmail.android.uitests.robots.mailbox
 
+import android.widget.ImageView
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParent
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
@@ -29,6 +33,8 @@ import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.click
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.instanceOf
 
 interface MailboxRobotInterface {
 
@@ -77,6 +83,10 @@ interface MailboxRobotInterface {
     }
 
     fun clickMessageBySubject(subject: String): MessageRobot {
+        UIActions.wait
+            .forViewByViewInteraction(onView(allOf(instanceOf(ImageView::class.java), withParent(withId(R.id.messages_list_view)))))
+        UIActions.wait
+            .untilViewByViewInteractionIsGone(onView(allOf(instanceOf(ImageView::class.java), withParent(withId(R.id.messages_list_view)))))
         UIActions.wait.forViewWithId(messagesRecyclerViewId)
         UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
         UIActions.recyclerView.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))

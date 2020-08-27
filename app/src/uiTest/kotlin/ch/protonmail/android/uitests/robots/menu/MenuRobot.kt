@@ -53,6 +53,12 @@ class MenuRobot {
         return DraftsRobot()
     }
 
+    fun inbox(): InboxRobot {
+        UIActions.wait.forViewWithId(R.id.left_drawer_navigation)
+        selectMenuItem(inboxText)
+        return InboxRobot()
+    }
+
     fun sent(): SentRobot {
         selectMenuItem(sentText)
         return SentRobot()
@@ -131,9 +137,9 @@ class MenuRobot {
             return AccountManagerRobot()
         }
 
-        fun switchToAccount(accountPosition: Int): InboxRobot {
+        fun switchToAccount(accountPosition: Int): MenuRobot {
             UIActions.recyclerView.clickOnRecyclerViewItemByPosition(menuDrawerUserList, accountPosition)
-            return InboxRobot()
+            return MenuRobot()
         }
 
         /**
@@ -168,5 +174,6 @@ class MenuRobot {
         val sentText = stringFromResource(R.string.sent)
         val logoutText = stringFromResource(R.string.logout)
         val trashText = stringFromResource(R.string.trash)
+        val inboxText = stringFromResource(R.string.inbox)
     }
 }

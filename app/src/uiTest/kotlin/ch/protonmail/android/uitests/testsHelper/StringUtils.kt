@@ -20,7 +20,7 @@ package ch.protonmail.android.uitests.testsHelper
 
 import androidx.annotation.IdRes
 import androidx.test.platform.app.InstrumentationRegistry
-import java.util.*
+import java.util.Random
 
 object StringUtils {
 

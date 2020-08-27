@@ -295,7 +295,8 @@ dependencies {
         `aerogear`,
         `falcon`,
         `espresso-contrib`,
-        `espresso-intents`
+        `espresso-intents`,
+        `uiautomator`
     )
 }
 

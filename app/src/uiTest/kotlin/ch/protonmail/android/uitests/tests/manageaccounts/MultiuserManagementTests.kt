@@ -259,7 +259,6 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .switchToAccount(1)
-            .menuDrawer()
             .accountsList()
             .manageAccounts()
             .verify { switchedToAccount(onePassUser.name) }

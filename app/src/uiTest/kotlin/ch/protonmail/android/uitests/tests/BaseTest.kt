@@ -33,6 +33,10 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiWatcher
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.uitests.testsHelper.ProtonFailureHandler
@@ -66,7 +70,6 @@ open class BaseTest {
     open fun setUp() {
         Espresso.setFailureHandler(ProtonFailureHandler(InstrumentationRegistry.getInstrumentation()))
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().clear().apply()
-        //IdlingRegistry.getInstance().register(ProtonRequestsIdlingResource())
         Intents.init()
         clearLogcat()
         Log.d(testTag, "Starting test execution for test: ${testName.methodName}")
@@ -85,6 +88,7 @@ open class BaseTest {
             }
             IdlingRegistry.getInstance().unregister(idlingResource)
         }
+        device.removeWatcher("SystemDialogWatcher")
         Log.d(testTag, "Finished test execution: ${testName.methodName}")
     }
 
@@ -107,6 +111,7 @@ open class BaseTest {
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
         private const val twoSeconds = 2000
+        val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         @JvmStatic
         @BeforeClass
@@ -180,6 +185,8 @@ open class BaseTest {
         private fun setupDevice() {
             automation.executeShellCommand("settings put secure long_press_timeout 2000")
             automation.executeShellCommand("settings put secure show_ime_with_hard_keyboard 0")
+            // Disable floating notification pop-ups
+            automation.executeShellCommand("settings put global heads_up_notifications_enabled 0")
         }
 
         private fun clearLogcat() {
