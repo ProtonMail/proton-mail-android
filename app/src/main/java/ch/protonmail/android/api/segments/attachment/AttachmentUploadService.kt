@@ -31,7 +31,7 @@ import retrofit2.http.Part
 interface AttachmentUploadService {
 
     @Multipart
-    @POST("attachments")
+    @POST("mail/v4/attachments")
     fun uploadAttachment(
             @Part("Filename") Filename: String,
             @Part("MessageID") MessageID: String,
@@ -41,7 +41,7 @@ interface AttachmentUploadService {
             @Part("Signature\"; filename=\"temp3") Signature: RequestBody): Call<AttachmentUploadResponse>
 
     @Multipart
-    @POST("attachments")
+    @POST("mail/v4/attachments")
     fun uploadAttachment(
             @Part("Filename") Filename: String,
             @Part("MessageID") MessageID: String,

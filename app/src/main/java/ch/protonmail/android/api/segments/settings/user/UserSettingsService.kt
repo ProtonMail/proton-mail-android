@@ -34,27 +34,27 @@ import retrofit2.http.*
 
 interface UserSettingsService {
 
-    @GET("settings")
+    @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchUserSettings() : Call<UserSettingsResponse>
 
-    @GET("settings")
+    @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchUserSettings(@Tag retrofitTag: RetrofitTag) : Call<UserSettingsResponse>
 
-    @PUT("settings/email/notify")
+    @PUT("mail/v4/settings/email/notify")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateNotify(@Body updateNotify: UpdateNotify): Call<ResponseBody>
 
-    @PUT("settings/email")
+    @PUT("mail/v4/settings/email")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateNotificationEmail(@Body email: NotificationEmail): Call<SrpResponseBody>
 
-    @PUT("settings/password")
+    @PUT("mail/v4/settings/password")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateLoginPassword(@Body passwordChangeBody: PasswordChange): Call<SrpResponseBody>
 
-    @PUT("settings/password/upgrade")
+    @PUT("mail/v4/settings/password/upgrade")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun upgradeLoginPassword(@Body passwordChangeBody: UpgradePasswordBody): Call<ResponseBody>
 
