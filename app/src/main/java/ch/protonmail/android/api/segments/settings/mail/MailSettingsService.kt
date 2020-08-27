@@ -35,31 +35,31 @@ import retrofit2.http.*
 // TODO: 8/20/18 Better error handling, in a single place
 interface MailSettingsService {
 
-    @GET("mail/v4/settings/mail")
+    @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchMailSettings(): Call<MailSettingsResponse>
 
-    @GET("mail/v4/settings/mail")
+    @GET("mail/v4/settings")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchMailSettings(@Tag retrofitTag: RetrofitTag): Call<MailSettingsResponse>
 
-    @PUT("mail/v4/settings/mail/display")
+    @PUT("mail/v4/settings/display")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateDisplay(@Body displayName: DisplayName): Call<MailSettingsResponse>
 
-    @PUT("mail/v4/settings/mail/signature")
+    @PUT("mail/v4/settings/signature")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateSignature(@Body signature: Signature): Call<ResponseBody>
 
-    @PUT("mail/v4/settings/mail/swipeleft")
+    @PUT("mail/v4/settings/swipeleft")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateLeftSwipe(@Body swipeLeft: SwipeLeft): Call<ResponseBody>
 
-    @PUT("mail/v4/settings/mail/swiperight")
+    @PUT("mail/v4/settings/swiperight")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateRightSwipe(@Body swipeRight: SwipeRight): Call<ResponseBody>
 
-    @PUT("mail/v4/settings/mail/images")
+    @PUT("mail/v4/settings/images")
     fun updateAutoShowImages(@Body showImages: ShowImages): Call<ResponseBody>
 
 }
