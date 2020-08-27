@@ -203,17 +203,18 @@ dependencies {
     kaptTest(`dagger-compiler`)
 
     implementation(
-        project(Module.domain),
-//        project(Module.tokenAutoComplete)
 
-        // Proton
+        // Core
         rootProject.aar(Lib.protonCore, version = `old protonCore version`),
-//        rootProject.aar(Lib.composer, version = `composer version`),
+        // rootProject.aar(Lib.composer, version = `composer version`),
         `Proton-kotlin-util`,
         `Proton-shared-preferences`,
-
         `Proton-domain`,
         `Proton-work-manager`,
+
+        // Modules
+        project(Module.domain),
+        // project(Module.tokenAutoComplete),
 
         // Kotlin
         `kotlin-jdk7`,
