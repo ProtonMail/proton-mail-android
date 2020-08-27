@@ -37,10 +37,8 @@ const val ONE_MINUTE = 60L
 const val THREE_SECONDS = 3L
 const val TEN_SECONDS = 10L
 
-const val API_VERSION = "3"
 const val HEADER_LOCALE = "x-pm-locale"
 const val HEADER_UID = "x-pm-uid"
-const val HEADER_API_VERSION = "x-pm-apiversion"
 const val HEADER_APP_VERSION = "x-pm-appversion"
 const val HEADER_AUTH = "Authorization"
 const val HEADER_USER_AGENT = "User-Agent"

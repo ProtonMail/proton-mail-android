@@ -158,7 +158,6 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                         newRequest = request.newBuilder()
                                 .header(HEADER_AUTH, tokenManager.authAccessToken!!)
                                 .header(HEADER_UID, tokenManager.uid)
-                                .header(HEADER_API_VERSION, API_VERSION)
                                 .header(HEADER_APP_VERSION, appVersionName)
                                 .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
                                 .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
@@ -167,7 +166,6 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
                         Timber.tag("429").i("access token expired, updating request without the token (should not happen!) and uid blank? ${tokenManager.isUidBlank()}")
                         newRequest = request.newBuilder()
                                 .header(HEADER_UID, tokenManager.uid)
-                                .header(HEADER_API_VERSION, API_VERSION)
                                 .header(HEADER_APP_VERSION, appVersionName)
                                 .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
                                 .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
@@ -206,7 +204,6 @@ abstract class BaseRequestInterceptor(protected val userManager: UserManager,
             }
         }
         requestBuilder
-            .header(HEADER_API_VERSION, API_VERSION)
             .header(HEADER_APP_VERSION, appVersionName)
             .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
             .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
