@@ -286,17 +286,21 @@ class AppModule(val app: ProtonMailApplication) {
                 }
                 .customLogger(object : CustomLogger {
                     override fun v(text: String, vararg args: Any?) {
-                        Logger.doLog(TAG, String.format(text, *args))
+                        if (isDebugEnabled) {
+                            Logger.doLog(TAG, String.format(text, *args))
+                        }
                     }
 
                     private val TAG = "JOBS"
 
                     override fun isDebugEnabled(): Boolean {
-                        return AppUtil.isDebug()
+                        return false
                     }
 
                     override fun d(text: String, vararg args: Any) {
-                        Logger.doLog(TAG, String.format(text, *args))
+                        if (isDebugEnabled) {
+                            Logger.doLog(TAG, String.format(text, *args))
+                        }
                     }
 
                     override fun e(t: Throwable, text: String, vararg args: Any) {
