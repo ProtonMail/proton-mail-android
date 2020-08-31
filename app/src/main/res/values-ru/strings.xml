@@ -835,7 +835,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="members">Участники</string>
     <string name="max_emails_in_group_title">Достигнуто максимальное количество писем на группу</string>
-    <string name="max_emails_in_group_subtitle">Вы достигли максимального количества писем на группу (%1$d). Пожалуйста, удалите %2$d элементов.</string>
     <string name="select_deselect_all">Выбрать всё</string>
     <string name="contact_group_name_hint">Задайте название группы</string>
     <string name="contact_group_change_color">Изменить цвет</string>

@@ -29,7 +29,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_out">Odjava</string>
     <string name="sign_out_question">Da li ste sigurni da se želite odjaviti?</string>
     <string name="mailbox_password">Lozinka sandučića e-pošte</string>
-    <string name="two_factor_code">Kȏd dvofaktorske autentikacije</string>
+    <string name="two_factor_code">Kôd dvofaktorske autentikacije</string>
     <string name="processing_request">Vaš zahtjev se obrađuje</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Niste prijavljeni!</string>
@@ -59,7 +59,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="contact_exist">Adresa e-pošte kontakta već postoji</string>
     <string name="invalid_email">Adresa e-pošte nije valjana</string>
     <string name="duplicate_email">Adresa e-pošte je duplikat</string>
-    <string name="invalid_code">Kȏd nije ispravan</string>
+    <string name="invalid_code">Kôd nije ispravan</string>
     <string name="message_drafted">Slanje poruke nije uspjelo. Poruka je spremljena u skice</string>
     <string name="open_drawer">Otvori</string>
     <string name="close_drawer">Zatvori</string>
@@ -231,11 +231,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="lock_the_app">Zaključaj aplikaciju</string>
     <string name="display_name_banned_chars">Nevažeće zaslonsko ime. \'&gt;\' i \'&lt;\' nisu dozvoljeni</string>
     <string name="cont">Nastavi</string>
-    <string name="email_verification_code">Poslati ćemo kȏd za potvrdu na gore navedenu adresu e-pošte.</string>
-    <string name="sms_verification_code">Poslati ćemo kȏd za potvrdu na gore navedeni telefonski broj.</string>
-    <string name="send_verification_code">Pošalji kȏd za potvrdu</string>
+    <string name="email_verification_code">Poslati ćemo kôd za potvrdu na gore navedenu adresu e-pošte.</string>
+    <string name="sms_verification_code">Poslati ćemo kôd za potvrdu na gore navedeni telefonski broj.</string>
+    <string name="send_verification_code">Pošalji kôd za potvrdu</string>
     <string name="resend_verification_code">Ponovno pošalji</string>
-    <string name="enter_verification_code">Unesite kȏd za provjeru</string>
+    <string name="enter_verification_code">Unesite kôd za provjeru</string>
     <string name="verify">Potvrdi</string>
     <string name="reply_prefix_on">Dana</string>
     <string name="create_new_account">Stvori novi račun</string>
@@ -329,7 +329,7 @@ koji se pojavljuje u polju pošiljatelja.</string>
     <string name="engagement_subtitle_expire">Poruke koje šaljete mogu se podesiti na automatsko brisanje nakon određenog vremenskog razdoblja.</string>
     <string name="engagement_subtitle_help">Pomoć i podršku možete dobiti na protonmail.com/support. Pogreške možete prijaviti i pomoću aplikacije.</string>
     <string name="attachment_exists">Privitak je već dodan</string>
-    <string name="sending_email_success">Kȏd za potvrdu je poslan</string>
+    <string name="sending_email_success">Kôd za potvrdu je poslan</string>
     <string name="sending_email_failed">Slanje koda za potvrdu nije uspjelo</string>
     <string name="password_not_valid">Unesena lozinka nije valjana</string>
     <string name="send_code_wait">Molimo pričekajte %d sekundi da biste ponovno pritisnuli</string>
@@ -391,7 +391,7 @@ koji se pojavljuje u polju pošiljatelja.</string>
     <string name="logout_question">Jesi li siguran da se želiš odjaviti?</string>
     <string name="logout_question_next_account">Biti će te prebačeni na %s.</string>
     <string name="upselling">Nadogradite/Donirajte</string>
-    <string name="upselling_title">ProtonMail je besplatan i otvorenog kȏda</string>
+    <string name="upselling_title">ProtonMail je besplatan i otvorenog kôda</string>
     <string name="upselling_subtitle">Potrebna nam je vaša podrška kako bismo nastavili štititi privatnost i poboljšavali ProtonMail</string>
     <string name="upselling_donate_title">Donirajte</string>
     <string name="upselling_upgrade_title">Nadogradite na ProtonMail Plus</string>
@@ -823,7 +823,6 @@ sadržaj poruke u cijelosti.</string>
     </plurals>
     <string name="members">Članovi</string>
     <string name="max_emails_in_group_title">Dosegnut maksimalan broj poruka e-pošte po grupi</string>
-    <string name="max_emails_in_group_subtitle">Dosegli ste maksimalni broj poruka e-pošte po grupi (%1$d). Molimo uklonite %2$d stavke.</string>
     <string name="select_deselect_all">Odaberi sve</string>
     <string name="contact_group_name_hint">Odaberite naziv grupe</string>
     <string name="contact_group_change_color">Promijeni boju</string>
@@ -961,7 +960,7 @@ pristup pohrani.</string>
     <string name="notification_settings">Postavke obavijesti</string>
     <string name="auto_lock">Automatsko zaključavanje</string>
     <string name="auto_lock_app">Automatsko zaključavanje aplikacije</string>
-    <string name="auto_lock_description">Uključite ovu značajku za automatsko\nzaključavanje aplikacije i upotrijebite\nPIN kȏd ili otisak otiska.</string>
+    <string name="auto_lock_description">Uključite ovu značajku za automatsko\nzaključavanje aplikacije i upotrijebite\nPIN kôd ili otisak otiska.</string>
     <string name="change_pin_code">Promijenite PIN kod</string>
     <string name="auto_lock_timer">Vrijeme automatskog zaključavanja</string>
     <string name="connections_via_third_parties">Alternativno usmjeravanje</string>

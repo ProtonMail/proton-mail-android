@@ -805,7 +805,6 @@ to see the contents of the message in full.</string>
     </plurals>
     <string name="members">Imttekkiyen</string>
     <string name="max_emails_in_group_title">Talast n yimaylen deg ugraw tewweḍ</string>
-    <string name="max_emails_in_group_subtitle">Tewwḍeḍ amḍan afellay n imaylen i wegraw (%1$d). Ttxil-k kkes %2$d n iferdisen.</string>
     <string name="select_deselect_all">Fren akk</string>
     <string name="contact_group_name_hint">Fren isem n ugraw</string>
     <string name="contact_group_change_color">Beddel ini</string>

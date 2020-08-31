@@ -789,7 +789,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="members">メンバー</string>
     <string name="max_emails_in_group_title">グループに設定できる、宛先の上限に達しました。</string>
-    <string name="max_emails_in_group_subtitle">グループ当たりの最大受信数(%1$d) に達しました。%2$d アイテムを削除してください。</string>
     <string name="select_deselect_all">全て選択</string>
     <string name="contact_group_name_hint">グループ名を入力してください</string>
     <string name="contact_group_change_color">色の変更</string>

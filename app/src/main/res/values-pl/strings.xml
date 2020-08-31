@@ -830,7 +830,6 @@ pobieranie wiadomości w tle</string>
     </plurals>
     <string name="members">Członkowie</string>
     <string name="max_emails_in_group_title">Limit maksymalnej liczby adresów w grupie został osiągnięty</string>
-    <string name="max_emails_in_group_subtitle">Osiągnąłeś maksymalną liczbę adresów e-mail w grupie (%1$d). Usuń %2$d elementów.</string>
     <string name="select_deselect_all">Zaznacz wszystkie</string>
     <string name="contact_group_name_hint">Wybierz nazwę grupy</string>
     <string name="contact_group_change_color">Zmień kolor</string>
