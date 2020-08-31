@@ -292,7 +292,7 @@ class AppModule(val app: ProtonMailApplication) {
                     private val TAG = "JOBS"
 
                     override fun isDebugEnabled(): Boolean {
-                        return AppUtil.isDebug()
+                        return false
                     }
 
                     override fun d(text: String, vararg args: Any) {
