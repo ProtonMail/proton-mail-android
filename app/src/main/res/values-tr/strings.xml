@@ -801,7 +801,6 @@ ProtonMail web posta arayüzü üzerinden yükseltme yapın.</string>
     </plurals>
     <string name="members">Üyeler</string>
     <string name="max_emails_in_group_title">Grup başına en yüksek e-postaya ulaşıldı</string>
-    <string name="max_emails_in_group_subtitle">Grup başına en yüksek e-posta sayısına ulaştınız (%1$d). Lütfen %2$d öğeyi kaldırın.</string>
     <string name="select_deselect_all">Tümünü Seç</string>
     <string name="contact_group_name_hint">Bir grup adı seçiniz</string>
     <string name="contact_group_change_color">Rengi değiştir</string>

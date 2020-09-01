@@ -806,7 +806,6 @@ om de volledige inhoud van de e-mail te zien.</string>
     </plurals>
     <string name="members">Leden</string>
     <string name="max_emails_in_group_title">Maximum e-mails per groep bereikt</string>
-    <string name="max_emails_in_group_subtitle">U hebt het maximum aantal e-mails per groep (%1$d) bereikt. Verwijder %2$d items.</string>
     <string name="select_deselect_all">Alles selecteren</string>
     <string name="contact_group_name_hint">Kies een groepsnaam</string>
     <string name="contact_group_change_color">Kleur wijzigen</string>

@@ -800,7 +800,6 @@ membaca seluruh isi pesan tersebut.</string>
     </plurals>
     <string name="members">Anggota</string>
     <string name="max_emails_in_group_title">Jumlah surel maksimum per grup tercapai</string>
-    <string name="max_emails_in_group_subtitle">Anda telah mencapai jumlah maksimum surel per grup (%1$d). Silakan hapus %2$d item.</string>
     <string name="select_deselect_all">Pilih Semua</string>
     <string name="contact_group_name_hint">Pilih nama grup</string>
     <string name="contact_group_change_color">Ubah warna</string>

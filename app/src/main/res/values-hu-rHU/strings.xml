@@ -809,7 +809,6 @@ az üzenet teljes szövegéhez hozzáférhetünk.</string>
     </plurals>
     <string name="members">Tagok</string>
     <string name="max_emails_in_group_title">Csoport létszám elérte a korlátot</string>
-    <string name="max_emails_in_group_subtitle">A csoport elérte a maximális méretet (%1$d). Töröljön %2$d címet.</string>
     <string name="select_deselect_all">Összes kijelölése</string>
     <string name="contact_group_name_hint">Adjon meg egy csoport nevet</string>
     <string name="contact_group_change_color">Szín megváltoztatása</string>

@@ -811,7 +811,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="members">Μέλη</string>
     <string name="max_emails_in_group_title">Τα μέγιστα μηνύματα E-mail ανά ομάδα έφτασαν στο όριο</string>
-    <string name="max_emails_in_group_subtitle">Έχετε φτάσει τον μέγιστο αριθμό μηνυμάτων ηλεκτρονικού ταχυδρομείου ανά ομάδα (%1$d). Παρακαλώ αφαιρέστε %2$d αντικείμενα.</string>
     <string name="select_deselect_all">Επιλογή Όλων</string>
     <string name="contact_group_name_hint">Επιλέξτε ένα όνομα ομάδας</string>
     <string name="contact_group_change_color">Αλλαγή χρώματος</string>

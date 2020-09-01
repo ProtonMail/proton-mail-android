@@ -811,7 +811,6 @@ kunne se det fulde indhold af beskeden.</string>
     </plurals>
     <string name="members">Medlemmer</string>
     <string name="max_emails_in_group_title">Maks. e-mails pr. gruppe nået</string>
-    <string name="max_emails_in_group_subtitle">Du har nået maksimumantallet af e-mails pr. gruppe (%1$d). Fjern %2$d emner.</string>
     <string name="select_deselect_all">Vælg alle</string>
     <string name="contact_group_name_hint">Vælg et gruppenavn</string>
     <string name="contact_group_change_color">Skift farve</string>

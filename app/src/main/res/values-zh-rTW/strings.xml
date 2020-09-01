@@ -797,7 +797,6 @@ webmail 介面升級 ProtonMail。</string>
     </plurals>
     <string name="members">成員</string>
     <string name="max_emails_in_group_title">已達群組的電子郵件數最大值</string>
-    <string name="max_emails_in_group_subtitle">您已達到每個群組的最大電子郵件數 (%1$d)。請移除 %2$d 個項目。</string>
     <string name="select_deselect_all">全選</string>
     <string name="contact_group_name_hint">選擇群組名稱</string>
     <string name="contact_group_change_color">變更色彩</string>

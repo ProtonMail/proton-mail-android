@@ -787,7 +787,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </plurals>
     <string name="members">成员</string>
     <string name="max_emails_in_group_title">已达到群组电子邮件数目限制</string>
-    <string name="max_emails_in_group_subtitle">此群组的电子邮件数量已达到限制（%1$d），请先移除 %2$d 封邮件。</string>
     <string name="select_deselect_all">全选</string>
     <string name="contact_group_name_hint">填写群组名称</string>
     <string name="contact_group_change_color">更改颜色</string>

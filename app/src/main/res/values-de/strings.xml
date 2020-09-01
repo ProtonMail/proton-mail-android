@@ -801,7 +801,6 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     </plurals>
     <string name="members">Mitglieder</string>
     <string name="max_emails_in_group_title">Maximale Anzahl von E-Mail-Adressen je Gruppe erreicht</string>
-    <string name="max_emails_in_group_subtitle">Sie haben die maximale Anzahl von E-Mail-Adressen je Gruppe erreicht (%1$d). Bitte entfernen Sie %2$d Elemente.</string>
     <string name="select_deselect_all">Alle auswählen</string>
     <string name="contact_group_name_hint">Gruppenname wählen</string>
     <string name="contact_group_change_color">Farbe ändern</string>

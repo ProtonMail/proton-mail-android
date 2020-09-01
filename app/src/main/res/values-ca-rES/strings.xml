@@ -810,7 +810,6 @@ per veure el contingut del missatge complet.</string>
     </plurals>
     <string name="members">Membres</string>
     <string name="max_emails_in_group_title">A arribar al max missatges de correu electrònic per grup</string>
-    <string name="max_emails_in_group_subtitle">Heu assolit el nombre màxim de missatges de correu electrònic per grup (%1$d). Suprimiu %2$d elements.</string>
     <string name="select_deselect_all">Selecciona-ho tot</string>
     <string name="contact_group_name_hint">Trieu un nom per al grup</string>
     <string name="contact_group_change_color">Canviar el color</string>

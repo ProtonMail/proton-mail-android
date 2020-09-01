@@ -805,7 +805,6 @@ av nya meddelanden i bakgrunden</string>
     </plurals>
     <string name="members">Medlemmar</string>
     <string name="max_emails_in_group_title">Maximalt antal e-post per grupp uppnått</string>
-    <string name="max_emails_in_group_subtitle">Du har nått maximalt antal e-postmeddelanden per grupp (%1$d). Ta bort %2$d objekt.</string>
     <string name="select_deselect_all">Markera Alla</string>
     <string name="contact_group_name_hint">Välj ett gruppnamn</string>
     <string name="contact_group_change_color">Ändra färg</string>

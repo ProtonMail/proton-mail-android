@@ -810,7 +810,6 @@ ver o conteúdo da mensagem na íntegra.</string>
     </plurals>
     <string name="members">Membros</string>
     <string name="max_emails_in_group_title">Atingido o máximo de emails por grupo</string>
-    <string name="max_emails_in_group_subtitle">Atingiu o máximo de emails por grupo (%1$d). Por favor, remova %2$d itens.</string>
     <string name="select_deselect_all">Seleccionar tudo</string>
     <string name="contact_group_name_hint">Escolha o nome do grupo</string>
     <string name="contact_group_change_color">Alterar cor</string>

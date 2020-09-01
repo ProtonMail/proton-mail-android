@@ -832,7 +832,6 @@ to see the contents of the message in full.</string>
     </plurals>
     <string name="members">Členové</string>
     <string name="max_emails_in_group_title">Dosáhli jste maximálního počtu e-mailů ve skupině</string>
-    <string name="max_emails_in_group_subtitle">Dosáhli jste maximálního počtu e-mailů na skupinu (%1$d). Prosím odeberte %2$d položek.</string>
     <string name="select_deselect_all">Vybrat vše</string>
     <string name="contact_group_name_hint">Zvolte název skupiny</string>
     <string name="contact_group_change_color">Změnit barvu</string>
