@@ -52,7 +52,6 @@ class AccountSettingsTests : BaseTest() {
             .verify { subscriptionViewShown() }
     }
 
-    @Category(SmokeTest::class)
     @Test
     fun changeLoginPassword() {
         accountSettingsRobot
