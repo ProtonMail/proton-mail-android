@@ -20,7 +20,8 @@
 package ch.protonmail.android.credentials
 
 import android.content.SharedPreferences
-import ch.protonmail.android.credentials.Credential.NotFound
+import ch.protonmail.android.domain.entity.Credential
+import ch.protonmail.android.domain.entity.Credential.NotFound
 import ch.protonmail.android.domain.entity.EmailAddress
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.minusAssign
