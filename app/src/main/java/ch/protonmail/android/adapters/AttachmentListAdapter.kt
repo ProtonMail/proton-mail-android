@@ -29,15 +29,22 @@ import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.FileProvider
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.room.messages.LocalAttachment
-import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.jobs.DeleteAttachmentJob
+import ch.protonmail.android.worker.DeleteAttachmentWorker
 import java.io.File
-import java.util.*
+import java.util.ArrayList
+import java.util.Collections
+import java.util.Comparator
 
 
-class AttachmentListAdapter(context: Context, private var mAttachmentList: ArrayList<LocalAttachment>?, private var mNumEmbeddedImages: Int) : ArrayAdapter<LocalAttachment>(context, 0, mAttachmentList) {
+class AttachmentListAdapter(
+    context: Context,
+    private var mAttachmentList: ArrayList<LocalAttachment>?,
+    private var mNumEmbeddedImages: Int,
+    private val workManager: WorkManager
+) : ArrayAdapter<LocalAttachment>(context, 0, mAttachmentList) {
     private val mInflater: LayoutInflater = LayoutInflater.from(context)
     private val mListener: IAttachmentListener
 
@@ -122,13 +129,13 @@ class AttachmentListAdapter(context: Context, private var mAttachmentList: Array
                 mNumEmbeddedImages -= 1
             }
             mListener.onAttachmentDeleted(count, mNumEmbeddedImages)
-            val job = DeleteAttachmentJob(attachment.attachmentId)
-            ProtonMailApplication.getApplication().jobManager.addJobInBackground(job)
+
+            DeleteAttachmentWorker.Enqueuer(workManager).enqueue(attachment.attachmentId)
         }
 
         attachmentName.setOnClickListener {
             if ("file" == attachment.uri.scheme) {
-                val localFileUri = FileProvider.getUriForFile(context,context.applicationContext.packageName + ".provider", File(attachment.uri.path))
+                val localFileUri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", File(attachment.uri.path))
                 val intent = Intent(Intent.ACTION_VIEW).setDataAndType(localFileUri, attachment.mimeType).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
                 if (intent.resolveActivity(context.packageManager) != null) {

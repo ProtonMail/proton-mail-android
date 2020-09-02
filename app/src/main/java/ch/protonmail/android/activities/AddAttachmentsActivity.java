@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
@@ -80,6 +82,7 @@ import ch.protonmail.android.utils.DownloadUtils;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
+import dagger.android.AndroidInjection;
 import kotlin.Unit;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
@@ -113,6 +116,9 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @BindView(R.id.attachment_list)
     ListView mListView;
 
+    @Inject
+    WorkManager workManager;
+
     private String mPathToPhoto;
     private String mDraftId;
     private boolean mDraftCreated;
@@ -140,7 +146,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         openCamera = false;
         openGallery = false;
         DialogUtils.Companion.showInfoDialog(AddAttachmentsActivity.this, getString(R.string.need_permissions_title),
-                getString(R.string.need_storage_permissions_text),unit -> unit);
+                getString(R.string.need_storage_permissions_text), unit -> unit);
     }
 
     @Override
@@ -173,7 +179,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
                     .setInputData(workerData)
                     .build();
 
-            WorkManager.getInstance().enqueue(importAttachmentsWork);
+            workManager.enqueue(importAttachmentsWork);
 
             mAttachFileWithoutPermission = null;
         }
@@ -191,8 +197,9 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-       messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
+        messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
                 getApplicationContext()).getDatabase();
 
         ActionBar actionBar = getSupportActionBar();
@@ -208,7 +215,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         }
         mDraftId = intent.getStringExtra(EXTRA_DRAFT_ID);
         mDraftCreated = intent.getBooleanExtra(EXTRA_DRAFT_CREATED, true);
-        int attachmentsCount = attachmentList != null ? attachmentList.size() : 0;
+        int attachmentsCount = attachmentList.size();
         int totalEmbeddedImages = countEmbeddedImages(attachmentList);
         updateAttachmentsCount(attachmentsCount, totalEmbeddedImages);
         if (mDraftCreated) {
@@ -216,7 +223,8 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         } else {
             mProgressLayout.setVisibility(View.VISIBLE);
         }
-        mAdapter = new AttachmentListAdapter(this, attachmentList, totalEmbeddedImages);
+        mAdapter = new AttachmentListAdapter(this, attachmentList, totalEmbeddedImages,
+                workManager);
         mListView.setAdapter(mAdapter);
     }
 
@@ -267,7 +275,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
             case R.id.attach_file: {
                 openGallery = true;
                 if (mHasStoragePermission != null && mHasStoragePermission) {
-                   return openGallery();
+                    return openGallery();
                 } else {
                     storagePermissionHelper.checkPermission();
                     return false;
@@ -301,7 +309,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     }
 
     @Subscribe
-    public void  onMailSettingsEvent(MailSettingsEvent event) {
+    public void onMailSettingsEvent(MailSettingsEvent event) {
         loadMailSettings();
     }
 
@@ -485,7 +493,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
                         .setInputData(workerData)
                         .build();
 
-                WorkManager.getInstance(this).enqueue(importAttachmentsWork);
+                workManager.enqueue(importAttachmentsWork);
             }
         }
     }
@@ -513,7 +521,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
                     .setInputData(data)
                     .build();
 
-            WorkManager workManager = WorkManager.getInstance(this);
             workManager.enqueue(importAttachmentsWork);
 
             workManager.getWorkInfoByIdLiveData(importAttachmentsWork.getId()).observe(this, workInfo -> {
@@ -564,7 +571,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         return embeddedImages;
     }
 
-    private static class DeleteMessageByIdTask extends AsyncTask<Unit,Unit,Unit> {
+    private static class DeleteMessageByIdTask extends AsyncTask<Unit, Unit, Unit> {
 
         private final MessagesDatabase messagesDatabase;
         private final String draftId;
@@ -581,7 +588,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         }
     }
 
-    private static class UpdateAttachmentsAdapterTask extends AsyncTask<Unit,Unit,List<Attachment>> {
+    private static class UpdateAttachmentsAdapterTask extends AsyncTask<Unit, Unit, List<Attachment>> {
         private final WeakReference<AddAttachmentsActivity> addAttachmentsActivityWeakReference;
         private final MessagesDatabase messagesDatabase;
         private final AttachmentListAdapter adapter;
@@ -618,7 +625,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         }
     }
 
-    private boolean openGallery(){
+    private boolean openGallery() {
         if (!isAttachmentsCountAllowed()) {
             TextExtensions.showToast(this, R.string.max_attachments_reached);
             return true;
@@ -636,7 +643,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         return true;
     }
 
-    private boolean openCamera(){
+    private boolean openCamera() {
         if (!isAttachmentsCountAllowed()) {
             TextExtensions.showToast(this, R.string.max_attachments_reached);
             return true;

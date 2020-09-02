@@ -27,7 +27,6 @@ import java.io.IOException
 
 interface AttachmentApiSpec {
 
-    @Throws(IOException::class)
     fun deleteAttachment(attachmentId: String): ResponseBody
 
     @Throws(IOException::class)
@@ -37,12 +36,23 @@ interface AttachmentApiSpec {
     fun downloadAttachment(attachmentId: String): ByteArray
 
     @Throws(IOException::class)
-    fun uploadAttachmentInline(attachment: Attachment, MessageID: String,
-                                        contentID: String,
-                                        KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
+    fun uploadAttachmentInline(
+        attachment: Attachment,
+        MessageID: String,
+        contentID: String,
+        KeyPackage: RequestBody,
+        DataPackage: RequestBody,
+        Signature: RequestBody
+    ): AttachmentUploadResponse
 
     @Throws(IOException::class)
-    fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
+    fun uploadAttachment(
+        attachment: Attachment,
+        MessageID: String,
+        KeyPackage: RequestBody,
+        DataPackage: RequestBody,
+        Signature: RequestBody
+    ): AttachmentUploadResponse
 
     fun getAttachmentUrl(attachmentId: String): String
 }
