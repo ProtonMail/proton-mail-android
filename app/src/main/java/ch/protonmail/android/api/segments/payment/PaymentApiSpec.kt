@@ -19,7 +19,23 @@
 package ch.protonmail.android.api.segments.payment
 
 import androidx.annotation.WorkerThread
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.AvailablePlansResponse
+import ch.protonmail.android.api.models.CheckSubscriptionBody
+import ch.protonmail.android.api.models.CheckSubscriptionResponse
+import ch.protonmail.android.api.models.CreatePaymentTokenBody
+import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
+import ch.protonmail.android.api.models.CreateSubscriptionBody
+import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
+import ch.protonmail.android.api.models.DonateBody
+import ch.protonmail.android.api.models.GetPaymentTokenResponse
+import ch.protonmail.android.api.models.GetSubscriptionResponse
+import ch.protonmail.android.api.models.PaymentMethodResponse
+import ch.protonmail.android.api.models.PaymentMethodsResponse
+import ch.protonmail.android.api.models.PaymentsStatusResponse
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.TokenPaymentBody
+import ch.protonmail.android.api.models.VerifyBody
+import ch.protonmail.android.api.models.VerifyResponse
 import retrofit2.Call
 import retrofit2.http.Path
 import java.io.IOException
@@ -55,7 +71,11 @@ interface PaymentApiSpec {
     fun verifyPayment(body: VerifyBody): VerifyResponse
 
     @Throws(IOException::class)
-    fun createPaymentToken(body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse>
+    fun createPaymentToken(
+        body: CreatePaymentTokenBody,
+        token: String?,
+        tokenType: String?
+    ): Call<CreatePaymentTokenSuccessResponse>
 
     @Throws(IOException::class)
     fun getPaymentToken(@Path("token") token: String): Call<GetPaymentTokenResponse>

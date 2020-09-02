@@ -25,8 +25,10 @@ import ch.protonmail.android.api.utils.ParseUtils
 import retrofit2.Call
 import java.io.IOException
 
-class PaymentApi(private val service: PaymentService,
-                 private val pubService: PaymentPubService) : BaseApi(), PaymentApiSpec {
+class PaymentApi(
+    private val service: PaymentService,
+    private val pubService: PaymentPubService
+) : BaseApi(), PaymentApiSpec {
 
     @Throws(IOException::class)
     override fun fetchSubscription(): GetSubscriptionResponse = ParseUtils.parse(service.fetchSubscription().execute())
@@ -61,7 +63,11 @@ class PaymentApi(private val service: PaymentService,
     override fun verifyPayment(body: VerifyBody): VerifyResponse = ParseUtils.parse(pubService.verifyPayment(body).execute())
 
     @Throws(IOException::class)
-    override fun createPaymentToken(body: CreatePaymentTokenBody): Call<CreatePaymentTokenSuccessResponse> = pubService.createPaymentToken(body)
+    override fun createPaymentToken(
+        body: CreatePaymentTokenBody,
+        token: String?,
+        tokenType: String?
+    ): Call<CreatePaymentTokenSuccessResponse> = pubService.createPaymentToken(body, token, tokenType)
 
     @Throws(IOException::class)
     override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = pubService.getPaymentToken(token)

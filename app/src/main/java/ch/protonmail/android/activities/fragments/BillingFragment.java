@@ -40,7 +40,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
@@ -60,6 +60,7 @@ import butterknife.OnItemSelected;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.PaymentTokenApprovalActivity;
 import ch.protonmail.android.adapters.SimpleCountriesAdapter;
+import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.CardDetails;
 import ch.protonmail.android.api.models.Countries;
 import ch.protonmail.android.api.models.Country;
@@ -97,6 +98,8 @@ import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EX
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.RESULT_CODE_ERROR;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_CARD;
 import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_TYPE_PAYPAL;
+import static ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponseKt.FIELD_HUMAN_VERIFICATION_TOKEN;
+import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
 
 /**
  * Created by dkadrikj on 7/1/16.
@@ -165,6 +168,8 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
     private SimpleCountriesAdapter mAdapter;
 
+    private IBillingListener billingListener;
+
     private Constants.BillingType billingType;
     private int amount;
     private Constants.CurrencyType currency;
@@ -211,7 +216,13 @@ public class BillingFragment extends CreateAccountBaseFragment {
         planIds = new ArrayList<>();
         planIds.add(selectedPlanId);
         cycle = getArguments().getInt(ARGUMENT_CYCLE);
-        billingViewModel = ViewModelProviders.of(this).get(BillingViewModel.class);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        BillingViewModel.Factory billingViewModelFactory = new BillingViewModel.Factory(billingListener.getProtonMailApiManager());
+        billingViewModel = new ViewModelProvider(this, billingViewModelFactory).get(BillingViewModel.class);
     }
 
     @Nullable
@@ -351,6 +362,15 @@ public class BillingFragment extends CreateAccountBaseFragment {
         }
     }
 
+    public void setActivityListener(IBillingListener billingListener) {
+        this.billingListener = billingListener;
+    }
+
+    public void retryPaymentAfterCaptchaValidation(String token, String tokenType) {
+        mProgressContainer.setVisibility(View.VISIBLE);
+        billingViewModel.retryCreatePaymentToken(token, tokenType);
+    }
+
     @OnClick(R.id.submit_picker_card)
     public void onSubmitPickerCardClicked() {
         mInputFormLayout.setVisibility(View.VISIBLE);
@@ -472,7 +492,12 @@ public class BillingFragment extends CreateAccountBaseFragment {
                 CreatePaymentTokenErrorResponse errorResponse = (CreatePaymentTokenErrorResponse) createPaymentTokenResponse;
                 if (!errorResponse.getEventConsumed()) {
                     errorResponse.setEventConsumed(true);
-                    showPaymentError(null, errorResponse.getError());
+                    if (errorResponse.getCode() == RESPONSE_CODE_ERROR_VERIFICATION_NEEDED) {
+                        mProgressContainer.setVisibility(View.GONE);
+                        billingListener.onRequestCaptchaVerification((String) errorResponse.getDetails().get(FIELD_HUMAN_VERIFICATION_TOKEN));
+                    } else {
+                        showPaymentError(null, errorResponse.getError());
+                    }
                 }
             } else if (createPaymentTokenResponse instanceof CreatePaymentTokenSuccessResponse) {
                 CreatePaymentTokenSuccessResponse successResponse = ((CreatePaymentTokenSuccessResponse) createPaymentTokenResponse);
@@ -489,7 +514,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
         mProgressContainer.setVisibility(View.VISIBLE);
 
-        BillingViewModel billingViewModel = ViewModelProviders.of(this).get(BillingViewModel.class);
         billingViewModel.createPaymentToken(amount, currency, PaymentType.PayPal.INSTANCE).observe(this, createPaymentTokenResponse -> {
             handleCreatePaymentTokenResponse(createPaymentTokenResponse, PAYMENT_TYPE_PAYPAL);
         });
@@ -820,4 +844,8 @@ public class BillingFragment extends CreateAccountBaseFragment {
         }
     }
 
+    public interface IBillingListener {
+        ProtonMailApiManager getProtonMailApiManager();
+        void onRequestCaptchaVerification(String token);
+    }
 }
