@@ -24,10 +24,10 @@ import assert4k.equals
 import assert4k.fails
 import assert4k.that
 import assert4k.with
-import ch.protonmail.android.credentials.Credential.FullyLoggedIn
-import ch.protonmail.android.credentials.Credential.LoggedOut
-import ch.protonmail.android.credentials.Credential.MailboxPasswordRequired
-import ch.protonmail.android.credentials.Credential.NotFound
+import ch.protonmail.android.domain.entity.Credential.FullyLoggedIn
+import ch.protonmail.android.domain.entity.Credential.LoggedOut
+import ch.protonmail.android.domain.entity.Credential.MailboxPasswordRequired
+import ch.protonmail.android.domain.entity.Credential.NotFound
 import ch.protonmail.android.domain.entity.EmailAddress
 import me.proton.core.test.android.mocks.newMockSharedPreferences
 import kotlin.test.Test

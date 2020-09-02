@@ -21,6 +21,7 @@ import studio.forface.easygradle.dsl.*
 plugins {
     `java-library`
     `kotlin`
+    `kotlin-serialization`
 }
 
 dependencies {
@@ -29,7 +30,8 @@ dependencies {
         `Proton-domain`,
 
         `kotlin-jdk8`,
-        `coroutines-core`
+        `coroutines-core`,
+        `serialization`
     )
 
     testImplementation(project(Module.testKotlin))

@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.credentials
+package ch.protonmail.android.domain.entity
 
 import kotlinx.serialization.Serializable
 
