@@ -34,10 +34,15 @@ allprojects {
 }
 
 setupKotlin(
+    // Enables new type inference: TODO remove with Kotlin 1.4
     "-XXLanguage:+NewInference",
     "-Xuse-experimental=kotlin.Experimental",
+    // Enables inline classes
     "-XXLanguage:+InlineClasses",
-    "-Xopt-in=kotlin.ExperimentalUnsignedTypes"
+    // Enables unsigned types, like `UInt`, `ULong`, etc
+    "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+    // Enables experimental Coroutines from coroutines-test artifact, like `runBlockingTest`
+    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
 )
 setupDetekt { "tokenAutoComplete" !in it.name }
 

@@ -19,18 +19,29 @@
 import studio.forface.easygradle.dsl.*
 
 plugins {
-    `java-library`
-    `kotlin`
+    `android-library`
+    `kotlin-android`
+    `kotlin-serialization`
 }
+
+android()
 
 dependencies {
     implementation(
-        `Proton-kotlin-util`,
-        `Proton-domain`,
 
+        // Core
+        `Proton-kotlin-util`,
+        `Proton-shared-preferences`,
+
+        // Modules
+        project(Module.domain),
+
+        // Kotlin
         `kotlin-jdk8`,
-        `coroutines-core`
+        `coroutines-android`,
+        `serialization`
     )
 
-    testImplementation(project(Module.testKotlin))
+    testImplementation(project(Module.testAndroid))
+    androidTestImplementation(project(Module.testAndroidInstrumented))
 }
