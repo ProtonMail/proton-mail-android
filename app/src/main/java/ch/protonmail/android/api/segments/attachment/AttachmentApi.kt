@@ -77,7 +77,7 @@ class AttachmentApi (private val basicService : AttachmentService,
         // return Constants.ENDPOINT_URI + "/attachments/" + attachmentId
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
         val apiUrl = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
-        return apiUrl + "/attachments/" + attachmentId
+        return apiUrl + "/mail/v4/attachments/" + attachmentId
     }
 
 }

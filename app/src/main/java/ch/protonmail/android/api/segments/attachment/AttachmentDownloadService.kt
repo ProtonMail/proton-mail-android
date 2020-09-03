@@ -33,7 +33,7 @@ import retrofit2.Call
  */
 interface AttachmentDownloadService {
 
-    @GET("attachments/{attachmentId}")
+    @GET("mail/v4/attachments/{attachmentId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun downloadAttachment(@Path("attachmentId") attachmentId: String): Call<ResponseBody>
 }

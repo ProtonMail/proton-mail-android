@@ -29,7 +29,7 @@ import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 
 interface AttachmentService {
 
-    @DELETE("attachments/{attachmentId}")
+    @DELETE("mail/v4/attachments/{attachmentId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun deleteAttachment(@Path("attachmentId") attachmentId: String): Call<ResponseBody>
 
