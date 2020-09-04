@@ -27,6 +27,7 @@ plugins {
     `kotlin-android`
     `kotlin-android-extensions`
     `kotlin-kapt`
+    `hilt`
     `kotlin-serialization`
     `hugo`
     `sentry-android`
@@ -193,21 +194,20 @@ tasks.register("pullTestArtifacts", Exec::class) {
 
 dependencies {
 
-    // Kapt
+    // Hilt
     kapt(
-        `butterknife-compiler`,
-        `dagger-compiler`,
-        `dagger-android-processor`,
-        `room-compiler`
+        `assistedInject-processor-dagger`,
+        `hilt-android-compiler`,
+        `hilt-androidx-compiler`
     )
-    kaptTest(`dagger-compiler`)
 
     // Dagger modules
     // These dependency can be resolved at compile-time only.
     // We should not use include any of them in the run-time of this module, we need this dependency for of being able
     // to build the Dagger's dependency graph
     compileOnly(
-        project(Module.credentials)
+        project(Module.credentials),
+        `assistedInject-annotations-dagger`
     )
 
     implementation(
@@ -253,15 +253,18 @@ dependencies {
         `room-ktx`,
         `room-rxJava`,
 
-        // Dagger
-        `dagger-android`,
-        `dagger-android-support`,
+        // Hilt
+        `hilt-android`,
+        `hilt-androidx-annotations`,
+        `hilt-androidx-viewModel`,
+        `hilt-androidx-workManager`,
 
         // Retrofit
+        `okHttp-loggingInterceptor`,
         `retrofit`,
         `retrofit-gson`,
         `retrofit-rxJava`,
-        `okHttp-loggingInterceptor`,
+        `retrofit2-converter`,
 
         // RxJava
         `rxJava-android`,
@@ -270,22 +273,30 @@ dependencies {
         // Other
         `apache-commons-lang`,
         `butterknife-runtime`,
+        `fasterxml-jackson-core`,
+        `fasterxml-jackson-anno`,
+        `fasterxml-jackson-databind`,
         `gcm`,
         `gson`,
         `hugo-annotations`,
         `jsoup`,
+        `minidns`,
         `safetyNet`,
         `sentry-android`,
         `stetho`,
         `timber`,
         `trustKit`,
         `viewStateStore`,
-        `viewStateStore-paging`,
-        `minidns`,
-        `retrofit2-converter`,
-        `fasterxml-jackson-core`,
-        `fasterxml-jackson-anno`,
-        `fasterxml-jackson-databind`
+        `viewStateStore-paging`
+    )
+
+    kapt(
+
+        // Room
+        `room-compiler`,
+
+        // Other
+        `butterknife-compiler`
     )
 
     testImplementation(project(Module.testAndroid))

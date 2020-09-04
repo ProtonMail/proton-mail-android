@@ -26,12 +26,18 @@ plugins {
 
 dependencies {
     implementation(
+
+        // Core
         `Proton-kotlin-util`,
         `Proton-domain`,
 
+        // Kotlin
         `kotlin-jdk8`,
         `coroutines-core`,
-        `serialization`
+        `serialization`,
+
+        // DI
+        `dagger`
     )
 
     testImplementation(project(Module.testKotlin))
