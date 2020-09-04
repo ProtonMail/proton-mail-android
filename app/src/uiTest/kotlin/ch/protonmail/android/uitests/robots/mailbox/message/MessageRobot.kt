@@ -37,7 +37,7 @@ class MessageRobot {
         return this
     }
 
-    fun selectFolderFromSpam(folderName: String): SpamRobot {
+    fun moveFromSpamToFolder(folderName: String): SpamRobot {
         UIActions.wait.forViewWithId(R.id.folders_list_view)
         UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, folderName)
         return SpamRobot()

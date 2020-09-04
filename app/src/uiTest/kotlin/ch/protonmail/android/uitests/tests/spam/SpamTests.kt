@@ -55,7 +55,7 @@ class SpamTests : BaseTest() {
             .trash()
             .clickMessageBySubject(subject)
             .openFoldersModal()
-            .selectFolderFromSpam(stringFromResource(R.string.inbox))
+            .moveFromSpamToFolder(stringFromResource(R.string.inbox))
             .menuDrawer()
             .inbox()
             .verify { messageWithSubjectExists(subject) }
