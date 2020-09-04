@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,12 +23,6 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.ProtonJobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-
-import com.google.android.gms.gcm.GoogleCloudMessaging
-import com.google.android.gms.iid.InstanceID
-
-import javax.inject.Inject
-
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.RegisterDeviceBody
@@ -36,28 +30,28 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.Logger
+import com.google.android.gms.gcm.GoogleCloudMessaging
+import com.google.android.gms.iid.InstanceID
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 // region constants
 private const val TAG_PM_REGISTRATION_INTENT_SERVICE = "PMRegIntentService"
 private const val PREF_REGISTRATION_COMPLETE = "registrationComplete"
 // endregion
 
-/**
+/*
  * Created by dkadrikj on 1/7/16.
  */
 
+@AndroidEntryPoint
 class PMRegistrationIntentService : ProtonJobIntentService() {
 
     @Inject
-    @Transient
     internal lateinit var mApi: ProtonMailApiManager
-    @Inject
-    @Transient
-    internal lateinit var mUserManager: UserManager
 
-    init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
-    }
+    @Inject
+    internal lateinit var mUserManager: UserManager
 
     override fun onHandleWork(intent: Intent) {
         try {

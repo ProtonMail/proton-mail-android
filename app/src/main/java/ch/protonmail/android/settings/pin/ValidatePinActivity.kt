@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,12 +24,16 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.biometric.BiometricPrompt
-import androidx.fragment.app.Fragment
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.*
+import ch.protonmail.android.events.DraftCreatedEvent
+import ch.protonmail.android.events.FetchDraftDetailEvent
+import ch.protonmail.android.events.FetchMessageDetailEvent
+import ch.protonmail.android.events.LogoutEvent
+import ch.protonmail.android.events.MessageCountsEvent
+import ch.protonmail.android.events.PostImportAttachmentEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.AppUtil
@@ -38,12 +42,7 @@ import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.SecureEditText
 import com.squareup.otto.Subscribe
-import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
 import java.util.concurrent.Executors
-import javax.inject.Inject
 
 // region constants
 const val EXTRA_PIN_VALID = "extra_pin_valid"
@@ -56,12 +55,14 @@ const val EXTRA_DRAFT_DETAILS_EVENT = "extra_draft_details_event"
 const val EXTRA_DRAFT_CREATED_EVENT = "extra_draft_created_event"
 // endregion
 
-/**
+/*
  * Created by dkadrikj on 3/27/16.
  */
 
-class ValidatePinActivity : BaseActivity(), PinFragmentViewModel.IPinCreationListener, SecureEditText.ISecurePINListener,
-        PinFragmentViewModel.ReopenFingerprintDialogListener, HasSupportFragmentInjector {
+class ValidatePinActivity : BaseActivity(),
+    PinFragmentViewModel.IPinCreationListener,
+    SecureEditText.ISecurePINListener,
+    PinFragmentViewModel.ReopenFingerprintDialogListener {
 
     private var importAttachmentEvent: PostImportAttachmentEvent? = null
     private var messageCountsEvent: MessageCountsEvent? = null
@@ -71,11 +72,6 @@ class ValidatePinActivity : BaseActivity(), PinFragmentViewModel.IPinCreationLis
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
-    @Inject
-    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
-
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
-
     override fun shouldCheckForAutoLogout(): Boolean = false
 
     override fun getLayoutId(): Int = R.layout.activity_fragment_container
@@ -83,7 +79,6 @@ class ValidatePinActivity : BaseActivity(), PinFragmentViewModel.IPinCreationLis
     override fun isPreventingScreenshots(): Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         if (savedInstanceState != null) {

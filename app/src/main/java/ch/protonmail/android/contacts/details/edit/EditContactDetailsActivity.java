@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -95,7 +95,7 @@ import ch.protonmail.android.views.CustomFontTextView;
 import ch.protonmail.android.views.VCardLinearLayout;
 import ch.protonmail.android.views.models.LocalContact;
 import ch.protonmail.android.views.models.LocalContactAddress;
-import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import ezvcard.VCard;
 import ezvcard.parameter.AddressType;
 import ezvcard.parameter.EmailType;
@@ -132,10 +132,11 @@ import static ch.protonmail.android.contacts.details.edit.EditContactDetailsView
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_EDIT_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_NEW_CONTACT;
 
-/**
+/*
  * Created by dkadrikj on 8/26/16.
  */
 
+@AndroidEntryPoint
 public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
     private static final int REQUEST_CODE_UPGRADE = 2;
@@ -215,7 +216,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         editContactDetailsViewModel = new ViewModelProvider(this, editContactDetailsViewModelFactory)
                 .get(EditContactDetailsViewModel.class);

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -26,7 +26,13 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.CompoundButton
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.Toast
+import androidx.biometric.BiometricManager
 import androidx.core.content.ContextCompat
 import butterknife.OnClick
 import ch.protonmail.android.R
@@ -41,14 +47,12 @@ import ch.protonmail.android.views.SettingsDefaultItemView
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_pin_settings.*
 
-import androidx.biometric.*
-
 // region constants
 private const val REQUEST_CODE_SETUP_PIN = 9
 private const val REQUEST_CODE_CHANGE_PIN = 14
 // endregion
 
-/**
+/*
  * Created by dkadrikj on 10/24/16.
  */
 

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -26,9 +26,9 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,9 +41,10 @@ const val EXTRA_NOTIFICATION_DELETE_MESSAGE = "notification_delete_message"
 const val EXTRA_NOTIFICATION_TRASH_MESSAGE = "notification_trash_message"
 // endregion
 
-/**
+/*
  * Created by dkadrikj on 29.9.15.
  */
+@AndroidEntryPoint
 class NotificationReceiver : BroadcastReceiver() {
     @Inject
     lateinit var jobManager: JobManager
@@ -54,7 +55,6 @@ class NotificationReceiver : BroadcastReceiver() {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     override fun onReceive(context: Context, intent: Intent) {
-        context.app.appComponent.inject(this)
         val extras = intent.extras
         if (extras != null && extras.containsKey(EXTRA_NOTIFICATION_ARCHIVE_MESSAGE)) {
             val messageId = extras.getString(EXTRA_NOTIFICATION_ARCHIVE_MESSAGE)

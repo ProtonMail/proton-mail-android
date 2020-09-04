@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -37,7 +37,7 @@ import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_notification_settings.*
 import studio.forface.viewstatestore.ViewStateActivity
 import javax.inject.Inject
@@ -52,7 +52,7 @@ private const val REQUEST_CODE_PICK_RINGTONE = 5
  * Inherit from [BaseActivity]
  * Implements [ViewStateActivity] for bind `ViewStateStore`s implicitly to the Lifecycle
  */
-
+@AndroidEntryPoint
 internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity {
 
     /** @return an instance of [getApplicationContext] casted as [ProtonMailApplication] */
@@ -79,7 +79,6 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
     override fun getLayoutId() = R.layout.activity_notification_settings
 
     override fun onCreate( savedInstanceState: Bundle? ) {
-        AndroidInjection.inject( this )
         super.onCreate( savedInstanceState )
 
         val actionBar = supportActionBar

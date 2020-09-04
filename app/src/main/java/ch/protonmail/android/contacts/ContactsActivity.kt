@@ -32,7 +32,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import ch.protonmail.android.R
@@ -62,10 +61,7 @@ import ch.protonmail.android.utils.moveToLogin
 import com.birbit.android.jobqueue.JobManager
 import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
-import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -76,8 +72,8 @@ const val REQUEST_CODE_NEW_CONTACT = 2
 const val REQUEST_CODE_CONVERT_CONTACT = 3
 // endregion
 
+@AndroidEntryPoint
 class ContactsActivity : BaseConnectivityActivity(),
-    HasSupportFragmentInjector,
     IContactsListFragmentListener,
     ContactsActivityContract {
 
@@ -91,8 +87,6 @@ class ContactsActivity : BaseConnectivityActivity(),
     private val contactsConnectivityRetryListener = ConnectivityRetryListener()
 
     private var alreadyCheckedPermission = false
-    @Inject
-    lateinit var fragmentDispatchingAndroidInjector: DispatchingAndroidInjector<Fragment>
     @Inject
     lateinit var contactsViewModelFactory: ContactsViewModelFactory
     private lateinit var contactsViewModel: ContactsViewModel
@@ -122,10 +116,7 @@ class ContactsActivity : BaseConnectivityActivity(),
         override fun onHasPermission(type: Constants.PermissionType) = onPermissionConfirmed(type)
     }
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = fragmentDispatchingAndroidInjector
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)

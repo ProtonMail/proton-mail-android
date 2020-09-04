@@ -1,32 +1,32 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.contacts.groups.edit.chooser
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -34,7 +34,7 @@ import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import javax.inject.Inject
 
@@ -42,10 +42,11 @@ import javax.inject.Inject
 const val EXTRA_CONTACT_EMAILS = "extra_contact_emails"
 // endregion
 
-/**
+/*
  * Created by kadrikj on 9/7/18.
  */
 
+@AndroidEntryPoint
 class AddressChooserActivity : BaseActivity() {
 
     @Inject
@@ -56,7 +57,6 @@ class AddressChooserActivity : BaseActivity() {
     override fun getLayoutId(): Int = R.layout.activity_address_chooser
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         addressChooserViewModel = ViewModelProviders.of(this, addressChooserViewModelFactory)

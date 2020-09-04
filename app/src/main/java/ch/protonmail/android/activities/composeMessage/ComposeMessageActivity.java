@@ -65,7 +65,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -178,10 +177,7 @@ import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PMWebView;
 import ch.protonmail.android.views.PMWebViewClient;
-import dagger.android.AndroidInjection;
-import dagger.android.AndroidInjector;
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.collections.CollectionsKt;
 import timber.log.Timber;
 
@@ -192,9 +188,13 @@ import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRA
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
-public class ComposeMessageActivity extends BaseContactsActivity implements MessagePasswordButton.OnMessagePasswordChangedListener,
-        MessageExpirationView.OnMessageExpirationChangedListener, LoaderManager.LoaderCallbacks<Cursor>,
-        HumanVerificationCaptchaDialogFragment.IHumanVerificationListener, HasSupportFragmentInjector,
+@AndroidEntryPoint
+public class ComposeMessageActivity 
+        extends BaseContactsActivity 
+        implements MessagePasswordButton.OnMessagePasswordChangedListener, 
+        MessageExpirationView.OnMessageExpirationChangedListener,
+        LoaderManager.LoaderCallbacks<Cursor>,
+        HumanVerificationCaptchaDialogFragment.IHumanVerificationListener,
         GroupRecipientsDialogFragment.IGroupRecipientsListener {
     //region extras
     private static final String TAG_COMPOSE_MESSAGE_ACTIVITY = "ComposeMessageActivity";
@@ -306,8 +306,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
     ComposeMessageViewModelFactory composeMessageViewModelFactory;
     private ComposeMessageViewModel composeMessageViewModel;
     @Inject
-    DispatchingAndroidInjector<Fragment> fragmentDispatchingAndroidInjector;
-    @Inject
     MessageDetailsRepository messageDetailsRepository;
 
     String composerInstanceId;
@@ -339,7 +337,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         if (!checkIfUserLoggedIn()) {
             return;
@@ -787,11 +784,6 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, mHumanVerificationDialogFragment);
         fragmentTransaction.commitAllowingStateLoss();
-    }
-
-    @Override
-    public AndroidInjector<Fragment> supportFragmentInjector() {
-        return fragmentDispatchingAndroidInjector;
     }
 
     @Override
