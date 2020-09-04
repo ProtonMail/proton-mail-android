@@ -24,6 +24,8 @@ import android.os.Environment
 import android.text.TextUtils
 import android.util.Base64
 import androidx.core.app.NotificationCompat
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.ListenableWorker
@@ -77,26 +79,18 @@ private const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHME
  * @see androidx.work.Data
  */
 
-class DownloadEmbeddedAttachmentsWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val userManager: UserManager,
+    private val api: ProtonMailApiManager,
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val attachmentMetadataDatabase: AttachmentMetadataDatabase
+) : Worker(context, params) {
 
-    @Inject
-    internal lateinit var userManager: UserManager
-
-    @Inject
-    internal lateinit var api: ProtonMailApiManager
-
-    @Inject
-    internal lateinit var messageDetailsRepository: MessageDetailsRepository
-
-    @Inject
-    internal lateinit var attachmentMetadataDatabase: AttachmentMetadataDatabase
 
     private val notificationManager by lazy { applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private lateinit var notificationBuilder: NotificationCompat.Builder
-
-    init {
-        (applicationContext as ProtonMailApplication).appComponent.inject(this)
-    }
 
     override fun doWork(): Result {
 

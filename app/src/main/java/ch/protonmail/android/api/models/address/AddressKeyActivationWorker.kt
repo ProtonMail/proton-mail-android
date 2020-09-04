@@ -19,13 +19,16 @@
 package ch.protonmail.android.api.models.address
 
 import android.content.Context
-import androidx.work.CoroutineWorker
-import androidx.work.OneTimeWorkRequestBuilder
+import android.util.Log
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.api.models.getActivationToken
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -48,17 +51,17 @@ private const val KEY_INPUT_DATA_USERNAME = "KEY_INPUT_DATA_USERNAME"
 /**
  * This worker handles AddressKey activation by decrypting Activation Token and updating Private Key on server.
  */
-class AddressKeyActivationWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+class AddressKeyActivationWorker @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val userManager: UserManager,
+    private val api: ProtonMailApiManager
+) : Worker(context, params) {
 
-    @Inject internal lateinit var userManager: UserManager
-    @Inject internal lateinit var api: ProtonMailApiManager
     private val openPgp: OpenPGP by lazy { userManager.openPgp }
 
-    init {
-        (applicationContext as ProtonMailApplication).appComponent.inject(this)
-    }
+    override fun doWork(): Result {
 
-    override suspend fun doWork(): Result {
         val username = inputData.getString(KEY_INPUT_DATA_USERNAME) ?: return Result.failure()
         val mailboxPassword = userManager.getMailboxPassword(username) ?: return Result.failure()
 
