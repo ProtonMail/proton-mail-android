@@ -160,7 +160,7 @@ abstract class NavigationActivity : BaseActivity(),
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
 
-    protected abstract val currentLabelId: String
+    protected abstract val currentLabelId: String?
 
     /**
      * A lambda that holds an operation that needs to be executed after the Drawer has been closed
