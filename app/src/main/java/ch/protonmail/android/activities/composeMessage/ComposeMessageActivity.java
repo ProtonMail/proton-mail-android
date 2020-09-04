@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -110,7 +110,6 @@ import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.MessageRecipientViewAdapter;
 import ch.protonmail.android.api.AccountManager;
-import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.models.MessageRecipient;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
@@ -129,6 +128,9 @@ import ch.protonmail.android.compose.recipients.GroupRecipientsDialogFragment;
 import ch.protonmail.android.contacts.PostResult;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.crypto.AddressCrypto;
+import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.ContactEvent;
@@ -164,9 +166,6 @@ import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.ServerTime;
 import ch.protonmail.android.utils.UiUtil;
-import ch.protonmail.android.utils.crypto.AddressCrypto;
-import ch.protonmail.android.utils.crypto.Crypto;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.SerializationUtils;
@@ -1679,11 +1678,10 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         mMessageTitleEditText.setText(loadedMessage.getSubject());
         String messageBody = loadedMessage.getMessageBody();
         try {
-            TextDecryptionResult tct = crypto.decrypt(TextCiphertext.fromArmor(messageBody));
+            TextDecryptionResult tct = crypto.decrypt(new CipherText(messageBody));
             messageBody = tct.getDecryptedData();
         } catch (Exception e) {
-            //TODO fetchContactGroups in conditions of message being malformed in Inbox
-            e.printStackTrace();
+            Timber.e(e);
         }
         composeMessageViewModel.setInitialMessageContent(messageBody);
         if (loadedMessage.isInline()) {

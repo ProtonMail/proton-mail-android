@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -49,6 +49,9 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.crypto.UserCrypto;
 import ch.protonmail.android.gcm.models.NotificationData;
 import ch.protonmail.android.gcm.models.NotificationEncryptedData;
 import ch.protonmail.android.gcm.models.NotificationSender;
@@ -56,8 +59,6 @@ import ch.protonmail.android.servers.notification.INotificationServer;
 import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
-import ch.protonmail.android.utils.crypto.Crypto;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
 import io.sentry.Sentry;
 import io.sentry.event.EventBuilder;
@@ -142,8 +143,8 @@ public class GcmIntentService extends IntentService {
                 try {
                     if (extras.containsKey(EXTRA_ENCRYPTED_DATA)) {
                         String encryptedStr = extras.getString(EXTRA_ENCRYPTED_DATA);
-                        Crypto crypto = Crypto.forUser(mUserManager, notificationUsername);
-                        TextDecryptionResult textDecryptionResult = crypto.decryptForUser(TextCiphertext.fromArmor(encryptedStr), notificationUsername);
+                        UserCrypto crypto = Crypto.forUser(mUserManager, notificationUsername);
+                        TextDecryptionResult textDecryptionResult = crypto.decryptMessage(new CipherText(encryptedStr));
                         String decryptedStr = textDecryptionResult.getDecryptedData();
                         notificationData = tryParseNotificationModel(decryptedStr);
                         messageData = notificationData.getData();

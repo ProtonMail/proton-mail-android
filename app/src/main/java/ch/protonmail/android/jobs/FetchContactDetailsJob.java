@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -28,13 +28,12 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.crypto.UserCrypto;
 import ch.protonmail.android.events.ContactDetailsFetchedEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.crypto.Crypto;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
-import ch.protonmail.android.utils.crypto.UserCrypto;
 
 public class FetchContactDetailsJob extends ProtonMailBaseJob {
 
@@ -79,7 +78,7 @@ public class FetchContactDetailsJob extends ProtonMailBaseJob {
         if (encData != null && encData.size() > 0) {
             for (ContactEncryptedData contactEncryptedData : encData) {
                 if (Constants.VCardType.Companion.fromInt(contactEncryptedData.getType()) == Constants.VCardType.SIGNED_ENCRYPTED) {
-                    TextCiphertext tct = TextCiphertext.fromArmor(contactEncryptedData.getData());
+                    CipherText tct = new CipherText(contactEncryptedData.getData());
                     decryptedVCardType3 = crypto.decrypt(tct).getDecryptedData();
                     vCardType3Signature = contactEncryptedData.getSignature();
                 } else if (Constants.VCardType.Companion.fromInt(contactEncryptedData.getType()) == Constants.VCardType.SIGNED) {

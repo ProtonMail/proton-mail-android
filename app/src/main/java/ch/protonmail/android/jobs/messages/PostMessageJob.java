@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -41,12 +41,10 @@ import java.util.Set;
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.interceptors.RetrofitTag;
-import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.NewMessage;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
-import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.factories.PackageFactory;
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory;
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory;
@@ -72,6 +70,10 @@ import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingF
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.crypto.AddressCrypto;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.domain.entity.user.Address;
+import ch.protonmail.android.domain.entity.user.AddressKeys;
 import ch.protonmail.android.events.MessageSentEvent;
 import ch.protonmail.android.events.ParentEvent;
 import ch.protonmail.android.jobs.Priority;
@@ -81,12 +83,11 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.ServerTime;
-import ch.protonmail.android.utils.crypto.AddressCrypto;
-import ch.protonmail.android.utils.crypto.Crypto;
 import io.sentry.Sentry;
 import io.sentry.event.EventBuilder;
 import retrofit2.Call;
 import retrofit2.Response;
+import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
 import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_DEVICE_TAG;
@@ -218,8 +219,9 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
         User user = mUserManager.getUser(mUsername);
         String addressId = message.getAddressID();
-        Address senderAddress = user.getAddressById(addressId);
-        newMessage.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
+        Address senderAddress1 = user.getAddressById(addressId).toNewAddress();
+        String displayName = senderAddress1.getDisplayName() == null ? null : senderAddress1.getDisplayName().getS();
+        newMessage.setSender(new MessageSender(displayName, senderAddress1.getEmail().getS()));
 
         if (MessageUtils.INSTANCE.isLocalMessageId(message.getMessageId())) {
             // create the draft if there was no connectivity previously for execution the create and post draft job
@@ -236,27 +238,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             uploadAttachments(message, crypto, mailSettings);
             fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                throw e;
-            } else {
-                if (message != null) {
-                    EventBuilder eventBuilder = new EventBuilder()
-                            .withTag(SENDING_FAILED_TAG, getAppVersion())
-                            .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-                            .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(mUserManager.getUsername())))
-                            .withTag("LOC", "ONRUN - 1")
-                            .withMessage(getExceptionStringBuilder(e).toString());
-                    Sentry.capture(eventBuilder.build());
-                } else {
-                    EventBuilder eventBuilder = new EventBuilder()
-                            .withTag(SENDING_FAILED_TAG, getAppVersion())
-                            .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-                            .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(mUserManager.getUsername())))
-                            .withTag("LOC", "ONRUN - 2")
-                            .withMessage(getExceptionStringBuilder(e).toString());
-                    Sentry.capture(eventBuilder.build());
-                }
-            }
+            Timber.e(e);
         }
 
         onRunPostMessage(pendingActionsDatabase, message, crypto);
@@ -304,9 +286,10 @@ public class PostMessageJob extends ProtonMailBaseJob {
     }
 
     private void attachPublicKey(Message message, AddressCrypto crypto) throws Exception {
-        Address address = mUserManager.getUser(mUsername).getAddressById(message.getAddressID());
-        List<Keys> keys = address.getKeys();
-        String publicKey = crypto.getArmoredPublicKey(keys.get(0));
+        Address address =
+                mUserManager.getUser(mUsername).getAddressById(message.getAddressID()).toNewAddress();
+        AddressKeys keys = address.getKeys();
+        String publicKey = crypto.buildArmoredPublicKey(keys.getPrimaryKey().getPrivateKey());
 
         Attachment attachment = new Attachment();
         attachment.setFileName("publickey - " + address.getEmail() + " - 0x" + crypto.getFingerprint(publicKey).substring(0, 8).toUpperCase() + ".asc");
@@ -330,7 +313,8 @@ public class PostMessageJob extends ProtonMailBaseJob {
         parentAttachmentList = message.attachments(messagesDatabase);
         User user = mUserManager.getUser(mUsername);
         String addressId = message.getAddressID();
-        Address senderAddress = user.getAddressById(addressId);
+        ch.protonmail.android.api.models.address.Address senderAddress =
+                user.getAddressById(addressId);
         updateAttachmentKeyPackets(parentAttachmentList, newMessage, mOldSenderAddressID, senderAddress);
         newMessage.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
 
@@ -440,11 +424,11 @@ public class PostMessageJob extends ProtonMailBaseJob {
         //endregion
     }
 
-    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage, String oldSenderAddress, Address newSenderAddress) throws Exception {
+    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage, String oldSenderAddress, ch.protonmail.android.api.models.address.Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
             AddressCrypto oldCrypto = Crypto.forAddress(mUserManager, mUsername, oldSenderAddress);
-            List<Keys> newAddressKeys = newSenderAddress.getKeys();
-            String newPublicKey = oldCrypto.getArmoredPublicKey(newAddressKeys.get(0));
+            AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
+            String newPublicKey = oldCrypto.buildArmoredPublicKey(newAddressKeys.getPrimaryKey().getPrivateKey());
             for (Attachment attachment : attachmentList) {
                 String AttachmentID = attachment.getAttachmentId();
                 String keyPackets = attachment.getKeyPackets();

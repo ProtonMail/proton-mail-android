@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.crypto
+package ch.protonmail.android
 
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
@@ -24,6 +24,8 @@ import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.CipherText
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.armor.Armor
 import io.mockk.every

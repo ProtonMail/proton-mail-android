@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -21,10 +21,18 @@ package ch.protonmail.android.attachments
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Environment
-import androidx.core.app.NotificationCompat
 import android.text.TextUtils
 import android.util.Base64
-import androidx.work.*
+import androidx.core.app.NotificationCompat
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ListenableWorker
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.Operation
+import androidx.work.WorkManager
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProgressListener
@@ -35,6 +43,9 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.crypto.CipherText
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.Status
@@ -42,12 +53,9 @@ import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.crypto.AddressCrypto
-import ch.protonmail.android.utils.crypto.BinaryCiphertext
-import ch.protonmail.android.utils.crypto.Crypto
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 // region constants
@@ -259,7 +267,7 @@ class DownloadEmbeddedAttachmentsWorker(context: Context, params: WorkerParamete
                 }
             })
             val keyBytes = Base64.decode(key, Base64.DEFAULT)
-            crypto.decrypt(BinaryCiphertext.fromPackets(keyBytes, byteArray)).decryptedData
+            crypto.decryptAttachment(CipherText(keyBytes, byteArray)).decryptedData
         } catch (e: Exception) {
             e.printStackTrace()
             null
