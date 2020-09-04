@@ -34,8 +34,10 @@ import ch.protonmail.android.views.messagesList.MessagesListItemView
 
 /**
  * Created by Kamil Rajtar on 17.07.18.  */
-class MessagesRecyclerViewAdapter(private val context: Context,
-                                  private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?) : RecyclerView.Adapter<MessagesListViewHolder>() {
+class MessagesRecyclerViewAdapter(
+    private val context: Context,
+    private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
+) : RecyclerView.Adapter<MessagesListViewHolder>() {
 
 
     private var mMailboxLocation = Constants.MessageLocationType.INVALID
@@ -90,10 +92,8 @@ class MessagesRecyclerViewAdapter(private val context: Context,
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (position) {
-            messages.size -> ElementType.FOOTER
-            else -> ElementType.MESSAGE
-        }.ordinal
+        val itemViewType = if (position == messages.size) ElementType.FOOTER else ElementType.MESSAGE
+        return itemViewType.ordinal
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagesListViewHolder {
@@ -111,7 +111,7 @@ class MessagesRecyclerViewAdapter(private val context: Context,
         when (ElementType.values()[getItemViewType(position)]) {
             ElementType.MESSAGE -> (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
             ElementType.FOOTER -> {
-                //NOOP
+                // NOOP
             }
         }
     }
