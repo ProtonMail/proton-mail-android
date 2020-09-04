@@ -58,6 +58,7 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.settings.pin.ValidatePinActivity
@@ -326,6 +327,7 @@ abstract class NavigationActivity : BaseActivity(),
         }
 
         setupAccountsList()
+        ForceSwitchedAccountNotifier.notifier.postValue(null)
     }
 
     protected fun setupAccountsList() {

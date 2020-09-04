@@ -16,19 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events;
+package ch.protonmail.android.events
 
-public class LogoutEvent {
-    public final Status status;
-    public final String username;
-
-    public LogoutEvent(Status status) {
-        this.status = status;
-        this.username = null;
-    }
-
-    public LogoutEvent(Status status, String username) {
-        this.status = status;
-        this.username = username;
-    }
-}
+data class LogoutEvent @JvmOverloads constructor(
+    @JvmField val status: Status,
+    val username: String? = null
+)

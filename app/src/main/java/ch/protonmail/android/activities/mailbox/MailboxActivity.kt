@@ -129,6 +129,7 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectivityEvent
+import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
@@ -572,7 +573,6 @@ class MailboxActivity : NavigationActivity(),
 
         val messagesLiveData =
             mailboxLocationMain.switchMap { getLiveDataByLocation(messageDetailsRepository, it) }
-
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
         messageDetailsRepository.getAllLabels().observe(this, Observer { labels: List<Label> ->
             messagesAdapter.setLabels(labels)
@@ -779,7 +779,6 @@ class MailboxActivity : NavigationActivity(),
         if (shouldShowSwipeGesturesChangedDialog()) {
             showSwipeGesturesChangedDialog()
         }
-
     }
 
     override fun onPause() {

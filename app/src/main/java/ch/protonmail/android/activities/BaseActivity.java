@@ -46,6 +46,11 @@ import com.birbit.android.jobqueue.JobManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
 
+import ch.protonmail.android.activities.mailbox.MailboxActivity;
+import ch.protonmail.android.activities.multiuser.AccountManagerActivity;
+import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
+import timber.log.Timber;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -185,6 +190,15 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         }
 
         UiUtil.setStatusBarColor(this, getResources().getColor(R.color.dark_purple_statusbar));
+
+        ForceSwitchedAccountNotifier.notifier.observe(this, event -> {
+            if (event != null) {
+                AppUtil.postEventOnUi(event);
+                if (!(this instanceof NavigationActivity)) {
+                    onBackPressed();
+                }
+            }
+        });
     }
 
     @Override
