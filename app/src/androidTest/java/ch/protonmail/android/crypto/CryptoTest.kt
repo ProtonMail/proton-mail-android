@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android
+package ch.protonmail.android.crypto
 
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
@@ -24,8 +24,9 @@ import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.crypto.CipherText
-import ch.protonmail.android.crypto.Crypto
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
+import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.armor.Armor
 import io.mockk.every
@@ -36,14 +37,13 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import javax.mail.internet.InternetHeaders
+import ch.protonmail.android.mapper.map
+import me.proton.core.domain.arch.map
 
 @LargeTest
 internal class CryptoTest {
 
     private val userManagerMock: UserManager = mockk()
-    private val oneKeyUserMock: User = mockk()
-    private val manyAddressKeysUserMock: User = mockk()
-
     private val openPgp = OpenPGP()
 
     //region One Address Key Setup
@@ -726,6 +726,40 @@ internal class CryptoTest {
         )
     )
     //endregion
+
+    private val addressKeyMapper = AddressKeyBridgeMapper()
+    private val userKeyMapper = UserKeyBridgeMapper()
+
+    private val oneKeyUserMock: User = mockk {
+        every { toNewUser() } returns mockk {
+            every { addresses } returns mockk {
+                every { findBy(Id(oneAddressKeyAddressId)) } answers { addresses[1] }
+                every { addresses } returns mapOf(1 to mockk {
+                    every { keys } returns mockk {
+                        every { keys } returns oneAddressKeyAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                    }
+                })
+            }
+            every { keys } returns mockk {
+                every { keys } returns oneAddressKeyUserKeys.map(userKeyMapper) { it.toNewModel() }
+            }
+        }
+    }
+    private val manyAddressKeysUserMock: User = mockk {
+        every { toNewUser() } returns mockk {
+            every { addresses } returns mockk {
+                every { findBy(Id(manyAddressKeysAddressId)) } answers { addresses[1] }
+                every { addresses } returns mapOf(1 to mockk {
+                    every { keys } returns mockk {
+                        every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                    }
+                })
+            }
+            every { keys } returns mockk {
+                every { keys } returns manyAddressKeysUserKeys.map(userKeyMapper) { it.toNewModel() }
+            }
+        }
+    }
 
     init {
         mockkStatic(TextUtils::class)

@@ -45,7 +45,7 @@ fun initVersions() {
     `android-room version` =                    "2.2.1"         // Released: Oct 23, 2019
     `android-work version` =                    "2.2.0"         // Released: Aug 16, 2019
 
-    `android-test version` =                    "1.2.0"         // Released: May 31, 2019
+    `android-test version` =                    "1.3.0-rc03"    // Released: Aug 05, 2020
     // endregion
 
     // region Others
