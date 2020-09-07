@@ -18,13 +18,13 @@
  */
 package ch.protonmail.android.contacts.list.viewModel
 
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.jobs.DeleteContactJob
-import com.birbit.android.jobqueue.JobManager
+import ch.protonmail.android.worker.DeleteContactWorker
 import io.reactivex.Completable
 import java.io.IOException
 import javax.inject.Inject
@@ -32,34 +32,34 @@ import javax.inject.Singleton
 
 @Singleton
 class ContactListRepository @Inject constructor(
-    val jobManager: JobManager,
+    val workManager: WorkManager,
     val api: ProtonMailApiManager,
     val contactsDatabase: ContactsDatabase
 ) {
 
-     fun delete(contactItems: IDList): Completable {
-        return api.deleteContact(contactItems)
-                .doOnSuccess {
-                    it?.responses?.forEach {
-                        if (it.responseBody.code == Constants.RESPONSE_CODE_OK) {
+    fun delete(contactItems: IDList): Completable {
+        return api.deleteContactSingle(contactItems)
+            .doOnSuccess {
+                it?.responses?.forEach {
+                    if (it.responseBody.code == Constants.RESPONSE_CODE_OK) {
 
-                            val contactData = contactsDatabase.findContactDataById(it.id)
-                            if (contactData != null) {
-                                    val contactEmails = contactsDatabase.findContactEmailsByContactId(
-                                        contactData.contactId!!
-                                    )
-                                    contactsDatabase.deleteAllContactsEmails(contactEmails)
-                                    contactsDatabase.deleteContactData(contactData)
-                            }
-                        } else {
-                            throw ApiException(it.responseBody, it.responseBody.error)
+                        val contactData = contactsDatabase.findContactDataById(it.id)
+                        if (contactData != null) {
+                            val contactEmails = contactsDatabase.findContactEmailsByContactId(
+                                contactData.contactId!!
+                            )
+                            contactsDatabase.deleteAllContactsEmails(contactEmails)
+                            contactsDatabase.deleteContactData(contactData)
                         }
+                    } else {
+                        throw ApiException(it.responseBody, it.responseBody.error)
                     }
                 }
-                .doOnError {
-                    if (it is IOException) {
-                        jobManager.addJobInBackground(DeleteContactJob(contactItems.iDs))
-                    }
-                }.toCompletable()
+            }
+            .doOnError {
+                if (it is IOException) {
+                    DeleteContactWorker.Enqueuer().enqueue(workManager, contactItems.iDs)
+                }
+            }.ignoreElement()
     }
 }

@@ -62,6 +62,7 @@ import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.WorkManager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -72,6 +73,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -100,7 +102,6 @@ import ch.protonmail.android.crypto.UserCrypto;
 import ch.protonmail.android.events.ContactDetailsFetchedEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.jobs.DeleteContactJob;
 import ch.protonmail.android.jobs.FetchContactDetailsJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
@@ -113,6 +114,7 @@ import ch.protonmail.android.views.CustomFontButton;
 import ch.protonmail.android.views.CustomFontTextView;
 import ch.protonmail.android.views.VCardLinearLayout;
 import ch.protonmail.android.views.contactDetails.ContactAvatarView;
+import ch.protonmail.android.worker.DeleteContactWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
@@ -216,6 +218,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     private Menu collapsedMenu;
     @Inject
     ContactDetailsViewModel.Factory contactDetailsViewModelFactory;
+    @Inject
+    WorkManager workManager;
     ContactDetailsViewModel contactDetailsViewModel;
     ContactEditDetailsEmailGroupsAdapter contactEditDetailsEmailGroupsAdapter;
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
@@ -362,8 +366,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (itemId == R.id.action_delete) {
             DialogInterface.OnClickListener clickListener = (dialog, which) -> {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                    DeleteContactJob deleteContactsJob = new DeleteContactJob(Arrays.asList(mContactId));
-                    mJobManager.addJobInBackground(deleteContactsJob);
+                    new DeleteContactWorker.Enqueuer()
+                            .enqueue(workManager, Collections.singletonList(mContactId));
                     new Handler().postDelayed(() -> finish(), 500);
                 }
                 dialog.dismiss();
@@ -403,7 +407,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (contact != null && contact.getEncryptedData() != null) {
             encData = contact.getEncryptedData();
         } else {
-            hasDecryptionError =  true;
+            hasDecryptionError = true;
         }
 
         for (ContactEncryptedData contactEncryptedData : encData) {
@@ -691,12 +695,12 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             ViewCompat.setBackgroundTintList(fabWeb, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
         }
 
-        File vcfFile = new File(this.getExternalFilesDir(null), mDisplayName+".vcf");
+        File vcfFile = new File(this.getExternalFilesDir(null), mDisplayName + ".vcf");
         try {
             FileWriter fw = new FileWriter(vcfFile);
-            if(mVCardType0!=null){
+            if (mVCardType0 != null) {
                 fw.write(mVCardType0);
-            } else if(mVCardType2!=null) {
+            } else if (mVCardType2 != null) {
                 fw.write(mVCardType2);
             }
             fw.close();

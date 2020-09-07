@@ -213,7 +213,9 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse? = api.updateContact(contactId, body)
 
-    override fun deleteContact(contactIds: IDList): Single<DeleteContactResponse> = api.deleteContact(contactIds)
+    override fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse> = api.deleteContactSingle(contactIds)
+
+    override suspend fun deleteContact(contactIds: IDList): DeleteContactResponse = api.deleteContact(contactIds)
 
     override fun labelContacts(labelContactsBody: LabelContactsBody): Completable = api.labelContacts(labelContactsBody)
 

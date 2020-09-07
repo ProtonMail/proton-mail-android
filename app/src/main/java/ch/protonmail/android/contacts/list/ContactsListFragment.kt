@@ -36,6 +36,7 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -188,8 +189,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         val factory = ContactsListViewModelFactory(
             application,
             loaderManager,
-            listener.jobManager,
-            application.app.api as ProtonMailApiManager
+            application.app.api as ProtonMailApiManager,
+            WorkManager.getInstance(application)
         )
         viewModel = ViewModelProvider(this, factory).get(ContactsListViewModel::class.java)
 

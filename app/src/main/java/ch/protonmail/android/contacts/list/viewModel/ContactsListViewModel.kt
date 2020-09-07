@@ -32,6 +32,7 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.IAndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
 import ch.protonmail.android.utils.Event
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class ContactsListViewModel @Inject constructor(
@@ -41,8 +42,9 @@ class ContactsListViewModel @Inject constructor(
     private val androidContactsDetailsRepository: AndroidContactDetailsRepository
 ) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
 
-    private val progressMax = MutableLiveData<Int?>()
-    private val progress = MutableLiveData<Int?>()
+    private var deleteDisposable: Disposable? = null
+	private val progressMax = MutableLiveData<Int?>()
+	private val progress = MutableLiveData<Int?>()
 
     private val searchPhrase = MutableLiveData<String?>()
     private val protonmailContactsData = contactsDatabase.findAllContactDataAsync()
@@ -56,7 +58,7 @@ class ContactsListViewModel @Inject constructor(
     override val contactToConvert = androidContactsDetailsRepository.contactDetails
 
     var hasPermission: Boolean = false
-        private set
+		private set
 
     val contactsDeleteError: LiveData<Event<String>>
         get() = _contactsDeleteError
@@ -83,13 +85,18 @@ class ContactsListViewModel @Inject constructor(
     }
 
     fun deleteSelected(contacts: List<String>) {
-        contactListRepository.delete(IDList(contacts))
-            .onErrorComplete()
-            .doOnError { error ->
-                _contactsDeleteError.value = Event(error.message ?: error.localizedMessage)
-            }
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe()
-    }
+		deleteDisposable = contactListRepository.delete(IDList(contacts))
+			.onErrorComplete()
+			.doOnError { error ->
+				_contactsDeleteError.value = Event(error.message ?: error.localizedMessage)
+			}
+			.subscribeOn(ThreadSchedulers.io())
+			.observeOn(ThreadSchedulers.main())
+			.subscribe()
+	}
+
+	override fun onCleared() {
+		deleteDisposable = null
+		super.onCleared()
+	}
 }
