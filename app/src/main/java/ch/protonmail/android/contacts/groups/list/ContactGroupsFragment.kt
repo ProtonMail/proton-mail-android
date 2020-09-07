@@ -73,7 +73,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         private set
     
     private val listener: IContactsListFragmentListener by lazy {
-        context as IContactsListFragmentListener
+        requireActivity() as IContactsListFragmentListener
     }
 
     override fun onItemCheckedStateChanged(
