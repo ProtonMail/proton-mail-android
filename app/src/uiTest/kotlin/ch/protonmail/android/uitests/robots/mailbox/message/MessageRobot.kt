@@ -20,7 +20,9 @@ package ch.protonmail.android.uitests.robots.mailbox.message
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
+import ch.protonmail.android.uitests.robots.mailbox.spam.SpamRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.click
 
@@ -33,6 +35,18 @@ class MessageRobot {
         UIActions.wait.forViewWithId(R.id.folders_list_view)
         UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, folderName)
         return this
+    }
+
+    fun moveFromSpamToFolder(folderName: String): SpamRobot {
+        UIActions.wait.forViewWithId(R.id.folders_list_view)
+        UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, folderName)
+        return SpamRobot()
+    }
+
+    fun moveToTrash(): InboxRobot {
+        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+        UIActions.wait.forViewWithId(R.id.move_to_trash).click()
+        return InboxRobot()
     }
 
     fun openFoldersModal(): MessageRobot {

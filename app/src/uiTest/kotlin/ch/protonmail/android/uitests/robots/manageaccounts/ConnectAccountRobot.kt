@@ -22,6 +22,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.User
+import ch.protonmail.android.uitests.testsHelper.type
 
 /**
  * [ConnectAccountRobot] class contains actions and verifications for Connect Account functionality.
@@ -113,7 +114,7 @@ open class ConnectAccountRobot {
     }
 
     private fun mailboxPassword(mailboxPassword: String): ConnectAccountRobot {
-        UIActions.id.insertTextIntoFieldWithId(R.id.mailboxPassword, mailboxPassword)
+        UIActions.wait.forViewWithId(R.id.mailboxPassword).type(mailboxPassword)
         return this
     }
 

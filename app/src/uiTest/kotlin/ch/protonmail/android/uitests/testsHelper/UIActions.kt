@@ -324,8 +324,14 @@ object UIActions {
         fun forViewWithTextAndParentId(@StringRes text: Int, @IdRes parentId: Int): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
 
+        fun forViewByViewInteraction(interaction: ViewInteraction): ViewInteraction =
+            waitUntilViewAppears(interaction)
+
         fun untilViewWithIdIsGone(@IdRes id: Int): ViewInteraction =
             waitUntilViewIsGone(onView(withId(id)))
+
+        fun untilViewByViewInteractionIsGone(interaction: ViewInteraction): ViewInteraction =
+            waitUntilViewIsGone(interaction)
 
         fun untilViewWithTextIsGone(@StringRes textId: Int): ViewInteraction =
             waitUntilViewIsGone(onView(withText(stringFromResource(textId))))
