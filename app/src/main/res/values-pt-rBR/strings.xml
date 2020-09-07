@@ -970,7 +970,7 @@ acesso ao armazenamento.</string>
     <string name="signed_in_with">Conectado com %s</string>
     <string name="signed_in_with_logged_out_from">Desconectado de %1$s e conectado com %2$s</string>
     <string name="connect_account_limit_title">Limite atingido</string>
-    <string name="connect_account_limit_subtitle">Você não pode adicionar outra conta gratuita do ProtonMail. Apenas uma conta gratuita do ProtonMail pode ser adicionada. Por favor, encerre a sessão da outra conta gratuita ou faça o upgrade de uma da suas contas para um plano pago.</string>
+    <string name="connect_account_limit_subtitle">Você não pode adicionar outra conta gratuita do ProtonMail. Apenas uma conta gratuita do ProtonMail pode ser adicionada. Por favor, encerre a sessão da outra conta gratuita ou faça o upgrade de uma da suas contas gratuitas para um plano pago.</string>
     <string name="switch_accounts_question">Trocar de conta?</string>
     <string name="switch_to_account">Trocar para %s</string>
     <string name="login_failure_missing_keys">A conta que você está tentando adicionar não possui chaves geradas. Adicione esta conta como uma primeira conta no aplicativo, ou faça login através da versão web, para gerar chaves e depois adicione-a como uma conta adicional no aplicativo.</string>

@@ -1000,7 +1000,7 @@ access to storage.</string>
     <string name="signed_in_with">Signed in with %s</string>
     <string name="signed_in_with_logged_out_from">Logged out from %1$s and signed in with %2$s</string>
     <string name="connect_account_limit_title">Limit reached</string>
-    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to paid account.</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Switch account?</string>
     <string name="switch_to_account">Switch to %s</string>
     <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>

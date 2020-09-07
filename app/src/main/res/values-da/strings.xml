@@ -970,7 +970,7 @@ lagerpladsadgang.</string>
     <string name="signed_in_with">Logget ind med %s</string>
     <string name="signed_in_with_logged_out_from">Logget ud fra %1$s og logget ind med %2$s</string>
     <string name="connect_account_limit_title">Grænse nået</string>
-    <string name="connect_account_limit_subtitle">Du kan ikke tilføje endnu en gratis ProtonMail-konto, da kun ën gratis ProtonMail-konto kan tilføjes. Log ud af din anden gratis konto, eller opgradér en af dine gratis konti til en betalt konto.</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Skift konto?</string>
     <string name="switch_to_account">Skift til %s</string>
     <string name="login_failure_missing_keys">Den konto, du prøver at tilføje, har ingen genererede nøgler. Tilføj denne konto som en første konto i appen, eller log ind via webversionen, for at generere nøgler og tilføj den derefter som en ekstra konto i appen.</string>

@@ -955,7 +955,7 @@ akses menuju penyimpanan.</string>
     <string name="signed_in_with">Masuk dengan %s</string>
     <string name="signed_in_with_logged_out_from">Keluar dari %1$s dan masuk dengan %2$s</string>
     <string name="connect_account_limit_title">Batas tercapai</string>
-    <string name="connect_account_limit_subtitle">Anda tidak dapat menambahkan akun ProtonMail gratis lainnya. Hanya satu akun ProtonMail gratis yang dapat ditambahkan. Harap keluar dari akun gratis anda atau tingkatkan ke akun berbayar.</string>
+    <string name="connect_account_limit_subtitle">Anda tidak dapat menambahkan akun ProtonMail gratis lainnya. Hanya satu akun ProtonMail gratis yang dapat ditambahkan. Harap keluar dari akun gratis anda atau tingkatkan salah satu akun Anda ke akun berbayar.</string>
     <string name="switch_accounts_question">Ganti akun?</string>
     <string name="switch_to_account">Ganti ke %s</string>
     <string name="login_failure_missing_keys">Akun yang anda tambahkan belum punya kunci. Harap tambahkan akun ini sebagai akun pertama di aplikasi, atau masuk via web, untuk menambahkan kunci dan lalu tambahkan akun tersebut sebagai akun tambahan di aplikasi.</string>
