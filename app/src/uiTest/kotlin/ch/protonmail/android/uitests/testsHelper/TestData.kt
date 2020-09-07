@@ -51,18 +51,19 @@ object TestData {
 
     fun reSubject(subject: String): String = "Re: $subject"
 
+    // Forwarded subject
     fun fwSubject(subject: String): String = "Fw: $subject"
 
-    //SEARCH MESSAGE
+    // SEARCH MESSAGE
     const val searchMessageSubject = "Random Subject"
     const val searchMessageSubjectNotFound = "MessageNotFound :O"
 
-    //CONTACT DATA
+    // CONTACT DATA
     const val newContactName = "A new contact"
     val editContactName = "Edited on ${System.currentTimeMillis()}"
     const val editEmailAddress = "test@pm.test"
 
-    //GROUP DATA
+    // GROUP DATA
     val newGroupName = "A New group #${System.currentTimeMillis()}"
     val editGroupName = "Group edited on ${System.currentTimeMillis()}"
     val messageSubject = "Random Subject: ${System.currentTimeMillis()}"

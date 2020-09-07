@@ -156,10 +156,10 @@ open class BaseTest {
             TestData.onePassUserWith2FA = setUser(BuildConfig.TEST_USER3)
             TestData.twoPassUserWith2FA = setUser(BuildConfig.TEST_USER4)
 
-            TestData.internalEmailTrustedKeys = setUser(BuildConfig.TEST_RECIPIENT1)
-            TestData.internalEmailNotTrustedKeys = setUser(BuildConfig.TEST_RECIPIENT2)
-            TestData.externalEmailPGPEncrypted = setUser(BuildConfig.TEST_RECIPIENT3)
-            TestData.externalEmailPGPSigned = setUser(BuildConfig.TEST_RECIPIENT4)
+            TestData.externalEmailPGPEncrypted = setUser(BuildConfig.TEST_RECIPIENT1)
+            TestData.externalEmailPGPSigned = setUser(BuildConfig.TEST_RECIPIENT2)
+            TestData.internalEmailTrustedKeys = setUser(BuildConfig.TEST_RECIPIENT3)
+            TestData.internalEmailNotTrustedKeys = setUser(BuildConfig.TEST_RECIPIENT4)
         }
 
         private fun setUser(user: String): User {

@@ -16,43 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+
 package ch.protonmail.android.uitests.tests.suites
 
 import ch.protonmail.android.uitests.tests.composer.ForwardMessageTests
 import ch.protonmail.android.uitests.tests.composer.ReplyToMessageTests
 import ch.protonmail.android.uitests.tests.composer.SendNewMessageTests
-import ch.protonmail.android.uitests.tests.contacts.ContactsTests
-import ch.protonmail.android.uitests.tests.inbox.InboxTests
-import ch.protonmail.android.uitests.tests.inbox.SearchTests
-import ch.protonmail.android.uitests.tests.login.LoginTests
-import ch.protonmail.android.uitests.tests.manageaccounts.MultiuserManagementTests
-import ch.protonmail.android.uitests.tests.menu.MenuTests
-import ch.protonmail.android.uitests.tests.settings.AccountSettingsTests
-import ch.protonmail.android.uitests.tests.settings.SettingsTests
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
-    // Account settings tests
-    AccountSettingsTests::class,
-    // Composer tests
     SendNewMessageTests::class,
     ForwardMessageTests::class,
-    ReplyToMessageTests::class,
-    // Contacts tests
-    ContactsTests::class,
-    // Inbox tests
-    InboxTests::class,
-    // Login tests
-    LoginTests::class,
-    // Multi-user management tests
-    MultiuserManagementTests::class,
-    // Menu tests
-    MenuTests::class,
-    //Search tests
-    SearchTests::class,
-    // Settings tests
-    SettingsTests::class
+    ReplyToMessageTests::class
 )
-class RegressionSuite
+class ComposerSuite

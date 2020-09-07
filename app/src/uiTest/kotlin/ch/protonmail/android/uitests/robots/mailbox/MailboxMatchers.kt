@@ -42,15 +42,52 @@ object MailboxMatchers {
         return object : BoundedMatcher<RecyclerView.ViewHolder,
             MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
 
+            val messagesList = ArrayList<String>()
+
             override fun describeTo(description: Description) {
-                description.appendText("Message item that contains subject: $subject")
+                description.appendText("Message item with subject: \"$subject\"\n")
+                description.appendText("Here is the actual list of messages:\n")
+                messagesList.forEach { description.appendText(" - \"$it\"\n") }
             }
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
                 val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val actualSubject = messageSubjectView.text.toString()
                 return if (messageSubjectView != null) {
-                    subject == messageSubjectView.text.toString()
+                    subject == actualSubject
                 } else {
+                    messagesList.add(actualSubject)
+                    false
+                }
+            }
+        }
+    }
+
+    /**
+     * Matches the Mailbox message represented by [MessagesListItemView] by message subject part.
+     * Subject must be unique in a list in order to use this matcher.
+     *
+     * @param subjectPart - message subject part
+     */
+    fun withMessageSubjectContaining(subjectPart: String): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedMatcher<RecyclerView.ViewHolder,
+            MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
+
+            val messagesList = ArrayList<String>()
+
+            override fun describeTo(description: Description) {
+                description.appendText("Message item that contains pattern: \"$subjectPart\"\n")
+                description.appendText("Here is the actual list of messages:\n")
+                messagesList.forEach { description.appendText(" - \"$it\"\n") }
+            }
+
+            override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
+                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val actualSubject = messageSubjectView.text.toString()
+                return if (actualSubject.contains(subjectPart)) {
+                    true
+                } else {
+                    messagesList.add(actualSubject)
                     false
                 }
             }
@@ -68,23 +105,22 @@ object MailboxMatchers {
             MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
 
             private var alreadyMatched = false
-            private var iteratedSubjects = ArrayList<String>()
+            val messagesList = ArrayList<String>()
 
             override fun describeTo(description: Description) {
                 description.appendText("Message item that contains subject text: $text.\nIterated subjects:\n")
-                iteratedSubjects.forEach {
-                    description.appendText("- $it\n")
-                }
+                description.appendText("Here is the actual list of messages:\n")
+                messagesList.forEach { description.appendText(" - \"$it\"\n") }
             }
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
                 val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val actualSubject = messageSubjectView.text.toString()
                 if (messageSubjectView != null) {
-                    val subject = messageSubjectView.text.toString()
-                    iteratedSubjects.add(subject)
                     /** since we need only the first match [alreadyMatched] var acts as a guard for other matches **/
-                    val matched = !alreadyMatched && (messageSubjectView.text.toString().contains(text))
+                    val matched = !alreadyMatched && messageSubjectView.text.toString().contains(text)
                     if (matched) alreadyMatched = true
+                    messagesList.add(actualSubject)
                     return matched
                 }
                 return false

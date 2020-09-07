@@ -30,11 +30,12 @@ import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKe
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category
 
-class ComposerTests : BaseTest() {
+class SendNewMessageTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
     private lateinit var subject: String
@@ -47,6 +48,7 @@ class ComposerTests : BaseTest() {
         body = TestData.messageBody
     }
 
+    @TestId("1545")
     @Test
     fun sendMessageToInternalTrustedContact() {
         val to = internalEmailTrustedKeys.email
@@ -59,6 +61,7 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("1546")
     @Test
     fun sendMessageToInternalNotTrustedContact() {
         val to = internalEmailNotTrustedKeys.email
@@ -71,9 +74,10 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("1543")
     @Category(SmokeTest::class)
     @Test
-    fun sendMessageToPGPEncryptedContact() {
+    fun sendMessageToNonPMPGPEncryptedContact() {
         val to = externalEmailPGPEncrypted.email
         loginRobot
             .loginUser(onePassUser)
@@ -84,9 +88,10 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("1544")
     @Category(SmokeTest::class)
     @Test
-    fun sendMessageToPGPSignedContact() {
+    fun sendMessageToNonPMPGPSignedContact() {
         val to = externalEmailPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
@@ -125,6 +130,7 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("1542")
     @Test
     fun sendMessageEO() {
         val to = externalEmailPGPSigned.email
@@ -139,9 +145,10 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("1550")
     @Test
     fun sendMessageExpiryTime() {
-        val to = externalEmailPGPSigned.email
+        val to = internalEmailTrustedKeys.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -151,6 +158,20 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("1548")
+    @Test
+    fun sendMessageExpiryTimeExternalContact() {
+        val to = externalEmailPGPSigned.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageExpiryTimeInDaysWithConfirmation(to, subject, body, 2)
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("21090")
     @Test
     fun sendMessageEOAndExpiryTime() {
         val to = externalEmailPGPSigned.email
@@ -166,6 +187,7 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("21091")
     @Test
     fun sendMessageEOAndExpiryTimeWithAttachment() {
         val to = externalEmailPGPSigned.email
@@ -220,9 +242,10 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("15539")
     @Test
     fun sendMessageToExternalContactWithOneAttachment() {
-        val to = externalEmailPGPSigned.email
+        val to = externalEmailPGPEncrypted.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -232,9 +255,10 @@ class ComposerTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
+    @TestId("15540")
     @Test
     fun sendMessageToExternalContactWithTwoAttachments() {
-        val to = externalEmailPGPSigned.email
+        val to = externalEmailPGPEncrypted.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
