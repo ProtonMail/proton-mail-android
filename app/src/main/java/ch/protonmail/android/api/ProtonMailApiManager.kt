@@ -152,9 +152,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
     fun getSecuredServices(): SecuredServices = api.securedServices
 
     // region routes and services
-    override fun fetchAddresses(): AddressesResponse = api.fetchAddresses()
+    override fun fetchAddressesBlocking(): AddressesResponse = api.fetchAddressesBlocking()
 
-    override fun fetchAddresses(username: String): AddressesResponse = api.fetchAddresses(username)
+    override suspend fun fetchAddresses(): AddressesResponse = api.fetchAddresses()
+
+    override fun fetchAddressesBlocking(username: String): AddressesResponse = api.fetchAddressesBlocking(username)
 
     override fun updateAlias(addressIds: List<String>): ResponseBody = api.updateAlias(addressIds)
 
@@ -364,9 +366,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? = api.updateAutoShowImages(autoShowImages)
 
-    override fun fetchUserInfo(): UserInfo = api.fetchUserInfo()
+    override fun fetchUserInfoBlocking(): UserInfo = api.fetchUserInfoBlocking()
 
-    override fun fetchUserInfo(username: String): UserInfo = api.fetchUserInfo(username)
+    override suspend fun fetchUserInfo(): UserInfo = api.fetchUserInfo()
+
+    override fun fetchUserInfoBlocking(username: String): UserInfo = api.fetchUserInfoBlocking(username)
 
     override fun fetchKeySalts(): KeySalts = api.fetchKeySalts()
 

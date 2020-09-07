@@ -146,7 +146,6 @@ import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
-import ch.protonmail.android.events.user.UserInfoEvent
 import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.fcm.PMRegistrationIntentService.Companion.startRegistration
 import ch.protonmail.android.jobs.EmptyFolderJob
@@ -1466,11 +1465,6 @@ class MailboxActivity : NavigationActivity(),
     @Subscribe
     fun onRefreshDrawer(event: RefreshDrawerEvent?) {
         refreshDrawer()
-    }
-
-    @Subscribe
-    override fun onUserInfoEvent(userInfoEvent: UserInfoEvent) {
-        super.onUserInfoEvent(userInfoEvent)
     }
 
     @Subscribe

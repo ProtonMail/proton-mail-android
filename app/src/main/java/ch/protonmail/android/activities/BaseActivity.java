@@ -41,6 +41,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.google.android.material.snackbar.Snackbar;
@@ -49,6 +50,7 @@ import com.squareup.otto.Subscribe;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity;
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
+import ch.protonmail.android.worker.FetchUserInfoWorker;
 import timber.log.Timber;
 
 import javax.inject.Inject;
@@ -77,9 +79,7 @@ import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MessageSentEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.user.UserInfoEvent;
 import ch.protonmail.android.jobs.FetchMailSettingsJob;
-import ch.protonmail.android.jobs.FetchUserInfoJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
@@ -89,7 +89,6 @@ import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import dagger.hilt.android.AndroidEntryPoint;
-import timber.log.Timber;
 
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID;
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ID;
@@ -97,6 +96,8 @@ import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_M
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
+import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_NAME;
+import static ch.protonmail.android.worker.FetchUserInfoWorkerKt.FETCH_USER_INFO_WORKER_RESULT;
 
 @AndroidEntryPoint
 public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {
@@ -126,7 +127,10 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected BigContentHolder mBigContentHolder;
     @Inject
     protected NetworkResults mNetworkResults;
-
+    @Inject
+    protected WorkManager workManager;
+    @Inject
+    protected FetchUserInfoWorker.Enqueuer fetchUserInfoWorkerEnqueuer;
 
     @Nullable
     @BindView(R.id.toolbar)
@@ -418,7 +422,16 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
                 finish();
             });
             btnClose.setOnClickListener(v -> finish());
-            btnCheckAgain.setOnClickListener(v -> mJobManager.addJobInBackground(new FetchUserInfoJob()));
+            btnCheckAgain.setOnClickListener(v -> {
+                fetchUserInfoWorkerEnqueuer.invoke();
+                workManager.getWorkInfosForUniqueWorkLiveData(FETCH_USER_INFO_WORKER_NAME)
+                        .observe(this, workInfo -> {
+                            boolean isDelinquent = workInfo.get(0).getOutputData().getBoolean(FETCH_USER_INFO_WORKER_RESULT, true);
+                            if (!isDelinquent && alertDelinquency != null && alertDelinquency.isShowing()) {
+                                alertDelinquency.dismiss();
+                            }
+                        });
+            });
             builder.setView(dialogView);
             alertDelinquency = builder.create();
             alertDelinquency.setCanceledOnTouchOutside(false);
@@ -487,14 +500,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             abortBroadcast();
         }
     };
-
-    @Subscribe
-    public void onUserInfoEvent(UserInfoEvent userInfoEvent) {
-        User user = userInfoEvent.getUser();
-        if (!user.getDelinquent() && alertDelinquency != null && alertDelinquency.isShowing()) {
-            alertDelinquency.dismiss();
-        }
-    }
 
     @Subscribe
     public void onMessageSentEvent(MessageSentEvent event){

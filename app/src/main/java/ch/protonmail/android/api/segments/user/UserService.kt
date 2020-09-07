@@ -28,7 +28,11 @@ import retrofit2.Call
 
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.Tag
 
 interface UserService {
 
@@ -39,11 +43,15 @@ interface UserService {
 
     @GET("users")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchUserInfo(): Call<UserInfo>
+    fun fetchUserInfoCall(): Call<UserInfo>
 
     @GET("users")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchUserInfo(@Tag retrofitTag: RetrofitTag): Call<UserInfo>
+    suspend fun fetchUserInfo(): UserInfo
+
+    @GET("users")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    fun fetchUserInfoCall(@Tag retrofitTag: RetrofitTag): Call<UserInfo>
 
     @GET("keys/salts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

@@ -52,10 +52,10 @@ class FetchUserSettingsJob(
         val addresses: AddressesResponse
 
         if (username != null) {
-            userInfo = getApi().fetchUserInfo(username!!)
+            userInfo = getApi().fetchUserInfoBlocking(username!!)
             userSettings = getApi().fetchUserSettings(username!!)
             mailSettings = getApi().fetchMailSettings(username!!)
-            addresses = getApi().fetchAddresses(username!!)
+            addresses = getApi().fetchAddressesBlocking(username!!)
             getUserManager().setUserInfo(userInfo, username, mailSettings.mailSettings,
                 userSettings.userSettings, addresses.addresses)
 
@@ -76,10 +76,10 @@ class FetchUserSettingsJob(
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, false)
             }
         } else {
-            userInfo = getApi().fetchUserInfo()
+            userInfo = getApi().fetchUserInfoBlocking()
             userSettings = getApi().fetchUserSettings()
             mailSettings = getApi().fetchMailSettings()
-            addresses = getApi().fetchAddresses()
+            addresses = getApi().fetchAddressesBlocking()
             getUserManager().setUserInfo(userInfo, mailSettings = mailSettings.mailSettings,
                 userSettings = userSettings.userSettings, addresses = addresses.addresses)
 
