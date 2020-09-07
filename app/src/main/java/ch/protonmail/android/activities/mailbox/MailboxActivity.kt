@@ -43,6 +43,7 @@ import android.view.WindowManager
 import android.widget.AbsListView.MultiChoiceModeListener
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -359,7 +360,7 @@ class MailboxActivity : NavigationActivity(),
                     settingsIntent.putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, mailboxLabelId)
                     startActivity(settingsIntent)
                 }
-                setActionTextColor(getColor(R.color.icon_purple))
+                setActionTextColor(ContextCompat.getColor(this@MailboxActivity, R.color.icon_purple))
             }
             mUserManager.firstMailboxLoadDone()
         }
@@ -1200,7 +1201,10 @@ class MailboxActivity : NavigationActivity(),
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         actionMode = mode
-        UiUtil.setStatusBarColor(this, UiUtil.scaleColor(getColor(R.color.dark_purple_statusbar), 1f, true))
+        UiUtil.setStatusBarColor(
+            this,
+            UiUtil.scaleColor(ContextCompat.getColor(this, R.color.dark_purple_statusbar), 1f, true)
+        )
         mode.menuInflater.inflate(R.menu.message_selection_menu, menu)
         menu.findItem(R.id.move_to_trash).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         menu.findItem(R.id.delete_message).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
@@ -1392,7 +1396,7 @@ class MailboxActivity : NavigationActivity(),
         actionMode = null
         swipe_refresh_layout.isEnabled = true
         messagesAdapter.endSelectionMode()
-        UiUtil.setStatusBarColor(this, getColor(R.color.dark_purple_statusbar))
+        UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar))
     }
 
     /* END AbsListView.MultiChoiceModeListener */
@@ -1678,7 +1682,7 @@ class MailboxActivity : NavigationActivity(),
         val tv = mDraftedMessageSnack.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
         tv.setTextColor(Color.WHITE)
         mDraftedMessageSnack.setAction(getString(R.string.dismiss)) { mDraftedMessageSnack.dismiss() }
-        mDraftedMessageSnack.setActionTextColor(getColor(R.color.icon_purple))
+        mDraftedMessageSnack.setActionTextColor(ContextCompat.getColor(this, R.color.icon_purple))
         mDraftedMessageSnack.show()
     }
 
