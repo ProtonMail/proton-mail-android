@@ -968,7 +968,7 @@ a tárhely elérését.</string>
     <string name="signed_in_with">Bejelentkezve ezzel: %s</string>
     <string name="signed_in_with_logged_out_from">Kijelentkezett a következőből: %1$s és bejelentkezett: %2$s-vel</string>
     <string name="connect_account_limit_title">Korlát elérve</string>
-    <string name="connect_account_limit_subtitle">Nem adhat hozzá újabb ingyenes ProtonMail fiókot. Csak egy ingyenes ProtonMail fiók adható hozzá. Kérjük, jelentkezzen ki másik ingyenes fiókjáról, vagy frissítse egyik ingyenes fiókját fizetős fiókra.</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Fiók váltása?</string>
     <string name="switch_to_account">Váltás %s-ra</string>
     <string name="login_failure_missing_keys">A hozzáadni kívánt fiók nem rendelkezik generált kulccsal. Kérjük, jelölje meg ezt a fiókot elsődleges fiókként, vagy jelentkezzen be a webes felületen, hogy kulcsot generálhasson, majd adja hozzá fiókját \"további fiókként\" az alkalmazáshoz.</string>

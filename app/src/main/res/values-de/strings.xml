@@ -631,7 +631,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="save_new_folder">Neuen Ordner speichern</string>
     <string name="create_new_folder">Ordner erstellen</string>
     <string name="all_mail">Alle Nachrichten</string>
-    <string name="allmail_option">Ale Nachrichten</string>
+    <string name="allmail_option">Alle Nachrichten</string>
     <string name="empty_emails">Keine Nachrichten</string>
     <string name="empty_email_list">Keine E-Mail-Adresse</string>
     <string name="no_contacts">Keine Kontakte</string>
@@ -955,7 +955,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="signed_in_with">Angemeldet mit %s</string>
     <string name="signed_in_with_logged_out_from">Von %1$s abgemeldet und angemeldet als %2$s</string>
     <string name="connect_account_limit_title">Grenzwert erreicht</string>
-    <string name="connect_account_limit_subtitle">Sie können kein weiteres kostenloses ProtonMail-Konto hinzufügen. Es kann nur ein einziges kostenloses ProtonMail-Konto hinzugefügt werden. Bitte melden Sie sich von Ihrem anderen kostenlosen Konto ab oder aktualisieren Sie eines Ihrer kostenlosen Konten auf ein bezahltes Konto.</string>
+    <string name="connect_account_limit_subtitle">Sie können kein weiteres kostenloses ProtonMail-Konto hinzufügen. Es kann nur ein kostenloses ProtonMail-Konto hinzugefügt werden. Bitte melden Sie sich von Ihrem anderen kostenlosen Konto ab oder erweitern Sie eines Ihrer kostenlosen Konten zu einem kostenpflichtigen Konto.</string>
     <string name="switch_accounts_question">Konto wechseln?</string>
     <string name="switch_to_account">Wechseln zu %s</string>
     <string name="login_failure_missing_keys">Das Konto, das Sie hinzuzufügen versuchen, enthält keine generierten Schlüssel. Bitte fügen Sie dieses Konto als erstes Konto in der App hinzu oder melden Sie sich über die Web-Version an, um Schlüssel zu generieren, und fügen Sie es dann als zusätzliches Konto in der App hinzu.</string>

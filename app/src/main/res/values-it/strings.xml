@@ -970,7 +970,7 @@ l\'accesso all\'archiviazione.</string>
     <string name="signed_in_with">Accesso effettuato con %s</string>
     <string name="signed_in_with_logged_out_from">Disconnesso da %1$s ed effettuato l\'accesso con %2$s</string>
     <string name="connect_account_limit_title">Limite raggiunto</string>
-    <string name="connect_account_limit_subtitle">Non puoi aggiungere un altro account gratuito di ProtonMail. Solo un account gratuito di ProtonMail può essere aggiunto. Si prega di disconnettersi dell\'altro account gratuito o di aggiornare uno dei suoi account gratuiti alla versione a pagamento.</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Cambiare account?</string>
     <string name="switch_to_account">Passare a %s</string>
     <string name="login_failure_missing_keys">L\'account che stai cercando di aggiungere non ha generato chiavi. Aggiungi questo account come primo account sull\'app, o accedi tramite la versione web, per generare chiavi e poi aggiungerlo come account aggiuntivo nell\'app.</string>

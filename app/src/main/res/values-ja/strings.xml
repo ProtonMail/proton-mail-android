@@ -940,7 +940,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="signed_in_with">%s にログイン</string>
     <string name="signed_in_with_logged_out_from">%1$s からログアウトし %2$s にログイン</string>
     <string name="connect_account_limit_title">アカウントのご利用限度に達しました。</string>
-    <string name="connect_account_limit_subtitle">複数の無料プランのProtonMailアカウントを追加することはできません。追加できる無料プランのProtonMailアカウントは1つだけです。他の無料プランのアカウントからログアウトするか、無料プランのアカウントのいずれかを有料プランにアップグレードしてください。</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">アカウントを切り替えますか？</string>
     <string name="switch_to_account">%s に切り替える。</string>
     <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>

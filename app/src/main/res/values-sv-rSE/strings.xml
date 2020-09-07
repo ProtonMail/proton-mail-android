@@ -962,7 +962,7 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <string name="signed_in_with">Inloggad med %s</string>
     <string name="signed_in_with_logged_out_from">Utloggad från %1$s och loggade in med %2$s</string>
     <string name="connect_account_limit_title">Gräns uppnådd</string>
-    <string name="connect_account_limit_subtitle">Du kan inte lägga till ytterligare ett gratis ProtonMail konto. Bara ett gratis ProtonMail konto kan läggas till. Vänligen logga ut från ditt andra gratis konto eller uppgradera ett utav dina gratis konton till betalt konto.</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Byt till konto?</string>
     <string name="switch_to_account">Byt till %s</string>
     <string name="login_failure_missing_keys">Det finns inga nycklar för det kontot du försöker lägga till. Lägg till detta konto som ett första konto i appen eller logga in via webbversionen, för att skapa nycklar och sedan lägga till det som ett ytterligare konto i appen.</string>

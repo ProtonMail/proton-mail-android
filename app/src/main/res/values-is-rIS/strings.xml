@@ -907,8 +907,8 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <string name="labels_manage">Sýsla með merkingar</string>
     <string name="folders_manage">Sýsla með möppur</string>
     <string name="swiping_gesture">Strokubending</string>
-    <string name="swipe_action_right">Swipe right</string>
-    <string name="swipe_action_left">Swipe left</string>
+    <string name="swipe_action_right">Strjúka til hægri</string>
+    <string name="swipe_action_left">Strjúka til vinstri</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Veldu aðgerð við stroku</string>
     <string name="swipe_action_trash">Skilaboð voru færð í ruslið</string>
@@ -967,7 +967,7 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <string name="signed_in_with">Skráð inn með %s</string>
     <string name="signed_in_with_logged_out_from">Skráð út úr %1$s og skráð inn með %2$s</string>
     <string name="connect_account_limit_title">Takmörkum náð</string>
-    <string name="connect_account_limit_subtitle">Þú getur ekki bætt við öðrum ókeypis ProtonMail-aðgangi. Aðeins er hægt að bæta við einum keypis ProtonMail-aðgangi. Skrðu þig út úr öðrum ókeypis aðgöngum eða uppfærðu einn af ókeypis aðgöngunum þínum yfir í greidda áskrift.</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Skipta um notandaaðgang?</string>
     <string name="switch_to_account">Skipta yfir í %s</string>
     <string name="login_failure_missing_keys">Notandaaðgangurinn sem þú ert að reyna að bæta við er ekki með útbúna dulritunarlykla. Bættu þessum aðgangi við sem fyrsta aðgangi í forritinu eða skráðu þig inn með vefviðmótinu til að útbúa dulritunarlykla og bættu honum síðan við sem aukaaðgangi í forritinu.</string>
@@ -994,8 +994,8 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <string name="allowed">Heimilað</string>
     <string name="denied">Hafnað</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Swipe gestures changed</string>
-    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
-    <string name="go_to_settings">Go to settings</string>
+    <string name="swipe_gestures_changed">Strokuhreyfingar breyttust</string>
+    <string name="swipe_gestures_changed_message">Eftir síðustu uppfærslu var strokuhreyfingum víxlað. Ef þú vilt geturðu endurstillt þetta í stillingunum.</string>
+    <string name="go_to_settings">Fara í stillingar</string>
     <!-- endregion -->
 </resources>
