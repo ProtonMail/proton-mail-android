@@ -23,7 +23,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.loader.app.LoaderManager
 import androidx.work.WorkManager
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.contacts.list.listView.ContactItemListFactory
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsLoaderCallbacksFactory
@@ -34,7 +33,6 @@ import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContac
 class ContactsListViewModelFactory(
     private val application: Application,
     private val loaderManager: LoaderManager,
-    private val api: ProtonMailApiManager,
     private val workManager: WorkManager
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(
@@ -45,16 +43,17 @@ class ContactsListViewModelFactory(
         val contactItemFactory = ContactItemListFactory()
         val androidContactsLoaderCallbacksFactory =
             AndroidContactsLoaderCallbacksFactory(application.applicationContext, contactItemFactory::convert)
-        val androidContactsRepository = AndroidContactsRepository(loaderManager,
-            androidContactsLoaderCallbacksFactory)
+        val androidContactsRepository = AndroidContactsRepository(
+            loaderManager,
+            androidContactsLoaderCallbacksFactory
+        )
         val androidContactsDetailsCallbacksFactory =
             AndroidContactDetailsCallbacksFactory(application.applicationContext)
         val androidContactsDetailsRepository =
             AndroidContactDetailsRepository(loaderManager, androidContactsDetailsCallbacksFactory)
-        val contactListRepository = ContactListRepository(workManager, api, contactsDatabase)
 
 		return ContactsListViewModel(
-			contactsDatabase, contactListRepository,
+			contactsDatabase, workManager,
 			androidContactsRepository, androidContactsDetailsRepository) as T
 	}
 }

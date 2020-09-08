@@ -102,10 +102,10 @@ class ContactApi (private val service : ContactService) : BaseApi(), ContactApiS
 
     @Throws(IOException::class)
     override fun deleteContactSingle(contactIds: IDList) : Single<DeleteContactResponse> {
-        return service.deleteContact(contactIds)
+        return service.deleteContactSingle(contactIds)
     }
 
     override suspend fun deleteContact(contactIds: IDList) : DeleteContactResponse {
-        return service.deleteContactSuspended(contactIds)
+        return service.deleteContact(contactIds)
     }
 }

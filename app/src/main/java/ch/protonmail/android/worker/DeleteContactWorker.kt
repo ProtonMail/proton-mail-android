@@ -32,13 +32,15 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val KEY_INPUT_DATA_CONTACT_IDS = "KEY_INPUT_DATA_CONTACT_IDS"
-internal const val KEY_WORKER_ERROR_DESCRIPTION = "KEY_WORKER_ERROR_DESCRIPTION"
+private const val KEY_INPUT_DATA_CONTACT_IDS = "KeyInputDataContactDds"
+internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 
 /**
  * Work Manager Worker responsible for contactIs removal.
@@ -64,26 +66,36 @@ class DeleteContactWorker(context: Context, params: WorkerParameters) :
         context.app.appComponent.inject(this)
     }
 
-    override suspend fun doWork(): Result = coroutineScope {
+    override suspend fun doWork(): Result {
 
         val contactIds = inputData.getStringArray(KEY_INPUT_DATA_CONTACT_IDS)
             ?: emptyArray()
 
         // skip empty input
         if (contactIds.isEmpty()) {
-            return@coroutineScope Result.failure(
+            return Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty contacts list")
             )
         }
 
         Timber.v("Deleting ${contactIds.size} contacts")
 
-        updateDb(contactIds)
+        return withContext(Dispatchers.IO) {
+            // clean remote store
+            val response = api.deleteContact(IDList(contactIds.toList()))
 
-        // clean remote store
-        api.deleteContact(IDList(contactIds.toList()))
-
-        Result.success()
+            if (
+                response.code == Constants.RESPONSE_CODE_OK ||
+                response.code == Constants.RESPONSE_CODE_MULTIPLE_OK
+            ) {
+                updateDb(contactIds)
+                Result.success()
+            } else {
+                Result.failure(
+                    workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${response.code}")
+                )
+            }
+        }
     }
 
     private fun updateDb(contactIds: Array<String>) {
@@ -102,8 +114,8 @@ class DeleteContactWorker(context: Context, params: WorkerParameters) :
         }
     }
 
-    class Enqueuer {
-        fun enqueue(workManager: WorkManager, contactIds: List<String>): Operation {
+    class Enqueuer(private val workManager: WorkManager) {
+        fun enqueue(contactIds: List<String>): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()

@@ -69,11 +69,11 @@ interface ContactService {
 
     @PUT("contacts/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun deleteContact(@Body contactId: IDList): Single<DeleteContactResponse>
+    fun deleteContactSingle(@Body contactId: IDList): Single<DeleteContactResponse>
 
     @PUT("contacts/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun deleteContactSuspended(@Body contactId: IDList): DeleteContactResponse
+    suspend fun deleteContact(@Body contactId: IDList): DeleteContactResponse
 
     @DELETE("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

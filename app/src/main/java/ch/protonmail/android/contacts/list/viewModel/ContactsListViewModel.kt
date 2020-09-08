@@ -21,9 +21,9 @@ package ch.protonmail.android.contacts.list.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ch.protonmail.android.api.models.IDList
+import androidx.work.Operation
+import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.list.listView.ContactsLiveData
 import ch.protonmail.android.contacts.list.listView.ProtonMailContactsLiveData
@@ -31,26 +31,23 @@ import ch.protonmail.android.contacts.list.progress.ProgressLiveData
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.IAndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
-import ch.protonmail.android.utils.Event
-import io.reactivex.disposables.Disposable
+import ch.protonmail.android.worker.DeleteContactWorker
 import javax.inject.Inject
 
 class ContactsListViewModel @Inject constructor(
     contactsDatabase: ContactsDatabase,
-    private val contactListRepository: ContactListRepository,
+    private val workManager: WorkManager,
     private val androidContactsRepository: IAndroidContactsRepository<ContactItem>,
     private val androidContactsDetailsRepository: AndroidContactDetailsRepository
-) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
+    ) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
 
-    private var deleteDisposable: Disposable? = null
-	private val progressMax = MutableLiveData<Int?>()
-	private val progress = MutableLiveData<Int?>()
+    private val progressMax = MutableLiveData<Int?>()
+    private val progress = MutableLiveData<Int?>()
 
     private val searchPhrase = MutableLiveData<String?>()
     private val protonmailContactsData = contactsDatabase.findAllContactDataAsync()
     private val protonmailContactsEmails = contactsDatabase.findAllContactsEmailsAsync()
     private val protonmailContacts = ProtonMailContactsLiveData(protonmailContactsData, protonmailContactsEmails)
-    private val _contactsDeleteError: MutableLiveData<Event<String>> = MutableLiveData()
 
     override val androidContacts = androidContactsRepository.androidContacts
     override val contactItems = ContactsLiveData(searchPhrase, protonmailContacts, androidContacts)
@@ -58,10 +55,7 @@ class ContactsListViewModel @Inject constructor(
     override val contactToConvert = androidContactsDetailsRepository.contactDetails
 
     var hasPermission: Boolean = false
-		private set
-
-    val contactsDeleteError: LiveData<Event<String>>
-        get() = _contactsDeleteError
+        private set
 
     override fun startConvertDetails(contactId: String) =
         androidContactsDetailsRepository.makeQuery(contactId)
@@ -84,19 +78,6 @@ class ContactsListViewModel @Inject constructor(
         this.progress.value = progress
     }
 
-    fun deleteSelected(contacts: List<String>) {
-		deleteDisposable = contactListRepository.delete(IDList(contacts))
-			.onErrorComplete()
-			.doOnError { error ->
-				_contactsDeleteError.value = Event(error.message ?: error.localizedMessage)
-			}
-			.subscribeOn(ThreadSchedulers.io())
-			.observeOn(ThreadSchedulers.main())
-			.subscribe()
-	}
-
-	override fun onCleared() {
-		deleteDisposable = null
-		super.onCleared()
-	}
+    fun deleteSelected(contacts: List<String>): LiveData<Operation.State> =
+        DeleteContactWorker.Enqueuer(workManager).enqueue(contacts).state
 }

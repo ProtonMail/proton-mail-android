@@ -366,8 +366,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (itemId == R.id.action_delete) {
             DialogInterface.OnClickListener clickListener = (dialog, which) -> {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                    new DeleteContactWorker.Enqueuer()
-                            .enqueue(workManager, Collections.singletonList(mContactId));
+                    new DeleteContactWorker.Enqueuer(workManager)
+                            .enqueue(Collections.singletonList(mContactId));
                     new Handler().postDelayed(() -> finish(), 500);
                 }
                 dialog.dismiss();
