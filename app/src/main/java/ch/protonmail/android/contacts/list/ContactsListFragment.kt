@@ -54,7 +54,6 @@ import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModel
 import ch.protonmail.android.contacts.list.viewModel.ContactsListViewModelFactory
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
-import ch.protonmail.android.toasts.ToastSimpleObserver
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
@@ -70,10 +69,6 @@ import kotlinx.android.synthetic.main.fragment_contacts.*
 private const val TAG_CONTACTS_LIST_FRAGMENT = "ProtonMail.ContactsFragment"
 private const val EXTRA_PERMISSION = "extra_permission"
 // endregion
-
-/**
- * Created by dkadrikj on 8/25/16.
- */
 
 class ContactsListFragment : BaseFragment(), IContactsFragment {
 
@@ -141,7 +136,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
         when (menuItemId) {
             R.id.delete_contacts -> if (!allContactsProtonMail) {
-                viewModel.postToast(R.string.please_select_only_phone_contacts)
+                requireContext().showToast(R.string.please_select_only_phone_contacts)
             } else {
                 DialogUtils.showDeleteConfirmationDialog(
                     requireContext(), getString(R.string.delete),
@@ -156,7 +151,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
             }
             R.id.transform_phone_contacts -> if (!allContactsLocal) {
-                viewModel.postToast(R.string.please_select_only_phone_contacts)
+                requireContext().showToast(R.string.please_select_only_phone_contacts)
             } else {
                 LocalContactsConverter(listener.jobManager, viewModel)
                     .startConversion(contactsAdapter.getSelectedItems!!.toList())
@@ -221,10 +216,6 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         viewModel.uploadProgress.observe(
             this,
             UploadProgressObserver(progressDialogFactory::create)
-        )
-        viewModel.toast.observe(
-            this,
-            ToastSimpleObserver(requireContext())
         )
         viewModel.contactToConvert.observe(this, Observer {
             val localContact = it?.getContentIfNotHandled() ?: return@Observer
@@ -311,7 +302,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     @Suppress("unused")
     fun onContactEvent(event: ContactEvent) {
         if (event.contactCreation) {
-            viewModel.postToast(event.status.statusTextId)
+            context?.showToast(event.status.statusTextId)
         } else if (event.status == ContactEvent.SUCCESS) {
             viewModel.setProgress(null)
             viewModel.setProgressMax(null)
@@ -319,10 +310,10 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             val statuses = event.statuses
             if (statuses != null) {
                 statuses.forEach {
-                    viewModel.postToast(it.statusTextId)
+                    context?.showToast(it.statusTextId)
                 }
             } else {
-                viewModel.postToast(event.status.statusTextId)
+                context?.showToast(event.status.statusTextId)
             }
         }
 
