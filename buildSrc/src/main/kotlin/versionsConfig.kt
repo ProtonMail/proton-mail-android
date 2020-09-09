@@ -33,7 +33,7 @@ fun initVersions() {
     `android-gradle-plugin version` =           "4.0.0"         // Released: May 28, 2020
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
-    `appcompat version` =                       "1.1.0"         // Released: Sep 06, 2019
+    `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.0-beta2"   // Released: Jun 17, 2019
     `dagger version` =                          "2.16"          // Released: May 04, 2018 TODO: 2.24 removed `HasActivityInjector` in favor of `HasAndroidInjector
