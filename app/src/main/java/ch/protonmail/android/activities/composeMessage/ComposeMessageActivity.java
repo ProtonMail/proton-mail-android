@@ -177,6 +177,7 @@ import ch.protonmail.android.views.ComposeEditText;
 import ch.protonmail.android.views.MessageExpirationView;
 import ch.protonmail.android.views.MessagePasswordButton;
 import ch.protonmail.android.views.MessageRecipientView;
+import ch.protonmail.android.views.PMWebView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
@@ -362,7 +363,7 @@ public class ComposeMessageActivity extends BaseContactsActivity implements Mess
         initRecipientsView(mBccRecipientsView, mMessageRecipientViewAdapter, Constants.RecipientLocationType.BCC);
         mMessageTitleEditText.setSelection(mMessageTitleEditText.getText().length(), mMessageTitleEditText.getText().length());
 
-        mMessageBody = new WebView(this);
+        mMessageBody = new PMWebView(this);
         pmWebViewClient = new PMWebViewClient(mUserManager, this, true);
         mMessageBody.setWebViewClient(pmWebViewClient);
         mMessageBody.requestDisallowInterceptTouchEvent(true);
