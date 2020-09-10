@@ -28,8 +28,6 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Compan
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.TestData.fwSubject
-import ch.protonmail.android.uitests.testsHelper.TestData.reSubject
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
@@ -158,83 +156,5 @@ class InboxTests : BaseTest() {
             .menuDrawer()
             .drafts()
             .verify { draftWithAttachmentSaved(draftSubject) }
-    }
-
-    @Category(SmokeTest::class)
-    @Test
-    fun reply() {
-        val to = TestData.internalEmailTrustedKeys.email
-        inboxRobot
-            .compose()
-            .sendMessage(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .clickMessageBySubject(subject)
-            .reply()
-            .editBodyAndReply("Robot Reply")
-            .navigateUpToSent()
-            .verify {
-                messageWithSubjectExists(reSubject(subject))
-            }
-    }
-
-    @Test
-    fun replyMessageWithAttachment() {
-        val to = TestData.internalEmailTrustedKeys.email
-        inboxRobot
-            .compose()
-            .sendMessageCameraCaptureAttachment(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .clickMessageBySubject(subject)
-            .reply()
-            .editBodyAndReply("Robot Reply With Attachment ")
-            .navigateUpToSent()
-            .verify { messageWithSubjectExists(reSubject(subject)) }
-    }
-
-    @Test
-    fun replyAll() {
-        val to = TestData.internalEmailTrustedKeys.email
-        inboxRobot
-            .compose()
-            .sendMessage(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .clickMessageBySubject(subject)
-            .replyAll()
-            .editBodyAndReply("Robot ReplyAll ")
-            .navigateUpToSent()
-            .verify { messageWithSubjectExists(reSubject(subject)) }
-    }
-
-    @Test
-    fun forwardMessage() {
-        val to = TestData.internalEmailTrustedKeys.email
-        inboxRobot
-            .compose()
-            .sendMessage(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .clickMessageBySubject(subject)
-            .forward()
-            .forwardMessage(to, body)
-            .navigateUpToSent()
-            .verify { messageWithSubjectExists(fwSubject(subject)) }
-    }
-
-    @Test
-    fun forwardMessageWithAttachment() {
-        val to = TestData.internalEmailTrustedKeys.email
-        inboxRobot
-            .compose()
-            .sendMessageWithFileAttachment(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .clickMessageBySubject(subject)
-            .forward()
-            .forwardMessage(to, body)
-            .navigateUpToSent()
-            .verify { messageWithSubjectExists(fwSubject(subject)) }
     }
 }

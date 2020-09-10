@@ -21,6 +21,7 @@ package ch.protonmail.android.uitests.robots.mailbox.message
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
+import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.robots.mailbox.spam.SpamRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
@@ -60,13 +61,13 @@ class MessageRobot {
     }
 
     fun replyAll(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.reply_all)
-        UIActions.id.clickViewWithId(R.id.reply_all)
+        UIActions.wait.forViewWithId(R.id.reply_all).click()
         return ComposerRobot()
     }
 
     fun forward(): ComposerRobot {
-        UIActions.id.clickViewWithId(R.id.forward)
+        UIActions.wait.forViewWithId(R.id.message_body)
+        UIActions.wait.forViewWithId(R.id.forward).click()
         return ComposerRobot()
     }
 
@@ -93,6 +94,11 @@ class MessageRobot {
     fun verifyAttachmentsNotAdded(): MessageRobot {
         UIActions.check.viewWithIdIsNotDisplayed(R.id.attachment_count)
         return this
+    }
+
+    fun navigateUpToSearch(): SearchRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return SearchRobot()
     }
 
     fun navigateUpToSent(): SentRobot {

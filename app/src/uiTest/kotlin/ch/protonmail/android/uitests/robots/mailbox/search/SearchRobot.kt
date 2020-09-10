@@ -20,7 +20,10 @@ package ch.protonmail.android.uitests.robots.mailbox.search
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectContaining
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
+import ch.protonmail.android.uitests.robots.mailbox.message.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
@@ -29,9 +32,28 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 class SearchRobot {
 
-    fun searchMessageText(messageSubject: String): SearchRobot {
-        UIActions.id.insertTextInFieldWithIdAndPressImeAction(R.id.search_src_text, messageSubject)
+    fun searchMessageText(subject: String): SearchRobot {
+        UIActions.id.insertTextInFieldWithIdAndPressImeAction(R.id.search_src_text, subject)
         return this
+    }
+
+    fun clickSearchedMessageBySubject(subject: String): MessageRobot {
+        UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
+        UIActions.recyclerView
+            .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+        return MessageRobot()
+    }
+
+    fun navigateUpToInbox(): InboxRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return InboxRobot()
+    }
+
+    fun clickSearchedMessageBySubjectPart(subject: String): MessageRobot {
+        UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
+        UIActions.recyclerView
+            .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectContaining(subject))
+        return MessageRobot()
     }
 
     /**
@@ -40,7 +62,7 @@ class SearchRobot {
     class Verify {
 
         fun searchedMessageFound() {
-            UIActions.recyclerView.waitForBeingPopulated(R.id.messages_list_view)
+            UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
             UIActions.recyclerView
                 .scrollToRecyclerViewMatchedItem(
                     R.id.messages_list_view,
@@ -54,4 +76,8 @@ class SearchRobot {
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+
+    companion object {
+        private const val messagesRecyclerViewId = R.id.messages_list_view
+    }
 }

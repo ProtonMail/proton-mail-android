@@ -18,7 +18,9 @@
  */
 package ch.protonmail.android.uitests.tests.suites
 
-import ch.protonmail.android.uitests.tests.composer.ComposerTests
+import ch.protonmail.android.uitests.tests.composer.ForwardMessageTests
+import ch.protonmail.android.uitests.tests.composer.ReplyToMessageTests
+import ch.protonmail.android.uitests.tests.composer.SendNewMessageTests
 import ch.protonmail.android.uitests.tests.contacts.ContactsTests
 import ch.protonmail.android.uitests.tests.inbox.InboxTests
 import ch.protonmail.android.uitests.tests.inbox.SearchTests
@@ -36,7 +38,9 @@ import org.junit.runners.Suite
 @Categories.IncludeCategory(SmokeTest::class)
 @Suite.SuiteClasses(
     AccountSettingsTests::class,
-    ComposerTests::class,
+    ForwardMessageTests::class,
+    SendNewMessageTests::class,
+    ReplyToMessageTests::class,
     ContactsTests::class,
     InboxTests::class,
     LoginTests::class,

@@ -31,6 +31,7 @@ import ch.protonmail.android.uitests.robots.mailbox.message.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
+import ch.protonmail.android.uitests.testsHelper.click
 import ch.protonmail.android.uitests.testsHelper.insert
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
@@ -54,6 +55,12 @@ class ComposerRobot {
 
     fun forwardMessage(to: String, body: String): MessageRobot =
         recipients(to)
+            .body(body)
+            .forward()
+
+    fun changeSubjectAndForwardMessage(to: String, subject: String, body: String): MessageRobot =
+        recipients(to)
+            .subject(subject)
             .body(body)
             .forward()
 
@@ -85,6 +92,13 @@ class ComposerRobot {
             .messageExpiration()
             .setExpirationInDays(days)
             .send()
+
+    fun sendMessageExpiryTimeInDaysWithConfirmation(to: String, subject: String, body: String, days: Int): InboxRobot =
+        composeMessage(to, subject, body)
+            .messageExpiration()
+            .setExpirationInDays(days)
+            .sendWithNotSupportedExpiryConfirmation()
+            .sendAnyway()
 
     fun sendMessageEOAndExpiryTime(
         to: String,
@@ -231,6 +245,11 @@ class ComposerRobot {
         return InboxRobot()
     }
 
+    private fun sendWithNotSupportedExpiryConfirmation(): NotSupportedExpirationRobot {
+        waitForConditionAndSend()
+        return NotSupportedExpirationRobot()
+    }
+
     private fun sendToContact(): ContactsRobot {
         waitForConditionAndSend()
         return ContactsRobot()
@@ -256,7 +275,7 @@ class ComposerRobot {
     /**
      * Class represents Message Password dialog.
      */
-    inner class MessagePasswordRobot {
+    class MessagePasswordRobot {
 
         fun definePasswordWithHint(password: String, hint: String): ComposerRobot {
             return definePassword(password)
@@ -289,7 +308,7 @@ class ComposerRobot {
     /**
      * Class represents Message Expiration dialog.
      */
-    inner class MessageExpirationRobot {
+    class MessageExpirationRobot {
 
         fun setExpirationInDays(days: Int): ComposerRobot =
             expirationDays(days)
@@ -307,9 +326,21 @@ class ComposerRobot {
         }
     }
 
+    /**
+     * Class represents Message Expiration dialog.
+     */
+    class NotSupportedExpirationRobot {
+
+        fun sendAnyway(): InboxRobot {
+            UIActions.wait.forViewWithId(ok).click()
+            return InboxRobot()
+        }
+    }
+
     companion object {
         const val sendMessageId = R.id.send_message
         const val logoDrawable = R.drawable.logo
         const val welcomeDrawable = R.drawable.welcome
+        const val ok = R.id.ok
     }
 }

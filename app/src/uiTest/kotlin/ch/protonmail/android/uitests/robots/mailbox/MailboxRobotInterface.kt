@@ -25,6 +25,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
@@ -118,7 +119,7 @@ interface MailboxRobotInterface {
         fun messageWithSubjectExists(subject: String) {
             UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
             UIActions.wait.forViewWithText(subject)
-            UIActions.recyclerView.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+            UIActions.recyclerView.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
         }
     }
 
