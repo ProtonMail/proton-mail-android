@@ -19,6 +19,7 @@
 package ch.protonmail.android.contacts.details
 
 import android.util.Log
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
@@ -27,9 +28,9 @@ import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.contacts.groups.jobs.RemoveMembersFromContactGroupJob
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.jobs.PostLabelJob
+import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -40,10 +41,10 @@ import javax.inject.Singleton
 
 @Singleton
 open class ContactDetailsRepository @Inject constructor(
+    private val workManager: WorkManager,
     protected val jobManager: JobManager,
     protected val api: ProtonMailApiManager,
-    protected val databaseProvider: DatabaseProvider
-) {
+    protected val databaseProvider: DatabaseProvider) {
 
     protected val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactDetailsRepository"); databaseProvider.provideContactsDao() }
 
@@ -131,18 +132,16 @@ open class ContactDetailsRepository @Inject constructor(
             return Completable.complete()
         }
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
-        return api.unlabelContactEmails(labelContactsBody)
+        return api.unlabelContactEmailsCompletable(labelContactsBody)
             .doOnComplete {
                 contactsDao.deleteJoinByGroupIdAndEmailId(membersList, contactGroupId)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
-                    jobManager.addJobInBackground(
-                        RemoveMembersFromContactGroupJob(
-                            contactGroupId,
-                            contactGroupName,
-                            membersList
-                        )
+                    RemoveMembersFromContactGroupWorker.Enqueuer(workManager).enqueue(
+                        contactGroupId,
+                        contactGroupName,
+                        membersList
                     )
                 }
             }

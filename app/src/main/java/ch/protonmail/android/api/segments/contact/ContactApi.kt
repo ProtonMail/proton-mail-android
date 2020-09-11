@@ -44,9 +44,12 @@ class ContactApi (private val service : ContactService) : BaseApi(), ContactApiS
     }
 
     @Throws(IOException::class)
-    override fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable {
-        return service.unlabelContactEmails(labelContactsBody)
+    override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable {
+        return service.unlabelContactEmailsCompletable(labelContactsBody)
     }
+
+    override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) =
+        service.unlabelContactEmails(labelContactsBody)
 
     @Throws(IOException::class)
     override fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse? {

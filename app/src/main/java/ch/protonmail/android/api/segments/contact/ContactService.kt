@@ -85,5 +85,9 @@ interface ContactService {
 
     @PUT("contacts/emails/unlabel")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun unlabelContactEmails(@Body labelContactsBody: LabelContactsBody): Completable
+    fun unlabelContactEmailsCompletable(@Body labelContactsBody: LabelContactsBody): Completable
+
+    @PUT("contacts/emails/unlabel")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun unlabelContactEmails(@Body labelContactsBody: LabelContactsBody)
 }

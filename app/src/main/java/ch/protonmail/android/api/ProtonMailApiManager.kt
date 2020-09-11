@@ -219,7 +219,9 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun labelContacts(labelContactsBody: LabelContactsBody): Completable = api.labelContacts(labelContactsBody)
 
-    override fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable = api.unlabelContactEmails(labelContactsBody)
+    override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable = api.unlabelContactEmailsCompletable(labelContactsBody)
+
+    override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) = api.unlabelContactEmails(labelContactsBody)
 
     override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
 

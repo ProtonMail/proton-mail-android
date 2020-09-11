@@ -38,7 +38,7 @@ interface ContactApiSpec {
     fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse?
 
     @Throws(IOException::class)
-    fun fetchContactEmails(pageSize : Int) : List<ContactEmailsResponseV2?>
+    fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?>
 
     @Throws(IOException::class)
     fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>
@@ -64,5 +64,7 @@ interface ContactApiSpec {
     fun labelContacts(labelContactsBody: LabelContactsBody): Completable
 
     @Throws(IOException::class)
-    fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable
+    fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable
+
+    suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody)
 }
