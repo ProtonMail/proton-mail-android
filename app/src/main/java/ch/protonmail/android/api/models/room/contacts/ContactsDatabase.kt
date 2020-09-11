@@ -18,9 +18,14 @@
  */
 package ch.protonmail.android.api.models.room.contacts
 
-import androidx.lifecycle.LiveData
-import androidx.room.*
 import android.provider.BaseColumns
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ID
 import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_NAME

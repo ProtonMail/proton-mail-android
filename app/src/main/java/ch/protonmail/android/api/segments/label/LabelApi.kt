@@ -79,10 +79,12 @@ class LabelApi (private val service : LabelService) : BaseApi(), LabelApiSpec {
     }
 
     @Throws(IOException::class)
-    override fun deleteLabel(labelId: String): Single<ResponseBody> {
-        return service.deleteLabel(labelId).doOnError {
+    override fun deleteLabelSingle(labelId: String): Single<ResponseBody> {
+        return service.deleteLabelSingle(labelId).doOnError {
             ParseUtils.doOnError(it)
         }
     }
+
+    override suspend fun deleteLabel(labelId: String): ResponseBody= service.deleteLabel(labelId)
 
 }

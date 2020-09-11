@@ -19,7 +19,7 @@
 package ch.protonmail.android.contacts.groups
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import ch.protonmail.android.api.ProtonMailApi
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
@@ -41,9 +41,6 @@ import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
 
-
-/**
- * Created by kadrikj on 8/26/18. */
 class ContactGroupsViewModelTest {
 
     //region mocks and vars
@@ -53,6 +50,7 @@ class ContactGroupsViewModelTest {
     private val label4 = ContactLabel("d", "dd")
 
     private val jobManager = mockk<JobManager>(relaxed = true)
+    private val workManager = mockk<WorkManager>(relaxed = true)
     private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true)
     private val contactsDatabase = mockk<ContactsDatabase>(relaxed = true) {
         every { findContactGroupsObservable() } returns Flowable.just(listOf(label1, label2, label3))
@@ -75,7 +73,7 @@ class ContactGroupsViewModelTest {
     //region tests
     @Test
     fun testUpdateFromDbAndFromApi() {
-        val contactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
         val contactGroupsViewModel = ContactGroupsViewModel(contactGroupsRepository, userManager)
 
         every { protonMailApi.fetchContactGroupsAsObservable() } returns Observable.just(listOf(label1, label2, label3, label4))
@@ -87,7 +85,7 @@ class ContactGroupsViewModelTest {
 
     @Test
     fun testUpdateFromDbOnly() {
-        val contactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
         val contactGroupsViewModel = ContactGroupsViewModel(contactGroupsRepository, userManager)
 
         every { protonMailApi.fetchContactGroupsAsObservable() } returns Observable.error(IOException(":("))

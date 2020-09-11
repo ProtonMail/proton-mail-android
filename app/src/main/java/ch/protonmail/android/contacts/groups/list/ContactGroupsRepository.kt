@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -25,7 +26,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.jobs.DeleteLabelJob
+import ch.protonmail.android.worker.DeleteLabelWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -36,6 +37,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ContactGroupsRepository @Inject constructor(
+    val workManager: WorkManager,
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider
@@ -98,21 +100,21 @@ class ContactGroupsRepository @Inject constructor(
     }
 
     fun delete(contactLabel: ContactLabel): Completable {
-        return api.deleteLabel(contactLabel.ID)
-                .doOnSuccess {
-                    it?.let {
-                        if (it.code == Constants.RESPONSE_CODE_OK) {
-                            contactsDatabase.deleteContactGroup(contactLabel)
-                        } else {
-                            throw ApiException(it, it.error)
-                        }
+        return api.deleteLabelSingle(contactLabel.ID)
+            .doOnSuccess {
+                it?.let {
+                    if (it.code == Constants.RESPONSE_CODE_OK) {
+                        contactsDatabase.deleteContactGroup(contactLabel)
+                    } else {
+                        throw ApiException(it, it.error)
                     }
                 }
-                .doOnError {
-                    if (it is IOException) {
-                        jobManager.addJobInBackground(DeleteLabelJob(contactLabel.ID))
-                    }
-                }.toCompletable()
+            }
+            .doOnError {
+                if (it is IOException) {
+                    DeleteLabelWorker.Enqueuer(workManager).enqueue(contactLabel.ID)
+                }
+            }.toCompletable()
     }
 
     fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {

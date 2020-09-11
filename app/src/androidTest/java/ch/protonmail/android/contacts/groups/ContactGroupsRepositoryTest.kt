@@ -19,7 +19,7 @@
 package ch.protonmail.android.contacts.groups
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import ch.protonmail.android.api.ProtonMailApi
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
@@ -49,6 +49,7 @@ class ContactGroupsRepositoryTest {
     private val label4 = ContactLabel("d", "dd")
 
     private val jobManager = mockk<JobManager>(relaxed = true)
+    private val workManager = mockk<WorkManager>(relaxed = true)
     private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true) {
         every { fetchContactGroupsAsObservable() } answers { Observable.just(listOf(label1, label2, label3, label4)).delay(500, TimeUnit.MILLISECONDS) }
     }
@@ -66,7 +67,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun testDbAndAPIEventsEmitted() {
-        val contactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
 
         val testObserver: TestObserver<List<ContactLabel>> = contactGroupsRepository.getContactGroups().test()
         testObserver.awaitTerminalEvent()
@@ -76,7 +77,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun testDbEventBeforeAPIEvent() {
-        val contactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
 
         val testObserver = contactGroupsRepository.getContactGroups().test()
         testObserver.assertValueCount(1)
@@ -90,7 +91,7 @@ class ContactGroupsRepositoryTest {
     @Test
     fun testApiErrorEvent() {
         every { protonMailApi.fetchContactGroupsAsObservable() } returns Observable.error(IOException(":("))
-        val contactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
 
         val testObserver = contactGroupsRepository.getContactGroups().test()
         rule2.schedulerTest.triggerActions()

@@ -29,9 +29,12 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.*
+import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.CREATE
+import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UNDEFINED
+import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UPDATE
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
@@ -121,8 +124,9 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** [LabelsManagerViewModel.Factory] for [LabelsManagerViewModel] */
     private val viewModelFactory by lazy {
-        val messagesDatabase = MessagesDatabaseFactory.getInstance( applicationContext ).getDatabase()
-        LabelsManagerViewModel.Factory( mJobManager, messagesDatabase, type ) // TODO: use DI for create Factory with variable param ( type )
+        val messagesDatabase = MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
+        val workManager = WorkManager.getInstance(applicationContext) // THis should be injected after refactor
+        LabelsManagerViewModel.Factory(workManager, mJobManager, messagesDatabase, type) // TODO: use DI for create Factory with variable param ( type )
     }
 
     /** A Lazy instance of [LabelsManagerViewModel] */
@@ -385,6 +389,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     @Subscribe
     @Suppress("unused") // EventBus
+    // TODO: Manage it with updates from DeleteLabelWorker
     fun onLabelDeletedEvent( event: LabelDeletedEvent ) {
         val success = event.status == Status.SUCCESS
         val message = when ( type ) {

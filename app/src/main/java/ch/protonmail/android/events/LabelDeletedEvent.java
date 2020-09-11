@@ -21,6 +21,7 @@ package ch.protonmail.android.events;
 /**
  * Created by sunny on 7/20/15.
  */
+@Deprecated //"Removed when created DeleteLabelWorker"
 public class LabelDeletedEvent {
 
     public final Status status;

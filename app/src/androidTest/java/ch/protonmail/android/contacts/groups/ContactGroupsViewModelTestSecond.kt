@@ -21,7 +21,7 @@ package ch.protonmail.android.contacts.groups
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
-import ch.protonmail.android.api.ProtonMailApi
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
@@ -42,8 +42,6 @@ import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
 
-/**
- * Created by kadrikj on 8/27/18. */
 class ContactGroupsViewModelTestSecond {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -60,6 +58,7 @@ class ContactGroupsViewModelTestSecond {
         every { fetchContactGroupsAsObservable() } returns Observable.error(IOException(":("))
     }
     private val jobManager = mockk<JobManager>(relaxed = true)
+    private val workManager = mockk<WorkManager>(relaxed = true)
     private val userManager = mockk<UserManager>(relaxed = true)
     private val databaseProvider = mockk<DatabaseProvider>(relaxed = true) {
         every { provideContactsDao(any()) } returns databaseFactory.getDatabase()
@@ -83,7 +82,7 @@ class ContactGroupsViewModelTestSecond {
     fun dbUpdatesLiveData() {
         databaseFactory.getDatabase().saveAllContactGroups(label1, label2, label3)
 
-        val contactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
         val contactGroupsViewModel = ContactGroupsViewModel(contactGroupsRepository, userManager)
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()
         val errorLiveData = contactGroupsViewModel.contactGroupsError.testObserver()

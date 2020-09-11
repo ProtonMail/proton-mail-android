@@ -247,7 +247,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun updateLabelCompletable(labelId: String, label: LabelBody): Completable = api.updateLabelCompletable(labelId, label)
 
-    override fun deleteLabel(labelId: String): Single<ResponseBody> = api.deleteLabel(labelId)
+    override fun deleteLabelSingle(labelId: String): Single<ResponseBody> = api.deleteLabelSingle(labelId)
+
+    override suspend fun deleteLabel(labelId: String): ResponseBody = api.deleteLabel(labelId)
 
     override fun fetchMessagesCount(retrofitTag: RetrofitTag): UnreadTotalMessagesResponse = api.fetchMessagesCount(retrofitTag)
 

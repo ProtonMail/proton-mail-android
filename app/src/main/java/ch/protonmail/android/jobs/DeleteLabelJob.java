@@ -27,13 +27,11 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.events.LabelDeletedEvent;
-import ch.protonmail.android.events.Status;
-import ch.protonmail.android.utils.AppUtil;
 
 /**
  * Created by dkadrikj on 28.8.15.
  */
+@Deprecated // Replaced with DeleteLabelWorker
 public class DeleteLabelJob extends ProtonMailEndlessJob {
 
     private final String mLabelId;
@@ -59,12 +57,12 @@ public class DeleteLabelJob extends ProtonMailEndlessJob {
 
     @Override
     public void onRun() throws Throwable {
-        ResponseBody responseBody = getApi().deleteLabel(mLabelId).blockingGet();
+        ResponseBody responseBody = getApi().deleteLabelSingle(mLabelId).blockingGet();
 
-        if (responseBody.getCode() == Constants.RESPONSE_CODE_OK) {
-            AppUtil.postEventOnUi(new LabelDeletedEvent(Status.SUCCESS));
-        } else {
-            AppUtil.postEventOnUi(new LabelDeletedEvent(Status.FAILED));
-        }
+//        if (responseBody.getCode() == Constants.RESPONSE_CODE_OK) {
+//            AppUtil.postEventOnUi(new LabelDeletedEvent(Status.SUCCESS));
+//        } else {
+//            AppUtil.postEventOnUi(new LabelDeletedEvent(Status.FAILED));
+//        }
     }
 }

@@ -32,7 +32,14 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Tag
 
 // region constants
 private const val PATH_LABEL_ID = "label_id"
@@ -69,7 +76,10 @@ interface LabelService {
 
     @DELETE("labels/{$PATH_LABEL_ID}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun deleteLabel(@Path(PATH_LABEL_ID) labelId: String): Single<ResponseBody>
+    fun deleteLabelSingle(@Path(PATH_LABEL_ID) labelId: String): Single<ResponseBody>
 
+    @DELETE("labels/{$PATH_LABEL_ID}")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun deleteLabel(@Path(PATH_LABEL_ID) labelId: String): ResponseBody
 
 }

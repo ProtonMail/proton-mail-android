@@ -52,10 +52,10 @@ internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
 
     private val viewModel by lazy {
         LabelsManagerViewModel(
-                jobManager = mockk(),
-                messagesDatabase = messagesDatabase,
-                type = LabelUiModel.Type.LABELS,
-                labelMapper = LabelUiModelMapper(isLabelEditable = false)
+            jobManager = mockk(),
+            messagesDatabase = messagesDatabase,
+            type = LabelUiModel.Type.LABELS,
+            labelMapper = LabelUiModelMapper(isLabelEditable = false),
         )
     }
 

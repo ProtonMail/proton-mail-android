@@ -28,13 +28,14 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
+import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.jobs.DeleteLabelJob
 import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
+import ch.protonmail.android.worker.DeleteLabelWorker
 import com.birbit.android.jobqueue.JobManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
@@ -47,10 +48,11 @@ import studio.forface.viewstatestore.paging.ViewStateStoreScope
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
 internal class LabelsManagerViewModel(
-        private val jobManager: JobManager,
-        messagesDatabase: MessagesDatabase,
-        private val type: LabelUiModel.Type,
-        private val labelMapper: LabelUiModelMapper
+    private val workManager: WorkManager,
+    private val jobManager: JobManager,
+    messagesDatabase: MessagesDatabase,
+    private val type: LabelUiModel.Type,
+    private val labelMapper: LabelUiModelMapper
 ): ViewModel(), ViewStateStoreScope {
 
     /** Triggered when a selection has changed */
@@ -97,8 +99,9 @@ internal class LabelsManagerViewModel(
     /** Delete all Labels which id is in [selectedLabelIds] */
     fun deleteSelectedLabels() {
         selectedLabelIds
-                .mapValue { DeleteLabelJob( it ) }
-                .forEach( jobManager::addJobInBackground )
+            .mapValue { id ->
+                DeleteLabelWorker.Enqueuer(workManager).enqueue(id)
+            }
         selectedLabelIds.clear()
     }
 
@@ -144,16 +147,17 @@ internal class LabelsManagerViewModel(
 
     /** [ViewModelProvider.NewInstanceFactory] for [LabelsManagerViewModel] */
     class Factory(
-            private val jobManager: JobManager,
-            private val messagesDatabase: MessagesDatabase,
-            private val type: LabelUiModel.Type,
-            private val labelMapper: LabelUiModelMapper = LabelUiModelMapper(isLabelEditable = true)
+        private val workManager: WorkManager,
+        private val jobManager: JobManager,
+        private val messagesDatabase: MessagesDatabase,
+        private val type: LabelUiModel.Type,
+        private val labelMapper: LabelUiModelMapper = LabelUiModelMapper(isLabelEditable = true)
     ) : ViewModelProvider.NewInstanceFactory() {
 
         /** @return new instance of [LabelsManagerViewModel] casted as T */
         @Suppress("UNCHECKED_CAST") // LabelsManagerViewModel is T, since T is ViewModel
         override fun <T : ViewModel?> create( modelClass: Class<T> ): T =
-                LabelsManagerViewModel( jobManager, messagesDatabase, type, labelMapper ) as T
+                LabelsManagerViewModel(workManager, jobManager, messagesDatabase, type, labelMapper) as T
     }
 }
 

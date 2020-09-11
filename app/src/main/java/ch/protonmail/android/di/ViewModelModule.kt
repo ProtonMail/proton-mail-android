@@ -21,6 +21,7 @@
 package ch.protonmail.android.di
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
