@@ -42,7 +42,9 @@ setupKotlin(
     // Enables unsigned types, like `UInt`, `ULong`, etc
     "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
     // Enables experimental Coroutines from coroutines-test artifact, like `runBlockingTest`
-    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+    // Enables experimental kotlin.time
+    "-Xopt-in=kotlin.time.ExperimentalTime"
 )
 setupDetekt { "tokenAutoComplete" !in it.name }
 
