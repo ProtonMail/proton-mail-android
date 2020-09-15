@@ -39,12 +39,12 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-internal const val KEY_INPUT_DATA_LABEL_ID = "KEY_INPUT_DATA_LABEL_ID"
-internal const val KEY_WORKER_ERROR_DESCRIPTION = "KEY_WORKER_ERROR_DESCRIPTION"
+internal const val KEY_INPUT_DATA_LABEL_ID = "KeyInputDataLabelId"
+internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 private const val WORKER_TAG = "DeleteLabelWorkerTag"
 
 /**
- * Work Manager Worker responsible for contact groups members removal.
+ * Work Manager Worker responsible for labels removal.
  *
  *  InputData has to contain non-null values for:
  *  labelId

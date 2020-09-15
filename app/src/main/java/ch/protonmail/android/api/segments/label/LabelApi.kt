@@ -85,6 +85,6 @@ class LabelApi (private val service : LabelService) : BaseApi(), LabelApiSpec {
         }
     }
 
-    override suspend fun deleteLabel(labelId: String): ResponseBody= service.deleteLabel(labelId)
+    override suspend fun deleteLabel(labelId: String): ResponseBody = service.deleteLabel(labelId)
 
 }

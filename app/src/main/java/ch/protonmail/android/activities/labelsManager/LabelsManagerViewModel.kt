@@ -28,6 +28,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
@@ -48,12 +49,14 @@ import studio.forface.viewstatestore.paging.ViewStateStoreScope
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
 internal class LabelsManagerViewModel(
-    private val workManager: WorkManager,
+    workManager: WorkManager,
     private val jobManager: JobManager,
     messagesDatabase: MessagesDatabase,
     private val type: LabelUiModel.Type,
     private val labelMapper: LabelUiModelMapper
-): ViewModel(), ViewStateStoreScope {
+) : ViewModel(), ViewStateStoreScope {
+
+    private val deleteWorkEnqueuer = DeleteLabelWorker.Enqueuer(workManager)
 
     /** Triggered when a selection has changed */
     private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
@@ -61,11 +64,20 @@ internal class LabelsManagerViewModel(
     /** Triggered when [selectedLabelIds] has changed */
     val hasSelectedLabels = ViewStateStore.from(selectedLabelIds.map { it.isNotEmpty() }).lock
 
+    val hasSuccessfullyDeletedMessages: LiveData<List<Boolean>> =
+        deleteWorkEnqueuer.getWorkStatusLiveData()
+            .map { mapStateToBoolean(it) }
+
+    private fun mapStateToBoolean(infoList: List<WorkInfo>): List<Boolean> =
+        infoList.map { it.state }
+            .filter { it.isFinished }
+            .map { it == WorkInfo.State.SUCCEEDED }
+
     /**
      * [LiveData] of [PagedList] of [LabelUiModel]
      * Triggered when a Labels are updated in DB
      */
-    private val labelsSource = when(type) {
+    private val labelsSource = when (type) {
         LabelUiModel.Type.LABELS -> messagesDatabase.getAllLabelsNotExclusivePaged()
         LabelUiModel.Type.FOLDERS -> messagesDatabase.getAllLabelsExclusivePaged()
     }
@@ -76,18 +88,19 @@ internal class LabelsManagerViewModel(
      * changed for one of them
      */
     val labels = ViewStateStore.from(
-            selectedLabelIds.switchMap { selectedList ->
-                labelsSource.map(labelMapper) {
-                    it.toUiModel().copy(isChecked = it.id in selectedList)
-                }.toLiveData(20)
-            }
+        selectedLabelIds.switchMap { selectedList ->
+            labelsSource.map(labelMapper) {
+                it.toUiModel().copy(isChecked = it.id in selectedList)
+            }.toLiveData(20)
+        }
     ).lock
 
     /** A reference to a [LabelEditor] for edit a [Label] */
     private var labelEditor: LabelEditor? = null
 
     /** [ColorInt] that hold the color for a new Label */
-    @ColorInt private var tempLabelColor: Int = Color.WHITE
+    @ColorInt
+    private var tempLabelColor: Int = Color.WHITE
 
     /** [CharSequence] that hold the name for a new Label */
     private var tempLabelName: CharSequence = ""
@@ -98,21 +111,20 @@ internal class LabelsManagerViewModel(
 
     /** Delete all Labels which id is in [selectedLabelIds] */
     fun deleteSelectedLabels() {
-        selectedLabelIds
-            .mapValue { id ->
-                DeleteLabelWorker.Enqueuer(workManager).enqueue(id)
-            }
+        selectedLabelIds.mapValue { id ->
+            deleteWorkEnqueuer.enqueue(id)
+        }
         selectedLabelIds.clear()
     }
 
     /** Initialize the editing of a Label */
-    fun onLabelEdit( label: LabelUiModel ) {
-        labelEditor = LabelEditor( label )
+    fun onLabelEdit(label: LabelUiModel) {
+        labelEditor = LabelEditor(label)
     }
 
     /** Update the selected state of the Label with the given [labelId] */
-    fun onLabelSelected( labelId: String, isChecked: Boolean ) {
-        if ( isChecked ) selectedLabelIds += labelId
+    fun onLabelSelected(labelId: String, isChecked: Boolean) {
+        if (isChecked) selectedLabelIds += labelId
         else selectedLabelIds -= labelId
     }
 
@@ -124,24 +136,26 @@ internal class LabelsManagerViewModel(
     /** Save the editing label */
     fun saveLabel() {
 
-        val job = if ( labelEditor != null ) {
-            with ( labelEditor!!.buildParams() ) {
-                PostLabelJob( labelName, color, display, exclusive, update, labelId )
+        val job = if (labelEditor != null) {
+            with(labelEditor!!.buildParams()) {
+                PostLabelJob(labelName, color, display, exclusive, update, labelId)
             }
 
-        } else PostLabelJob( tempLabelName.toString(), tempLabelColor.toColorHex(),
-                0, type.toExclusive(), false, null )
+        } else PostLabelJob(
+            tempLabelName.toString(), tempLabelColor.toColorHex(),
+            0, type.toExclusive(), false, null
+        )
 
-        jobManager.addJobInBackground( job ) { /* TODO handle callback */ }
+        jobManager.addJobInBackground(job) { /* TODO handle callback */ }
     }
 
     /** Set a [ColorInt] for the current editing Label */
-    fun setLabelColor( @ColorInt color: Int ) {
+    fun setLabelColor(@ColorInt color: Int) {
         labelEditor?.let { it.color = color } ?: run { tempLabelColor = color }
     }
 
     /** Set a [CharSequence] name for a new Label or for the currently editing Label */
-    fun setLabelName( name: CharSequence ) {
+    fun setLabelName(name: CharSequence) {
         labelEditor?.let { it.name = name } ?: run { tempLabelName = name }
     }
 
@@ -156,48 +170,49 @@ internal class LabelsManagerViewModel(
 
         /** @return new instance of [LabelsManagerViewModel] casted as T */
         @Suppress("UNCHECKED_CAST") // LabelsManagerViewModel is T, since T is ViewModel
-        override fun <T : ViewModel?> create( modelClass: Class<T> ): T =
-                LabelsManagerViewModel(workManager, jobManager, messagesDatabase, type, labelMapper) as T
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+            LabelsManagerViewModel(workManager, jobManager, messagesDatabase, type, labelMapper) as T
     }
 }
 
 /** A class that hold editing progress of a Label */
-private class LabelEditor( private val initialLabel: LabelUiModel ) {
+private class LabelEditor(private val initialLabel: LabelUiModel) {
 
     /** [ColorInt] color for the current editing Label */
-    @ColorInt var color: Int = initialLabel.color
+    @ColorInt
+    var color: Int = initialLabel.color
 
     /** [CharSequence] name for the current editing Label */
     var name: CharSequence = initialLabel.name
 
     /** @return [SaveParams] */
-    fun buildParams() : SaveParams {
+    fun buildParams(): SaveParams {
         return SaveParams(
-                labelName =     name.toString(),
-                color =         color.toColorHex(),
-                display =       initialLabel.display,
-                exclusive =     initialLabel.type.toExclusive(),
-                update =        true,
-                labelId =       initialLabel.labelId
+            labelName = name.toString(),
+            color = color.toColorHex(),
+            display = initialLabel.display,
+            exclusive = initialLabel.type.toExclusive(),
+            update = true,
+            labelId = initialLabel.labelId
         )
     }
 
     /** A class holding params for save the Label */
     data class SaveParams(
-            val labelName: String,
-            val color: String,
-            val display: Int,
-            val exclusive: Int,
-            val update: Boolean,
-            val labelId: String
+        val labelName: String,
+        val color: String,
+        val display: Int,
+        val exclusive: Int,
+        val update: Boolean,
+        val labelId: String
     )
 }
 
 /** @return [String] color hex from a [ColorInt] */
-private fun Int.toColorHex() = String.format( "#%06X", 0xFFFFFF and this )
+private fun Int.toColorHex() = String.format("#%06X", 0xFFFFFF and this)
 
 /** @return [Boolean] exclusive from a [LabelUiModel.Type] */
-private fun LabelUiModel.Type.toExclusive() = if ( this == LabelUiModel.Type.FOLDERS ) 1 else 0
+private fun LabelUiModel.Type.toExclusive() = if (this == LabelUiModel.Type.FOLDERS) 1 else 0
 
 // region Selected Labels extensions
 private typealias MutableLiveStringSet = MutableLiveData<MutableSet<String>>
