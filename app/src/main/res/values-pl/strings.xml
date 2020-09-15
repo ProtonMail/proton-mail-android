@@ -314,7 +314,7 @@ Nie strać tego hasła - nie możemy go odzyskać. Jeśli je zgubisz, nie będzi
     <string name="username_is_too_long">Maksymalna długość nazwy użytkownika to %d znaków!</string>
     <string name="congratulation">Gratulacje!</string>
     <string name="new_account_ready">Twoje nowe bezpieczne konto\ne-mail jest gotowe.</string>
-    <string name="optional_email_note">Opcjonalny adres odzyskiwania pozwoli Ci
+    <string name="optional_email_note">Opcjonalny adres pomocniczy pozwoli Ci
 zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="optional_display_name">Po wysłaniu wiadomości ta nazwa
 pojawi się w polu nadawcy.</string>
@@ -491,7 +491,7 @@ ludziom na całym świecie.</string>
     <string name="switch_billing_monthly">Zmień na plan miesięczny</string>
     <string name="switch_billing_yearly">Zmień na plan roczny</string>
     <string name="warning">Ostrzeżenie</string>
-    <string name="empty_recovery_email_question">Ostrzeżenie: Nie dodałeś adresu odzyskiwania. Jeśli zapomnisz hasła, to nie odzyskasz już swojego konta. Czy chcesz przejść dalej bez wpisywania tego adresu?</string>
+    <string name="empty_recovery_email_question">Ostrzeżenie: Nie dodałeś adresu pomocniczego. Jeśli zapomnisz hasła, to nie odzyskasz już swojego konta. Czy chcesz przejść dalej bez wpisywania tego adresu?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Data ważności %s</string>
     <string name="payment_methods">Metody płatności</string>
@@ -507,7 +507,7 @@ ludziom na całym świecie.</string>
     <string name="available_addresses">Dostępne adresy</string>
     <string name="inactive_addresses">Nieaktywne adresy</string>
     <string name="not_set">Nie ustawiono</string>
-    <string name="edit_notification_email">Edytuj adres odzyskiwania</string>
+    <string name="edit_notification_email">Edytuj adres pomocniczy</string>
     <string name="available_swipe_actions">Dostępne działania</string>
     <string name="no_available_addresses">Nie posiadasz dostępnych adresów</string>
     <string name="no_inactive_addresses">Nie posiadasz nieaktywnych adresów</string>
@@ -873,7 +873,7 @@ na dostęp do pamięci wewnętrznej.</string>
     <string name="plan_and_user">Plan</string>
     <string name="payment_method">Metoda płatności</string>
     <string name="password_manager">Menedżer haseł</string>
-    <string name="recovery_email">Adres odzyskiwania</string>
+    <string name="recovery_email">Adres pomocniczy</string>
     <string name="storage">Rozmiar skrzynki pocztowej</string>
     <string name="storage_used">%1$s / %2$s</string>
     <string name="addresses">Adresy</string>

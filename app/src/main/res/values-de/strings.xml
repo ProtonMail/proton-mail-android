@@ -899,11 +899,11 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="swipe_action_left">Nach links wischen</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Wischgeste wählen</string>
-    <string name="swipe_action_trash">Nachricht in den Papierkorb verschoben</string>
-    <string name="swipe_action_trash_short">In Papierkorb verschoben</string>
+    <string name="swipe_action_trash">Nachricht in den Papierkorb verschieben</string>
+    <string name="swipe_action_trash_short">In Papierkorb verschieben</string>
     <string name="swipe_action_star">Kennzeichnung der Nachricht aktualisiert</string>
     <string name="swipe_action_spam">Nachricht als Spam gekennzeichnet</string>
-    <string name="swipe_action_archive">Nachricht archiviert</string>
+    <string name="swipe_action_archive">Archivieren</string>
     <string name="swipe_action_mark_read">Nachricht als gelesen gekennzeichnet</string>
     <plurals name="action_move_to_trash">
         <item quantity="one">Nachricht in den Papierkorb verschoben</item>
@@ -914,8 +914,8 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
         <item quantity="other">Nachrichten als Spam gekennzeichnet</item>
     </plurals>
     <plurals name="action_move_to_archive">
-        <item quantity="one">Nachricht archiviert</item>
-        <item quantity="other">Nachrichten archiviert</item>
+        <item quantity="one">Nachricht archivieren</item>
+        <item quantity="other">Nachrichten archivieren</item>
     </plurals>
     <!-- endregion -->
     <string name="local_storage">Lokale Speicherbegrenzung</string>
