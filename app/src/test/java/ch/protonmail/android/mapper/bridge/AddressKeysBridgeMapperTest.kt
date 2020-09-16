@@ -20,7 +20,7 @@ package ch.protonmail.android.mapper.bridge
 
 import assert4k.assert
 import assert4k.equals
-import assert4k.invoke
+import assert4k.invoke as fix
 import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
@@ -68,7 +68,7 @@ internal class AddressKeysBridgeMapperTest {
 
         assert that newKeys * {
             +primaryKey?.id?.s equals "4"
-            +keys.size() equals 10
+            +keys.size.fix() equals 10
         }
     }
 
@@ -80,7 +80,7 @@ internal class AddressKeysBridgeMapperTest {
 
         assert that newKeys * {
             +primaryKey?.id?.s equals "1"
-            +keys.size() equals 10
+            +keys.size.fix() equals 10
         }
     }
 

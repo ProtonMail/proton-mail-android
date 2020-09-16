@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -26,10 +26,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.PublicKeyBody;
 import ch.protonmail.android.api.models.PublicKeyResponse;
-import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.enumerations.KeyFlag;
 import ch.protonmail.android.api.models.room.contacts.ContactEmail;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
@@ -37,12 +35,14 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.domain.entity.user.Address;
+import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.events.FetchVerificationKeysEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.crypto.Crypto;
 import ch.protonmail.android.utils.crypto.KeyInformation;
-import ch.protonmail.android.utils.crypto.UserCrypto;
 
 public class FetchVerificationKeysJob extends ProtonMailBaseJob {
 
@@ -63,12 +63,12 @@ public class FetchVerificationKeysJob extends ProtonMailBaseJob {
     public void onRun() throws Throwable {
         ContactsDatabase contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
-        for (Address address : mUserManager.getUser().getAddresses()) {
-            if (address.getEmail().equals(email)) {
+        for (Address address : mUserManager.getUser().toNewUser().getAddresses().sorted()) {
+            if (address.getEmail().getS().equals(email)) {
                 List<KeyInformation> publicKeys = new ArrayList<>();
-                for (Keys key : address.getKeys()) {
-                    KeyInformation keyInfo = crypto.deriveKeyInfo(crypto.getArmoredPublicKey(key));
-                    if (!KeyFlag.fromInteger(key.getFlags()).contains(KeyFlag.VERIFICATION_ENABLED)) {
+                for (AddressKey key : address.getKeys().getKeys()) {
+                    KeyInformation keyInfo = crypto.deriveKeyInfo(crypto.buildArmoredPublicKey(key.getPrivateKey()));
+                    if (!KeyFlag.fromInteger(key.buildBackEndFlags()).contains(KeyFlag.VERIFICATION_ENABLED)) {
                         keyInfo.flagAsCompromised();
                     }
                     publicKeys.add(keyInfo);

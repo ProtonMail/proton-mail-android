@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -36,7 +36,6 @@ import java.util.Set;
 
 import ch.protonmail.android.api.interceptors.RetrofitTag;
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.NewMessage;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
@@ -52,11 +51,12 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.crypto.AddressCrypto;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.domain.entity.user.AddressKeys;
 import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
-import ch.protonmail.android.utils.crypto.AddressCrypto;
-import ch.protonmail.android.utils.crypto.Crypto;
 
 public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
 
@@ -174,8 +174,8 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
     private void updateAttachmentKeyPackets(List<String> attachmentList, NewMessage newMessage, String oldSenderAddress, Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
             AddressCrypto oldCrypto = Crypto.forAddress(mUserManager, mUsername, oldSenderAddress);
-            List<Keys> newAddressKeys = newSenderAddress.getKeys();
-            String newPublicKey = oldCrypto.getArmoredPublicKey(newAddressKeys.get(0));
+            AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
+            String newPublicKey = oldCrypto.buildArmoredPublicKey(newAddressKeys.getPrimaryKey().getPrivateKey());
             for (String attachmentId : attachmentList) {
                 Attachment attachment = messageDetailsRepository.findAttachmentById(attachmentId);
                 String AttachmentID = attachment.getAttachmentId();

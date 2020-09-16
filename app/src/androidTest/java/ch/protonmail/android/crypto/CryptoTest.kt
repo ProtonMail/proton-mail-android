@@ -1,22 +1,22 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android
+package ch.protonmail.android.crypto
 
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
@@ -24,9 +24,12 @@ import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.crypto.Crypto
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
+import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
+import ch.protonmail.android.mapper.bridge.AddressesBridgeMapper
+import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
 import ch.protonmail.android.utils.crypto.OpenPGP
-import ch.protonmail.android.utils.crypto.TextCiphertext
 import com.proton.gopenpgp.armor.Armor
 import io.mockk.every
 import io.mockk.mockk
@@ -36,14 +39,14 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import javax.mail.internet.InternetHeaders
+import ch.protonmail.android.mapper.map
+import me.proton.core.domain.arch.map
+import me.proton.core.util.kotlin.invoke
 
 @LargeTest
 internal class CryptoTest {
 
     private val userManagerMock: UserManager = mockk()
-    private val oneKeyUserMock: User = mockk()
-    private val manyAddressKeysUserMock: User = mockk()
-
     private val openPgp = OpenPGP()
 
     //region One Address Key Setup
@@ -727,6 +730,42 @@ internal class CryptoTest {
     )
     //endregion
 
+    private val addressKeyMapper = AddressKeyBridgeMapper()
+    private val addressKeysMapper = AddressKeysBridgeMapper(addressKeyMapper)
+    private val userKeyMapper = UserKeyBridgeMapper()
+
+    private val oneKeyUserMock: User = mockk {
+        every { toNewUser() } returns mockk {
+            every { addresses } returns mockk {
+                every { findBy(Id(oneAddressKeyAddressId)) } answers { addresses[1] }
+                every { addresses } returns mapOf(1 to mockk {
+                    every { keys } returns mockk {
+                        every { keys } returns oneAddressKeyAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                    }
+                })
+            }
+            every { keys } returns mockk {
+                every { keys } returns oneAddressKeyUserKeys.map(userKeyMapper) { it.toNewModel() }
+            }
+        }
+    }
+    private val manyAddressKeysUserMock: User = mockk {
+        every { toNewUser() } returns mockk {
+            every { addresses } returns mockk {
+                every { findBy(Id(manyAddressKeysAddressId)) } answers { addresses[1] }
+                every { addresses } returns mapOf(1 to mockk {
+                    every { keys } returns mockk {
+                        every { primaryKey } returns addressKeysMapper { manyAddressKeysAddressKeys.toNewModel() }.primaryKey
+                        every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                    }
+                })
+            }
+            every { keys } returns mockk {
+                every { keys } returns manyAddressKeysUserKeys.map(userKeyMapper) { it.toNewModel() }
+            }
+        }
+    }
+
     init {
         mockkStatic(TextUtils::class)
         every { TextUtils.isEmpty(oneAddressKeyUsername) } returns false
@@ -782,7 +821,7 @@ internal class CryptoTest {
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
         val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
-        val result = addressCrypto.decrypt(TextCiphertext.fromArmor(encryptedMessage)).decryptedData
+        val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
     }
@@ -812,7 +851,7 @@ internal class CryptoTest {
         val decrypted = userCrypto.decrypt(encryptedAndSigned)
 
         assert(decrypted.hasSignature())
-        assert(decrypted.isSignatureValid())
+        assert(decrypted.isSignatureValid)
         assertEquals(message, decrypted.decryptedData)
     }
 
@@ -847,7 +886,7 @@ internal class CryptoTest {
 
         val addressCrypto =
             Crypto.forAddress(userManagerMock, manyAddressKeysUsername, manyAddressKeysAddressId)
-        val result = addressCrypto.decrypt(TextCiphertext.fromArmor(encryptedMessage)).decryptedData
+        val result = addressCrypto.decrypt(CipherText(encryptedMessage)).decryptedData
 
         assertEquals(expected, result)
     }
@@ -892,7 +931,7 @@ internal class CryptoTest {
         val expected = "Test PGP/MIME Message\r\n\r\n\r\n"
 
         val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
-        val decryptor = addressCrypto.decryptMime(TextCiphertext.fromArmor(encryptedMessage))
+        val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String
         decryptor.onBody = { eventBody: String, _ ->
@@ -1617,7 +1656,7 @@ internal class CryptoTest {
         )
 
         val addressCrypto = Crypto.forAddress(userManagerMock, oneAddressKeyUsername, oneAddressKeyAddressId)
-        val decryptor = addressCrypto.decryptMime(TextCiphertext.fromArmor(encryptedMessage))
+        val decryptor = addressCrypto.decryptMime(CipherText(encryptedMessage))
 
         lateinit var resultBody: String
         decryptor.onBody = { eventBody: String, _ ->

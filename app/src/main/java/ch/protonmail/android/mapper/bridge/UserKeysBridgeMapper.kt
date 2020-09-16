@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -27,6 +27,7 @@ import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.domain.entity.user.UserKeys
 import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.invoke
+import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 import ch.protonmail.android.api.models.Keys as OldKey
 
@@ -60,6 +61,8 @@ class UserKeyBridgeMapper @Inject constructor() : BridgeMapper<OldKey, UserKey> 
         id = Id(id),
         version = 4u, // TODO not implemented on old Keys
         privateKey = PgpField.PrivateKey(NotBlankString(privateKey)),
-        token = PgpField.Message(NotBlankString(token))
+        token = getToken(token)
     )
+
+    private fun getToken(token: String?) = token?.takeIfNotBlank()?.let { PgpField.Message(NotBlankString(it)) }
 }

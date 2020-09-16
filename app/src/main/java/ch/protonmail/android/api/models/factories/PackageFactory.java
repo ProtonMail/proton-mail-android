@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -45,11 +45,11 @@ import ch.protonmail.android.api.models.messages.send.MessageSendKey;
 import ch.protonmail.android.api.models.messages.send.MessageSendPackage;
 import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
+import ch.protonmail.android.crypto.AddressCrypto;
+import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.MIME.MIMEBuilder;
-import ch.protonmail.android.utils.crypto.AddressCrypto;
 import ch.protonmail.android.utils.crypto.EOToken;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
 import kotlin.text.Charsets;
 
 public class PackageFactory {
@@ -105,11 +105,11 @@ public class PackageFactory {
         for (Attachment attachment : message.getAttachments()) {
             String attachmentID = attachment.getAttachmentId();
             byte[] keyPackage = Base64.decode(attachment.getKeyPackets(), Base64.DEFAULT);
-            byte[] sessionKey = crypto.decryptKeyPacketWithMessageId(keyPackage, message.getAddressID()); // TODO temporary debug log
+            byte[] sessionKey = crypto.decryptKeyPacket(keyPackage);
             attachmentKeys.put(attachmentID, new MessageSendKey(crypto.getSessionKey(keyPackage).getAlgo(), sessionKey));
         }
 
-        TextCiphertext encPackage = generateEncryptedBody(message, mime);
+        CipherText encPackage = generateEncryptedBody(message, mime);
         byte[] keyPackage = encPackage.getKeyPacket();
         byte[] sessionKey = crypto.decryptKeyPacket(keyPackage);
 
@@ -119,10 +119,10 @@ public class PackageFactory {
                 attachmentKeys);
     }
 
-    private TextCiphertext generateEncryptedBody(Message message, MIMEType mime) throws Exception {
+    private CipherText generateEncryptedBody(Message message, MIMEType mime) throws Exception {
         MIMEType messageMime = MIMEType.fromString(message.getMimeType());
         if (messageMime == mime) {
-            return TextCiphertext.fromArmor(message.getMessageBody());
+            return new CipherText(message.getMessageBody());
         }
         if (mime == MIMEType.MIME) {
             return generateEncryptedMIME(message);
@@ -131,10 +131,10 @@ public class PackageFactory {
             return generatePlaintextBody(message);
         }
         // Should not happen
-        return TextCiphertext.fromArmor(message.getMessageBody());
+        return new CipherText(message.getMessageBody());
     }
 
-    private TextCiphertext generateEncryptedMIME(Message message) throws Exception {
+    private CipherText generateEncryptedMIME(Message message) throws Exception {
         MIMEType messageMime = MIMEType.fromString(message.getMimeType());
         MIMEBuilder mimeBuilder = new MIMEBuilder(mApi, crypto);
         String html = messageMime == MIMEType.HTML ? message.getDecryptedHTML() : null;
@@ -148,7 +148,7 @@ public class PackageFactory {
         return crypto.encrypt(mimeString, true);
     }
 
-    private TextCiphertext generatePlaintextBody(Message message) throws Exception {
+    private CipherText generatePlaintextBody(Message message) throws Exception {
         String html = message.getDecryptedHTML();
         HTMLToMDConverter converter = new HTMLToMDConverter();
         String plaintext = converter.convert(html);

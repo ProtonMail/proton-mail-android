@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -21,22 +21,32 @@ package ch.protonmail.android.api.models.room.messages
 import android.provider.BaseColumns
 import android.text.TextUtils
 import android.webkit.URLUtil
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.crypto.Crypto
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.proton.gopenpgp.armor.Armor
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.io.Serializable
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.*
+import java.util.Arrays
+import java.util.Formatter
+import java.util.Random
 import javax.mail.MessagingException
 import javax.mail.Part
 import javax.mail.internet.InternetHeaders
@@ -142,7 +152,7 @@ data class Attachment @JvmOverloads constructor(
     }
 
 	@Throws(Exception::class)
-	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, api: ProtonMailApiManager, crypto:Crypto) : String? {
+	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, api: ProtonMailApiManager, crypto: AddressCrypto) : String? {
 		val filePath = filePath
 		val fileContent = if (URLUtil.isDataUrl(filePath)) {
 			android.util.Base64.decode(filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
@@ -155,9 +165,9 @@ data class Attachment @JvmOverloads constructor(
 	}
 
 	@Throws(Exception::class)
-	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, fileContent:ByteArray, api: ProtonMailApiManager, crypto:Crypto) : String? {
+	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, fileContent:ByteArray, api: ProtonMailApiManager, crypto: AddressCrypto) : String? {
 		val headers = headers
-		val bct = crypto.encrypt(fileContent, fileName)
+		val bct = crypto.encrypt(fileContent, fileName!!)
 		val keyPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.keyPacket)
 		val dataPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.dataPacket)
 		val signature = RequestBody.create(MediaType.parse("application/octet-stream"), Armor.unarmor(crypto.sign(fileContent)))

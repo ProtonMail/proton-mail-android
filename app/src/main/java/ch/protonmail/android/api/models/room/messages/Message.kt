@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -37,12 +37,12 @@ import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.crypto.CipherText
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.crypto.AddressCrypto
-import ch.protonmail.android.utils.crypto.Crypto
 import ch.protonmail.android.utils.crypto.KeyInformation
-import ch.protonmail.android.utils.crypto.TextCiphertext
 import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringEscapeUtils
 import java.io.Serializable
@@ -382,7 +382,8 @@ data class Message @JvmOverloads constructor(
     }
 
     private fun decryptMime(addressCrypto: AddressCrypto, keys: List<ByteArray>? = null) {
-        val mimeDecryptor = addressCrypto.decryptMime(TextCiphertext.fromArmor(messageBody))
+        val messageBody = checkNotNull(messageBody)
+        val mimeDecryptor = addressCrypto.decryptMime(CipherText(messageBody))
         var body: String? = null
         var mimetype: String? = null
         var exception: Exception? = null
@@ -444,15 +445,17 @@ data class Message @JvmOverloads constructor(
         }
         val messageBody = messageBody
         try {
+            // We assert that 'messageBody' is not null here, because otherwise 'decrypt' would throw anyway
+            messageBody!!
             if (isPGPMime) {
                 decryptMime(addressCrypto, keys)
                 return
             }
             val tct = if (verKeys != null) {
-                val fromArmor = TextCiphertext.fromArmor(messageBody)
+                val fromArmor = CipherText(messageBody)
                 addressCrypto.decrypt(fromArmor, keys, time)
             } else {
-                addressCrypto.decrypt(TextCiphertext.fromArmor(messageBody))
+                addressCrypto.decrypt(CipherText(messageBody))
             }
             val hasSense = verKeys != null && verKeys.isNotEmpty() && tct.hasSignature()
             hasValidSignature = hasSense && tct.isSignatureValid

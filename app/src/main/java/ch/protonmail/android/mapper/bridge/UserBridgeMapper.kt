@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -48,13 +48,12 @@ class UserBridgeMapper @Inject constructor(
 
         return User(
             id = Id(id),
-            name = Name(name),
+            name = Name(name.takeIfNotBlank() ?: username),
             addresses = addressMapper { addresses.toNewModel() },
             keys = keysMapper { keys.toNewModel() },
             plans = getPlans(services, subscribed),
             private = private.toBoolean(),
             role = getRole(role),
-            organizationPrivateKey = getOrganizationKey(organizationPrivateKey),
             currency = NotBlankString(currency),
             credits = credit,
             delinquent = getDelinquent(delinquentValue),
@@ -76,8 +75,6 @@ class UserBridgeMapper @Inject constructor(
     }
 
     private fun getRole(value: Int) = Role.values().first { it.i == value }
-
-    private fun getOrganizationKey(key: String?) = key?.takeIfNotBlank()?.let(::NotBlankString)
 
     private fun getDelinquent(value: Int) = when (value.toUInt()) {
         Delinquent.None.i -> Delinquent.None

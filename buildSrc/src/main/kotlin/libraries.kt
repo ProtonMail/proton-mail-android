@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -60,7 +60,6 @@ val DependencyHandler.`jUnit5-jupiter-api` get() =          jUnit5jupiter("api")
 val DependencyHandler.`jUnit5-jupiter-engine` get() =       jUnit5jupiter("engine")
 val DependencyHandler.`jUnit5-jupiter-params` get() =       jUnit5jupiter("params")
 val DependencyHandler.`jUnit5-vintage-engine` get() =       jUnit5vintage("engine")
-val DependencyHandler.`robolectric` get() =                 dependency("org.robolectric", module = "robolectric") version `robolectric version`
 
 //testRail
 val DependencyHandler.`jsonsimple` get() =                 dependency("com.googlecode.json-simple", module = "json-simple") version `json-simple version`

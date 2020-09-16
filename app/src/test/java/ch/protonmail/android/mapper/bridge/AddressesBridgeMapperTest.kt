@@ -20,7 +20,7 @@ package ch.protonmail.android.mapper.bridge
 
 import assert4k.assert
 import assert4k.equals
-import assert4k.invoke
+import assert4k.invoke as fix
 import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
@@ -77,7 +77,7 @@ internal class AddressesBridgeMapperTest {
         val newAddresses = multiMapper { oldAddresses.toNewModel() }
 
         assert that newAddresses * {
-            +addresses.size() equals 10
+            +addresses.size.fix() equals 10
         }
     }
 
@@ -88,7 +88,7 @@ internal class AddressesBridgeMapperTest {
         val newAddresses = multiMapper { oldAddresses.toNewModel() }
 
         assert that newAddresses * {
-            +addresses.size() equals 10
+            +addresses.size.fix() equals 10
             +primary?.id?.s equals "11"
             +sorted().map { it.id.s.toInt() } equals (11..20).toList()
         }
@@ -101,7 +101,7 @@ internal class AddressesBridgeMapperTest {
         val newAddresses = multiMapper { oldAddresses.toNewModel() }
 
         assert that newAddresses * {
-            +addresses.size() equals 10
+            +addresses.size.fix() equals 10
             +sorted().map { it.id.s.toInt() } equals (1..10).toList()
         }
     }
@@ -115,7 +115,7 @@ internal class AddressesBridgeMapperTest {
 
         assert that order equals mapOf(10 to 20, 11 to 22, 12 to 10, 13 to 10, 14 to 28)
         assert that newAddresses * {
-            +addresses.size() equals 5
+            +addresses.size.fix() equals 5
             +sorted().map { it.id.s.toInt() } equals listOf(12, 13, 10, 11, 14)
         }
     }

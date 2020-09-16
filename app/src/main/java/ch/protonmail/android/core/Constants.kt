@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -167,7 +167,6 @@ object Constants {
         const val PREF_USER_CURRENCY = "user_currency"
         const val PREF_USER_ID = "user_id"
         const val PREF_USER_NAME = "user_name"
-        const val PREF_USER_ORG_PRIVATE_KEY = "user_organization_private_key"
         const val PREF_USER_PRIVATE = "user_private"
         const val PREF_USER_SERVICES = "user_services"
         const val PREF_USING_REGULAR_API = "pref_doh_using_regular_api"

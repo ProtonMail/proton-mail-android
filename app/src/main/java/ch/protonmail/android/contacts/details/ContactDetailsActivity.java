@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -94,6 +94,9 @@ import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.contacts.ErrorEnum;
 import ch.protonmail.android.contacts.ErrorResponse;
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
+import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.crypto.UserCrypto;
 import ch.protonmail.android.events.ContactDetailsFetchedEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.Status;
@@ -104,10 +107,7 @@ import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.VCardUtil;
-import ch.protonmail.android.utils.crypto.Crypto;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
-import ch.protonmail.android.utils.crypto.UserCrypto;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.views.CustomFontButton;
 import ch.protonmail.android.views.CustomFontTextView;
@@ -415,7 +415,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 mVCardType2Signature = contactEncryptedData.getSignature();
             } else if (contactEncryptedData.getType() == 3) {
                 try {
-                    TextCiphertext tct = TextCiphertext.fromArmor(contactEncryptedData.getData());
+                    CipherText tct = new CipherText(contactEncryptedData.getData());
                     TextDecryptionResult tdr = crypto.decrypt(tct);
                     mVCardType3 = tdr.getDecryptedData();
                 } catch (Exception e) {

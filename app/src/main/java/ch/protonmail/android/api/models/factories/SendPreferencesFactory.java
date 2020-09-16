@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -35,13 +35,11 @@ import javax.inject.Named;
 
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.ContactEncryptedData;
-import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.PublicKeyBody;
 import ch.protonmail.android.api.models.PublicKeyResponse;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
-import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.enumerations.MIMEType;
 import ch.protonmail.android.api.models.enumerations.PackageType;
 import ch.protonmail.android.api.models.room.contacts.ContactEmail;
@@ -49,12 +47,15 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.domain.entity.user.Address;
+import ch.protonmail.android.domain.entity.user.AddressKey;
+import ch.protonmail.android.domain.entity.user.Addresses;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.VCardUtil;
-import ch.protonmail.android.utils.crypto.Crypto;
 import ch.protonmail.android.utils.crypto.KeyInformation;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
-import ch.protonmail.android.utils.crypto.UserCrypto;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.property.Key;
@@ -115,14 +116,14 @@ public class SendPreferencesFactory {
         return keyMap;
     }
 
-    private PublicKeyResponse toPublicKeyResponse(Address alias) {
+    private PublicKeyResponse toPublicKeyResponse(Address address) {
         List<PublicKeyBody> sendbodies = new ArrayList<>();
         List<PublicKeyBody> verbodies = new ArrayList<>();
-        for (Keys key : alias.getKeys()) {
+        for (AddressKey key : address.getKeys().getKeys()) {
             if (crypto.isAllowedForSending(key)) {
-                sendbodies.add(new PublicKeyBody(key.getFlags(), crypto.getArmoredPublicKey(key)));
+                sendbodies.add(new PublicKeyBody(key.buildBackEndFlags(), crypto.buildArmoredPublicKeyOrNull(key.getPrivateKey())));
             } else {
-                verbodies.add(new PublicKeyBody(key.getFlags(), crypto.getArmoredPublicKey(key)));
+                verbodies.add(new PublicKeyBody(key.buildBackEndFlags(), crypto.buildArmoredPublicKeyOrNull(key.getPrivateKey())));
             }
         }
         sendbodies.addAll(verbodies);
@@ -227,9 +228,9 @@ public class SendPreferencesFactory {
 
     private Address getAddress(String email) {
         User user = (username != null) ? mUserManager.getUser(username) : mUserManager.getUser();
-        List<Address> addresses = user.getAddresses();
-        for (Address address : addresses) {
-            if (email.equalsIgnoreCase(address.getEmail())) {
+        Addresses addresses = user.toNewUser().getAddresses();
+        for (Address address : addresses.sorted()) {
+            if (email.equalsIgnoreCase(address.getEmail().getS())) {
                 return address;
             }
         }

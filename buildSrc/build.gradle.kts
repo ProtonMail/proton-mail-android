@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    val android =       "3.5.0"         // Released: Aug 08, 2019
+    val android =       "4.0.1"         // Released: Jul 14, 2020
     val easyGradle =    "1.5-beta-6"    // Released: Jun 17, 2020
     val protonGradle =  "0.1.11"        // Released: Aug 21, 2020
 

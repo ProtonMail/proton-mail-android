@@ -1,29 +1,29 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.jobs;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import android.text.TextUtils;
 import android.util.Base64;
 import android.webkit.URLUtil;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.NewMessage;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
@@ -53,12 +52,13 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.crypto.AddressCrypto;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.domain.entity.user.AddressKeys;
 import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
-import ch.protonmail.android.utils.crypto.AddressCrypto;
-import ch.protonmail.android.utils.crypto.Crypto;
 
 public class CreateAndPostDraftJob extends ProtonMailBaseJob {
 
@@ -143,7 +143,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         User user = mUserManager.getUser(mUsername);
         Address senderAddress = user.getAddressById(addressId);
         newDraft.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
-        Crypto crypto = Crypto.forAddress(mUserManager, mUsername, message.getAddressID());
+        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUsername, message.getAddressID());
         newDraft.addMessageBody(Fields.Message.SELF, encryptedMessage);
         List<Attachment> parentAttachmentList = null;
         if (parentMessage != null) {
@@ -214,8 +214,8 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
     private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage, String oldSenderAddress, Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
             AddressCrypto oldCrypto = Crypto.forAddress(mUserManager, mUsername, oldSenderAddress);
-            List<Keys> newAddressKeys = newSenderAddress.getKeys();
-            String newPublicKey = oldCrypto.getArmoredPublicKey(newAddressKeys.get(0));
+            AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
+            String newPublicKey = oldCrypto.buildArmoredPublicKey(newAddressKeys.getPrimaryKey().getPrivateKey());
             for (Attachment attachment : attachmentList) {
                 if (mActionType == Constants.MessageActionType.FORWARD ||
                         ((mActionType == Constants.MessageActionType.REPLY || mActionType == Constants.MessageActionType.REPLY_ALL) && attachment.getInline())) {
@@ -246,10 +246,10 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         private final String mOldMessageId;
         private final boolean mUploadAttachments;
         private final List<Attachment> mAttachments;
-        private final Crypto mCrypto;
+        private final AddressCrypto mCrypto;
         private final String mUsername;
 
-        PostCreateDraftAttachmentsJob(String messageId, String oldMessageId, boolean uploadAttachments, List<Attachment> attachments, Crypto crypto, String username) {
+        PostCreateDraftAttachmentsJob(String messageId, String oldMessageId, boolean uploadAttachments, List<Attachment> attachments, AddressCrypto crypto, String username) {
             super(new Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_MESSAGE));
             mMessageId = messageId;
             mOldMessageId = oldMessageId;

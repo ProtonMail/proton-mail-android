@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,7 +20,9 @@ package ch.protonmail.android.jobs
 
 import android.database.Cursor
 import android.provider.ContactsContract
-import android.provider.ContactsContract.CommonDataKinds.*
+import android.provider.ContactsContract.CommonDataKinds.GroupMembership
+import android.provider.ContactsContract.CommonDataKinds.Phone
+import android.provider.ContactsContract.CommonDataKinds.StructuredPostal
 import android.text.TextUtils
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.ContactResponse
@@ -33,15 +35,20 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJo
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.api.segments.*
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.repositories.andorid.details.IAndroidContactDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.crypto.Crypto
 import ch.protonmail.android.views.models.LocalContact
 import ch.protonmail.android.views.models.LocalContactAddress
 import com.birbit.android.jobqueue.Params
@@ -53,7 +60,8 @@ import ezvcard.property.Email
 import ezvcard.property.Telephone
 import ezvcard.property.Uid
 import java.io.Serializable
-import java.util.*
+import java.util.ArrayList
+import java.util.UUID
 
 class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
 
