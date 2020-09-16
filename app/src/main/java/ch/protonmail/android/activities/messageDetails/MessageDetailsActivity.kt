@@ -48,6 +48,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
@@ -110,6 +111,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteCo
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.views.PMWebViewClient
+import ch.protonmail.android.worker.DeleteMessageWorker
 import com.birbit.android.jobqueue.Job
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
@@ -133,6 +135,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
 
     @Inject
     lateinit var factory: MessageDetailsViewModel.Factory
+
+    @Inject
+    lateinit var workManager: WorkManager
 
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
 
@@ -396,7 +401,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                 getString(R.string.delete_message),
                 getString(R.string.confirm_destructive_action)
             ) {
-                mJobManager.addJobInBackground(PostDeleteJob(listOf(messageId)))
+                DeleteMessageWorker.Enqueuer(workManager).enqueue(listOf(messageId))
                 onBackPressed()
             }
             R.id.move_to_spam -> job = PostSpamJob(listOf(messageId))
@@ -743,7 +748,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     private fun showLabelsManagerDialog(fragmentManager: FragmentManager, message: Message) {
         val attachedLabels = HashSet(message.labelIDsNotIncludingLocations)
         val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(attachedLabels, null, null, true)
-        fragmentManager.commit (allowStateLoss = true) {
+        fragmentManager.commit(allowStateLoss = true) {
             add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
             addToBackStack(null)
         }
@@ -792,14 +797,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
 
     private var showActionButtons = false
 
-    private inner class Copy (private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
+    private inner class Copy(private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
         override fun onMenuItemClick(item: MenuItem): Boolean {
             UiUtil.copy(this@MessageDetailsActivity, text)
             return true
         }
     }
 
-    private inner class Share (private val uri: String?) : MenuItem.OnMenuItemClickListener {
+    private inner class Share(private val uri: String?) : MenuItem.OnMenuItemClickListener {
         override fun onMenuItemClick(item: MenuItem): Boolean {
             val send = Intent(Intent.ACTION_SEND)
             send.type = "text/plain"

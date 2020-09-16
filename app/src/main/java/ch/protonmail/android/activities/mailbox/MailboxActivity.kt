@@ -56,6 +56,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_LOGOUT
@@ -223,6 +224,9 @@ class MailboxActivity : NavigationActivity(),
 
     @Inject
     lateinit var contactsRepository: ContactsRepository
+
+    @Inject
+    lateinit var workManager: WorkManager
 
     private var noConnectivitySnack: Snackbar? = null
     private var checkForConnectivitySnack: Snackbar? = null
