@@ -58,8 +58,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
 
-/**
- * Created by kadrikj on 9/17/18. */
 class ComposeMessageRepository @Inject constructor(
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
@@ -184,7 +182,8 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun startPostDelete(messageId: String) {
-        jobManager.addJobInBackground(PostDeleteJob(listOf(messageId)))
+        throw IllegalStateException("Migrate to PostDeleteWorker")
+        ///jobManager.addJobInBackground(PostDeleteJob(listOf(messageId)))
     }
 
     fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {

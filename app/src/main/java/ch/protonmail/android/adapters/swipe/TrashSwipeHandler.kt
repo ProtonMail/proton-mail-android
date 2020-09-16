@@ -20,17 +20,19 @@ package ch.protonmail.android.adapters.swipe
 
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.jobs.*
+import ch.protonmail.android.jobs.MoveToFolderJob
+import ch.protonmail.android.jobs.PostArchiveJob
+import ch.protonmail.android.jobs.PostDraftJob
+import ch.protonmail.android.jobs.PostInboxJob
+import ch.protonmail.android.jobs.PostTrashJob
 import com.birbit.android.jobqueue.Job
 
-/**
- * Created by dkadrikj on 9.7.15.
- */
 class TrashSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
         return if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.DRAFT) {
-            PostDeleteJob(listOf(message.messageId))
+            throw IllegalStateException("Migrate to PostDeleteWorker")
+            //PostDeleteJob(listOf(message.messageId))
         } else {
             PostTrashJob(listOf(message.messageId), currentLocation)
         }

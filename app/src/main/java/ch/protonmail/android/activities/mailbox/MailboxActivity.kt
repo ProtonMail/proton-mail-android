@@ -153,7 +153,6 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PingJob
 import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostDeleteJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -178,6 +177,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDial
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
+import ch.protonmail.android.worker.DeleteMessageWorker
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -1344,7 +1344,7 @@ class MailboxActivity : NavigationActivity(),
                 getString(R.string.delete_messages),
                 getString(R.string.confirm_destructive_action)
             ) {
-                mJobManager.addJobInBackground(PostDeleteJob(messageIds))
+                DeleteMessageWorker.Enqueuer(workManager).enqueue(messageIds)
                 mode.finish()
             }
             R.id.mark_read -> job = PostReadJob(messageIds)

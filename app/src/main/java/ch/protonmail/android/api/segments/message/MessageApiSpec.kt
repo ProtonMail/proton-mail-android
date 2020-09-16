@@ -20,6 +20,7 @@ package ch.protonmail.android.api.segments.message
 
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.NewMessage
@@ -55,8 +56,7 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun markMessageAsUnRead(messageIds: IDList)
 
-    @Throws(IOException::class)
-    fun deleteMessage(messageIds: IDList)
+    suspend fun deleteMessage(messageIds: IDList): DeleteContactResponse
 
     @Throws(IOException::class)
     fun emptyDrafts()

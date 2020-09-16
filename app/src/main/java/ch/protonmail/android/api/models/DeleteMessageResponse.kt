@@ -16,10 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events
+package ch.protonmail.android.api.models
 
-/**
- * Created by sunny on 7/20/15.
- */
-@Deprecated("Not in use with new Workes")
-class MessageDeletedEvent(val notDeletedMessages: List<String>)
+import ch.protonmail.android.api.utils.Fields
+import com.google.gson.annotations.SerializedName
+
+data class DeleteMessageResponse(
+    @SerializedName(Fields.Response.CODE)
+    val code: Int,
+    @SerializedName(Fields.Response.RESPONSES)
+    val responses: List<DeleteContactResponse.Response>
+)
+
