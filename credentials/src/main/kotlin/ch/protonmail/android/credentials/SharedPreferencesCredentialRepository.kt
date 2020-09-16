@@ -30,6 +30,7 @@ import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.deserialize
 
 internal class SharedPreferencesCredentialRepository(
+    @CredentialsSharedPreferences
     private val preferences: SharedPreferences
 ) : CredentialRepository {
 

@@ -23,11 +23,19 @@ plugins {
     `android-library`
     `kotlin-android`
     `kotlin-serialization`
+    `kotlin-kapt`
 }
 
 android()
 
 dependencies {
+
+    // Hilt
+    kapt(
+        `hilt-android-compiler`,
+        `hilt-androidx-compiler`
+    )
+
     implementation(
 
         // Core
