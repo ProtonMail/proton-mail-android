@@ -29,7 +29,7 @@ import ch.protonmail.android.views.messageDetails.AttachmentDetailView
 
 /**
  * Created by Kamil Rajtar on 10.08.18.  */
-internal class MessageDetailsAttachmentListAdapter(context: Context, private val downloadListener: (String) -> Unit)
+class MessageDetailsAttachmentListAdapter(context: Context, private val downloadListener: (String) -> Unit)
 	: ArrayAdapter<Attachment>(context, R.layout.view_attachment_detail) {
 	private val downloadingIds = mutableSetOf<String>()
 	private var pgpEncrypted: Boolean = false
