@@ -114,3 +114,4 @@ const val `sonarQube version` =                 "2.7.1"         // Released: May
 const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 2019
 const val `timber version` =                    "4.7.1"         // Released:
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
+const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016

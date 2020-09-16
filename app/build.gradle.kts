@@ -292,7 +292,8 @@ dependencies {
         `timber`,
         `trustKit`,
         `viewStateStore`,
-        `viewStateStore-paging`
+        `viewStateStore-paging`,
+        `remark`
     )
 
     kapt(
