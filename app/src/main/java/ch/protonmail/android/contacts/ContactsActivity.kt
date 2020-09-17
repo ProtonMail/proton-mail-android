@@ -52,19 +52,19 @@ import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchContactsDataJob
-import ch.protonmail.android.jobs.FetchContactsEmailsJob
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.NetworkUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
+import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.time.seconds
 
 // region constants
 const val REQUEST_CODE_CONTACT_DETAILS = 1
@@ -83,6 +83,9 @@ class ContactsActivity : BaseConnectivityActivity(),
     }
 
     override val jobManager: JobManager get() = mJobManager
+
+    @Inject
+    lateinit var enqueueFetchContactsEmails: FetchContactsEmailsWorker.Enqueuer
 
     private val contactsConnectivityRetryListener = ConnectivityRetryListener()
 
@@ -242,10 +245,8 @@ class ContactsActivity : BaseConnectivityActivity(),
     }
 
     private fun refresh() {
-        mJobManager.apply {
-            addJobInBackground(FetchContactsDataJob())
-            addJobInBackground(FetchContactsEmailsJob(TimeUnit.SECONDS.toMillis(2)))
-        }
+        mJobManager.addJobInBackground(FetchContactsDataJob())
+        enqueueFetchContactsEmails(2.seconds)
     }
 
     private fun MenuItem.configureSearch() {

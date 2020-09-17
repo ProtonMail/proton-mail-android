@@ -138,7 +138,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
-        Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
         if (message != null) {
             if (!BuildConfig.DEBUG) {
                 EventBuilder eventBuilder = new EventBuilder()
@@ -154,7 +154,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
             message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
             message.setTime(ServerTime.currentTimeMillis() / 1000);
-            messageDetailsRepository.saveMessageInDB(message);
+            getMessageDetailsRepository().saveMessageInDB(message);
             PendingSend pendingSend = pendingActionsDatabase.findPendingSendByMessageId(message.getMessageId());
             if (pendingSend != null) {
                 pendingSend.setSent(false);
@@ -181,7 +181,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
     //region create draft & upload attachments
     @Override
     public void onRun() throws Throwable {
-        messageDetailsRepository.reloadDependenciesForUser(mUsername);
+        getMessageDetailsRepository().reloadDependenciesForUser(mUsername);
         ContactsDatabase contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         if (mMessageDbId == null) {
@@ -193,7 +193,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             }
             throw e;
         }
-        Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
         if (!BuildConfig.DEBUG && message == null) {
             EventBuilder eventBuilder = new EventBuilder()
                     .withTag(SENDING_FAILED_TAG, getAppVersion())
@@ -201,10 +201,10 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     .withTag("LOCATION", "ONRUN - NULL")
                     .withTag("EXCEPTION", "MESSAGE NULL")
                     .withTag("DBID", String.valueOf(mMessageDbId));
-            Sentry.capture(eventBuilder.withMessage("username same with primary: " + (mUsername.equals(mUserManager.getUsername()))).build());
+            Sentry.capture(eventBuilder.withMessage("username same with primary: " + (mUsername.equals(getUserManager().getUsername()))).build());
         }
         String messageBody = message.getMessageBody();
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUsername, message.getAddressID());
+        AddressCrypto crypto = Crypto.forAddress(getUserManager(), mUsername, message.getAddressID());
         AttachmentFactory attachmentFactory = new AttachmentFactory();
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
         MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
@@ -217,7 +217,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             newMessage.setAction(mActionType.getMessageActionTypeValue());
         }
 
-        User user = mUserManager.getUser(mUsername);
+        User user = getUserManager().getUser(mUsername);
         String addressId = message.getAddressID();
         Address senderAddress1 = user.getAddressById(addressId).toNewAddress();
         String displayName = senderAddress1.getDisplayName() == null ? null : senderAddress1.getDisplayName().getS();
@@ -227,12 +227,12 @@ public class PostMessageJob extends ProtonMailBaseJob {
             // create the draft if there was no connectivity previously for execution the create and post draft job
             // this however should not happen, because the jobs with the same ID are executed serial,
             // but just in case that there is no any bug on the JobQueue library
-            final MessageResponse draftResponse = mApi.createDraft(newMessage);
+            final MessageResponse draftResponse = getApi().createDraft(newMessage);
             message.setMessageId(draftResponse.getMessageId());
         }
         message.setTime(ServerTime.currentTimeMillis() / 1000);
-        messageDetailsRepository.saveMessageInDB(message);
-        MailSettings mailSettings = mUserManager.getMailSettings(mUsername);
+        getMessageDetailsRepository().saveMessageInDB(message);
+        MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
         try {
             uploadAttachments(message, crypto, mailSettings);
@@ -254,7 +254,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
     private void uploadAttachments(Message message, AddressCrypto crypto, MailSettings mailSettings) throws Exception {
         List<File> attachmentTempFiles = new ArrayList<>();
         for (String attachmentId : mNewAttachments) {
-            Attachment attachment = messageDetailsRepository.findAttachmentById(attachmentId);
+            Attachment attachment = getMessageDetailsRepository().findAttachmentById(attachmentId);
             if (attachment == null) {
                 continue;
             }
@@ -271,7 +271,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             attachmentTempFiles.add(file);
             attachment.setMessage(message);
 
-            attachment.uploadAndSave(messageDetailsRepository, mApi, crypto);
+            attachment.uploadAndSave(getMessageDetailsRepository(), getApi(), crypto);
         }
         // upload public key
         if (mailSettings.getAttachPublicKey()) {
@@ -287,7 +287,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
     private void attachPublicKey(Message message, AddressCrypto crypto) throws Exception {
         Address address =
-                mUserManager.getUser(mUsername).getAddressById(message.getAddressID()).toNewAddress();
+                getUserManager().getUser(mUsername).getAddressById(message.getAddressID()).toNewAddress();
         AddressKeys keys = address.getKeys();
         String publicKey = crypto.buildArmoredPublicKey(keys.getPrimaryKey().getPrivateKey());
 
@@ -295,7 +295,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         attachment.setFileName("publickey - " + address.getEmail() + " - 0x" + crypto.getFingerprint(publicKey).substring(0, 8).toUpperCase() + ".asc");
         attachment.setMimeType("application/pgp-keys");
         attachment.setMessage(message);
-        attachment.uploadAndSave(messageDetailsRepository,publicKey.getBytes(), mApi, crypto);
+        attachment.uploadAndSave(getMessageDetailsRepository(),publicKey.getBytes(), getApi(), crypto);
     }
 
     private void onRunPostMessage(PendingActionsDatabase pendingActionsDatabase, @NonNull Message message,
@@ -311,7 +311,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         List<Attachment> parentAttachmentList;
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         parentAttachmentList = message.attachments(messagesDatabase);
-        User user = mUserManager.getUser(mUsername);
+        User user = getUserManager().getUser(mUsername);
         String addressId = message.getAddressID();
         ch.protonmail.android.api.models.address.Address senderAddress =
                 user.getAddressById(addressId);
@@ -322,11 +322,11 @@ public class PostMessageJob extends ProtonMailBaseJob {
             newMessage.setSender(new MessageSender(message.getSenderName(), message.getSenderEmail()));
         }
 
-        final MessageResponse draftResponse = mApi.updateDraft(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
+        final MessageResponse draftResponse = getApi().updateDraft(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
         EventBuilder eventBuilder = new EventBuilder()
                 .withTag(SENDING_FAILED_TAG, getAppVersion())
                 .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
-                .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(mUserManager.getUsername())))
+                .withTag(SENDING_FAILED_SAME_USER_TAG, String.valueOf(username.equals(getUserManager().getUsername())))
                 .withTag("LOC", "ONRUNPOSTMESSAGE");
 
         if (draftResponse == null) {
@@ -347,17 +347,17 @@ public class PostMessageJob extends ProtonMailBaseJob {
         }
 
         Message draftMessage = draftResponse.getMessage();
-        draftMessage.decrypt(mUserManager, mUsername);
+        draftMessage.decrypt(getUserManager(), mUsername);
         //region create packages to send to API
-        PackageFactory packageFactory = new PackageFactory(mApi, crypto, mOutsidersPassword, mOutsidersHint);
+        PackageFactory packageFactory = new PackageFactory(getApi(), crypto, mOutsidersPassword, mOutsidersHint);
         List<MessageSendPackage> packages = packageFactory.generatePackages(draftMessage, mSendPreferences);
 
-        MessageSendBody Body = new MessageSendBody(packages, expiresIn <= 0 ? null : expiresIn, mUserManager.getMailSettings(mUsername).getAutoSaveContacts());
+        MessageSendBody Body = new MessageSendBody(packages, expiresIn <= 0 ? null : expiresIn, getUserManager().getMailSettings(mUsername).getAutoSaveContacts());
         //endregion
 
         //region sending the message
         MessageSendResponse messageSendResponse;
-        Call<MessageSendResponse> responseCall = mApi.sendMessage(message.getMessageId(), Body, new RetrofitTag(mUsername));
+        Call<MessageSendResponse> responseCall = getApi().sendMessage(message.getMessageId(), Body, new RetrofitTag(mUsername));
         Response<MessageSendResponse> response = responseCall.execute();
 
         StringBuilder builder = new StringBuilder("HTTP CODE " + response.code());
@@ -403,7 +403,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 message.setLocation(Constants.MessageLocationType.SENT.getMessageLocationTypeValue());
                 message.setLabelIDs(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_SENT.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.SENT.getMessageLocationTypeValue())));
                 message.removeLabels(Arrays.asList(String.valueOf(Constants.MessageLocationType.ALL_DRAFT.getMessageLocationTypeValue()), String.valueOf(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue())));
-                messageDetailsRepository.saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageInDB(message);
                 pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
             }
         }
@@ -426,7 +426,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
     private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage, String oldSenderAddress, ch.protonmail.android.api.models.address.Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
-            AddressCrypto oldCrypto = Crypto.forAddress(mUserManager, mUsername, oldSenderAddress);
+            AddressCrypto oldCrypto = Crypto.forAddress(getUserManager(), mUsername, oldSenderAddress);
             AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
             String newPublicKey = oldCrypto.buildArmoredPublicKey(newAddressKeys.getPrimaryKey().getPrivateKey());
             for (Attachment attachment : attachmentList) {
@@ -483,7 +483,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             emailSet.remove(sp.getEmailAddress());
         }
 
-        SendPreferencesFactory factory = new SendPreferencesFactory(mApi, mUserManager, mUsername, mailSettings, contactsDatabase);
+        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), mUsername, mailSettings, contactsDatabase);
         try {
             Map<String, SendPreference> sendPreferenceMap = factory.fetch(Arrays.asList(emailSet.toArray(new String[0])));
             ArrayList<SendPreference> sendPrefs = new ArrayList<>();
@@ -498,18 +498,18 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
     private void sendErrorSending(String error) {
         if (error == null) error = "";
-        Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
         if (message != null) {
             String messageId = message.getMessageId();
             if (messageId != null) {
-                SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase = messageDetailsRepository.getDatabaseProvider().provideSendingFailedNotificationsDao(mUserManager.getUsername());
+                SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase = getMessageDetailsRepository().getDatabaseProvider().provideSendingFailedNotificationsDao(getUserManager().getUsername());
                 sendingFailedNotificationsDatabase.insertSendingFailedNotification(new SendingFailedNotification(messageId, message.getSubject(), error));
 
                 if (sendingFailedNotificationsDatabase.count() > 1) {
                     List<SendingFailedNotification> sendingFailedNotifications = sendingFailedNotificationsDatabase.findAllSendingFailedNotifications();
-                    ProtonMailApplication.getApplication().notifyMultipleErrorSendingMessage(sendingFailedNotifications, mUserManager.getUser());
+                    ProtonMailApplication.getApplication().notifyMultipleErrorSendingMessage(sendingFailedNotifications, getUserManager().getUser());
                 } else {
-                    ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, mUserManager.getUser());
+                    ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, getUserManager().getUser());
                 }
             }
         }

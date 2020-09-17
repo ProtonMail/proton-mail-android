@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -22,7 +22,11 @@ import android.text.TextUtils
 import android.util.Base64
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.api.segments.*
+import ch.protonmail.android.api.segments.RESPONSE_CODE_EMAIL_FAILED_VALIDATION
+import ch.protonmail.android.api.segments.RESPONSE_CODE_INCORRECT_PASSWORD
+import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_EMAIL
+import ch.protonmail.android.api.segments.RESPONSE_CODE_NEW_PASSWORD_INCORRECT
+import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.SettingsChangedEvent
@@ -50,60 +54,60 @@ class UpdateSettingsJob(
 
     @Throws(Throwable::class)
     override fun onRun() {
-        val user = mUserManager.user
+        val user = getUserManager().user
         var failed = false
         try {
             if (notificationEmailChanged) {
-                val infoResponse = mApi.loginInfo(mUserManager.username)
-                val proofs = LoginService.srpProofsForInfo(mUserManager.username, password, infoResponse, 2)
-                val response = mApi.updateNotificationEmail(infoResponse.srpSession,
+                val infoResponse = getApi().loginInfo(getUserManager().username)
+                val proofs = LoginService.srpProofsForInfo(getUserManager().username, password, infoResponse, 2)
+                val response = getApi().updateNotificationEmail(infoResponse.srpSession,
                     ConstantTime.encodeBase64(proofs!!.clientEphemeral, true),
                     ConstantTime.encodeBase64(proofs.clientProof, true), twoFactor, newEmail)
 
                 if (response!!.code == RESPONSE_CODE_INVALID_EMAIL) {
                     AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED,
-                        mUserManager.userSettings?.notificationEmail, backPressed, response.error))
+                        getUserManager().userSettings?.notificationEmail, backPressed, response.error))
                     failed = true
                 } else if (response.code == RESPONSE_CODE_INCORRECT_PASSWORD ||
                     response.code == RESPONSE_CODE_OLD_PASSWORD_INCORRECT ||
                     response.code == RESPONSE_CODE_NEW_PASSWORD_INCORRECT) {
                     AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED,
-                        mUserManager.userSettings?.notificationEmail, backPressed, response.error))
+                        getUserManager().userSettings?.notificationEmail, backPressed, response.error))
                     failed = true
                 } else if (response.code == RESPONSE_CODE_EMAIL_FAILED_VALIDATION) {
                     AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED,
-                        mUserManager.userSettings?.notificationEmail, backPressed, response.error))
+                        getUserManager().userSettings?.notificationEmail, backPressed, response.error))
                     failed = true
                 } else if (!ConstantTime.isEqual(Base64.decode(response.serverProof, Base64.DEFAULT),
                         proofs.expectedServerProof)) {
                     AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.INVALID_SERVER_PROOF,
-                        mUserManager.userSettings?.notificationEmail, backPressed, EMPTY_STRING))
+                        getUserManager().userSettings?.notificationEmail, backPressed, EMPTY_STRING))
                     failed = true
                 }
                 if (!failed) {
-                    oldEmail = mUserManager.userSettings?.notificationEmail
+                    oldEmail = getUserManager().userSettings?.notificationEmail
                     if (TextUtils.isEmpty(newEmail)) {
-                        mUserManager.userSettings?.notificationEmail = applicationContext.resources.getString(R.string.not_set)
+                        getUserManager().userSettings?.notificationEmail = applicationContext.resources.getString(R.string.not_set)
                     } else {
-                        mUserManager.userSettings?.notificationEmail = newEmail
+                        getUserManager().userSettings?.notificationEmail = newEmail
                     }
                 }
             }
             if (!failed) {
                 if (sortAliasChanged) {
-                    val addresses = mUserManager.user.addresses
+                    val addresses = getUserManager().user.addresses
                     val aliasSize = addresses.size
                     val newAliasesOrder = ArrayList<String>(aliasSize)
                     for (i in 0 until aliasSize) {
                         newAliasesOrder.add(addresses[i].id)
                     }
-                    mApi.updateAlias(newAliasesOrder)
+                    getApi().updateAlias(newAliasesOrder)
                 }
                 if (displayChanged && !TextUtils.isEmpty(addressId)) {
                     val addresses = user.addresses
                     for (address in addresses) {
                         if (address.id == addressId) {
-                            val responseBody = mApi.editAddress(address.id, newDisplayName, address.signature)
+                            val responseBody = getApi().editAddress(address.id, newDisplayName, address.signature)
                             Logger.doLog("editAddress", "address: " + address.email + " new DN: "
                                     + newDisplayName + " response: " + responseBody.code)
                             address.displayName = newDisplayName
@@ -117,7 +121,7 @@ class UpdateSettingsJob(
                     val addresses = user.addresses
                     for (address in user.addresses) {
                         if (address.id == addressId) {
-                            mApi.editAddress(address.id, address.displayName, newSignature)
+                            getApi().editAddress(address.id, address.displayName, newSignature)
                             address.signature = newSignature
                             break
                         }
@@ -126,14 +130,14 @@ class UpdateSettingsJob(
                     user.save()
                 }
                 if (actionLeftSwipeChanged) {
-                    mApi.updateLeftSwipe(mUserManager.mailSettings!!.leftSwipeAction)
+                    getApi().updateLeftSwipe(getUserManager().mailSettings!!.leftSwipeAction)
                 }
                 if (actionRightSwipeChanged) {
-                    mApi.updateRightSwipe(mUserManager.mailSettings!!.rightSwipeAction)
+                    getApi().updateRightSwipe(getUserManager().mailSettings!!.rightSwipeAction)
                 }
                 if (mailSettings != null) {
-                    mUserManager.mailSettings = mailSettings
-                    mApi.updateAutoShowImages(mailSettings.showImages)
+                    getUserManager().mailSettings = mailSettings
+                    getApi().updateAutoShowImages(mailSettings.showImages)
 
                 }
                 AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.SUCCESS, oldEmail, backPressed, null))

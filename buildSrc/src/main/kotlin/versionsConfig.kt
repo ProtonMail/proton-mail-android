@@ -51,7 +51,7 @@ fun initVersions() {
 
     // region Others
     `assert4k version` =                        "0.5.7"         // Released: Aug 15, 2020
-    `assistedInject version` =                  "0.5.2"         // Released: Nov 22, 2019
+    `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
     `dagger version` =                          "2.28.3"        // Released: Jul 18, 2020
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019

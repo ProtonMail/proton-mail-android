@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,7 +24,9 @@ import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.makeInt
-import ch.protonmail.android.api.models.room.contacts.*
+import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
+import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.jobs.RemoveMembersFromContactGroupJob
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.jobs.PostLabelJob
@@ -34,11 +36,14 @@ import io.reactivex.Observable
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 open class ContactDetailsRepository @Inject constructor(
-        protected val jobManager: JobManager,
-        protected val api: ProtonMailApiManager,
-        protected val databaseProvider: DatabaseProvider) {
+    protected val jobManager: JobManager,
+    protected val api: ProtonMailApiManager,
+    protected val databaseProvider: DatabaseProvider
+) {
 
     protected val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactDetailsRepository"); databaseProvider.provideContactsDao() }
 

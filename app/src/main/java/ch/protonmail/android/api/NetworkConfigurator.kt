@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,26 +23,35 @@ import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
 import ch.protonmail.android.api.models.doh.ProxyList
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.di.AppCoroutineScope
+import ch.protonmail.android.di.DefaultSharedPreferences
+import ch.protonmail.android.di.DohProviders
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
 // region constants
 const val DOH_PROVIDER_TIMEOUT = 20_000L
 private const val TAG = "NetworkConfigurator"
 // endregion
 
-/**
+/*
  * Created by dinokadrikj on 3/3/20.
  */
 
 /**
  * NetworkConfigurator - used to retrieve and switch to alternative routing domains
  */
-class NetworkConfigurator(
-    private val dohProviders: Array<DnsOverHttpsProviderRFC8484>,
-    private val prefs: SharedPreferences,
-    private val scope: CoroutineScope = GlobalScope
+@Singleton
+class NetworkConfigurator @Inject constructor(
+    @DohProviders private val dohProviders: Array<DnsOverHttpsProviderRFC8484>,
+    @DefaultSharedPreferences private val prefs: SharedPreferences,
+    @AppCoroutineScope private val scope: CoroutineScope
 ) {
 
     lateinit var networkSwitcher: INetworkSwitcher

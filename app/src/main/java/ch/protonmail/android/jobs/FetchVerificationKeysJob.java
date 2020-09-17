@@ -62,8 +62,8 @@ public class FetchVerificationKeysJob extends ProtonMailBaseJob {
     @Override
     public void onRun() throws Throwable {
         ContactsDatabase contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
-        for (Address address : mUserManager.getUser().toNewUser().getAddresses().sorted()) {
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
+        for (Address address : getUserManager().getUser().toNewUser().getAddresses().sorted()) {
             if (address.getEmail().getS().equals(email)) {
                 List<KeyInformation> publicKeys = new ArrayList<>();
                 for (AddressKey key : address.getKeys().getKeys()) {
@@ -83,11 +83,11 @@ public class FetchVerificationKeysJob extends ProtonMailBaseJob {
             AppUtil.postEventOnUi(new FetchVerificationKeysEvent(Status.SUCCESS, Collections.emptyList(), mRetry));
             return;
         }
-        FullContactDetailsResponse contRespons = mApi.fetchContactDetails(contactEmail.getContactId());
+        FullContactDetailsResponse contRespons = getApi().fetchContactDetails(contactEmail.getContactId());
         FullContactDetails fullContactDetails = contRespons.getContact();
         contactsDatabase.insertFullContactDetails(fullContactDetails);
         List<String> trustedKeys = fullContactDetails.getPublicKeys(crypto, email);
-        PublicKeyResponse response = mApi.getPublicKeys(email);
+        PublicKeyResponse response = getApi().getPublicKeys(email);
         if (response.hasError()) {
             throw new Exception(response.getError());
         }

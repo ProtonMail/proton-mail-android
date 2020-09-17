@@ -97,10 +97,10 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        messageDetailsRepository.reloadDependenciesForUser(mUsername);
+        getMessageDetailsRepository().reloadDependenciesForUser(mUsername);
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
 
-        Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
         if (message == null) {
             // todo show error to the user
             return;
@@ -113,7 +113,7 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         final NewMessage newMessage = new NewMessage(serverMessage);
         String encryptedMessage = message.getMessageBody();
 
-        User user = mUserManager.getUser(mUsername);
+        User user = getUserManager().getUser(mUsername);
         Address senderAddress = user.getAddressById(addressId);
         newMessage.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
 
@@ -122,9 +122,9 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         if (message.getSenderEmail().contains("+")) { // it's being sent by alias
             newMessage.setSender(new MessageSender(message.getSenderName(), message.getSenderEmail()));
         }
-        final MessageResponse draftResponse = mApi.updateDraft(newMessage.getMessage().getID(), newMessage, new RetrofitTag(mUsername));
+        final MessageResponse draftResponse = getApi().updateDraft(newMessage.getMessage().getID(), newMessage, new RetrofitTag(mUsername));
         if (draftResponse.getCode() == Constants.RESPONSE_CODE_OK) {
-            mApi.markMessageAsRead(new IDList(Arrays.asList(newMessage.getMessage().getID())));
+            getApi().markMessageAsRead(new IDList(Arrays.asList(newMessage.getMessage().getID())));
         } else {
             pendingActionsDatabase.deletePendingUploadByMessageId(message.getMessageId());
             return;
@@ -138,8 +138,8 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
 
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
-        messageDetailsRepository.reloadDependenciesForUser(mUsername);
-        Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
+        getMessageDetailsRepository().reloadDependenciesForUser(mUsername);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
         if (message == null) {
             return;
         }
@@ -149,7 +149,7 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
     }
 
     private void saveMessage(Message message, PendingActionsDatabase pendingActionsDatabase) {
-        AddressCrypto addressCrypto = Crypto.forAddress(mUserManager, mUsername, message.getAddressID());
+        AddressCrypto addressCrypto = Crypto.forAddress(getUserManager(), mUsername, message.getAddressID());
         Set<Attachment> currentAttachments = new HashSet<>(message.getAttachments());
         List<Attachment> updatedAtt = updateDraft(pendingActionsDatabase, addressCrypto, message.getMessageId());
         for (Attachment updatedAttachment : updatedAtt) {
@@ -168,16 +168,16 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
             }
         }
         message.setAttachmentList(new ArrayList<>(currentAttachments));
-        messageDetailsRepository.saveMessageInDB(message);
+        getMessageDetailsRepository().saveMessageInDB(message);
     }
 
     private void updateAttachmentKeyPackets(List<String> attachmentList, NewMessage newMessage, String oldSenderAddress, Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
-            AddressCrypto oldCrypto = Crypto.forAddress(mUserManager, mUsername, oldSenderAddress);
+            AddressCrypto oldCrypto = Crypto.forAddress(getUserManager(), mUsername, oldSenderAddress);
             AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
             String newPublicKey = oldCrypto.buildArmoredPublicKey(newAddressKeys.getPrimaryKey().getPrivateKey());
             for (String attachmentId : attachmentList) {
-                Attachment attachment = messageDetailsRepository.findAttachmentById(attachmentId);
+                Attachment attachment = getMessageDetailsRepository().findAttachmentById(attachmentId);
                 String AttachmentID = attachment.getAttachmentId();
                 String keyPackets = attachment.getKeyPackets();
                 if (TextUtils.isEmpty(keyPackets)) {
@@ -203,11 +203,11 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
 
     private ArrayList<Attachment> updateDraft(PendingActionsDatabase pendingActionsDatabase, AddressCrypto addressCrypto, String messageId)  {
         ArrayList<Attachment> updatedAttachments = new ArrayList<>();
-        Message message = messageDetailsRepository.findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
         if (message != null && mUploadAttachments && (mNewAttachments != null && mNewAttachments.size() > 0)) {
             String mMessageId = message.getMessageId();
             for (String attachmentId : mNewAttachments) {
-                Attachment attachment = messageDetailsRepository.findAttachmentById(attachmentId);
+                Attachment attachment = getMessageDetailsRepository().findAttachmentById(attachmentId);
                 try {
                     if (attachment == null) {
                         continue;
@@ -228,7 +228,7 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
                     }
                     // this is just a hack until new complete composer refactoring is done for some of the next versions
                     attachment.setMessageId(messageId);
-                    attachment.setAttachmentId(attachment.uploadAndSave(messageDetailsRepository, mApi, addressCrypto));
+                    attachment.setAttachmentId(attachment.uploadAndSave(getMessageDetailsRepository(), getApi(), addressCrypto));
                     updatedAttachments.add(attachment);
                 } catch (Exception e) {
                     Logger.doLogException(TAG_UPDATE_AND_POST_DRAFT_JOB, "error while attaching file: " + attachment.getFilePath(), e);

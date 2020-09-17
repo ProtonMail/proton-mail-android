@@ -102,13 +102,13 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        messageDetailsRepository.reloadDependenciesForUser(mUsername);
+        getMessageDetailsRepository().reloadDependenciesForUser(mUsername);
         // first save draft with -ve messageId so it won't overwrite any message
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         MessagesDatabase searchDatabase = MessagesDatabaseFactory.Companion.getSearchDatabase(getApplicationContext()).getDatabase();
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
 
-        Message message = messageDetailsRepository.findMessageByMessageDbId(mDbMessageId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mDbMessageId);
         PendingSend pendingForSending = pendingActionsDatabase.findPendingSendByDbId(message.getDbId());
 
         if (pendingForSending != null) {
@@ -127,20 +127,20 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
             newDraft.setParentID(mParentId);
             newDraft.setAction(mActionType.getMessageActionTypeValue());
             if(!isTransient) {
-                parentMessage = messageDetailsRepository.findMessageById(mParentId);
+                parentMessage = getMessageDetailsRepository().findMessageById(mParentId);
             } else {
-                parentMessage = messageDetailsRepository.findSearchMessageById(mParentId);
+                parentMessage = getMessageDetailsRepository().findSearchMessageById(mParentId);
             }
         }
         String addressId = message.getAddressID();
         String encryptedMessage = message.getMessageBody();
         if (!TextUtils.isEmpty(message.getMessageId())) {
-            Message savedMessage = messageDetailsRepository.findMessageById(message.getMessageId());
+            Message savedMessage = getMessageDetailsRepository().findMessageById(message.getMessageId());
             if (savedMessage != null) {
                 encryptedMessage = savedMessage.getMessageBody();
             }
         }
-        User user = mUserManager.getUser(mUsername);
+        User user = getUserManager().getUser(mUsername);
         Address senderAddress = user.getAddressById(addressId);
         newDraft.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
         AddressCrypto crypto = Crypto.forAddress(mUserManager, mUsername, message.getAddressID());
@@ -159,12 +159,12 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         if (message.getSenderEmail().contains("+")) { // it's being sent by alias
             newDraft.setSender(new MessageSender(message.getSenderName(), message.getSenderEmail()));
         }
-        final MessageResponse draftResponse = mApi.createDraft(newDraft);
+        final MessageResponse draftResponse = getApi().createDraft(newDraft);
         // on success update draft with messageId
 
         String newId = draftResponse.getMessageId();
         Message draftMessage = draftResponse.getMessage();
-        mApi.markMessageAsRead(new IDList(Collections.singletonList(newId)));
+        getApi().markMessageAsRead(new IDList(Collections.singletonList(newId)));
         draftMessage.setDbId(mDbMessageId);
         draftMessage.setToList(message.getToList());
         draftMessage.setCcList(message.getCcList());
@@ -187,16 +187,16 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
                 }
             }
         }
-        messageDetailsRepository.saveMessageInDB(draftMessage);
+        getMessageDetailsRepository().saveMessageInDB(draftMessage);
 
         pendingForSending = pendingActionsDatabase.findPendingSendByOfflineMessageId(oldId);
         if (pendingForSending != null) {
             pendingForSending.setMessageId(newId);
             pendingActionsDatabase.insertPendingForSend(pendingForSending);
         }
-        Message offlineDraft = messageDetailsRepository.findMessageById(oldId);
+        Message offlineDraft = getMessageDetailsRepository().findMessageById(oldId);
         if (offlineDraft != null) {
-            messageDetailsRepository.deleteMessage(offlineDraft);
+            getMessageDetailsRepository().deleteMessage(offlineDraft);
         }
 
         if (message.getNumAttachments() >= 1 && mUploadAttachments && !mNewAttachments.isEmpty()) {
@@ -204,7 +204,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
             for (String attachmentId : mNewAttachments) {
                 listOfAttachments.add(messagesDatabase.findAttachmentById(attachmentId));
             }
-            mJobManager.addJob(new PostCreateDraftAttachmentsJob(newId, oldId, mUploadAttachments, listOfAttachments, crypto, mUsername));
+            getJobManager().addJob(new PostCreateDraftAttachmentsJob(newId, oldId, mUploadAttachments, listOfAttachments, crypto, mUsername));
         } else {
             DraftCreatedEvent draftCreatedEvent = new DraftCreatedEvent(message.getMessageId(), oldId, draftMessage);
             AppUtil.postEventOnUi(draftCreatedEvent);
@@ -262,8 +262,8 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         @Override
         public void onRun() throws Throwable {
             PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-            Message message = messageDetailsRepository.findMessageById(mMessageId);
-            User user = mUserManager.getUser(mUsername);
+            Message message = getMessageDetailsRepository().findMessageById(mMessageId);
+            User user = getUserManager().getUser(mUsername);
             if (user == null) {
                 pendingActionsDatabase.deletePendingUploadByMessageId(mMessageId, mOldMessageId);
                 return;
@@ -288,7 +288,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
                         if (attachment.isUploaded()) {
                             continue;
                         }
-                        attachment.uploadAndSave(messageDetailsRepository,mApi, mCrypto);
+                        attachment.uploadAndSave(getMessageDetailsRepository(), getApi(), mCrypto);
                     } catch (Exception e) {
                         Logger.doLogException(TAG_CREATE_AND_POST_DRAFT_JOB, "error while attaching file: " + attachment.getFilePath(), e);
                         AppUtil.postEventOnUi(new AttachmentFailedEvent(message.getMessageId(), message.getSubject(), attachment.getFileName()));
@@ -299,9 +299,9 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
             PendingSend pendingForSending = pendingActionsDatabase.findPendingSendByDbId(message.getDbId());
 
             if (pendingForSending == null) {
-                messageDetailsRepository.saveMessageInDB(message);
+                getMessageDetailsRepository().saveMessageInDB(message);
             }
-            mJobManager.addJob(new FetchMessageDetailJob(message.getMessageId()));
+            getJobManager().addJob(new FetchMessageDetailJob(message.getMessageId()));
             pendingActionsDatabase.deletePendingUploadByMessageId(mMessageId, mOldMessageId);
             DraftCreatedEvent draftCreatedEvent = new DraftCreatedEvent(message.getMessageId(), mOldMessageId, message);
             AppUtil.postEventOnUi(draftCreatedEvent);

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -60,87 +60,81 @@ import ch.protonmail.android.api.segments.settings.mail.UserSettingsApiSpec
 import ch.protonmail.android.api.segments.user.UserApi
 import ch.protonmail.android.api.segments.user.UserApiSpec
 import ch.protonmail.android.api.segments.user.UserPubService
-import ch.protonmail.android.core.ProtonMailApplication
 import javax.inject.Inject
 
 /**
  * Base API class that all API calls should go through.
  */
 class ProtonMailApi private constructor(
-        // region constructor params
-        private val addressApi: AddressApiSpec,
-        private val attachmentApi: AttachmentApiSpec,
-        private val authenticationApi: AuthenticationApiSpec,
-        val connectivityApi: ConnectivityApiSpec,
-        private val contactApi: ContactApiSpec,
-        private val deviceApi: DeviceApiSpec,
-        private val keyApi: KeyApiSpec,
-        private val messageApi: MessageApiSpec,
-        private val labelApi: LabelApiSpec,
-        private val organizationApi: OrganizationApiSpec,
-        private val paymentApi: PaymentApiSpec,
-        private val reportApi: ReportApiSpec,
-        private val resetApi: ResetApiSpec,
-        private val mailSettingsApi: MailSettingsApiSpec,
-        private val userSettingsApi: UserSettingsApiSpec,
-        private val userApi: UserApiSpec,
-        private val domainApi: DomainApiSpec,
-        var securedServices: SecuredServices
-        // endregion
+    // region constructor params
+    private val addressApi: AddressApiSpec,
+    private val attachmentApi: AttachmentApiSpec,
+    private val authenticationApi: AuthenticationApiSpec,
+    val connectivityApi: ConnectivityApiSpec,
+    private val contactApi: ContactApiSpec,
+    private val deviceApi: DeviceApiSpec,
+    private val keyApi: KeyApiSpec,
+    private val messageApi: MessageApiSpec,
+    private val labelApi: LabelApiSpec,
+    private val organizationApi: OrganizationApiSpec,
+    private val paymentApi: PaymentApiSpec,
+    private val reportApi: ReportApiSpec,
+    private val resetApi: ResetApiSpec,
+    private val mailSettingsApi: MailSettingsApiSpec,
+    private val userSettingsApi: UserSettingsApiSpec,
+    private val userApi: UserApiSpec,
+    private val domainApi: DomainApiSpec,
+    var securedServices: SecuredServices
+    // endregion
 ) :
-// region super classes and interfaces
-        BaseApi(),
-        AddressApiSpec by addressApi,
-        AttachmentApiSpec by attachmentApi,
-        AuthenticationApiSpec by authenticationApi,
-        ConnectivityApiSpec by connectivityApi,
-        ContactApiSpec by contactApi,
-        DeviceApiSpec by deviceApi,
-        KeyApiSpec by keyApi,
-        LabelApiSpec by labelApi,
-        MessageApiSpec by messageApi,
-        OrganizationApiSpec by organizationApi,
-        PaymentApiSpec by paymentApi,
-        ReportApiSpec by reportApi,
-        ResetApiSpec by resetApi,
-        UserSettingsApiSpec by userSettingsApi,
-        MailSettingsApiSpec by mailSettingsApi,
-        UserApiSpec by userApi,
-        DomainApiSpec by domainApi
-        // endregion
+    // region super classes and interfaces
+    BaseApi(),
+    AddressApiSpec by addressApi,
+    AttachmentApiSpec by attachmentApi,
+    AuthenticationApiSpec by authenticationApi,
+    ConnectivityApiSpec by connectivityApi,
+    ContactApiSpec by contactApi,
+    DeviceApiSpec by deviceApi,
+    KeyApiSpec by keyApi,
+    LabelApiSpec by labelApi,
+    MessageApiSpec by messageApi,
+    OrganizationApiSpec by organizationApi,
+    PaymentApiSpec by paymentApi,
+    ReportApiSpec by reportApi,
+    ResetApiSpec by resetApi,
+    UserSettingsApiSpec by userSettingsApi,
+    MailSettingsApiSpec by mailSettingsApi,
+    UserApiSpec by userApi,
+    DomainApiSpec by domainApi
+    // endregion
 {
     // region hack to insert parameters in the constructor instead of init, otherwise delegation doesn't work
     @Inject
     constructor(protonRetrofitBuilder: ProtonRetrofitBuilder) :
-            this(createConstructionParams(protonRetrofitBuilder))
+        this(createConstructionParams(protonRetrofitBuilder))
 
     constructor(params: Array<Any>) : this(
-            // region params
-            params[0] as AddressApiSpec,
-            params[1] as AttachmentApiSpec,
-            params[2] as AuthenticationApiSpec,
-            params[3] as ConnectivityApiSpec,
-            params[4] as ContactApiSpec,
-            params[5] as DeviceApiSpec,
-            params[6] as KeyApiSpec,
-            params[7] as MessageApi,
-            params[8] as LabelApiSpec,
-            params[9] as OrganizationApiSpec,
-            params[10] as PaymentApiSpec,
-            params[11] as ReportApiSpec,
-            params[12] as ResetApiSpec,
-            params[13] as MailSettingsApiSpec,
-            params[14] as UserSettingsApiSpec,
-            params[15] as UserApiSpec,
-            params[16] as DomainApiSpec,
-            params[18] as SecuredServices
-            // endregion
+        // region params
+        params[0] as AddressApiSpec,
+        params[1] as AttachmentApiSpec,
+        params[2] as AuthenticationApiSpec,
+        params[3] as ConnectivityApiSpec,
+        params[4] as ContactApiSpec,
+        params[5] as DeviceApiSpec,
+        params[6] as KeyApiSpec,
+        params[7] as MessageApi,
+        params[8] as LabelApiSpec,
+        params[9] as OrganizationApiSpec,
+        params[10] as PaymentApiSpec,
+        params[11] as ReportApiSpec,
+        params[12] as ResetApiSpec,
+        params[13] as MailSettingsApiSpec,
+        params[14] as UserSettingsApiSpec,
+        params[15] as UserApiSpec,
+        params[16] as DomainApiSpec,
+        params[18] as SecuredServices
+        // endregion
     )
-
-    // endregion
-    init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
-    }
 
     companion object {
         /**

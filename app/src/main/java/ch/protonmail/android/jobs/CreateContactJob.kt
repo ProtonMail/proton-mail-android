@@ -29,9 +29,9 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FA
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.crypto.Crypto
 import com.birbit.android.jobqueue.Params
 import java.util.ArrayList
 
@@ -59,7 +59,7 @@ class CreateContactJob()
         val contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext).getDatabase()
         contactsDatabase.saveAllContactsEmails(mContactEmails!!)
 
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.NO_NETWORK, true))
         }
     }
@@ -69,7 +69,7 @@ class CreateContactJob()
         val contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext)
                 .getDatabase()
 
-        val crypto = Crypto.forUser(mUserManager, mUserManager.username)
+        val crypto = Crypto.forUser(getUserManager(), getUserManager().username)
         val encryptedData = crypto.encrypt(mEncryptedData, false).armored
         val encryptDataSignature = crypto.sign(mEncryptedData)
         val signedDataSignature = crypto.sign(mSignedData)
@@ -80,7 +80,7 @@ class CreateContactJob()
         contactEncryptedDataList.add(contactEncryptedDataType2)
         contactEncryptedDataList.add(contactEncryptedDataType3)
         val body = CreateContact(contactEncryptedDataList)
-        val response = mApi.createContact(body)
+        val response = getApi().createContact(body)
 
         if (response!!.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.ERROR, true))

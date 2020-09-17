@@ -72,7 +72,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
     }
 
     override fun onAdded() {
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.NO_NETWORK, false))
         }
     }
@@ -82,7 +82,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
 
         val contactsDatabase = ContactsDatabaseFactory.getInstance(
                 applicationContext).getDatabase()
-        val crypto = Crypto.forUser(mUserManager, mUserManager.username)
+        val crypto = Crypto.forUser(getUserManager(), getUserManager().username)
 
         val executionResults = ContactsDatabaseFactory.getInstance(applicationContext).runInTransaction<List<Int>> {
 
@@ -157,7 +157,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 contactEncryptedDataList.add(contactEncryptedDataType3)
 
                 val body = CreateContact(contactEncryptedDataList)
-                val response = mApi.createContact(body)
+                val response = getApi().createContact(body)
 
                 @ContactEvent.Status val status = handleResponse(contactsDatabase, response!!, dbId, contactGroupIds)
                 if (status != ContactEvent.SUCCESS) {
@@ -247,7 +247,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         var someGroupsAlreadyExist = false
 
         localGroups.forEach {
-            val response = mApi.createLabel(LabelBody(it.value, defaultColor, 1, false.makeInt(), Constants.LABEL_TYPE_CONTACT_GROUPS))
+            val response = getApi().createLabel(LabelBody(it.value, defaultColor, 1, false.makeInt(), Constants.LABEL_TYPE_CONTACT_GROUPS))
             if (response.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
                 someGroupsAlreadyExist = true
             } else {
@@ -257,7 +257,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
         }
 
         if (someGroupsAlreadyExist) { // at least one local group already exist on server, we fetch all of them to get IDs
-            val serverGroups = mApi.fetchContactGroups()
+            val serverGroups = getApi().fetchContactGroups()
                     .map { it.contactGroups }
                     .subscribeOn(ThreadSchedulers.io())
                     .observeOn(ThreadSchedulers.io())
@@ -290,7 +290,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 contactsDatabase.saveAllContactsEmails(contact.emails!!)
                 contactGroupIds.forEach { contactGroupId ->
                     val emailsList = contact.emails!!.map { it.contactEmailId }
-                    mApi.labelContacts(LabelContactsBody(contactGroupId, emailsList))
+                    getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
                             .doOnComplete {
                                 val joins = contactsDatabase.fetchJoins(contactGroupId) as ArrayList
                                 for (contactEmail in emailsList) {

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -62,8 +62,8 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        MailSettings mailSettings = mUserManager.getMailSettings();
-        SendPreferencesFactory factory = new SendPreferencesFactory(mApi, mUserManager, mUserManager.getUsername(), mailSettings, contactsDatabase);
+        MailSettings mailSettings = getUserManager().getMailSettings();
+        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().getUsername(), mailSettings, contactsDatabase);
         Map<String, SendPreference> sendPreferenceMap = new HashMap<>();
         sendPreferenceMap.put(mEmails.get(0), null);
         try {

@@ -60,7 +60,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
     @Override
     public void onAdded() {
         ContactsDatabase contactsDatabase= ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-        User user = mUserManager.getUser();
+        User user = getUserManager().getUser();
         String contactId = getContactId(contactsDatabase, mContactEmail);
         if (contactId == null) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.ERROR, mDestination));
@@ -79,7 +79,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
             return;
         }
 
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(new ResignContactEvent(mSendPreference, ContactEvent.NO_NETWORK, mDestination));
         }
     }
@@ -106,7 +106,7 @@ public class ResignContactJob extends ProtonMailEndlessJob {
 
         FullContactDetails fullContactDetails = contactsDatabase.findFullContactDetailsById(
                 contactId);
-        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
         ContactEncryptedData signedCard = getCardByType(fullContactDetails.getEncryptedData(), ContactEncryption.SIGNED);
 
         if (signedCard == null) {
@@ -131,8 +131,8 @@ public class ResignContactJob extends ProtonMailEndlessJob {
             body = new CreateContactV2BodyItem(signedCard.getData(), signedCard.getSignature(), encCard.getData(), encCard.getSignature());
         }
 
-        mApi.updateContact(contactId, body);
-        FullContactDetailsResponse response = mApi.updateContact(contactId, body);
+        getApi().updateContact(contactId, body);
+        FullContactDetailsResponse response = getApi().updateContact(contactId, body);
 
         if (response != null) {
             if (response.getCode() == RESPONSE_CODE_ERROR_EMAIL_EXIST) {

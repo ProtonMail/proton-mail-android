@@ -19,17 +19,19 @@
 
 package ch.protonmail.android.di
 
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
-import ch.protonmail.android.jobs.ProtonMailBaseJob
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.Logger
+import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
 import com.birbit.android.jobqueue.log.CustomLogger
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.EntryPoint
-import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import timber.log.Timber
@@ -39,8 +41,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object JobModule {
 
-    val component by lazy { EntryPoints.get(ProtonMailApplication.getApplication(), JobComponent::class.java) }
-
     @Provides
     @Singleton
     fun jobManager(app: ProtonMailApplication, queueNetworkUtil: QueueNetworkUtil): JobManager {
@@ -49,10 +49,6 @@ object JobModule {
             .consumerKeepAlive(120) // 2 minutes
             .networkUtil(queueNetworkUtil)
             .customLogger(logger)
-            .injector { job ->
-                if (job is ProtonMailBaseJob)
-                    component.inject(job)
-            }
             .build()
 
         return JobManager(config)
@@ -88,7 +84,12 @@ object JobModule {
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
-interface JobComponent {
+interface JobEntryPoint {
 
-    fun inject(job: ProtonMailBaseJob)
+    fun apiManager(): ProtonMailApiManager
+    fun fetchContactsEmailsWorkerEnqueuer(): FetchContactsEmailsWorker.Enqueuer
+    fun jobManager(): JobManager
+    fun messageDetailsRepository(): MessageDetailsRepository
+    fun queueNetworkUtil(): QueueNetworkUtil
+    fun userManager(): UserManager
 }

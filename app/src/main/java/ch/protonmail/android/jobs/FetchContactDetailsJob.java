@@ -28,12 +28,13 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.crypto.CipherText;
-import ch.protonmail.android.crypto.Crypto;
-import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.ContactDetailsFetchedEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.AppUtil;
+import ch.protonmail.android.utils.crypto.Crypto;
+import ch.protonmail.android.utils.crypto.TextCiphertext;
+import ch.protonmail.android.utils.crypto.UserCrypto;
 
 public class FetchContactDetailsJob extends ProtonMailBaseJob {
 
@@ -49,10 +50,10 @@ public class FetchContactDetailsJob extends ProtonMailBaseJob {
         ContactsDatabase contactsDatabase= ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         FullContactDetails contact = contactsDatabase.findFullContactDetailsById(contactId);
         checkAndParse(contact);
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             return;
         } else {
-            FullContactDetailsResponse response = mApi.fetchContactDetails(contactId);
+            FullContactDetailsResponse response = getApi().fetchContactDetails(contactId);
             contact = response.getContact();
             contactsDatabase.insertFullContactDetails(contact);
             checkAndParse(contact);
@@ -67,7 +68,7 @@ public class FetchContactDetailsJob extends ProtonMailBaseJob {
 
     private void parseVCard(FullContactDetails contact) throws Exception {
         List<ContactEncryptedData> encData = contact.getEncryptedData();
-        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
 
         String decryptedVCardType0 = "";
         String decryptedVCardType2 = "";

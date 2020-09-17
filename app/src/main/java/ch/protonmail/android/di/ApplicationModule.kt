@@ -21,6 +21,7 @@ package ch.protonmail.android.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.work.WorkManager
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
@@ -33,6 +34,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
+import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -79,7 +81,7 @@ object ApplicationModule {
     @Provides
     @Singleton
     @BackupSharedPreferences
-    fun provideBackupSharedPreferences(context: Context): SharedPreferences =
+    fun backupSharedPreferences(context: Context): SharedPreferences =
         context.getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE)
 
     @Provides
@@ -161,4 +163,13 @@ object ApplicationModule {
     @Singleton
     fun proxies(@DefaultSharedPreferences prefs: SharedPreferences): Proxies =
         Proxies.getInstance(prefs = prefs)
+
+    @Provides
+    fun workManager(context: Context): WorkManager =
+        WorkManager.getInstance(context)
 }
+
+@Module
+@AssistedModule
+@InstallIn(SingletonComponent::class)
+interface AssistedApplicationModule

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -28,11 +28,11 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
-import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.LocalAttachment
+import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingDraft
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
@@ -40,11 +40,11 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.FetchVerificationKeysJob
 import ch.protonmail.android.jobs.PostReadJob
+import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
@@ -59,22 +59,23 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
+import java.util.Arrays
+import java.util.HashSet
 import javax.inject.Inject
-import kotlin.collections.ArrayList
+import javax.inject.Named
 
 // region constants
 private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
 // endregion
 
-/**
+/*
  * Created by kadrikj on 11/13/18.
  */
 
 class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
-    var searchDatabaseDao: MessagesDao,
+    @Named("messages_search") var searchDatabaseDao: MessagesDao,
     private var pendingActionsDatabase: PendingActionsDao,
     private val applicationContext: Context,
     var databaseProvider: DatabaseProvider
