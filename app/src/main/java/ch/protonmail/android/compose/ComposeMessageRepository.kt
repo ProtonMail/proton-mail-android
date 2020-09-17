@@ -19,6 +19,7 @@
 package ch.protonmail.android.compose
 
 import android.text.TextUtils
+import androidx.work.WorkManager
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.AccountManager
@@ -37,7 +38,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.FetchPublicKeysJob
-import ch.protonmail.android.jobs.PostDeleteJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
@@ -46,6 +46,7 @@ import ch.protonmail.android.jobs.verification.FetchHumanVerificationOptionsJob
 import ch.protonmail.android.jobs.verification.PostHumanVerificationJob
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
+import ch.protonmail.android.worker.DeleteMessageWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -59,12 +60,13 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ComposeMessageRepository @Inject constructor(
+    val workManager: WorkManager,
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
-    @Named("messages") var messagesDatabase: MessagesDatabase,
-    @Named("messages_search") val searchDatabase: MessagesDatabase,
-    val messageDetailsRepository: MessageDetailsRepository // FIXME: this should be removed
+    @Named("messages")var messagesDatabase: MessagesDatabase,
+    @Named("messages_search")val searchDatabase: MessagesDatabase,
+    val messageDetailsRepository: MessageDetailsRepository // FIXME: this should be removed){}
 ) {
 
     val lazyManager = resettableManager()
@@ -81,31 +83,31 @@ class ComposeMessageRepository @Inject constructor(
         databaseProvider.provideContactsDao()
     }
 
-    private val contactsDaos : HashMap<String, ContactsDao> by resettableLazy(lazyManager) {
+    private val contactsDaos: HashMap<String, ContactsDao> by resettableLazy(lazyManager) {
         val usernames = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).getLoggedInUsers()
-        val listOfDaos : HashMap<String, ContactsDao> = HashMap()
-        for(username in usernames){
-            listOfDaos[username]= databaseProvider.provideContactsDao(username)
+        val listOfDaos: HashMap<String, ContactsDao> = HashMap()
+        for (username in usernames) {
+            listOfDaos[username] = databaseProvider.provideContactsDao(username)
         }
         listOfDaos
     }
 
-    fun getContactGroupsFromDB(username : String, combinedContacts:Boolean): Observable<List<ContactLabel>> {
-        var tempContactsDao : ContactsDao = contactsDao
-        if(combinedContacts) {
-             tempContactsDao = contactsDaos[username]!!
+    fun getContactGroupsFromDB(username: String, combinedContacts: Boolean): Observable<List<ContactLabel>> {
+        var tempContactsDao: ContactsDao = contactsDao
+        if (combinedContacts) {
+            tempContactsDao = contactsDaos[username]!!
         }
-            return tempContactsDao.findContactGroupsObservable()
-                    .flatMap { list ->
-                        Observable.fromIterable(list)
-                                .map {
-                                    it.contactEmailsCount = tempContactsDao.countContactEmailsByLabelId(it.ID)
-                                    it
-                                }
-                                .toList()
-                                .toFlowable()
+        return tempContactsDao.findContactGroupsObservable()
+            .flatMap { list ->
+                Observable.fromIterable(list)
+                    .map {
+                        it.contactEmailsCount = tempContactsDao.countContactEmailsByLabelId(it.ID)
+                        it
                     }
-                    .toObservable()
+                    .toList()
+                    .toFlowable()
+            }
+            .toObservable()
     }
 
     fun getContactGroupFromDB(groupName: String): Single<ContactLabel> {
@@ -125,13 +127,13 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     suspend fun getAttachments(message: Message, isTransient: Boolean, dispatcher: CoroutineDispatcher): List<Attachment> =
-            withContext(dispatcher) {
-                if (!isTransient) {
-                    message.attachments(messagesDatabase)
-                } else {
-                    message.attachments(searchDatabase)
-                }
+        withContext(dispatcher) {
+            if (!isTransient) {
+                message.attachments(messagesDatabase)
+            } else {
+                message.attachments(searchDatabase)
             }
+        }
 
     fun getAttachments2(message: Message, isTransient: Boolean): List<Attachment> = if (!isTransient) {
         message.attachments(messagesDatabase)
@@ -181,9 +183,8 @@ class ComposeMessageRepository @Inject constructor(
         jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
     }
 
-    fun startPostDelete(messageId: String) {
-        throw IllegalStateException("Migrate to PostDeleteWorker")
-        ///jobManager.addJobInBackground(PostDeleteJob(listOf(messageId)))
+    fun startDeleteMessage(messageId: String) {
+        DeleteMessageWorker.Enqueuer(workManager).enqueue(listOf(messageId))
     }
 
     fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {
@@ -201,13 +202,13 @@ class ComposeMessageRepository @Inject constructor(
         }
 
     suspend fun findAttachmentByMessageIdFileNameAndPath(messageId: String, fileName: String, filePath: String, isTransient: Boolean, dispatcher: CoroutineDispatcher) =
-            withContext(dispatcher) {
-                if(!isTransient) {
-                    messagesDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
-                } else {
-                    searchDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
-                }
+        withContext(dispatcher) {
+            if (!isTransient) {
+                messagesDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
+            } else {
+                searchDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
             }
+        }
 
     suspend fun createAttachmentList(attachmentList: List<LocalAttachment>, dispatcher: CoroutineDispatcher) =
         withContext(dispatcher) {
@@ -217,17 +218,17 @@ class ComposeMessageRepository @Inject constructor(
     fun prepareMessageData(currentObject: MessageBuilderData, messageTitle: String,
                            attachments: ArrayList<LocalAttachment>): MessageBuilderData {
         return MessageBuilderData.Builder()
-                .fromOld(currentObject)
-                .message(Message())
-                .messageTitle("")
-                .senderEmailAddress("")
-                .messageSenderName("")
-                .messageTitle(messageTitle)
-                .attachmentList(attachments)
-                .build()
+            .fromOld(currentObject)
+            .message(Message())
+            .messageTitle("")
+            .senderEmailAddress("")
+            .messageSenderName("")
+            .messageTitle(messageTitle)
+            .attachmentList(attachments)
+            .build()
     }
 
-    fun prepareMessageData(isPgpMime: Boolean, addressId: String, addressEmailAlias: String? = null, isTransient: Boolean = false): MessageBuilderData  {
+    fun prepareMessageData(isPgpMime: Boolean, addressId: String, addressEmailAlias: String? = null, isTransient: Boolean = false): MessageBuilderData {
         return MessageBuilderData.Builder()
             .message(Message())
             .messageTitle("")
@@ -238,13 +239,13 @@ class ComposeMessageRepository @Inject constructor(
             .isPGPMime(isPgpMime)
             .isTransient(isTransient)
             .build()
-        }
+    }
 
-    fun findAllMessageRecipients(username : String) = contactsDaos[username]!!.findAllMessageRecipients()
+    fun findAllMessageRecipients(username: String) = contactsDaos[username]!!.findAllMessageRecipients()
 
     fun markMessageRead(messageId: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            messageDetailsRepository.findMessageById(messageId)?.let {savedMessage->
+            messageDetailsRepository.findMessageById(messageId)?.let { savedMessage ->
                 val read = savedMessage.isRead
                 if (!read) {
                     jobManager.addJobInBackground(PostReadJob(listOf(savedMessage.messageId)))

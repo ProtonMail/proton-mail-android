@@ -29,21 +29,17 @@ import com.birbit.android.jobqueue.Job
 
 class TrashSwipeHandler : ISwipeHandler {
 
-    override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
-        return if (Constants.MessageLocationType.fromInt(message.location) == Constants.MessageLocationType.DRAFT) {
-            throw IllegalStateException("Migrate to PostDeleteWorker")
-            //PostDeleteJob(listOf(message.messageId))
-        } else {
-            PostTrashJob(listOf(message.messageId), currentLocation)
-        }
-    }
+    override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job =
+        PostTrashJob(listOf(message.messageId), currentLocation)
 
-    override fun handleUndo(message: SimpleMessage, messageLocation: Constants.MessageLocationType, currentLocation: String?): Job {
-        return when (messageLocation) {
-            Constants.MessageLocationType.INBOX -> PostInboxJob(listOf(message.messageId))
-            Constants.MessageLocationType.ARCHIVE -> PostArchiveJob(listOf(message.messageId))
-            Constants.MessageLocationType.LABEL_FOLDER -> MoveToFolderJob(listOf(message.messageId), currentLocation)
-            else -> PostDraftJob(listOf(message.messageId))
-        }
+    override fun handleUndo(
+        message: SimpleMessage,
+        messageLocation: Constants.MessageLocationType,
+        currentLocation: String?
+    ): Job = when (messageLocation) {
+        Constants.MessageLocationType.INBOX -> PostInboxJob(listOf(message.messageId))
+        Constants.MessageLocationType.ARCHIVE -> PostArchiveJob(listOf(message.messageId))
+        Constants.MessageLocationType.LABEL_FOLDER -> MoveToFolderJob(listOf(message.messageId), currentLocation)
+        else -> PostDraftJob(listOf(message.messageId))
     }
 }

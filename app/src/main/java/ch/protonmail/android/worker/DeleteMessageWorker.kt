@@ -42,7 +42,7 @@ import javax.inject.Inject
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 internal const val KEY_INPUT_DATA_MESSAGE_IDS = "KeyInputDataMessageIds"
 internal const val KEY_INVALID_MESSAGE_IDS_RESULT = "KeyInvalidMessageIdsResult"
-private const val WORKER_TAG = "PostDeleteWorkerTag"
+private const val WORKER_TAG = "DeleteMessageWorkerTag"
 
 /**
  * Work Manager Worker responsible for deleting messages.
@@ -92,7 +92,6 @@ class DeleteMessageWorker(
                 if (response.code == Constants.RESPONSE_CODE_OK ||
                     response.code == Constants.RESPONSE_CODE_MULTIPLE_OK
                 ) {
-                    Timber.v("Response success code ${response.code}")
                     updateDb(validMessageIdList)
                     getInvalidMessagesResult(invalidMessageIdList)
                 } else {
@@ -169,7 +168,7 @@ class DeleteMessageWorker(
                 .setInputData(workDataOf(KEY_INPUT_DATA_MESSAGE_IDS to messageIds.toTypedArray()))
                 .addTag(WORKER_TAG)
                 .build()
-            Timber.v("Scheduling PostDeleteWorker")
+            Timber.v("Scheduling DeleteMessageWorker for ${messageIds.size} message(s)")
             return workManager.enqueue(workRequest)
         }
 

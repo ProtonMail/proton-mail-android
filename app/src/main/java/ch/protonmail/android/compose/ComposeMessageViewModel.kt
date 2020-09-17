@@ -695,7 +695,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     fun deleteDraft() {
-        composeMessageRepository.startPostDelete(_draftId.get())
+        composeMessageRepository.startDeleteMessage(_draftId.get())
         removePendingDraft()
     }
 
