@@ -111,6 +111,8 @@ val DependencyHandler.`fasterxml-jackson-core` get() =      dependency("com.fast
 val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-annotations") version `jackson version`
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
 val DependencyHandler.`remark` get() =                      dependency("com.overzealous", module = "remark") version `remark version`
+val DependencyHandler.`mail-android` get() =                dependency("com.sun.mail", module = "android-mail") version `mailAndroid version`
+val DependencyHandler.`mail-android-activation` get() =     dependency("com.sun.mail", module = "android-activation") version `mailAndroid version`
 // endregion
 
 // endregion
