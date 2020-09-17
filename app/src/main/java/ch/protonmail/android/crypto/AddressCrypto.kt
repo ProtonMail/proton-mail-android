@@ -112,8 +112,12 @@ class AddressCrypto(
         return GoOpenPgpCrypto.encryptSessionKeyWithPassword(symmetricKey, password)
     }
 
-    fun decryptKeyPacket(keyPacket: ByteArray): ByteArray =
-        createAndUnlockKeyRing().decryptSessionKey(keyPacket).key
+    fun decryptKeyPacket(keyPacket: ByteArray): ByteArray {
+        val unlockedKeyRing = createAndUnlockKeyRing()
+        val key = unlockedKeyRing.decryptSessionKey(keyPacket).key
+        unlockedKeyRing.clearPrivateParams()
+        return key
+    }
 
     fun decryptAttachment(message: CipherText): BinaryDecryptionResult {
         return withCurrentKeys("Error decrypting attachment") { key ->
