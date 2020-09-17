@@ -17,26 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.domain.testDoubles
+package ch.protonmail.android.domain.util
 
-import ch.protonmail.android.domain.entity.Credential
-import ch.protonmail.android.domain.entity.EmailAddress
-import ch.protonmail.android.domain.repository.CredentialRepository
+import kotlinx.coroutines.delay
+import kotlin.time.Duration
 
-class FakeCredentialsRepository : CredentialRepository {
-
-    private val map = mutableMapOf<EmailAddress, Credential>()
-
-    override fun getAll() = map.toMap()
-
-    override fun get(address: EmailAddress) = map.getOrDefault(address, Credential.NotFound)
-
-    override fun set(address: EmailAddress, credential: Credential) {
-        map[address] = credential
-    }
-
-    override fun minusAssign(address: EmailAddress) {
-        map -= address
-    }
-
-}
+/**
+ * Apply a delay using [Duration]
+ */
+suspend fun delay(time: Duration) =
+    delay(time.toLongMilliseconds())

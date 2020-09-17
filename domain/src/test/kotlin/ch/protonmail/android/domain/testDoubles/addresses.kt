@@ -21,4 +21,6 @@ package ch.protonmail.android.domain.testDoubles
 
 import ch.protonmail.android.domain.entity.EmailAddress
 
+val AnotherEmailAddress = EmailAddress("another@email.com")
+val JustAnEmailAddress = EmailAddress("justan@email.com")
 val SomeEmailAddress = EmailAddress("some@email.com")
