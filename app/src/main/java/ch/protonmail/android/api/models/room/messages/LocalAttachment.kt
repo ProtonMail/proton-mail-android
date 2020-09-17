@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,18 +24,21 @@ import android.os.Parcelable
 import android.util.Base64
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.core.ProtonMailApplication
+import me.proton.core.util.kotlin.EMPTY_STRING
 
-class LocalAttachment @JvmOverloads constructor(var uri: Uri,
-												val displayName: String,
-												val size: Long = 0,
-												val mimeType: String,
-												var attachmentId: String = "",
-												var messageId: String = "",
-												var isEmbeddedImage: Boolean = false,
-												var isUploading: Boolean = false,
-												val keyPackets: String? = null,
-												val headers: AttachmentHeaders? = null,
-                                                val isUploaded: Boolean = false) : Parcelable {
+class LocalAttachment @JvmOverloads constructor(
+	var uri: Uri,
+	val displayName: String,
+	val size: Long = 0,
+	val mimeType: String,
+	var attachmentId: String = "",
+	var messageId: String = "",
+	var isEmbeddedImage: Boolean = false,
+	var isUploading: Boolean = false,
+	val keyPackets: String? = null,
+	val headers: AttachmentHeaders? = null,
+	val isUploaded: Boolean = false
+) : Parcelable {
 
 	override fun describeContents(): Int {
 		return 0
@@ -89,36 +92,36 @@ class LocalAttachment @JvmOverloads constructor(var uri: Uri,
 		@JvmField
 		val CREATOR = object : Parcelable.Creator<LocalAttachment> {
 			override fun createFromParcel(parcel: Parcel): LocalAttachment {
-				val attachmentId = parcel.readString()
-				val messageId = parcel.readString()
-				val uri = parcel.readParcelable<Uri>(Uri::class.java.classLoader)
-				val name = parcel.readString()
+				val attachmentId = parcel.readString() ?: EMPTY_STRING
+				val messageId = parcel.readString() ?: EMPTY_STRING
+				val uri = parcel.readParcelable<Uri>(Uri::class.java.classLoader) ?: Uri.EMPTY
+				val name = parcel.readString() ?: EMPTY_STRING
 				val size = parcel.readLong()
-				val mimeType = parcel.readString()
+				val mimeType = parcel.readString() ?: EMPTY_STRING
 				val isEmbeddedImage = parcel.readInt() == 1
 				val isUploading = parcel.readInt() == 1
 				val keyPackets = parcel.readString()
-				val serializedHeaders = parcel.readString()
-				val headers = if (serializedHeaders.isEmpty()) null else AttachmentHeaders.fromString(
-						serializedHeaders)
-                val isUploaded = parcel.readInt() == 1
+				val serializedHeaders = parcel.readString() ?: EMPTY_STRING
+				val headers =
+					if (serializedHeaders.isEmpty()) null
+					else AttachmentHeaders.fromString(serializedHeaders)
+				val isUploaded = parcel.readInt() == 1
 
-				return LocalAttachment(uri,
-						name,
-						size,
-						mimeType,
-						attachmentId,
-						messageId,
-						isEmbeddedImage,
-						isUploading,
-						keyPackets,
-						headers,
-                        isUploaded)
+				return LocalAttachment(
+					uri,
+					name,
+					size,
+					mimeType,
+					attachmentId,
+					messageId,
+					isEmbeddedImage,
+					isUploading,
+					keyPackets,
+					headers,
+					isUploaded)
 			}
 
-			override fun newArray(size: Int): Array<LocalAttachment?> {
-				return arrayOfNulls(size)
-			}
+			override fun newArray(size: Int) = arrayOfNulls<LocalAttachment>(size)
 		}
 	}
 }

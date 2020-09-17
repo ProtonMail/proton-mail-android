@@ -236,7 +236,9 @@ class MessageDetailsAdapter(
             // Copy Subject to Clipboard at long press
             itemView.messageTitle.setOnLongClickListener {
                 clipboardManager?.let {
-                    it.primaryClip = ClipData.newPlainText(context.getString(R.string.email_subject), itemView.messageTitle.text)
+                    it.setPrimaryClip(
+                        ClipData.newPlainText(context.getString(R.string.email_subject), itemView.messageTitle.text)
+                    )
                     context.showToast(R.string.subject_copied, Toast.LENGTH_SHORT)
                     true
                 } ?: false

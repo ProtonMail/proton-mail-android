@@ -1,28 +1,28 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.activities.messageDetails.attachments
 
 import android.content.Context
-import androidx.annotation.DrawableRes
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.annotation.DrawableRes
 import ch.protonmail.android.R
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.views.messageDetails.AttachmentDetailView
@@ -66,10 +66,10 @@ class MessageDetailsAttachmentListAdapter(context: Context, private val download
 		pgpEncrypted = isPgpEncrypted
 	}
 
-	override fun getView(position:Int,convertView:View?,parent:ViewGroup):View? {
+	override fun getView(position: Int, convertView: View? ,parent: ViewGroup): View {
 
-		val attachment = getItem(position) ?: return null
-		val result = convertView as? AttachmentDetailView ?: AttachmentDetailView(context)
+		val view = convertView as? AttachmentDetailView ?: AttachmentDetailView(context)
+		val attachment = getItem(position) ?: return view
 
 		val fileName = attachment.fileName
 		val fileSize = attachment.fileSize
@@ -79,11 +79,11 @@ class MessageDetailsAttachmentListAdapter(context: Context, private val download
 		val showWarningIcon = headers != null && headers.contentEncryption == "on-delivery" && pgpEncrypted
 		val attachmentId = attachment.attachmentId
 		val isDownloading = downloadingIds.contains(attachmentId)
-		result.bind(fileName, fileSize, attachmentSpecificIcon, showWarningIcon, isDownloading)
+		view.bind(fileName, fileSize, attachmentSpecificIcon, showWarningIcon, isDownloading)
 
 		val onClickListener = View.OnClickListener { downloadListener(attachmentId!!) }
-		result.setOnClickListener(onClickListener)
+		view.setOnClickListener(onClickListener)
 
-		return result
+		return view
 	}
 }
