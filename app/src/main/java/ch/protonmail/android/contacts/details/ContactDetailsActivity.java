@@ -35,6 +35,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -62,7 +63,6 @@ import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.WorkManager;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -73,7 +73,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -114,7 +113,6 @@ import ch.protonmail.android.views.CustomFontButton;
 import ch.protonmail.android.views.CustomFontTextView;
 import ch.protonmail.android.views.VCardLinearLayout;
 import ch.protonmail.android.views.contactDetails.ContactAvatarView;
-import ch.protonmail.android.worker.DeleteContactWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
@@ -218,8 +216,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     private Menu collapsedMenu;
     @Inject
     ContactDetailsViewModel.Factory contactDetailsViewModelFactory;
-    @Inject
-    WorkManager workManager;
     ContactDetailsViewModel contactDetailsViewModel;
     ContactEditDetailsEmailGroupsAdapter contactEditDetailsEmailGroupsAdapter;
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
@@ -366,9 +362,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (itemId == R.id.action_delete) {
             DialogInterface.OnClickListener clickListener = (dialog, which) -> {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                    new DeleteContactWorker.Enqueuer(workManager)
-                            .enqueue(Collections.singletonList(mContactId));
-                    new Handler().postDelayed(() -> finish(), 500);
+                    contactDetailsViewModel.deleteContact(mContactId);
+                    new Handler(Looper.getMainLooper()).postDelayed(this::finish, 500);
                 }
                 dialog.dismiss();
             };

@@ -26,6 +26,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
@@ -40,10 +41,10 @@ import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
+import ch.protonmail.android.worker.DeleteContactWorker
 import ch.protonmail.libs.core.utils.ViewModelFactory
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -68,7 +69,8 @@ import javax.inject.Inject
 open class ContactDetailsViewModel(
     dispatcherProvider: DispatcherProvider,
     private val downloadFile: DownloadFile,
-    private val contactDetailsRepository: ContactDetailsRepository
+    private val contactDetailsRepository: ContactDetailsRepository,
+    private val workManager: WorkManager
 ) : BaseViewModel(dispatcherProvider) {
 
     //region data
@@ -76,16 +78,20 @@ open class ContactDetailsViewModel(
     protected lateinit var allContactEmails: List<ContactEmail>
 
     private val _mapEmailGroups: HashMap<String, List<ContactLabel>> = HashMap()
+
     //endregion
     private var _setupCompleteValue: Boolean = false
     private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _setupError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
+
     //region email groups result and error below
     private var _emailGroupsResult: MutableLiveData<ContactEmailsGroups> = MutableLiveData()
     private val _emailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
+
     //endregion
     //region contact groups result and error
     private val _contactEmailGroupsResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
+
     //endregion
     //region merged result and errors
     private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabel>> =
@@ -135,18 +141,21 @@ open class ContactDetailsViewModel(
                 }
                 Observable.just(list1)
             }
-            .subscribe({
-                _mergedContactEmailGroupsResult.postValue(it)
-            }, {
-                _mergedContactEmailGroupsError.postValue(
-                    Event(
-                        ErrorResponse(
-                            it.message ?: "",
-                            ErrorEnum.INVALID_GROUP_LIST
+            .subscribe(
+                {
+                    _mergedContactEmailGroupsResult.postValue(it)
+                },
+                {
+                    _mergedContactEmailGroupsError.postValue(
+                        Event(
+                            ErrorResponse(
+                                it.message ?: "",
+                                ErrorEnum.INVALID_GROUP_LIST
+                            )
                         )
                     )
-                )
-            })
+                }
+            )
     }
 
     fun fetchContactEmailGroups(rowID: Int, email: String) {
@@ -158,45 +167,49 @@ open class ContactDetailsViewModel(
             contactDetailsRepository.getContactGroups(emailId)
                 .subscribeOn(ThreadSchedulers.io())
                 .observeOn(ThreadSchedulers.main())
-                .subscribe({
-                    _mapEmailGroups[emailId] = it
-                    _emailGroupsResult.value = ContactEmailsGroups(it, emailId, rowID)
-                }, {
-                    _emailGroupsError.postValue(
-                        Event(
-                            ErrorResponse(
-                                it.message ?: "",
-                                ErrorEnum.SERVER_ERROR
+                .subscribe(
+                    {
+                        _mapEmailGroups[emailId] = it
+                        _emailGroupsResult.value = ContactEmailsGroups(it, emailId, rowID)
+                    },
+                    {
+                        _emailGroupsError.postValue(
+                            Event(
+                                ErrorResponse(
+                                    it.message ?: "",
+                                    ErrorEnum.SERVER_ERROR
+                                )
                             )
                         )
-                    )
-                })
+                    }
+                )
         }
     }
 
     fun fetchContactGroupsAndContactEmails(contactId: String) {
-        Observable.zip(contactDetailsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
-            .doOnError {
-                if (allContactGroups.isEmpty()) {
-                    _setupError.postValue(
-                        Event(
-                            ErrorResponse(
-                                "",
-                                ErrorEnum.INVALID_GROUP_LIST
+        Observable.zip(
+            contactDetailsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
+                .doOnError {
+                    if (allContactGroups.isEmpty()) {
+                        _setupError.postValue(
+                            Event(
+                                ErrorResponse(
+                                    "",
+                                    ErrorEnum.INVALID_GROUP_LIST
+                                )
                             )
                         )
-                    )
-                } else {
-                    _setupError.postValue(
-                        Event(
-                            ErrorResponse(
-                                it.message ?: "",
-                                ErrorEnum.SERVER_ERROR
+                    } else {
+                        _setupError.postValue(
+                            Event(
+                                ErrorResponse(
+                                    it.message ?: "",
+                                    ErrorEnum.SERVER_ERROR
+                                )
                             )
                         )
-                    )
-                }
-            },
+                    }
+                },
             contactDetailsRepository.getContactEmails(contactId).subscribeOn(ThreadSchedulers.io())
                 .doOnError {
                     if (allContactEmails.isEmpty()) {
@@ -219,26 +232,31 @@ open class ContactDetailsViewModel(
                         )
                     }
                 },
-            BiFunction { groups: List<ContactLabel>, emails: List<ContactEmail> ->
+            {
+                groups: List<ContactLabel>,
+                emails: List<ContactEmail> ->
                 allContactGroups = groups
                 allContactEmails = emails
             }
         ).observeOn(ThreadSchedulers.main())
-            .subscribe({
-                if (!_setupCompleteValue) {
-                    _setupCompleteValue = true
-                    _setupComplete.value = Event(true)
-                }
-            }, {
-                _setupError.postValue(
-                    Event(
-                        ErrorResponse(
-                            it.message ?: "",
-                            ErrorEnum.SERVER_ERROR
+            .subscribe(
+                {
+                    if (!_setupCompleteValue) {
+                        _setupCompleteValue = true
+                        _setupComplete.value = Event(true)
+                    }
+                },
+                {
+                    _setupError.postValue(
+                        Event(
+                            ErrorResponse(
+                                it.message ?: "",
+                                ErrorEnum.SERVER_ERROR
+                            )
                         )
                     )
-                )
-            })
+                }
+            )
     }
 
     fun updateContactEmailGroup(contactLabel: ContactLabel, email: String) {
@@ -268,11 +286,14 @@ open class ContactDetailsViewModel(
             }
             .subscribeOn(ThreadSchedulers.io())
             .observeOn(ThreadSchedulers.main())
-            .subscribe({
-                _contactEmailGroupsResult.postValue(Event(PostResult(status = Status.SUCCESS)))
-            }, {
-                _contactEmailGroupsResult.postValue(Event(PostResult(it.message, Status.FAILED)))
-            })
+            .subscribe(
+                {
+                    _contactEmailGroupsResult.postValue(Event(PostResult(status = Status.SUCCESS)))
+                },
+                {
+                    _contactEmailGroupsResult.postValue(Event(PostResult(it.message, Status.FAILED)))
+                }
+            )
     }
 
     fun getBitmapFromURL(src: String) {
@@ -293,16 +314,27 @@ open class ContactDetailsViewModel(
                     } else {
                         profilePicture.postError(throwable)
                     }
-                })
+                }
+            )
         }
     }
 
+    fun deleteContact(contactId: String) {
+        DeleteContactWorker.Enqueuer(workManager).enqueue(listOf(contactId))
+    }
+
     // TODO: remove when the ViewModel can be injected into a Kotlin class
-    class Factory @Inject constructor (
+    class Factory @Inject constructor(
         private val dispatcherProvider: DispatcherProvider,
         private val downloadFile: DownloadFile,
-        private val contactDetailsRepository: ContactDetailsRepository
+        private val contactDetailsRepository: ContactDetailsRepository,
+        private val workManager: WorkManager
     ) : ViewModelFactory<ContactDetailsViewModel>() {
-        override fun create() = ContactDetailsViewModel(dispatcherProvider, downloadFile, contactDetailsRepository)
+        override fun create() = ContactDetailsViewModel(
+            dispatcherProvider,
+            downloadFile,
+            contactDetailsRepository,
+            workManager
+        )
     }
 }

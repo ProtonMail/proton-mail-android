@@ -22,6 +22,7 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
@@ -86,8 +87,9 @@ class EditContactDetailsViewModel(
     dispatcherProvider: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
-    private val userManager: UserManager
-) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository) {
+    private val userManager: UserManager,
+    workManager: WorkManager
+) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, workManager) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -130,6 +132,7 @@ class EditContactDetailsViewModel(
     private lateinit var _vCardSigned: VCard
     private lateinit var _vCardEncrypted: VCard
     private lateinit var _mapEmailGroupsIds: HashMap<ContactEmail, List<ContactLabel>>
+
     // endregion
     // region setup
     fun setup(flow: Int, contactId: String, localContact: LocalContact?, email: String,
@@ -210,6 +213,7 @@ class EditContactDetailsViewModel(
         // getting custom properties
         _vCardCustomProperties = _vCardType3.extendedProperties
     }
+
     // endregion
     // region default options
     val defaultEmailOption: String
@@ -226,6 +230,7 @@ class EditContactDetailsViewModel(
         get() = _vCardAddressUIOptions[0]
     val defaultOtherOption: String
         get() = _vCardOtherOptions[0]
+
     // endregion
     //region options lists
     val emailOptions: List<String>
@@ -242,6 +247,7 @@ class EditContactDetailsViewModel(
         get() = _vCardAddressUIOptions
     val otherOptions: List<String>
         get() = _vCardOtherOptions
+
     // endregion
     // region others
     val localContact: LocalContact?
@@ -250,6 +256,7 @@ class EditContactDetailsViewModel(
         get() = _contactId
 
     fun isConvertContactFlow(): Boolean = _flow == FLOW_CONVERT_CONTACT
+
     // endregion
     // region card properties
     fun getPhotos(): List<Photo>? = _vCardType3.photos
@@ -334,10 +341,10 @@ class EditContactDetailsViewModel(
             }.subscribeOn(ThreadSchedulers.main())
             .observeOn(ThreadSchedulers.main())
             .subscribe({
-                           val size = _mapEmailGroupsIds.size
-                       }, {
-                           ParseUtils.doOnError(it)
-                       })
+                val size = _mapEmailGroupsIds.size
+            }, {
+                ParseUtils.doOnError(it)
+            })
     }
 
     private fun validateEmails(emails: List<ContactEmail>): List<ContactEmail> {
@@ -347,13 +354,15 @@ class EditContactDetailsViewModel(
     class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
 
     // TODO: remove when the ViewModel can be injected into a Kotlin class
-    class Factory @Inject constructor (
+    class Factory @Inject constructor(
         private val dispatcherProvider: DispatcherProvider,
         private val downloadFile: DownloadFile,
         private val editContactDetailsRepository: EditContactDetailsRepository,
-        private val userManager: UserManager
+        private val userManager: UserManager,
+        private val workManager: WorkManager
     ) : ViewModelFactory<EditContactDetailsViewModel>() {
         override fun create() =
-            EditContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, userManager)
+            EditContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, userManager,
+                workManager)
     }
 }
