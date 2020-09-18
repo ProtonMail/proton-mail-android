@@ -29,23 +29,27 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FA
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.crypto.Crypto
 import com.birbit.android.jobqueue.Params
 import java.util.ArrayList
 
-class CreateContactJob()
-    : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
+class CreateContactJob() : ProtonMailEndlessJob(
+    Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)
+) {
+
     private lateinit var mContactData: ContactData
     private lateinit var mContactEmails: List<ContactEmail>
     private lateinit var mEncryptedData: String
     private lateinit var mSignedData: String
 
-    constructor(contactData: ContactData,
-                contactEmails: List<ContactEmail>,
-                encryptedData: String,
-                signedData: String): this() {
+    constructor(
+        contactData: ContactData,
+        contactEmails: List<ContactEmail>,
+        encryptedData: String,
+        signedData: String
+    ) : this() {
         mContactData = contactData
         mContactEmails = contactEmails
         mEncryptedData = encryptedData

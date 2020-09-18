@@ -143,7 +143,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         User user = getUserManager().getUser(mUsername);
         Address senderAddress = user.getAddressById(addressId);
         newDraft.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUsername, message.getAddressID());
+        AddressCrypto crypto = Crypto.forAddress(getUserManager(), mUsername, message.getAddressID());
         newDraft.addMessageBody(Fields.Message.SELF, encryptedMessage);
         List<Attachment> parentAttachmentList = null;
         if (parentMessage != null) {
@@ -213,7 +213,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
 
     private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage, String oldSenderAddress, Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
-            AddressCrypto oldCrypto = Crypto.forAddress(mUserManager, mUsername, oldSenderAddress);
+            AddressCrypto oldCrypto = Crypto.forAddress(getUserManager(), mUsername, oldSenderAddress);
             AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
             String newPublicKey = oldCrypto.buildArmoredPublicKey(newAddressKeys.getPrimaryKey().getPrivateKey());
             for (Attachment attachment : attachmentList) {

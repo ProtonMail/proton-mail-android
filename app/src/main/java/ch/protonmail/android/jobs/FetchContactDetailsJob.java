@@ -28,13 +28,12 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.crypto.UserCrypto;
 import ch.protonmail.android.events.ContactDetailsFetchedEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.crypto.Crypto;
-import ch.protonmail.android.utils.crypto.TextCiphertext;
-import ch.protonmail.android.utils.crypto.UserCrypto;
 
 public class FetchContactDetailsJob extends ProtonMailBaseJob {
 

@@ -19,16 +19,14 @@
 package ch.protonmail.android.api.models.address
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.getActivationToken
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -41,7 +39,6 @@ import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.helper.Helper
 import me.proton.core.domain.arch.map
 import timber.log.Timber
-import javax.inject.Inject
 import ch.protonmail.android.api.models.address.Address as OldAddress
 
 // region constants

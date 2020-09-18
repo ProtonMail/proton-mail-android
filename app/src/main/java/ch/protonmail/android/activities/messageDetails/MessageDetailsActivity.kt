@@ -1,23 +1,26 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.activities.messageDetails
 
+//
+//
+//
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -72,27 +75,24 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.UserManager
-//
 import ch.protonmail.android.events.AttachmentFailedEvent
-import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
+import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MessageSentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
-//
 import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostDeleteJob
+import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.AppUtil
-//
 import ch.protonmail.android.utils.CustomLocale.Companion.apply
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -113,17 +113,17 @@ import ch.protonmail.android.views.PMWebViewClient
 import com.birbit.android.jobqueue.Job
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import timber.log.Timber
-import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
-class MessageDetailsActivity : BaseStoragePermissionActivity(),
+@AndroidEntryPoint
+internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     ILabelCreationListener, ILabelsChangeListener, IMoveMessagesListener {
 
     private lateinit var pmWebViewClient: PMWebViewClient
@@ -172,7 +172,6 @@ class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         if (mUserManager.isFirstMessageDetails) {
             mUserManager.firstMessageDetailsDone()
