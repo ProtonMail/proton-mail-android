@@ -29,11 +29,11 @@ import javax.inject.Inject
  * Delete a stored credential by [EmailAddress]
  */
 class DeleteSavedCredentials @Inject constructor (
-    dispatchers: DispatcherProvider,
-    val repository: CredentialRepository
-) : DispatcherProvider by dispatchers {
+    private val dispatchers: DispatcherProvider,
+    private val repository: CredentialRepository
+) {
 
-    suspend operator fun invoke(emailAddress: EmailAddress) = withContext(Io) {
+    suspend operator fun invoke(emailAddress: EmailAddress) = withContext(dispatchers.Io) {
         repository -= emailAddress
     }
 }

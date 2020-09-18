@@ -30,11 +30,14 @@ import javax.inject.Inject
  * Update stored credentials or create a new one
  */
 class UpdateCredentials @Inject constructor (
-    dispatchers: DispatcherProvider,
-    val repository: CredentialRepository
-) : DispatcherProvider by dispatchers {
+    private val dispatchers: DispatcherProvider,
+    private val repository: CredentialRepository
+) {
 
-    suspend operator fun invoke(emailAddress: EmailAddress, credential: Credential) = withContext(Io) {
+    suspend operator fun invoke(
+        emailAddress: EmailAddress,
+        credential: Credential
+    ) = withContext(dispatchers.Io) {
         repository[emailAddress] = credential
     }
 }

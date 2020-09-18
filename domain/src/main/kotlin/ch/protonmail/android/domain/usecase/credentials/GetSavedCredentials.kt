@@ -19,8 +19,9 @@
 
 package ch.protonmail.android.domain.usecase.credentials
 
+import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.repository.CredentialRepository
-import ch.protonmail.android.domain.util.delay
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -30,19 +31,32 @@ import kotlin.time.Duration
 import kotlin.time.seconds
 
 /**
- * Get / Observe all the saved credentials
+ * Get / Observe all the saved credentials or for a single [EmailAddress]
  */
 class GetSavedCredentials @Inject constructor (
-    dispatchers: DispatcherProvider,
+    private val dispatchers: DispatcherProvider,
     private val repository: CredentialRepository
-) : DispatcherProvider by dispatchers {
+) {
 
+    /**
+     * Get all the credentials store
+     */
     operator fun invoke(interval: Duration = DEFAULT_INTERVAL) = flow {
         while (true) {
             emit(repository.getAll())
             delay(interval)
         }
-    }.flowOn(Io).distinctUntilChanged()
+    }.flowOn(dispatchers.Io).distinctUntilChanged()
+
+    /**
+     * Get credentials stored for a single user
+     */
+    operator fun invoke(emailAddress: EmailAddress, interval: Duration = DEFAULT_INTERVAL) = flow {
+        while (true) {
+            emit(repository[emailAddress])
+            delay(interval)
+        }
+    }.flowOn(dispatchers.Io).distinctUntilChanged()
 
     private companion object {
         val DEFAULT_INTERVAL = 30.seconds

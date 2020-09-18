@@ -44,7 +44,7 @@ class GetSavedCredentialsTest : CoroutinesTest {
     private val getSavedCredentials = GetSavedCredentials(dispatchers, repository = repo)
 
     @Test
-    fun `can get saved credentials a single time`() = coroutinesTest {
+    fun `can get all saved credentials a single time`() = coroutinesTest {
 
         // Given
         repo[SomeEmailAddress] = Credential.FullyLoggedIn
@@ -61,7 +61,20 @@ class GetSavedCredentialsTest : CoroutinesTest {
     }
 
     @Test
-    fun `returns empty map if no credential is found`() = coroutinesTest {
+    fun `can get a single saved credentials a single time`() = coroutinesTest {
+
+        // Given
+        repo[SomeEmailAddress] = Credential.FullyLoggedIn
+
+        // When
+        val result = getSavedCredentials(SomeEmailAddress).first()
+
+        // Then
+        assert that result equals Credential.FullyLoggedIn
+    }
+
+    @Test
+    fun `returns empty map for all credentials if no credential is found`() = coroutinesTest {
 
         // Given
         // * No saved credentials *
@@ -74,7 +87,20 @@ class GetSavedCredentialsTest : CoroutinesTest {
     }
 
     @Test
-    fun `does publish updates correctly`() = coroutinesTest {
+    fun `returns NotFound for a single credentials a single time if not found`() = coroutinesTest {
+
+        // Given
+        // * No saved credentials *
+
+        // When
+        val result = getSavedCredentials(SomeEmailAddress).first()
+
+        // Then
+        assert that result equals Credential.NotFound
+    }
+
+    @Test
+    fun `does publish updates correctly for all the credentials`() = coroutinesTest {
 
         val result = mutableListOf<Map<EmailAddress, Credential>>()
         val interval = 30.seconds
@@ -128,7 +154,51 @@ class GetSavedCredentialsTest : CoroutinesTest {
     }
 
     @Test
-    fun `does not publish multiple times the same value`() = coroutinesTest {
+    fun `does publish updates correctly for a single credentials`() = coroutinesTest {
+
+        val result = mutableListOf<Credential>()
+        val interval = 30.seconds
+        val flow = getSavedCredentials(SomeEmailAddress, interval - 5.seconds)
+        val job = launch {
+            delay(10)
+            flow.toList(result)
+        }
+
+        // Given
+        repo[SomeEmailAddress] = Credential.FullyLoggedIn
+
+        // When
+        advanceTimeBy(interval.toLongMilliseconds())
+        repo -= SomeEmailAddress
+
+        advanceTimeBy(interval.toLongMilliseconds())
+        repo[SomeEmailAddress] = Credential.MailboxPasswordRequired
+
+        advanceTimeBy(interval.toLongMilliseconds())
+        repo[SomeEmailAddress] = Credential.FullyLoggedIn
+
+        advanceTimeBy(interval.toLongMilliseconds())
+        job.cancel()
+
+        // Then
+        assert that result equals listOf(
+
+            // First
+            Credential.FullyLoggedIn,
+
+            // Second
+            Credential.NotFound,
+
+            // Third
+            Credential.MailboxPasswordRequired,
+
+            // Forth
+            Credential.FullyLoggedIn
+        )
+    }
+
+    @Test
+    fun `does not publish multiple times the same value for all the credentials`() = coroutinesTest {
 
         val result = mutableListOf<Map<EmailAddress, Credential>>()
         val flow = getSavedCredentials(30.seconds)
@@ -151,6 +221,29 @@ class GetSavedCredentialsTest : CoroutinesTest {
                 SomeEmailAddress to Credential.FullyLoggedIn,
                 AnotherEmailAddress to Credential.MailboxPasswordRequired
             )
+        )
+    }
+
+    @Test
+    fun `does not publish multiple times the same value for a single credentials`() = coroutinesTest {
+
+        val result = mutableListOf<Credential>()
+        val flow = getSavedCredentials(SomeEmailAddress, 30.seconds)
+        val job = launch {
+            delay(10)
+            flow.toList(result)
+        }
+
+        // Given
+        repo[SomeEmailAddress] = Credential.FullyLoggedIn
+
+        // When
+        advanceTimeBy(2.minutes.toLongMilliseconds())
+        job.cancel()
+
+        // Then
+        assert that result equals listOf(
+            Credential.FullyLoggedIn
         )
     }
 
