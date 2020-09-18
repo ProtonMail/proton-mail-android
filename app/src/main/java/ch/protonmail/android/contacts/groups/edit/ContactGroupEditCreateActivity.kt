@@ -125,16 +125,16 @@ class ContactGroupEditCreateActivity : BaseActivity(), ColorChooserFragment.ICol
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> onBackPressed()
             R.id.action_save -> {
                 progress.visibility = View.VISIBLE
-                contactGroupEditCreateViewModel.contactGroupUpdateResult.observe(this, Observer {
+                contactGroupEditCreateViewModel.contactGroupUpdateResult.observe(this, {
                     progress.visibility = View.GONE
                     it?.getContentIfNotHandled()?.let {
                         val status = it.status
-                        when(status) {
+                        when (status) {
                             Status.FAILED -> showToast(it.message ?: getString(R.string.error))
                             Status.SUCCESS -> {
                                 showToast(R.string.contact_group_saved)

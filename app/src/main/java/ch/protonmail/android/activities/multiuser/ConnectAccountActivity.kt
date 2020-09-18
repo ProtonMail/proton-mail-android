@@ -298,8 +298,8 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         password.isFocusableInTouchMode = enable
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> {
                 moveToMailbox()
                 saveLastInteraction()

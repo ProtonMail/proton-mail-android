@@ -34,14 +34,13 @@ import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.worker.DeleteAttachmentWorker
 import java.io.File
 import java.util.ArrayList
-import java.util.Collections
 import java.util.Comparator
 
 
 class AttachmentListAdapter(
     context: Context,
     attachmentsList: List<LocalAttachment>?,
-    private var embeddedImages: Int,
+    private var numberOfEmbeddedImages: Int,
     private val workManager: WorkManager
 ) : ArrayAdapter<LocalAttachment>(context, 0, attachmentsList ?: emptyList()) {
 
@@ -68,7 +67,7 @@ class AttachmentListAdapter(
 
     fun updateData(attachmentList: ArrayList<LocalAttachment>, numEmbeddedImages: Int) {
         clear()
-        embeddedImages = numEmbeddedImages
+        numberOfEmbeddedImages = numEmbeddedImages
         attachmentsList = attachmentList.sortedWith(attachmentSortComparator)
         addAll(attachmentsList)
         sort(attachmentSortComparator)
@@ -96,7 +95,7 @@ class AttachmentListAdapter(
 
         if (embeddedImageHeader != null && attachment.isEmbeddedImage) {
             embeddedImageHeader.visibility = View.VISIBLE
-            embeddedImageHeader.text = String.format(context.getString(R.string.inline_header), embeddedImages)
+            embeddedImageHeader.text = String.format(context.getString(R.string.inline_header), numberOfEmbeddedImages)
         } else if (embeddedImageHeader != null) {
             embeddedImageHeader.visibility = View.GONE
         }
@@ -120,9 +119,9 @@ class AttachmentListAdapter(
                     attachment.displayName == it.displayName
             }
             if (isEmbedded) {
-                embeddedImages -= 1
+                numberOfEmbeddedImages -= 1
             }
-            listener.onAttachmentDeleted(count, embeddedImages)
+            listener.onAttachmentDeleted(count, numberOfEmbeddedImages)
 
             DeleteAttachmentWorker.Enqueuer(workManager).enqueue(attachment.attachmentId)
         }

@@ -178,7 +178,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
             mUserManager.firstMessageDetailsDone()
         }
         markAsRead = true
-        messageId = intent.getStringExtra(EXTRA_MESSAGE_ID)
+        messageId = intent.getStringExtra(EXTRA_MESSAGE_ID)!!
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         val currentAccountUsername = mUserManager.username
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
