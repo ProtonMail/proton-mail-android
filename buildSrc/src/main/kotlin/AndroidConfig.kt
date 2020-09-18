@@ -108,6 +108,7 @@ fun org.gradle.api.Project.android(
 
     packagingOptions {
         exclude("META-INF/*.kotlin_module")
+        exclude("META-INF/AL2.0")
         exclude("META-INF/DEPENDENCIES")
         exclude("META-INF/DEPENDENCIES.txt")
         exclude("META-INF/LGPL2.1")
