@@ -37,6 +37,7 @@ import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.worker.DeleteMessageWorker
+import ch.protonmail.android.worker.KEY_INVALID_MESSAGE_IDS_RESULT
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +64,7 @@ class MailboxViewModel(
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
     var pendingUploadsLiveData = messageDetailsRepository.findAllPendingUploadsAsync()
 
-    private val deleteMessageEnquier = DeleteMessageWorker.Enqueuer(workManager)
+    private val deleteMessageEnqueuer = DeleteMessageWorker.Enqueuer(workManager)
 
     //used data actions
     private val _manageLimitReachedWarning: MutableLiveData<Event<Boolean>> =
@@ -88,13 +89,13 @@ class MailboxViewModel(
         get() = _toastMessageMaxLabelsReached
 
     val hasSuccessfullyDeletedMessages: LiveData<List<Boolean>> =
-        deleteMessageEnquier.getWorkStatusLiveData()
+        deleteMessageEnqueuer.getWorkStatusLiveData()
             .map { mapDeleteState(it) }
 
     private fun mapDeleteState(workInfoList: List<WorkInfo>): List<Boolean> =
-        workInfoList.map { it.state }
-            .filter { it.isFinished }
-            .map { it == WorkInfo.State.SUCCEEDED }
+        workInfoList
+            .filter { it.state.isFinished }
+            .map { it.outputData.getStringArray(KEY_INVALID_MESSAGE_IDS_RESULT).isNullOrEmpty() }
 
     fun reloadDependenciesForUser() {
         pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -228,7 +229,7 @@ class MailboxViewModel(
         return ApplyRemoveLabels(checkedLabelIds, labelsToRemove)
     }
 
-    fun deleteMessages(messageIds: List<String>) = deleteMessageEnquier.enqueue(messageIds)
+    fun deleteMessages(messageIds: List<String>) = deleteMessageEnqueuer.enqueue(messageIds)
 
     companion object {
 

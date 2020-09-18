@@ -28,10 +28,8 @@ import androidx.work.Operation
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.extensions.app
 import kotlinx.coroutines.Dispatchers
@@ -41,11 +39,12 @@ import javax.inject.Inject
 
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 internal const val KEY_INPUT_DATA_MESSAGE_IDS = "KeyInputDataMessageIds"
-internal const val KEY_INVALID_MESSAGE_IDS_RESULT = "KeyInvalidMessageIdsResult"
+private const val WORKER_DB_TAG = "DeleteMessageWorkerDbTag"
 private const val WORKER_TAG = "DeleteMessageWorkerTag"
 
 /**
  * Work Manager Worker responsible for deleting messages.
+ * It works together with [DeleteMessageDbWorker].
  *
  *  InputData has to contain non-null values for:
  *  labelId
@@ -60,118 +59,58 @@ class DeleteMessageWorker(
     @Inject
     internal lateinit var api: ProtonMailApiManager
 
-    @Inject
-    internal lateinit var pendingActionsDatabase: PendingActionsDao
-
-    @Inject
-    internal lateinit var messageDetailsRepository: MessageDetailsRepository
-
     init {
         context.app.appComponent.inject(this)
     }
 
     override suspend fun doWork(): Result {
-        val messageIds = inputData.getStringArray(KEY_INPUT_DATA_MESSAGE_IDS)
+        val validMessageIdList = inputData.getStringArray(KEY_INPUT_VALID_MESSAGES_IDS)
             ?: emptyArray()
 
         // skip empty input
-        if (messageIds.isEmpty()) {
+        if (validMessageIdList.isEmpty()) {
             return Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messages list")
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty valid messages list")
             )
         }
-
-        val validAndInvalidMessagesPair = getValidAndInvalidMessages(messageIds)
-        val validMessageIdList = validAndInvalidMessagesPair.first
-        val invalidMessageIdList = validAndInvalidMessagesPair.second
 
         return withContext(Dispatchers.IO) {
             // delete messages on remote
-            if (validMessageIdList.isNotEmpty()) {
-                val response = api.deleteMessage(IDList(validMessageIdList))
-                if (response.code == Constants.RESPONSE_CODE_OK ||
-                    response.code == Constants.RESPONSE_CODE_MULTIPLE_OK
-                ) {
-                    updateDb(validMessageIdList)
-                    getInvalidMessagesResult(invalidMessageIdList)
-                } else {
-                    Timber.v("ApiException failure response code ${response.code}")
-                    Result.failure(
-                        workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${response.code}")
-                    )
-                }
-            }
-            getInvalidMessagesResult(invalidMessageIdList)
-        }
-    }
-
-    private fun getInvalidMessagesResult(invalidMessageIdList: List<String>): Result {
-        return if (invalidMessageIdList.isNotEmpty()) {
-            Timber.v("ApiException failure invalidMessageIdList not empty")
-            Result.failure(
-                workDataOf(KEY_INVALID_MESSAGE_IDS_RESULT to invalidMessageIdList)
-            )
-        } else {
-            Result.success()
-        }
-    }
-
-    private fun updateDb(validMessageIdList: List<String>) {
-        for (id in validMessageIdList) {
-
-            val message = messageDetailsRepository.findMessageById(id)
-            val searchMessage = messageDetailsRepository.findSearchMessageById(id)
-
-            if (message != null) {
-                message.deleted = true
-                messageDetailsRepository.saveMessageInDB(message)
-            }
-            if (searchMessage != null) {
-                searchMessage.deleted = true
-                messageDetailsRepository.saveSearchMessageInDB(searchMessage)
-            }
-        }
-    }
-
-    private fun getValidAndInvalidMessages(messageIds: Array<String>): Pair<List<String>, List<String>> {
-        val validMessageIdList = mutableListOf<String>()
-        val invalidMessageIdList = mutableListOf<String>()
-
-        for (id in messageIds) {
-            if (id.isEmpty()) {
-                continue
-            }
-            val pendingUploads = pendingActionsDatabase.findPendingUploadByMessageId(id)
-            val pendingForSending = pendingActionsDatabase.findPendingSendByMessageId(id)
-
-            if (pendingUploads == null && (pendingForSending == null || pendingForSending.sent == false)) {
-                // do the logic below if there is no pending upload and not pending send for the message
-                // trying to be deleted
-                // or if there is a failed pending send expressed by value `false` in the nullable Sent
-                // property of the PendingSend class
-                validMessageIdList.add(id)
+            val response = api.deleteMessage(IDList(validMessageIdList.toList()))
+            if (response.code == Constants.RESPONSE_CODE_OK ||
+                response.code == Constants.RESPONSE_CODE_MULTIPLE_OK
+            ) {
+                Result.success()
             } else {
-                invalidMessageIdList.add(id)
+                Timber.v("ApiException failure response code ${response.code}")
+                Result.failure(
+                    workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${response.code}")
+                )
             }
         }
-
-        return validMessageIdList to invalidMessageIdList
     }
 
     class Enqueuer(private val workManager: WorkManager) {
         fun enqueue(messageIds: List<String>): Operation {
-            val constraints = Constraints.Builder()
+            val dbWorkRequest = OneTimeWorkRequestBuilder<DeleteMessageDbWorker>()
+                .setInputData(workDataOf(KEY_INPUT_DATA_MESSAGE_IDS to messageIds.toTypedArray()))
+                .addTag(WORKER_DB_TAG)
+                .build()
+            val networkConstraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val workRequest = OneTimeWorkRequestBuilder<DeleteMessageWorker>()
-                .setConstraints(constraints)
+            val networkWorkRequest = OneTimeWorkRequestBuilder<DeleteMessageWorker>()
+                .setConstraints(networkConstraints)
                 .setInputData(workDataOf(KEY_INPUT_DATA_MESSAGE_IDS to messageIds.toTypedArray()))
                 .addTag(WORKER_TAG)
                 .build()
-            Timber.v("Scheduling DeleteMessageWorker for ${messageIds.size} message(s)")
-            return workManager.enqueue(workRequest)
+            Timber.v("Scheduling $WORKER_TAG for ${messageIds.size} message(s)")
+            return workManager
+                .beginWith(dbWorkRequest)
+                .then(networkWorkRequest)
+                .enqueue()
         }
 
-        fun getWorkStatusLiveData() = workManager.getWorkInfosByTagLiveData(WORKER_TAG)
+        fun getWorkStatusLiveData() = workManager.getWorkInfosByTagLiveData(WORKER_DB_TAG)
     }
 }

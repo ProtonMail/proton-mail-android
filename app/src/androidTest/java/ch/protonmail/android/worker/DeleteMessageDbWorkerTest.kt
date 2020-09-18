@@ -25,10 +25,10 @@ import androidx.work.ListenableWorker
 import androidx.work.testing.TestListenableWorkerBuilder
 import androidx.work.workDataOf
 import org.junit.Before
-import org.junit.Test
-import kotlin.test.assertEquals
 
-class DeleteMessageWorkerTest {
+import org.junit.Test
+
+class DeleteMessageDbWorkerTest {
 
     private lateinit var context: Context
 
@@ -41,15 +41,15 @@ class DeleteMessageWorkerTest {
     fun verifyWorkerFailsWithNoMessageIdsProvided() {
         // given
         val worker =
-            TestListenableWorkerBuilder<DeleteMessageWorker>(context).build()
+            TestListenableWorkerBuilder<DeleteMessageDbWorker>(context).build()
         val expected = ListenableWorker.Result.failure(
-            workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty valid messages list")
+            workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messages list")
         )
 
         // when
         val result = worker.startWork().get()
 
         // then
-        assertEquals(expected, result)
+        kotlin.test.assertEquals(expected, result)
     }
 }
