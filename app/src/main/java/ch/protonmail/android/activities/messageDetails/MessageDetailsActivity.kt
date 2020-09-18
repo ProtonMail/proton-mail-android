@@ -136,9 +136,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     @Inject
     lateinit var factory: MessageDetailsViewModel.Factory
 
-    @Inject
-    lateinit var workManager: WorkManager
-
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
 
     /**
@@ -401,7 +398,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                 getString(R.string.delete_message),
                 getString(R.string.confirm_destructive_action)
             ) {
-                DeleteMessageWorker.Enqueuer(workManager).enqueue(listOf(messageId))
+                viewModel.deleteMessage(messageId)
                 onBackPressed()
             }
             R.id.move_to_spam -> job = PostSpamJob(listOf(messageId))

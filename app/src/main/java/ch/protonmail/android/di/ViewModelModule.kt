@@ -97,13 +97,15 @@ internal class ViewModelModule {
             userManager: UserManager,
             contactsRepository: ContactsRepository,
             attachmentMetadataDatabase: AttachmentMetadataDatabase,
-            messageRendererFactory: MessageRenderer.Factory
+            messageRendererFactory: MessageRenderer.Factory,
+            workManager: WorkManager
     ) = MessageDetailsViewModel.Factory(
-            messageDetailsRepository,
-            userManager,
-            contactsRepository,
-            attachmentMetadataDatabase,
-            messageRendererFactory
+        messageDetailsRepository,
+        userManager,
+        contactsRepository,
+        attachmentMetadataDatabase,
+        messageRendererFactory,
+        workManager
     )
 
     @Provides
