@@ -19,7 +19,6 @@
 package ch.protonmail.android.compose
 
 import android.text.TextUtils
-import androidx.work.WorkManager
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.AccountManager
@@ -46,7 +45,6 @@ import ch.protonmail.android.jobs.verification.FetchHumanVerificationOptionsJob
 import ch.protonmail.android.jobs.verification.PostHumanVerificationJob
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
-import ch.protonmail.android.worker.DeleteMessageWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -60,7 +58,6 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ComposeMessageRepository @Inject constructor(
-    val workManager: WorkManager,
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
@@ -181,10 +178,6 @@ class ComposeMessageRepository @Inject constructor(
 
     fun startFetchMessageDetail(messageId: String) {
         jobManager.addJobInBackground(FetchMessageDetailJob(messageId))
-    }
-
-    fun startDeleteMessage(messageId: String) {
-        DeleteMessageWorker.Enqueuer(workManager).enqueue(listOf(messageId))
     }
 
     fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {

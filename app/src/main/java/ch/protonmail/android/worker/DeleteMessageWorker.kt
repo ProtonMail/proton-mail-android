@@ -38,13 +38,10 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
-internal const val KEY_INPUT_DATA_MESSAGE_IDS = "KeyInputDataMessageIds"
-private const val WORKER_DB_TAG = "DeleteMessageWorkerDbTag"
-private const val WORKER_TAG = "DeleteMessageWorkerTag"
+internal const val KEY_INPUT_VALID_MESSAGES_IDS = "KeyInputValidMessageIds"
 
 /**
  * Work Manager Worker responsible for deleting messages.
- * It works together with [DeleteMessageDbWorker].
  *
  *  InputData has to contain non-null values for:
  *  labelId
@@ -64,6 +61,7 @@ class DeleteMessageWorker(
     }
 
     override suspend fun doWork(): Result {
+
         val validMessageIdList = inputData.getStringArray(KEY_INPUT_VALID_MESSAGES_IDS)
             ?: emptyArray()
 
@@ -90,27 +88,17 @@ class DeleteMessageWorker(
         }
     }
 
-    class Enqueuer(private val workManager: WorkManager) {
+    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         fun enqueue(messageIds: List<String>): Operation {
-            val dbWorkRequest = OneTimeWorkRequestBuilder<DeleteMessageDbWorker>()
-                .setInputData(workDataOf(KEY_INPUT_DATA_MESSAGE_IDS to messageIds.toTypedArray()))
-                .addTag(WORKER_DB_TAG)
-                .build()
             val networkConstraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             val networkWorkRequest = OneTimeWorkRequestBuilder<DeleteMessageWorker>()
                 .setConstraints(networkConstraints)
-                .setInputData(workDataOf(KEY_INPUT_DATA_MESSAGE_IDS to messageIds.toTypedArray()))
-                .addTag(WORKER_TAG)
+                .setInputData(workDataOf(KEY_INPUT_VALID_MESSAGES_IDS to messageIds.toTypedArray()))
                 .build()
-            Timber.v("Scheduling $WORKER_TAG for ${messageIds.size} message(s)")
-            return workManager
-                .beginWith(dbWorkRequest)
-                .then(networkWorkRequest)
-                .enqueue()
+            Timber.v("Scheduling delete messages worker for ${messageIds.size} message(s)")
+            return workManager.enqueue(networkWorkRequest)
         }
-
-        fun getWorkStatusLiveData() = workManager.getWorkInfosByTagLiveData(WORKER_DB_TAG)
     }
 }

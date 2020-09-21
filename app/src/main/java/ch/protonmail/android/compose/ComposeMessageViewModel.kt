@@ -54,6 +54,7 @@ import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.usecase.DeleteMessage
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -75,15 +76,12 @@ const val LESS_THAN = "&lt;"
 const val GREATER_THAN = "&gt;"
 // endregion
 
-/*
- * Created by kadrikj on 9/17/18.
- */
-
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val postMessageServiceFactory: PostMessageServiceFactory
+    private val postMessageServiceFactory: PostMessageServiceFactory,
+    private val deleteMessageUseCase: DeleteMessage
 ) : ViewModel() {
 
     // region events data
@@ -695,8 +693,10 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     fun deleteDraft() {
-        composeMessageRepository.startDeleteMessage(_draftId.get())
-        removePendingDraft()
+        viewModelScope.launch {
+            deleteMessageUseCase.deleteMessages(listOf(_draftId.get()))
+            removePendingDraft()
+        }
     }
 
     fun startPostHumanVerification(tokenType: Constants.TokenType, token: String) {
@@ -1220,13 +1220,13 @@ class ComposeMessageViewModel @Inject constructor(
     fun watchForMessageSent() {
         if (!TextUtils.isEmpty(_draftId.get())) {
             composeMessageRepository.findMessageByIdObservable(_draftId.get()).toObservable()
-                    .subscribeOn(ThreadSchedulers.io())
-                    .observeOn(ThreadSchedulers.main())
-                    .subscribe({
-                        if (Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.SENT || Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.ALL_SENT) {
-                            _closeComposer.postValue(Event(true))
-                        }
-                    }, { })
+                .subscribeOn(ThreadSchedulers.io())
+                .observeOn(ThreadSchedulers.main())
+                .subscribe({
+                    if (Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.SENT || Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.ALL_SENT) {
+                        _closeComposer.postValue(Event(true))
+                    }
+                }, { })
         }
     }
 

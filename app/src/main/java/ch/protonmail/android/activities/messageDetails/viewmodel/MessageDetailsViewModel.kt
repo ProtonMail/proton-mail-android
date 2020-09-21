@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
-androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
@@ -56,7 +55,7 @@ import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
-import ch.protonmail.android.worker.DeleteMessageWorker
+import ch.protonmail.android.usecase.DeleteMessage
 import com.squareup.otto.Subscribe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -79,7 +78,7 @@ internal class MessageDetailsViewModel(
     messageRendererFactory: MessageRenderer.Factory,
     val messageId: String,
     private val isTransientMessage: Boolean,
-    private val workManager: WorkManager
+    private val deleteMessageUseCase: DeleteMessage
 ) : ViewModel() {
 
     private val messageRenderer
@@ -284,10 +283,10 @@ internal class MessageDetailsViewModel(
             init {
                 addSource(this@MessageDetailsViewModel.message) {
                     message = it
-                    message?.senderEmail?.let{ senderEmail ->
+                    message?.senderEmail?.let { senderEmail ->
                         addSource(contactsRepository.findContactEmailByEmailLiveData(senderEmail)) { contactEmail ->
                             contact = contactEmail ?: ContactEmail("", message?.senderEmail ?: "", message?.senderName)
-                            if(!decrypted) {
+                            if (!decrypted) {
                                 refreshedKeys = true
                                 viewModelScope.launch {
                                     withContext(IO) {
@@ -297,7 +296,7 @@ internal class MessageDetailsViewModel(
                             }
                         }
                     }
-                    if(!decrypted) {
+                    if (!decrypted) {
                         refreshedKeys = true
                         viewModelScope.launch {
                             withContext(IO) {
@@ -581,7 +580,9 @@ internal class MessageDetailsViewModel(
     fun isPgpEncrypted(): Boolean = message.value?.messageEncryption?.isPGPEncrypted ?: false
 
     fun deleteMessage(messageId: String) {
-        DeleteMessageWorker.Enqueuer(workManager).enqueue(listOf(messageId))
+        viewModelScope.launch {
+            deleteMessageUseCase.deleteMessages(listOf(messageId))
+        }
     }
 
     /** [ViewModelProvider.Factory] for create a [MessageDetailsViewModel] */
@@ -591,7 +592,7 @@ internal class MessageDetailsViewModel(
         private val contactsRepository: ContactsRepository,
         private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
         private val messageRendererFactory: MessageRenderer.Factory,
-        private val workManager: WorkManager
+        private val deleteMessage: DeleteMessage
     ) : ViewModelProvider.Factory {
 
         /**
@@ -608,7 +609,7 @@ internal class MessageDetailsViewModel(
             return MessageDetailsViewModel(
                     messageDetailsRepository, userManager, contactsRepository,
                     attachmentMetadataDatabase, messageRendererFactory,
-                    messageId, isTransientMessage, workManager
+                    messageId, isTransientMessage, deleteMessage
             ) as T
         }
     }

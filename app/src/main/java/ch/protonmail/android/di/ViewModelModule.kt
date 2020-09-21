@@ -44,6 +44,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
+import ch.protonmail.android.usecase.DeleteMessage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,19 +94,19 @@ internal class ViewModelModule {
 
     @Provides
     fun provideMessageDetailsViewModelFactory(
-            messageDetailsRepository: MessageDetailsRepository,
-            userManager: UserManager,
-            contactsRepository: ContactsRepository,
-            attachmentMetadataDatabase: AttachmentMetadataDatabase,
-            messageRendererFactory: MessageRenderer.Factory,
-            workManager: WorkManager
+        messageDetailsRepository: MessageDetailsRepository,
+        userManager: UserManager,
+        contactsRepository: ContactsRepository,
+        attachmentMetadataDatabase: AttachmentMetadataDatabase,
+        messageRendererFactory: MessageRenderer.Factory,
+        deleteMessage: DeleteMessage
     ) = MessageDetailsViewModel.Factory(
         messageDetailsRepository,
         userManager,
         contactsRepository,
         attachmentMetadataDatabase,
         messageRendererFactory,
-        workManager
+        deleteMessage
     )
 
     @Provides

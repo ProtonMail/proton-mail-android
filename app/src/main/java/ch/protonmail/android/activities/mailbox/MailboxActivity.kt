@@ -56,7 +56,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_LOGOUT
@@ -177,6 +176,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDial
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
+import ch.protonmail.android.usecase.DeleteMessage
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -224,7 +224,7 @@ class MailboxActivity : NavigationActivity(),
     lateinit var contactsRepository: ContactsRepository
 
     @Inject
-    lateinit var workManager: WorkManager
+    lateinit var deleteMessageUseCase: DeleteMessage
 
     private var noConnectivitySnack: Snackbar? = null
     private var checkForConnectivitySnack: Snackbar? = null
@@ -276,7 +276,7 @@ class MailboxActivity : NavigationActivity(),
         if (extras != null && extras.containsKey(EXTRA_MAILBOX_LOCATION)) {
             setupNewMessageLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
         }
-        mailboxViewModel = create(this, messageDetailsRepository, mUserManager, mJobManager, workManager)
+        mailboxViewModel = create(this, messageDetailsRepository, mUserManager, mJobManager, deleteMessageUseCase)
         startObserving()
         mailboxViewModel.toastMessageMaxLabelsReached.observe(this, { event: Event<MaxLabelsReached?> ->
             val maxLabelsReached = event.getContentIfNotHandled()
@@ -330,10 +330,9 @@ class MailboxActivity : NavigationActivity(),
             })
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this,
-            {
-                val failuresCount = it.count { isSuccess -> !isSuccess }
-                Timber.v("Delete message status received failures $failuresCount")
-                if (failuresCount > 0) {
+            { isSuccess ->
+                Timber.v("Delete message status is success $isSuccess")
+                if (!isSuccess) {
                     showToast(R.string.message_deleted_error)
                 }
             }

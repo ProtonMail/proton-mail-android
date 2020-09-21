@@ -17,64 +17,37 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.usecase
 
-import android.content.Context
-import androidx.work.CoroutineWorker
-import androidx.work.Data
-import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.Dispatchers
+import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.withContext
-import timber.log.Timber
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
-internal const val KEY_INVALID_MESSAGE_IDS_RESULT = "KeyInvalidMessageIdsResult"
-internal const val KEY_INPUT_VALID_MESSAGES_IDS = "KeyInputValidMessagesIds"
-
 /**
- * Work Manager Worker responsible for deleting messages from messages database.
- * To be used chained with [DeleteMessageWorker].
- *
- *  InputData has to contain non-null values for:
- *  labelId
- *
- * @see androidx.work.WorkManager
+ * Use case responsible for removing a message from the DB and scheduling
+ * [DeleteMessageWorker] that will send a deferrable delete message network request.
  */
-class DeleteMessageDbWorker(
-    context: Context,
-    params: WorkerParameters
-) : CoroutineWorker(context, params) {
+class DeleteMessage @Inject constructor(
+    private val dispatcher: DispatcherProvider,
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val pendingActionsDatabase: PendingActionsDao,
+    private val workerScheduler: DeleteMessageWorker.Enqueuer
+) {
 
-    @Inject
-    internal lateinit var messageDetailsRepository: MessageDetailsRepository
+    /**
+     * Removes message from the DB and prepares network request.
+     *
+     * @return true if everything goes well,
+     *   false if there are some new pending messages that are marked to be deleted
+     */
+    suspend fun deleteMessages(messageIds: List<String>): DeleteMessageResult =
+        withContext(dispatcher.Io) {
 
-    @Inject
-    internal lateinit var pendingActionsDatabase: PendingActionsDao
+            val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(messageIds)
 
-    init {
-        context.app.appComponent.inject(this)
-    }
-
-    override suspend fun doWork(): Result {
-        val messageIds = inputData.getStringArray(KEY_INPUT_DATA_MESSAGE_IDS)
-            ?: emptyArray()
-
-        // skip empty input
-        if (messageIds.isEmpty()) {
-            return Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messages list")
-            )
-        }
-
-        val validAndInvalidMessagesPair = getValidAndInvalidMessages(messageIds)
-        val validMessageIdList = validAndInvalidMessagesPair.first
-        val invalidMessageIdList = validAndInvalidMessagesPair.second
-
-        return withContext(Dispatchers.IO) {
             for (id in validMessageIdList) {
                 val message = messageDetailsRepository.findMessageById(id)
                 val searchMessage = messageDetailsRepository.findSearchMessageById(id)
@@ -89,17 +62,14 @@ class DeleteMessageDbWorker(
                 }
             }
 
-            val workData = Data.Builder().put(KEY_INPUT_VALID_MESSAGES_IDS, validMessageIdList)
-
-            if (invalidMessageIdList.isNotEmpty()) {
-                Timber.d("InvalidMessageIdList is not empty!")
-                workData.put(KEY_INVALID_MESSAGE_IDS_RESULT, invalidMessageIdList)
-            }
-            Result.success(workData.build())
+            val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList)
+            return@withContext DeleteMessageResult(
+                invalidMessageIdList.isEmpty(),
+                scheduleWorkerResult
+            )
         }
-    }
 
-    private fun getValidAndInvalidMessages(messageIds: Array<String>): Pair<Array<String>, Array<String>> {
+    private fun getValidAndInvalidMessages(messageIds: List<String>): Pair<List<String>, List<String>> {
         val validMessageIdList = mutableListOf<String>()
         val invalidMessageIdList = mutableListOf<String>()
 
@@ -120,7 +90,6 @@ class DeleteMessageDbWorker(
                 invalidMessageIdList.add(id)
             }
         }
-
-        return validMessageIdList.toTypedArray() to invalidMessageIdList.toTypedArray()
+        return validMessageIdList to invalidMessageIdList
     }
 }
