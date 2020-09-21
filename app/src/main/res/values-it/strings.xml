@@ -910,8 +910,8 @@ l\'accesso all\'archiviazione.</string>
     <string name="labels_manage">Gestione etichette</string>
     <string name="folders_manage">Gestore cartelle</string>
     <string name="swiping_gesture">Gesto di scorrimento</string>
-    <string name="swipe_action_right">Swipe right</string>
-    <string name="swipe_action_left">Swipe left</string>
+    <string name="swipe_action_right">Scorri a destra</string>
+    <string name="swipe_action_left">Scorri a sinistra</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Scelta azione con gesti di scorrimento</string>
     <string name="swipe_action_trash">Messaggio spostato nel cestino</string>
@@ -970,7 +970,7 @@ l\'accesso all\'archiviazione.</string>
     <string name="signed_in_with">Accesso effettuato con %s</string>
     <string name="signed_in_with_logged_out_from">Disconnesso da %1$s ed effettuato l\'accesso con %2$s</string>
     <string name="connect_account_limit_title">Limite raggiunto</string>
-    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
+    <string name="connect_account_limit_subtitle">Non puoi aggiungere un altro account gratuito di ProtonMail. Solo un account gratuito di ProtonMail può essere aggiunto. Si prega di disconnettersi dell\'altro account gratuito o di aggiornare uno dei suoi account gratuiti alla versione a pagamento.</string>
     <string name="switch_accounts_question">Cambiare account?</string>
     <string name="switch_to_account">Passare a %s</string>
     <string name="login_failure_missing_keys">L\'account che stai cercando di aggiungere non ha generato chiavi. Aggiungi questo account come primo account sull\'app, o accedi tramite la versione web, per generare chiavi e poi aggiungerlo come account aggiuntivo nell\'app.</string>
@@ -997,8 +997,8 @@ l\'accesso all\'archiviazione.</string>
     <string name="allowed">Consentito</string>
     <string name="denied">Rifiutato</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Swipe gestures changed</string>
-    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
-    <string name="go_to_settings">Go to settings</string>
+    <string name="swipe_gestures_changed">Modifica dei gesti di scorrimento</string>
+    <string name="swipe_gestures_changed_message">Dopo l\'ultimo aggiornamento i gesti di scorrimento sono stati invertiti, puoi ripristinarli nelle opzioni.</string>
+    <string name="go_to_settings">Vai alle impostazioni</string>
     <!-- endregion -->
 </resources>

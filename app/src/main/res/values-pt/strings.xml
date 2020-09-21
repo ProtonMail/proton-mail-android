@@ -245,7 +245,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="create_mailbox_password">Criar senha</string>
     <string name="password_note"><b>Nota:</b> isto é usado para encriptar e desencriptar as suas mensagens.
 Não perca esta senha, não a podemos recuperar. Se a perder, não poderá ler os seus emails.</string>
-    <string name="username_note"><b>Nota:</b> o nome de utilizador também é o seu endereço do ProtonMail</string>
+    <string name="username_note"><b>Nota:</b> o nome de utilizador também é o seu endereço ProtonMail</string>
     <string name="terms_and_conditions">Ao usar o ProtonMail está a concordar com os nossos \n<a href="https://protonmail.com/terms-and-conditions">termos, condições</a> e <a href="https://protonmail.com/privacy-policy">política de privacidade</a></string>
     <string name="human_verification">Verificação humana</string>
     <string name="human_verification_subtitle">Para evitar abusos no ProtonMail,\ntemos de verificar se é um ser humano.</string>
