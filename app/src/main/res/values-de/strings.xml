@@ -66,7 +66,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="inbox_option">Posteingang</string>
     <string name="starred_option">Gekennzeichnet</string>
     <string name="drafts_option">Entwürfe</string>
-    <string name="sent_option">Gesendet</string>
+    <string name="sent_option">GESENDET</string>
     <string name="archive_option">Archiv</string>
     <string name="trash_option">PAPIERKORB</string>
     <string name="spam_option">Spam</string>

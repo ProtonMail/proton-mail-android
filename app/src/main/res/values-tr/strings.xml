@@ -958,7 +958,7 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="signed_in_with">%s ile giriş yapıldı</string>
     <string name="signed_in_with_logged_out_from">%1$s oturumu kapatıldı ve %2$s ile giriş yapıldı</string>
     <string name="connect_account_limit_title">Sınıra ulaşıldı</string>
-    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
+    <string name="connect_account_limit_subtitle">Başka bir ücretsiz ProtonMail hesabı ekleyemezsiniz. Sadece bir ücretsiz ProtonMail hesabı eklenebilir. Lütfen diğer ücretsiz hesabınızdan çıkış yapın veya ücretsiz hesaplarınızdan birini ücretli bir hesaba yükseltin.</string>
     <string name="switch_accounts_question">Hesap değiştirilsin mi?</string>
     <string name="switch_to_account">%s hesabına geç</string>
     <string name="login_failure_missing_keys">Eklemeye çalıştığınız hesapta oluşturulan anahtar yok. Anahtar oluşturmak için lütfen bu hesabı uygulamada ilk hesap olarak ekleyin veya web sürümü üzerinden oturum açın. Ardından uygulamaya ek hesap olarak ekleyin.</string>
