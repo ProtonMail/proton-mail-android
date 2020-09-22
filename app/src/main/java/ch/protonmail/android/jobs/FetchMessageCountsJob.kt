@@ -1,25 +1,22 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.jobs
-
-import com.birbit.android.jobqueue.Params
-import com.birbit.android.jobqueue.RetryConstraint
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
@@ -31,6 +28,8 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
+import com.birbit.android.jobqueue.Params
+import com.birbit.android.jobqueue.RetryConstraint
 
 // region constants
 private const val COUNTS_SINGLE_INSTANCE = "instanceIdCounts"
@@ -41,14 +40,14 @@ class FetchMessageCountsJob(username: String?) : ProtonMailBaseJob(Params(Priori
 
     @Throws(Throwable::class)
     override fun onRun() {
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_JOB_FETCH_UNREAD, "no network - cannot fetch unread")
             AppUtil.postEventOnUi(MessageCountsEvent(Status.FAILED))
             return
         }
 
         try {
-            val totalResponse = mApi.fetchMessagesCount(RetrofitTag(username?: mUserManager.username))
+            val totalResponse = getApi().fetchMessagesCount(RetrofitTag(username?: getUserManager().username))
             val messageCounts = totalResponse.counts?: emptyList()
             val locationCounters = messageCounts.filter { it.labelId.length <= 2 }.map {
                 val location = Constants.MessageLocationType.fromInt(Integer.valueOf(it.labelId))

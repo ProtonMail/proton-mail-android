@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -38,14 +38,14 @@ class UpdateNotificationEmailAndUpdatesJob(private val email: String, private va
     override fun onRun() {
         var failed = false
         try {
-            val infoResponse = mApi.loginInfo(mUserManager.username)
+            val infoResponse = getApi().loginInfo(getUserManager().username)
 
-            val proofs = LoginService.srpProofsForInfo(mUserManager.username, password, infoResponse, 2)
-            val response = mApi.updateNotificationEmail(infoResponse.srpSession, ConstantTime.encodeBase64(proofs!!.clientEphemeral, true), ConstantTime.encodeBase64(proofs.clientProof, true), null, email)
+            val proofs = LoginService.srpProofsForInfo(getUserManager().username, password, infoResponse, 2)
+            val response = getApi().updateNotificationEmail(infoResponse.srpSession, ConstantTime.encodeBase64(proofs!!.clientEphemeral, true), ConstantTime.encodeBase64(proofs.clientProof, true), null, email)
 
-            val responseUpdateNotify = mApi.updateNotify(updateNotify)
+            val responseUpdateNotify = getApi().updateNotify(updateNotify)
             if (!TextUtils.isEmpty(displayName)) {
-                mApi.updateDisplayName(displayName)
+                getApi().updateDisplayName(displayName)
             }
 
             var emailStatus = AuthStatus.SUCCESS
@@ -64,7 +64,7 @@ class UpdateNotificationEmailAndUpdatesJob(private val email: String, private va
             if (responseUpdateNotify!!.code != Constants.RESPONSE_CODE_OK) {
                 updateNotifyStatus = Status.FAILED
             }
-            val user = mUserManager.user
+            val user = getUserManager().user
 
             if (!TextUtils.isEmpty(displayName)) {
                 user.addresses[0].displayName = displayName
@@ -72,15 +72,15 @@ class UpdateNotificationEmailAndUpdatesJob(private val email: String, private va
 
             if (!failed) {
                 if (TextUtils.isEmpty(email)) {
-                    mUserManager.userSettings!!.notificationEmail = applicationContext.resources.getString(R.string.not_set)
+                    getUserManager().userSettings!!.notificationEmail = applicationContext.resources.getString(R.string.not_set)
                 } else {
-                    mUserManager.userSettings!!.notificationEmail = email
+                    getUserManager().userSettings!!.notificationEmail = email
 
                 }
                 AppUtil.postEventOnUi(NotificationsUpdatedEvent(emailStatus, updateNotifyStatus, email, displayName))
             }
 
-                mUserManager.user = user
+                getUserManager().user = user
 
         } catch (e: Exception) {
             AppUtil.postEventOnUi(NotificationsUpdatedEvent(AuthStatus.FAILED, Status.FAILED))

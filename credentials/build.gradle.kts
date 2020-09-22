@@ -17,6 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 import studio.forface.easygradle.dsl.*
+import studio.forface.easygradle.dsl.android.*
 
 plugins {
     `android-library`
@@ -39,7 +40,11 @@ dependencies {
         // Kotlin
         `kotlin-jdk8`,
         `coroutines-android`,
-        `serialization`
+        `serialization`,
+
+        // DI
+        `hilt-android`,
+        `hilt-androidx-annotations`
     )
 
     testImplementation(project(Module.testAndroid))

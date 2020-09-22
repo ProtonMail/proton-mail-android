@@ -1,56 +1,56 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.api.segments.event
 
+import android.content.Context
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.models.MailSettings
-import ch.protonmail.android.api.models.UserSettings
-import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
+import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.UserSettings
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.address.AddressKeyActivationWorker
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.enumerations.MessageFlag
-import ch.protonmail.android.api.models.messages.receive.MessageFactory
-import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.LabelFactory
+import ch.protonmail.android.api.models.messages.receive.MessageFactory
+import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
+import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.messages.MessageSender
-import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
@@ -58,20 +58,20 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.jobs.FetchContactsDataJob
-import ch.protonmail.android.jobs.FetchContactsEmailsJob
 import ch.protonmail.android.jobs.OnFirstLoginJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.MessageUtils
-import ch.protonmail.android.utils.extensions.ifNullElseReturn
 import ch.protonmail.android.utils.extensions.ifNullElse
-import ch.protonmail.android.utils.extensions.replaceFirst
+import ch.protonmail.android.utils.extensions.ifNullElseReturn
 import ch.protonmail.android.utils.extensions.removeFirst
-
+import ch.protonmail.android.utils.extensions.replaceFirst
+import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.google.gson.JsonSyntaxException
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import timber.log.Timber
-import javax.inject.Inject
 import kotlin.collections.set
 import kotlin.math.max
 
@@ -97,22 +97,26 @@ enum class EventType(val eventType: Int) {
     }
 }
 
-class EventHandler(
-        private val protonMailApplication: ProtonMailApplication,
-        private val protonMailApiManager: ProtonMailApiManager,
-        private val databaseProvider: DatabaseProvider,
-        private val userManager: UserManager,
-        private val jobManager: JobManager,
-        val username: String
+class EventHandler @AssistedInject constructor(
+    private val context: Context,
+    private val protonMailApiManager: ProtonMailApiManager,
+    private val databaseProvider: DatabaseProvider,
+    private val userManager: UserManager,
+    private val jobManager: JobManager,
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val enqueueFetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
+    @Assisted val username: String
 ) {
+
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(username: String): EventHandler
+    }
 
     private val messageFactory: MessageFactory
     private val contactsDao by lazy { databaseProvider.provideContactsDao(username) }
-    @Inject
-    lateinit var messageDetailsRepository: MessageDetailsRepository
 
     init {
-        protonMailApplication.appComponent.inject(this)
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
@@ -124,7 +128,7 @@ class EventHandler(
         contactsDao.clearContactEmailsLabelsJoin()
         contactsDao.clearContactEmailsCache()
         contactsDao.clearContactGroupsLabelsTable()
-        jobManager.addJob(FetchContactsEmailsJob(0))
+        enqueueFetchContactEmails()
         jobManager.addJob(FetchContactsDataJob())
     }
 
@@ -522,7 +526,7 @@ class EventHandler(
             }
         }
 
-        AddressKeyActivationWorker.activateAddressKeysIfNeeded(protonMailApplication, eventAddresses, username)
+        AddressKeyActivationWorker.activateAddressKeysIfNeeded(context, eventAddresses, username)
         user.setAddresses(addresses)
     }
 

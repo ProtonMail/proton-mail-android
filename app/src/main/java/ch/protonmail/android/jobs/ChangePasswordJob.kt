@@ -1,31 +1,31 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.jobs
 
 import android.util.Base64
-import ch.protonmail.android.api.models.PasswordVerifier
-import ch.protonmail.android.api.models.PrivateKeyBody
-import ch.protonmail.android.api.models.SrpResponseBody
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.SinglePasswordChange
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.LoginInfoResponse
+import ch.protonmail.android.api.models.PasswordVerifier
+import ch.protonmail.android.api.models.PrivateKeyBody
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.SinglePasswordChange
+import ch.protonmail.android.api.models.SrpResponseBody
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.requests.PasswordChange
@@ -59,15 +59,15 @@ class ChangePasswordJob(
         username.takeIfNotBlank()
             ?: throw IllegalArgumentException("username is empty in UserManager")
         val openPGP = applicationContext.app.openPGP
-        val user = mUserManager.user
-        val infoResponse = mApi.loginInfo(username)
+        val user = getUserManager().user
+        val infoResponse = getApi().loginInfo(username)
         val proofs = LoginService.srpProofsForInfo(username, oldPassword, infoResponse, 2)
         var keysResponse: Keys? = null
 
         if (user.isPaidUser) {
-            val organizationResponse = mApi.fetchOrganization()
+            val organizationResponse = getApi().fetchOrganization()
             if (organizationResponse.code == Constants.RESPONSE_CODE_OK) {
-                keysResponse = mApi.fetchOrganizationKeys()
+                keysResponse = getApi().fetchOrganizationKeys()
             }
         }
 
@@ -75,9 +75,9 @@ class ChangePasswordJob(
             when (passwordType) {
                 Constants.PASSWORD_TYPE_LOGIN -> {
                     // region dual password mode change login password
-                    val newModulus = mApi.randomModulus()
+                    val newModulus = getApi().randomModulus()
                     val verifier = PasswordVerifier.calculate(newPassword, newModulus)
-                    val response = mApi.updateLoginPassword(PasswordChange(infoResponse.srpSession,
+                    val response = getApi().updateLoginPassword(PasswordChange(infoResponse.srpSession,
                         ConstantTime.encodeBase64(proofs.clientEphemeral, true),
                         ConstantTime.encodeBase64(proofs.clientProof, true),
                         twoFactorCode, verifier))
@@ -122,7 +122,7 @@ class ChangePasswordJob(
         infoResponse: LoginInfoResponse,
         keysResponse: Keys?
     ) {
-        val newModulus = mApi.randomModulus()
+        val newModulus = getApi().randomModulus()
         val keySalt = openPGP.createNewKeySalt()
         val generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, newPassword)
         val verifier = if (isSingleMode == PasswordMode.SINGLE)
@@ -145,16 +145,16 @@ class ChangePasswordJob(
         var newOrganizationPrivateKey: String? = ""
         keysResponse?.let { it ->
             newOrganizationPrivateKey = if (openPGP.checkPassphrase(it.privateKey,
-                    mUserManager.getMailboxPassword()!!)) {
+                    getUserManager().getMailboxPassword()!!)) {
                     openPGP.updatePrivateKeyPassphrase(it.privateKey,
-                    mUserManager.getMailboxPassword(), generatedMailboxPassword)
+                    getUserManager().getMailboxPassword(), generatedMailboxPassword)
             } else {
                 null
             }
         }
 
         val privateKeyArray = privateKeyBodies.toTypedArray()
-        val response = mApi.updatePrivateKeys(
+        val response = getApi().updatePrivateKeys(
             SinglePasswordChange(keySalt, privateKeyArray, newOrganizationPrivateKey, infoResponse
                 .srpSession, ConstantTime.encodeBase64(proofs.clientEphemeral, true),
                 ConstantTime.encodeBase64(proofs.clientProof, true), twoFactorCode, verifier))
@@ -166,7 +166,7 @@ class ChangePasswordJob(
         generatedMailboxPassword: ByteArray
     ) {
         if (response.code == Constants.RESPONSE_CODE_OK) {
-            mUserManager.saveMailboxPassword(generatedMailboxPassword, username)
+            getUserManager().saveMailboxPassword(generatedMailboxPassword, username)
             AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.SUCCESS, response.error))
         } else {
             when (response.code) {
@@ -193,7 +193,7 @@ class ChangePasswordJob(
         try {
             try {
                 val newPrivateKey = openPGP.updatePrivateKeyPassphrase(keys.privateKey,
-                    mUserManager.getMailboxPassword(), generatedMailboxPassword)
+                    getUserManager().getMailboxPassword(), generatedMailboxPassword)
                 val privateKeyBody = PrivateKeyBody(newPrivateKey, keys.id)
                 privateKeyBody.let { privateKeyBodies.add(privateKeyBody) }
             } catch (e: Exception) {

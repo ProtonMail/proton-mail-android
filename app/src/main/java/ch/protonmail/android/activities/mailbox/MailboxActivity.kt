@@ -185,6 +185,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.SnackbarContentLayout
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -205,6 +206,7 @@ private const val REQUEST_CODE_TRASH_MESSAGE_DETAILS = 1
 private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 // endregion
 
+@AndroidEntryPoint
 class MailboxActivity : NavigationActivity(),
         MultiChoiceModeListener,
         OnRefreshListener,
@@ -247,7 +249,6 @@ class MailboxActivity : NavigationActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        app.appComponent.inject(this)
         countersDatabase = CountersDatabaseFactory.getInstance(this).getDatabase()
         pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
 

@@ -20,12 +20,12 @@ package ch.protonmail.android.mapper.bridge
 
 import assert4k.assert
 import assert4k.equals
-import assert4k.invoke as fix
 import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
 import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
+import assert4k.invoke as fix
 import ch.protonmail.android.api.models.Keys as OldKey
 
 /**
@@ -49,7 +49,7 @@ internal class UserKeysBridgeMapperTest {
         assert that newKey * {
             +id.s equals "id"
             +privateKey.content.s equals "private_key"
-            +token?.content?.s equals "token"
+            +token.content.s equals "token"
         }
     }
 
@@ -82,5 +82,5 @@ internal class UserKeysBridgeMapperTest {
         primary: Boolean = false,
         privateKey: String = "none",
         token: String = "none"
-    ) = OldKey(id, privateKey, 0, if (primary) 1 else 0, token, "none", "none")
+    ) = OldKey(id, privateKey, 0, if (primary) 1 else 0, token, "none", "none", 0)
 }

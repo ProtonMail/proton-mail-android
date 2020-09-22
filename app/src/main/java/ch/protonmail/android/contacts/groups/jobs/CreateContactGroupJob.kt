@@ -1,24 +1,22 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.contacts.groups.jobs
-
-import com.birbit.android.jobqueue.Params
 
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
@@ -29,6 +27,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
+import com.birbit.android.jobqueue.Params
 
 /**
  * Created by dkadrikj on 17.7.15.
@@ -42,9 +41,9 @@ class CreateContactGroupJob(private val labelName: String, private val color: St
         val contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext).getDatabase()
         val labelResponse: LabelResponse = if (update) {
             // edit the label
-            mApi.updateLabel(labelId, LabelBody(labelName, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
+            getApi().updateLabel(labelId, LabelBody(labelName, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
         } else {
-            mApi.createLabel(LabelBody(labelName, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
+            getApi().createLabel(LabelBody(labelName, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
         }
 
         if (labelResponse.hasError()) {

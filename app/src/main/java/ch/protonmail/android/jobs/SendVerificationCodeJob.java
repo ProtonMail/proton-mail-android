@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -53,7 +53,7 @@ public class SendVerificationCodeJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_CHECK_USERNAME_AVAILABLE_JOB, "no network");
             AppUtil.postEventOnUi(new SendVerificationCodeEvent(Status.NO_NETWORK, ProtonMailApplication.getApplication().getString(R.string.no_network)));
             return;
@@ -68,7 +68,7 @@ public class SendVerificationCodeJob extends ProtonMailBaseJob {
             destination = new Destination(null, phoneNumber);
         }
         VerificationCodeBody verificationCodeBody = new VerificationCodeBody(username, type, destination);
-        ResponseBody response = mApi.sendVerificationCode(verificationCodeBody);
+        ResponseBody response = getApi().sendVerificationCode(verificationCodeBody);
         if (response.getCode() == Constants.RESPONSE_CODE_OK) {
             AppUtil.postEventOnUi(new SendVerificationCodeEvent(Status.SUCCESS, null));
         } else {

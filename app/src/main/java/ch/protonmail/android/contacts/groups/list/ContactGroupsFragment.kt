@@ -49,7 +49,7 @@ import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.libs.core.utils.ViewModelProvider
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts_groups.*
 import java.io.Serializable
 import javax.inject.Inject
@@ -58,10 +58,11 @@ import javax.inject.Inject
 private const val TAG_CONTACT_GROUPS_FRAGMENT = "ProtonMail.ContactGroupsFragment"
 // endregion
 
-/**
+/*
  * Created by kadrikj on 8/24/18.
  */
 
+@AndroidEntryPoint
 class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     @Inject
@@ -72,7 +73,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         private set
     
     private val listener: IContactsListFragmentListener by lazy {
-        context as IContactsListFragmentListener
+        requireActivity() as IContactsListFragmentListener
     }
 
     override fun onItemCheckedStateChanged(
@@ -149,7 +150,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        AndroidSupportInjection.inject(this)
 
         contactGroupsViewModel = ViewModelProvider(this, contactGroupsViewModelFactory)
             .get(ContactGroupsViewModel::class.java)

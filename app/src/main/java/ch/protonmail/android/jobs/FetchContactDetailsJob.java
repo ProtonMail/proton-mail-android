@@ -49,10 +49,10 @@ public class FetchContactDetailsJob extends ProtonMailBaseJob {
         ContactsDatabase contactsDatabase= ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         FullContactDetails contact = contactsDatabase.findFullContactDetailsById(contactId);
         checkAndParse(contact);
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             return;
         } else {
-            FullContactDetailsResponse response = mApi.fetchContactDetails(contactId);
+            FullContactDetailsResponse response = getApi().fetchContactDetails(contactId);
             contact = response.getContact();
             contactsDatabase.insertFullContactDetails(contact);
             checkAndParse(contact);
@@ -67,7 +67,7 @@ public class FetchContactDetailsJob extends ProtonMailBaseJob {
 
     private void parseVCard(FullContactDetails contact) throws Exception {
         List<ContactEncryptedData> encData = contact.getEncryptedData();
-        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
 
         String decryptedVCardType0 = "";
         String decryptedVCardType2 = "";

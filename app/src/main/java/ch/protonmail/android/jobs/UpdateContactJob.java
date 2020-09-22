@@ -81,9 +81,9 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
     @Override
     public void onAdded() {
-        User user = mUserManager.getUser();
+        User user = getUserManager().getUser();
         if (user != null) {
-            UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+            UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
             try {
                 CipherText tct = crypto.encrypt(mEncryptedData, false);
                 String encryptedDataSignature = crypto.sign(mEncryptedData);
@@ -95,14 +95,14 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                 e.printStackTrace();
             }
         }
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(new ContactEvent(ContactEvent.NO_NETWORK, true));
         }
     }
 
     @Override
     public void onRun() throws Throwable {
-        UserCrypto crypto = Crypto.forUser(mUserManager, mUserManager.getUsername());
+        UserCrypto crypto = Crypto.forUser(getUserManager(), getUserManager().getUsername());
         mContactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
 
         CipherText tct = crypto.encrypt(mEncryptedData, false);
@@ -111,7 +111,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 
         CreateContactV2BodyItem body = new CreateContactV2BodyItem(mSignedData, signedDataSignature,
                 tct.getArmored(), encryptedDataSignature);
-        FullContactDetailsResponse response = mApi.updateContact(mContactId, body);
+        FullContactDetailsResponse response = getApi().updateContact(mContactId, body);
 
         if (response != null) {
             if (response.getCode() == RESPONSE_CODE_ERROR_EMAIL_EXIST) {
@@ -197,7 +197,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
     private void updateJoins(String contactGroupId, String contactGroupName, List<String> membersList) {
         LabelContactsBody labelContactsBody = new LabelContactsBody(contactGroupId, membersList);
         try {
-            mApi.labelContacts(labelContactsBody)
+            getApi().labelContacts(labelContactsBody)
                     .doOnComplete(() -> {
                         List<ContactEmailContactLabelJoin> joins = mContactsDatabase.fetchJoins(contactGroupId);
                         for (String contactEmail : membersList) {
@@ -206,7 +206,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                         mContactsDatabase.saveContactEmailContactLabel(joins);
                     })
                     .doOnError(throwable ->
-                            mJobManager.addJobInBackground(new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)))
+                            getJobManager().addJobInBackground(new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)))
                     .subscribeOn(ThreadSchedulers.io())
                     .observeOn(ThreadSchedulers.io())
                     .subscribe();

@@ -20,7 +20,6 @@ package ch.protonmail.android.mapper.bridge
 
 import assert4k.assert
 import assert4k.equals
-import assert4k.invoke as fix
 import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
@@ -31,6 +30,7 @@ import io.mockk.every
 import io.mockk.mockk
 import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
+import assert4k.invoke as fix
 import ch.protonmail.android.api.models.address.Address as OldAddress
 
 /**

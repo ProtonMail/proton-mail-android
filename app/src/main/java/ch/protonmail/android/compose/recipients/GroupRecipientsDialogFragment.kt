@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -35,7 +35,7 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.ErrorResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.extensions.showToast
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_fragment_group_recipients.*
 import javax.inject.Inject
 
@@ -44,11 +44,12 @@ private const val ARGUMENT_RECIPIENTS = "extra_contact_group_recipients"
 private const val ARGUMENT_LOCATION = "extra_recipient_view_location" // should be one of To/CC/BCC, please use one of Constants.RecipientLocation
 // endregion
 
-/**
+/*
  * Created by kadrikj on 9/18/18.
  */
 
-class GroupRecipientsDialogFragment: AbstractDialogFragment() {
+@AndroidEntryPoint
+class GroupRecipientsDialogFragment : AbstractDialogFragment() {
     override fun onBackPressed() {
         CANCELED = true
         dismiss()
@@ -81,7 +82,6 @@ class GroupRecipientsDialogFragment: AbstractDialogFragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
         super.onCreate(savedInstanceState)
         groupRecipientsViewModel = ViewModelProviders.of(this, groupRecipientsViewModelFactory)
                 .get(GroupRecipientsViewModel::class.java)

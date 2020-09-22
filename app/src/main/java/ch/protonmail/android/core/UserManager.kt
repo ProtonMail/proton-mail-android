@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -27,15 +27,17 @@ import androidx.annotation.Nullable
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
-import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.UserSettings
-import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.MailSettings
+import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.UserInfo
+import ch.protonmail.android.api.models.UserSettings
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
+import ch.protonmail.android.di.BackupSharedPreferences
+import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
@@ -44,7 +46,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Produce
-import java.util.*
+import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -79,10 +81,10 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
  * UserManager handles behavior of the current primary account, as well as some multi-account behaviors
  */
 @Singleton
-class UserManager(
-        private val prefs: SharedPreferences,
-        private val backupPrefs: SharedPreferences,
-        val context: Context
+class UserManager @Inject constructor(
+    val context: Context,
+    @DefaultSharedPreferences private val prefs: SharedPreferences,
+    @BackupSharedPreferences private val backupPrefs: SharedPreferences
 ) {
 
     private val userReferences = HashMap<String, User>()
@@ -282,7 +284,6 @@ class UserManager(
      * @see MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC
      */
     init {
-        app.appComponent.inject(this)
         val prefs = app.defaultSharedPreferences
         val currentAppVersion = AppUtil.getAppVersionCode(app)
         val previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE)

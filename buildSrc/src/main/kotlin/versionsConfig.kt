@@ -36,8 +36,9 @@ fun initVersions() {
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.0-rc1"     // Released: Jul 30, 2020
-    `dagger version` =                          "2.16"          // Released: May 04, 2018 TODO: 2.24 removed `HasActivityInjector` in favor of `HasAndroidInjector
     `espresso version` =                        "3.2.0"         // Released: May 30, 2019
+    `hilt-android version` =                    "2.28.3-alpha"  // Released: Jul 18, 2020
+    `hilt-androidx version` =                   "1.0.0-alpha02" // Released: Jul 26, 2020
     `ktx version` =                             "1.2.0-rc01"    // Released: Nov 23, 2019
     `lifecycle version` =                       "2.2.0-rc03"    // Released: Dec 05, 2019
     `material version` =                        "1.1.0-beta02"  // Released: Nov 10, 2019
@@ -49,7 +50,9 @@ fun initVersions() {
     // endregion
 
     // region Others
-    `assert4k version` =                        "0.3.1"         // Released: Jul 03, 2020
+    `assert4k version` =                        "0.5.7"         // Released: Aug 15, 2020
+    `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
+    `dagger version` =                          "2.28.3"        // Released: Jul 18, 2020
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
@@ -62,10 +65,10 @@ fun initVersions() {
 // Common
 const val `Proton-kotlin-util version` =        "0.1.6"         // Released: Aug 30, 2020
 const val `Proton-shared-preferences version` = "0.1.2"         // Released: Aug 30, 2020
-const val `Proton-work-manager version` =       "0.1"           // Released: Jun 10, 2020
+const val `Proton-work-manager version` =       "0.1.1"         // Released: Sep 14, 2020
 // Test
 const val `Proton-android-test version` =       "0.1"           // Released: May 30, 2020
-const val `Proton-android-instr-test version` = "0.1.1"         // Released: Jun 17, 2020
+const val `Proton-android-instr-test version` = "0.1.2"         // Released: Sep 14, 2020
 const val `Proton-kotlin-test version` =        "0.1"           // Released: Jun 10, 2020
 
 const val `Proton-domain version` =             "0.1"           // Released: Jul 03, 2020
@@ -94,16 +97,16 @@ const val `apache-commons-lang version` =       "3.4"           // Released: Apr
 const val `butterKnife version` =               "10.1.0"        // Released: Feb 14, 201
 const val `gson version` =                      "2.8.5"         // Released: May 22, 201
 const val `hugo version` =                      "1.2.1"         // Released: Feb 18, 201
+const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020
 const val `jsoup version` =                     "1.8.3"         // Released: Aug 02, 2015
+const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
 const val `okHttp3 version` =                   "3.12.5"        // Released: Sep 11, 2019 TODO: 4.x requires some refactor / 3.13+ requires minSDK 2
+const val `rf2 converter version` =             "2.7.1"         // Released: Jan 02, 2020
 const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201
 const val `rxRelay version` =                   "2.1.1"         // Released: Aug 23, 201
 const val `sentry version` =                    "1.7.30"        // Released: Jan 28, 2020 TODO: 2.x requires minor refactor for captureEvent and different imports
 const val `sentry-plugin version` =             "1.7.34"        // Released: Apr 15, 2020
-const val `sonarQube version` =                 "2.7.1"         // Released: May 14, 201
-const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 201
+const val `sonarQube version` =                 "2.7.1"         // Released: May 14, 2019
+const val `stetho version` =                    "1.5.1"         // Released: Mar 18, 2019
 const val `timber version` =                    "4.7.1"         // Released:
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
-const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
-const val `rf2 converter version` =             "2.7.1"         // Released: Jan 02, 2020
-const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020

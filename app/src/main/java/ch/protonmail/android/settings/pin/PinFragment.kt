@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -31,7 +31,7 @@ import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.views.RoundButton
-import dagger.android.support.AndroidSupportInjection
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_pin.*
 import javax.inject.Inject
 
@@ -43,10 +43,11 @@ private const val ARGUMENT_SIGN_OUT = "extra_signout_possible"
 private const val ARGUMENT_FINGERPRINT = "extra_use_fingerprint"
 // endregion
 
-/**
+/*
  * Created by dkadrikj on 3/28/16.
  */
 
+@AndroidEntryPoint
 class PinFragment : BaseFragment() {
 
     @Inject
@@ -61,7 +62,6 @@ class PinFragment : BaseFragment() {
     override fun getFragmentKey(): String = "ProtonMail.PinFragment"
 
     override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
         super.onAttach(context)
         pinFragmentViewModel = ViewModelProviders.of(this, pinFragmentViewModelFactory).get(PinFragmentViewModel::class.java)
         if (context is PinFragmentViewModel.IPinCreationListener) {

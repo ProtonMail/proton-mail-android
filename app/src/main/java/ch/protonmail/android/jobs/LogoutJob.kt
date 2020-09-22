@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,21 +20,20 @@ package ch.protonmail.android.jobs
 
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
-import com.birbit.android.jobqueue.Params
-import com.birbit.android.jobqueue.RetryConstraint
-
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.gcm.GcmUtil
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
+import com.birbit.android.jobqueue.Params
+import com.birbit.android.jobqueue.RetryConstraint
 
 class LogoutJob(username: String) : ProtonMailBaseJob(Params(Priority.HIGH).persist(), username) {
 
     @Throws(Throwable::class)
     override fun onRun() {
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(LogoutEvent(Status.NO_NETWORK))
         } else {
             // Unregister GCM only if this is the last user on device
@@ -46,18 +45,18 @@ class LogoutJob(username: String) : ProtonMailBaseJob(Params(Priority.HIGH).pers
                 Logger.doLog("unregistering from GCM")
                 val registrationId = GcmUtil.getRegistrationId()
                 if (registrationId.isNotEmpty()) {
-                    mApi.unregisterDevice(registrationId)
+                    getApi().unregisterDevice(registrationId)
                 }
                 AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS, username))
             }
             accountManager.clear()
             // Revoke access token through API
             if (username.isNotEmpty()) {
-                mApi.revokeAccess(username)
+                getApi().revokeAccess(username)
             }
         }
-        AppUtil.deleteSecurePrefs(username, mUserManager.nextLoggedInAccountOtherThanCurrent == null)
-        mUserManager.getTokenManager(username)?.clear()
+        AppUtil.deleteSecurePrefs(username, getUserManager().nextLoggedInAccountOtherThanCurrent == null)
+        getUserManager().getTokenManager(username)?.clear()
         TokenManager.clearInstance(username)
     }
 

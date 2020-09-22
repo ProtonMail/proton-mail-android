@@ -113,7 +113,7 @@ import ch.protonmail.android.views.CustomFontButton;
 import ch.protonmail.android.views.CustomFontTextView;
 import ch.protonmail.android.views.VCardLinearLayout;
 import ch.protonmail.android.views.contactDetails.ContactAvatarView;
-import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.parameter.AddressType;
@@ -140,9 +140,10 @@ import kotlin.Unit;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
 
-/**
+/*
  * Created by dkadrikj on 8/26/16.
  */
+@AndroidEntryPoint
 public class ContactDetailsActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
 
     public static final String EXTRA_CONTACT = "extra_contact";
@@ -226,7 +227,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         contactDetailsViewModel = new ViewModelProvider(this, contactDetailsViewModelFactory)

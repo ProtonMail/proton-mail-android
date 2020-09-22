@@ -1,37 +1,33 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.utils.crypto
 
+import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.utils.ServerTime
+import okhttp3.Interceptor
+import okhttp3.Response
 import java.io.IOException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
-
 import javax.inject.Inject
-
-import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.QueueNetworkUtil
-import ch.protonmail.android.utils.ServerTime
-import okhttp3.Interceptor
-import okhttp3.Response
-import java.lang.Exception
 
 
 /**
@@ -44,10 +40,6 @@ class ServerTimeInterceptor : Interceptor {
 
     @Inject
     lateinit var mQueueNetworkUtil: QueueNetworkUtil
-
-    init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
-    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()

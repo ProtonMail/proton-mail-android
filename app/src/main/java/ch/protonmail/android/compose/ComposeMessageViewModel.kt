@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -22,9 +22,9 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.Spanned
 import android.text.TextUtils
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
@@ -62,11 +62,11 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
+import java.util.HashMap
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 import kotlin.collections.set
 
 // region constants
@@ -75,13 +75,16 @@ const val LESS_THAN = "&lt;"
 const val GREATER_THAN = "&gt;"
 // endregion
 
-/**
+/*
  * Created by kadrikj on 9/17/18.
  */
 
-class ComposeMessageViewModel @Inject constructor(private val composeMessageRepository: ComposeMessageRepository,
-                                                  private val userManager: UserManager,
-                                                  private val messageDetailsRepository: MessageDetailsRepository) : ViewModel() {
+class ComposeMessageViewModel @Inject constructor(
+    private val composeMessageRepository: ComposeMessageRepository,
+    private val userManager: UserManager,
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val postMessageServiceFactory: PostMessageServiceFactory
+) : ViewModel() {
 
     // region events data
     private val _mergedContactsLiveData: MediatorLiveData<List<MessageRecipient>> = MediatorLiveData()
@@ -395,7 +398,7 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                PostMessageServiceFactory().startUpdateDraftService(_dbId!!, message.decryptedBody
+                postMessageServiceFactory.startUpdateDraftService(_dbId!!, message.decryptedBody
                         ?: "",
                         newAttachments, uploadAttachments, _oldSenderAddressId)
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
@@ -424,7 +427,7 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
                             composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
                             IO, uploadAttachments)
                 }
-                PostMessageServiceFactory().startCreateDraftService(_dbId!!, _draftId.get(), parentId,
+                postMessageServiceFactory.startCreateDraftService(_dbId!!, _draftId.get(), parentId,
                         _actionId, message.decryptedBody
                         ?: "", uploadAttachments, newAttachments, _oldSenderAddressId, _messageDataResult.isTransient)
                 _oldSenderAddressId = ""
@@ -734,7 +737,6 @@ class ComposeMessageViewModel @Inject constructor(private val composeMessageRepo
             messageDetailsRepository.deletePendingDraft(message.dbId!!)
 
             val newAttachments = calculateNewAttachments(true)
-            val postMessageServiceFactory = PostMessageServiceFactory()
             postMessageServiceFactory.startSendingMessage(_dbId!!,
                     messageDataResult.message.decryptedBody ?: "",
                     messageDataResult.messagePassword,

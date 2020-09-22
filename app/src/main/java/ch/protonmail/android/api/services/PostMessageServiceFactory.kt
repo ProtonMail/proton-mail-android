@@ -48,22 +48,14 @@ import timber.log.Timber
 import java.util.ArrayList
 import javax.inject.Inject
 
-class PostMessageServiceFactory {
-
-    @Inject
-    internal lateinit var messageDetailsRepository: MessageDetailsRepository
-    @Inject
-    internal lateinit var userManager: UserManager
-    @Inject
-    internal lateinit var jobManager: JobManager
-    @Inject
-    internal lateinit var networkUtil: QueueNetworkUtil
+class PostMessageServiceFactory @Inject constructor(
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val userManager: UserManager,
+    private val jobManager: JobManager,
+    private val networkUtil: QueueNetworkUtil
+) {
 
     private val bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-
-    init {
-        ProtonMailApplication.getApplication().appComponent.inject(this)
-    }
 
     suspend fun startCreateDraftService(messageId: Long, localMessageId: String, parentId: String?, actionType: Constants.MessageActionType, content: String, uploadAttachments: Boolean, newAttachments: List<String>, oldSenderId: String, isTransient: Boolean, username: String = userManager.username) {
         val message = handleMessage(messageId, content, username) ?: return

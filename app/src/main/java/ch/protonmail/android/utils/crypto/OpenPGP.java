@@ -40,12 +40,21 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import at.favre.lib.crypto.bcrypt.Radix64Encoder;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.crypto.Primes.PrimeGenerator;
 import timber.log.Timber;
 
+@Singleton
 public class OpenPGP {
+
+    @Inject
+    public OpenPGP() {
+
+    }
 
     public byte[] decryptAttachmentBinKey(byte[] keyPacket, byte[] dataPacket, List<byte[]> privateKeys, byte[] passphrase) throws Exception {
         KeyRing privateKeyRing = buildPrivateKeyRing(privateKeys, passphrase);

@@ -1,26 +1,25 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 @file:Suppress("unused")
 
-package ch.protonmail.android.core.di
+package ch.protonmail.android.di
 
-import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -30,40 +29,30 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailbo
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewModel
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.compose.ComposeMessageRepository
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
-import ch.protonmail.android.contacts.details.ContactDetailsRepository
-import ch.protonmail.android.contacts.details.edit.EditContactDetailsRepository
-import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsRepository
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
-import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateRepository
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateViewModelFactory
-import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserRepository
 import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewModelFactory
-import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModelFactory
-import ch.protonmail.android.contacts.list.viewModel.ContactListRepository
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
-import com.birbit.android.jobqueue.JobManager
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
-import javax.inject.Singleton
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
-/**
+/*
  * Created by kadrikj on 8/28/18. */
+
+// TODO here we're providing factories by injecting the ViewModel, this is wrong, we should get rid of it!
+//  With Hilt + Assisted Inject we can avoid the Factory - see `val myViewModel by viewModels<MyViewModel>()`
 @Module
-class RepositoryModule {
+@InstallIn(SingletonComponent::class)
+internal class ViewModelModule {
 
     // region view models factories
     @Provides
@@ -148,47 +137,4 @@ class RepositoryModule {
     }
     // endregion
 
-    // region repositories
-    @Provides
-    @Singleton
-    fun provideEditContactDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
-            : EditContactDetailsRepository = EditContactDetailsRepository(jobManager, protonMailApi, databaseProvider)
-
-    @Provides
-    @Singleton
-    fun provideAddressChooserRepository(databaseProvider: DatabaseProvider): AddressChooserRepository = AddressChooserRepository(databaseProvider)
-
-    @Provides
-    @Singleton
-    fun provideContactGroupsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider):
-            ContactGroupsRepository = ContactGroupsRepository(jobManager, protonMailApi, databaseProvider)
-
-    @Provides
-    @Singleton
-    fun provideContactGroupDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
-            : ContactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider)
-
-    @Provides
-    @Singleton
-    fun provideContactGroupEditCreateRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
-            : ContactGroupEditCreateRepository = ContactGroupEditCreateRepository(jobManager, protonMailApi, databaseProvider)
-
-    @Provides
-    @Singleton
-    fun provideContactDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider)
-            : ContactDetailsRepository = ContactDetailsRepository(jobManager, protonMailApi, databaseProvider)
-
-    @Provides
-    fun provideComposeMessageRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, databaseProvider: DatabaseProvider, @Named("messages") messagesDatabase: MessagesDatabase, @Named("messages_search") searchDatabase: MessagesDatabase, messageDetailsRepository: MessageDetailsRepository)
-            : ComposeMessageRepository = ComposeMessageRepository(jobManager, protonMailApi, databaseProvider, messagesDatabase, searchDatabase, messageDetailsRepository)
-
-    @Provides
-    @Singleton
-    fun provideContactListRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, contactsDatabase: ContactsDatabase):
-            ContactListRepository = ContactListRepository(jobManager, protonMailApi, contactsDatabase)
-
-    @Provides
-    fun provideMessageDetailsRepository(jobManager: JobManager, protonMailApi: ProtonMailApiManager, @Named("messages_search") searchDatabase: MessagesDatabase, pendingActionsDatabase: PendingActionsDatabase, applicationContext: Context, databaseProvider: DatabaseProvider):
-        MessageDetailsRepository = MessageDetailsRepository(jobManager, protonMailApi, searchDatabase, pendingActionsDatabase, applicationContext, databaseProvider)
-    // endregion
 }

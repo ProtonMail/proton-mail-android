@@ -35,17 +35,21 @@ import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import java.util.ArrayList
 
-class CreateContactJob()
-    : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
+class CreateContactJob() : ProtonMailEndlessJob(
+    Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)
+) {
+
     private lateinit var mContactData: ContactData
     private lateinit var mContactEmails: List<ContactEmail>
     private lateinit var mEncryptedData: String
     private lateinit var mSignedData: String
 
-    constructor(contactData: ContactData,
-                contactEmails: List<ContactEmail>,
-                encryptedData: String,
-                signedData: String): this() {
+    constructor(
+        contactData: ContactData,
+        contactEmails: List<ContactEmail>,
+        encryptedData: String,
+        signedData: String
+    ) : this() {
         mContactData = contactData
         mContactEmails = contactEmails
         mEncryptedData = encryptedData
@@ -59,7 +63,7 @@ class CreateContactJob()
         val contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext).getDatabase()
         contactsDatabase.saveAllContactsEmails(mContactEmails!!)
 
-        if (!mQueueNetworkUtil.isConnected()) {
+        if (!getQueueNetworkUtil().isConnected()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.NO_NETWORK, true))
         }
     }
@@ -69,7 +73,7 @@ class CreateContactJob()
         val contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext)
                 .getDatabase()
 
-        val crypto = Crypto.forUser(mUserManager, mUserManager.username)
+        val crypto = Crypto.forUser(getUserManager(), getUserManager().username)
         val encryptedData = crypto.encrypt(mEncryptedData, false).armored
         val encryptDataSignature = crypto.sign(mEncryptedData)
         val signedDataSignature = crypto.sign(mSignedData)
@@ -80,7 +84,7 @@ class CreateContactJob()
         contactEncryptedDataList.add(contactEncryptedDataType2)
         contactEncryptedDataList.add(contactEncryptedDataType3)
         val body = CreateContact(contactEncryptedDataList)
-        val response = mApi.createContact(body)
+        val response = getApi().createContact(body)
 
         if (response!!.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.ERROR, true))

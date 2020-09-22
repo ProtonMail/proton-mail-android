@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,7 +20,6 @@ package ch.protonmail.android.contacts.details
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import ch.protonmail.android.domain.util.DispatcherProvider
 import ch.protonmail.android.exceptions.BadImageUrlError
 import ch.protonmail.android.exceptions.ImageNotFoundError
 import ch.protonmail.android.exceptions.errorStateGenerator
@@ -39,6 +38,7 @@ import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.assertIs
 import me.proton.core.test.kotlin.coroutinesTest
+import me.proton.core.util.kotlin.DispatcherProvider
 import studio.forface.viewstatestore.ViewState
 import java.io.FileNotFoundException
 import kotlin.test.Test

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,6 +23,7 @@ package ch.protonmail.android.activities.messageDetails
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import ch.protonmail.android.di.AttachmentsDirectory
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.utils.extensions.forEachAsync
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +39,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import java.io.ByteArrayOutputStream
 import java.io.File
+import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -51,11 +53,11 @@ import kotlin.math.sqrt
  *
  * @author Davide Farella
  */
-class MessageRenderer(
-        private val directory: File,
-        private val documentParser: DocumentParser,
-        private val bitmapImageDecoder: ImageDecoder,
-        scope: CoroutineScope
+internal class MessageRenderer(
+    private val directory: File,
+    private val documentParser: DocumentParser,
+    private val bitmapImageDecoder: ImageDecoder,
+    scope: CoroutineScope
 ) : CoroutineScope by ( scope + Default ) {
 
     /** The [String] html of the message body */
@@ -206,10 +208,10 @@ class MessageRenderer(
      *
      * @param imageDecoder [ImageDecoder]
      */
-    class Factory(
-            private val attachmentsDirectory: File,
-            private val documentParser: DocumentParser = DefaultDocumentParser,
-            private val imageDecoder: ImageDecoder = DefaultImageDecoder
+    class Factory @Inject constructor(
+        @AttachmentsDirectory private val attachmentsDirectory: File,
+        private val documentParser: DocumentParser = DefaultDocumentParser(),
+        private val imageDecoder: ImageDecoder = DefaultImageDecoder()
     ) {
         /** @return [File] directory for the current message */
         private fun messageDirectory(messageId: String) = File(attachmentsDirectory, messageId)
@@ -269,21 +271,33 @@ private fun Document.findImageElements(id: String): Elements? {
 // endregion
 
 // region DocumentParser
-/** Typealias for a lambda that takes a body [String] and returns a [Document] */
-internal typealias DocumentParser = (body: String) -> Document
+/**
+ * Parses a document as [String] and returns a [Document] model
+ */
+internal interface DocumentParser {
+    operator fun invoke(body: String): Document
+}
 
-/** Default implementation of [DocumentParser] */
-object DefaultDocumentParser : DocumentParser {
+/**
+ * Default implementation of [DocumentParser]
+ */
+internal class DefaultDocumentParser @Inject constructor() : DocumentParser {
     override fun invoke(body: String): Document = Jsoup.parse(body).flatten()
 }
 // endregion
 
 // region ImageDecoder
-/** Typealias for a lambda that takes an [File] and the max size in bytes and returns a [Bitmap] */
-internal typealias ImageDecoder = (file: File, maxBytes: Int) -> Bitmap
+/**
+ * Decodes to [Bitmap] the image provided by the given [File] to fit the max size provided
+ */
+internal interface ImageDecoder {
+    operator fun invoke(file: File, maxBytes: Int): Bitmap
+}
 
-/** Default implementation of [ImageDecoder] */
-object DefaultImageDecoder : ImageDecoder {
+/**
+ * Default implementation of [ImageDecoder]
+ */
+internal class DefaultImageDecoder @Inject constructor() : ImageDecoder {
     override fun invoke(file: File, maxBytes: Int): Bitmap {
         // https://stackoverflow.com/a/8497703/6372379
 

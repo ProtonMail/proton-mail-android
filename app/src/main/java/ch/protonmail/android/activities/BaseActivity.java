@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -45,7 +45,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.birbit.android.jobqueue.JobManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
-import timber.log.Timber;
 
 import javax.inject.Inject;
 
@@ -70,7 +69,6 @@ import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
-import ch.protonmail.android.core.di.AppComponent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MessageSentEvent;
 import ch.protonmail.android.events.Status;
@@ -83,17 +81,19 @@ import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID;
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ID;
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_INLINE;
+import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 
+@AndroidEntryPoint
 public abstract class BaseActivity extends AppCompatActivity implements INetworkConfiguratorCallback {
 
     public static final String EXTRA_IN_APP = "extra_in_app";
@@ -161,7 +161,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ProtonMailApplication.getApplication().setAppInBackground(false);
-        getAppComponent().inject(this);
         inApp = getIntent().getBooleanExtra(EXTRA_IN_APP, false);
         if (savedInstanceState != null) {
             mCurrentLocale = savedInstanceState.getString("curr_loc");
@@ -386,10 +385,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             User user = mUserManager.getUser();
             user.setLastInteraction(SystemClock.elapsedRealtime());
         }
-    }
-
-    protected AppComponent getAppComponent() {
-        return ProtonMailApplication.getApplication().getAppComponent();
     }
 
     protected void checkDelinquency() {

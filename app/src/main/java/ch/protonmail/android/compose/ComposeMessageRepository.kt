@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -34,7 +34,12 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.jobs.*
+import ch.protonmail.android.jobs.FetchDraftDetailJob
+import ch.protonmail.android.jobs.FetchMessageDetailJob
+import ch.protonmail.android.jobs.FetchPublicKeysJob
+import ch.protonmail.android.jobs.PostDeleteJob
+import ch.protonmail.android.jobs.PostReadJob
+import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob
 import ch.protonmail.android.jobs.verification.FetchHumanVerificationOptionsJob
@@ -45,18 +50,23 @@ import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * Created by kadrikj on 9/17/18. */
 class ComposeMessageRepository @Inject constructor(
-        val jobManager: JobManager,
-        val api: ProtonMailApiManager,
-        val databaseProvider: DatabaseProvider,
-        var messagesDatabase: MessagesDatabase,
-        val searchDatabase: MessagesDatabase,
-        val messageDetailsRepository: MessageDetailsRepository // FIXME: this should be removed
+    val jobManager: JobManager,
+    val api: ProtonMailApiManager,
+    val databaseProvider: DatabaseProvider,
+    @Named("messages") var messagesDatabase: MessagesDatabase,
+    @Named("messages_search") val searchDatabase: MessagesDatabase,
+    val messageDetailsRepository: MessageDetailsRepository // FIXME: this should be removed
 ) {
 
     val lazyManager = resettableManager()

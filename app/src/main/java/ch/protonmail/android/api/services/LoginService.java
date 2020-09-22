@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -97,15 +97,15 @@ import ch.protonmail.android.utils.PasswordUtils;
 import ch.protonmail.android.utils.SRPClient;
 import ch.protonmail.android.utils.crypto.KeyType;
 import ch.protonmail.android.utils.crypto.OpenPGP;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.text.Charsets;
 import timber.log.Timber;
 
 import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+@AndroidEntryPoint
 public class LoginService extends ProtonJobIntentService {
     private static final String TAG_LOGIN_SERVICE = "LoginService";
 
@@ -164,7 +164,6 @@ public class LoginService extends ProtonJobIntentService {
     private TokenManager tokenManager;
 
     public LoginService() {
-        ProtonMailApplication.getApplication().getAppComponent().inject(this);
     }
 
     @Override
