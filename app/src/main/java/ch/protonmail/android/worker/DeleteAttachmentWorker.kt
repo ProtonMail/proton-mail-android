@@ -20,6 +20,8 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -29,15 +31,14 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.messages.MessagesDao
+import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ATTACHMENT_DELETE_ID_INVALID
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_ATTACHMENT_ID_STRING
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Inject
+import javax.inject.Named
 
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 
@@ -50,18 +51,13 @@ internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteAttachmentWorker(context: Context, params: WorkerParameters) :
-    CoroutineWorker(context, params) {
-
-    @Inject
-    internal lateinit var api: ProtonMailApiManager
-
-    @Inject
-    internal lateinit var messagesDatabase: MessagesDao
-
-    init {
-        context.app.appComponent.inject(this)
-    }
+class DeleteAttachmentWorker @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val api: ProtonMailApiManager,
+    @Named("messages") var messagesDatabase: MessagesDatabase,
+    private val dispatchers: DispatcherProvider
+) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         val attachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING) ?: ""
@@ -75,7 +71,7 @@ class DeleteAttachmentWorker(context: Context, params: WorkerParameters) :
 
         Timber.v("Delete attachmentId ID: $attachmentId")
 
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatchers.Io) {
             val response = api.deleteAttachment(attachmentId)
 
             if (response.code == Constants.RESPONSE_CODE_OK ||

@@ -82,7 +82,7 @@ import ch.protonmail.android.utils.DownloadUtils;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
-import dagger.android.AndroidInjection;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
@@ -91,6 +91,7 @@ import timber.log.Timber;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
 
+@AndroidEntryPoint
 public class AddAttachmentsActivity extends BaseStoragePermissionActivity implements AttachmentListAdapter.IAttachmentListener {
 
     private static final String TAG_ADD_ATTACHMENTS_ACTIVITY = "AddAttachmentsActivity";
@@ -197,7 +198,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
                 getApplicationContext()).getDatabase();
