@@ -81,7 +81,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val postMessageServiceFactory: PostMessageServiceFactory,
-    private val deleteMessageUseCase: DeleteMessage
+    private val deleteMessage: DeleteMessage
 ) : ViewModel() {
 
     // region events data
@@ -694,7 +694,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun deleteDraft() {
         viewModelScope.launch {
-            deleteMessageUseCase.deleteMessages(listOf(_draftId.get()))
+            deleteMessage(listOf(_draftId.get()))
             removePendingDraft()
         }
     }

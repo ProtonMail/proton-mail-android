@@ -581,7 +581,7 @@ internal class MessageDetailsViewModel(
 
     fun deleteMessage(messageId: String) {
         viewModelScope.launch {
-            deleteMessageUseCase.deleteMessages(listOf(messageId))
+            deleteMessageUseCase(listOf(messageId))
         }
     }
 

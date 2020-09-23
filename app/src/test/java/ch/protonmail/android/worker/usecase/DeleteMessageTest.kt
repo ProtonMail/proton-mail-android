@@ -50,12 +50,12 @@ class DeleteMessageTest {
     @MockK
     private lateinit var repository: MessageDetailsRepository
 
-    private lateinit var useCase: DeleteMessage
+    private lateinit var deleteMessageUseCase: DeleteMessage
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        useCase = DeleteMessage(TestDispatcherProvider, repository, db, workScheduler)
+        deleteMessageUseCase = DeleteMessage(TestDispatcherProvider, repository, db, workScheduler)
     }
 
     @Test
@@ -73,7 +73,7 @@ class DeleteMessageTest {
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
-            val response = useCase.deleteMessages(listOf(messId))
+            val response = deleteMessageUseCase(listOf(messId))
 
             // then
             verify { workScheduler.enqueue(listOf(messId)) }
@@ -97,7 +97,7 @@ class DeleteMessageTest {
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
-            val response = useCase.deleteMessages(listOf(messId))
+            val response = deleteMessageUseCase(listOf(messId))
 
             // then
             verify { workScheduler.enqueue(emptyList()) }
@@ -124,7 +124,7 @@ class DeleteMessageTest {
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
-            val response = useCase.deleteMessages(listOf(messId))
+            val response = deleteMessageUseCase(listOf(messId))
 
             // then
             verify { workScheduler.enqueue(emptyList()) }

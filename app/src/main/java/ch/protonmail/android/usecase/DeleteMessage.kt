@@ -31,20 +31,14 @@ import javax.inject.Inject
  * [DeleteMessageWorker] that will send a deferrable delete message network request.
  */
 class DeleteMessage @Inject constructor(
-    private val dispatcher: DispatcherProvider,
+    private val dispatchers: DispatcherProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val pendingActionsDatabase: PendingActionsDao,
     private val workerScheduler: DeleteMessageWorker.Enqueuer
 ) {
 
-    /**
-     * Removes message from the DB and prepares network request.
-     *
-     * @return true if everything goes well,
-     *   false if there are some new pending messages that are marked to be deleted
-     */
-    suspend fun deleteMessages(messageIds: List<String>): DeleteMessageResult =
-        withContext(dispatcher.Io) {
+    suspend operator fun invoke(messageIds: List<String>): DeleteMessageResult =
+        withContext(dispatchers.Io) {
 
             val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(messageIds)
 

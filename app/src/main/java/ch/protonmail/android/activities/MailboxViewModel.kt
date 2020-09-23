@@ -32,9 +32,9 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.usecase.DeleteMessage
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
-import ch.protonmail.android.usecase.DeleteMessage
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +55,7 @@ class MailboxViewModel(
     private val messageDetailsRepository: MessageDetailsRepository,
     val userManager: UserManager,
     private val jobManager: JobManager,
-    private val deleteMessageUseCase: DeleteMessage
+    private val deleteMessage: DeleteMessage
 ) : ViewModel() {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -221,7 +221,7 @@ class MailboxViewModel(
 
     fun deleteMessages(messageIds: List<String>) =
         viewModelScope.launch {
-            val deleteMessagesResult = deleteMessageUseCase.deleteMessages(messageIds)
+            val deleteMessagesResult = deleteMessage(messageIds)
             _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
         }
 

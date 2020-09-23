@@ -37,7 +37,6 @@ import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class DeleteMessageWorkerTest {
 
@@ -70,7 +69,6 @@ class DeleteMessageWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            assertNotNull(operationResult)
             assertEquals(operationResult, expected)
         }
     }
@@ -95,7 +93,6 @@ class DeleteMessageWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            assertNotNull(operationResult)
             assertEquals(operationResult, expected)
         }
     }
@@ -123,7 +120,6 @@ class DeleteMessageWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            assertNotNull(operationResult)
             assertEquals(operationResult, expected)
         }
     }
