@@ -20,6 +20,8 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -31,9 +33,8 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -48,17 +49,12 @@ internal const val KEY_INPUT_VALID_MESSAGES_IDS = "KeyInputValidMessageIds"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteMessageWorker(
-    context: Context,
-    params: WorkerParameters
+class DeleteMessageWorker @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val dispatcher: DispatcherProvider,
+    private var api: ProtonMailApiManager
 ) : CoroutineWorker(context, params) {
-
-    @Inject
-    internal lateinit var api: ProtonMailApiManager
-
-    init {
-        context.app.appComponent.inject(this)
-    }
 
     override suspend fun doWork(): Result {
 
@@ -72,7 +68,7 @@ class DeleteMessageWorker(
             )
         }
 
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatcher.Io) {
             // delete messages on remote
             val response = api.deleteMessage(IDList(validMessageIdList.toList()))
             if (response.code == Constants.RESPONSE_CODE_OK ||

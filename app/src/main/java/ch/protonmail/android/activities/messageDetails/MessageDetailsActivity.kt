@@ -86,7 +86,6 @@ import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostDeleteJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.jobs.PostSpamJob

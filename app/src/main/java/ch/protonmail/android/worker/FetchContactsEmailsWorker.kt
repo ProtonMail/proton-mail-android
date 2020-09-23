@@ -55,7 +55,8 @@ class FetchContactsEmailsWorker @WorkerInject constructor (
                 // TODO: remove and observe Work directly
                 AppUtil.postEventOnUi(ContactsFetchedEvent(Status.FAILED))
                 failure(it)
-            })
+            }
+            )
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
