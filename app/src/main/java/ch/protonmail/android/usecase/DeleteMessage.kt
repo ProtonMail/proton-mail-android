@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.withContext
@@ -42,19 +43,22 @@ class DeleteMessage @Inject constructor(
 
             val (validMessageIdList, invalidMessageIdList) = getValidAndInvalidMessages(messageIds)
 
-            for (id in validMessageIdList) {
-                val message = messageDetailsRepository.findMessageById(id)
-                val searchMessage = messageDetailsRepository.findSearchMessageById(id)
+            val messagesToSave = mutableListOf<Message>()
+            val searchMessagesToSave = mutableListOf<Message>()
 
-                if (message != null) {
+            for (id in validMessageIdList) {
+                messageDetailsRepository.findMessageById(id)?.let { message ->
                     message.deleted = true
-                    messageDetailsRepository.saveMessageInDB(message)
+                    messagesToSave.add(message)
                 }
-                if (searchMessage != null) {
+                messageDetailsRepository.findSearchMessageById(id)?.let { searchMessage ->
                     searchMessage.deleted = true
-                    messageDetailsRepository.saveSearchMessageInDB(searchMessage)
+                    searchMessagesToSave.add(searchMessage)
                 }
             }
+
+            messageDetailsRepository.saveMessagesInOneTransaction(messagesToSave)
+            messageDetailsRepository.saveSearchMessagesInOneTransaction(searchMessagesToSave)
 
             val scheduleWorkerResult = workerScheduler.enqueue(validMessageIdList)
             return@withContext DeleteMessageResult(

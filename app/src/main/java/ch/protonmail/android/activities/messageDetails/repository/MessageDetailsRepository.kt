@@ -220,12 +220,7 @@ class MessageDetailsRepository @Inject constructor(
     }
 
     fun saveMessageInDB(message: Message): Long {
-        if (Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE) {
-            val localFilePath = saveBodyToFileIfNeeded(message)
-            localFilePath?.let {
-                message.messageBody = it
-            }
-        }
+        checkSaveFlagAndSaveFile(message)
         return messagesDao.saveMessage(message)
     }
 
@@ -238,18 +233,36 @@ class MessageDetailsRepository @Inject constructor(
         messages.map(this::saveMessageInDB)
     }
 
+    fun saveMessagesInOneTransaction(messages: List<Message>) {
+        messages.forEach { message ->
+            checkSaveFlagAndSaveFile(message)
+        }
+        messagesDao.saveMessages(*messages.toTypedArray())
+    }
+
     fun saveSearchMessageInDB(message: Message) {
+        checkSaveFlagAndSaveFile(message)
+        searchDatabaseDao.saveMessage(message)
+    }
+
+    private fun checkSaveFlagAndSaveFile(message: Message) {
         if (Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE) {
             val localFilePath = saveBodyToFileIfNeeded(message)
             localFilePath?.let {
                 message.messageBody = it
             }
         }
-        searchDatabaseDao.saveMessage(message)
     }
 
     fun saveAllSearchMessagesInDB(messages:List<Message>) {
         messages.map(this::saveSearchMessageInDB)
+    }
+
+    fun saveSearchMessagesInOneTransaction(messages:List<Message>) {
+        messages.forEach { message ->
+            checkSaveFlagAndSaveFile(message)
+        }
+        searchDatabaseDao.saveMessages(*messages.toTypedArray())
     }
 
     fun clearSearchMessagesCache() = searchDatabaseDao.clearMessagesCache()
