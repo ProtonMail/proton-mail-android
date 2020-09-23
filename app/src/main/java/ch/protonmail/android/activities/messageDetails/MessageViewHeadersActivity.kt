@@ -26,6 +26,9 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import kotlinx.android.synthetic.main.activity_view_headers.*
 import android.text.method.ScrollingMovementMethod
+import ch.protonmail.android.events.LogoutEvent
+import ch.protonmail.android.utils.moveToLogin
+import com.squareup.otto.Subscribe
 
 // region constants
 const val EXTRA_VIEW_HEADERS = "extra_view_headers"
@@ -66,5 +69,11 @@ class MessageViewHeadersActivity  : BaseActivity() {
             return true
         }
         return false
+    }
+
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

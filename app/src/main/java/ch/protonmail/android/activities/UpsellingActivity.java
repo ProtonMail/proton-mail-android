@@ -49,6 +49,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
+import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.AvailablePlansResponse;
 import ch.protonmail.android.api.models.Organization;
@@ -57,6 +58,7 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AvailablePlansEvent;
+import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.PaymentMethodEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.payment.CheckSubscriptionEvent;
@@ -648,5 +650,11 @@ public class UpsellingActivity extends BaseActivity {
 
     private enum State {
         CLOSED, OPENED
+    }
+
+    @Subscribe
+    public void onLogoutEvent(LogoutEvent event) {
+        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
+        finish();
     }
 }

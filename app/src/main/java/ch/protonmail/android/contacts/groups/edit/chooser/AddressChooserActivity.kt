@@ -26,14 +26,17 @@ import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.GroupsItemAdapterMode
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.moveToLogin
+import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import javax.inject.Inject
@@ -59,7 +62,7 @@ class AddressChooserActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        addressChooserViewModel = ViewModelProviders.of(this, addressChooserViewModelFactory)
+        addressChooserViewModel = ViewModelProvider(this, addressChooserViewModelFactory)
                 .get(AddressChooserViewModel::class.java)
         setupToolbar()
         initAdapter()
@@ -133,5 +136,11 @@ class AddressChooserActivity : BaseActivity() {
                 }
             })
         }
+    }
+
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

@@ -226,18 +226,10 @@ class NotificationServer(
         }
         inboxStyle.setSummaryText(summaryText)
 
-        val composeIntent = Intent(context, LoginActivity::class.java)
-        val stackBuilder = TaskStackBuilder.create(context)
-        stackBuilder.addParentStack(LoginActivity::class.java)
-        stackBuilder.addNextIntent(composeIntent)
-        val contentIntent = stackBuilder.getPendingIntent(0,
-            PendingIntent.FLAG_UPDATE_CURRENT)
-
         val channelId = createAccountChannel()
 
         val mBuilder = NotificationCompat.Builder(context,
             channelId).setSmallIcon(R.drawable.notification_icon)
-            .setContentIntent(contentIntent)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
             .setStyle(inboxStyle)
             .setLights(ContextCompat.getColor(context, R.color.light_indicator),
