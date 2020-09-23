@@ -82,8 +82,7 @@ unit tests:
   tags:
     - android
   script:
-    - ./gradlew :domain:test
-    - ./gradlew testDebugUnitTest
+    - ./gradlew -Pci --console=plain allTest
 
 
 firebase tests:
