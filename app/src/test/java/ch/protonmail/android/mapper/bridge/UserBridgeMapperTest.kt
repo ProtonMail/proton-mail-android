@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,7 +20,12 @@ package ch.protonmail.android.mapper.bridge
 
 import android.os.SystemClock
 import android.text.TextUtils
-import assert4k.*
+import assert4k.assert
+import assert4k.contains
+import assert4k.equals
+import assert4k.that
+import assert4k.times
+import assert4k.unaryPlus
 import ch.protonmail.android.core.Constants.Prefs.PREF_DELINQUENT
 import ch.protonmail.android.core.Constants.Prefs.PREF_MAX_SPACE
 import ch.protonmail.android.core.Constants.Prefs.PREF_MAX_UPLOAD_FILE_SIZE
@@ -31,7 +36,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
-import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ORG_PRIVATE_KEY
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.domain.entity.user.Addresses
@@ -45,6 +49,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
+import assert4k.invoke as fix
 import ch.protonmail.android.api.models.Keys as OldKeys
 import ch.protonmail.android.api.models.User as OldUser
 import ch.protonmail.android.api.models.address.Address as OldAddress
@@ -70,7 +75,6 @@ internal class UserBridgeMapperTest {
             every { subscribed } returns 4
             every { private } returns 1
             every { role } returns 2
-            every { organizationPrivateKey } returns "orgKey"
             every { currency } returns "eur"
             every { credit } returns 10
             every { delinquentValue } returns 3
@@ -87,19 +91,18 @@ internal class UserBridgeMapperTest {
             +id.s equals "id"
             +name.s equals "name"
             +(plans * {
-                +size() equals 1
+                +size.fix() equals 1
                 it contains Plan.Vpn.Paid
             })
             +private equals true
             +role equals Role.ORGANIZATION_ADMIN
-            +organizationPrivateKey?.s equals "orgKey"
             +currency.s equals "eur"
-            +credits() equals 10
+            +credits.fix() equals 10
             +delinquent equals Delinquent.InvoiceDelinquent
             +totalUploadLimit.l equals 12_345uL
             +(dedicatedSpace * {
-                +used.l() equals 15_000uL
-                +total.l() equals 30_000uL
+                +used.l.fix() equals 15_000uL
+                +total.l.fix() equals 30_000uL
             })
         }
     }
@@ -124,7 +127,6 @@ internal class UserBridgeMapperTest {
                 every { getInt(PREF_SUBSCRIBED, any()) } returns 4
                 every { getInt(PREF_USER_PRIVATE, any()) } returns 1
                 every { getInt(PREF_ROLE, any()) } returns 2
-                every { getString(PREF_USER_ORG_PRIVATE_KEY, any()) } returns "orgKey"
                 every { getString(PREF_USER_CURRENCY, any()) } returns "eur"
                 every { getInt(PREF_USER_CREDIT, any()) } returns 10
                 every { getInt(PREF_DELINQUENT, any()) } returns 3
@@ -150,19 +152,18 @@ internal class UserBridgeMapperTest {
             +id.s equals "id"
             +name.s equals "username"
             +(plans * {
-                +size() equals 1
+                +size.fix() equals 1
                 it contains Plan.Vpn.Paid
             })
             +private equals true
             +role equals Role.ORGANIZATION_ADMIN
-            +organizationPrivateKey?.s equals "orgKey"
             +currency.s equals "eur"
-            +credits() equals 10
+            +credits.fix() equals 10
             +delinquent equals Delinquent.InvoiceDelinquent
             +totalUploadLimit.l equals 12_345uL
             +(dedicatedSpace * {
-                +used.l() equals 15_000uL
-                +total.l() equals 30_000uL
+                +used.l.fix() equals 15_000uL
+                +total.l.fix() equals 30_000uL
             })
         }
 

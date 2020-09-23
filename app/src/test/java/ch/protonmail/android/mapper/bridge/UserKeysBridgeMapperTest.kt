@@ -40,7 +40,7 @@ internal class UserKeysBridgeMapperTest {
     fun `can map correctly single Key`() {
         val oldKey = OldKey(
             id = "id",
-            privateKey = "-----BEGIN PGP PRIVATE_KEY_BLOCK-----private_key-----END PGP PRIVATE_KEY_BLOCK-----",
+            privateKey = "-----BEGIN PGP PRIVATE KEY BLOCK-----private_key-----END PGP PRIVATE KEY BLOCK-----",
             token = "-----BEGIN PGP MESSAGE-----token-----END PGP MESSAGE-----"
         )
 
@@ -49,7 +49,7 @@ internal class UserKeysBridgeMapperTest {
         assert that newKey * {
             +id.s equals "id"
             +privateKey.content.s equals "private_key"
-            +token.content.s equals "token"
+            +token?.content?.s equals "token"
         }
     }
 
