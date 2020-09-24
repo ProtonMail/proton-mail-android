@@ -85,6 +85,7 @@ const val `jUnit5 version` =                    "5.5.0"         // Released:
 const val `json-simple version` =               "1.1.1"         // Released: Mar 21, 2012
 const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun 10, 2020
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018
+const val `sun-mail-android version` =          "1.5.5"         // Released: Mar 06, 2020
 
 // Android
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020

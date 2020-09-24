@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.AmbiguousViewMatcherException
 import androidx.test.espresso.AppNotIdleException
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
@@ -38,6 +39,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerVi
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
 import ch.protonmail.android.R
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers.allOf
@@ -132,12 +134,31 @@ object UICustomViewActions {
 
             override fun checkCondition() = try {
                 val rv = ActivityProvider.currentActivity!!.findViewById<RecyclerView>(id)
+                waitUntilLoaded{ rv }
                 rv.adapter!!.itemCount > 0
             } catch (e: Exception) {
                 errorMessage = e.message.toString()
                 false
             }
         })
+    }
+
+    /**
+     * Stop the test until RecyclerView's data gets loaded.
+     * Passed [recyclerProvider] will be activated in UI thread, allowing you to retrieve the View.
+     * Workaround for https://issuetracker.google.com/issues/123653014.
+     */
+    inline fun waitUntilLoaded(crossinline recyclerProvider: () -> RecyclerView) {
+        Espresso.onIdle()
+        lateinit var recycler: RecyclerView
+
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            recycler = recyclerProvider()
+        }
+
+        while (recycler.hasPendingAdapterUpdates()) {
+            Thread.sleep(10)
+        }
     }
 
     @Contract(value = "_ -> new", pure = true)

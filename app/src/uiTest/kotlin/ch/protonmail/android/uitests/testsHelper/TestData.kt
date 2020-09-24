@@ -43,9 +43,9 @@ object TestData {
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
     var internalEmailNotTrustedKeys =
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
-    var externalEmailPGPEncrypted =
+    var externalGmailPGPEncrypted =
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
-    var externalEmailPGPSigned =
+    var externalOutlookPGPSigned =
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
 
 
