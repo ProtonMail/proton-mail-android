@@ -151,6 +151,9 @@ release-publish-github:
   extends: .release-sync-commit-shared
 
 release-publish-github-tags:
+  needs:
+    - job: build prerelease
+      artifacts: true
   stage: bot-release
   variables:
     RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
