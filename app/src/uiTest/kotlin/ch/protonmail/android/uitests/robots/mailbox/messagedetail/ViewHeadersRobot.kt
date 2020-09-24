@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.mailbox.message
+package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot

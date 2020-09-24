@@ -142,6 +142,11 @@ class MenuRobot {
             return MenuRobot()
         }
 
+        fun switchToAccount(email: String): MenuRobot {
+            UIActions.recyclerView.clickOnRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
+            return MenuRobot()
+        }
+
         /**
          * Contains all the validations that can be performed by [MenuAccountListRobot].
          */

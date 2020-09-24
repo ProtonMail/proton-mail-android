@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+import org.gradle.internal.impldep.org.apache.ivy.core.IvyPatternHelper.substitute
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
 import java.io.FileInputStream
@@ -158,7 +159,11 @@ android(appIdSuffix = "android") {
     }
 
     packagingOptions {
+        exclude("LICENSE-2.0.txt")
+        exclude("RELEASE.txt")
+        exclude("META-INF/NOTICE.md")
         exclude("META-INF/INDEX.LIST")
+        exclude("META-INF/gfprobe-provider.xml")
     }
 }
 
@@ -307,7 +312,8 @@ dependencies {
         `falcon`,
         `espresso-contrib`,
         `espresso-intents`,
-        `uiautomator`
+        `uiautomator`,
+        `android-activation`
     )
 }
 

@@ -23,7 +23,7 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstIns
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectContaining
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.robots.mailbox.message.MessageRobot
+import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 

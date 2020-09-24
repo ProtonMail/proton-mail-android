@@ -33,10 +33,7 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiWatcher
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.uitests.testsHelper.ProtonFailureHandler
@@ -156,8 +153,8 @@ open class BaseTest {
             TestData.onePassUserWith2FA = setUser(BuildConfig.TEST_USER3)
             TestData.twoPassUserWith2FA = setUser(BuildConfig.TEST_USER4)
 
-            TestData.externalEmailPGPEncrypted = setUser(BuildConfig.TEST_RECIPIENT1)
-            TestData.externalEmailPGPSigned = setUser(BuildConfig.TEST_RECIPIENT2)
+            TestData.externalGmailPGPEncrypted = setUser(BuildConfig.TEST_RECIPIENT1)
+            TestData.externalOutlookPGPSigned = setUser(BuildConfig.TEST_RECIPIENT2)
             TestData.internalEmailTrustedKeys = setUser(BuildConfig.TEST_RECIPIENT3)
             TestData.internalEmailNotTrustedKeys = setUser(BuildConfig.TEST_RECIPIENT4)
         }

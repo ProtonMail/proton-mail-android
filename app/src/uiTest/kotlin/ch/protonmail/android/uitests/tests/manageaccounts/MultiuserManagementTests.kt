@@ -236,7 +236,8 @@ class MultiuserManagementTests : BaseTest() {
     @Test
     fun addTwoFreeAccounts() {
         loginRobot
-            .loginTwoPasswordUser(twoPassUserWith2FA)
+            .loginUserWithTwoFa(twoPassUserWith2FA)
+            .provideTwoFaCodeMailbox(twoPassUserWith2FA.twoFaCode)
             .decryptMailbox(twoPassUserWith2FA.mailboxPassword)
             .menuDrawer()
             .accountsList()

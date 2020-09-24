@@ -28,7 +28,12 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Compan
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.externalGmailPGPEncrypted
+import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import ch.protonmail.android.uitests.testsHelper.mailer.Mail
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -45,9 +50,51 @@ class InboxTests : BaseTest() {
         super.setUp()
         subject = TestData.messageSubject
         body = TestData.messageBody
-        inboxRobot = loginRobot.loginUser(TestData.onePassUser)
+        inboxRobot = loginRobot.loginUser(onePassUser)
     }
 
+    @TestId("29746")
+    @Test
+    fun receiveMessageFromGmail() {
+        val from = externalGmailPGPEncrypted
+        val to = onePassUser
+        Mail.gmail.from(from).to(to).withSubject(subject).withBody(body).send()
+        inboxRobot
+            .clickMessageBySubject(subject)
+            .verify { pgpIconShown() }
+    }
+
+    @TestId("29747:")
+    @Test
+    fun receiveMessageFromOutlook() {
+        val from = externalOutlookPGPSigned
+        val to = onePassUser
+        Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).send()
+        inboxRobot
+            .clickMessageBySubject(subject)
+            .verify { pgpIconShown() }
+    }
+
+    @TestId("1307")
+    @Test
+    fun receiveMessageFromPMUser() {
+        loginRobot
+            .loginUser(onePassUser)
+            .menuDrawer()
+            .accountsList()
+            .manageAccounts()
+            .addAccount()
+            .connectTwoPassAccount(TestData.twoPassUser)
+            .compose()
+            .sendMessage(onePassUser.email, subject, body)
+            .menuDrawer()
+            .accountsList()
+            .switchToAccount(onePassUser.email)
+            .inbox()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("29722")
     @Test
     fun deleteMessageLongClick() {
         inboxRobot
@@ -60,6 +107,7 @@ class InboxTests : BaseTest() {
             }
     }
 
+    @TestId("29723")
     @Category(SmokeTest::class)
     @Test
     fun deleteMessageWithSwipe() {
@@ -72,6 +120,7 @@ class InboxTests : BaseTest() {
             }
     }
 
+    @TestId("29724")
     @Test
     fun deleteMultipleMessages() {
         inboxRobot
@@ -86,6 +135,7 @@ class InboxTests : BaseTest() {
             }
     }
 
+    @TestId("29725")
     @Test
     fun starMessageWithSwipe() {
         inboxRobot
@@ -95,6 +145,7 @@ class InboxTests : BaseTest() {
             .verify { messageStarred() }
     }
 
+    @TestId("29726")
     @Test
     fun changeMessageFolder() {
         val folder = "Folder 1"
@@ -118,43 +169,5 @@ class InboxTests : BaseTest() {
             .emptyFolder()
             .confirm()
             .verify { folderEmpty() }
-    }
-
-    @Test
-    fun messageDetailsViewHeaders() {
-        inboxRobot
-            .menuDrawer()
-            .sent()
-            .clickMessageByPosition(0)
-            .moreOptions()
-            .viewHeaders()
-            .verify { messageHeadersDisplayed() }
-    }
-
-    @Test
-    fun saveDraft() {
-        val draftSubject = "Draft ${TestData.messageSubject}"
-        inboxRobot
-            .compose()
-            .draftSubjectBody(draftSubject)
-            .clickUpButton()
-            .confirmDraftSaving()
-            .menuDrawer()
-            .drafts()
-            .verify { draftMessageSaved(draftSubject) }
-    }
-
-    @Category(SmokeTest::class)
-    @Test
-    fun saveDraftWithAttachment() {
-        val draftSubject = "Draft ${TestData.messageSubject}"
-        inboxRobot
-            .compose()
-            .draftSubjectBodyAttachment(draftSubject)
-            .clickUpButton()
-            .confirmDraftSaving()
-            .menuDrawer()
-            .drafts()
-            .verify { draftWithAttachmentSaved(draftSubject) }
     }
 }

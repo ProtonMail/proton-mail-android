@@ -23,8 +23,8 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPasswordHint
-import ch.protonmail.android.uitests.testsHelper.TestData.externalEmailPGPEncrypted
-import ch.protonmail.android.uitests.testsHelper.TestData.externalEmailPGPSigned
+import ch.protonmail.android.uitests.testsHelper.TestData.externalGmailPGPEncrypted
+import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailNotTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
@@ -77,8 +77,8 @@ class SendNewMessageTests : BaseTest() {
     @TestId("1543")
     @Category(SmokeTest::class)
     @Test
-    fun sendMessageToNonPMPGPEncryptedContact() {
-        val to = externalEmailPGPEncrypted.email
+    fun sendMessageToPGPEncryptedContact() {
+        val to = externalGmailPGPEncrypted.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -91,8 +91,8 @@ class SendNewMessageTests : BaseTest() {
     @TestId("1544")
     @Category(SmokeTest::class)
     @Test
-    fun sendMessageToNonPMPGPSignedContact() {
-        val to = externalEmailPGPSigned.email
+    fun sendMessageToPGPSignedContact() {
+        val to = externalGmailPGPEncrypted.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -105,7 +105,7 @@ class SendNewMessageTests : BaseTest() {
     @Test
     fun sendMessageTOandCC() {
         val to = internalEmailTrustedKeys.email
-        val cc = externalEmailPGPSigned.email
+        val cc = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -118,8 +118,8 @@ class SendNewMessageTests : BaseTest() {
     @Category(SmokeTest::class)
     @Test
     fun sendMessageTOandCCandBCC() {
-        val to = internalEmailTrustedKeys.email
-        val cc = externalEmailPGPSigned.email
+        val to = externalGmailPGPEncrypted.email
+        val cc = internalEmailTrustedKeys.email
         val bcc = internalEmailNotTrustedKeys.email
         loginRobot
             .loginUser(onePassUser)
@@ -133,7 +133,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("1542")
     @Test
     fun sendMessageEO() {
-        val to = externalEmailPGPSigned.email
+        val to = externalOutlookPGPSigned.email
         val password = editedPassword
         val hint = editedPasswordHint
         loginRobot
@@ -148,7 +148,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("1550")
     @Test
     fun sendMessageExpiryTime() {
-        val to = internalEmailTrustedKeys.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -161,7 +161,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("1548")
     @Test
     fun sendMessageExpiryTimeExternalContact() {
-        val to = externalEmailPGPSigned.email
+        val to = externalGmailPGPEncrypted.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -174,7 +174,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("21090")
     @Test
     fun sendMessageEOAndExpiryTime() {
-        val to = externalEmailPGPSigned.email
+        val to = externalOutlookPGPSigned.email
         val password = editedPassword
         val hint = editedPasswordHint
         loginRobot
@@ -190,7 +190,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("21091")
     @Test
     fun sendMessageEOAndExpiryTimeWithAttachment() {
-        val to = externalEmailPGPSigned.email
+        val to = externalOutlookPGPSigned.email
         val password = editedPassword
         val hint = editedPasswordHint
         loginRobot
@@ -206,7 +206,7 @@ class SendNewMessageTests : BaseTest() {
 
     @Test
     fun sendMessageToInternalTrustedContactCameraCaptureAttachment() {
-        val to = externalEmailPGPSigned.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -219,7 +219,7 @@ class SendNewMessageTests : BaseTest() {
 
     @Test
     fun sendMessageToInternalNotTrustedContactChooseAttachment() {
-        val to = externalEmailPGPSigned.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -232,7 +232,7 @@ class SendNewMessageTests : BaseTest() {
 
     @Test
     fun sendMessageToInternalContactWithTwoAttachments() {
-        val to = externalEmailPGPSigned.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -245,7 +245,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("15539")
     @Test
     fun sendMessageToExternalContactWithOneAttachment() {
-        val to = externalEmailPGPEncrypted.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -258,7 +258,7 @@ class SendNewMessageTests : BaseTest() {
     @TestId("15540")
     @Test
     fun sendMessageToExternalContactWithTwoAttachments() {
-        val to = externalEmailPGPEncrypted.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()

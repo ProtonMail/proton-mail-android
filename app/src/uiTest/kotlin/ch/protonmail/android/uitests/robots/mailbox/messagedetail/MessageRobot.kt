@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.mailbox.message
+package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
@@ -113,4 +113,28 @@ class MessageRobot {
             return ViewHeadersRobot()
         }
     }
+
+    class Verify {
+        fun messageContainsAttachment() {
+            UIActions.wait.forViewWithId(R.id.attachment_title)
+        }
+
+        fun quotedHeaderShown() {
+            UIActions.wait.forViewWithId(R.id.quoted_header)
+        }
+
+        fun attachmentsNotAdded() {
+            UIActions.check.viewWithIdIsNotDisplayed(R.id.attachment_count)
+        }
+
+        fun attachmentsAdded() {
+            UIActions.check.viewWithIdIsDisplayed(R.id.attachment_count)
+        }
+
+        fun pgpIconShown() {
+            UIActions.wait.forViewWithId(R.id.pgp_icon)
+        }
+    }
+
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

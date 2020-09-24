@@ -29,7 +29,7 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstIns
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.robots.mailbox.message.MessageRobot
+import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
@@ -113,6 +113,7 @@ interface MailboxRobotInterface {
         }
 
         fun messageDeleted(subject: String, date: String) {
+            UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
             UIActions.recyclerView.checkDoesNotContainItemWithText(messagesRecyclerViewId, subject, date)
         }
 

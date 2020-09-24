@@ -27,7 +27,7 @@ import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessageExpirationRobot
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessagePasswordRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.robots.mailbox.message.MessageRobot
+import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
