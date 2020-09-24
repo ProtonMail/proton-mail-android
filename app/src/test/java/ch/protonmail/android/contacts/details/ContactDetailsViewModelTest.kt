@@ -69,6 +69,7 @@ internal class ContactDetailsViewModelTest :
                 }
             },
             contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN
@@ -87,6 +88,7 @@ internal class ContactDetailsViewModelTest :
             dispatchers,
             downloadFile = mockk(),
             contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN
@@ -105,6 +107,7 @@ internal class ContactDetailsViewModelTest :
                 coEvery { invoke(url = any()) } answers  { throw FileNotFoundException() }
             },
             contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN
@@ -126,6 +129,7 @@ internal class ContactDetailsViewModelTest :
                 coEvery { invoke(url = any()) } returns mockk()
             },
             contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN

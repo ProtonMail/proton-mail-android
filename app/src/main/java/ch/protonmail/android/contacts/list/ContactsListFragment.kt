@@ -63,6 +63,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.libs.core.utils.ViewModelProvider
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -72,6 +73,7 @@ private const val TAG_CONTACTS_LIST_FRAGMENT = "ProtonMail.ContactsFragment"
 private const val EXTRA_PERMISSION = "extra_permission"
 // endregion
 
+@AndroidEntryPoint
 class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private lateinit var viewModel: ContactsListViewModel
@@ -85,13 +87,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         private set
 
     private val listener: IContactsListFragmentListener by lazy {
-        context as? IContactsListFragmentListener
+        activity as? IContactsListFragmentListener
             ?: throw IllegalStateException("Activity must implement IContactsListFragmentListener")
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requireContext().app.appComponent.inject(this)
     }
 
     private fun getSelectedContactsIds(): List<String> {

@@ -22,6 +22,8 @@ package ch.protonmail.android.di
 import android.content.Context
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
+import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
+import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
@@ -78,4 +80,14 @@ object DatabaseModule {
     @Singleton
     fun provideAttachmentMetadataDatabase(context: Context): AttachmentMetadataDatabase =
         AttachmentMetadataDatabaseFactory.getInstance(context).getDatabase()
+
+    @Provides
+    @Singleton
+    fun provideContactsDatabaseFactory(context: Context): ContactsDatabaseFactory =
+        ContactsDatabaseFactory.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun provideContactsDatabase(factory: ContactsDatabaseFactory): ContactsDatabase =
+        factory.getDatabase()
 }

@@ -20,6 +20,8 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -33,14 +35,11 @@ import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Inject
 
-private const val KEY_INPUT_DATA_CONTACT_IDS = "KeyInputDataContactDds"
-internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
+internal const val KEY_INPUT_DATA_CONTACT_IDS = "KeyInputDataContactDds"
 
 /**
  * Work Manager Worker responsible for contactIs removal.
@@ -50,21 +49,14 @@ internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteContactWorker(context: Context, params: WorkerParameters) :
-    CoroutineWorker(context, params) {
-
-    @Inject
-    internal lateinit var api: ProtonMailApiManager
-
-    @Inject
-    internal lateinit var contactsDatabaseFactory: ContactsDatabaseFactory
-
-    @Inject
-    internal lateinit var contactsDatabase: ContactsDatabase
-
-    init {
-        context.app.appComponent.inject(this)
-    }
+class DeleteContactWorker @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val api: ProtonMailApiManager,
+    private val contactsDatabase: ContactsDatabase,
+    private val contactsDatabaseFactory: ContactsDatabaseFactory,
+    private val dispatchers: DispatcherProvider
+) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
 
@@ -80,7 +72,7 @@ class DeleteContactWorker(context: Context, params: WorkerParameters) :
 
         Timber.v("Deleting ${contactIds.size} contacts")
 
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatchers.Io) {
             // clean remote store
             val response = api.deleteContact(IDList(contactIds.toList()))
 
