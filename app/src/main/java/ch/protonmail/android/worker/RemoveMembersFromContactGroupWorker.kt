@@ -20,6 +20,8 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -31,16 +33,13 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CONTACT_GROUP_ID = "KeyInputDataContactGroupId"
 internal const val KEY_INPUT_DATA_CONTACT_GROUP_NAME = "KeyInputDataContactGroupName"
 internal const val KEY_INPUT_DATA_MEMBERS_LIST = "KeyInputDataMembersList"
-internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 
 /**
  * Work Manager Worker responsible for contact groups members removal.
@@ -52,21 +51,13 @@ internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
  *
  * @see androidx.work.WorkManager
  */
-class RemoveMembersFromContactGroupWorker(
-    context: Context,
-    params: WorkerParameters
+class RemoveMembersFromContactGroupWorker @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val api: ProtonMailApiManager,
+    private val contactsDatabase: ContactsDatabase,
+    private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
-
-    @Inject
-    internal lateinit var api: ProtonMailApiManager
-
-    @Inject
-    internal lateinit var contactsDatabase: ContactsDatabase
-
-
-    init {
-        context.app.appComponent.inject(this)
-    }
 
     override suspend fun doWork(): Result {
 
@@ -77,7 +68,7 @@ class RemoveMembersFromContactGroupWorker(
         Timber.v("Remove group Members $membersList")
 
         if (id.isEmpty() && contactGroupName?.isNotEmpty() == true) {
-            val contactLabel = withContext(Dispatchers.IO) {
+            val contactLabel = withContext(dispatchers.Io) {
                 contactsDatabase.findContactGroupByName(contactGroupName)
             }
             id = contactLabel?.ID ?: ""
@@ -98,7 +89,7 @@ class RemoveMembersFromContactGroupWorker(
         val labelContactsBody = LabelContactsBody(id, membersList.asList())
 
         // make network call
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatchers.Io) {
             api.unlabelContactEmails(labelContactsBody)
             Result.success()
         }
