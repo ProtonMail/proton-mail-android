@@ -20,57 +20,122 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.ListenableWorker
-import androidx.work.testing.TestListenableWorkerBuilder
+import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
+import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.core.Constants
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class DeleteLabelWorkerTest {
 
+    @RelaxedMockK
     private lateinit var context: Context
+
+    @RelaxedMockK
+    private lateinit var parameters: WorkerParameters
+
+    @MockK
+    private lateinit var contactsDb: ContactsDatabase
+
+    @MockK
+    private lateinit var messagesDatabase: MessagesDatabase
+
+    @MockK
+    private lateinit var api: ProtonMailApiManager
+
+    private lateinit var worker: DeleteLabelWorker
 
     @Before
     fun setUp() {
-        context = InstrumentationRegistry.getInstrumentation().targetContext
+        MockKAnnotations.init(this)
+        worker = DeleteLabelWorker(
+            context,
+            parameters,
+            api,
+            contactsDb,
+            messagesDatabase,
+            TestDispatcherProvider
+        )
     }
 
     @Test
     fun verifyWorkerFailsWithNoLabelIdProvided() {
-        // given
-        val worker =
-            TestListenableWorkerBuilder<DeleteLabelWorker>(context).build()
-        val expected = ListenableWorker.Result.failure(
-            workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id")
-        )
+        runBlockingTest {
+            // given
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id")
+            )
 
-        // when
-        val result = worker.startWork().get()
+            // when
+            val result = worker.doWork()
 
-        // then
-        assertEquals(expected, result)
+            // then
+            assertEquals(expected, result)
+        }
     }
 
     @Test
     fun verifyWorkerSuccessesWithLabelIdProvided() {
-        // given
-        val labelId = "id1"
-        val worker =
-            TestListenableWorkerBuilder<DeleteLabelWorker>(
-                context,
-                inputData = workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId)
-            ).build()
-        val expected = ListenableWorker.Result.failure(
-            workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id")
-        )
+        runBlockingTest {
+            // given
+            val labelId = "id1"
+            val deleteResponse = mockk<ResponseBody> {
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
+            val contactLabel = mockk<ContactLabel>()
+            val expected = ListenableWorker.Result.success()
 
-        // when
-        val result = worker.startWork().get()
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId)
+            every { contactsDb.findContactGroupById(labelId) } returns contactLabel
+            every { contactsDb.deleteContactGroup(contactLabel) } returns Unit
+            every { messagesDatabase.deleteLabelById(labelId) } returns Unit
+            coEvery { api.deleteLabel(any()) } returns deleteResponse
 
-        // then
-        assertEquals(expected, result)
+            // when
+            val result = worker.doWork()
+
+            // then
+            assertEquals(expected, result)
+        }
+    }
+
+    @Test
+    fun verifyWorkerFailureWithLabelIdProvidedButBadServerResponse() {
+        runBlockingTest {
+            // given
+            val labelId = "id1"
+            val errorCode = 12123
+            val deleteResponse = mockk<ResponseBody> {
+                every { code } returns errorCode
+            }
+            val contactLabel = mockk<ContactLabel>()
+            val expected = ListenableWorker.Result.failure()
+
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId)
+            every { contactsDb.findContactGroupById(labelId) } returns contactLabel
+            coEvery { api.deleteLabel(any()) } returns deleteResponse
+
+            // when
+            val result = worker.doWork()
+
+            // then
+            assertEquals(expected, result)
+        }
     }
 
 }

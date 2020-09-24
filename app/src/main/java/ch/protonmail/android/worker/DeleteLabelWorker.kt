@@ -20,6 +20,8 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -33,11 +35,10 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.extensions.app
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Inject
+import javax.inject.Named
 
 internal const val KEY_INPUT_DATA_LABEL_ID = "KeyInputDataLabelId"
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
@@ -51,23 +52,14 @@ private const val WORKER_TAG = "DeleteLabelWorkerTag"
  *
  * @see androidx.work.WorkManager
  */
-class DeleteLabelWorker(
-    context: Context,
-    params: WorkerParameters
+class DeleteLabelWorker @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
+    private val api: ProtonMailApiManager,
+    private val contactsDatabase: ContactsDatabase,
+    @Named("messages") private val messagesDatabase: MessagesDao,
+    private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
-
-    @Inject
-    internal lateinit var api: ProtonMailApiManager
-
-    @Inject
-    internal lateinit var contactsDatabase: ContactsDatabase
-
-    @Inject
-    internal lateinit var messagesDatabase: MessagesDao
-
-    init {
-        context.app.appComponent.inject(this)
-    }
 
     override suspend fun doWork(): Result {
 
@@ -81,7 +73,7 @@ class DeleteLabelWorker(
         }
 
         Timber.v("Deleting label $labelId")
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatchers.Io) {
             val responseBody: ResponseBody = api.deleteLabel(labelId)
             if (responseBody.code == Constants.RESPONSE_CODE_OK) {
                 updateDb(labelId)
