@@ -32,13 +32,10 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.withTimeout
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.assertIs
-import me.proton.core.test.kotlin.coroutinesTest
-import me.proton.core.util.kotlin.DispatcherProvider
 import studio.forface.viewstatestore.ViewState
 import java.io.FileNotFoundException
 import kotlin.test.Test
@@ -54,21 +51,15 @@ import kotlin.test.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ContactDetailsViewModelTest :
     ArchTest,
-    CoroutinesTest by coroutinesTest,
+    CoroutinesTest,
     ViewStateStoreTest by viewStateStoreTest(errorStateGenerator) {
 
-    private val dispatcherProvider = object : DispatcherProvider {
-        override val Io = ioDispatcher
-        override val Comp = compDispatcher
-        override val Main = mainDispatcher
-    }
-
     @Test
-    fun `getBitmapFromURL handles timeout`() = runBlockingTest {
+    fun `getBitmapFromURL handles timeout`() = coroutinesTest {
 
         // GIVEN
         val viewModel = ContactDetailsViewModel(
-            dispatcherProvider,
+            dispatchers,
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } coAnswers {
                     withTimeout(1) {
@@ -85,15 +76,15 @@ internal class ContactDetailsViewModelTest :
         advanceTimeBy(5)
 
         // THEN
-        assertIs<ImageNotFoundError>(viewModel.profilePicture.awaitNext())
+        assertIs<ImageNotFoundError>(viewModel.profilePicture.await())
     }
 
     @Test
-    fun `getBitmapFromURL handles malformed url`() = runBlockingTest {
+    fun `getBitmapFromURL handles malformed url`() = coroutinesTest {
 
         // GIVEN
         val viewModel = ContactDetailsViewModel(
-            dispatcherProvider,
+            dispatchers,
             downloadFile = mockk(),
             contactDetailsRepository = mockk()
         )
@@ -102,14 +93,14 @@ internal class ContactDetailsViewModelTest :
         viewModel.getBitmapFromURL("malformed_url")
 
         // THEN
-        assertIs<BadImageUrlError>(viewModel.profilePicture.awaitNext())
+        assertIs<BadImageUrlError>(viewModel.profilePicture.await())
     }
 
     @Test
-    fun `getBitmapFromURL handles 404`() = runBlockingTest {
+    fun `getBitmapFromURL handles 404`() = coroutinesTest {
         // GIVEN
         val viewModel = ContactDetailsViewModel(
-            dispatcherProvider,
+            dispatchers,
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } answers  { throw FileNotFoundException() }
             },
@@ -120,17 +111,17 @@ internal class ContactDetailsViewModelTest :
         viewModel.getBitmapFromURL("http://hello.world")
 
         // THEN
-        assertIs<ImageNotFoundError>(viewModel.profilePicture.awaitNext())
+        assertIs<ImageNotFoundError>(viewModel.profilePicture.await())
     }
 
     @Test
-    fun `getBitmapFromURL load image correctly`() = runBlockingTest {
+    fun `getBitmapFromURL load image correctly`() = coroutinesTest {
         mockkStatic(BitmapFactory::class)
         every { BitmapFactory.decodeStream(any()) } returns mockk()
 
         // GIVEN
         val viewModel = ContactDetailsViewModel(
-            dispatcherProvider,
+            dispatchers,
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } returns mockk()
             },
@@ -141,7 +132,7 @@ internal class ContactDetailsViewModelTest :
         viewModel.getBitmapFromURL("http://hello.world")
 
         // THEN
-        assertIs<ViewState.Success<Bitmap>>(viewModel.profilePicture.awaitNext())
+        assertIs<ViewState.Success<Bitmap>>(viewModel.profilePicture.await())
 
         unmockkStatic(BitmapFactory::class)
     }

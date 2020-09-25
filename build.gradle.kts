@@ -33,6 +33,7 @@ allprojects {
     repositories(repos)
 }
 
+setupTests()
 setupKotlin(
     // Enables new type inference: TODO remove with Kotlin 1.4
     "-XXLanguage:+NewInference",

@@ -24,8 +24,8 @@ import studio.forface.easygradle.dsl.android.*
 fun initVersions() {
 
     // region Kotlin
-    `kotlin version` =                          "1.3.70"        // Released: Mar 03, 2020
-    `coroutines version` =                      "1.3.4"         // Released: Mar 06, 2020
+    `kotlin version` =                          "1.3.72"        // Released: Apr 14, 2020
+    `coroutines version` =                      "1.3.9"         // Released: Aug 14, 2020
     `serialization version` =                   "0.20.0"        // Released: Mar 04, 2020
     // endregion
 
@@ -69,7 +69,7 @@ const val `Proton-work-manager version` =       "0.1.1"         // Released: Sep
 // Test
 const val `Proton-android-test version` =       "0.1"           // Released: May 30, 2020
 const val `Proton-android-instr-test version` = "0.1.2"         // Released: Sep 14, 2020
-const val `Proton-kotlin-test version` =        "0.1"           // Released: Jun 10, 2020
+const val `Proton-kotlin-test version` =        "0.1.1"         // Released: Sep 16, 2020
 
 const val `Proton-domain version` =             "0.1"           // Released: Jul 03, 2020
 

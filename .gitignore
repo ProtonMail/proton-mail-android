@@ -57,6 +57,8 @@ sentry.properties
 .idea/**/shelf
 .idea/runConfigurations.xml
 .idea/misc.xml
+# SonarLint reports
+.idea/sonarlint/issuestore
 
 # Generated files
 .idea/**/contentModel.xml

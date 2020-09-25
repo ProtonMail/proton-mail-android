@@ -20,12 +20,12 @@ package ch.protonmail.android.mapper.bridge
 
 import assert4k.assert
 import assert4k.equals
-import assert4k.invoke as fix
 import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
 import me.proton.core.util.kotlin.invoke
 import kotlin.test.Test
+import assert4k.invoke as fix
 import ch.protonmail.android.api.models.Keys as OldKey
 
 /**
@@ -41,9 +41,9 @@ internal class AddressKeysBridgeMapperTest {
         val oldKey = OldKey(
             id = "id",
             flags = 3,
-            privateKey = "-----BEGIN PGP PRIVATE_KEY_BLOCK-----private_key-----END PGP PRIVATE_KEY_BLOCK-----",
+            privateKey = "-----BEGIN PGP PRIVATE KEY BLOCK-----private_key-----END PGP PRIVATE KEY BLOCK-----",
             token = "-----BEGIN PGP MESSAGE-----token-----END PGP MESSAGE-----",
-            signature = "-----BEGIN PGP SIGNATURE_KEY_BLOCK-----signature-----END PGP SIGNATURE_KEY_BLOCK-----",
+            signature = "-----BEGIN PGP SIGNATURE KEY BLOCK-----signature-----END PGP SIGNATURE KEY BLOCK-----",
             activation = "-----BEGIN PGP MESSAGE-----activation-----END PGP MESSAGE-----"
         )
 
@@ -92,5 +92,5 @@ internal class AddressKeysBridgeMapperTest {
         token: String = "none",
         signature: String = "none",
         activation: String = "none"
-    ) = OldKey(id, privateKey, flags, if (primary) 1 else 0, token, signature, activation)
+    ) = OldKey(id, privateKey, flags, if (primary) 1 else 0, token, signature, activation, 0)
 }

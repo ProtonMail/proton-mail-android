@@ -1,24 +1,30 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.domain.entity.user
 
-import assert4k.*
+import assert4k.`is`
+import assert4k.`not equals`
+import assert4k.`null`
+import assert4k.assert
+import assert4k.equals
+import assert4k.that
+import assert4k.times
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
 import kotlin.test.Test
@@ -53,8 +59,8 @@ internal class AddressTest {
         val addresses = Addresses(mapOf(4 to forth, 5 to fifth, 2 to second))
 
         // WHEN - THEN
-        assert that addresses.sorted() + { sorted ->
-            sorted `equals` listOf(second, forth, fifth)
+        assert that addresses.sorted() * { sorted ->
+            sorted equals listOf(second, forth, fifth)
             sorted `not equals` listOf(forth, fifth, second)
         }
     }

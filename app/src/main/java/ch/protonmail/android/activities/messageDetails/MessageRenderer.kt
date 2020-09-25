@@ -27,13 +27,13 @@ import ch.protonmail.android.di.AttachmentsDirectory
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.utils.extensions.forEachAsync
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.toList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.plus
+import me.proton.core.util.kotlin.DispatcherProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -42,6 +42,7 @@ import java.io.File
 import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.sqrt
+import kotlin.time.milliseconds
 
 /**
  * A class that will inline the images in the message's body.
@@ -54,11 +55,12 @@ import kotlin.math.sqrt
  * @author Davide Farella
  */
 internal class MessageRenderer(
+    private val dispatchers: DispatcherProvider,
     private val directory: File,
     private val documentParser: DocumentParser,
     private val bitmapImageDecoder: ImageDecoder,
     scope: CoroutineScope
-) : CoroutineScope by ( scope + Default ) {
+) : CoroutineScope by scope + dispatchers.Comp {
 
     /** The [String] html of the message body */
     var messageBody: String? = null
@@ -79,7 +81,7 @@ internal class MessageRenderer(
             imageCompressor.send(embeddedImages)
             // Workaround that ignore values for the next half second, since ViewModel is emitting
             // too many times
-            delay(500)
+            delay(DebounceDelay)
         }
     }
 
@@ -209,6 +211,7 @@ internal class MessageRenderer(
      * @param imageDecoder [ImageDecoder]
      */
     class Factory @Inject constructor(
+        private val dispatchers: DispatcherProvider,
         @AttachmentsDirectory private val attachmentsDirectory: File,
         private val documentParser: DocumentParser = DefaultDocumentParser(),
         private val imageDecoder: ImageDecoder = DefaultImageDecoder()
@@ -218,7 +221,11 @@ internal class MessageRenderer(
 
         /** @return new instance of [MessageRenderer] with the given [messageBody] */
         fun create(scope: CoroutineScope, messageId: String) =
-                MessageRenderer(messageDirectory(messageId), documentParser, imageDecoder, scope)
+            MessageRenderer(dispatchers, messageDirectory(messageId), documentParser, imageDecoder, scope)
+    }
+
+    companion object {
+        val DebounceDelay = 500.milliseconds
     }
 }
 

@@ -60,7 +60,7 @@ class FetchContactsEmailsWorker @WorkerInject constructor (
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        operator fun invoke(delay: Duration = Duration.ZERO): Operation {
+        operator fun invoke(delay: Duration = 0.milliseconds): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()

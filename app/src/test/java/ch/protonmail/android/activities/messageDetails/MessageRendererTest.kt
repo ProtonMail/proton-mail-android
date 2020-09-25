@@ -16,50 +16,113 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-@file:Suppress("EXPERIMENTAL_API_USAGE")
 
 package ch.protonmail.android.activities.messageDetails
 
+import android.util.Base64
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Unconfined
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.plus
+import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 /**
  * Test class for [MessageRenderer]
  * @author Davide Farella
  */
-internal class MessageRendererTest {
+internal class MessageRendererTest : CoroutinesTest {
 
-    private val mockImageDecoder: ImageDecoder = mockk()
-    private val mockDocumentParser: DocumentParser = mockk()
+    @get:Rule
+    val folder: TemporaryFolder = TemporaryFolder()
+        .also { it.create() }
+
+    private val mockImageDecoder: ImageDecoder = mockk(relaxed = true)
+    private val mockDocumentParser: DocumentParser = mockk(relaxed = true)
     private val mockEmbeddedImages = (1..10).map {
-        mockk<EmbeddedImage>(relaxed = true) { every { localFileName } returns "" }
-    }
-
-    private val CoroutineScope.newRenderer get() =
-        MessageRenderer(mockk(), mockDocumentParser, mockImageDecoder, this)
-                .apply { messageBody = "" }
-
-    @Test // TODO, replace with `runBlockingTest` and `advanceTimeBy` when this is resolved: java.lang.IllegalStateException: This job has not completed yet
-    fun `renderedBody emits just once for every images sent`() {
-        val count = 2
-        val consumer: (String) -> Unit = mockk(relaxed = true)
-        with(TestCoroutineScope().newRenderer) {
-            launch { renderedBody.consumeEach(consumer) }
-            repeat(count) { runBlocking {
-                images.send(mockEmbeddedImages)
-                delay(550)
-            } }
-            renderedBody.close()
+        mockk<EmbeddedImage>(relaxed = true) {
+            every { localFileName } returns "$it"
+            every { contentId } returns "id"
+            every { encoding } returns ""
         }
-        verify(exactly = count) { consumer(any()) }
     }
+
+    @Before
+    fun before() {
+        for (image in mockEmbeddedImages) {
+            val file = folder.newFile(image.localFileName)
+            file.writeText("_")
+        }
+    }
+
+    private fun CoroutineScope.Renderer() =
+        MessageRenderer(dispatchers, folder.root, mockDocumentParser, mockImageDecoder, this)
+            .apply { messageBody = "" }
+
+    @Test
+    fun `renderedBody doesn't emit for images sent with too short delay`() = coroutinesTest {
+        mockkStatic(Base64::class) {
+            every { Base64.encodeToString(any(), any()) } returns "string"
+
+            val scope = this + Job()
+            val renderer = scope.Renderer()
+
+            val count = 2
+            val consumer: (String) -> Unit = mockk(relaxed = true)
+
+            with(renderer) {
+                launch(Unconfined) {
+                    renderedBody.consumeEach(consumer)
+                }
+                repeat(count) {
+                    images.offer(mockEmbeddedImages)
+                }
+                advanceUntilIdle()
+                renderedBody.close()
+                scope.cancel()
+            }
+
+            verify(exactly = 1) { consumer(any()) }
+        }
+    }
+
+    @Test
+    fun `renderedBody emits for every image sent with right delay`() = coroutinesTest {
+        mockkStatic(Base64::class) {
+            every { Base64.encodeToString(any(), any()) } returns "string"
+
+            val scope = this + Job()
+            val renderer = scope.Renderer()
+
+            val count = 2
+            val consumer: (String) -> Unit = mockk(relaxed = true)
+
+            with(renderer) {
+                launch(Unconfined) {
+                    renderedBody.consumeEach(consumer)
+                }
+                repeat(count) {
+                    images.offer(mockEmbeddedImages)
+                    advanceTimeBy(MessageRenderer.DebounceDelay.toLongMilliseconds())
+                }
+                advanceUntilIdle()
+                renderedBody.close()
+                scope.cancel()
+            }
+
+            verify(exactly = count) { consumer(any()) }
+        }
+    }
+
 }
