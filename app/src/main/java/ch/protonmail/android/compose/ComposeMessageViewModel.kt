@@ -54,7 +54,7 @@ import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.usecase.DeleteMessage
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single

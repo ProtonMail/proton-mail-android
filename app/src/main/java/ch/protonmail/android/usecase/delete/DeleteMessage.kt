@@ -17,12 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase
+package ch.protonmail.android.usecase.delete
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.worker.DeleteMessageWorker
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -47,6 +48,7 @@ class DeleteMessage @Inject constructor(
             val searchMessagesToSave = mutableListOf<Message>()
 
             for (id in validMessageIdList) {
+                ensureActive()
                 messageDetailsRepository.findMessageById(id)?.let { message ->
                     message.deleted = true
                     messagesToSave.add(message)
@@ -57,6 +59,7 @@ class DeleteMessage @Inject constructor(
                 }
             }
 
+            ensureActive()
             messageDetailsRepository.saveMessagesInOneTransaction(messagesToSave)
             messageDetailsRepository.saveSearchMessagesInOneTransaction(searchMessagesToSave)
 

@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase
+package ch.protonmail.android.usecase.delete
 
 import androidx.work.Operation
 

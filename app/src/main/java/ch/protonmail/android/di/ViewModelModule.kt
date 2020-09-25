@@ -44,7 +44,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
-import ch.protonmail.android.usecase.DeleteMessage
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

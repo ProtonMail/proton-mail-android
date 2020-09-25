@@ -32,7 +32,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.usecase.DeleteMessage
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
 import com.birbit.android.jobqueue.JobManager
