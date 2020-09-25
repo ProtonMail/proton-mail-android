@@ -30,6 +30,7 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.externalGmailPGPEncrypted
 import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
+import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
@@ -64,7 +65,7 @@ class InboxTests : BaseTest() {
             .verify { pgpIconShown() }
     }
 
-    @TestId("29747:")
+    @TestId("29747")
     @Test
     fun receiveMessageFromOutlook() {
         val from = externalOutlookPGPSigned
@@ -169,5 +170,45 @@ class InboxTests : BaseTest() {
             .emptyFolder()
             .confirm()
             .verify { folderEmpty() }
+    }
+
+    @Test
+    fun messageDetailsViewHeaders() {
+        inboxRobot
+            .menuDrawer()
+            .sent()
+            .clickMessageByPosition(0)
+            .moreOptions()
+            .viewHeaders()
+            .verify { messageHeadersDisplayed() }
+    }
+
+    @Test
+    fun saveDraft() {
+        val draftSubject = "Draft ${TestData.messageSubject}"
+        val body = "Draft ${TestData.messageBody}"
+        inboxRobot
+            .compose()
+            .draftToSubjectBody(internalEmailTrustedKeys.email, draftSubject, body)
+            .clickUpButton()
+            .confirmDraftSaving()
+            .menuDrawer()
+            .drafts()
+            .verify { draftMessageSaved(draftSubject) }
+    }
+
+    @Category(SmokeTest::class)
+    @Test
+    fun saveDraftWithAttachment() {
+        val draftSubject = "Draft ${TestData.messageSubject}"
+        val body = "Draft ${TestData.messageBody}"
+        inboxRobot
+            .compose()
+            .draftSubjectBodyAttachment(internalEmailTrustedKeys.email, draftSubject, body)
+            .clickUpButton()
+            .confirmDraftSaving()
+            .menuDrawer()
+            .drafts()
+            .verify { draftWithAttachmentSaved(draftSubject) }
     }
 }

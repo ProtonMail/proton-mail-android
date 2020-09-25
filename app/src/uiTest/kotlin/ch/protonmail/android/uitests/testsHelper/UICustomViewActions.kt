@@ -39,7 +39,6 @@ import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerVi
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import ch.protonmail.android.R
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers.allOf
@@ -134,7 +133,7 @@ object UICustomViewActions {
 
             override fun checkCondition() = try {
                 val rv = ActivityProvider.currentActivity!!.findViewById<RecyclerView>(id)
-                waitUntilLoaded{ rv }
+                waitUntilLoaded { rv }
                 rv.adapter!!.itemCount > 0
             } catch (e: Exception) {
                 errorMessage = e.message.toString()

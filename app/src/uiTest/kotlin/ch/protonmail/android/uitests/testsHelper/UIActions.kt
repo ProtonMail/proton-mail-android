@@ -133,6 +133,9 @@ object UIActions {
         fun viewWithIdIsNotDisplayed(@IdRes id: Int): ViewInteraction =
             onView(withId(id)).check(matches(not(isDisplayed())))
 
+        fun viewWithIdIsContainsText(@IdRes id: Int, text: String): ViewInteraction =
+            onView(withId(id)).check(matches(withText(containsString(text))))
+
         fun viewWithIdAndTextDoesNotExist(@IdRes id: Int, text: String): ViewInteraction =
             onView(allOf(withId(id), withText(text))).check(doesNotExist())
 
@@ -301,6 +304,9 @@ object UIActions {
     class Text {
         fun clickViewWithText(@IdRes text: Int): ViewInteraction =
             onView(withText(text)).check(matches(isDisplayed())).perform(click())
+
+        fun clickViewWithText(text: String): ViewInteraction =
+            onView(withText(text)).check(matches(isDisplayed())).perform(click())
     }
 
     val wait = Wait()
@@ -322,6 +328,9 @@ object UIActions {
             waitUntilViewAppears(onView(withId(id)))
 
         fun forViewWithTextAndParentId(@StringRes text: Int, @IdRes parentId: Int): ViewInteraction =
+            waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
+
+        fun forViewWithTextAndParentId(text: String, @IdRes parentId: Int): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
 
         fun forViewByViewInteraction(interaction: ViewInteraction): ViewInteraction =

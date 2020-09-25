@@ -20,6 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox.drafts
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
+import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
@@ -59,10 +60,15 @@ class DraftsRobot : MailboxRobotInterface {
         return this
     }
 
+    fun clickDraftBySubject(subject: String): ComposerRobot {
+        super.clickMessageBySubject(subject)
+        return ComposerRobot()
+    }
+
     /**
      * Contains all the validations that can be performed by [MenuRobot].
      */
-    class Verify {
+    class Verify : MailboxRobotInterface.verify() {
 
         fun folderEmpty() {
             //TODO - remove this workaround with 20 sec waiting time when possible
@@ -72,10 +78,6 @@ class DraftsRobot : MailboxRobotInterface {
         fun draftMessageSaved(draftSubject: String?): DraftsRobot {
             UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, draftSubject!!)
             return DraftsRobot()
-        }
-
-        fun draftWithAttachmentSaved(draftSubject: String) {
-            UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, draftSubject)
         }
     }
 

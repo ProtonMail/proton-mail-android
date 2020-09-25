@@ -22,6 +22,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectContaining
+import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
@@ -33,7 +34,7 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
 class SearchRobot {
 
     fun searchMessageText(subject: String): SearchRobot {
-        UIActions.id.insertTextInFieldWithIdAndPressImeAction(R.id.search_src_text, subject)
+        UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.search_src_text, subject)
         return this
     }
 
@@ -42,6 +43,13 @@ class SearchRobot {
         UIActions.recyclerView
             .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
         return MessageRobot()
+    }
+
+    fun clickSearchedDraftBySubject(subject: String): ComposerRobot {
+        UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
+        UIActions.recyclerView
+            .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+        return ComposerRobot()
     }
 
     fun navigateUpToInbox(): InboxRobot {
