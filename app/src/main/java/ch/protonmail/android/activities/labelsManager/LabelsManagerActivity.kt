@@ -29,7 +29,6 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.CREATE
@@ -45,14 +44,17 @@ import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.uiModel.LabelUiModel.Type.FOLDERS
 import ch.protonmail.android.uiModel.LabelUiModel.Type.LABELS
+import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
 import studio.forface.viewstatestore.ViewStateActivity
+import javax.inject.Inject
 import kotlin.random.Random
 
 // region constants
@@ -70,8 +72,11 @@ const val EXTRA_CREATE_ONLY = "create_only"
  *
  * @author Davide Farella
  */
-
+@AndroidEntryPoint
 class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
+
+    @Inject
+    lateinit var deleteLabel: DeleteLabel
 
     /** Lazy instance of [LabelColorsAdapter] */
     private val colorsAdapter by lazy {
@@ -123,8 +128,8 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     /** [LabelsManagerViewModel.Factory] for [LabelsManagerViewModel] */
     private val viewModelFactory by lazy {
         val messagesDatabase = MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
-        val workManager = WorkManager.getInstance(applicationContext) // THis should be injected after refactor
-        LabelsManagerViewModel.Factory(workManager, mJobManager, messagesDatabase, type) // TODO: use DI for create Factory with variable param ( type )
+        // TODO: use DI for create Factory with variable param ( type )
+        LabelsManagerViewModel.Factory(mJobManager, messagesDatabase, type, deleteLabel)
     }
 
     /** A Lazy instance of [LabelsManagerViewModel] */

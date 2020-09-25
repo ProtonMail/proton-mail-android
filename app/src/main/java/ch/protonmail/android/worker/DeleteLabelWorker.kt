@@ -32,13 +32,11 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.Constants
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Named
+import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_LABEL_ID = "KeyInputDataLabelId"
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
@@ -56,8 +54,6 @@ class DeleteLabelWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactsDatabase: ContactsDatabase,
-    @Named("messages") private val messagesDatabase: MessagesDao,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
@@ -76,23 +72,18 @@ class DeleteLabelWorker @WorkerInject constructor(
         return withContext(dispatchers.Io) {
             val responseBody: ResponseBody = api.deleteLabel(labelId)
             if (responseBody.code == Constants.RESPONSE_CODE_OK) {
-                updateDb(labelId)
                 Result.success()
             } else {
-                Result.failure()
+                Result.failure(
+                    workDataOf(
+                        KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${responseBody.code}"
+                    )
+                )
             }
         }
     }
 
-    private fun updateDb(labelId: String) {
-        val contactLabel = contactsDatabase.findContactGroupById(labelId)
-        contactLabel?.let {
-            contactsDatabase.deleteContactGroup(it)
-        }
-        messagesDatabase.deleteLabelById(labelId)
-    }
-
-    class Enqueuer(private val workManager: WorkManager) {
+    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         fun enqueue(labelId: String): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)

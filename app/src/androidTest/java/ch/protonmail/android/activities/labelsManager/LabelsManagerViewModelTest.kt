@@ -59,11 +59,10 @@ internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
             every { getWorkInfosByTagLiveData(any()) } returns mockk<LiveData<List<WorkInfo>>>()
         }
         LabelsManagerViewModel(
-            workManager,
             jobManager = mockk(),
             messagesDatabase = messagesDatabase,
             type = LabelUiModel.Type.LABELS,
-            labelMapper = LabelUiModelMapper(isLabelEditable = false)
+            labelMapper = LabelUiModelMapper(isLabelEditable = false),
         )
     }
 

@@ -24,19 +24,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
-import ch.protonmail.android.worker.DeleteLabelWorker
+import ch.protonmail.android.usecase.delete.DeleteLabel
 import com.birbit.android.jobqueue.JobManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
@@ -49,29 +48,27 @@ import studio.forface.viewstatestore.paging.ViewStateStoreScope
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
 internal class LabelsManagerViewModel(
-    workManager: WorkManager,
     private val jobManager: JobManager,
     messagesDatabase: MessagesDatabase,
     private val type: LabelUiModel.Type,
-    private val labelMapper: LabelUiModelMapper
+    private val labelMapper: LabelUiModelMapper,
+    private val deleteLabelUseCase: DeleteLabel
 ) : ViewModel(), ViewStateStoreScope {
-
-    private val deleteWorkEnqueuer = DeleteLabelWorker.Enqueuer(workManager)
 
     /** Triggered when a selection has changed */
     private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
+//    private var deleteLabelIds = MutableLiveData<List<String>>()
+    private var deleteLabelIds = MutableLiveData<String>()
 
     /** Triggered when [selectedLabelIds] has changed */
     val hasSelectedLabels = ViewStateStore.from(selectedLabelIds.map { it.isNotEmpty() }).lock
 
-    val hasSuccessfullyDeletedMessages: LiveData<List<Boolean>> =
-        deleteWorkEnqueuer.getWorkStatusLiveData()
-            .map { mapStateToBoolean(it) }
-
-    private fun mapStateToBoolean(infoList: List<WorkInfo>): List<Boolean> =
-        infoList.map { it.state }
-            .filter { it.isFinished }
-            .map { it == WorkInfo.State.SUCCEEDED }
+    val hasSuccessfullyDeletedMessages: LiveData<List<Boolean>>
+        get() = deleteLabelIds.switchMap {
+            liveData {
+                emitSource(deleteLabelUseCase(it))
+            }
+        }
 
     /**
      * [LiveData] of [PagedList] of [LabelUiModel]
@@ -111,8 +108,9 @@ internal class LabelsManagerViewModel(
 
     /** Delete all Labels which id is in [selectedLabelIds] */
     fun deleteSelectedLabels() {
+        //        deleteLabelIds.value = selectedLabelIds.mapValue { it }
         selectedLabelIds.mapValue { id ->
-            deleteWorkEnqueuer.enqueue(id)
+            deleteLabelIds.value = id
         }
         selectedLabelIds.clear()
     }
@@ -161,17 +159,17 @@ internal class LabelsManagerViewModel(
 
     /** [ViewModelProvider.NewInstanceFactory] for [LabelsManagerViewModel] */
     class Factory(
-        private val workManager: WorkManager,
         private val jobManager: JobManager,
         private val messagesDatabase: MessagesDatabase,
         private val type: LabelUiModel.Type,
+        private val deleteLabel: DeleteLabel,
         private val labelMapper: LabelUiModelMapper = LabelUiModelMapper(isLabelEditable = true)
     ) : ViewModelProvider.NewInstanceFactory() {
 
         /** @return new instance of [LabelsManagerViewModel] casted as T */
         @Suppress("UNCHECKED_CAST") // LabelsManagerViewModel is T, since T is ViewModel
         override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            LabelsManagerViewModel(workManager, jobManager, messagesDatabase, type, labelMapper) as T
+            LabelsManagerViewModel(jobManager, messagesDatabase, type, labelMapper, deleteLabel) as T
     }
 }
 

@@ -25,9 +25,6 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.core.Constants
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -50,12 +47,6 @@ class DeleteLabelWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @MockK
-    private lateinit var contactsDb: ContactsDatabase
-
-    @MockK
-    private lateinit var messagesDatabase: MessagesDatabase
-
-    @MockK
     private lateinit var api: ProtonMailApiManager
 
     private lateinit var worker: DeleteLabelWorker
@@ -67,8 +58,6 @@ class DeleteLabelWorkerTest {
             context,
             parameters,
             api,
-            contactsDb,
-            messagesDatabase,
             TestDispatcherProvider
         )
     }
@@ -97,13 +86,9 @@ class DeleteLabelWorkerTest {
             val deleteResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
-            val contactLabel = mockk<ContactLabel>()
             val expected = ListenableWorker.Result.success()
 
             every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId)
-            every { contactsDb.findContactGroupById(labelId) } returns contactLabel
-            every { contactsDb.deleteContactGroup(contactLabel) } returns Unit
-            every { messagesDatabase.deleteLabelById(labelId) } returns Unit
             coEvery { api.deleteLabel(any()) } returns deleteResponse
 
             // when
@@ -123,11 +108,11 @@ class DeleteLabelWorkerTest {
             val deleteResponse = mockk<ResponseBody> {
                 every { code } returns errorCode
             }
-            val contactLabel = mockk<ContactLabel>()
-            val expected = ListenableWorker.Result.failure()
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $errorCode")
+            )
 
             every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId)
-            every { contactsDb.findContactGroupById(labelId) } returns contactLabel
             coEvery { api.deleteLabel(any()) } returns deleteResponse
 
             // when
