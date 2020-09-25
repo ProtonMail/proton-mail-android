@@ -18,15 +18,44 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import ch.protonmail.android.R
+import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.click
+
 /**
  * [ContactDetailsRobot] class contains actions and verifications for Contacts functionality.
  */
 open class ContactDetailsRobot {
 
+    fun deleteContact(): ContactsRobot {
+        delete()
+            .confirmDeletion()
+        return ContactsRobot()
+    }
+
+    fun editContact(): AddContactRobot {
+        UIActions.wait.forViewWithId(R.id.editContactDetails).click()
+        return AddContactRobot()
+    }
+
+    fun navigateUp(): ContactsRobot {
+        UIActions.system.clickHamburgerOrUpButtonInAnimatedToolbar()
+        return ContactsRobot()
+    }
+
+    private fun delete(): ContactDetailsRobot {
+        UIActions.wait.forViewWithId(R.id.action_delete).click()
+        return this
+    }
+
+    private fun confirmDeletion() {
+        UIActions.system.clickPositiveDialogButton()
+    }
+
     /**
      * Contains all the validations that can be performed by [ContactDetailsRobot].
      */
-    class Verify
+    class Verify {}
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 }

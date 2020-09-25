@@ -39,8 +39,8 @@ class SearchRobot {
     }
 
     fun clickSearchedMessageBySubject(subject: String): MessageRobot {
-        UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
         UIActions.recyclerView
+            .waitForBeingPopulated(messagesRecyclerViewId)
             .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
         return MessageRobot()
     }
@@ -58,8 +58,8 @@ class SearchRobot {
     }
 
     fun clickSearchedMessageBySubjectPart(subject: String): MessageRobot {
-        UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
         UIActions.recyclerView
+            .waitForBeingPopulated(messagesRecyclerViewId)
             .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectContaining(subject))
         return MessageRobot()
     }
@@ -70,8 +70,8 @@ class SearchRobot {
     class Verify {
 
         fun searchedMessageFound() {
-            UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
             UIActions.recyclerView
+                .waitForBeingPopulated(messagesRecyclerViewId)
                 .scrollToRecyclerViewMatchedItem(
                     R.id.messages_list_view,
                     withFirstInstanceMessageSubject(TestData.searchMessageSubject)

@@ -60,12 +60,15 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactEmail
+import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactEmailInManageAddressesView
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactGroupName
 import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withAccountEmailInAccountManager
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkItemDoesNotExist
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkContactDoesNotExist
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkMessageDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.clickOnChildWithId
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitForAdapterItemWithIdAndText
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilRecyclerViewPopulated
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilViewAppears
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilViewIsGone
@@ -96,7 +99,8 @@ object UIActions {
             onView(viewMatcher).perform(click())
 
         fun clickViewWithIdAndAncestorTag(@IdRes id: Int, ancestorTag: String): ViewInteraction =
-            onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag))))).perform(click())
+            onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                .perform(click())
 
         fun clickViewWithIdAndText(@IdRes id: Int, text: String): ViewInteraction =
             onView(allOf(withId(id), withText(text))).perform(click())
@@ -121,6 +125,21 @@ object UIActions {
             text: String
         ): ViewInteraction =
             onView(allOf(withId(id), isDescendantOfA(withTagValue(`is`(ancestorTag)))))
+                .perform(replaceText(text))
+
+        fun setTextIntoFieldWithIdAndHint(
+            @IdRes id: Int,
+            @StringRes stringId: Int,
+            text: String
+        ): ViewInteraction =
+            onView(allOf(withId(id), withHint(stringId))).perform(replaceText(text))
+
+        fun setTextIntoFieldByIdAndParent(
+            @IdRes id: Int,
+            @IdRes ancestorId: Int,
+            text: String
+        ): ViewInteraction =
+            onView(allOf(withId(id), withEffectiveVisibility(Visibility.VISIBLE), isDescendantOfA(withId(ancestorId))))
                 .perform(replaceText(text))
     }
 
@@ -210,6 +229,7 @@ object UIActions {
     val recyclerView = Recycler()
 
     class Recycler {
+
         fun clickOnRecyclerViewMatchedItem(
             @IdRes recyclerViewId: Int,
             withMatcher: Matcher<RecyclerView.ViewHolder>
@@ -233,11 +253,18 @@ object UIActions {
         ): ViewInteraction = onView(withId(recyclerViewId))
             .perform(actionOnHolderItem(withContactGroupName(withName), clickOnChildWithId(childViewId)))
 
-        fun checkDoesNotContainItemWithText(@IdRes recyclerViewId: Int, subject: String, date: String):
-            ViewInteraction = onView(withId(recyclerViewId)).perform(checkItemDoesNotExist(subject, date))
+        fun checkDoesNotContainMessage(@IdRes recyclerViewId: Int, subject: String, date: String):
+            ViewInteraction = onView(withId(recyclerViewId)).perform(checkMessageDoesNotExist(subject, date))
+
+        fun checkDoesNotContainContact(@IdRes recyclerViewId: Int, name: String, email: String):
+            ViewInteraction = onView(withId(recyclerViewId)).perform(checkContactDoesNotExist(name, email))
 
         fun clickContactsGroupItem(@IdRes recyclerViewId: Int, withName: String): ViewInteraction =
             onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactGroupName(withName), click()))
+
+        fun selectContactsInManageAddresses(@IdRes recyclerViewId: Int, withEmail: String): ViewInteraction =
+            onView(withId(recyclerViewId))
+                .perform(actionOnHolderItem(withContactEmailInManageAddressesView(withEmail), click()))
 
         fun clickAccountManagerViewItem(
             @IdRes recyclerViewId: Int,
@@ -273,7 +300,15 @@ object UIActions {
             onView(withId(recyclerViewId))
                 .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeLeft()))
 
-        fun waitForBeingPopulated(@IdRes recyclerViewId: Int) = waitUntilRecyclerViewPopulated(recyclerViewId)
+        fun waitForBeingPopulated(@IdRes recyclerViewId: Int): Recycler {
+            waitUntilRecyclerViewPopulated(recyclerViewId)
+            return this
+        }
+
+        fun waitForItemWithIdAndText(@IdRes recyclerViewId: Int, @IdRes viewId: Int, text: String): Recycler {
+            waitForAdapterItemWithIdAndText(recyclerViewId, viewId, text)
+            return this
+        }
     }
 
     val system = System()
@@ -281,6 +316,9 @@ object UIActions {
     class System {
         fun clickHamburgerOrUpButton(): ViewInteraction =
             allOf.clickViewWithParentIdAndClass(R.id.toolbar, AppCompatImageButton::class.java)
+
+        fun clickHamburgerOrUpButtonInAnimatedToolbar(): ViewInteraction =
+            allOf.clickViewWithParentIdAndClass(R.id.animToolbar, AppCompatImageButton::class.java)
 
         fun clickMoreOptionsButton(): ViewInteraction =
             allOf.clickViewByClassAndParentClass(AppCompatImageView::class.java, ActionMenuView::class.java)
@@ -318,8 +356,12 @@ object UIActions {
         fun forViewWithIdAndText(@IdRes id: Int, textId: Int, timeout: Long = 5000): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withId(id), withText(textId))), timeout)
 
+        fun forViewWithContentDescription(@StringRes textId: Int): ViewInteraction =
+            waitUntilViewAppears(onView(withContentDescription(containsString(stringFromResource(textId)))))
+
         fun forViewWithText(@StringRes textId: Int): ViewInteraction =
             waitUntilViewAppears(onView(withText(stringFromResource(textId))))
+
 
         fun forViewWithText(text: String): ViewInteraction =
             waitUntilViewAppears(onView(withText(text)))

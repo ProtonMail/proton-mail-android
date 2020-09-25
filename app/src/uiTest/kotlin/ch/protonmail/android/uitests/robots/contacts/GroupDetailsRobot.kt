@@ -18,10 +18,41 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import ch.protonmail.android.R
+import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.click
+
 /**
  * [GroupDetailsRobot] class contains actions and verifications for Contacts functionality.
  */
 open class GroupDetailsRobot {
+
+    fun edit(): AddContactGroupRobot {
+        UIActions.id.clickViewWithId(R.id.editFab)
+        return AddContactGroupRobot()
+    }
+
+    fun deleteGroup(): ContactsRobot {
+        return delete()
+            .confirmDeletion()
+    }
+
+    fun navigateUp(): ContactsRobot {
+        UIActions.wait.forViewWithId(R.id.editFab)
+        UIActions.system.clickHamburgerOrUpButtonInAnimatedToolbar()
+        return ContactsRobot()
+    }
+
+    private fun delete(): GroupDetailsRobot {
+        UIActions.wait.forViewWithId(R.id.contactEmailsRecyclerView)
+        UIActions.wait.forViewWithId(R.id.action_delete).click()
+        return this
+    }
+
+    private fun confirmDeletion(): ContactsRobot {
+        UIActions.system.clickPositiveDialogButton()
+        return ContactsRobot()
+    }
 
     /**
      * Contains all the validations that can be performed by [GroupDetailsRobot].

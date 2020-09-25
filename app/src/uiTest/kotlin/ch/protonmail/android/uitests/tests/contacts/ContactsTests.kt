@@ -19,13 +19,17 @@
 package ch.protonmail.android.uitests.tests.contacts
 
 import androidx.test.filters.LargeTest
+import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
+import ch.protonmail.android.uitests.testsHelper.StringUtils.getEmailString
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkGroupDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Test
@@ -48,6 +52,116 @@ class ContactsTests : BaseTest() {
             .contacts()
     }
 
+    @TestId("1419")
+    @Test
+    fun createContact() {
+        val name = TestData.newContactName
+        val email = TestData.newEmailAddress
+        contactsRobot
+            .addContact()
+            .setNameEmailAndSave(name, email)
+            .clickContactByEmail(email)
+            .deleteContact()
+            .verify { contactDoesNotExists(name, email) }
+    }
+
+    @Category(SmokeTest::class)
+    @TestId("1420")
+    @Test
+    fun editContact() {
+        val name = TestData.newContactName
+        val email = TestData.newEmailAddress
+        val editedName = TestData.newContactName
+        val editedEmail = TestData.newEmailAddress
+        contactsRobot
+            .addContact()
+            .setNameEmailAndSave(name, email)
+            .clickContactByEmail(email)
+            .editContact()
+            .editNameEmailAndSave(editedName, editedEmail)
+            .navigateUp()
+            .clickContactByEmail(editedEmail)
+            .deleteContact()
+            .verify { contactDoesNotExists(editedName, editedEmail) }
+    }
+
+    @TestId("21241")
+    @Test
+    fun deleteContact() {
+        val name = TestData.newContactName
+        val email = TestData.newEmailAddress
+        contactsRobot
+            .addContact()
+            .setNameEmailAndSave(name, email)
+            .clickContactByEmail(email)
+            .deleteContact()
+            .verify { contactDoesNotExists(name, email) }
+    }
+
+    @TestId("1421")
+    fun createGroup() {
+        val contactEmail = internalEmailTrustedKeys
+        val groupName = getEmailString()
+        val groupMembersCount =
+            targetContext.resources.getQuantityString(R.plurals.contact_group_members, 1, 1)
+        contactsRobot
+            .addGroup()
+            .groupName(groupName)
+            .manageAddresses()
+            .addContactToGroup(contactEmail.email)
+            .done()
+            .groupsView()
+            .clickGroupWithMembersCount(groupName, groupMembersCount)
+            .deleteGroup()
+            .groupsView()
+            .verify { checkGroupDoesNotExist(groupName, groupMembersCount) }
+    }
+
+    @TestId("1422")
+    fun editGroup() {
+        val contactEmail = internalEmailTrustedKeys
+        val groupName = getEmailString()
+        val groupMembersCount =
+            targetContext.resources.getQuantityString(R.plurals.contact_group_members, 1, 1)
+        val newGroupName = getEmailString()
+        contactsRobot
+            .addGroup()
+            .groupName(groupName)
+            .manageAddresses()
+            .addContactToGroup(contactEmail.email)
+            .done()
+            .groupsView()
+            .clickGroup(groupName)
+            .edit()
+            .editNameAndSave(newGroupName)
+            .navigateUp()
+            .groupsView()
+            .clickGroupWithMembersCount(newGroupName, groupMembersCount)
+            .deleteGroup()
+            .groupsView()
+            .verify { checkGroupDoesNotExist(newGroupName, groupMembersCount) }
+    }
+
+    @TestId("21240")
+    fun deleteGroup() {
+        val contactEmail = internalEmailTrustedKeys
+        val groupName = getEmailString()
+        val groupMembersCount =
+            targetContext.resources.getQuantityString(R.plurals.contact_group_members, 1, 1)
+        contactsRobot
+            .addGroup()
+            .groupName(groupName)
+            .manageAddresses()
+            .addContactToGroup(contactEmail.email)
+            .done()
+            .groupsView()
+            .clickGroupWithMembersCount(groupName, groupMembersCount)
+            .deleteGroup()
+            .groupsView()
+            .verify { checkGroupDoesNotExist(groupName, groupMembersCount) }
+    }
+
+    @TestId("1606")
     @Test
     fun contactListRefresh() {
         contactsRobot
@@ -56,6 +170,7 @@ class ContactsTests : BaseTest() {
             .verify { contactsRefreshed() }
     }
 
+    @TestId("30833")
     @Category(SmokeTest::class)
     @Test
     fun contactDetailSendMessage() {
@@ -73,6 +188,7 @@ class ContactsTests : BaseTest() {
             }
     }
 
+    @TestId("1423")
     @Test
     fun contactGroupSendMessage() {
         val subject = TestData.messageSubject

@@ -89,6 +89,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_marginEnd="@dimen/fields_default_space_small"
         android:layout_marginBottom="@dimen/fields_default_space">
 
+
         <!-- Delete button -->
         <ImageButton
             android:id="@+id/btn_minus"
@@ -97,6 +98,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
+            android:visibility="gone"
             android:src="@drawable/ic_circle_minus"
             tools:ignore="ContentDescription" />
 
@@ -116,6 +118,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             android:textColor="@color/contact_data"
             android:textColorHint="@color/iron_gray"
             android:textCursorDrawable="@null"
+            android:visibility="gone"
             android:textAlignment="viewStart"
             app:fontName="Roboto-Bold.ttf"
             tools:text="exampleemail@protonmail.com"/>
