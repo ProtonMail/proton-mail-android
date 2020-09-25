@@ -57,8 +57,7 @@ internal class LabelsManagerViewModel(
 
     /** Triggered when a selection has changed */
     private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
-//    private var deleteLabelIds = MutableLiveData<List<String>>()
-    private var deleteLabelIds = MutableLiveData<String>()
+    private var deleteLabelIds = MutableLiveData<List<String>>()
 
     /** Triggered when [selectedLabelIds] has changed */
     val hasSelectedLabels = ViewStateStore.from(selectedLabelIds.map { it.isNotEmpty() }).lock
@@ -108,10 +107,7 @@ internal class LabelsManagerViewModel(
 
     /** Delete all Labels which id is in [selectedLabelIds] */
     fun deleteSelectedLabels() {
-        //        deleteLabelIds.value = selectedLabelIds.mapValue { it }
-        selectedLabelIds.mapValue { id ->
-            deleteLabelIds.value = id
-        }
+        deleteLabelIds.value = selectedLabelIds.mapValue { it }
         selectedLabelIds.clear()
     }
 

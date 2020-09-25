@@ -55,14 +55,12 @@ internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
             MessagesDatabaseFactory.buildInMemoryDatabase(context).getDatabase()
 
     private val viewModel by lazy {
-        val workManager = mockk<WorkManager>() {
-            every { getWorkInfosByTagLiveData(any()) } returns mockk<LiveData<List<WorkInfo>>>()
-        }
         LabelsManagerViewModel(
             jobManager = mockk(),
             messagesDatabase = messagesDatabase,
             type = LabelUiModel.Type.LABELS,
             labelMapper = LabelUiModelMapper(isLabelEditable = false),
+            deleteLabelUseCase = mockk()
         )
     }
 

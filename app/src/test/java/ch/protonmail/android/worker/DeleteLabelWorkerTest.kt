@@ -88,7 +88,7 @@ class DeleteLabelWorkerTest {
             }
             val expected = ListenableWorker.Result.success()
 
-            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId)
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_IDS to arrayOf(labelId))
             coEvery { api.deleteLabel(any()) } returns deleteResponse
 
             // when
@@ -112,7 +112,7 @@ class DeleteLabelWorkerTest {
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $errorCode")
             )
 
-            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId)
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_DATA_LABEL_IDS to arrayOf(labelId))
             coEvery { api.deleteLabel(any()) } returns deleteResponse
 
             // when

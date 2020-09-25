@@ -89,7 +89,7 @@ class DeleteLabelTest {
             every { workScheduler.getWorkStatusLiveData() } returns workerStatusLiveData
 
             // when
-            val response = deleteUseCase(labelId)
+            val response = deleteUseCase(listOf(labelId))
             response.observeForever { }
 
             // then

@@ -67,7 +67,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun testDbAndAPIEventsEmitted() {
-        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, databaseProvider)
 
         val testObserver: TestObserver<List<ContactLabel>> = contactGroupsRepository.getContactGroups().test()
         testObserver.awaitTerminalEvent()
@@ -77,7 +77,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun testDbEventBeforeAPIEvent() {
-        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, databaseProvider)
 
         val testObserver = contactGroupsRepository.getContactGroups().test()
         testObserver.assertValueCount(1)
@@ -91,7 +91,7 @@ class ContactGroupsRepositoryTest {
     @Test
     fun testApiErrorEvent() {
         every { protonMailApi.fetchContactGroupsAsObservable() } returns Observable.error(IOException(":("))
-        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
+        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, databaseProvider)
 
         val testObserver = contactGroupsRepository.getContactGroups().test()
         rule2.schedulerTest.triggerActions()

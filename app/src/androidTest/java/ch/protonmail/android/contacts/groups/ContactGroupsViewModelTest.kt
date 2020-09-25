@@ -31,6 +31,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
+import ch.protonmail.android.usecase.delete.DeleteLabel
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
 import io.mockk.mockk
@@ -56,6 +57,7 @@ class ContactGroupsViewModelTest {
         every { findContactGroupsObservable() } returns Flowable.just(listOf(label1, label2, label3))
     }
     private val userManager = mockk<UserManager>(relaxed = true)
+    private val deleteLabel = mockk<DeleteLabel>(relaxed = true)
     private val databaseProvider = mockk<DatabaseProvider>(relaxed = true) {
         every { provideContactsDao() } returns contactsDatabase
     }
@@ -73,8 +75,8 @@ class ContactGroupsViewModelTest {
     //region tests
     @Test
     fun testUpdateFromDbAndFromApi() {
-        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
-        val contactGroupsViewModel = ContactGroupsViewModel(contactGroupsRepository, userManager)
+        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, databaseProvider)
+        val contactGroupsViewModel = ContactGroupsViewModel(contactGroupsRepository, userManager, deleteLabel)
 
         every { protonMailApi.fetchContactGroupsAsObservable() } returns Observable.just(listOf(label1, label2, label3, label4))
         val resultLiveData = contactGroupsViewModel.contactGroupsResult
@@ -85,8 +87,8 @@ class ContactGroupsViewModelTest {
 
     @Test
     fun testUpdateFromDbOnly() {
-        val contactGroupsRepository = ContactGroupsRepository(workManager, jobManager, protonMailApi, databaseProvider)
-        val contactGroupsViewModel = ContactGroupsViewModel(contactGroupsRepository, userManager)
+        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, databaseProvider)
+        val contactGroupsViewModel = ContactGroupsViewModel(contactGroupsRepository, userManager, deleteLabel)
 
         every { protonMailApi.fetchContactGroupsAsObservable() } returns Observable.error(IOException(":("))
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()

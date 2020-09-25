@@ -38,7 +38,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
-internal const val KEY_INPUT_DATA_LABEL_ID = "KeyInputDataLabelId"
+internal const val KEY_INPUT_DATA_LABEL_IDS = "KeyInputDataLabelIds"
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 private const val WORKER_TAG = "DeleteLabelWorkerTag"
 
@@ -59,38 +59,41 @@ class DeleteLabelWorker @WorkerInject constructor(
 
     override suspend fun doWork(): Result {
 
-        val labelId = inputData.getString(KEY_INPUT_DATA_LABEL_ID) ?: ""
+        val labelIds = inputData.getStringArray(KEY_INPUT_DATA_LABEL_IDS) ?: emptyArray()
 
         // skip empty input
-        if (labelId.isEmpty()) {
+        if (labelIds.isEmpty()) {
             return Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty label id")
             )
         }
 
-        Timber.v("Deleting label $labelId")
         return withContext(dispatchers.Io) {
-            val responseBody: ResponseBody = api.deleteLabel(labelId)
-            if (responseBody.code == Constants.RESPONSE_CODE_OK) {
-                Result.success()
-            } else {
-                Result.failure(
-                    workDataOf(
-                        KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${responseBody.code}"
+            var result = Result.success()
+
+            labelIds.forEach { labelId ->
+                Timber.v("Deleting label $labelId")
+                val responseBody: ResponseBody = api.deleteLabel(labelId)
+                if (responseBody.code != Constants.RESPONSE_CODE_OK) {
+                    result = Result.failure(
+                        workDataOf(
+                            KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code ${responseBody.code}"
+                        )
                     )
-                )
+                }
             }
+            result
         }
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
-        fun enqueue(labelId: String): Operation {
+        fun enqueue(labelIds: List<String>): Operation {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             val workRequest = OneTimeWorkRequestBuilder<DeleteLabelWorker>()
                 .setConstraints(constraints)
-                .setInputData(workDataOf(KEY_INPUT_DATA_LABEL_ID to labelId))
+                .setInputData(workDataOf(KEY_INPUT_DATA_LABEL_IDS to labelIds.toTypedArray()))
                 .addTag(WORKER_TAG)
                 .build()
             return workManager.enqueue(workRequest)

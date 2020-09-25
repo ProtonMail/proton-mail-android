@@ -25,6 +25,7 @@ import androidx.work.WorkInfo
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.worker.DeleteLabelWorker
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -42,32 +43,27 @@ class DeleteLabel @Inject constructor(
     private val workerScheduler: DeleteLabelWorker.Enqueuer
 ) {
 
-    suspend operator fun invoke(labelId: String): LiveData<List<Boolean>> =
+    suspend operator fun invoke(labelIds: List<String>): LiveData<List<Boolean>> =
         withContext(dispatchers.Io) {
-            val contactLabel = contactsDatabase.findContactGroupById(labelId)
-            contactLabel?.let {
-                contactsDatabase.deleteContactGroup(it)
-            }
-            Timber.v("Delete DB labels ")
-            messagesDatabase.deleteLabelById(labelId)
-            workerScheduler.enqueue(labelId)
 
-            workerScheduler.getWorkStatusLiveData()
+            // delete labels in DB
+            labelIds.forEach { labelId ->
+                ensureActive()
+
+                val contactLabel = contactsDatabase.findContactGroupById(labelId)
+                contactLabel?.let { label ->
+                    Timber.v("Delete DB contact group $label")
+                    contactsDatabase.deleteContactGroup(label)
+                }
+                Timber.v("Delete DB label $labelId")
+                messagesDatabase.deleteLabelById(labelId)
+            }
+
+            // schedule worker to remove label ids over the network
+            workerScheduler.enqueue(labelIds)
+            return@withContext workerScheduler.getWorkStatusLiveData()
                 .map { mapStateToBoolean(it) }
         }
-
-//    suspend operator fun invoke(labelId: List<String>): LiveData<List<Boolean>> =
-//        withContext(dispatchers.Io) {
-//            val contactLabel = contactsDatabase.findContactGroupById(labelId)
-//            contactLabel?.let {
-//                contactsDatabase.deleteContactGroup(it)
-//            }
-//            messagesDatabase.deleteLabelById(labelId)
-//            workerScheduler.enqueue(labelId)
-//
-//            return@withContext workerScheduler.getWorkStatusLiveData()
-//                .map { mapStateToBoolean(it) }
-//        }
 
     private fun mapStateToBoolean(infoList: List<WorkInfo>): List<Boolean> =
         infoList.map { it.state }
