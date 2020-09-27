@@ -37,7 +37,7 @@ fun initVersions() {
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.0-rc1"     // Released: Jul 30, 2020
     `espresso version` =                        "3.2.0"         // Released: May 30, 2019
-    `hilt-android version` =                    "2.28.3-alpha"  // Released: Jul 18, 2020
+    `hilt-android version` =                    "2.29.1-alpha"  // Released: Sep 10, 2020
     `hilt-androidx version` =                   "1.0.0-alpha02" // Released: Jul 26, 2020
     `ktx version` =                             "1.2.0-rc01"    // Released: Nov 23, 2019
     `lifecycle version` =                       "2.2.0-rc03"    // Released: Dec 05, 2019
