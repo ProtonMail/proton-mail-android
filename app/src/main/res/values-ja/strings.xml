@@ -242,7 +242,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 このパスワードを失くした場合、電子メールが読めなくなります。</string>
     <string name="username_note"><b>注意:</b>ユーザー名はProtonMailアドレスに使用されます。</string>
     <string name="terms_and_conditions">ProtonMailを使用することによって、あなたは\n<a href="https://protonmail.com/terms-and-conditions"> 利用規約</a> と <a href="https://protonmail.com/privacy-policy"> プライバシー ポリシー</a> に同意したことになります。</string>
-    <string name="human_verification">人間であることの確認</string>
+    <string name="human_verification">機械でないことの確認</string>
     <string name="human_verification_subtitle">ProtonMailの乱用を防ぐために、\nあなたがボットでないことを検証する必要があります。</string>
     <string name="select_options">次のオプションのいずれかを選択してください。</string>
     <string name="no_verification_methods_found">検証方法が選択されていません。</string>
@@ -259,7 +259,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_title_add">ラベルの追加</string>
     <string name="labels_title">ラベル</string>
     <string name="label_name">ラベル名</string>
-    <string name="label_name_empty">ラベル名が必要です</string>
+    <string name="label_name_empty">ラベル名が必要です。</string>
     <string name="label_name_duplicate">このラベル名は既に存在します。</string>
     <string name="label_created">ラベルが作成されました。</string>
     <string name="label_invalid">無効な名前のため、ラベルを追加できせん。</string>
@@ -274,7 +274,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_application_found_or_link_invalid">この操作を処理するアプリが見つからないか、あるいは無効なURLです。</string>
     <string name="also_archive">アーカイブも行う</string>
     <string name="label_deleted">ラベルが削除されました。</string>
-    <string name="label_deleted_error">ラベル削除中にエラーが発生しました</string>
+    <string name="label_deleted_error">ラベル削除中にエラーが発生しました。</string>
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
     <string name="no_connectivity_detected">接続が検出できません...</string>
@@ -312,7 +312,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_title_support_protonmail">ProtonMail を支援する</string>
     <string name="engagement_subtitle_welcome">新しい暗号化された電子メールアカウントが設定され、暗号化されたメッセージを送受信する準備ができました。</string>
     <string name="engagement_subtitle_swipe">ProtonMailアプリの設定で、スワイプ操作をカスタマイズできます。</string>
-    <string name="engagement_subtitle_labels">受信箱を整理するラベルの作成や追加ができます。全てのオプションに対してメッセージ上で下にスワイプしてください。</string>
+    <string name="engagement_subtitle_labels">受信箱を整理するラベルの作成ができます。メッセージを長押しすると全てのオプションが表示されます。</string>
     <string name="engagement_subtitle_encryption">受信箱は、端末相互間で暗号保護されています。保護された電子メールを自動的に送信するためには、送信相手にProtonMail を使用するように招待してください。送信相手がProtonMailを使用しない場合には、メッセージを手動で暗号化することもできます。</string>
     <string name="engagement_subtitle_expire">送信メッセージが一定時間後に自動的に削除されるように設定できます。</string>
     <string name="engagement_subtitle_help">protonmail.com/supportでヘルプとサポートが受けられます。バグの報告はアプリ内からも行えます。</string>
@@ -335,18 +335,18 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </string-array>
     <string name="delete_label_confirmation_title">選択したラベルを削除してよろしいですか？</string>
     <string name="delete_folder_confirmation_title">選択したフォルダーを削除してよろしいですか？</string>
-    <string name="delete_label_confirmation_message">ここに含まれている電子メールは、<b>全てのメール</b>から閲覧できます。</string>
+    <string name="delete_label_confirmation_message">ここに含まれているメッセージは<b>全てのメール</b>から閲覧できます。</string>
     <string name="enter_pin">受信箱のロックを解除するPINコードを入力してください。</string>
     <string name="enter_pin_message_details">メッセージのロックを解除するPINコードを入力してください。</string>
     <string name="enter_current_pin">現在のPINコードを入力してください。</string>
-    <string name="pin_subtitle_create">PINを作成してください</string>
-    <string name="pin_subtitle_create_new">新しいPINを作成してください</string>
-    <string name="pin_subtitle_confirm">PINを確認</string>
-    <string name="pin_subtitle_confirm_new">新しいPINを確認してください</string>
+    <string name="pin_subtitle_create">PINコードを作成してください。</string>
+    <string name="pin_subtitle_create_new">新しいPINコードを作成してください。</string>
+    <string name="pin_subtitle_confirm">PINコードを確認してください。</string>
+    <string name="pin_subtitle_confirm_new">新しいPINコードを確認してください。</string>
     <string name="pin_invalid">無効なPINコードです。4桁の正しいPINコードを入力してください。</string>
     <string name="pin_confirmation_not_match">確認用のPINコードが一致しません。</string>
     <string name="pin_not_match">PINコードが一致しません。</string>
-    <string name="new_pin_saved">新しいPINが保存されました。</string>
+    <string name="new_pin_saved">新しいPINコードが保存されました。</string>
     <string name="new_emails">%d 新しいメール</string>
     <string name="attachment_download_success">%s は正常にファイルマネージャーにダウンロードされました。</string>
     <string name="attachment_download_failed">%s のダウンロードに失敗しました。</string>
@@ -360,7 +360,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sync_attachments">添付ファイルを同期しています...</string>
     <string name="processing_attachment">添付ファイルの処理中</string>
     <string name="hyperlink_confirmation_dialog_text_html">ウェブブラウザを使用して次のURLを開こうとしています：&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;続行してよろしいですか？</string>
-    <string name="dont_ask_again">Don\'t ask again</string>
+    <string name="dont_ask_again">今後表示しない</string>
     <string name="none">なし</string>
     <string name="changes_affected_after_closing">アプリを閉じた後で変更が反映されます。</string>
     <plurals name="incorrect_pin_remaining_attempts">
@@ -378,7 +378,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upselling_title">ProtonMailはフリーでオープンソースです。</string>
     <string name="upselling_subtitle">プライバシーを保護しProtonMailを改良し続けるために、私たちはあなたのご支援を必要としています。</string>
     <string name="upselling_donate_title">寄付</string>
-    <string name="upselling_upgrade_title">ProtonMail PLUSプランにアップグレードする。</string>
+    <string name="upselling_upgrade_title">ProtonMail Plusプランにアップグレードする</string>
     <string name="upselling_donate_subtitle">あなたの寄付は、フリーのオープンソースソフトウェアとしてProtonMailの開発を続けることに役立てられます。私たちが世界中の人々にProtonMailのサービスを提供し続けることができるのは、コミュニティのご支援があってこそなのです。</string>
     <string name="upgrade_donate">アップグレード/寄付</string>
     <string name="upselling_donate_pick_amount">寄付金額の選択または、任意の金額を入力してください。</string>
@@ -390,57 +390,57 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="donate">寄付</string>
     <string name="donate_paypal_bitcoin">ビットコインまたはPayPal経由で寄付します。</string>
     <string name="upgrade_line1">無料のプランに含まれるものすべて</string>
-    <string name="upgrade_line2">5GBのストレージ</string>
-    <string name="upgrade_line3">独自ドメインを使用</string>
-    <string name="upgrade_line4">最大 5 個までのエイリアス</string>
+    <string name="upgrade_line2">5 GB のストレージ</string>
+    <string name="upgrade_line3">独自ドメインの利用</string>
+    <string name="upgrade_line4">最大 5 個までの別名メールアドレス</string>
     <string name="upgrade_line5">優先カスタマーサポート</string>
     <string name="upgrade">アップグレード</string>
-    <string name="payment_options">支払いオプション</string>
+    <string name="payment_options">支払い方法の選択</string>
     <string name="other_plans">より容量の大きなストレージをもつプランは、ProtonMailウェブメールのインターフェイスからアップグレードできます。</string>
     <string name="upgrade_paid_user">有料プランのご契約ありがとうございます。</string>
-    <string name="select_account_type">アカウントの種類を選択</string>
-    <string name="select_account_type_subtitle">ProtonMailは公共の利益のための無料サービスです。有料アカウントを選択することオンラインプライバシーを支援することができます。</string>
+    <string name="select_account_type">アカウントの種類を選択してください</string>
+    <string name="select_account_type_subtitle">ProtonMail は公共の利益のため、無料で利用できるサービスです。オンラインプライバシーの保護を支援したい場合は有料アカウントの利用もご検討ください。</string>
     <string name="plan_free_with_price">無料</string>
     <string name="plan_plus_with_price">PLUS %s/月</string>
     <string name="plan_visionary_with_price">VISIONARY %s/月</string>
     <string name="plan_business_with_price">BUSINESS %s/月</string>
     <string name="plan_free_title">機能限定の基本アカウント</string>
-    <string name="plan_plus_title">高度な機能とセキュリティで保護された電子メール</string>
-    <string name="plan_visionary_title">サポーターのための特別アカウント</string>
-    <string name="plan_business_title">サポーターのための特別アカウント</string>
-    <string name="plan_plus_line2">1 日あたり最大 1000 件まで送信</string>
+    <string name="plan_plus_title">高度なセキュリティで保護された電子メール</string>
+    <string name="plan_visionary_title">支援者のための特別アカウント</string>
+    <string name="plan_business_title">支援者のための特別アカウント</string>
+    <string name="plan_plus_line2">1 日あたり最大 1000 件までの送信</string>
     <string name="plan_plus_line3">ラベルおよびカスタムフィルター</string>
     <string name="plan_plus_line4">外部の受信者宛への暗号化されたメッセージの送信</string>
     <string name="plan_plus_line7">優先カスタマーサポート</string>
-    <string name="plan_free_line1">500MBのストレージ</string>
-    <string name="plan_free_line2">1 日あたり最大 150 件まで送信</string>
-    <string name="plan_free_line3">20ラベル</string>
-    <string name="plan_free_line4">独自ドメイン: サポートされていません。</string>
+    <string name="plan_free_line1">500 MBのストレージ</string>
+    <string name="plan_free_line2">1 日あたり最大 150 件までの送信</string>
+    <string name="plan_free_line3">20 ラベル</string>
+    <string name="plan_free_line4">独自ドメイン: 非対応</string>
     <string name="plan_free_line5">1 アドレス</string>
-    <string name="plan_free_line6">カスタマー サポート: 制限があります。</string>
+    <string name="plan_free_line6">カスタマー サポート: 制限付き</string>
     <string name="plan_visio_line2">送信制限なし</string>
-    <string name="plan_visio_line3">新機能の早期公開</string>
+    <string name="plan_visio_line3">新機能への早期アクセス</string>
     <string name="plan_visio_line6">VISIONARYプランでは、新機能への投票ができます。</string>
     <string name="plan_business_line1">近日中に組織で暗号化されたメールを使えるようになります。</string>
     <string name="currency_duration">通貨 &amp; 期間</string>
     <string name="credit_card_name">クレジット／デビットカードの名義人</string>
     <string name="zip_code">郵便番号</string>
-    <string name="card_number">クレジットカード番号</string>
+    <string name="card_number">カード番号</string>
     <string name="billing_information">請求書情報</string>
     <string name="country">国名</string>
     <string name="cvc">セキュリティコード（CVC）</string>
     <string name="terms_and_conditions_billing">「送信」をクリックすることにより、あなたは以下の規約に同意したことになります。\n<a href="https://protonmail.com/terms-and-conditions">ProtonMailの利用規約</a></string>
     <string name="submit">送信</string>
     <string name="currency">通貨</string>
-    <string name="plan_duration">請求期間</string>
-    <string name="duration_annual_line1">年間プラン <font color="#C3E129"> 20% 割引</font></string>
-    <string name="per_month_text_only">1 ヶ月あたり</string>
-    <string name="duration_annual_line3">年額%sが請求されました。</string>
-    <string name="duration_annual_line4">月額%sが請求されました。</string>
+    <string name="plan_duration">契約期間</string>
+    <string name="duration_annual_line1">年額プラン <font color="#C3E129"> 20% 割引</font></string>
+    <string name="per_month_text_only"> / 月</string>
+    <string name="duration_annual_line3">年額%sのご請求になります。</string>
+    <string name="duration_annual_line4">月額%sのご請求になります。</string>
     <string name="duration_monthly_line1">月額プラン</string>
     <string name="duration_monthly_line3">20% 割引</string>
     <string name="set_cont">設定 &amp; 続行</string>
-    <string name="payment_error">決済エラー</string>
+    <string name="payment_error">決済エラーが発生しました。</string>
     <string name="error">エラー</string>
     <string name="try_another_card">別のカードを試す</string>
     <string name="try_another_paypal">PayPalで支払う</string>
@@ -451,31 +451,31 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="paypal_disclaimer">この取引を完了するには、PayPalアカウントにログインする必要があります。 PayPalで新しいブラウザウィンドウが開きます。</string>
     <string name="payment_picker_disclaimer">支払い方法を選択してください。</string>
     <string name="payment_success_title">支払いが正常に完了しました。</string>
-    <string name="payment_success_text">アカウントをアップグレードしています、しばらくお待ちください。支援していただきありがとうございます。</string>
+    <string name="payment_success_text">アカウントをアップグレードしていますので、しばらくお待ちください。ご支援くださり、ありがとうございます。</string>
     <string name="donation_success_title">寄付が完了しました。</string>
     <string name="donation_success_text">私たちがProtonMailの開発を続けるためには、あなたの支援が不可欠です。インターネット上でのプライバシー保護のために支援していただきありがとうございます。</string>
     <string name="create_free_account">無料アカウントを作成する</string>
     <string name="storage_gb">%d GBのストレージ</string>
     <string name="storage_mb">%d MBのストレージ</string>
-    <string name="max_addresses">最大 %d の別名メールアドレス</string>
+    <string name="max_addresses">最大 %d 個の別名メールアドレス</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d 埋め込み画像</string>
     <string name="select">選択</string>
     <string name="change_currency">通貨を変更</string>
-    <string name="switch_billing_monthly">毎月に切り替える</string>
-    <string name="switch_billing_yearly">年間に切り替える</string>
+    <string name="switch_billing_monthly">月払いに切り替える</string>
+    <string name="switch_billing_yearly">年払いに切り替える</string>
     <string name="warning">警告</string>
     <string name="empty_recovery_email_question">警告: 回復用のメールが設定されていません。パスワードを忘れた場合、アカウントの復旧はできません。回復用のメールなしで続行しますか。</string>
     <string name="card_details_title">%1$s (* * * %2$s)</string>
     <string name="card_details_subtitle">有効期限 %s</string>
     <string name="payment_methods">支払い方法</string>
-    <string name="payment_approval_activity">支払方法の承認</string>
-    <string name="payment_approval_success">支払方法は承認されています。</string>
-    <string name="payment_approval_unknown_error_description">お支払い方法の確認中にエラーが発生しました。 再度試すか、別のカードに切り替えてください。</string>
-    <string name="payment_approval_cancel_error_description">支払い方法の確認がキャンセルされました。 再度試すか、別のカードに切り替えてください。</string>
+    <string name="payment_approval_activity">支払い方法の承認</string>
+    <string name="payment_approval_success">支払い方法が承認されました。</string>
+    <string name="payment_approval_unknown_error_description">お支払い方法の確認中にエラーが発生しました。 再度お試しいただくか、別のカードに切り替えてください。</string>
+    <string name="payment_approval_cancel_error_description">支払い方法の検証がキャンセルされました。 再度お試しいただくか、別のカードに切り替えてください。</string>
     <string name="payment_approval_consumed_error_description">この支払い方法は既に使用されています。 サブスクリプションのステータスを確認してください。</string>
     <string name="no_payment_methods">支払い方法が登録されていません。</string>
-    <string name="edit_payment_methods">支払い方法を編集するには protonmail.comからログインしてください。</string>
+    <string name="edit_payment_methods">protonmail.comにログインし、支払い方法を編集してください。</string>
     <string name="message_not_loaded">メッセージが読み込まれていません。</string>
     <string name="signature_text">署名のテキスト</string>
     <string name="available_addresses">使用可能なアドレス</string>
@@ -490,26 +490,26 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="choose_label_color">ラベル色の選択</string>
     <string name="save_new_label">新しいラベルを保存</string>
     <string name="delete_selected">選択項目を削除</string>
-    <string name="pin_not_activated">PINが有効化されていません。</string>
-    <string name="available_options">使用可能なオプション</string>
-    <string name="current_recovery_email">現在の回復用のメールアドレス</string>
-    <string name="change_recovery_email">回復用のメールアドレスの変更</string>
-    <string name="new_recovery_email">新しい回復用メールアドレス</string>
-    <string name="confirm_new_recovery_email">新しい回復用メールアドレスの確認</string>
+    <string name="pin_not_activated">PINコードが有効化されていません。</string>
+    <string name="available_options">利用可能なオプション</string>
+    <string name="current_recovery_email">現在の回復・通知用のメールアドレス</string>
+    <string name="change_recovery_email">回復・通知用のメールアドレスの変更</string>
+    <string name="new_recovery_email">新しい回復・通知用メールアドレス</string>
+    <string name="confirm_new_recovery_email">新しい回復・通知用メールアドレスの確認</string>
     <string name="recovery_emails_invalid">メール アドレスが一致しないか、有効ではありません。</string>
     <string name="authenticate">認証</string>
     <string name="background_sync_subtitle">このオプションが有効な場合は、アプリはバックグラウンドでサーバーと同期します。この機能を無効にすると、プッシュ通知が無効になります。</string>
     <string-array name="notification_options">
-        <item>振動と音、共に切る</item>
+        <item>振動と音、共に無し</item>
         <item>音のみ、振動無し</item>
         <item>振動のみ、音無し</item>
         <item>振動と音</item>
     </string-array>
     <string-array name="account_type_names">
         <item>無料</item>
-        <item>PLUS</item>
-        <item>VISIONARY</item>
-        <item>PROFESSIONAL</item>
+        <item>Plus</item>
+        <item>Visionary</item>
+        <item>Professional</item>
     </string-array>
     <plurals name="custom_domains">
         <item quantity="other">独自ドメインの使用（例：john@smith. com）
@@ -591,7 +591,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="logged_out">ログアウトしました。</string>
     <string name="logged_out_description">ログアウトされています。もう一度ログインをしてください。</string>
     <string name="verification_needed">検証が必要です。</string>
-    <string name="verification_needed_description">セキュリティ上の理由から、あなたがロボットではないことを立証してください。</string>
+    <string name="verification_needed_description">セキュリティ上の理由から、あなたが機械でないことの立証が必要です。</string>
     <string name="verification_needed_description_notification">このメッセージを送信する前に、あなたが人間であることを立証してください：%s</string>
     <string name="message_drafted_verification_needed">検証が必要なため、メッセージが送信されませんでした。メッセージは、下書きフォルダーに保存されました。</string>
     <string name="error_message_zip_code_invalid">エラー：郵便番号が無効です。</string>
@@ -619,7 +619,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="folder_created">フォルダーを作成しました。</string>
     <string name="folder_invalid">フォルダー名が無効なため、作成できません。</string>
     <string name="folder_deleted">フォルダを削除しました。</string>
-    <string name="folder_deleted_error">フォルダー削除中のエラー</string>
+    <string name="folder_deleted_error">フォルダー削除中にエラーが発生しました。</string>
     <string name="save_new_folder">新しいフォルダーを保存</string>
     <string name="create_new_folder">フォルダを作成</string>
     <string name="all_mail">全てのメール</string>
@@ -642,13 +642,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="print_to_template">宛先：%s;  </string>
     <string name="print_cc_template">CC：%s; </string>
     <string name="print_bcc_template">BCC：%s; </string>
-    <string name="signature_error">検証エラー</string>
+    <string name="signature_error">検証エラーが発生しました。</string>
     <string name="signature_error_desc">このコンテンツの署名の検証に失敗しました。</string>
     <string name="decryption_error">復号エラー</string>
     <string name="decryption_error_desc">コンテンツの復号に失敗しました。</string>
     <string name="address">アドレス：</string>
     <string name="address_street">番地</string>
-    <string name="address_city">市町村</string>
+    <string name="address_city">市区町村</string>
     <string name="address_region">都道府県</string>
     <string name="address_postcode">郵便番号</string>
     <string name="address_country">国名</string>
@@ -691,7 +691,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="send_with_untrusted_key_title">信頼していない鍵を送信しますか？</string>
     <string name="send_with_untrusted_key_message">信頼できる鍵によるアドレス検証が%sに対して有効になっていますが、信頼済みの有効な鍵がありません。</string>
     <string name="resign_contact_title">この連絡先に再署名しますか？</string>
-    <string name="resign_contact_message">%sの検証に失敗しました：連絡先が正しく署名されていません。メッセージを送信するためには再署名するか編集する必要があります。このメッセージはパスワードの復旧や鍵のリセットをした場合に表示されることがあります。</string>
+    <string name="resign_contact_message">%sの検証に失敗しました：連絡先が正しく署名されていません。メッセージを送信するためには再署名または編集の必要があります。このメッセージはパスワードの復旧や鍵のリセットをした場合に表示されることがあります。</string>
     <!-- Sender locks -->
     <string name="sender_lock_unencrypted">暗号化されていないメッセージ</string>
     <string name="sender_lock_zero_access">暗号化されずに送受信されたメッセージ</string>
@@ -699,7 +699,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sender_lock_sent_end_to_end">端末相互間の暗号化による送信</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_autoresponder">ProtonMail によって送信された、ゼロアクセス暗号化されたメッセージ</string>
-    <string name="sender_lock_verification_failed">送信者検証の失敗</string>
+    <string name="sender_lock_verification_failed">送信者の検証に失敗しました。</string>
     <string name="sender_lock_pgp_encrypted">PGPで暗号化されたメッセージ（署名なし）</string>
     <string name="sender_lock_pgp_encrypted_verified">検証済みアドレスからのPGP暗号化メッセージ</string>
     <string name="sender_lock_pgp_signed_verified_sender">検証済みアドレスからのPGP署名付きメッセージ（暗号化なし）</string>
@@ -716,7 +716,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="send_anyway">このまま送信</string>
     <string name="expiration_error_title">メッセージの有効期限を有効にしましたが、全ての宛先でこの機能が利用できるわけではありません。</string>
     <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください：</string>
-    <string name="expiration_error_disable_pgp_sending">次の宛先に対しての期限付きPGP送信を無効にしてください：</string>
+    <string name="expiration_error_disable_pgp_sending">次の宛先に対して期限付きメッセージを送信するには、PGPを無効にしてください：</string>
     <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
     <string name="expiration_error_learn_more">
         <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">より詳しく</a>
@@ -754,15 +754,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="title_activity_account_manager">アカウントの管理</string>
     <string name="title_activity_connect_account">アカウントに接続</string>
     <string name="account_manager_add_account">アカウントの追加</string>
-    <string name="account_manager_remove_all_accounts">全てのアカウントを削除中</string>
-    <string name="account_manager_note">無制限の数の有料ProtonMailアカウントと1つの無料アカウントに同時にログインできます。</string>
+    <string name="account_manager_remove_all_accounts">全てのアカウントを削除しています...</string>
+    <string name="account_manager_note">無制限の数の有料 ProtonMail アカウントと1つの無料アカウントに同時にログインできます。</string>
     <string name="account_manager_remove_all">全てのアカウントを削除</string>
     <string name="account_manager_logout">ログアウト</string>
     <string name="account_manager_login">ログイン</string>
     <string name="manage_accounts_user_loggedout">%s (ログアウト済み)</string>
     <string name="manage_accounts_user_primary">%s (現在ログイン中)</string>
     <string name="account_manager_remove">削除</string>
-    <string name="connect_account_login_title">ProtonMailアカウントにログイン</string>
+    <string name="connect_account_login_title">ProtonMail アカウントにログイン</string>
     <string name="default_error_message">エラーが発生しました</string>
     <string name="no_contact_groups">連絡先グループはありません</string>
     <string name="search_contacts_inside_group">グループ内の連絡先を検索する</string>
@@ -810,7 +810,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="push_notifications_alert_title">プッシュ通知警告</string>
     <string name="push_notifications_alert_subtitle">ProtonMailのプッシュ通知は、Google Playサービスを更新しないと機能しません。</string>
     <string name="app_locked">アプリはロックされています。</string>
-    <string name="use_pin_instead">代わりにPINを使用する</string>
+    <string name="use_pin_instead">代わりにPINコードを使用する</string>
     <!-- strings used for biometric enrollment -->
     <string name="no_biometric_data_enrolled">No biometric data enrolled</string>
     <string name="log_in_using_biometric_credential">生体認証によるロック解除</string>
@@ -932,8 +932,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="enabled">有効</string>
     <string name="disabled">無効</string>
-    <string name="app_info">アプリの情報</string>
-    <string name="app_version">アプリのバージョン</string>
+    <string name="app_info">情報</string>
+    <string name="app_version">バージョン</string>
     <!-- endregion -->
     <!-- region Multi Account -->
     <string name="remove_account_question">%s を削除してよろしいですか？</string>
@@ -942,15 +942,15 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="connect_account_limit_title">アカウントのご利用限度に達しました。</string>
     <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">アカウントを切り替えますか？</string>
-    <string name="switch_to_account">%s に切り替える。</string>
+    <string name="switch_to_account">%s に切り替える</string>
     <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
-    <string name="shortcut_compose">Compose</string>
+    <string name="shortcut_compose">新規作成</string>
     <string name="shortcut_compose_new_message">Compose a new message</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
-    <string name="troubleshoot_dialog_title">Common connection problems and solutions</string>
+    <string name="troubleshoot_dialog_title">一般的な接続の問題と解決策</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
 &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
@@ -961,8 +961,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 </string>
     <!-- endregion -->
     <!-- region errors -->
-    <string name="error_image_not_found">画像が見つかりませんでした</string>
-    <string name="error_image_bad_url">不正な形式のイメージURL</string>
+    <string name="error_image_not_found">画像が見つかりませんでした。</string>
+    <string name="error_image_bad_url">不正な画像のURLです。</string>
     <!-- endregion -->
     <string name="allowed">許可</string>
     <string name="denied">拒否</string>

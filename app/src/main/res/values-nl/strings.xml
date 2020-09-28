@@ -905,8 +905,8 @@ toegang tot opslag toestaan.</string>
     <string name="labels_manage">Labels manager</string>
     <string name="folders_manage">Mappen manager</string>
     <string name="swiping_gesture">Swipe gebaren</string>
-    <string name="swipe_action_right">Swipe right</string>
-    <string name="swipe_action_left">Swipe left</string>
+    <string name="swipe_action_right">Naar rechts vegen</string>
+    <string name="swipe_action_left">Naar links vegen</string>
     <!-- region Swipe Actions -->
     <string name="swipe_action_chooser_title">Kies veegactie</string>
     <string name="swipe_action_trash">Bericht verplaatst naar de prullenbak</string>
@@ -965,7 +965,7 @@ toegang tot opslag toestaan.</string>
     <string name="signed_in_with">Ingelogd met %s</string>
     <string name="signed_in_with_logged_out_from">Uitgelogd van %1$s en ingelogd met %2$s</string>
     <string name="connect_account_limit_title">Limiet bereikt</string>
-    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
+    <string name="connect_account_limit_subtitle">U kunt geen andere gratis ProtonMail account toevoegen. Slechts één gratis ProtonMail account kan worden toegevoegd. Log uit van uw andere gratis account of upgrade een van uw gratis accounts naar een betaald account.</string>
     <string name="switch_accounts_question">Van account wisselen?</string>
     <string name="switch_to_account">Wisselen naar %s</string>
     <string name="login_failure_missing_keys">Het account dat u probeert toe te voegen heeft geen gegenereerde sleutels. Voeg dit account toe als eerste account op de app, of log in via de webversie, om sleutels te genereren en voeg het dan toe als een extra account in de app.</string>
@@ -992,8 +992,8 @@ toegang tot opslag toestaan.</string>
     <string name="allowed">Toegestaan</string>
     <string name="denied">Geweigerd</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Swipe gestures changed</string>
-    <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
-    <string name="go_to_settings">Go to settings</string>
+    <string name="swipe_gestures_changed">Veeggebaren veranderd</string>
+    <string name="swipe_gestures_changed_message">Na de laatste update zijn de veegbewegingen omgeschakeld. Als u wilt, kunt u ze in de instellingen resetten.</string>
+    <string name="go_to_settings">Ga naar instellingen</string>
     <!-- endregion -->
 </resources>
