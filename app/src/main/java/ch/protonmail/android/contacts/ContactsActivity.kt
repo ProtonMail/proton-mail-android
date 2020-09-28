@@ -52,7 +52,6 @@ import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.NetworkUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
 import com.birbit.android.jobqueue.JobManager
@@ -193,7 +192,7 @@ class ContactsActivity :
         override fun onClick(v: View) {
             super.onClick(v)
             mNetworkUtil.setCurrentlyHasConnectivity(true)
-            mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
                 layout_no_connectivity_info,
                 this@ContactsActivity
             )

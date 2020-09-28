@@ -43,7 +43,6 @@ import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
@@ -180,7 +179,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), MailboxLoginActivity.this);
+            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), MailboxLoginActivity.this);
             mCheckForConnectivitySnack.show();
             super.onClick(v);
         }

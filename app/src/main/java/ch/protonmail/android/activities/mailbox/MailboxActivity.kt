@@ -230,6 +230,9 @@ class MailboxActivity :
     @Inject
     lateinit var sendPing: SendPing
 
+    @Inject
+    lateinit var networkUtil: NetworkUtil
+
     private var noConnectivitySnack: Snackbar? = null
     private var checkForConnectivitySnack: Snackbar? = null
 
@@ -713,8 +716,10 @@ class MailboxActivity :
     private var connectivityRetryListener = View.OnClickListener {
         mNetworkUtil.setCurrentlyHasConnectivity(true)
         mailboxViewModel.launchPing()
-        checkForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(mConnectivitySnackLayout, this)
-        checkForConnectivitySnack?.show()
+        mConnectivitySnackLayout?.let {
+            checkForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(it, this)
+            checkForConnectivitySnack?.show()
+        }
         syncUUID = UUID.randomUUID().toString()
         if (mNetworkUtil.isConnected()) {
             Handler().postDelayed(FetchMessagesRetryRunnable(this), 3000)
@@ -1047,13 +1052,13 @@ class MailboxActivity :
     }
 
     private fun showNoConnSnack() {
-        if (noConnectivitySnack == null) {
-            noConnectivitySnack = NetworkUtil.setNoConnectionSnackLayout(
-                mConnectivitySnackLayout,
-                this,
-                connectivityRetryListener,
-                mUserManager.user,
-                this
+        mConnectivitySnackLayout?.let {
+            noConnectivitySnack = networkUtil.setNoConnectionSnackLayout(
+                snackBarLayout = it,
+                context = this,
+                listener = connectivityRetryListener,
+                user = mUserManager.user,
+                callback = this
             )
         }
         val contentLayout = (noConnectivitySnack!!.view as ViewGroup).getChildAt(0) as SnackbarContentLayout

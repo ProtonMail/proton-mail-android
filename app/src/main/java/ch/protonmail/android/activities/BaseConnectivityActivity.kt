@@ -31,10 +31,14 @@ import ch.protonmail.android.utils.NetworkUtil
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.SnackbarContentLayout
 import timber.log.Timber
+import javax.inject.Inject
 
 abstract class BaseConnectivityActivity : BaseActivity() {
 
-    @BindView(R.id.layout_no_connectivity_info)
+    @Inject
+	lateinit var networkUtil : NetworkUtil
+
+	@BindView(R.id.layout_no_connectivity_info)
     protected lateinit var mSnackLayout: View
     var mNoConnectivitySnack: Snackbar? = null
     protected var mCheckForConnectivitySnack: Snackbar? = null
@@ -47,11 +51,11 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     protected open inner class RetryListener : View.OnClickListener {
 
         override fun onClick(v: View) {
-            mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
                 mSnackLayout,
                 this@BaseConnectivityActivity
             )
-            mCheckForConnectivitySnack!!.show()
+            mCheckForConnectivitySnack?.show()
             if (mNoConnectivitySnack != null && mNoConnectivitySnack!!.isShownOrQueued) {
                 mNoConnectivitySnack!!.dismiss()
             }
@@ -80,15 +84,15 @@ abstract class BaseConnectivityActivity : BaseActivity() {
         callback: INetworkConfiguratorCallback
     ) {
         val user = mUserManager.user
-        mNoConnectivitySnack = mNoConnectivitySnack ?: NetworkUtil.setNoConnectionSnackLayout(
+        mNoConnectivitySnack = mNoConnectivitySnack ?: networkUtil.setNoConnectionSnackLayout(
             view,
             this,
             listener ?: connectivityRetryListener,
-            false,
+
             message,
             user,
             callback
-        )
+        , false)
         mNoConnectivitySnack!!.show()
         val contentLayout = (mNoConnectivitySnack!!.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
         val vvv: TextView = contentLayout.actionView

@@ -76,7 +76,6 @@ import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
 import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.UiUtil;
 
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
@@ -626,7 +625,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
                     getMSnackLayout(), CreateAccountActivity.this);
             mCheckForConnectivitySnack.show();
             checkDirectEnabled();

@@ -804,7 +804,7 @@ public class ComposeMessageActivity
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            Snackbar mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), ComposeMessageActivity.this);
+            Snackbar mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), ComposeMessageActivity.this);
             mCheckForConnectivitySnack.show();
             super.onClick(v);
         }

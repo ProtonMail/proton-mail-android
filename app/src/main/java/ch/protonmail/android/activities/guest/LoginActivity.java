@@ -56,7 +56,6 @@ import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
@@ -195,7 +194,7 @@ public class LoginActivity extends BaseLoginActivity {
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
                     getMSnackLayout(), LoginActivity.this);
             mCheckForConnectivitySnack.show();
             onSignIn();
