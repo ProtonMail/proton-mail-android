@@ -27,26 +27,24 @@ import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Created by dinokadrikj on 3/1/20.
- */
 @Singleton
 class OkHttpProvider @Inject constructor(
     @AlternativeApiPins private val pinnedKeyHashes: List<String>
 ) {
     // cache the clients, this way we can have separate client for every Uri/Url
     private val okHttpClients = HashMap<String, ProtonOkHttpClient>()
+
     /**
      * Decide in runtime which okhttp client to be returned
      */
     fun provideOkHttpClient(
-            endpointUri: String,
-            id: String = endpointUri,
-            timeout: Long,
-            interceptor: Interceptor?,
-            loggingLevel: HttpLoggingInterceptor.Level,
-            connectionSpecs: List<ConnectionSpec?>,
-            serverTimeInterceptor: ServerTimeInterceptor?
+        endpointUri: String,
+        id: String = endpointUri,
+        timeout: Long,
+        interceptor: Interceptor?,
+        loggingLevel: HttpLoggingInterceptor.Level,
+        connectionSpecs: List<ConnectionSpec?>,
+        serverTimeInterceptor: ServerTimeInterceptor?
     ): ProtonOkHttpClient {
         if (okHttpClients.containsKey(id)) {
             return okHttpClients[id]!! // we can safely enforce here because we are sure it exists

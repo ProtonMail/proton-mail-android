@@ -21,7 +21,11 @@ package ch.protonmail.android.api
 import android.os.Build
 import ch.protonmail.android.api.interceptors.ProtonMailAttachmentRequestInterceptor
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.AttachmentHeaders
+import ch.protonmail.android.api.models.BugsBody
+import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.api.models.NewMessage
 import ch.protonmail.android.api.segments.ATTACH_PATH
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.api.utils.StringConverterFactory
@@ -47,16 +51,11 @@ enum class RetrofitType {
     PUBLIC, PING, EXTENDED_TIMEOUT, ATTACHMENTS, SECURE
 }
 
-/**
- * Created by dinokadrikj on 3/1/20.
- */
 @Singleton
 class ProtonRetrofitBuilder(
-        val userManager: UserManager,
-        val jobManager: JobManager,
-        private val networkUtil: QueueNetworkUtil,
-        okHttpProvider: OkHttpProvider,
-        endpointUri: String
+    val userManager: UserManager,
+    val jobManager: JobManager,
+    private val networkUtil: QueueNetworkUtil
 ) {
     private val cache = HashMap<RetrofitType, Retrofit>()
     private lateinit var endpointUri: String
@@ -135,7 +134,7 @@ sealed class ProtonRetrofit(
     } else {
         listOf(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS)
     }
-    val serverTimeInterceptor = ServerTimeInterceptor()
+    val serverTimeInterceptor = ServerTimeInterceptor(userManager.openPgp, networkUtil)
 
     // region gson specs
     private val gsonUcc: Gson = GsonBuilder()
