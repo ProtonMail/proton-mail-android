@@ -305,16 +305,20 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     override fun onStart() {
         super.onStart()
         mApp.bus.register(this)
-        mApp.bus.register(viewModel)
+        if(this::viewModel.isInitialized) {
+            mApp.bus.register(viewModel)
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        if (markAsRead) {
-            viewModel.markRead(true)
+        if(this::viewModel.isInitialized) {
+            if (markAsRead) {
+                viewModel.markRead(true)
+            }
+            mApp.bus.unregister(viewModel)
+            stopEmbeddedImagesTask()
         }
-        mApp.bus.unregister(viewModel)
-        stopEmbeddedImagesTask()
         mApp.bus.unregister(this)
     }
 
@@ -338,6 +342,9 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        if(!this::viewModel.isInitialized) {
+            return true
+        }
         val message = viewModel.decryptedMessageData.value
         if (message != null) {
             val trash = menu.findItem(R.id.move_to_trash)
