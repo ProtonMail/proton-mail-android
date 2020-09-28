@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.gcm
+package ch.protonmail.android.fcm
 
 import android.content.Context
 import android.content.Intent
@@ -28,16 +28,14 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.RegisterDeviceBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.Logger
-import com.google.android.gms.gcm.GoogleCloudMessaging
-import com.google.android.gms.iid.InstanceID
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 // region constants
 private const val TAG_PM_REGISTRATION_INTENT_SERVICE = "PMRegIntentService"
 private const val PREF_REGISTRATION_COMPLETE = "registrationComplete"
+private const val EXTRA_FCM_TOKEN = "fcmToken"
 // endregion
 
 /*
@@ -48,24 +46,17 @@ private const val PREF_REGISTRATION_COMPLETE = "registrationComplete"
 class PMRegistrationIntentService : ProtonJobIntentService() {
 
     @Inject
-    internal lateinit var mApi: ProtonMailApiManager
-
-    @Inject
-    internal lateinit var mUserManager: UserManager
+    internal lateinit var protonMailApiManager: ProtonMailApiManager
 
     override fun onHandleWork(intent: Intent) {
         try {
-            val instanceID = InstanceID.getInstance(this)
-            val token = instanceID.getToken(GcmUtil.SENDER_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null)
-
-            sendRegistrationToServer(token)
-
-            GcmUtil.setTokenSent(true)
+            sendRegistrationToServer(intent.getStringExtra(EXTRA_FCM_TOKEN))
+            FcmUtil.setTokenSent(true)
         } catch (e: Exception) {
             Logger.doLogException(TAG_PM_REGISTRATION_INTENT_SERVICE, "Failed to complete token refresh", e)
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
-            GcmUtil.setTokenSent(false)
+            FcmUtil.setTokenSent(false)
         }
 
         // Notify UI that registration has completed, so the progress indicator can be hidden.
@@ -80,14 +71,14 @@ class PMRegistrationIntentService : ProtonJobIntentService() {
      */
     @Throws(Exception::class)
     private fun sendRegistrationToServer(token: String) {
-        GcmUtil.setRegistrationId(token)
+        FcmUtil.setRegistrationId(token)
 
         var exception: Exception? = null
         for (username in AccountManager.getInstance(baseContext).getLoggedInUsers()) {
             try {
-                mApi!!.registerDevice(RegisterDeviceBody(ProtonMailApplication.getApplication()), username)
+                protonMailApiManager.registerDevice(RegisterDeviceBody(ProtonMailApplication.getApplication()), username)
             } catch (e: Exception) {
-                Log.e(TAG_PM_REGISTRATION_INTENT_SERVICE, "error registering user $username for GCM", e)
+                Log.e(TAG_PM_REGISTRATION_INTENT_SERVICE, "error registering user for FCM", e)
                 exception = e
             }
 
@@ -100,8 +91,9 @@ class PMRegistrationIntentService : ProtonJobIntentService() {
 
     companion object {
 
-        fun startRegistration(context: Context) {
+        fun startRegistration(context: Context, token: String) {
             val intent = Intent(context, PMRegistrationIntentService::class.java)
+            intent.putExtra(EXTRA_FCM_TOKEN, token)
             enqueueWork(context, PMRegistrationIntentService::class.java, Constants.JOB_INTENT_SERVICE_ID_REGISTRATION, intent)
         }
     }

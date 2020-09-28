@@ -20,10 +20,10 @@ package ch.protonmail.android.api.models;
 
 import android.content.Context;
 import android.os.Build;
-import android.provider.Settings.Secure;
+
 import androidx.annotation.NonNull;
 
-import ch.protonmail.android.gcm.GcmUtil;
+import ch.protonmail.android.fcm.FcmUtil;
 import ch.protonmail.android.utils.AppUtil;
 
 public class RegisterDeviceBody {
@@ -35,7 +35,7 @@ public class RegisterDeviceBody {
     private int Environment;
 
     public RegisterDeviceBody(@NonNull Context context) {
-        DeviceToken = GcmUtil.getRegistrationId();
+        DeviceToken = FcmUtil.getRegistrationId();
         DeviceName = "Android";
         DeviceModel = Build.MODEL;
         DeviceVersion = "" + Build.VERSION.SDK_INT;

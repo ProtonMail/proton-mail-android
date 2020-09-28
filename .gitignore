@@ -38,6 +38,9 @@ app/schemas/
 privateConfig/
 sentry.properties
 
+# Google services .json files
+app/google-services.json
+app/src/beta/google-services.json
 
 
 # # # # # # # # #

@@ -74,6 +74,7 @@ const val `Proton-kotlin-test version` =        "0.1.1"         // Released: Sep
 const val `Proton-domain version` =             "0.1"           // Released: Jul 03, 2020
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
+
 @Deprecated("To be removed in favour of package published on Bintray") const val `old protonCore version` =        "0.2.21"        // Released: Mar 13, 2020
 
 // Test
@@ -91,11 +92,13 @@ const val `sun-mail-android version` =          "1.5.5"         // Released: Mar
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
 const val `android-fragment version` =          "1.2.0-rc01"    // Released: Oct 24, 2019
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
+const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019
 
 // Other
 const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015
 const val `butterKnife version` =               "10.1.0"        // Released: Feb 14, 201
+const val `firebase-messaging version` =        "20.2.4"        // Released: Jul 30, 2020
 const val `gson version` =                      "2.8.5"         // Released: May 22, 201
 const val `hugo version` =                      "1.2.1"         // Released: Feb 18, 201
 const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020

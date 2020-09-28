@@ -45,9 +45,12 @@ fun DependencyHandler.proton(module: String, moduleSuffix: String? = null, versi
 val DependencyHandler.`android-biometric` get() =           androidx("biometric") version `android-biometric version`
 val DependencyHandler.`android-fragment` get() =            androidx("fragment", moduleSuffix = "ktx") version `android-fragment version`
 val DependencyHandler.`android-media` get() =               androidx("media") version `android-media version`
-val DependencyHandler.`gcm` get() =                         playServices("gcm")
+val DependencyHandler.`google-services` get() =             googleServices()
 val DependencyHandler.`room-rxJava` get() =                 androidxRoom("rxjava2")
 val DependencyHandler.`safetyNet` get() =                   playServices("safetynet")
+
+fun DependencyHandler.googleServices(moduleSuffix: String? = null, version: String = `googleServices version`) =
+    google("gms", "google-services", moduleSuffix, version)
 
 fun DependencyHandler.playServices(moduleSuffix: String, version: String = `playServices version`) =
     googleAndroid("gms", "play-services", moduleSuffix, version)
@@ -61,18 +64,18 @@ val DependencyHandler.`jUnit5-jupiter-engine` get() =       jUnit5jupiter("engin
 val DependencyHandler.`jUnit5-jupiter-params` get() =       jUnit5jupiter("params")
 val DependencyHandler.`jUnit5-vintage-engine` get() =       jUnit5vintage("engine")
 
-//testRail
+// testRail
 val DependencyHandler.`jsonsimple` get() =                 dependency("com.googlecode.json-simple", module = "json-simple") version `json-simple version`
 
 // region jUnit 5 groups
 fun DependencyHandler.jUnit5jupiter(moduleSuffix: String, version: String = `jUnit5 version`) =
-        jUnit5("jupiter", "jupiter-$moduleSuffix", version)
+    jUnit5("jupiter", "jupiter-$moduleSuffix", version)
 
 fun DependencyHandler.jUnit5vintage(moduleSuffix: String, version: String = `jUnit5 version`) =
-        jUnit5("vintage", "vintage-$moduleSuffix", version)
+    jUnit5("vintage", "vintage-$moduleSuffix", version)
 
 fun DependencyHandler.jUnit5(groupName: String, moduleSuffix: String, version: String = `jUnit5 version`) =
-        dependency("org.junit", groupName, "junit", moduleSuffix, version)
+    dependency("org.junit", groupName, "junit", moduleSuffix, version)
 // endregion
 // endregion
 
@@ -91,6 +94,7 @@ val DependencyHandler.`rxRelay` get() =                     jakeWharton("rxrelay
 val DependencyHandler.`apache-commons-lang` get() =         dependency("org.apache", "commons", moduleSuffix = "lang3") version `apache-commons-lang version`
 val DependencyHandler.`butterknife-runtime` get() =         jakeWharton(module = "butterknife") version `butterKnife version`
 val DependencyHandler.`butterknife-compiler` get() =        jakeWharton(module = "butterknife", moduleSuffix = "compiler") version `butterKnife version`
+val DependencyHandler.`firebase-messaging` get() =          google("firebase", moduleSuffix = "messaging") version `firebase-messaging version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`hugo-annotations` get() =            jakeWharton("hugo", moduleSuffix = "annotations") version `hugo version`
 val DependencyHandler.`hugo-plugin` get() =                 jakeWharton("hugo", moduleSuffix = "plugin") version `hugo version`
