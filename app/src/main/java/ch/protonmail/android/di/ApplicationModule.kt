@@ -155,7 +155,7 @@ object ApplicationModule {
 
         // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
 
-        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, okHttpProvider, dnsOverHttpsHost)
+        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil)
             .apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 
