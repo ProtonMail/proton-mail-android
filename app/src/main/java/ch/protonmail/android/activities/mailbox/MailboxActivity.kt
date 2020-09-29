@@ -1060,7 +1060,7 @@ class MailboxActivity : NavigationActivity(),
 
     @Subscribe
     fun onMailboxLoaded(event: MailboxLoadedEvent?) {
-        if (event == null || event.uuid != syncUUID) {
+        if (event == null || (event.uuid != null && event.uuid != syncUUID)) {
             return
         }
         refreshMailboxJobRunning = false
