@@ -74,6 +74,7 @@ dependencies {
         `android-test-core`,
         `android-test-runner`,
         `android-test-rules`,
+        `android-work-testing`,
         `espresso`,
         `hamcrest`,
         `jsonsimple`

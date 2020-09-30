@@ -44,7 +44,7 @@ fun initVersions() {
     `material version` =                        "1.1.0-beta02"  // Released: Nov 10, 2019
     `android-paging version` =                  "2.1.0"         // Released: Jan 26, 2019
     `android-room version` =                    "2.2.1"         // Released: Oct 23, 2019
-    `android-work version` =                    "2.2.0"         // Released: Aug 16, 2019
+    `android-work version` =                    "2.4.0"         // Released: Aug 19, 2020
 
     `android-test version` =                    "1.3.0-rc03"    // Released: Aug 05, 2020
     // endregion
