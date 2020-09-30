@@ -441,7 +441,7 @@ class MessageDetailsRepository @Inject constructor(
         api.messageDetail(messageId) // try to fetch the message details from the API
 
     fun startDownloadEmbeddedImages(messageId: String, username: String) {
-        DownloadEmbeddedAttachmentsWorker.enqueue(messageId, username)
+        DownloadEmbeddedAttachmentsWorker.enqueue(messageId, username, "")
     }
 
     fun fetchVerificationKeys(senderEmail: String) {
