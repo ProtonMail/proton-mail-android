@@ -94,9 +94,9 @@ firebase tests:
     - /opt/google-cloud-sdk/install.sh --quiet
     - source /opt/google-cloud-sdk/path.bash.inc
     - gcloud components update
-    - echo $CLOUD_PROJECT_ID
-    - gcloud config set project $CLOUD_PROJECT_ID
-    - echo $SERVICE_ACCOUNT > /tmp/service-account.json
+    - echo $CLOUD_PROJECT_ID_MAIL
+    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
+    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
     - gcloud auth activate-service-account --key-file /tmp/service-account.json
     - gcloud firebase test android run
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
@@ -105,7 +105,6 @@ firebase tests:
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
       --num-flaky-test-attempts=2
-
 
 #UI tests:
 #  stage: test
