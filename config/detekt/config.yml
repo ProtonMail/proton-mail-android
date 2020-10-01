@@ -203,22 +203,22 @@ exceptions:
   PrintStackTrace:
     active: true
   RethrowCaughtException:
-    active: false
+    active: true
   ReturnFromFinally:
     active: false
     # ignoreLabeled: false
   SwallowedException:
-    active: false
-    # ignoredExceptionTypes:
-    #  - InterruptedException
-    #  - NumberFormatException
-    #  - ParseException
-    #  - MalformedURLException
-    #  allowedExceptionNameRegex: '_|(ignore|expected).*'
+    active: true
+    ignoredExceptionTypes:
+     - InterruptedException
+     - NumberFormatException
+     - ParseException
+     - MalformedURLException
+    allowedExceptionNameRegex: '_|(ignore|expected).*'
   ThrowingExceptionFromFinally:
-    active: false
+    active: true
   ThrowingExceptionInMain:
-    active: false
+    active: true
   ThrowingExceptionsWithoutMessageOrCause:
     active: true
     excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
@@ -227,7 +227,7 @@ exceptions:
       - IllegalStateException
       - IOException
   ThrowingNewInstanceOfSameException:
-    active: false
+    active: true
   TooGenericExceptionCaught:
     active: true
     excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
