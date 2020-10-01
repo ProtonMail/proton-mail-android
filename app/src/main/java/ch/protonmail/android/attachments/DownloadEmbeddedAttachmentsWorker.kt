@@ -28,7 +28,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.Data
-import androidx.work.ListenableWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.Operation
@@ -43,7 +43,6 @@ import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetada
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
@@ -55,10 +54,11 @@ import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.storage.AttachmentClearingService
 import ch.protonmail.android.utils.AppUtil
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.util.Date
-import javax.inject.Inject
 
 // region constants
 private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
@@ -70,7 +70,8 @@ internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHM
 // endregion
 
 /**
- * Represents one unit of work downloading embedded attachments for [Message][ch.protonmail.android.api.models.room.messages.Message] and saving them to local app storage.
+ * Represents one unit of work downloading embedded attachments for
+ * [Message][ch.protonmail.android.api.models.room.messages.Message] and saving them to local app storage.
  *
  * InputData has to contain non-null values for:
  * - messageId
@@ -88,8 +89,9 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase
 ) : Worker(context, params) {
 
-
-    private val notificationManager by lazy { applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    private val notificationManager by lazy {
+        applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
     private lateinit var notificationBuilder: NotificationCompat.Builder
 
     override fun doWork(): Result {
@@ -114,12 +116,11 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         if (message == null) return Result.failure()
 
         val addressCrypto = Crypto.forAddress(userManager, username, message.addressID!!)
-                ?: return Result.failure()
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e, "Decrypt exception")
         }
         if (message.isPGPMime) {
             attachments = message.Attachments
@@ -146,13 +147,21 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         }
     }
 
-    private fun handleSingleAttachment(attachment: Attachment, crypto: AddressCrypto, attachmentsDirectoryFile: File, messageId: String): ListenableWorker.Result {
+    private fun handleSingleAttachment(
+        attachment: Attachment,
+        crypto: AddressCrypto,
+        attachmentsDirectoryFile: File,
+        messageId: String
+    ): Result {
 
         AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.STARTED, attachment.fileName, attachment.attachmentId, messageId, false))
 
         val filenameInCache = attachment.fileName!!.replace(" ", "_").replace("/", ":")
         val attachmentFile = File(attachmentsDirectoryFile, filenameInCache)
-        val uniqueFilenameInDownloads = createUniqueFilename(attachment.fileName ?: ATTACHMENT_UNKNOWN_FILE_NAME, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS))
+        val uniqueFilenameInDownloads = createUniqueFilename(
+            attachment.fileName ?: ATTACHMENT_UNKNOWN_FILE_NAME,
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        )
 
         try {
 
@@ -166,9 +175,15 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             val attachmentMetadata = AttachmentMetadata(attachment.attachmentId!!, attachment.fileName!!, attachment.fileSize, attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache, attachment.messageId, System.currentTimeMillis())
             attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 
-            attachmentFile.copyTo(File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), uniqueFilenameInDownloads))
+            attachmentFile.copyTo(
+                File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                    uniqueFilenameInDownloads
+                )
+            )
 
         } catch (e: Exception) {
+            Timber.e(e, "handleSingleAttachment exception")
             AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.FAILED, filenameInCache, attachment.attachmentId, messageId, false))
             return Result.failure()
         }
@@ -178,7 +193,12 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         return Result.success()
     }
 
-    private fun handleEmbeddedImages(embeddedImages: List<EmbeddedImage>, crypto: AddressCrypto, attachmentsDirectoryFile: File, messageId: String): ListenableWorker.Result {
+    private fun handleEmbeddedImages(
+        embeddedImages: List<EmbeddedImage>,
+        crypto: AddressCrypto,
+        attachmentsDirectoryFile: File,
+        messageId: String
+    ): Result {
 
         // short-circuit if all attachments are already downloaded
         if (areAllAttachmentsAlreadyDownloaded(attachmentsDirectoryFile, messageId, embeddedImages)) {
@@ -196,16 +216,27 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
 
             try {
 
-                val decryptedByteArray = getAttachmentData(crypto, embeddedImage.mimeData, embeddedImage.attachmentId, embeddedImage.key)
+                val decryptedByteArray = getAttachmentData(
+                    crypto,
+                    embeddedImage.mimeData,
+                    embeddedImage.attachmentId,
+                    embeddedImage.key
+                )
                 FileOutputStream(attachmentFile).use {
                     it.write(decryptedByteArray)
                 }
 
                 embeddedImage.localFileName = filename
-                val attachmentMetadata = AttachmentMetadata(embeddedImage.attachmentId, embeddedImage.fileName!!, embeddedImage.size, embeddedImage.messageId + "/" + filename, embeddedImage.messageId, System.currentTimeMillis())
+                val attachmentMetadata = AttachmentMetadata(
+                    embeddedImage.attachmentId,
+                    embeddedImage.fileName!!, embeddedImage.size,
+                    embeddedImage.messageId + "/" + filename,
+                    embeddedImage.messageId, System.currentTimeMillis()
+                )
                 attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 
             } catch (e: Exception) {
+                Timber.e(e, "handleEmbeddedImages exception")
                 failure = true
             }
         }
@@ -232,45 +263,58 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     /**
      * If fileSize is provided, progress notification will be shown.
      */
-    private fun getAttachmentData(crypto: AddressCrypto, mimeData: ByteArray?, attachmentId: String, key: String?, fileSize: Long = -1L): ByteArray? {
+    private fun getAttachmentData(
+        crypto: AddressCrypto,
+        mimeData: ByteArray?,
+        attachmentId: String,
+        key: String?,
+        fileSize: Long = -1L
+    ): ByteArray? {
         if (mimeData != null) {
             return mimeData
         }
 
         return try {
-            val byteArray = api.downloadAttachment(attachmentId, object : ProgressListener {
+            val byteArray = api.downloadAttachment(
+                attachmentId,
+                object : ProgressListener {
 
-                var currentBytesRead = 0
-                var mNotificationProgressStartTime: Long = 0
-                var mNotificationProgressElapsedTime = 0L
+                    var currentBytesRead = 0
+                    var mNotificationProgressStartTime: Long = 0
+                    var mNotificationProgressElapsedTime = 0L
 
-                override fun update(bytesRead: Long, contentLength: Long, done: Boolean) {
-                    val br = (bytesRead.toFloat() / fileSize * 100).toInt()
-                    if (br > currentBytesRead) {
-                        currentBytesRead = br
-                    }
-                    if (mNotificationProgressElapsedTime > 500) {
-                        if (fileSize != -1L) {
-                            notifyOfProgress(currentBytesRead)
+                    override fun update(bytesRead: Long, contentLength: Long, done: Boolean) {
+                        val br = (bytesRead.toFloat() / fileSize * 100).toInt()
+                        if (br > currentBytesRead) {
+                            currentBytesRead = br
                         }
-                        mNotificationProgressStartTime = System.currentTimeMillis()
-                        mNotificationProgressElapsedTime = 0L
-                    } else {
-                        mNotificationProgressElapsedTime = Date().time - mNotificationProgressStartTime
+                        if (mNotificationProgressElapsedTime > 500) {
+                            if (fileSize != -1L) {
+                                notifyOfProgress(currentBytesRead)
+                            }
+                            mNotificationProgressStartTime = System.currentTimeMillis()
+                            mNotificationProgressElapsedTime = 0L
+                        } else {
+                            mNotificationProgressElapsedTime = Date().time - mNotificationProgressStartTime
+                        }
                     }
                 }
-            })
+            )
             val keyBytes = Base64.decode(key, Base64.DEFAULT)
             crypto.decryptAttachment(CipherText(keyBytes, byteArray)).decryptedData
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (exception: IOException) {
+            Timber.w(exception, "getAttachmentData exception")
             null
         } finally {
             notifyOfProgress(100)
         }
     }
 
-    private fun areAllAttachmentsAlreadyDownloaded(attachmentsDirectoryFile: File, messageId: String, embeddedImages: List<EmbeddedImage>): Boolean {
+    private fun areAllAttachmentsAlreadyDownloaded(
+        attachmentsDirectoryFile: File,
+        messageId: String,
+        embeddedImages: List<EmbeddedImage>
+    ): Boolean {
 
         if (attachmentsDirectoryFile.exists()) {
 
@@ -295,7 +339,8 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             path.mkdirs()
         }
         true
-    } catch (e: SecurityException) {
+    } catch (exception: SecurityException) {
+        Timber.e(exception, "createAttachmentFolderIfNeeded exception")
         false
     }
 
@@ -322,14 +367,14 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         val channelId = NotificationServer(applicationContext, notificationManager).createAttachmentsChannel()
 
         notificationBuilder = NotificationCompat.Builder(applicationContext, channelId)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setAutoCancel(true)
-                .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentTitle(filename)
-                .setPriority(1000)
-                .setContentText(applicationContext.getString(R.string.download_in_progress))
-                .setProgress(100, 0, false)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setAutoCancel(true)
+            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setContentTitle(filename)
+            .setPriority(1000)
+            .setContentText(applicationContext.getString(R.string.download_in_progress))
+            .setProgress(100, 0, false)
     }
 
     private fun notifyOfProgress(progress: Int) {
@@ -343,25 +388,35 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
 
     companion object {
 
-        fun enqueue(messageId: String, username: String, attachmentId: String? = null): Operation {
+        private const val UNIQUE_WORK_ID_PREFIX = "downloadEmbeddedAttachmentsWork"
+
+        fun enqueue(
+            messageId: String,
+            username: String,
+            attachmentId: String
+        ): Operation {
 
             val constraints = Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
 
             val data = Data.Builder()
-                    .putString(KEY_INPUT_DATA_MESSAGE_ID_STRING, messageId)
-                    .putString(KEY_INPUT_DATA_USERNAME_STRING, username)
-                    .putString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING, attachmentId)
-                    .build()
+                .putString(KEY_INPUT_DATA_MESSAGE_ID_STRING, messageId)
+                .putString(KEY_INPUT_DATA_USERNAME_STRING, username)
+                .putString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING, attachmentId)
+                .build()
 
-            val downloadEmbeddedAttachmentsWork = OneTimeWorkRequest.Builder(DownloadEmbeddedAttachmentsWorker::class.java)
+            val downloadEmbeddedAttachmentsWork =
+                OneTimeWorkRequest.Builder(DownloadEmbeddedAttachmentsWorker::class.java)
                     .setConstraints(constraints)
                     .setInputData(data)
                     .build()
 
-            return WorkManager.getInstance().enqueue(downloadEmbeddedAttachmentsWork)
+            return WorkManager.getInstance().enqueueUniqueWork(
+                "$UNIQUE_WORK_ID_PREFIX-$attachmentId",
+                ExistingWorkPolicy.KEEP,
+                downloadEmbeddedAttachmentsWork
+            )
         }
     }
-
 }
