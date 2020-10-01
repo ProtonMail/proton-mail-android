@@ -60,7 +60,7 @@ internal class AddressesBridgeMapperTest {
 
         assert that newAddress * {
             +id.s equals "id"
-            +domainId.s equals "domain_id"
+            +domainId?.s equals "domain_id"
             +email.s equals "davide@email.com"
             +displayName?.s equals "Davide"
             +enabled equals true

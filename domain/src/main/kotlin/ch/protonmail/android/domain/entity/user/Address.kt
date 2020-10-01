@@ -30,7 +30,7 @@ import ch.protonmail.android.domain.entity.Validated
 @Validated
 data class Address(
     val id: Id,
-    val domainId: Id,
+    val domainId: Id?,
     val email: EmailAddress,
     val displayName: Name?,
     val enabled: Boolean,
