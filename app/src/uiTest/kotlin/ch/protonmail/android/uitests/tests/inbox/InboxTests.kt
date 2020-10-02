@@ -76,6 +76,36 @@ class InboxTests : BaseTest() {
             .verify { pgpIconShown() }
     }
 
+    @TestId("C1486")
+    @Test
+    fun receiveMessageOnPmMe() {
+        val from = externalOutlookPGPSigned
+        val to = onePassUser
+        Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).sendToPmMe()
+        inboxRobot
+            .clickMessageBySubject(subject)
+            .verify { pgpIconShown() }
+    }
+
+    @TestId("C1487")
+    @Test
+    fun receiveMessageWithAttachmentOnPmMe() {
+        loginRobot
+            .loginUser(onePassUser)
+            .menuDrawer()
+            .accountsList()
+            .manageAccounts()
+            .addAccount()
+            .connectTwoPassAccount(TestData.twoPassUser)
+            .compose()
+            .sendMessageWithFileAttachment(onePassUser.pmMe, subject, body)
+            .menuDrawer()
+            .accountsList()
+            .switchToAccount(onePassUser.email)
+            .inbox()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
     @TestId("1307")
     @Test
     fun receiveMessageFromPMUser() {
