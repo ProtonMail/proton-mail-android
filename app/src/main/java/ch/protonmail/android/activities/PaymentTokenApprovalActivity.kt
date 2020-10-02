@@ -34,8 +34,11 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.PaymentToken
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.PMWebView
+import com.squareup.otto.Subscribe
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -225,4 +228,9 @@ class PaymentTokenApprovalActivity : BaseActivity() {
         }
     }
 
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
+    }
 }

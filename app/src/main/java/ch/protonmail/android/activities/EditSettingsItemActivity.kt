@@ -44,12 +44,14 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AuthStatus
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.jobs.UpdateSettingsJob
 import ch.protonmail.android.uiModel.SettingsItemUiModel
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.isValidEmail
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.CustomFontEditText
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
@@ -111,7 +113,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             val newConfirmRecoveryEmail = newRecoveryEmailConfirm!!.text.toString().trim()
             return if (TextUtils.isEmpty(newRecoveryEmail) && TextUtils.isEmpty(newConfirmRecoveryEmail)) {
                 true
-            } else (newRecoveryEmail == newConfirmRecoveryEmail && newRecoveryEmail.isValidEmail())
+            } else newRecoveryEmail == newConfirmRecoveryEmail && newRecoveryEmail.isValidEmail()
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -282,7 +284,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setEnabled(SettingsEnum.SHOW_REMOTE_IMAGES, mailSettings.showImages == 1 || mailSettings.showImages == 3)
                 setToggleListener(SettingsEnum.SHOW_REMOTE_IMAGES) { view: View, isChecked: Boolean ->
-                    if(view.isPressed && isChecked != (mailSettings.showImages == 1 || mailSettings.showImages == 3)) {initializedRemote = false}
+                    if (view.isPressed && isChecked != (mailSettings.showImages == 1 || mailSettings.showImages == 3)) {
+                        initializedRemote = false
+                    }
 
                     if (!initializedRemote) {
                         if (isChecked && mailSettings.showImages == 0) {
@@ -302,7 +306,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setEnabled(SettingsEnum.SHOW_EMBEDDED_IMAGES, mailSettings.showImages == 2 || mailSettings.showImages == 3)
                 setToggleListener(SettingsEnum.SHOW_EMBEDDED_IMAGES) { view: View, isChecked: Boolean ->
-                    if(view.isPressed && isChecked != (mailSettings.showImages == 2 || mailSettings.showImages == 3)) {initializedEbedded = false}
+                    if (view.isPressed && isChecked != (mailSettings.showImages == 2 || mailSettings.showImages == 3)) {
+                        initializedEbedded = false
+                    }
 
                     if (!initializedEbedded) {
                         if (isChecked && mailSettings.showImages == 0) {
@@ -367,9 +373,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             }
             SettingsItem.SWIPE -> {
                 setValue(SettingsEnum.SWIPE_LEFT,
-                        getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription))
+                    getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription))
                 setValue(SettingsEnum.SWIPE_RIGHT,
-                        getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription))
+                    getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription))
                 actionBarTitle = R.string.swiping_gesture
             }
             SettingsItem.LABELS_AND_FOLDERS -> {
@@ -446,9 +452,9 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         if (this !is ViewGroup || childCount == 0) return listOf(this)
 
         return children
-                .toList()
-                .flatMap { it.getAllViews() }
-                .plus(this as View)
+            .toList()
+            .flatMap { it.getAllViews() }
+            .plus(this as View)
     }
 
     private fun saveAndFinish() {
@@ -585,5 +591,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         }
         alert.setCanceledOnTouchOutside(false)
         alert.show()
+    }
+
+    @Subscribe
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

@@ -444,11 +444,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         showToast(getString(R.string.attachment_failed) + " " + event.messageSubject + " " + event.attachmentName, Toast.LENGTH_SHORT)
     }
 
-    @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        moveToLogin()
-    }
-
     open fun onLabelsLoadedEvent(event: FetchLabelsEvent) {
         if (!canClick.get()) {
             showToast(R.string.cache_cleared, gravity = Gravity.CENTER)
