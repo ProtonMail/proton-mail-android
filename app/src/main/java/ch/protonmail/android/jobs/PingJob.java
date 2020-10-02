@@ -28,8 +28,6 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.utils.AppUtil;
 
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_API_OFFLINE;
-
 /**
  * Created by dkadrikj on 10/27/15.
  */
@@ -51,7 +49,7 @@ public class PingJob extends ProtonMailBaseJob {
             ResponseBody ping = getApi().ping();
             if (ping.getCode() == Constants.RESPONSE_CODE_OK) {
                 return true;
-            } else if (ping.getCode() == RESPONSE_CODE_API_OFFLINE) {
+            } else if (ping.getCode() == Constants.RESPONSE_CODE_API_OFFLINE) {
                 return true;
             }
         } catch (Exception e) {

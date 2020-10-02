@@ -94,12 +94,10 @@ object Constants {
     // Address types
     const val ADDRESS_TYPE_PRIMARY = 1
 
-    // BCrypt
-    const val BCRYPT_PREFIX = "$2a$10$"
-
     // Response codes
     const val RESPONSE_CODE_OK = 1000
     const val RESPONSE_CODE_MULTIPLE_OK = 1001
+    const val RESPONSE_CODE_API_OFFLINE = 7001
 
     // JobIntentService IDs
     const val JOB_INTENT_SERVICE_ID_EVENT_UPDATER = 870

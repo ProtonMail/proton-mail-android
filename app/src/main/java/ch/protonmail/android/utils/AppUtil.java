@@ -67,9 +67,9 @@ import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
 
-import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_API_OFFLINE;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
+import static ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE;
 import static ch.protonmail.android.core.ProtonMailApplication.getApplication;
 import static ch.protonmail.android.core.UserManagerKt.PREF_PIN;
 import static ch.protonmail.android.prefs.SecureSharedPreferencesKt.PREF_SYMMETRIC_KEY;

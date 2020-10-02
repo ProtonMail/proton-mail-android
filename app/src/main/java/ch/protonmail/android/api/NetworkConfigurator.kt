@@ -100,12 +100,12 @@ class NetworkConfigurator @Inject constructor(
         }
 
         val proxies =
-        if (alternativeProxyList.isEmpty()) {
-            // if the new list is empty, try with the old list perhaps there will be an api url available there
-            Proxies.getInstance(null, prefs) // or just try the last used proxy
-        } else {
-            Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
-        }
+            if (alternativeProxyList.isEmpty()) {
+                // if the new list is empty, try with the old list perhaps there will be an api url available there
+                Proxies.getInstance(null, prefs) // or just try the last used proxy
+            } else {
+                Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
+            }
 
         // supplying proxy list means that the savings will be invalidated
         // val proxies = Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
