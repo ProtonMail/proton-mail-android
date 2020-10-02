@@ -702,12 +702,9 @@ class MailboxActivity :
         registerReceiver(humanVerificationBroadcastReceiver, filter)
     }
 
-    private val pingHandler = Handler()
-    private val pingRunnable = Runnable { mJobManager.addJobInBackground(PingJob()) }
     private var connectivityRetryListener = View.OnClickListener {
         mNetworkUtil.setCurrentlyHasConnectivity(true)
-        pingHandler.removeCallbacks(pingRunnable)
-        pingHandler.postDelayed(pingRunnable, 1000)
+        mailboxViewModel.launchPing()
         checkForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(mConnectivitySnackLayout, this)
         checkForConnectivitySnack?.show()
         syncUUID = UUID.randomUUID().toString()

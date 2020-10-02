@@ -54,7 +54,8 @@ const val FLOW_TRY_COMPOSE = 3
 class MailboxViewModel(
     private val messageDetailsRepository: MessageDetailsRepository,
     val userManager: UserManager,
-    private val jobManager: JobManager,
+    private val jobManager: JobManager
+,
     private val deleteMessage: DeleteMessage
 ) : ViewModel() {
 
@@ -226,15 +227,19 @@ class MailboxViewModel(
             _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
         }
 
+    fun launchPing() {
+        TODO("Not yet implemented")
+    }
+
     companion object {
 
         fun create(
             activity: BaseActivity,
             messageDetailsRepository: MessageDetailsRepository,
             userManager: UserManager,
-            jobManager: JobManager,
-            deleteMessage: DeleteMessage
-        ): MailboxViewModel =
+            jobManager: JobManager
+        ,
+            deleteMessage: DeleteMessage): MailboxViewModel =
             ViewModelProviders.of(
                 activity,
                 MailboxViewModelFactory(messageDetailsRepository, userManager, jobManager, deleteMessage)
@@ -245,14 +250,15 @@ class MailboxViewModel(
     private class MailboxViewModelFactory(
         private val messageDetailsRepository: MessageDetailsRepository,
         private val userManager: UserManager,
-        private val jobManager: JobManager,
+        private val jobManager: JobManager
+    ,
         private val deleteMessage: DeleteMessage
     ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return MailboxViewModel(
-                messageDetailsRepository,
-                userManager,
-                jobManager,
+                messageDetailsRepository, userManager,
+                jobManager
+           ,
                 deleteMessage
             ) as T
         }
