@@ -162,6 +162,7 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.servers.notification.EXTRA_USERNAME
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -174,7 +175,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDial
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job
@@ -207,7 +207,8 @@ private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
 // endregion
 
 @AndroidEntryPoint
-class MailboxActivity : NavigationActivity(),
+class MailboxActivity :
+    NavigationActivity(),
     MultiChoiceModeListener,
     OnRefreshListener,
     ILabelCreationListener,
@@ -279,56 +280,69 @@ class MailboxActivity : NavigationActivity(),
         }
         mailboxViewModel = create(this, messageDetailsRepository, mUserManager, mJobManager, deleteMessageUseCase)
         startObserving()
-        mailboxViewModel.toastMessageMaxLabelsReached.observe(this, { event: Event<MaxLabelsReached?> ->
-            val maxLabelsReached = event.getContentIfNotHandled()
-            if (maxLabelsReached != null) {
-                val message =
-                    String.format(
-                        getString(R.string.max_labels_exceeded),
-                        maxLabelsReached.subject,
-                        maxLabelsReached.maxAllowedLabels
-                    )
-                showToast(message, Toast.LENGTH_SHORT)
+        mailboxViewModel.toastMessageMaxLabelsReached.observe(
+            this,
+            { event: Event<MaxLabelsReached?> ->
+                val maxLabelsReached = event.getContentIfNotHandled()
+                if (maxLabelsReached != null) {
+                    val message =
+                        String.format(
+                            getString(R.string.max_labels_exceeded),
+                            maxLabelsReached.subject,
+                            maxLabelsReached.maxAllowedLabels
+                        )
+                    showToast(message, Toast.LENGTH_SHORT)
+                }
             }
-        })
-
+        )
         startObservingUsedSpace()
 
-        messagesAdapter = MessagesRecyclerViewAdapter(this, object : Function1<SelectionModeEnum, Unit> {
-            var actionModeAux: ActionMode? = null
-            override fun invoke(selectionModeEvent: SelectionModeEnum) {
-                when (selectionModeEvent) {
-                    SelectionModeEnum.STARTED -> actionModeAux = startActionMode(this@MailboxActivity)
-                    SelectionModeEnum.ENDED -> {
-                        val actionModeEnd = actionModeAux
-                        if (actionModeEnd != null) {
-                            actionModeEnd.finish()
-                            this.actionModeAux = null
+        messagesAdapter = MessagesRecyclerViewAdapter(
+            this,
+            object : Function1<SelectionModeEnum, Unit> {
+                var actionModeAux: ActionMode? = null
+                override fun invoke(selectionModeEvent: SelectionModeEnum) {
+                    when (selectionModeEvent) {
+                        SelectionModeEnum.STARTED -> actionModeAux = startActionMode(this@MailboxActivity)
+                        SelectionModeEnum.ENDED -> {
+                            val actionModeEnd = actionModeAux
+                            if (actionModeEnd != null) {
+                                actionModeEnd.finish()
+                                this.actionModeAux = null
+                            }
                         }
                     }
                 }
             }
-        })
+        )
 
-        contactsRepository.findAllContactsEmailsAsync().observe(this,
+        contactsRepository.findAllContactsEmailsAsync().observe(
+            this,
             { contactEmails: List<ContactEmail> ->
                 messagesAdapter.setContactsList(contactEmails)
-            })
+            }
+        )
 
-        mailboxViewModel.pendingSendsLiveData.observe(this,
+        mailboxViewModel.pendingSendsLiveData.observe(
+            this,
             { pendingSendList: List<PendingSend> ->
                 messagesAdapter.setPendingForSendingList(pendingSendList)
-            })
+            }
+        )
 
-        mailboxViewModel.pendingUploadsLiveData.observe(this,
+        mailboxViewModel.pendingUploadsLiveData.observe(
+            this,
             { pendingUploadList: List<PendingUpload> ->
                 messagesAdapter.setPendingUploadsList(pendingUploadList)
-            })
+            }
+        )
 
-        messageDetailsRepository.getAllLabels().observe(this,
+        messageDetailsRepository.getAllLabels().observe(
+            this,
             { labels: List<Label> ->
                 messagesAdapter.setLabels(labels)
-            })
+            }
+        )
 
         mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this,
             { isSuccess ->
@@ -365,8 +379,10 @@ class MailboxActivity : NavigationActivity(),
                 view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.setTextColor(Color.WHITE)
                 setAction(getString(R.string.settings)) {
                     val settingsIntent = AppUtil.decorInAppIntent(
-                        Intent(this@MailboxActivity,
-                            SettingsActivity::class.java)
+                        Intent(
+                            this@MailboxActivity,
+                            SettingsActivity::class.java
+                        )
                     )
                     settingsIntent.putExtra(
                         EXTRA_CURRENT_MAILBOX_LOCATION,
@@ -383,8 +399,11 @@ class MailboxActivity : NavigationActivity(),
 
         messagesAdapter.setItemClick { message: Message? ->
             if (message != null && !message.messageId.isNullOrEmpty()) {
-                OnMessageClickTask(WeakReference(this@MailboxActivity),
-                    messageDetailsRepository, message).execute()
+                OnMessageClickTask(
+                    WeakReference(this@MailboxActivity),
+                    messageDetailsRepository,
+                    message
+                ).execute()
             }
         }
 
@@ -395,13 +414,17 @@ class MailboxActivity : NavigationActivity(),
 
         fetchOrganizationData()
 
-        val messagesLiveData: LiveData<List<Message>> = Transformations.switchMap(mailboxLocationMain) { location: MessageLocationType? ->
-            getLiveDataByLocation(messageDetailsRepository, location!!)
-        }
+        val messagesLiveData: LiveData<List<Message>> =
+            Transformations.switchMap(mailboxLocationMain) { location: MessageLocationType? ->
+                getLiveDataByLocation(messageDetailsRepository, location!!)
+            }
 
-        mailboxLocationMain.observe(this, Observer { newLocation: MessageLocationType? ->
-            messagesAdapter.setNewLocation(newLocation!!)
-        })
+        mailboxLocationMain.observe(
+            this,
+            { newLocation: MessageLocationType? ->
+                messagesAdapter.setNewLocation(newLocation!!)
+            }
+        )
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
         ItemTouchHelper(SwipeController()).attachToRecyclerView(messages_list_view)
 
@@ -435,10 +458,14 @@ class MailboxActivity : NavigationActivity(),
 
     private fun startObservingUsedSpace() {
         liveSharedPreferences?.removeObservers(this)
-        liveSharedPreferences = LiveSharedPreferences(app.getSecureSharedPreferences(mUserManager.username)
-            as SecureSharedPreferences, Constants.Prefs.PREF_USED_SPACE)
-        liveSharedPreferences!!.observe(this,
-            Observer { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) })
+        liveSharedPreferences = LiveSharedPreferences(
+            app.getSecureSharedPreferences(mUserManager.username) as SecureSharedPreferences,
+            Constants.Prefs.PREF_USED_SPACE
+        )
+        liveSharedPreferences!!.observe(
+            this,
+            { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) }
+        )
     }
 
     private val setupUpLimitReachedObserver = Observer { limitReached: Event<Boolean> ->
@@ -449,21 +476,25 @@ class MailboxActivity : NavigationActivity(),
                 storageLimitApproachingAlertDialog = null
             }
             if (mUserManager.canShowStorageLimitReached()) {
-                showInfoDialogWithTwoButtons(this@MailboxActivity,
+                showInfoDialogWithTwoButtons(
+                    this@MailboxActivity,
                     getString(R.string.storage_limit_warning_title),
                     getString(R.string.storage_limit_reached_text),
                     getString(R.string.learn_more),
                     getString(R.string.okay),
                     {
-                        val browserIntent = Intent(Intent.ACTION_VIEW,
-                            Uri.parse(getString(R.string.limit_reached_learn_more)))
+                        val browserIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(getString(R.string.limit_reached_learn_more))
+                        )
                         startActivity(browserIntent)
                         mUserManager.setShowStorageLimitReached(false)
                     },
                     {
                         mUserManager.setShowStorageLimitReached(false)
                     },
-                    true)
+                    true
+                )
             }
             mUserManager.setShowStorageLimitWarning(true)
             storageLimitAlert.visibility = View.VISIBLE
@@ -473,7 +504,8 @@ class MailboxActivity : NavigationActivity(),
     }
 
     private fun showStorageLimitApproachingAlertDialog() {
-        storageLimitApproachingAlertDialog = showInfoDialogWithTwoButtons(this@MailboxActivity,
+        storageLimitApproachingAlertDialog = showInfoDialogWithTwoButtons(
+            this@MailboxActivity,
             getString(R.string.storage_limit_warning_title),
             getString(R.string.storage_limit_approaching_text),
             getString(R.string.dont_remind_again),
@@ -483,7 +515,8 @@ class MailboxActivity : NavigationActivity(),
                 storageLimitApproachingAlertDialog = null
             },
             { storageLimitApproachingAlertDialog = null },
-            true)
+            true
+        )
     }
 
     private val setupUpLimitApproachingObserver = Observer { limitApproaching: Event<Boolean> ->
@@ -514,20 +547,29 @@ class MailboxActivity : NavigationActivity(),
     private val setupUpLimitReachedTryComposeObserver = Observer { limitReached: Event<Boolean> ->
         // val _limitReached = limitReached.getContentIfNotHandled()
         if (limitReached.getContentIfNotHandled() == true /* _limitReached != null && _limitReached */) {
-            showInfoDialogWithTwoButtons(this@MailboxActivity,
+            showInfoDialogWithTwoButtons(
+                this@MailboxActivity,
                 getString(R.string.storage_limit_warning_title),
                 getString(R.string.storage_limit_reached_text),
                 getString(R.string.learn_more),
                 getString(R.string.okay),
                 {
-                    val browserIntent = Intent(Intent.ACTION_VIEW,
-                        Uri.parse(getString(R.string.limit_reached_learn_more)))
+                    val browserIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(getString(R.string.limit_reached_learn_more))
+                    )
                     startActivity(browserIntent)
                 },
                 { },
-                true)
+                true
+            )
         } else {
-            val intent = AppUtil.decorInAppIntent(Intent(this@MailboxActivity, ComposeMessageActivity::class.java))
+            val intent = AppUtil.decorInAppIntent(
+                Intent(
+                    this@MailboxActivity,
+                    ComposeMessageActivity::class.java
+                )
+            )
             startActivityForResult(intent, REQUEST_CODE_COMPOSE_MESSAGE)
         }
     }
@@ -590,9 +632,12 @@ class MailboxActivity : NavigationActivity(),
         val messagesLiveData =
             mailboxLocationMain.switchMap { getLiveDataByLocation(messageDetailsRepository, it) }
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
-        messageDetailsRepository.getAllLabels().observe(this, Observer { labels: List<Label> ->
-            messagesAdapter.setLabels(labels)
-        })
+        messageDetailsRepository.getAllLabels().observe(
+            this,
+            { labels: List<Label> ->
+                messagesAdapter.setLabels(labels)
+            }
+        )
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
@@ -767,10 +812,15 @@ class MailboxActivity : NavigationActivity(),
             getString(R.string.go_to_settings),
             getString(R.string.okay),
             {
-                val swipeGestureIntent = Intent(this, EditSettingsItemActivity::class.java)
+                val swipeGestureIntent = Intent(
+                    this,
+                    EditSettingsItemActivity::class.java
+                )
                 swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE)
-                startActivityForResult(AppUtil.decorInAppIntent(swipeGestureIntent),
-                    SettingsEnum.SWIPING_GESTURE.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(swipeGestureIntent),
+                    SettingsEnum.SWIPING_GESTURE.ordinal
+                )
             },
             { },
             cancelable = true,
@@ -833,7 +883,7 @@ class MailboxActivity : NavigationActivity(),
         super.onSaveInstanceState(outState)
     }
 
-    //TODO refactor with onPrepareOptionsMenu
+    // TODO refactor with onPrepareOptionsMenu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.mailbox_options_menu, menu)
         val mailboxLocation = mailboxLocationMain.value
@@ -848,19 +898,24 @@ class MailboxActivity : NavigationActivity(),
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-                MessageLocationType.DRAFT,
-                MessageLocationType.SPAM,
-                MessageLocationType.TRASH,
-                MessageLocationType.LABEL,
-                MessageLocationType.LABEL_FOLDER
-            )
+            MessageLocationType.DRAFT,
+            MessageLocationType.SPAM,
+            MessageLocationType.TRASH,
+            MessageLocationType.LABEL,
+            MessageLocationType.LABEL_FOLDER
+        )
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
             R.id.search -> {
-                val intent = AppUtil.decorInAppIntent(Intent(this@MailboxActivity, SearchActivity::class.java))
+                val intent = AppUtil.decorInAppIntent(
+                    Intent(
+                        this@MailboxActivity,
+                        SearchActivity::class.java
+                    )
+                )
                 startActivity(intent)
                 true
             }
@@ -1341,7 +1396,6 @@ class MailboxActivity : NavigationActivity(),
         override fun run() {
             actionModeAux?.finish()
         }
-
     }
 
     private var actionModeRunnable: ActionModeInteractionRunnable? = null
@@ -1361,14 +1415,15 @@ class MailboxActivity : NavigationActivity(),
                 )
                 undoSnack!!.show()
             }
-            R.id.delete_message -> showDeleteConfirmationDialog(
-                this,
-                getString(R.string.delete_messages),
-                getString(R.string.confirm_destructive_action)
-            ) {
-                mailboxViewModel.deleteMessages(messageIds)
-                mode.finish()
-            }
+            R.id.delete_message ->
+                showDeleteConfirmationDialog(
+                    this,
+                    getString(R.string.delete_messages),
+                    getString(R.string.confirm_destructive_action)
+                ) {
+                    mailboxViewModel.deleteMessages(messageIds)
+                    mode.finish()
+                }
             R.id.mark_read -> job = PostReadJob(messageIds)
             R.id.mark_unread -> job = PostUnreadJob(messageIds)
             R.id.add_star -> job = PostStarJob(messageIds)
@@ -1574,7 +1629,8 @@ class MailboxActivity : NavigationActivity(),
             mailboxLabelId
         ).execute()
         if (newMessageLocationType == MessageLocationType.ALL_DRAFT ||
-            newMessageLocationType == MessageLocationType.DRAFT) {
+            newMessageLocationType == MessageLocationType.DRAFT
+        ) {
             AppUtil.clearSendingFailedNotifications(this, mUserManager.username)
         }
     }
@@ -1614,7 +1670,8 @@ class MailboxActivity : NavigationActivity(),
                 }
                 REQUEST_CODE_VALIDATE_PIN -> {
                     if (data!!.hasExtra(EXTRA_TOTAL_COUNT_EVENT)) {
-                        val totalCountEvent: Any? = data.getSerializableExtra(EXTRA_TOTAL_COUNT_EVENT)
+                        val totalCountEvent: Any? = data.getSerializableExtra(EXTRA_TOTAL_COUNT_EVENT
+                        )
                         if (totalCountEvent is MessageCountsEvent) {
                             onMessageCountsEvent(totalCountEvent)
                         }
@@ -1662,7 +1719,11 @@ class MailboxActivity : NavigationActivity(),
                         )
                     }
                 } else {
-                    googleAPI.getErrorDialog(this, result, PLAY_SERVICES_RESOLUTION_REQUEST) {
+                    googleAPI.getErrorDialog(
+                        this,
+                        result,
+                        PLAY_SERVICES_RESOLUTION_REQUEST
+                    ) {
                         showToast("cancel", Toast.LENGTH_SHORT)
                     }.show()
                 }
@@ -1677,7 +1738,8 @@ class MailboxActivity : NavigationActivity(),
     private fun checkForDraftedMessages() {
         val mailboxLocation = mailboxLocationMain.value
         if (mailboxLocation == MessageLocationType.ALL_DRAFT || mailboxLocation == MessageLocationType.DRAFT &&
-            mDraftedMessageSnack != null) {
+            mDraftedMessageSnack != null
+        ) {
             mDraftedMessageSnack.dismiss()
         }
         registerReceiver(showDraftedSnackBroadcastReceiver, IntentFilter(ACTION_MESSAGE_DRAFTED))
@@ -1743,7 +1805,11 @@ class MailboxActivity : NavigationActivity(),
                     message.addressID
                 ).execute()
             } else {
-                val intent = AppUtil.decorInAppIntent(Intent(mailboxActivity, MessageDetailsActivity::class.java))
+                val intent = AppUtil.decorInAppIntent(
+                    Intent(
+                        mailboxActivity, MessageDetailsActivity::class.java
+                    )
+                )
                 if (!mailboxActivity!!.mailboxLabelId.isNullOrEmpty()) {
                     intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, false)
                 }
@@ -1765,8 +1831,11 @@ class MailboxActivity : NavigationActivity(),
             // return if message is not in sending process and can be opened
             val pendingUploads = pendingActionsDatabase?.findPendingUploadByMessageId(messageId!!)
             val pendingForSending = pendingActionsDatabase?.findPendingSendByMessageId(messageId!!)
-            return pendingUploads == null && (pendingForSending == null ||
-                pendingForSending.sent != null && !pendingForSending.sent!!)
+            return pendingUploads == null &&
+                (
+                    pendingForSending == null ||
+                        pendingForSending.sent != null && !pendingForSending.sent!!
+                    )
         }
 
         override fun onPostExecute(openMessage: Boolean) {
@@ -1837,7 +1906,8 @@ class MailboxActivity : NavigationActivity(),
 
     private inner class FcmBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.extras != null) {
+            if (intent.extras != null
+            ) {
                 syncUUID = UUID.randomUUID().toString()
                 checkUserAndFetchNews()
                 if ((messages_list_view.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {
@@ -1871,7 +1941,8 @@ class MailboxActivity : NavigationActivity(),
             if (viewHolder is MessageViewHolder) {
                 val mailboxLocation = mailboxLocationMain.value
                 return if (mailboxLocationMain.value != null && mailboxLocation == MessageLocationType.DRAFT ||
-                    mailboxLocation == MessageLocationType.ALL_DRAFT) {
+                    mailboxLocation == MessageLocationType.ALL_DRAFT
+                ) {
                     makeMovementFlags(0, 0)
                 } else {
                     makeMovementFlags(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
@@ -1890,7 +1961,8 @@ class MailboxActivity : NavigationActivity(),
 
         fun normalise(swipeAction: SwipeAction, mailboxLocation: MessageLocationType?): SwipeAction {
             return if (mailboxLocation == MessageLocationType.DRAFT ||
-                mailboxLocation == MessageLocationType.ALL_DRAFT && swipeAction != SwipeAction.STAR) {
+                mailboxLocation == MessageLocationType.ALL_DRAFT && swipeAction != SwipeAction.STAR
+            ) {
                 SwipeAction.TRASH
             } else swipeAction
         }
@@ -2014,7 +2086,8 @@ class MailboxActivity : NavigationActivity(),
                     val location = fromInt(Integer.valueOf(labelId))
                     if (location == MessageLocationType.INBOX &&
                         inboxMessagesCount in 0 until total &&
-                        !mailboxActivity.refreshMailboxJobRunning) {
+                        !mailboxActivity.refreshMailboxJobRunning
+                    ) {
                         mailboxActivity.checkUserAndFetchNews()
                     }
                     if (mailboxActivity.mailboxLocationMain.value == location) {
