@@ -31,6 +31,7 @@ import ch.protonmail.android.utils.AppUtil;
 /**
  * Created by dkadrikj on 10/27/15.
  */
+@Deprecated
 public class PingJob extends ProtonMailBaseJob {
 
     public PingJob() {
