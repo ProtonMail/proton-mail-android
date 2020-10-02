@@ -22,6 +22,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -309,6 +310,8 @@ public class ComposeMessageActivity
     MessageDetailsRepository messageDetailsRepository;
 
     String composerInstanceId;
+
+    Menu menu;
 
     @Override
     protected int getLayoutId() {
@@ -1001,6 +1004,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
             mUpdateDraftPmMeChanged = false;
         }
+        disableSendButton(false);
     }
 
     @Override
@@ -1131,6 +1135,8 @@ public class ComposeMessageActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.compose_message_menu, menu);
+        this.menu = menu;
+        disableSendButton(true);
         return true;
     }
 
@@ -2272,6 +2278,18 @@ public class ComposeMessageActivity
         } else {
             mToRecipientsView.requestFocus();
             UiUtil.toggleKeyboard(this, mToRecipientsView);
+        }
+    }
+
+    private void disableSendButton(boolean disable) {
+        // Find the menu item you want to style
+        MenuItem item = menu.getItem(0);
+        if (disable) {
+            item.setEnabled(false);
+            item.setIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.white_30)));
+        } else {
+            item.setEnabled(true);
+            item.setIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
         }
     }
 }
