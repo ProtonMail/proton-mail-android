@@ -22,11 +22,15 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
+import ch.protonmail.android.api.ProtonMailApiManager
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
 
 class PostLabelWorkerTest {
 
@@ -36,6 +40,9 @@ class PostLabelWorkerTest {
     @RelaxedMockK
     private lateinit var parameters: WorkerParameters
 
+    @RelaxedMockK
+    private lateinit var apiManager: ProtonMailApiManager
+
     private lateinit var worker: PostLabelWorker
 
     @BeforeEach
@@ -43,14 +50,17 @@ class PostLabelWorkerTest {
         MockKAnnotations.init(this)
         worker = PostLabelWorker(
             context,
-            parameters
+            parameters,
+            apiManager
         )
     }
 
     @Test
-    fun `empty worker returns success result`() {
+    fun `workers fails when labelId parameter is not passed`() {
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
+
         val result = worker.doWork()
 
-        Assert.assertEquals(ListenableWorker.Result.success(), result)
+        assertEquals(ListenableWorker.Result.failure(), result)
     }
 }
