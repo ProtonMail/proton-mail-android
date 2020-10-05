@@ -194,7 +194,7 @@ public class LoginActivity extends BaseLoginActivity {
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
                     getMSnackLayout(), LoginActivity.this);
             mCheckForConnectivitySnack.show();
             onSignIn();

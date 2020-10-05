@@ -33,12 +33,12 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.ActionMode
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.AbsListView.MultiChoiceModeListener
 import android.widget.TextView
@@ -165,7 +165,7 @@ import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
-import ch.protonmail.android.utils.NetworkUtil
+import ch.protonmail.android.utils.NetworkSnackBarUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
@@ -191,6 +191,7 @@ import java.lang.ref.WeakReference
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+import kotlin.time.seconds
 
 // region constants
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
@@ -231,10 +232,7 @@ class MailboxActivity :
     lateinit var sendPing: SendPing
 
     @Inject
-    lateinit var networkUtil: NetworkUtil
-
-    private var noConnectivitySnack: Snackbar? = null
-    private var checkForConnectivitySnack: Snackbar? = null
+    lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
@@ -251,6 +249,7 @@ class MailboxActivity :
     private lateinit var mailboxViewModel: MailboxViewModel
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private var liveSharedPreferences: LiveSharedPreferences? = null
+    private val handler = Handler(Looper.getMainLooper())
 
     override val currentLabelId get() = mailboxLabelId
 
@@ -632,7 +631,7 @@ class MailboxActivity :
         setUpDrawer()
         setupAccountsList()
         checkRegistration()
-        Handler().postDelayed(
+        handler.postDelayed(
             {
                 mJobManager.addJobInBackground(FetchLabelsJob())
                 setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
@@ -714,15 +713,19 @@ class MailboxActivity :
     }
 
     private var connectivityRetryListener = View.OnClickListener {
+        mConnectivitySnackLayout?.let {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(it, this).show()
+        }
+        retryConnection()
+    }
+
+    private fun retryConnection() {
+        Timber.v("retryConnection")
         mNetworkUtil.setCurrentlyHasConnectivity(true)
         mailboxViewModel.launchPing()
-        mConnectivitySnackLayout?.let {
-            checkForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(it, this)
-            checkForConnectivitySnack?.show()
-        }
         syncUUID = UUID.randomUUID().toString()
         if (mNetworkUtil.isConnected()) {
-            Handler().postDelayed(FetchMessagesRetryRunnable(this), 3000)
+            handler.postDelayed(FetchMessagesRetryRunnable(this), 3000)
             val thirdPartyConnectionsEnabled = mUserManager.user.allowSecureConnectionsViaThirdParties
             if (thirdPartyConnectionsEnabled) {
                 networkConfigurator.refreshDomainsAsync()
@@ -1052,29 +1055,30 @@ class MailboxActivity :
     }
 
     private fun showNoConnSnack() {
+        Timber.v("showNoConnSnack")
         mConnectivitySnackLayout?.let {
-            noConnectivitySnack = networkUtil.setNoConnectionSnackLayout(
+            val noConnectivitySnackBar = networkSnackBarUtil.getNoConnectionSnackBar(
                 snackBarLayout = it,
                 context = this,
                 listener = connectivityRetryListener,
                 user = mUserManager.user,
                 callback = this
             )
+            noConnectivitySnackBar.show()
         }
-        val contentLayout = (noConnectivitySnack!!.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
-        noConnectivitySnack?.show()
+
         if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {
-            window.decorView.postDelayed({ contentLayout.actionView.callOnClick() }, 500)
+            handler.postDelayed(
+                { retryConnection() },
+                5.seconds.toLongMilliseconds()
+            )
         }
     }
 
     private fun hideNoConnSnack() {
-        if (noConnectivitySnack != null) {
-            if (checkForConnectivitySnack != null) {
-                checkForConnectivitySnack!!.dismiss()
-            }
-            noConnectivitySnack!!.dismiss()
-        }
+        Timber.v("hideNoConnSnack")
+        networkSnackBarUtil.hideCheckingConnectionSnakBar()
+        networkSnackBarUtil.hideNoConnectionSnakBar()
     }
 
     @Subscribe
@@ -1176,7 +1180,7 @@ class MailboxActivity :
         setRefreshing(false)
     }
 
-    fun onConnectivityEvent(hasConnection: Boolean) {
+    private fun onConnectivityEvent(hasConnection: Boolean) {
         Timber.d("onConnectivityEvent hasConnection: $hasConnection")
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
@@ -1675,7 +1679,7 @@ class MailboxActivity :
             when (requestCode) {
                 REQUEST_CODE_TRASH_MESSAGE_DETAILS -> {
                     move_to_trash.visibility = View.VISIBLE
-                    Handler().postDelayed({ move_to_trash.visibility = View.GONE }, 1000)
+                    handler.postDelayed({ move_to_trash.visibility = View.GONE }, 1000)
                 }
                 REQUEST_CODE_VALIDATE_PIN -> {
                     if (data!!.hasExtra(EXTRA_TOTAL_COUNT_EVENT)) {
@@ -1920,7 +1924,7 @@ class MailboxActivity :
                 syncUUID = UUID.randomUUID().toString()
                 checkUserAndFetchNews()
                 if ((messages_list_view.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {
-                    Handler().postDelayed(
+                    handler.postDelayed(
                         {
                             val newMessageSnack =
                                 Snackbar.make(
@@ -2013,7 +2017,7 @@ class MailboxActivity :
                 undoSnack!!.show()
             }
             if (swipeCustomizeSnack != null && !customizeSwipeSnackShown) {
-                Handler().postDelayed(
+                handler.postDelayed(
                     {
                         swipeCustomizeSnack!!.show()
                         customizeSwipeSnackShown = true

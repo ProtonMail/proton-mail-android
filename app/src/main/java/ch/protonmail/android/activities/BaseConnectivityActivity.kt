@@ -27,7 +27,7 @@ import butterknife.BindView
 import ch.protonmail.android.R
 import ch.protonmail.android.jobs.PingJob
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
-import ch.protonmail.android.utils.NetworkUtil
+import ch.protonmail.android.utils.NetworkSnackBarUtil
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.SnackbarContentLayout
 import timber.log.Timber
@@ -36,7 +36,7 @@ import javax.inject.Inject
 abstract class BaseConnectivityActivity : BaseActivity() {
 
     @Inject
-	lateinit var networkUtil : NetworkUtil
+	lateinit var networkSnackBarUtil : NetworkSnackBarUtil
 
 	@BindView(R.id.layout_no_connectivity_info)
     protected lateinit var mSnackLayout: View
@@ -51,7 +51,7 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     protected open inner class RetryListener : View.OnClickListener {
 
         override fun onClick(v: View) {
-            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
                 mSnackLayout,
                 this@BaseConnectivityActivity
             )
@@ -84,7 +84,7 @@ abstract class BaseConnectivityActivity : BaseActivity() {
         callback: INetworkConfiguratorCallback
     ) {
         val user = mUserManager.user
-        mNoConnectivitySnack = mNoConnectivitySnack ?: networkUtil.setNoConnectionSnackLayout(
+        mNoConnectivitySnack = mNoConnectivitySnack ?: networkSnackBarUtil.getNoConnectionSnackBar(
             view,
             this,
             listener ?: connectivityRetryListener,

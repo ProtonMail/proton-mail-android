@@ -625,7 +625,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
                     getMSnackLayout(), CreateAccountActivity.this);
             mCheckForConnectivitySnack.show();
             checkDirectEnabled();

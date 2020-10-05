@@ -192,7 +192,7 @@ class ContactsActivity :
         override fun onClick(v: View) {
             super.onClick(v)
             mNetworkUtil.setCurrentlyHasConnectivity(true)
-            mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(
+            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
                 layout_no_connectivity_info,
                 this@ContactsActivity
             )

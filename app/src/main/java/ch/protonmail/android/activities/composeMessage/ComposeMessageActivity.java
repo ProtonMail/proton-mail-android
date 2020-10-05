@@ -163,7 +163,6 @@ import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.MailTo;
 import ch.protonmail.android.utils.MailToUtils;
 import ch.protonmail.android.utils.MessageUtils;
-import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.ServerTime;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
@@ -804,7 +803,7 @@ public class ComposeMessageActivity
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            Snackbar mCheckForConnectivitySnack = networkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), ComposeMessageActivity.this);
+            Snackbar mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(getMSnackLayout(), ComposeMessageActivity.this);
             mCheckForConnectivitySnack.show();
             super.onClick(v);
         }

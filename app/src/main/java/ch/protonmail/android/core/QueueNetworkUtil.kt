@@ -42,7 +42,7 @@ class QueueNetworkUtil @Inject constructor(
     private var isInternetAccessible: Boolean = false
 
     @Synchronized
-    fun updateRealConnectivity(internetAccessible: Boolean) {
+    private fun updateRealConnectivity(internetAccessible: Boolean) {
         isInternetAccessible = internetAccessible
     }
 

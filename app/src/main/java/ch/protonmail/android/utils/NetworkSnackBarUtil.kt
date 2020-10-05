@@ -35,21 +35,22 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithCustomView
 import com.google.android.material.snackbar.Snackbar
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Utility methods for displaying network error seacoasts.
+ * Utility methods for displaying network error snackbars.
  *
  * Defined as Singleton in order to be able to determine if a given snackbar instance is still displayed.
  */
 @Singleton
-class NetworkUtil @Inject constructor() {
+class NetworkSnackBarUtil @Inject constructor() {
 
     private var noConnectionSnackBar: Snackbar? = null
     private var checkingConnectionSnackBar: Snackbar? = null
 
-    fun setNoConnectionSnackLayout(
+    fun getNoConnectionSnackBar(
         snackBarLayout: View,
         context: Context,
         listener: View.OnClickListener?,
@@ -78,7 +79,7 @@ class NetworkUtil @Inject constructor() {
         return snackbar
     }
 
-    fun setCheckingConnectionSnackLayout(
+    fun getCheckingConnectionSnackBar(
         snackBarLayout: View,
         context: Context
     ): Snackbar {
@@ -100,7 +101,11 @@ class NetworkUtil @Inject constructor() {
 
     fun isNoConnectionShown() = noConnectionSnackBar?.isShownOrQueued ?: false
 
+    fun hideNoConnectionSnakBar() = noConnectionSnackBar?.dismiss()
+
     fun isCheckingConnectionShown() = checkingConnectionSnackBar?.isShownOrQueued ?: false
+
+    fun hideCheckingConnectionSnakBar() = checkingConnectionSnackBar?.dismiss()
 
     private fun showNoConnectionTroubleshootDialog(
         context: Context,
