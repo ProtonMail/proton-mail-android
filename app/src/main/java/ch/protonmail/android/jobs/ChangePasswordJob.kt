@@ -130,9 +130,13 @@ class ChangePasswordJob(
         val proofs = LoginService.srpProofsForInfo(username, oldPassword, infoResponse, 2)
         val userAddresses: List<Address> = user.addresses
         val privateKeyBodies = ArrayList<PrivateKeyBody>()
+        val userPrivateKeyBodies = ArrayList<PrivateKeyBody>()
         val userKeys = user.keys
         for (keys in userKeys) {
             updateKey(keys, generatedMailboxPassword, openPGP, privateKeyBodies, false)
+        }
+        if(!getUserManager().user.legacyAccount) { // non-empty body for UserKeys for migrated users
+            userPrivateKeyBodies.addAll(privateKeyBodies)
         }
         for (address in userAddresses) {
             val keysList = address.keys
@@ -156,8 +160,9 @@ class ChangePasswordJob(
         }
 
         val privateKeyArray = privateKeyBodies.toTypedArray()
+        val userPrivateKeyArray = userPrivateKeyBodies.toTypedArray()
         val response = getApi().updatePrivateKeys(
-            SinglePasswordChange(keySalt, privateKeyArray, newOrganizationPrivateKey, infoResponse
+            SinglePasswordChange(keySalt, privateKeyArray, userPrivateKeyArray, newOrganizationPrivateKey, infoResponse
                 .srpSession, ConstantTime.encodeBase64(proofs.clientEphemeral, true),
                 ConstantTime.encodeBase64(proofs.clientProof, true), twoFactorCode, verifier))
         handleUpdatePrivateKeysResponse(response, generatedMailboxPassword)

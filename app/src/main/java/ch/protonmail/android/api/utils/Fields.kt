@@ -248,6 +248,7 @@ object Fields {
         const val KEY_SALTS = "KeySalts"
         const val KEY_ID = "ID"
         const val KEYS = "Keys"
+        const val USER_KEYS = "UserKeys"
         const val ORGANIZATION_KEY = "OrganizationKey"
 
         const val DOMAIN_ID = "DomainID"

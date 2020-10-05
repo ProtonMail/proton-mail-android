@@ -541,6 +541,9 @@ public class LoginService extends ProtonJobIntentService {
                     UserSettingsResponse userSettings = api.fetchUserSettings();
                     MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
                     AddressesResponse addresses = api.fetchAddressesBlocking();
+
+                    setAccountMigrationStatus(addresses, userInfo);
+
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
@@ -874,6 +877,10 @@ public class LoginService extends ProtonJobIntentService {
 
             AddressPrivateKey addressPrivateKey = new AddressPrivateKey(addressId, privateKey);
 
+            // TODO: uncomment when the API is updated (i.e. when new accounts are migrated by default)
+            // TokenAndSignature tokenAndSignature = generateTokenAndSignature(privateKey);
+            // addressPrivateKey.setToken(tokenAndSignature.token);
+            // addressPrivateKey.setSignature(tokenAndSignature.signature);
             addressPrivateKey.setSignedKeyList(generateSignedKeyList(privateKey));
             List<AddressPrivateKey> addressPrivateKeys = new ArrayList<>();
             addressPrivateKeys.add(addressPrivateKey);
@@ -1075,6 +1082,16 @@ public class LoginService extends ProtonJobIntentService {
                 status = AuthStatus.SUCCESS;
             }
             AppUtil.postEventOnUi(new CreateUserEvent(status, error));
+        }
+    }
+
+    private void setAccountMigrationStatus(AddressesResponse addresses, UserInfo userInfo) {
+        // check for user account type if it's legacy or migrated and persist the info
+        Keys key = addresses.getAddresses().get(0).getKeys().get(0);
+        if (key.toAddressKey().getSignature() == null && key.toAddressKey().getToken() == null) {
+            userInfo.getUser().setLegacyAccount(true);
+        } else if (key.toAddressKey().getSignature() != null && key.toAddressKey().getToken() != null) {
+            userInfo.getUser().setLegacyAccount(false);
         }
     }
 }

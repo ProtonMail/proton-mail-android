@@ -41,7 +41,7 @@ import ch.protonmail.android.domain.entity.requireValid
  * @author Davide Farella
  */
 @Validated
-data class User( // TODO: consider naming UserInfo or simialar
+data class User( // TODO: consider naming UserInfo or similar
     val id: Id,
     val name: Name,
     val addresses: Addresses,
@@ -78,7 +78,14 @@ data class User( // TODO: consider naming UserInfo or simialar
         "Has 2 or more plans of the same type"
     }
 }) {
-    init { requireValid() }
+    init {
+        requireValid()
+    }
+
+    val isLegacy
+        get() = with(addresses.primary?.keys?.primaryKey) {
+            this?.signature == null && this?.token == null
+        }
 }
 
 sealed class Delinquent(val i: UInt, val mailRoutesAccessible: Boolean = true) {

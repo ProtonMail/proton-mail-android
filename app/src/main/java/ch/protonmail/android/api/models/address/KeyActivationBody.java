@@ -18,13 +18,26 @@
  */
 package ch.protonmail.android.api.models.address;
 
+import io.sentry.util.Nullable;
+
 public class KeyActivationBody {
 
     private String PrivateKey;
     private SignedKeyList SignedKeyList;
+    @Nullable
+    private String Token;
+    @Nullable
+    private String Signature;
 
-    public KeyActivationBody(String privateKey, ch.protonmail.android.api.models.address.SignedKeyList signedKeyList) {
+    public KeyActivationBody(
+            String privateKey,
+            ch.protonmail.android.api.models.address.SignedKeyList signedKeyList,
+            @Nullable String token,
+            @Nullable String signature
+    ) {
         PrivateKey = privateKey;
         SignedKeyList = signedKeyList;
+        Token = token;
+        Signature = signature;
     }
 }
