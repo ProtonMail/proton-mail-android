@@ -709,7 +709,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- Composer locks -->
     <string name="composer_lock_internal">端末相互間の暗号化済み</string>
     <string name="composer_lock_internal_pinned">検証済みアドレスへの端末相互間の暗号化による送信</string>
-    <string name="composer_lock_pgp_encrypted_pinned">PGP暗号化のみ（署名なし）</string>
+    <string name="composer_lock_pgp_encrypted_pinned">PGP暗号化済み（署名付き）</string>
     <string name="composer_lock_pgp_signed">PGP署名のみ（暗号化なし）</string>
     <string name="recipient_not_found_and_removed">宛先が見つかりません：%sは削除されています</string>
     <string name="recipient_error_and_removed">宛先の情報の受信中に問題が発生しました。宛先が削除されています：%s</string>

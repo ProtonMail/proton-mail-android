@@ -904,7 +904,7 @@ el acceso al almacenamiento.</string>
     <string name="auto_download_messages_subtitle">Cuando esta opción está activada, los cuerpos de los mensajes se descargarán automáticamente cada vez que reciba una notificación nueva (esto consumirá más datos). Si la opción no está activada, los cuerpos de los mensajes solo se descargarán cuando abra el mensaje. (Nota: con cualquier opción, si vacía la caché o cierra la sesión, no podrá leer el cuerpo de los mensajes mientras no esté conectado).</string>
     <string name="settings_background_sync">Sincronizar en segundo plano</string>
     <string name="settings_auto_show_images">Mostrar imágenes remotas automáticamente</string>
-    <string name="settings_auto_show_embedded_images">Mostrar imágenes incrustadas automáticamente</string>
+    <string name="settings_auto_show_embedded_images">Mostrar automáticamente las imágenes incrustadas</string>
     <string name="settings_prevent_taking_screenshots">Prevenir capturas de pantalla</string>
     <string name="hyperlink_confirmation">Solicitar enlace de confirmación</string>
     <string name="labels_and_folders">Etiquetas y carpetas </string>

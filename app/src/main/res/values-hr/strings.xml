@@ -167,7 +167,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">Došlo je do pogreške prilikom dodavanja odabrane datoteke</string>
     <string name="add_contact">Dodaj kontakt</string>
     <string name="delete_contact">Ukloni %s iz kontakata?</string>
-    <string name="confirm">Potvrdi</string>
+    <string name="confirm">Potvrda</string>
     <string name="confirm_destructive_action">Jeste li sigurni? Ova radnja se ne može poništiti.</string>
     <string name="create">Stvori</string>
     <string name="email">E-pošta</string>
@@ -421,7 +421,7 @@ ProtonMail webmail sučelja.</string>
     <string name="select_account_type">Odaberite vrstu računa</string>
     <string name="select_account_type_subtitle">ProtonMail je besplatna usluga
 za javno dobro. Možete podržati internet privatnost odabirom plaćenog računa.</string>
-    <string name="plan_free_with_price">BESPLATNO</string>
+    <string name="plan_free_with_price">FREE</string>
     <string name="plan_plus_with_price">PLUS %s /mjesečno</string>
     <string name="plan_visionary_with_price">VISIONARY %s /mjesečno</string>
     <string name="plan_business_with_price">BUSINESS %s /mjesečno</string>
@@ -528,7 +528,7 @@ pridržavati \n<a href="https://protonmail.com/terms-and-conditions">ProtonMail 
         <item>Vibracija i zvuk</item>
     </string-array>
     <string-array name="account_type_names">
-        <item>Besplatno</item>
+        <item>Free</item>
         <item>Plus</item>
         <item>Visionary</item>
         <item>Professional</item>
@@ -986,7 +986,7 @@ pristup pohrani.</string>
     <string name="signed_in_with">Prijavljen kao %s</string>
     <string name="signed_in_with_logged_out_from">Odjavili ste se s %1$s i prijavili s %2$s</string>
     <string name="connect_account_limit_title">Ograničenje je dosegnuto</string>
-    <string name="connect_account_limit_subtitle">Ne možete dodati još jedan besplatni račun ProtonMail. Može se dodati samo jedan besplatni račun ProtonMail. Odjavite se sa svog drugog besplatnog računa ili nadogradite jedan od svojih besplatnih računa na plaćeni račun.</string>
+    <string name="connect_account_limit_subtitle">Ne možete dodati još jedan besplatni ProtonMail račun. Može se dodati samo jedan besplatni ProtonMail račun. Odjavite se sa svog drugog besplatnog računa ili nadogradite jedan od svojih besplatnih računa na plaćeni račun.</string>
     <string name="switch_accounts_question">Promjeni račun?</string>
     <string name="switch_to_account">Prebacite se na %s</string>
     <string name="login_failure_missing_keys">Račun koji pokušavate dodati nema stvorene ključeve. Dodajte ovaj račun kao prvi račun u aplikaciji ili se prijavite putem web aplikacije da biste stvorili ključeve, a zatim ga dodajte kao dodatni račun u aplikaciji.</string>
