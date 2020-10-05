@@ -129,7 +129,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
-import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
@@ -149,7 +148,6 @@ import ch.protonmail.android.fcm.PMRegistrationIntentService.Companion.startRegi
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
-import ch.protonmail.android.jobs.PingJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -162,6 +160,7 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.servers.notification.EXTRA_USERNAME
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
+import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
@@ -228,6 +227,9 @@ class MailboxActivity :
     @Inject
     lateinit var deleteMessageUseCase: DeleteMessage
 
+    @Inject
+    lateinit var sendPing: SendPing
+
     private var noConnectivitySnack: Snackbar? = null
     private var checkForConnectivitySnack: Snackbar? = null
 
@@ -278,7 +280,8 @@ class MailboxActivity :
         if (extras != null && extras.containsKey(EXTRA_MAILBOX_LOCATION)) {
             setupNewMessageLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
         }
-        mailboxViewModel = create(this, messageDetailsRepository, mUserManager, mJobManager, deleteMessageUseCase)
+        mailboxViewModel = create(this, messageDetailsRepository, mUserManager, mJobManager, deleteMessageUseCase,
+            sendPing)
         startObserving()
         mailboxViewModel.toastMessageMaxLabelsReached.observe(
             this,
@@ -295,6 +298,11 @@ class MailboxActivity :
                 }
             }
         )
+        mailboxViewModel.hasPingSucceededLiveData.observe(
+            this,
+            { onConnectivityEvent(it) }
+        )
+
         startObservingUsedSpace()
 
         messagesAdapter = MessagesRecyclerViewAdapter(
@@ -1163,12 +1171,11 @@ class MailboxActivity :
         setRefreshing(false)
     }
 
-    @Subscribe
-    fun onConnectivityEvent(event: ConnectivityEvent) {
-        Timber.d("onConnectivityEvent")
+    fun onConnectivityEvent(hasConnection: Boolean) {
+        Timber.d("onConnectivityEvent hasConnection: $hasConnection")
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
-            if (!event.hasConnection()) {
+            if (!hasConnection) {
                 Timber.d("Has connection: false")
                 // mPingHasConnection = false;
                 showNoConnSnack()

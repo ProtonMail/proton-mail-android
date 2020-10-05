@@ -23,6 +23,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Label
@@ -32,6 +33,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
@@ -41,6 +43,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.ArrayList
 import java.util.HashMap
 import kotlin.collections.set
@@ -54,9 +57,9 @@ const val FLOW_TRY_COMPOSE = 3
 class MailboxViewModel(
     private val messageDetailsRepository: MessageDetailsRepository,
     val userManager: UserManager,
-    private val jobManager: JobManager
-,
-    private val deleteMessage: DeleteMessage
+    private val jobManager: JobManager,
+    private val deleteMessage: DeleteMessage,
+    private val sendPing: SendPing
 ) : ViewModel() {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -73,6 +76,7 @@ class MailboxViewModel(
         MutableLiveData()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
+    private val _pingTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -84,6 +88,8 @@ class MailboxViewModel(
         get() = _manageLimitReachedWarningOnTryCompose
     val toastMessageMaxLabelsReached: LiveData<Event<MaxLabelsReached>>
         get() = _toastMessageMaxLabelsReached
+    val hasPingSucceededLiveData: LiveData<Boolean> =
+        _pingTrigger.switchMap { sendPing() }
 
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = _hasSuccessfullyDeletedMessages
@@ -228,7 +234,8 @@ class MailboxViewModel(
         }
 
     fun launchPing() {
-        TODO("Not yet implemented")
+        Timber.v("Launch ping")
+        _pingTrigger.value = Unit
     }
 
     companion object {
@@ -237,29 +244,29 @@ class MailboxViewModel(
             activity: BaseActivity,
             messageDetailsRepository: MessageDetailsRepository,
             userManager: UserManager,
-            jobManager: JobManager
-        ,
-            deleteMessage: DeleteMessage): MailboxViewModel =
+            jobManager: JobManager,
+            deleteMessage: DeleteMessage,
+            sendPing: SendPing): MailboxViewModel =
             ViewModelProviders.of(
                 activity,
-                MailboxViewModelFactory(messageDetailsRepository, userManager, jobManager, deleteMessage)
-            )
-                .get(MailboxViewModel::class.java)
+                MailboxViewModelFactory(messageDetailsRepository, userManager, jobManager, deleteMessage,
+                    sendPing)
+            ).get(MailboxViewModel::class.java)
     }
 
     private class MailboxViewModelFactory(
         private val messageDetailsRepository: MessageDetailsRepository,
         private val userManager: UserManager,
-        private val jobManager: JobManager
-    ,
-        private val deleteMessage: DeleteMessage
+        private val jobManager: JobManager,
+        private val deleteMessage: DeleteMessage,
+        private val sendPing: SendPing
     ) : ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return MailboxViewModel(
                 messageDetailsRepository, userManager,
-                jobManager
-           ,
-                deleteMessage
+                jobManager,
+                deleteMessage,
+                sendPing
             ) as T
         }
     }

@@ -22,11 +22,13 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
+import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Operation
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -34,6 +36,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * Work Manager Worker responsible sending a continuous ping message to the backend in a predefined interval
@@ -54,6 +58,7 @@ class PingWorker @WorkerInject constructor(
             val isAccessible = isBackendStillReachable()
             queueNetworkUtil.setCurrentlyHasConnectivity(isAccessible)
 
+            Timber.v("Ping isAccessible $isAccessible")
             if (isAccessible)
                 Result.success()
             else
@@ -73,15 +78,24 @@ class PingWorker @WorkerInject constructor(
                 onFailure = { false }
             )
 
-    class Enqueuer(private val workManager: WorkManager) {
-        fun enqueue(): Operation {
+    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
+        private val uniqueWorkerName = "PingWorker"
+
+        fun enqueue(): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             val deleteContactWorkRequest = OneTimeWorkRequestBuilder<PingWorker>()
                 .setConstraints(constraints)
                 .build()
-            return workManager.enqueue(deleteContactWorkRequest)
+
+            workManager.enqueueUniqueWork(
+                uniqueWorkerName,
+                ExistingWorkPolicy.REPLACE,
+                deleteContactWorkRequest
+            )
+
+            return workManager.getWorkInfoByIdLiveData(deleteContactWorkRequest.id)
         }
     }
 }
