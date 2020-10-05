@@ -39,7 +39,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_LABEL_IDS = "KeyInputDataLabelIds"
-internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 private const val WORKER_TAG = "DeleteLabelWorkerTag"
 
 /**
