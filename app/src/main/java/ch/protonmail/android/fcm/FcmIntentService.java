@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.gcm;
+package ch.protonmail.android.fcm;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -51,9 +51,9 @@ import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
-import ch.protonmail.android.gcm.models.NotificationData;
-import ch.protonmail.android.gcm.models.NotificationEncryptedData;
-import ch.protonmail.android.gcm.models.NotificationSender;
+import ch.protonmail.android.fcm.models.NotificationData;
+import ch.protonmail.android.fcm.models.NotificationEncryptedData;
+import ch.protonmail.android.fcm.models.NotificationSender;
 import ch.protonmail.android.servers.notification.INotificationServer;
 import ch.protonmail.android.servers.notification.NotificationServer;
 import ch.protonmail.android.utils.AppUtil;
@@ -64,9 +64,9 @@ import io.sentry.Sentry;
 import io.sentry.event.EventBuilder;
 
 @AndroidEntryPoint
-public class GcmIntentService extends IntentService {
+public class FcmIntentService extends IntentService {
 
-    private static final String TAG_GCM_INTENT_SERVICE = "GcmIntentService";
+    private static final String TAG_FCM_INTENT_SERVICE = "FcmIntentService";
 
     public static final String EXTRA_READ = "CMD_READ";
     private static final String EXTRA_ENCRYPTED_DATA = "encryptedMessage";
@@ -86,8 +86,8 @@ public class GcmIntentService extends IntentService {
     private NotificationsDatabase notificationsDatabase;
     private INotificationServer notificationServer;
 
-    public GcmIntentService() {
-        super("GCM");
+    public FcmIntentService() {
+        super("FCM");
         setIntentRedelivery(true);
     }
 
@@ -152,7 +152,7 @@ public class GcmIntentService extends IntentService {
                 } catch (Exception e) {
                     // can not deliver notification
                     if (!BuildConfig.DEBUG) {
-                        EventBuilder eventBuilder = new EventBuilder().withTag("GCM_MU", TextUtils.isEmpty(notificationUsername) ? "EMPTY" : "NOT_EMPTY");
+                        EventBuilder eventBuilder = new EventBuilder().withTag("FCM_MU", TextUtils.isEmpty(notificationUsername) ? "EMPTY" : "NOT_EMPTY");
                         Sentry.capture(eventBuilder);
                         Sentry.capture(e);
                     }
@@ -292,7 +292,7 @@ public class GcmIntentService extends IntentService {
                 }
             }
         } catch (Exception error) {
-            Logger.doLogException(TAG_GCM_INTENT_SERVICE, "error while fetching message detail", error);
+            Logger.doLogException(TAG_FCM_INTENT_SERVICE, "error while fetching message detail", error);
         }
         return message;
     }
@@ -309,7 +309,7 @@ public class GcmIntentService extends IntentService {
             message.setDownloaded(true);
             messageDetailsRepository.saveMessageInDB(message);
         } catch (Exception error) {
-            Logger.doLogException(TAG_GCM_INTENT_SERVICE, "error while fetching message detail", error);
+            Logger.doLogException(TAG_FCM_INTENT_SERVICE, "error while fetching message detail", error);
         }
 
         return message;

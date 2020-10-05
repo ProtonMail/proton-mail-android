@@ -147,8 +147,8 @@ import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.events.user.UserInfoEvent
-import ch.protonmail.android.gcm.GcmUtil
-import ch.protonmail.android.gcm.PMRegistrationIntentService.Companion.startRegistration
+import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.fcm.PMRegistrationIntentService.Companion.startRegistration
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
@@ -182,9 +182,9 @@ import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.gcm.GoogleCloudMessaging
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.SnackbarContentLayout
+import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
@@ -258,7 +258,7 @@ class MailboxActivity : NavigationActivity(),
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
             messageDetailsRepository.reloadDependenciesForUser(mUserManager.username)
-            GcmUtil.setTokenSent(false) // force GCM to re-register
+            FcmUtil.setTokenSent(false) // force FCM to re-register
         }
         val extras = intent.extras
         if (!mUserManager.isEngagementShown) {
@@ -629,10 +629,10 @@ class MailboxActivity : NavigationActivity(),
         }
     }
 
-    private fun registerGcmReceiver() {
+    private fun registerFcmReceiver() {
         val filter = IntentFilter(getString(R.string.action_notification))
         filter.priority = 2
-        LocalBroadcastManager.getInstance(this).registerReceiver(gcmBroadcastReceiver, filter)
+        LocalBroadcastManager.getInstance(this).registerReceiver(fcmBroadcastReceiver, filter)
     }
 
     private fun registerHumanVerificationReceiver() {
@@ -662,9 +662,17 @@ class MailboxActivity : NavigationActivity(),
     private fun checkRegistration() {
         // Check device for Play Services APK.
         if (checkPlayServices()) {
-            val tokenSent = GcmUtil.isTokenSent()
+            val tokenSent = FcmUtil.isTokenSent()
             if (!tokenSent) {
-                startRegistration(this)
+                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        task.result?.let { result ->
+                            startRegistration(this, result.token)
+                        }
+                    } else {
+                        Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
+                    }
+                }
             }
         }
     }
@@ -758,7 +766,7 @@ class MailboxActivity : NavigationActivity(),
             return
         }
         reloadMessageCounts()
-        registerGcmReceiver()
+        registerFcmReceiver()
         registerHumanVerificationReceiver()
         checkDelinquency()
         no_messages_layout.visibility = View.GONE
@@ -783,7 +791,7 @@ class MailboxActivity : NavigationActivity(),
 
     override fun onPause() {
         runCatching {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(gcmBroadcastReceiver)
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmBroadcastReceiver)
             unregisterReceiver(showDraftedSnackBroadcastReceiver)
             unregisterReceiver(humanVerificationBroadcastReceiver)
         }
@@ -1686,7 +1694,7 @@ class MailboxActivity : NavigationActivity(),
     }
 
     private val showDraftedSnackBroadcastReceiver: BroadcastReceiver = ShowDraftedSnackBroadcastReceiver()
-    private val gcmBroadcastReceiver: BroadcastReceiver = GcmBroadcastReceiver()
+    private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 
     private class FetchMessagesRetryRunnable internal constructor(activity: MailboxActivity) : Runnable {
         // non leaky runnable
@@ -1820,12 +1828,9 @@ class MailboxActivity : NavigationActivity(),
         }
     }
 
-    private inner class GcmBroadcastReceiver : BroadcastReceiver() {
+    private inner class FcmBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val gcm = GoogleCloudMessaging.getInstance(context)
-            val messageType = gcm.getMessageType(intent)
-            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR != messageType &&
-                GoogleCloudMessaging.MESSAGE_TYPE_DELETED != messageType) {
+            if (intent.extras != null) {
                 syncUUID = UUID.randomUUID().toString()
                 checkUserAndFetchNews()
                 if ((messages_list_view.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {

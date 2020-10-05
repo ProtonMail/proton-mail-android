@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.gcm.models
+package ch.protonmail.android.fcm.models
 
 import com.google.gson.annotations.SerializedName
 

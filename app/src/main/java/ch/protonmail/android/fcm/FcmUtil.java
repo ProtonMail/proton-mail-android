@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.gcm;
+package ch.protonmail.android.fcm;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -26,8 +26,8 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
 
-public class GcmUtil {
-    private static final String TAG_GCM_UTIL = "GcmUtil";
+public class FcmUtil {
+    private static final String TAG_FCM_UTIL = "FcmUtil";
 
     /**
      * Substitute you own sender ID here. This is the project number you got
@@ -35,11 +35,11 @@ public class GcmUtil {
      */
     public static final String SENDER_ID = "75309174866";
 
-    private GcmUtil() {
+    private FcmUtil() {
     }
 
     /**
-     * Gets the current registration ID for application on GCM service.
+     * Gets the current registration ID for application on FCM service.
      * <p/>
      * If result is empty, the app needs to register.
      *
@@ -52,7 +52,7 @@ public class GcmUtil {
 
         String registrationId = prefs.getString(Constants.Prefs.PREF_REGISTRATION_ID, "");
         if (registrationId.isEmpty()) {
-            Logger.doLog(TAG_GCM_UTIL, "Registration not found.");
+            Logger.doLog(TAG_FCM_UTIL, "Registration not found.");
             return "";
         }
         // Check if app was updated; if so, it must clear the registration ID
@@ -61,7 +61,7 @@ public class GcmUtil {
         int registeredVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = AppUtil.getAppVersionCode(app);
         if (registeredVersion != currentVersion) {
-            Logger.doLog(TAG_GCM_UTIL, "App version changed");
+            Logger.doLog(TAG_FCM_UTIL, "App version changed");
             return "";
         }
         return registrationId;
