@@ -30,6 +30,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.text.TextUtils
 import android.util.Base64
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
@@ -56,14 +57,11 @@ private const val ALGORITHM_AES = "AES"
 const val PREF_SYMMETRIC_KEY = "SEKRIT"
 // endregion
 
-class SecureSharedPreferences
-/**
- * Constructor
- *
- * @param context
- * @param delegate - SharedPreferences object from the system
- */
-private constructor(val context: Context, private val delegate: SharedPreferences) : SharedPreferences {
+class SecureSharedPreferences(
+    private val context: Context,
+    private val delegate: SharedPreferences,
+    defaultSharedPreferences: SharedPreferences
+) : SharedPreferences {
 
     private var keyStore: KeyStore
 
@@ -76,7 +74,6 @@ private constructor(val context: Context, private val delegate: SharedPreference
             keyPair = generateKeyPair(context, asymmetricKeyAlias)
         }
 
-        val defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         var symmetricKey =
             decryptAsymmetric(defaultSharedPreferences[PREF_SYMMETRIC_KEY] ?: "", keyPair.private)
 
@@ -448,6 +445,7 @@ private constructor(val context: Context, private val delegate: SharedPreference
         @SuppressLint("StaticFieldLeak")
         private var prefs: SecureSharedPreferences? = null
         private val userSSPs = mutableMapOf<String, SecureSharedPreferences>()
+        private val usersPreferences = mutableMapOf<Id, SecureSharedPreferences>()
 
         /**
          * Accessor to grab the preferences in a singleton.  This stores the reference in a singleton so it can be
@@ -467,21 +465,37 @@ private constructor(val context: Context, private val delegate: SharedPreference
             if (prefs == null) {
                 prefs = SecureSharedPreferences(
                     context.applicationContext,
-                    context.applicationContext.getSharedPreferences(appName, contextMode)
+                    context.applicationContext.getSharedPreferences(appName, contextMode),
+                    PreferenceManager.getDefaultSharedPreferences(context)
                 )
             }
             return prefs!!
         }
 
         @Synchronized
-        fun getPrefsForUser(context: Context, username: String): SecureSharedPreferences {
-            return userSSPs.getOrPut(username) {
-                val name = "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP"
+        // Temporally deprecated until replaced, this will be needed for migration
+        @Deprecated(
+            "Get with users' Id",
+            ReplaceWith("getPrefsForUser(context, userId)"),
+            DeprecationLevel.ERROR
+        )
+        fun getPrefsForUser(context: Context, username: String): SecureSharedPreferences = userSSPs.getOrPut(username) {
+            val name = "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP"
+            SecureSharedPreferences(
+                context.applicationContext,
+                context.applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE),
+                PreferenceManager.getDefaultSharedPreferences(context)
+            )
+        }
+
+        @Synchronized
+        fun getPrefsForUser(context: Context, userId: Id): SecureSharedPreferences =
+            usersPreferences.getOrPut(userId) {
                 SecureSharedPreferences(
                     context.applicationContext,
-                    context.applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE)
+                    context.applicationContext.getSharedPreferences(userId.s, Context.MODE_PRIVATE),
+                    PreferenceManager.getDefaultSharedPreferences(context)
                 )
             }
-        }
     }
 }
