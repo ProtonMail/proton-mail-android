@@ -127,5 +127,45 @@ object Mail {
                 fail("Failed to send email from external account: ${from.email}.\nError message: ${e.message}")
             }
         }
+
+        fun sendToPmMe() {
+            val session = Session.getInstance(
+                props,
+                object : Authenticator() {
+                    override fun getPasswordAuthentication(): PasswordAuthentication {
+                        return if (!from.email.contains("gmail")) {
+                            PasswordAuthentication(from.email, from.password)
+                        } else {
+                            PasswordAuthentication(from.email, from.mailboxPassword)
+                        }
+                    }
+                }
+            )
+            try {
+                val message: Message = MimeMessage(session)
+                message.setFrom(InternetAddress(from.email))
+                message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(to.pmMe)
+                )
+                if (cc != null) {
+                    message.setRecipients(
+                        Message.RecipientType.CC,
+                        InternetAddress.parse(cc?.email)
+                    )
+                }
+                if (bcc != null) {
+                    message.setRecipients(
+                        Message.RecipientType.BCC,
+                        InternetAddress.parse(bcc!!.email)
+                    )
+                }
+                message.subject = subject
+                message.setText(body)
+                Transport.send(message)
+            } catch (e: MessagingException) {
+                fail("Failed to send email from external account: ${from.email}.\nError message: ${e.message}")
+            }
+        }
     }
 }

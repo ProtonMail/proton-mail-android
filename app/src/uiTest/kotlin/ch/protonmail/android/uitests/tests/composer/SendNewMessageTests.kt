@@ -267,4 +267,34 @@ class SendNewMessageTests : BaseTest() {
             .sent()
             .verify { messageWithSubjectExists(subject) }
     }
+
+    @TestId("C1484")
+    @Test
+    fun sendMessageFromPmMe() {
+        val onePassUserPmMeAddress = onePassUser.pmMe
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .changeSenderTo(onePassUserPmMeAddress)
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("C1485")
+    @Test
+    fun sendMessageWithAttachmentFromPmMe() {
+        val onePassUserPmMeAddress = onePassUser.pmMe
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .changeSenderTo(onePassUserPmMeAddress)
+            .sendMessageWithFileAttachment(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .verify { messageWithSubjectExists(subject) }
+    }
 }
