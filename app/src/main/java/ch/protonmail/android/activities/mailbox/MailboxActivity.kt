@@ -180,7 +180,6 @@ import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.snackbar.SnackbarContentLayout
 import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
@@ -855,7 +854,7 @@ class MailboxActivity :
         checkDelinquency()
         no_messages_layout.visibility = View.GONE
         if (!mNetworkUtil.isConnectedAndHasConnectivity()) {
-            showNoConnSnack()
+            showNoConnSnackAndScheduleRetry()
         }
         checkForDraftedMessages()
         val mailboxLocation = mailboxLocationMain.value
@@ -985,11 +984,11 @@ class MailboxActivity :
         swipeRefreshLayoutAux.setOnRefreshListener(this)
     }
 
-    fun setRefreshing(refreshing: Boolean) {
-        swipe_refresh_layout.isRefreshing = refreshing
-        spinner_layout.isRefreshing = refreshing
-        no_messages_layout.isRefreshing = refreshing
-        spinner_layout.visibility = if (refreshing) View.VISIBLE else View.GONE
+    fun setRefreshing(shouldRefresh: Boolean) {
+        swipe_refresh_layout.isRefreshing = shouldRefresh
+        spinner_layout.isRefreshing = shouldRefresh
+        no_messages_layout.isRefreshing = shouldRefresh
+        spinner_layout.visibility = if (shouldRefresh) View.VISIBLE else View.GONE
     }
 
     private fun setLoadingMore(loadingMore: Boolean): Boolean {
@@ -1054,7 +1053,7 @@ class MailboxActivity :
         supportActionBar!!.setTitle(titleRes)
     }
 
-    private fun showNoConnSnack() {
+    private fun showNoConnSnackAndScheduleRetry() {
         Timber.v("showNoConnSnack")
         mConnectivitySnackLayout?.let {
             val noConnectivitySnackBar = networkSnackBarUtil.getNoConnectionSnackBar(
@@ -1181,21 +1180,16 @@ class MailboxActivity :
     }
 
     private fun onConnectivityEvent(hasConnection: Boolean) {
-        Timber.d("onConnectivityEvent hasConnection: $hasConnection")
+        Timber.v("onConnectivityEvent hasConnection: $hasConnection")
         if (!isDohOngoing) {
+            mPingHasConnection = hasConnection
             Timber.d("DoH NOT ongoing showing UI")
             if (!hasConnection) {
-                Timber.d("Has connection: false")
-                // mPingHasConnection = false;
-                showNoConnSnack()
+                showNoConnSnackAndScheduleRetry()
             } else {
-                Timber.d("Has connection: true")
                 hideNoConnSnack()
-                if (!mPingHasConnection) {
-                    setRefreshing(true)
-                    fetchUpdates()
-                    mPingHasConnection = true
-                }
+                setRefreshing(true)
+                fetchUpdates()
             }
         } else {
             Timber.d("DoH ongoing, not showing UI")
@@ -1224,7 +1218,7 @@ class MailboxActivity :
         when (status) {
             Status.FAILED,
             Status.NO_NETWORK -> {
-                showNoConnSnack()
+                showNoConnSnackAndScheduleRetry()
             }
             Status.SUCCESS -> {
                 if (mNetworkUtil.isConnectedAndHasConnectivity()) {

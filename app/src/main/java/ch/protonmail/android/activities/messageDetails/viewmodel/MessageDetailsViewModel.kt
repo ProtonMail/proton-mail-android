@@ -82,9 +82,10 @@ internal class MessageDetailsViewModel(
 ) : ViewModel() {
 
     private val messageRenderer
-            by lazy { messageRendererFactory.create(viewModelScope, messageId) }
+    by lazy { messageRendererFactory.create(viewModelScope, messageId) }
 
     lateinit var message: LiveData<Message>
+
     // TODO: this value was a lateinit, but only initialized with an empty `ArrayList`
     val folderIds: MutableList<String> = mutableListOf()
     lateinit var addressId: String
@@ -150,7 +151,7 @@ internal class MessageDetailsViewModel(
     val downloadEmbeddedImagesResult: LiveData<Pair<String, String>>
         get() = _downloadEmbeddedImagesResult
 
-    val prepareEditMessageIntent : LiveData<Event<IntentExtrasData>>
+    val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
         get() = _prepareEditMessageIntentResult
 
     val publicKeys = MutableLiveData<List<KeyInformation>>()
@@ -211,8 +212,8 @@ internal class MessageDetailsViewModel(
     fun findAllLabelsWithIds(checkedLabelIds: MutableList<String>) {
         viewModelScope.launch(IO) {
             messageDetailsRepository.findAllLabelsWithIds(
-                    decryptedMessageData.value ?: Message(), checkedLabelIds,
-                    labels.value ?: ArrayList(), isTransientMessage
+                decryptedMessageData.value ?: Message(), checkedLabelIds,
+                labels.value ?: ArrayList(), isTransientMessage
             )
         }
         message.value!!.setLabelIDs(decryptedMessageData.value!!.allLabelIDs)
@@ -224,9 +225,9 @@ internal class MessageDetailsViewModel(
         viewModelScope.launch(IO) {
 
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
-            val embeddedImages =_embeddedImagesAttachments.mapNotNull {
+            val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 EmbeddedImage.fromAttachment(
-                        it, decryptedMessageData.value!!.embeddedImagesArray.toList()
+                    it, decryptedMessageData.value!!.embeddedImagesArray.toList()
                 )
             }
 
@@ -254,16 +255,28 @@ internal class MessageDetailsViewModel(
         messageRenderer.images.offer(event.images)
     }
 
-    fun prepareEditMessageIntent(messageAction: Constants.MessageActionType,
-                                 message: Message,
-                                 newMessageTitle: String?,
-                                 content: String,
-                                 mBigContentHolder: BigContentHolder) {
+    fun prepareEditMessageIntent(
+        messageAction: Constants.MessageActionType,
+        message: Message,
+        newMessageTitle: String?,
+        content: String,
+        mBigContentHolder: BigContentHolder
+    ) {
         val user: User = userManager.user
         viewModelScope.launch {
-            val intent = messageDetailsRepository.prepareEditMessageIntent(messageAction, message,
-                    user, newMessageTitle, content, mBigContentHolder, mImagesDisplayed,
-                    remoteContentDisplayed, _embeddedImagesAttachments, IO, isTransientMessage)
+            val intent = messageDetailsRepository.prepareEditMessageIntent(
+                messageAction,
+                message,
+                user,
+                newMessageTitle,
+                content,
+                mBigContentHolder,
+                mImagesDisplayed,
+                remoteContentDisplayed,
+                _embeddedImagesAttachments,
+                IO,
+                isTransientMessage
+            )
             _prepareEditMessageIntentResult.value = Event(intent)
         }
     }
@@ -347,8 +360,8 @@ internal class MessageDetailsViewModel(
                 if (!message.isDownloaded) {
                     return
                 }
-                if(!contact?.name.equals(message.sender!!.emailAddress))
-                message.senderDisplayName = contact?.name
+                if (!contact?.name.equals(message.sender!!.emailAddress))
+                    message.senderDisplayName = contact?.name
                 decrypted = message.tryDecrypt(keys) ?: false
                 postValue(message)
             }
@@ -396,46 +409,46 @@ internal class MessageDetailsViewModel(
             if (!shouldExit) {
                 withContext(IO) {
                     val messageDetailsResult = runCatching {
-                        with (messageDetailsRepository) {
+                        with(messageDetailsRepository) {
                             if (isTransientMessage) fetchSearchMessageDetails(messageId)
                             else fetchMessageDetails(messageId)
                         }
                     }
 
                     messageDetailsResult
-                            .onFailure {
-                                requestPending.set(false)
-                                _messageDetailsError.postValue(Event(""))
-                            }
-                            .onSuccess { messageResponse ->
-                                if (messageResponse.code == RESPONSE_CODE_OK) {
-                                    with(messageDetailsRepository) {
+                        .onFailure {
+                            requestPending.set(false)
+                            _messageDetailsError.postValue(Event(""))
+                        }
+                        .onSuccess { messageResponse ->
+                            if (messageResponse.code == RESPONSE_CODE_OK) {
+                                with(messageDetailsRepository) {
 
-                                        if (isTransientMessage) {
-                                            val savedMessage = findSearchMessageById(messageId, bgDispatcher)
-                                            if (savedMessage != null) {
-                                                messageResponse.message.writeTo(savedMessage)
-                                                saveSearchMessageInDB(savedMessage)
-                                            } else {
-                                                prepareMessage(messageResponse.message)
-                                            }
-
+                                    if (isTransientMessage) {
+                                        val savedMessage = findSearchMessageById(messageId, bgDispatcher)
+                                        if (savedMessage != null) {
+                                            messageResponse.message.writeTo(savedMessage)
+                                            saveSearchMessageInDB(savedMessage)
                                         } else {
-                                            val savedMessage = findMessageById(messageId, bgDispatcher)
-                                            if (savedMessage != null) {
-                                                messageResponse.message.writeTo(savedMessage)
-                                                saveMessageInDB(savedMessage)
-                                            } else {
-                                                prepareMessage(messageResponse.message)
-                                                setFolderLocation(messageResponse.message)
-                                                saveMessageInDB(messageResponse.message, isTransientMessage)
-                                            }
+                                            prepareMessage(messageResponse.message)
+                                        }
+
+                                    } else {
+                                        val savedMessage = findMessageById(messageId, bgDispatcher)
+                                        if (savedMessage != null) {
+                                            messageResponse.message.writeTo(savedMessage)
+                                            saveMessageInDB(savedMessage)
+                                        } else {
+                                            prepareMessage(messageResponse.message)
+                                            setFolderLocation(messageResponse.message)
+                                            saveMessageInDB(messageResponse.message, isTransientMessage)
                                         }
                                     }
-                                } else {
-                                    _messageDetailsError.postValue(Event(messageResponse.error))
                                 }
+                            } else {
+                                _messageDetailsError.postValue(Event(messageResponse.error))
                             }
+                        }
                 }
             }
         }
@@ -533,7 +546,7 @@ internal class MessageDetailsViewModel(
             val embeddedImagesAttachments = ArrayList<Attachment>()
             for (attachment in attachments) {
                 val embeddedImage = EmbeddedImage
-                        .fromAttachment(attachment, message.embeddedImagesArray.toList()) ?: continue
+                    .fromAttachment(attachment, message.embeddedImagesArray.toList()) ?: continue
                 embeddedImagesToFetch.add(embeddedImage)
                 embeddedImagesAttachments.add(attachment)
             }
@@ -596,9 +609,9 @@ internal class MessageDetailsViewModel(
     ) : ViewModelProvider.Factory {
 
         /**
-        This 2 values must be set before call `ViewModelProviders.of`.
-        It should be better to use an Assisted Injection but at least now we are sure that the
-        ViewModel will be instantiated with all the required parameters
+         This 2 values must be set before call `ViewModelProviders.of`.
+         It should be better to use an Assisted Injection but at least now we are sure that the
+         ViewModel will be instantiated with all the required parameters
          */
         lateinit var messageId: String
         var isTransientMessage = false
@@ -607,9 +620,9 @@ internal class MessageDetailsViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST") // MessageDetailsViewModel is T, since T is ViewModel
             return MessageDetailsViewModel(
-                    messageDetailsRepository, userManager, contactsRepository,
-                    attachmentMetadataDatabase, messageRendererFactory,
-                    messageId, isTransientMessage, deleteMessage
+                messageDetailsRepository, userManager, contactsRepository,
+                attachmentMetadataDatabase, messageRendererFactory,
+                messageId, isTransientMessage, deleteMessage
             ) as T
         }
     }

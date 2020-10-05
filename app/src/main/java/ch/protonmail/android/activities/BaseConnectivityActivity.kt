@@ -36,15 +36,17 @@ import javax.inject.Inject
 abstract class BaseConnectivityActivity : BaseActivity() {
 
     @Inject
-	lateinit var networkSnackBarUtil : NetworkSnackBarUtil
+    lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
-	@BindView(R.id.layout_no_connectivity_info)
+    @BindView(R.id.layout_no_connectivity_info)
     protected lateinit var mSnackLayout: View
     var mNoConnectivitySnack: Snackbar? = null
     protected var mCheckForConnectivitySnack: Snackbar? = null
 
     protected var pingHandler = Handler()
-    protected var pingRunnable: Runnable = Runnable { mJobManager.addJobInBackground(PingJob()) }
+    protected var pingRunnable: Runnable = Runnable {
+        mJobManager.addJobInBackground(PingJob())
+    }
 
     private var connectivityRetryListener = RetryListener()
 
@@ -91,8 +93,8 @@ abstract class BaseConnectivityActivity : BaseActivity() {
 
             message,
             user,
-            callback
-        , false)
+            callback, false
+        )
         mNoConnectivitySnack!!.show()
         val contentLayout = (mNoConnectivitySnack!!.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
         val vvv: TextView = contentLayout.actionView

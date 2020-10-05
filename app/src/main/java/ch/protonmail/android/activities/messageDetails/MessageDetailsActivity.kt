@@ -18,9 +18,6 @@
  */
 package ch.protonmail.android.activities.messageDetails
 
-//
-//
-//
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -126,8 +123,11 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 @AndroidEntryPoint
-internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
-    ILabelCreationListener, ILabelsChangeListener, IMoveMessagesListener {
+internal class MessageDetailsActivity :
+    BaseStoragePermissionActivity(),
+    ILabelCreationListener,
+    ILabelsChangeListener,
+    IMoveMessagesListener {
 
     private lateinit var pmWebViewClient: PMWebViewClient
     private var markAsRead = false
@@ -293,7 +293,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                     viewModel.markRead(true)
                     onBackPressed()
                 }
-            })
+            }
+        )
         viewModel.saveMessage()
     }
 
@@ -308,14 +309,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     override fun onStart() {
         super.onStart()
         mApp.bus.register(this)
-        if(this::viewModel.isInitialized) {
+        if (this::viewModel.isInitialized) {
             mApp.bus.register(viewModel)
         }
     }
 
     override fun onStop() {
         super.onStop()
-        if(this::viewModel.isInitialized) {
+        if (this::viewModel.isInitialized) {
             if (markAsRead) {
                 viewModel.markRead(true)
             }
@@ -345,7 +346,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if(!this::viewModel.isInitialized) {
+        if (!this::viewModel.isInitialized) {
             return true
         }
         val message = viewModel.decryptedMessageData.value
@@ -379,11 +380,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                 onBackPressed()
                 return true
             }
-            R.id.move_to_trash -> if (message != null) {
-                job = PostTrashJobV2(listOf(message.messageId), null)
-            } else {
-                showToast(R.string.message_not_loaded, Toast.LENGTH_SHORT)
-            }
+            R.id.move_to_trash ->
+                if (message != null) {
+                    job = PostTrashJobV2(listOf(message.messageId), null)
+                } else {
+                    showToast(R.string.message_not_loaded, Toast.LENGTH_SHORT)
+                }
             R.id.view_headers -> if (message != null) {
                 startActivity(
                     AppUtil.decorInAppIntent(
@@ -394,14 +396,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                     )
                 )
             }
-            R.id.delete_message -> showDeleteConfirmationDialog(
-                this,
-                getString(R.string.delete_message),
-                getString(R.string.confirm_destructive_action)
-            ) {
-                viewModel.deleteMessage(messageId)
-                onBackPressed()
-            }
+            R.id.delete_message ->
+                showDeleteConfirmationDialog(
+                    this,
+                    getString(R.string.delete_message),
+                    getString(R.string.confirm_destructive_action)
+                ) {
+                    viewModel.deleteMessage(messageId)
+                    onBackPressed()
+                }
             R.id.move_to_spam -> job = PostSpamJob(listOf(messageId))
             R.id.mark_unread -> {
                 if (message != null) {
@@ -944,8 +947,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
             viewModel.triggerVerificationKeyLoading()
             action_buttons.setOnMessageActionListener { messageAction: MessageActionType? ->
                 try {
-                    val newMessageTitle = MessageUtils.buildNewMessageTitle(this@MessageDetailsActivity,
-                        messageAction, message.subject)
+                    val newMessageTitle = MessageUtils.buildNewMessageTitle(
+                        this@MessageDetailsActivity,
+                        messageAction,
+                        message.subject
+                    )
                     val userUsedSpace = app.getSecureSharedPreferences(mUserManager.username)
                         .getLong(Constants.Prefs.PREF_USED_SPACE, 0)
                     val userMaxSpace = if (mUserManager.user.maxSpace == 0L) {
@@ -962,8 +968,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                             getString(R.string.learn_more),
                             getString(R.string.okay),
                             {
-                                val browserIntent = Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(getString(R.string.limit_reached_learn_more)))
+                                val browserIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(getString(R.string.limit_reached_learn_more))
+                                )
                                 startActivity(browserIntent)
                             },
                             { },
@@ -1061,7 +1069,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                                 if (editIntentExtras.embeddedImagesAttachmentsExist) {
                                     intent.putParcelableArrayListExtra(
                                         ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
-                                        editIntentExtras.attachments)
+                                        editIntentExtras.attachments
+                                    )
                                 }
                                 val attachments = editIntentExtras.attachments
                                 if (attachments.size > 0) {
