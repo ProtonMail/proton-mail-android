@@ -37,9 +37,9 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class DeleteAttachmentWorkerTest {
 
@@ -100,7 +100,7 @@ class DeleteAttachmentWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            kotlin.test.assertEquals(operationResult, expected)
+            assertEquals(operationResult, expected)
         }
     }
 
@@ -127,7 +127,7 @@ class DeleteAttachmentWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            kotlin.test.assertEquals(operationResult, expected)
+            assertEquals(operationResult, expected)
         }
     }
 }

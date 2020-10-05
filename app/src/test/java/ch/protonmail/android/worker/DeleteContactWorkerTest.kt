@@ -29,7 +29,6 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.Constants
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -39,9 +38,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Assert
 import org.junit.Before
-
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -90,7 +87,7 @@ class DeleteContactWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            Assert.assertEquals(operationResult, expected)
+            assertEquals(operationResult, expected)
         }
     }
 

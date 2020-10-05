@@ -35,10 +35,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
+import kotlin.test.assertEquals
 
 class PingWorkerTest {
 
