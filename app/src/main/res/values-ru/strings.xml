@@ -200,7 +200,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_email_address_removed">Адрес \'%s\' недействителен и был удален</string>
     <string name="no_recipients_specified">Пожалуйста, укажите хотя бы одного получателя</string>
     <string name="no_password_specified">Срок действия можно установить только на полностью зашифрованные сообщения. Пожалуйста, укажите пароль для получателей вне ProtonMail.</string>
-    <string name="attachment_limit">Вложения ограничены %1$s. Все вложения займут: %2$s.</string>
+    <string name="attachment_limit">Размер вложений ограничен %1$s. Все вложения займут: %2$s.</string>
     <string name="sending_message">Отправка сообщения...</string>
     <string name="sending_message_offline">Вы не в сети, поставлено в очередь на отправку...</string>
     <string name="go_to_inbox">Перейти во Входящие</string>

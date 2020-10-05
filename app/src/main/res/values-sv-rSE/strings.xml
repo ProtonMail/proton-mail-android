@@ -751,15 +751,15 @@ av nya meddelanden i bakgrunden</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Lägg till foto</string>
-    <string name="contact_display_name">\ue91c visningsnamn</string>
-    <string name="add_new_email">Lägga till e-postadress</string>
+    <string name="contact_display_name">\ue91c Visningsnamn</string>
+    <string name="add_new_email">\ue914 Lägga till e-postadress</string>
     <string name="no_groups">Inga grupper</string>
     <string name="contact_vcard_note">Anteckning</string>
     <string name="edit_contact">Redigera kontakt</string>
     <string name="create_contact_group">Skapa kontaktgrupp</string>
     <string name="edit_contact_group">Redigera kontaktgrupp</string>
     <string name="contact_groups_manage_addresses">Hantera adresser</string>
-    <string name="contact_group_display_name">\ue91c visningsnamn</string>
+    <string name="contact_group_display_name">\ue91a Visningsnamn</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Lägga till adressen till grupper</string>
     <string name="title_activity_address_chooser">Hantera adresser</string>
@@ -771,7 +771,7 @@ av nya meddelanden i bakgrunden</string>
     <string name="account_manager_remove_all">Ta bort alla konton</string>
     <string name="account_manager_logout">Logga ut</string>
     <string name="account_manager_login">Logga in</string>
-    <string name="manage_accounts_user_loggedout">%s(ut loggad)</string>
+    <string name="manage_accounts_user_loggedout">%s(utloggad)</string>
     <string name="manage_accounts_user_primary">%s(primär)</string>
     <string name="account_manager_remove">Ta bort</string>
     <string name="connect_account_login_title">Logga in till ditt Protonmail konto</string>
