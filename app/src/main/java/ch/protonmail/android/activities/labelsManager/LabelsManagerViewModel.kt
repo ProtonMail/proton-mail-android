@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -31,6 +31,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
+import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.jobs.PostLabelJob
@@ -38,6 +39,7 @@ import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.usecase.delete.DeleteLabel
+import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.JobManager
 import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
@@ -54,7 +56,8 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
     private val jobManager: JobManager,
     @Named("messages") private val messagesDatabase: MessagesDatabase,
     @Assisted private val savedStateHandle: SavedStateHandle,
-    private val deleteLabel: DeleteLabel
+    private val deleteLabel: DeleteLabel,
+    private val workManager: WorkManager
 ) : ViewModel(), ViewStateStoreScope {
 
     // Extract the original form of the data
@@ -139,18 +142,27 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
 
     /** Save the editing label */
     fun saveLabel() {
-
-        val job = if (labelEditor != null) {
-            with(labelEditor!!.buildParams()) {
-                PostLabelJob(labelName, color, display, exclusive, update, labelId)
+        if ( labelEditor != null ) {
+            with ( labelEditor!!.buildParams() ) {
+                PostLabelWorker.Enqueuer(workManager).enqueue(
+                    labelName,
+                    color,
+                    display,
+                    exclusive,
+                    update,
+                    labelId
+                )
             }
-
-        } else PostLabelJob(
-            tempLabelName.toString(), tempLabelColor.toColorHex(),
-            0, type.toExclusive(), false, null
-        )
-
-        jobManager.addJobInBackground(job) { /* TODO handle callback */ }
+        } else {
+            PostLabelWorker.Enqueuer(workManager).enqueue(
+                tempLabelName.toString(),
+                tempLabelColor.toColorHex(),
+                0,
+                type.toExclusive(),
+                false,
+                null
+            )
+        }
     }
 
     /** Set a [ColorInt] for the current editing Label */

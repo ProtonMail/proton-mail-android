@@ -111,11 +111,13 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDial
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.worker.DeleteMessageWorker
+import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
+import me.proton.core.util.android.workmanager.activity.getWorkManager
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import timber.log.Timber
@@ -727,7 +729,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        mJobManager.addJobInBackground(PostLabelJob(labelName, color, 0, 0, false, null))
+        PostLabelWorker.Enqueuer(getWorkManager()).enqueue(
+            labelName,
+            color,
+            0,
+            0,
+            false,
+            null
+        )
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {
