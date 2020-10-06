@@ -54,12 +54,12 @@ class DeleteLabelTest {
     @MockK
     private lateinit var contactsDatabase: ContactsDatabase
 
-    private lateinit var deleteUseCase: DeleteLabel
+    private lateinit var deleteLabel: DeleteLabel
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        deleteUseCase = DeleteLabel(TestDispatcherProvider, contactsDatabase, messagesDatabase, workScheduler)
+        deleteLabel = DeleteLabel(TestDispatcherProvider, contactsDatabase, messagesDatabase, workScheduler)
     }
 
     @Test
@@ -80,7 +80,7 @@ class DeleteLabelTest {
             )
             val workerStatusLiveData = MutableLiveData<List<WorkInfo>>()
             workerStatusLiveData.value = listOf(workInfo)
-            val expected = listOf(true)
+            val expected = true
 
             every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
             every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
@@ -89,7 +89,43 @@ class DeleteLabelTest {
             every { workScheduler.getWorkStatusLiveData() } returns workerStatusLiveData
 
             // when
-            val response = deleteUseCase(listOf(labelId))
+            val response = deleteLabel(listOf(labelId))
+            response.observeForever { }
+
+            // then
+            assertNotNull(response.value)
+            assertEquals(expected, response.value)
+        }
+    }
+
+    @Test
+    fun verifyThatMessageDeleteHasFailed() {
+        runBlockingTest {
+            // given
+            val labelId = "Id1"
+            val contactLabel = mockk<ContactLabel>()
+            val finishState = WorkInfo.State.FAILED
+            val outputData = workDataOf()
+            val workInfo = WorkInfo(
+                UUID.randomUUID(),
+                finishState,
+                outputData,
+                emptyList(),
+                outputData,
+                0
+            )
+            val workerStatusLiveData = MutableLiveData<List<WorkInfo>>()
+            workerStatusLiveData.value = listOf(workInfo)
+            val expected = false
+
+            every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
+            every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
+            every { messagesDatabase.deleteLabelById(labelId) } returns Unit
+            every { workScheduler.enqueue(any()) } returns mockk(relaxed = true)
+            every { workScheduler.getWorkStatusLiveData() } returns workerStatusLiveData
+
+            // when
+            val response = deleteLabel(listOf(labelId))
             response.observeForever { }
 
             // then

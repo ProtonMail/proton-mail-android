@@ -419,15 +419,12 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         )
     }
 
-    private fun onLabelDeletedEvent(isSuccessList: List<Boolean>) {
-        isSuccessList.forEach { isSuccessful ->
-            val message = when (type) {
-                FOLDERS -> if (isSuccessful) R.string.folder_deleted else R.string.folder_deleted_error
-                LABELS -> if (isSuccessful) R.string.label_deleted else R.string.label_deleted_error
-            }
-
-            showToast(message, Toast.LENGTH_SHORT)
+    private fun onLabelDeletedEvent(isSuccessful: Boolean) {
+        val message = when (type) {
+            FOLDERS -> if (isSuccessful) R.string.folder_deleted else R.string.folder_deleted_error
+            LABELS -> if (isSuccessful) R.string.label_deleted else R.string.label_deleted_error
         }
+        showToast(message, Toast.LENGTH_SHORT)
     }
 
     @Subscribe

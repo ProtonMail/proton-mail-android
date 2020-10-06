@@ -21,9 +21,9 @@ package ch.protonmail.android.usecase.delete
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import androidx.work.WorkInfo
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.utils.extensions.reduceWorkInfoToBoolean
 import ch.protonmail.android.worker.DeleteLabelWorker
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -43,7 +43,7 @@ class DeleteLabel @Inject constructor(
     private val workerScheduler: DeleteLabelWorker.Enqueuer
 ) {
 
-    suspend operator fun invoke(labelIds: List<String>): LiveData<List<Boolean>> =
+    suspend operator fun invoke(labelIds: List<String>): LiveData<Boolean> =
         withContext(dispatchers.Io) {
 
             // delete labels in DB
@@ -62,11 +62,6 @@ class DeleteLabel @Inject constructor(
             // schedule worker to remove label ids over the network
             workerScheduler.enqueue(labelIds)
             return@withContext workerScheduler.getWorkStatusLiveData()
-                .map { mapStateToBoolean(it) }
+                .map { it.reduceWorkInfoToBoolean() }
         }
-
-    private fun mapStateToBoolean(infoList: List<WorkInfo>): List<Boolean> =
-        infoList.map { it.state }
-            .filter { it.isFinished }
-            .map { it == WorkInfo.State.SUCCEEDED }
 }

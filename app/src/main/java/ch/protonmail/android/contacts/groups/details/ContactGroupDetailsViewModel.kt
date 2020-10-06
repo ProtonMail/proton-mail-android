@@ -70,9 +70,8 @@ class ContactGroupDetailsViewModel @Inject constructor(
         return liveData {
             emitSource(
                 deleteLabel(contactsToDelete)
-                    .map { it.contains(false) }
-                    .map { containsFailure ->
-                        if (!containsFailure) {
+                    .map { isSuccess ->
+                        if (isSuccess) {
                             Event(Status.SUCCESS)
                         } else {
                             Event(Status.ERROR)

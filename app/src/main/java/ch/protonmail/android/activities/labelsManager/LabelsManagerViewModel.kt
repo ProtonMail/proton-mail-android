@@ -52,7 +52,7 @@ internal class LabelsManagerViewModel(
     messagesDatabase: MessagesDatabase,
     private val type: LabelUiModel.Type,
     private val labelMapper: LabelUiModelMapper,
-    private val deleteLabelUseCase: DeleteLabel
+    private val deleteLabel: DeleteLabel
 ) : ViewModel(), ViewStateStoreScope {
 
     /** Triggered when a selection has changed */
@@ -62,10 +62,10 @@ internal class LabelsManagerViewModel(
     /** Triggered when [selectedLabelIds] has changed */
     val hasSelectedLabels = ViewStateStore.from(selectedLabelIds.map { it.isNotEmpty() }).lock
 
-    val hasSuccessfullyDeletedMessages: LiveData<List<Boolean>>
+    val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = deleteLabelIds.switchMap {
             liveData {
-                emitSource(deleteLabelUseCase(it))
+                emitSource(deleteLabel(it))
             }
         }
 

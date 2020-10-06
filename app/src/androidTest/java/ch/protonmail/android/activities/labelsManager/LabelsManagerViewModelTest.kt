@@ -19,17 +19,13 @@
 package ch.protonmail.android.activities.labelsManager
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.LiveData
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.libs.core.utils.EMPTY_STRING
-import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -60,7 +56,7 @@ internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
             messagesDatabase = messagesDatabase,
             type = LabelUiModel.Type.LABELS,
             labelMapper = LabelUiModelMapper(isLabelEditable = false),
-            deleteLabelUseCase = mockk()
+            deleteLabel = mockk()
         )
     }
 
