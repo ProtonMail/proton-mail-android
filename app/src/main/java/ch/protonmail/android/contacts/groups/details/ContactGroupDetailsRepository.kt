@@ -26,7 +26,6 @@ import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Observable

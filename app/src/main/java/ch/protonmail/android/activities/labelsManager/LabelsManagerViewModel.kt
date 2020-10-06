@@ -34,7 +34,6 @@ import androidx.paging.toLiveData
 import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
 import ch.protonmail.android.mapper.map
 import ch.protonmail.android.uiModel.LabelUiModel

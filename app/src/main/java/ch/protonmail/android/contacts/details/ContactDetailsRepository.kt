@@ -29,12 +29,8 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
-import ch.protonmail.android.jobs.PostLabelJob
-<<<<<<< HEAD
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
-=======
 import ch.protonmail.android.worker.PostLabelWorker
->>>>>>> 4777487... Use PostLabelWorker in place of Job for contactDetail classes
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable

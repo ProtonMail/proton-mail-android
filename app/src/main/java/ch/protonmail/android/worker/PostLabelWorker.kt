@@ -22,8 +22,6 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
-import androidx.work.Constraints
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
 import androidx.work.WorkManager
@@ -42,7 +40,7 @@ internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
 internal const val KEY_INPUT_DATA_IS_UPDATE = "keyInputDataIsUpdate"
 internal const val KEY_INPUT_DATA_LABEL_COLOR = "keyInputDataLabelColor"
-internal const val KEY_INPUT_DATA_LABEL_IS_DISPLAY = "keyInputDataLabelIsDisplay"
+internal const val KEY_INPUT_DATA_LABEL_DISPLAY = "keyInputDataLabelIsDisplay"
 internal const val KEY_INPUT_DATA_LABEL_EXCLUSIVE = "keyInputDataLabelExlusive"
 
 class PostLabelWorker @WorkerInject constructor(
@@ -56,7 +54,7 @@ class PostLabelWorker @WorkerInject constructor(
         val update = inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false)
         val labelName = inputData.getString(KEY_INPUT_DATA_LABEL_NAME) ?: return Result.failure()
         val color = inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) ?: return Result.failure()
-        val display = inputData.getInt(KEY_INPUT_DATA_LABEL_IS_DISPLAY, 0)
+        val display = inputData.getInt(KEY_INPUT_DATA_LABEL_DISPLAY, 0)
         val exclusive = inputData.getInt(KEY_INPUT_DATA_LABEL_EXCLUSIVE, 0)
         val labelIdInput = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 
@@ -101,7 +99,7 @@ class PostLabelWorker @WorkerInject constructor(
                     KEY_INPUT_DATA_LABEL_COLOR to color,
                     KEY_INPUT_DATA_LABEL_EXCLUSIVE to exclusive,
                     KEY_INPUT_DATA_IS_UPDATE to update,
-                    KEY_INPUT_DATA_LABEL_IS_DISPLAY to display
+                    KEY_INPUT_DATA_LABEL_DISPLAY to display
                 ))
                 .build()
 

@@ -153,7 +153,6 @@ import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PingJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostStarJob
