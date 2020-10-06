@@ -728,14 +728,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        PostLabelWorker.Enqueuer(getWorkManager()).enqueue(
-            labelName,
-            color,
-            0,
-            0,
-            false,
-            null
-        )
+        PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {

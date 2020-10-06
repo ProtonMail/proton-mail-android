@@ -129,7 +129,6 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
@@ -1438,14 +1437,7 @@ class MailboxActivity : NavigationActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        PostLabelWorker.Enqueuer(getWorkManager()).enqueue(
-            labelName,
-            color,
-            0,
-            0,
-            false,
-            null
-        )
+        PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {

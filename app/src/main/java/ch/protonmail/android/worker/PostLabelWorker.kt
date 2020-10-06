@@ -20,7 +20,6 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import android.widget.Toast
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.OneTimeWorkRequestBuilder
@@ -52,18 +51,16 @@ class PostLabelWorker @WorkerInject constructor(
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val update = inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false)
-        val labelName = inputData.getString(KEY_INPUT_DATA_LABEL_NAME) ?: return Result.failure()
-        val color = inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) ?: return Result.failure()
-        val display = inputData.getInt(KEY_INPUT_DATA_LABEL_DISPLAY, 0)
-        val exclusive = inputData.getInt(KEY_INPUT_DATA_LABEL_EXCLUSIVE, 0)
-        val labelIdInput = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
+        val labelName = getLabelNameParam() ?: return Result.failure()
+        val color = getLabelColorParam() ?: return Result.failure()
+        val display = getDisplayParam()
+        val exclusive = getExclusiveParam()
 
-        val labelResponse: LabelResponse = if (!update) {
-            apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
-        } else {
-            val validLabelId = labelIdInput ?: return Result.failure()
+        val labelResponse = if (isUpdateParam()) {
+            val validLabelId = getLabelIdParam() ?: return Result.failure()
             apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
+        } else {
+            apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
         }
         if (labelResponse.hasError()) {
             val errorText = labelResponse.error
@@ -71,27 +68,40 @@ class PostLabelWorker @WorkerInject constructor(
             return Result.failure()
         }
 
-        if (labelResponse.label == null) {
+        if (isLabelResponseNotValid(labelResponse)) {
             AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, labelResponse.error))
             return Result.failure()
         }
 
-        if (labelResponse.label.id != "") {
-            labelRepository.saveLabel(labelResponse.label)
-            AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
-        }
-
+        labelRepository.saveLabel(labelResponse.label)
+        AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
         return Result.success()
     }
+
+    @Suppress("SENSELESS_COMPARISON")
+    private fun isLabelResponseNotValid(labelResponse: LabelResponse) =
+        labelResponse.label == null || labelResponse.label.id == ""
+
+    private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
+
+    private fun getExclusiveParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_EXCLUSIVE, 0)
+
+    private fun getDisplayParam() = inputData.getInt(KEY_INPUT_DATA_LABEL_DISPLAY, 0)
+
+    private fun getLabelColorParam() = inputData.getString(KEY_INPUT_DATA_LABEL_COLOR)
+
+    private fun getLabelNameParam() = inputData.getString(KEY_INPUT_DATA_LABEL_NAME)
+
+    private fun isUpdateParam() = inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false)
 
     class Enqueuer(private val workManager: WorkManager) {
 
         fun enqueue(labelName: String,
                     color: String,
-                    display: Int,
-                    exclusive: Int,
-                    update: Boolean,
-                    labelId: String?): Operation {
+                    display: Int? = 0,
+                    exclusive: Int? = 0,
+                    update: Boolean? = false,
+                    labelId: String? = null): Operation {
 
             val postLabelWorker = OneTimeWorkRequestBuilder<PostLabelWorker>()
                 .setInputData(workDataOf(
