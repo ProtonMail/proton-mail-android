@@ -69,6 +69,8 @@ class DeleteMessageTest {
             every { repository.findMessageById(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
             every { repository.findSearchMessageById(messId) } returns null
+            every { repository.saveMessagesInOneTransaction(any()) } returns Unit
+            every { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
@@ -93,6 +95,8 @@ class DeleteMessageTest {
             every { repository.findMessageById(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
             every { repository.findSearchMessageById(messId) } returns null
+            every { repository.saveMessagesInOneTransaction(any()) } returns Unit
+            every { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
@@ -120,6 +124,8 @@ class DeleteMessageTest {
             every { repository.findSearchMessageById(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
             every { repository.saveSearchMessageInDB(message) } returns Unit
+            every { repository.saveMessagesInOneTransaction(any()) } returns Unit
+            every { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
             every { workScheduler.enqueue(any()) } returns operation
 
             // when

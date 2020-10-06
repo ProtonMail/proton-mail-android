@@ -38,7 +38,6 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
-internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 internal const val KEY_INPUT_VALID_MESSAGES_IDS = "KeyInputValidMessageIds"
 
 /**
