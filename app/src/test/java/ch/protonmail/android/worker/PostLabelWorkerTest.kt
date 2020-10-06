@@ -63,4 +63,22 @@ class PostLabelWorkerTest {
 
         assertEquals(ListenableWorker.Result.failure(), result)
     }
+
+    @Test
+    fun `workers fails when labelName parameter is not passed`() {
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns null
+
+        val result = worker.doWork()
+
+        assertEquals(ListenableWorker.Result.failure(), result)
+    }
+
+    @Test
+    fun `workers fails when color parameter is not passed`() {
+        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns null
+
+        val result = worker.doWork()
+
+        assertEquals(ListenableWorker.Result.failure(), result)
+    }
 }
