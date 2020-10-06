@@ -19,14 +19,14 @@
 
 package ch.protonmail.android.data
 
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.messages.Label
+import ch.protonmail.android.api.models.room.messages.MessagesDao
+import javax.inject.Named
 
-class RoomLabelRepository(val databaseProvider: DatabaseProvider) : LabelRepository {
+class RoomLabelRepository(@Named("messages") var messagesDao: MessagesDao) : LabelRepository {
 
     override fun saveLabel(label: Label) {
-        val messagesDatabase = databaseProvider.provideMessagesDao()
-        messagesDatabase.saveLabel(label)
+        messagesDao.saveLabel(label)
     }
 
 }
