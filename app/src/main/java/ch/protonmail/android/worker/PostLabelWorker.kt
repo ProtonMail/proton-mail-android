@@ -20,6 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import android.widget.Toast
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.OneTimeWorkRequestBuilder
@@ -61,7 +62,8 @@ class PostLabelWorker @WorkerInject constructor(
         val labelResponse: LabelResponse = if (!update) {
             apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
         } else {
-            apiManager.updateLabel(labelIdInput!!, LabelBody(labelName, color, display, exclusive))
+            val validLabelId = labelIdInput ?: return Result.failure()
+            apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
         }
         if (labelResponse.hasError()) {
             val errorText = labelResponse.error
@@ -76,8 +78,7 @@ class PostLabelWorker @WorkerInject constructor(
 
         if (labelResponse.label.id != "") {
             labelRepository.saveLabel(labelResponse.label)
-            // TODO re-enable posting event on UI without the bus (removed as it makes Unit Testing repository harder)
-//            AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
+            AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
         }
 
         return Result.success()
