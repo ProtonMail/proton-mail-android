@@ -26,6 +26,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
@@ -44,12 +45,12 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
+import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -78,7 +79,8 @@ internal class MessageDetailsViewModel(
     messageRendererFactory: MessageRenderer.Factory,
     val messageId: String,
     private val isTransientMessage: Boolean,
-    private val deleteMessageUseCase: DeleteMessage
+    private val deleteMessageUseCase: DeleteMessage,
+    private val sendPing: SendPing
 ) : ViewModel() {
 
     private val messageRenderer
@@ -99,7 +101,6 @@ internal class MessageDetailsViewModel(
 
     // region properties and data
     private val requestPending = AtomicBoolean(false)
-    private var _hasConnection = AtomicBoolean(true)
     var renderedFromCache = AtomicBoolean(false)
 
     var refreshedKeys: Boolean = true
@@ -111,6 +112,7 @@ internal class MessageDetailsViewModel(
     private val _connectivityEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
+    private val _pingTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     var nonBrokenEmail: String? = null
     var bodyString: String? = null
@@ -157,11 +159,7 @@ internal class MessageDetailsViewModel(
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
-    // region getters and setters
-    var hasConnection: Boolean
-        get() = _hasConnection.get()
-        set(value) = _hasConnection.set(value)
-    // endregion
+    val hasConnection : LiveData<Boolean> = _pingTrigger.switchMap { sendPing() }
 
     init {
         tryFindMessage()
@@ -504,10 +502,12 @@ internal class MessageDetailsViewModel(
         }
     }
 
-    @Subscribe
-    fun onConnectivityEvent(event: ConnectivityEvent) {
-        val hasConnection = event.hasConnection()
-        _hasConnection.set(hasConnection)
+    fun launchPing() {
+        Timber.v("Launch ping")
+        _pingTrigger.value = Unit
+    }
+
+    private fun onConnectivityEvent(hasConnection: Boolean) {
         if (!hasConnection && !renderedFromCache.get()) {
             _connectivityEvent.postValue(Event(false))
         } else {
@@ -605,7 +605,8 @@ internal class MessageDetailsViewModel(
         private val contactsRepository: ContactsRepository,
         private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
         private val messageRendererFactory: MessageRenderer.Factory,
-        private val deleteMessage: DeleteMessage
+        private val deleteMessage: DeleteMessage,
+        private val sendPing: SendPing
     ) : ViewModelProvider.Factory {
 
         /**
@@ -622,7 +623,7 @@ internal class MessageDetailsViewModel(
             return MessageDetailsViewModel(
                 messageDetailsRepository, userManager, contactsRepository,
                 attachmentMetadataDatabase, messageRendererFactory,
-                messageId, isTransientMessage, deleteMessage
+                messageId, isTransientMessage, deleteMessage, sendPing
             ) as T
         }
     }

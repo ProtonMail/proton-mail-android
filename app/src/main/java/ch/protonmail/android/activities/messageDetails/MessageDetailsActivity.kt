@@ -255,10 +255,7 @@ internal class MessageDetailsActivity :
     override fun onResume() {
         super.onResume()
         checkDelinquency()
-        pingHandler.postDelayed(pingRunnable, 0)
-        if (!mNetworkUtil.isConnected()) {
-            showNoConnSnackExtended()
-        }
+        viewModel.launchPing()
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
@@ -465,7 +462,6 @@ internal class MessageDetailsActivity :
 
     private inner class MessageDetailsRetryListener : RetryListener() {
         override fun onClick(v: View) {
-            viewModel.hasConnection = true
             mNetworkUtil.setCurrentlyHasConnectivity(true)
             viewModel.fetchMessageDetails(false)
             super.onClick(v)
