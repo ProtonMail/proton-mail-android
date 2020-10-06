@@ -27,7 +27,6 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory.Companion.getInstance
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.Status
@@ -66,17 +65,13 @@ class PostLabelWorker @WorkerInject constructor(
             return Result.failure()
         }
 
-        val labelBody = labelResponse.label
-        if (labelBody == null) {
-            // we have no label response, checking for error
+        if (labelResponse.label == null) {
             AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, labelResponse.error))
             return Result.failure()
         }
-        val labelId = labelBody.id
-        // update local label
-        // update local label
-        if (labelId != "") {
-            labelRepository.saveLabel(labelBody)
+
+        if (labelResponse.label.id != "") {
+            labelRepository.saveLabel(labelResponse.label)
             // TODO re-enable posting event on UI without the bus (removed as it makes Unit Testing repository harder)
 //            AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
         }
