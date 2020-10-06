@@ -28,6 +28,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory.Companion.getInstance
+import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
@@ -42,7 +43,8 @@ internal const val KEY_INPUT_DATA_LABEL_EXCLUSIVE = "keyInputDataLabelExlusive"
 class PostLabelWorker @WorkerInject constructor(
     @Assisted val context: Context,
     @Assisted val workerParams: WorkerParameters,
-    private val apiManager: ProtonMailApiManager
+    private val apiManager: ProtonMailApiManager,
+    private val labelRepository: LabelRepository
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
@@ -53,7 +55,6 @@ class PostLabelWorker @WorkerInject constructor(
         val exclusive = inputData.getInt(KEY_INPUT_DATA_LABEL_EXCLUSIVE, 0)
         val labelIdInput = inputData.getString(KEY_INPUT_DATA_LABEL_ID) ?: return Result.failure()
 
-        val messagesDatabase = getInstance(applicationContext).getDatabase()
         val labelResponse: LabelResponse = if (!update) {
             apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
         } else {
@@ -75,8 +76,9 @@ class PostLabelWorker @WorkerInject constructor(
         // update local label
         // update local label
         if (labelId != "") {
-            messagesDatabase.saveLabel(labelBody)
-            AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
+            labelRepository.saveLabel(labelBody)
+            // TODO re-enable posting event on UI without the bus (removed as it makes Unit Testing repository harder)
+//            AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
         }
 
         return Result.success()

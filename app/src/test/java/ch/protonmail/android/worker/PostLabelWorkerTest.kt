@@ -23,14 +23,17 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.messages.receive.LabelResponse
+import ch.protonmail.android.api.models.room.messages.Label
+import ch.protonmail.android.data.LabelRepository
+import ch.protonmail.android.data.RoomLabelRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
-import org.junit.Assert
+import io.mockk.verify
 import org.junit.Assert.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.`when`
 
 class PostLabelWorkerTest {
 
@@ -43,6 +46,12 @@ class PostLabelWorkerTest {
     @RelaxedMockK
     private lateinit var apiManager: ProtonMailApiManager
 
+    @RelaxedMockK
+    private lateinit var repository: LabelRepository
+
+    @RelaxedMockK
+    private lateinit var labelApiResponse: LabelResponse
+
     private lateinit var worker: PostLabelWorker
 
     @BeforeEach
@@ -51,7 +60,8 @@ class PostLabelWorkerTest {
         worker = PostLabelWorker(
             context,
             parameters,
-            apiManager
+            apiManager,
+            repository
         )
     }
 
@@ -80,5 +90,17 @@ class PostLabelWorkerTest {
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.failure(), result)
+    }
+
+    @Test
+    fun `workers saves label in repository when creation succeeds`() {
+        every { labelApiResponse.label } returns Label("ID", "name", "color")
+        every { labelApiResponse.hasError() } returns false
+        every { apiManager.createLabel(any()) } returns labelApiResponse
+
+        val result = worker.doWork()
+
+        verify { repository.saveLabel(any()) }
+        assertEquals(ListenableWorker.Result.success(), result)
     }
 }

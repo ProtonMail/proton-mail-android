@@ -30,10 +30,8 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailbo
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewModel
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.compose.ComposeMessageRepository
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
@@ -43,6 +41,8 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.LabelRepository
+import ch.protonmail.android.data.RoomLabelRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.Module
@@ -142,6 +142,10 @@ internal class ViewModelModule {
             ViewModelProvider.NewInstanceFactory {
         return pinFragmentViewModelFactory
     }
-    // endregion
+
+    @Provides
+    internal fun provideLabelRepository(
+        databaseProvider: DatabaseProvider
+    ): LabelRepository = RoomLabelRepository(databaseProvider)
 
 }
