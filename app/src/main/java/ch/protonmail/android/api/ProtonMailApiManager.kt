@@ -125,24 +125,25 @@ import javax.inject.Singleton
  * which can work directly with the Proton API or use any alternative proxy.
  */
 @Singleton
-class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseApi(),
-        AddressApiSpec,
-        AttachmentApiSpec,
-        AuthenticationApiSpec,
-        ConnectivityApiSpec,
-        ContactApiSpec,
-        DeviceApiSpec,
-        KeyApiSpec,
-        LabelApiSpec,
-        MessageApiSpec,
-        OrganizationApiSpec,
-        PaymentApiSpec,
-        ReportApiSpec,
-        ResetApiSpec,
-        UserSettingsApiSpec,
-        MailSettingsApiSpec,
-        UserApiSpec,
-        DomainApiSpec {
+class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
+    : BaseApi(),
+    AddressApiSpec,
+    AttachmentApiSpec,
+    AuthenticationApiSpec,
+    ConnectivityApiSpec,
+    ContactApiSpec,
+    DeviceApiSpec,
+    KeyApiSpec,
+    LabelApiSpec,
+    MessageApiSpec,
+    OrganizationApiSpec,
+    PaymentApiSpec,
+    ReportApiSpec,
+    ResetApiSpec,
+    UserSettingsApiSpec,
+    MailSettingsApiSpec,
+    UserApiSpec,
+    DomainApiSpec {
 
     fun reset(newApi: ProtonMailApi) {
         api = newApi
@@ -163,16 +164,13 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun deleteAttachment(attachmentId: String): ResponseBody = api.deleteAttachment(attachmentId)
 
-    override fun downloadAttachment(attachmentId: String, progressListener: ProgressListener): ByteArray
-            = api.downloadAttachment(attachmentId)
+    override fun downloadAttachment(attachmentId: String, progressListener: ProgressListener): ByteArray = api.downloadAttachment(attachmentId)
 
     override fun downloadAttachment(attachmentId: String): ByteArray = api.downloadAttachment(attachmentId)
 
-    override fun uploadAttachmentInline(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
-            = api.uploadAttachmentInline(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachmentInline(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
 
-    override fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse
-            = api.uploadAttachment(attachment, MessageID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, MessageID, KeyPackage, DataPackage, Signature)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
@@ -185,8 +183,7 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
      */
     override fun loginInfoForAuthentication(username: String): LoginInfoResponse = api.loginInfoForAuthentication(username)
 
-    override fun login(username: String, srpSession: String, clientEphemeral: ByteArray, clientProof: ByteArray): LoginResponse
-            = api.login(username, srpSession, clientEphemeral, clientProof)
+    override fun login(username: String, srpSession: String, clientEphemeral: ByteArray, clientProof: ByteArray): LoginResponse = api.login(username, srpSession, clientEphemeral, clientProof)
 
     override fun randomModulus(): ModulusResponse = api.randomModulus()
 
@@ -202,8 +199,7 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> = api.fetchContactEmails(pageSize)
 
-    override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>
-            = api.fetchContactsEmailsByLabelId(page, labelId)
+    override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> = api.fetchContactsEmailsByLabelId(page, labelId)
 
     override fun fetchContactDetails(contactId: String): FullContactDetailsResponse? = api.fetchContactDetails(contactId)
 
@@ -219,7 +215,9 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun labelContacts(labelContactsBody: LabelContactsBody): Completable = api.labelContacts(labelContactsBody)
 
-    override fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable = api.unlabelContactEmails(labelContactsBody)
+    override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable = api.unlabelContactEmailsCompletable(labelContactsBody)
+
+    override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) = api.unlabelContactEmails(labelContactsBody)
 
     override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
 
@@ -278,7 +276,7 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
     override fun messageDetail(messageId: String): MessageResponse = api.messageDetail(messageId)
 
     override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
-            api.messageDetail(messageId, retrofitTag)
+        api.messageDetail(messageId, retrofitTag)
 
     override fun messageDetailObservable(messageId: String): Observable<MessageResponse> = api.messageDetailObservable(messageId)
 
@@ -292,8 +290,7 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, newMessage, retrofitTag)
 
-    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse>
-            = api.sendMessage(messageId, message, retrofitTag)
+    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> = api.sendMessage(messageId, message, retrofitTag)
 
     override fun unlabelMessages(idList: IDList) = api.unlabelMessages(idList)
 
@@ -331,11 +328,9 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun getPaymentToken(token: String): Call<GetPaymentTokenResponse> = api.getPaymentToken(token)
 
-    override fun reportBug(OSName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, username: String, email: String): ResponseBody
-            = api.reportBug(OSName, appVersion, client, clientVersion, title, description, username, email)
+    override fun reportBug(OSName: String, appVersion: String, client: String, clientVersion: String, title: String, description: String, username: String, email: String): ResponseBody = api.reportBug(OSName, appVersion, client, clientVersion, title, description, username, email)
 
-    override fun postPhishingReport(messageId: String, messageBody: String, mimeType: String): ResponseBody?
-            = api.postPhishingReport(messageId, messageBody, mimeType)
+    override fun postPhishingReport(messageId: String, messageBody: String, mimeType: String): ResponseBody? = api.postPhishingReport(messageId, messageBody, mimeType)
 
     override fun resetMailboxToken(): ResetTokenResponse? = api.resetMailboxToken()
 
@@ -347,8 +342,7 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun updateNotify(updateNotify: Boolean): ResponseBody? = api.updateNotify(updateNotify)
 
-    override fun updateNotificationEmail(srpSession: String, clientEpheremal: String, clientProof: String, twoFactorCode: String?, email: String): SrpResponseBody?
-            = api.updateNotificationEmail(srpSession, clientEpheremal, clientProof, twoFactorCode, email)
+    override fun updateNotificationEmail(srpSession: String, clientEpheremal: String, clientProof: String, twoFactorCode: String?, email: String): SrpResponseBody? = api.updateNotificationEmail(srpSession, clientEpheremal, clientProof, twoFactorCode, email)
 
     override fun updateLoginPassword(passwordChangeBody: PasswordChange): SrpResponseBody? = api.updateLoginPassword(passwordChangeBody)
 
@@ -378,8 +372,7 @@ class ProtonMailApiManager @Inject constructor (var api: ProtonMailApi) : BaseAp
 
     override fun postHumanVerification(body: PostHumanVerificationBody): ResponseBody? = api.postHumanVerification(body)
 
-    override fun createUser(username: String, password: PasswordVerifier, updateMe: Boolean, tokenType: String, token: String, timestamp: String, payload: String): UserInfo
-            = api.createUser(username, password, updateMe, tokenType, token, timestamp, payload)
+    override fun createUser(username: String, password: PasswordVerifier, updateMe: Boolean, tokenType: String, token: String, timestamp: String, payload: String): UserInfo = api.createUser(username, password, updateMe, tokenType, token, timestamp, payload)
 
     override fun sendVerificationCode(verificationCodeBody: VerificationCodeBody): ResponseBody = api.sendVerificationCode(verificationCodeBody)
 

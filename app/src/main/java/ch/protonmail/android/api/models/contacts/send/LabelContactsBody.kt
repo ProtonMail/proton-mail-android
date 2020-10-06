@@ -25,10 +25,6 @@ private const val FIELD_LABEL_ID = "LabelID"
 private const val FIELD_CONTACT_EMAILS_IDS = "ContactEmailIDs"
 // endregion
 
-/**
- * Created by kadrikj on 9/6/18.
- */
-
 class LabelContactsBody(
         @SerializedName(FIELD_LABEL_ID)
         var labelId: String,
