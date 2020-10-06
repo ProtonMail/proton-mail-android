@@ -30,7 +30,6 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
-import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.data.LabelRepository
 import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.Status
@@ -68,19 +67,20 @@ class PostLabelWorker @WorkerInject constructor(
             return Result.failure()
         }
 
-        if (isLabelResponseNotValid(labelResponse)) {
+        val labelBody = labelResponse.label
+        if (labelBody == null) {
+            // we have no label response, checking for error
             AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, labelResponse.error))
             return Result.failure()
         }
+        val labelId = labelBody.id
+        if (labelId != "") {
+            labelRepository.saveLabel(labelBody)
+        }
 
-        labelRepository.saveLabel(labelResponse.label)
         AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
         return Result.success()
     }
-
-    @Suppress("SENSELESS_COMPARISON")
-    private fun isLabelResponseNotValid(labelResponse: LabelResponse) =
-        labelResponse.label == null || labelResponse.label.id == ""
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 

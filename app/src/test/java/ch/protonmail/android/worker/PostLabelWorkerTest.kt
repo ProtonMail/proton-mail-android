@@ -27,13 +27,12 @@ import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.data.LabelRepository
-import ch.protonmail.android.data.RoomLabelRepository
 import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -69,7 +68,8 @@ class PostLabelWorkerTest {
     }
 
     @Test
-    fun `worker does not fail when labelId parameter is not passed`() {
+    fun `worker succeeds when create label is performed without passing labelId parameter`() {
+        every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
         every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
 
         val result = worker.doWork()
@@ -95,7 +95,6 @@ class PostLabelWorkerTest {
         assertEquals(ListenableWorker.Result.failure(), result)
     }
 
-    @Ignore("Ignoring till we decide how to handle Bus")
     @Test
     fun `worker saves label in repository when creation succeeds`() {
         every { labelApiResponse.label } returns Label("ID", "name", "color")
@@ -149,7 +148,6 @@ class PostLabelWorkerTest {
         assertEquals(ListenableWorker.Result.failure(), result)
     }
 
-    @Ignore("Ignoring till we decide how to handle Bus")
     @Test
     fun `worker show error and fails when api returns any errors`() {
         every { labelApiResponse.hasError() } returns true
