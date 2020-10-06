@@ -281,6 +281,7 @@ class ComposerRobot {
         UIActions.wait.forViewWithId(R.id.tokenPgpText)
         UIActions.id.clickViewWithId(sendMessageId)
         UIActions.wait.forViewWithText(R.string.message_sent)
+        UIActions.wait.untilViewWithTextIsGone(R.string.message_sent)
     }
 
     /**

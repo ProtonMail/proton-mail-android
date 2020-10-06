@@ -628,6 +628,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         final TextView optionIcon = emailRowView.findViewById(R.id.optionIcon);
         final TextView titleView = emailRowView.findViewById(R.id.optionTitle);
         final EditText optionValueView = emailRowView.findViewById(R.id.option);
+        optionValueView.setVisibility(View.VISIBLE);
         if (singleLine) {
             optionValueView.setInputType(inputType);
         } else {
@@ -646,6 +647,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             });
         }
         final ImageButton btnMinus = emailRowView.findViewById(R.id.btn_minus);
+        btnMinus.setVisibility(View.VISIBLE);
         optionValueView.addTextChangedListener(new DirtyWatcher());
         optionValueView.setHint(optionHint);
         ImageButton btnEmailType = emailRowView.findViewById(R.id.btnOptionType);
@@ -724,14 +726,20 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         optionTitle.setText(optionUITypeText);
 
         btnAddNewRow.setVisibility(View.VISIBLE);
+        option.setVisibility(View.GONE);
+        btnMinus.setVisibility(View.GONE);
         if (!singleLine) {
             btnAddNewRow.setText(addOptionTitleText);
             inputFields.setVisibility(View.GONE);
+            option.setVisibility(View.VISIBLE);
+            btnMinus.setVisibility(View.VISIBLE);
         }
 
         btnAddNewRow.setOnClickListener(v -> {
             inputFields.setVisibility(View.VISIBLE);
             btnAddNewRow.setVisibility(View.GONE);
+            option.setVisibility(View.VISIBLE);
+            btnMinus.setVisibility(View.VISIBLE);
             option.requestFocus();
             UiUtil.toggleKeyboard(this, option);
             ContactOptionTypeClickListener optionTypeClickListener = new ContactOptionTypeClickListener(
