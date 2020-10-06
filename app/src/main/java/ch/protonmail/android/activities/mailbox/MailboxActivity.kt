@@ -177,6 +177,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedIn
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -186,6 +187,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -1437,7 +1439,14 @@ class MailboxActivity : NavigationActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        mJobManager.addJobInBackground(PostLabelJob(labelName, color, 0, 0, false, null))
+        PostLabelWorker.Enqueuer(getWorkManager()).enqueue(
+            labelName,
+            color,
+            0,
+            0,
+            false,
+            null
+        )
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {

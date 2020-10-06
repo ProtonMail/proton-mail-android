@@ -22,8 +22,14 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.Operation
+import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
@@ -52,12 +58,12 @@ class PostLabelWorker @WorkerInject constructor(
         val color = inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) ?: return Result.failure()
         val display = inputData.getInt(KEY_INPUT_DATA_LABEL_IS_DISPLAY, 0)
         val exclusive = inputData.getInt(KEY_INPUT_DATA_LABEL_EXCLUSIVE, 0)
-        val labelIdInput = inputData.getString(KEY_INPUT_DATA_LABEL_ID) ?: return Result.failure()
+        val labelIdInput = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 
         val labelResponse: LabelResponse = if (!update) {
             apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
         } else {
-            apiManager.updateLabel(labelIdInput, LabelBody(labelName, color, display, exclusive))
+            apiManager.updateLabel(labelIdInput!!, LabelBody(labelName, color, display, exclusive))
         }
         if (labelResponse.hasError()) {
             val errorText = labelResponse.error
@@ -77,6 +83,30 @@ class PostLabelWorker @WorkerInject constructor(
         }
 
         return Result.success()
+    }
+
+    class Enqueuer(private val workManager: WorkManager) {
+
+        fun enqueue(labelName: String,
+                    color: String,
+                    display: Int,
+                    exclusive: Int,
+                    update: Boolean,
+                    labelId: String?): Operation {
+
+            val postLabelWorker = OneTimeWorkRequestBuilder<PostLabelWorker>()
+                .setInputData(workDataOf(
+                    KEY_INPUT_DATA_LABEL_ID to labelId,
+                    KEY_INPUT_DATA_LABEL_NAME to labelName,
+                    KEY_INPUT_DATA_LABEL_COLOR to color,
+                    KEY_INPUT_DATA_LABEL_EXCLUSIVE to exclusive,
+                    KEY_INPUT_DATA_IS_UPDATE to update,
+                    KEY_INPUT_DATA_LABEL_IS_DISPLAY to display
+                ))
+                .build()
+
+            return workManager.enqueue(postLabelWorker)
+        }
     }
 
 }
