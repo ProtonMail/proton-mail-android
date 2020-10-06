@@ -21,11 +21,13 @@ package ch.protonmail.android.activities.labelsManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.every
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -44,6 +46,9 @@ import org.junit.Test
 internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
 
     @get:Rule val archRule = InstantTaskExecutorRule()
+
+    @RelaxedMockK
+    private lateinit var workManager: WorkManager
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
