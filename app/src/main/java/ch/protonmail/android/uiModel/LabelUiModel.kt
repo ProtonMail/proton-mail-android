@@ -26,20 +26,21 @@ import androidx.annotation.DrawableRes
  *
  * @author Davide Farella
  */
-internal data class LabelUiModel (
-        val labelId: String,
-        val name: String,
-        @DrawableRes val image: Int,
-        @ColorInt val color: Int,
-        val isChecked: Boolean,
-        val display: Int,
-        val type: Type
+internal data class LabelUiModel(
+    val labelId: String,
+    val name: String,
+    @DrawableRes val image: Int,
+    @ColorInt val color: Int,
+    val isChecked: Boolean,
+    val display: Int,
+    val type: Type
 ) {
 
     /** The type of the Model */
     enum class Type {
         /** Model is Label */
         LABELS,
+
         /** Model is Folder */
         FOLDERS
     }

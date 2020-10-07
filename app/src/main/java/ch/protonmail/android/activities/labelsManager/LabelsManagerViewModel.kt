@@ -20,10 +20,12 @@ package ch.protonmail.android.activities.labelsManager
 
 import android.graphics.Color
 import androidx.annotation.ColorInt
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
@@ -41,19 +43,25 @@ import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
 import studio.forface.viewstatestore.paging.PagedViewStateStore
 import studio.forface.viewstatestore.paging.ViewStateStoreScope
+import javax.inject.Named
 
 /**
  * A [ViewModel] for Manage Labels
  * Inherit from [ViewModel]
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
-internal class LabelsManagerViewModel(
+internal class LabelsManagerViewModel @ViewModelInject constructor(
     private val jobManager: JobManager,
-    messagesDatabase: MessagesDatabase,
-    private val type: LabelUiModel.Type,
-    private val labelMapper: LabelUiModelMapper,
+    @Named("messages") private val messagesDatabase: MessagesDatabase,
+    @Assisted private val savedStateHandle: SavedStateHandle,
     private val deleteLabel: DeleteLabel
 ) : ViewModel(), ViewStateStoreScope {
+
+    // Extract the original form of the data
+    private val type: LabelUiModel.Type = if (savedStateHandle.get<Boolean>(EXTRA_MANAGE_FOLDERS) == true)
+        LabelUiModel.Type.FOLDERS
+    else
+        LabelUiModel.Type.LABELS
 
     /** Triggered when a selection has changed */
     private val selectedLabelIds = MutableLiveData(mutableSetOf<String>())
@@ -77,6 +85,8 @@ internal class LabelsManagerViewModel(
         LabelUiModel.Type.LABELS -> messagesDatabase.getAllLabelsNotExclusivePaged()
         LabelUiModel.Type.FOLDERS -> messagesDatabase.getAllLabelsExclusivePaged()
     }
+
+    private val labelMapper = LabelUiModelMapper(isLabelEditable = true)
 
     /**
      * A Locked [PagedViewStateStore] of type [LabelUiModel]
@@ -153,20 +163,6 @@ internal class LabelsManagerViewModel(
         labelEditor?.let { it.name = name } ?: run { tempLabelName = name }
     }
 
-    /** [ViewModelProvider.NewInstanceFactory] for [LabelsManagerViewModel] */
-    class Factory(
-        private val jobManager: JobManager,
-        private val messagesDatabase: MessagesDatabase,
-        private val type: LabelUiModel.Type,
-        private val deleteLabel: DeleteLabel,
-        private val labelMapper: LabelUiModelMapper = LabelUiModelMapper(isLabelEditable = true)
-    ) : ViewModelProvider.NewInstanceFactory() {
-
-        /** @return new instance of [LabelsManagerViewModel] casted as T */
-        @Suppress("UNCHECKED_CAST") // LabelsManagerViewModel is T, since T is ViewModel
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-            LabelsManagerViewModel(jobManager, messagesDatabase, type, labelMapper, deleteLabel) as T
-    }
 }
 
 /** A class that hold editing progress of a Label */

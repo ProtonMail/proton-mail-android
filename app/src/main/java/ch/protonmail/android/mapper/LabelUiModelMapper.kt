@@ -23,6 +23,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.UiUtil
+import timber.log.Timber
 
 /**
  * A Mapper of [LabelUiModel]
@@ -51,7 +52,8 @@ internal class LabelUiModelMapper(private val isLabelEditable: Boolean) : UiMode
         val normalizedColor =
             try {
                 Color.parseColor(UiUtil.normalizeColor(color))
-            } catch (t: Throwable) {
+            } catch (exception: Exception) {
+                Timber.w(exception, "Cannot parse color: $color")
                 Color.WHITE
             }
 
