@@ -20,15 +20,18 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
 import android.util.Pair
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
+import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -51,12 +54,12 @@ import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.SendPing
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import com.squareup.otto.Subscribe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -71,17 +74,21 @@ import java.util.concurrent.atomic.AtomicBoolean
  * TODO reduce [LiveData]s and keep only a single version of the message
  */
 
-internal class MessageDetailsViewModel(
-    val messageDetailsRepository: MessageDetailsRepository,
+internal class MessageDetailsViewModel @ViewModelInject constructor(
+    @Assisted private val savedStateHandle: SavedStateHandle,
+    private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     messageRendererFactory: MessageRenderer.Factory,
-    val messageId: String,
-    private val isTransientMessage: Boolean,
     private val deleteMessageUseCase: DeleteMessage,
     private val sendPing: SendPing
 ) : ViewModel() {
+
+    private val messageId: String = savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID)
+        ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
+    private val isTransientMessage = savedStateHandle.get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE)
+        ?: false
 
     private val messageRenderer
     by lazy { messageRendererFactory.create(viewModelScope, messageId) }
@@ -159,10 +166,11 @@ internal class MessageDetailsViewModel(
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
-    val hasConnection : LiveData<Boolean> = _pingTrigger.switchMap { sendPing() }
+    val hasConnection: LiveData<Boolean> = _pingTrigger.switchMap { sendPing() }
 
     init {
         tryFindMessage()
+        messageDetailsRepository.reloadDependenciesForUser(userManager.username)
 
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
@@ -595,36 +603,6 @@ internal class MessageDetailsViewModel(
     fun deleteMessage(messageId: String) {
         viewModelScope.launch {
             deleteMessageUseCase(listOf(messageId))
-        }
-    }
-
-    /** [ViewModelProvider.Factory] for create a [MessageDetailsViewModel] */
-    class Factory(
-        private val messageDetailsRepository: MessageDetailsRepository,
-        private val userManager: UserManager,
-        private val contactsRepository: ContactsRepository,
-        private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-        private val messageRendererFactory: MessageRenderer.Factory,
-        private val deleteMessage: DeleteMessage,
-        private val sendPing: SendPing
-    ) : ViewModelProvider.Factory {
-
-        /**
-         This 2 values must be set before call `ViewModelProviders.of`.
-         It should be better to use an Assisted Injection but at least now we are sure that the
-         ViewModel will be instantiated with all the required parameters
-         */
-        lateinit var messageId: String
-        var isTransientMessage = false
-
-        /** @return a new instance of [MessageDetailsViewModel] casted as [T] */
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST") // MessageDetailsViewModel is T, since T is ViewModel
-            return MessageDetailsViewModel(
-                messageDetailsRepository, userManager, contactsRepository,
-                attachmentMetadataDatabase, messageRendererFactory,
-                messageId, isTransientMessage, deleteMessage, sendPing
-            ) as T
         }
     }
 }

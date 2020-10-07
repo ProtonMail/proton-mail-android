@@ -39,11 +39,11 @@ import android.webkit.WebView.HitTestResult
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkManager
 import androidx.work.WorkInfo
@@ -120,7 +120,6 @@ import org.jsoup.nodes.Document
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
-import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class MessageDetailsActivity :
@@ -132,10 +131,7 @@ internal class MessageDetailsActivity :
     private lateinit var pmWebViewClient: PMWebViewClient
     private var markAsRead = false
     private var showPhishingReportButton = true
-    private lateinit var viewModel: MessageDetailsViewModel
-
-    @Inject
-    lateinit var factory: MessageDetailsViewModel.Factory
+    private val viewModel: MessageDetailsViewModel by viewModels()
 
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
 
@@ -223,8 +219,6 @@ internal class MessageDetailsActivity :
             this,
             OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
         )
-        factory.messageId = messageId
-        factory.isTransientMessage = isTransientMessage
         pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
@@ -235,8 +229,7 @@ internal class MessageDetailsActivity :
             pmWebViewClient,
             { onLoadEmbeddedImagesCLick() }
         ) { onDisplayImagesCLick() }
-        viewModel = ViewModelProvider(this, factory).get(MessageDetailsViewModel::class.java)
-        viewModel.messageDetailsRepository.reloadDependenciesForUser(mUserManager.username)
+
         viewModel.tryFindMessage()
         viewModel.message.observe(this, MessageObserver())
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
@@ -306,20 +299,16 @@ internal class MessageDetailsActivity :
     override fun onStart() {
         super.onStart()
         mApp.bus.register(this)
-        if (this::viewModel.isInitialized) {
-            mApp.bus.register(viewModel)
-        }
+        mApp.bus.register(viewModel)
     }
 
     override fun onStop() {
         super.onStop()
-        if (this::viewModel.isInitialized) {
-            if (markAsRead) {
-                viewModel.markRead(true)
-            }
-            mApp.bus.unregister(viewModel)
-            stopEmbeddedImagesTask()
+        if (markAsRead) {
+            viewModel.markRead(true)
         }
+        mApp.bus.unregister(viewModel)
+        stopEmbeddedImagesTask()
         mApp.bus.unregister(this)
     }
 
@@ -343,9 +332,7 @@ internal class MessageDetailsActivity :
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (!this::viewModel.isInitialized) {
-            return true
-        }
+
         val message = viewModel.decryptedMessageData.value
         if (message != null) {
             val trash = menu.findItem(R.id.move_to_trash)

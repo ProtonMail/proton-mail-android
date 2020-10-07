@@ -21,16 +21,11 @@
 package ch.protonmail.android.di
 
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.WorkManager
-import ch.protonmail.android.activities.messageDetails.MessageRenderer
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.activities.multiuser.viewModel.AccountManagerViewModel
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailboxLoginViewModel
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewModel
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
@@ -39,10 +34,7 @@ import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewMode
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
-import ch.protonmail.android.usecase.delete.DeleteMessage
-import ch.protonmail.android.usecase.SendPing
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,25 +81,6 @@ internal class ViewModelModule {
     fun provideGroupRecipientsViewModelFactory(groupRecipientsViewModelFactory: GroupRecipientsViewModelFactory): ViewModelProvider.NewInstanceFactory {
         return groupRecipientsViewModelFactory
     }
-
-    @Provides
-    fun provideMessageDetailsViewModelFactory(
-        messageDetailsRepository: MessageDetailsRepository,
-        userManager: UserManager,
-        contactsRepository: ContactsRepository,
-        attachmentMetadataDatabase: AttachmentMetadataDatabase,
-        messageRendererFactory: MessageRenderer.Factory,
-        deleteMessage: DeleteMessage,
-        sendPing: SendPing
-    ) = MessageDetailsViewModel.Factory(
-        messageDetailsRepository,
-        userManager,
-        contactsRepository,
-        attachmentMetadataDatabase,
-        messageRendererFactory,
-        deleteMessage,
-        sendPing
-    )
 
     @Provides
     internal fun provideNotificationSettingsViewModelFactory(

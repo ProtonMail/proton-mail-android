@@ -35,7 +35,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithCustomView
 import com.google.android.material.snackbar.Snackbar
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -101,11 +100,17 @@ class NetworkSnackBarUtil @Inject constructor() {
 
     fun isNoConnectionShown() = noConnectionSnackBar?.isShownOrQueued ?: false
 
-    fun hideNoConnectionSnakBar() = noConnectionSnackBar?.dismiss()
+    fun hideNoConnectionSnakBar() {
+        noConnectionSnackBar?.dismiss()
+        noConnectionSnackBar = null
+    }
 
     fun isCheckingConnectionShown() = checkingConnectionSnackBar?.isShownOrQueued ?: false
 
-    fun hideCheckingConnectionSnakBar() = checkingConnectionSnackBar?.dismiss()
+    fun hideCheckingConnectionSnakBar() {
+        checkingConnectionSnackBar?.dismiss()
+        checkingConnectionSnackBar = null
+    }
 
     private fun showNoConnectionTroubleshootDialog(
         context: Context,
