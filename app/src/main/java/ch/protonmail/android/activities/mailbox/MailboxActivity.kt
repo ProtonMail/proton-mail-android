@@ -43,6 +43,7 @@ import android.view.WindowManager
 import android.widget.AbsListView.MultiChoiceModeListener
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -69,7 +70,6 @@ import ch.protonmail.android.activities.FLOW_START_ACTIVITY
 import ch.protonmail.android.activities.FLOW_TRY_COMPOSE
 import ch.protonmail.android.activities.FLOW_USED_SPACE_CHANGED
 import ch.protonmail.android.activities.MailboxViewModel
-import ch.protonmail.android.activities.MailboxViewModel.Companion.create
 import ch.protonmail.android.activities.MailboxViewModel.MaxLabelsReached
 import ch.protonmail.android.activities.NavigationActivity
 import ch.protonmail.android.activities.REQUEST_CODE_SWITCHED_USER
@@ -245,7 +245,7 @@ class MailboxActivity :
     private lateinit var syncUUID: String
     private var customizeSwipeSnackShown = false
     private var catchLabelEvents = false
-    private lateinit var mailboxViewModel: MailboxViewModel
+    private val mailboxViewModel: MailboxViewModel by viewModels()
     private var storageLimitApproachingAlertDialog: AlertDialog? = null
     private var liveSharedPreferences: LiveSharedPreferences? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -281,8 +281,6 @@ class MailboxActivity :
         if (extras != null && extras.containsKey(EXTRA_MAILBOX_LOCATION)) {
             setupNewMessageLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
         }
-        mailboxViewModel = create(this, messageDetailsRepository, mUserManager, mJobManager, deleteMessageUseCase,
-            sendPing)
         startObserving()
         mailboxViewModel.toastMessageMaxLabelsReached.observe(
             this,

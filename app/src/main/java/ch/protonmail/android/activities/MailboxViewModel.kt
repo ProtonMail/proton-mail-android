@@ -18,11 +18,10 @@
  */
 package ch.protonmail.android.activities
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -54,7 +53,7 @@ const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 // endregion
 
-class MailboxViewModel(
+class MailboxViewModel @ViewModelInject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     val userManager: UserManager,
     private val jobManager: JobManager,
@@ -135,7 +134,8 @@ class MailboxViewModel(
         messageDetailsRepository.findAllLabelsWithIds(labelIds)
 
     fun processLabels(messageIds: List<String>, checkedLabelIds: List<String>, unchangedLabels: List<String>) {
-        // check for case of too many labels being added to a message- will need to edit this if removing labels
+        // check for case of too many labels being added to a message- will need to edit this if
+        // removing labels
         // is introduced to mailbox view
         val iterator = messageIds.iterator()
 
@@ -152,7 +152,11 @@ class MailboxViewModel(
                     if (message != null) {
                         val currentLabelsIds = message.labelIDsNotIncludingLocations
                         val labels = getAllLabelsByIds(currentLabelsIds)
-                        val applyRemoveLabels = resolveMessageLabels(message, ArrayList(checkedLabelIds), ArrayList<String>(unchangedLabels), labels)
+                        val applyRemoveLabels = resolveMessageLabels(
+                            message, ArrayList(checkedLabelIds),
+                            ArrayList<String>(unchangedLabels),
+                            labels
+                        )
                         val apply = applyRemoveLabels?.labelsToApply
                         val remove = applyRemoveLabels?.labelsToRemove
                         apply?.forEach {
@@ -236,39 +240,6 @@ class MailboxViewModel(
     fun launchPing() {
         Timber.v("Launch ping")
         _pingTrigger.value = Unit
-    }
-
-    companion object {
-
-        fun create(
-            activity: BaseActivity,
-            messageDetailsRepository: MessageDetailsRepository,
-            userManager: UserManager,
-            jobManager: JobManager,
-            deleteMessage: DeleteMessage,
-            sendPing: SendPing): MailboxViewModel =
-            ViewModelProviders.of(
-                activity,
-                MailboxViewModelFactory(messageDetailsRepository, userManager, jobManager, deleteMessage,
-                    sendPing)
-            ).get(MailboxViewModel::class.java)
-    }
-
-    private class MailboxViewModelFactory(
-        private val messageDetailsRepository: MessageDetailsRepository,
-        private val userManager: UserManager,
-        private val jobManager: JobManager,
-        private val deleteMessage: DeleteMessage,
-        private val sendPing: SendPing
-    ) : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MailboxViewModel(
-                messageDetailsRepository, userManager,
-                jobManager,
-                deleteMessage,
-                sendPing
-            ) as T
-        }
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)

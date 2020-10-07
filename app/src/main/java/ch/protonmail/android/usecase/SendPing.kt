@@ -35,16 +35,10 @@ class SendPing @Inject constructor(
 ) {
 
     operator fun invoke(): LiveData<Boolean> {
-
         val workInfoLiveData = workerEnqueuer.enqueue()
-        Timber.v("SendPing workerResult sate ${workInfoLiveData.value?.state}")
         return workInfoLiveData.map { workInfo ->
-            val filteredState = workInfo.state.takeIf { lastState ->
-                lastState == WorkInfo.State.SUCCEEDED ||
-                    lastState == WorkInfo.State.FAILED
-            }
-            Timber.v("SendPing filteredState $filteredState")
-            filteredState == WorkInfo.State.SUCCEEDED
+            Timber.v("SendPing finishedState ${workInfo.state}")
+            workInfo.state == WorkInfo.State.SUCCEEDED
         }
     }
 }

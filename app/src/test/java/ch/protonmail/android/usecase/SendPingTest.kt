@@ -93,4 +93,26 @@ class SendPingTest {
         verify { observer.onChanged(expected) }
         assertEquals(expected, response.value)
     }
+
+    @Test
+    fun verifyThatFalseIsReturnedWhenOperationIsOngoing() {
+        // given
+        val workInfoLiveData = MutableLiveData<WorkInfo>()
+        workInfoLiveData.value = mockk {
+            every { state } returns  WorkInfo.State.RUNNING
+        }
+        every { workEnqueuer.enqueue() } returns workInfoLiveData
+
+        val observer = mockk<Observer<Boolean>>(relaxed = true)
+        val expected = false
+
+        // when
+        val response = sendPingUseCase()
+        response.observeForever(observer)
+
+        // then
+        assertNotNull(response.value)
+        verify { observer.onChanged(expected) }
+        assertEquals(expected, response.value)
+    }
 }
