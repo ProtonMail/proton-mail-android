@@ -22,11 +22,12 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
+import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Operation
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -71,8 +72,8 @@ class DeleteLabelWorker @WorkerInject constructor(
             var result = Result.success()
 
             labelIds.forEach { labelId ->
-                Timber.v("Deleting label $labelId")
                 val responseBody: ResponseBody = api.deleteLabel(labelId)
+                Timber.v("Deleting label $labelId response ${responseBody.code}")
                 if (responseBody.code != Constants.RESPONSE_CODE_OK) {
                     result = Result.failure(
                         workDataOf(
@@ -86,7 +87,7 @@ class DeleteLabelWorker @WorkerInject constructor(
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
-        fun enqueue(labelIds: List<String>): Operation {
+        fun enqueue(labelIds: List<String>): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -95,9 +96,9 @@ class DeleteLabelWorker @WorkerInject constructor(
                 .setInputData(workDataOf(KEY_INPUT_DATA_LABEL_IDS to labelIds.toTypedArray()))
                 .addTag(WORKER_TAG)
                 .build()
-            return workManager.enqueue(workRequest)
-        }
+            workManager.enqueue(workRequest)
 
-        fun getWorkStatusLiveData() = workManager.getWorkInfosByTagLiveData(WORKER_TAG)
+            return workManager.getWorkInfoByIdLiveData(workRequest.id)
+        }
     }
 }

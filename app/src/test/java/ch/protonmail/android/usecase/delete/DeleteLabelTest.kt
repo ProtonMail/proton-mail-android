@@ -78,15 +78,14 @@ class DeleteLabelTest {
                 outputData,
                 0
             )
-            val workerStatusLiveData = MutableLiveData<List<WorkInfo>>()
-            workerStatusLiveData.value = listOf(workInfo)
+            val workerStatusLiveData = MutableLiveData<WorkInfo>()
+            workerStatusLiveData.value = workInfo
             val expected = true
 
             every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
             every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
             every { messagesDatabase.deleteLabelById(labelId) } returns Unit
-            every { workScheduler.enqueue(any()) } returns mockk(relaxed = true)
-            every { workScheduler.getWorkStatusLiveData() } returns workerStatusLiveData
+            every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when
             val response = deleteLabel(listOf(labelId))
@@ -114,15 +113,14 @@ class DeleteLabelTest {
                 outputData,
                 0
             )
-            val workerStatusLiveData = MutableLiveData<List<WorkInfo>>()
-            workerStatusLiveData.value = listOf(workInfo)
+            val workerStatusLiveData = MutableLiveData<WorkInfo>()
+            workerStatusLiveData.value = workInfo
             val expected = false
 
             every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
             every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
             every { messagesDatabase.deleteLabelById(labelId) } returns Unit
-            every { workScheduler.enqueue(any()) } returns mockk(relaxed = true)
-            every { workScheduler.getWorkStatusLiveData() } returns workerStatusLiveData
+            every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
             // when
             val response = deleteLabel(listOf(labelId))
@@ -131,6 +129,39 @@ class DeleteLabelTest {
             // then
             assertNotNull(response.value)
             assertEquals(expected, response.value)
+        }
+    }
+
+    @Test
+    fun verifyThatMessageIsEnqueuedThereIsNoValueEmitted() {
+        runBlockingTest {
+            // given
+            val labelId = "Id1"
+            val contactLabel = mockk<ContactLabel>()
+            val finishState = WorkInfo.State.ENQUEUED
+            val outputData = workDataOf("a" to "b")
+            val workInfo = WorkInfo(
+                UUID.randomUUID(),
+                finishState,
+                outputData,
+                emptyList(),
+                outputData,
+                0
+            )
+            val workerStatusLiveData = MutableLiveData<WorkInfo>()
+            workerStatusLiveData.value = workInfo
+
+            every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
+            every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
+            every { messagesDatabase.deleteLabelById(labelId) } returns Unit
+            every { workScheduler.enqueue(any()) } returns workerStatusLiveData
+
+            // when
+            val response = deleteLabel(listOf(labelId))
+            response.observeForever { }
+
+            // then
+            assertEquals(null, response.value)
         }
     }
 
