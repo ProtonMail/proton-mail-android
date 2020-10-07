@@ -49,6 +49,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkManager
+import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
@@ -79,7 +80,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
-import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MessageSentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
@@ -110,6 +110,7 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDial
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.worker.DeleteMessageWorker
+import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job
 import com.google.android.material.snackbar.Snackbar
@@ -576,23 +577,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     @Subscribe
-    @Suppress("unused")
-    fun onLabelAddedEvent(event: LabelAddedEvent) {
-        val message: String? = if (event.status == Status.SUCCESS) {
-            getString(R.string.label_created)
-        } else {
-            if (event.error.isNullOrEmpty()) {
-                getString(R.string.label_invalid)
-            } else {
-                event.error
-            }
-        }
-        if (!message.isNullOrEmpty()) {
-            showToast(message, Toast.LENGTH_SHORT)
-        }
-    }
-
-    @Subscribe
     @Suppress("UNUSED_PARAMETER")
     fun onMailSettingsEvent(event: MailSettingsEvent?) {
         loadMailSettings()
@@ -728,7 +712,25 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
+        val postLabelRequest = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
+        getWorkManager().getWorkInfoByIdLiveData(postLabelRequest.id).observe(
+            this,
+            {
+                val state: WorkInfo.State = it.state
+
+                if (state == WorkInfo.State.SUCCEEDED) {
+                    showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
+                    return@observe
+                }
+
+                if (state == WorkInfo.State.FAILED) {
+                    val outputData = it.outputData
+                    val errorMessage = outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+                        ?: getString(R.string.label_invalid)
+                    showToast(errorMessage, Toast.LENGTH_SHORT)
+                }
+            }
+        )
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {
