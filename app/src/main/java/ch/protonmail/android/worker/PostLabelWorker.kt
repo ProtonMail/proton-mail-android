@@ -31,9 +31,6 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.data.LabelRepository
-import ch.protonmail.android.events.LabelAddedEvent
-import ch.protonmail.android.events.Status
-import ch.protonmail.android.utils.AppUtil
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
@@ -63,14 +60,14 @@ class PostLabelWorker @WorkerInject constructor(
         }
         if (labelResponse.hasError()) {
             val errorText = labelResponse.error
-            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, errorText))
+//            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, errorText))
             return Result.failure()
         }
 
         val labelBody = labelResponse.label
         if (labelBody == null) {
             // we have no label response, checking for error
-            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, labelResponse.error))
+//            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, labelResponse.error))
             return Result.failure()
         }
         val labelId = labelBody.id
@@ -78,7 +75,7 @@ class PostLabelWorker @WorkerInject constructor(
             labelRepository.saveLabel(labelBody)
         }
 
-        AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
+//        AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
         return Result.success()
     }
 

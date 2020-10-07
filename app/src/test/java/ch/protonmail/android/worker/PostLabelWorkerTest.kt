@@ -33,7 +33,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -149,12 +148,23 @@ class PostLabelWorkerTest {
     }
 
     @Test
-    fun `worker show error and fails when api returns any errors`() {
+    fun `worker fails returning error when api returns any errors`() {
         every { labelApiResponse.hasError() } returns true
         every { apiManager.createLabel(any()) } returns labelApiResponse
 
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.failure(), result)
+    }
+
+    @Test
+    fun `worker does not save label when api returns label with empty ID`() {
+        every { labelApiResponse.hasError() } returns false
+        every { apiManager.createLabel(any()) } returns labelApiResponse
+        every { labelApiResponse.label.id } returns ""
+
+        worker.doWork()
+
+        verify(exactly = 0) { repository.saveLabel(any()) }
     }
 }
