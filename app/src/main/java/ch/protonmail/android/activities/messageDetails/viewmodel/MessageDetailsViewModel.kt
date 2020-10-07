@@ -28,6 +28,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
@@ -116,7 +117,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val _downloadEmbeddedImagesResult: MutableLiveData<Pair<String, String>> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    private val _connectivityEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
     private val _pingTrigger: MutableLiveData<Unit> = MutableLiveData()
@@ -148,9 +148,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission
 
-    val connectivityEvent: LiveData<Event<Boolean>>
-        get() = _connectivityEvent
-
     val reloadRecipientsEvent: LiveData<Event<Boolean>>
         get() = _reloadRecipientsEvent
 
@@ -166,7 +163,12 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
-    val hasConnection: LiveData<Boolean> = _pingTrigger.switchMap { sendPing() }
+    val hasConnection: LiveData<Boolean> = _pingTrigger.switchMap {
+        sendPing().map { hasConnectivity ->
+            onConnectivityEvent(hasConnectivity)
+            hasConnectivity
+        }
+    }
 
     init {
         tryFindMessage()
@@ -504,9 +506,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             return
         }
         if (event.success) {
-            _connectivityEvent.postValue(Event(true))
-        } else {
-            _connectivityEvent.postValue(Event(false))
+            Timber.v("FetchMessage success")
         }
     }
 
@@ -515,14 +515,9 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         _pingTrigger.value = Unit
     }
 
-    private fun onConnectivityEvent(hasConnection: Boolean) {
-        if (!hasConnection && !renderedFromCache.get()) {
-            _connectivityEvent.postValue(Event(false))
-        } else {
-            _connectivityEvent.postValue(Event(true))
-            if (!requestPending.get()) {
-                fetchMessageDetails(false)
-            }
+    private fun onConnectivityEvent(hasConnectivity: Boolean) {
+        if (hasConnectivity && !requestPending.get()) {
+            fetchMessageDetails(false)
         }
     }
 

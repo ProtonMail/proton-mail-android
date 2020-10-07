@@ -81,21 +81,22 @@ class PingWorker @WorkerInject constructor(
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         private val uniqueWorkerName = "PingWorker"
 
-        fun enqueue(): LiveData<WorkInfo> {
+        fun enqueue(): LiveData<WorkInfo?> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
-            val deleteContactWorkRequest = OneTimeWorkRequestBuilder<PingWorker>()
+            val workRequest = OneTimeWorkRequestBuilder<PingWorker>()
                 .setConstraints(constraints)
                 .build()
 
             workManager.enqueueUniqueWork(
                 uniqueWorkerName,
                 ExistingWorkPolicy.REPLACE,
-                deleteContactWorkRequest
+                workRequest
             )
+            Timber.v("Scheduled ping work request id:${workRequest.id}")
 
-            return workManager.getWorkInfoByIdLiveData(deleteContactWorkRequest.id)
+            return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
     }
 }

@@ -101,7 +101,7 @@ class PingWorkerTest {
     }
 
     @Test
-    fun verifyFailureIsReturnedWhenPingRespondedWithUnreognisedApiResponse() {
+    fun verifyFailureIsReturnedWhenPingRespondedWithUnrecognizedAliResponse() {
         runBlockingTest {
             // given
             val unknownResponseCode = 12313

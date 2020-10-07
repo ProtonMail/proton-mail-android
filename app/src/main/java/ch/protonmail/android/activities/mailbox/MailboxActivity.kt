@@ -1052,7 +1052,7 @@ class MailboxActivity :
     }
 
     private fun showNoConnSnackAndScheduleRetry() {
-        Timber.v("showNoConnSnack")
+        Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
         mConnectivitySnackLayout?.let {
             val noConnectivitySnackBar = networkSnackBarUtil.getNoConnectionSnackBar(
                 snackBarLayout = it,
@@ -1074,8 +1074,8 @@ class MailboxActivity :
 
     private fun hideNoConnSnack() {
         Timber.v("hideNoConnSnack")
-        networkSnackBarUtil.hideCheckingConnectionSnakBar()
-        networkSnackBarUtil.hideNoConnectionSnakBar()
+        networkSnackBarUtil.hideCheckingConnectionSnackBar()
+        networkSnackBarUtil.hideNoConnectionSnackBar()
     }
 
     @Subscribe

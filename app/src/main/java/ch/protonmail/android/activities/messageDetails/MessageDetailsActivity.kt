@@ -506,16 +506,12 @@ internal class MessageDetailsActivity :
     }
 
     private fun listenForConnectivityEvent() {
-        viewModel.connectivityEvent.observe(
+        viewModel.hasConnection.observe(
             this,
-            Observer { event: Event<Boolean?>? ->
-                if (event == null) {
-                    return@Observer
-                }
-                val content = event.getContentIfNotHandled() ?: return@Observer
-                if (content) {
+            { isConnectionActive ->
+                BaseActivity.mPingHasConnection = isConnectionActive
+                if (isConnectionActive) {
                     hideNoConnSnackExtended()
-                    BaseActivity.mPingHasConnection = true
                 } else {
                     showNoConnSnackExtended()
                 }
