@@ -30,6 +30,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.data.LabelRepository
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
@@ -37,7 +38,8 @@ internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
 internal const val KEY_INPUT_DATA_IS_UPDATE = "keyInputDataIsUpdate"
 internal const val KEY_INPUT_DATA_LABEL_COLOR = "keyInputDataLabelColor"
 internal const val KEY_INPUT_DATA_LABEL_DISPLAY = "keyInputDataLabelIsDisplay"
-internal const val KEY_INPUT_DATA_LABEL_EXCLUSIVE = "keyInputDataLabelExlusive"
+internal const val KEY_INPUT_DATA_LABEL_EXCLUSIVE = "keyInputDataLabelExclusive"
+internal const val KEY_POST_LABEL_WORKER_RESULT_ERROR = "keyResultDataPostLabelWorkerError"
 
 class PostLabelWorker @WorkerInject constructor(
     @Assisted val context: Context,
@@ -58,26 +60,25 @@ class PostLabelWorker @WorkerInject constructor(
         } else {
             apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
         }
+
         if (labelResponse.hasError()) {
-            val errorText = labelResponse.error
 //            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, errorText))
-            return Result.failure()
+            return Result.failure(workDataOf(KEY_POST_LABEL_WORKER_RESULT_ERROR to labelResponse.error))
         }
 
-        val labelBody = labelResponse.label
-        if (labelBody == null) {
-            // we have no label response, checking for error
+        if (hasInvalidLabelApiResponse(labelResponse)) {
 //            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, labelResponse.error))
-            return Result.failure()
-        }
-        val labelId = labelBody.id
-        if (labelId != "") {
-            labelRepository.saveLabel(labelBody)
+            return Result.failure(workDataOf(KEY_POST_LABEL_WORKER_RESULT_ERROR to labelResponse.error))
         }
 
+        labelRepository.saveLabel(labelResponse.label)
 //        AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
         return Result.success()
     }
+
+    @Suppress("SENSELESS_COMPARISON")
+    private fun hasInvalidLabelApiResponse(labelResponse: LabelResponse) =
+        labelResponse.label == null || labelResponse.label.id.isEmpty()
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 

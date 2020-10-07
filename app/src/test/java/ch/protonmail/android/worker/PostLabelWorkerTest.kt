@@ -20,6 +20,7 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -58,6 +59,10 @@ class PostLabelWorkerTest {
     @BeforeEach
     fun setUp() {
         MockKAnnotations.init(this)
+        every { apiManager.createLabel(any()) } returns labelApiResponse
+        every { apiManager.updateLabel(any(), any()) } returns labelApiResponse
+        every { labelApiResponse.label } returns Label("labelID", "name", "color")
+
         worker = PostLabelWorker(
             context,
             parameters,
@@ -96,7 +101,6 @@ class PostLabelWorkerTest {
 
     @Test
     fun `worker saves label in repository when creation succeeds`() {
-        every { labelApiResponse.label } returns Label("ID", "name", "color")
         every { labelApiResponse.hasError() } returns false
         every { apiManager.createLabel(any()) } returns labelApiResponse
 
@@ -149,22 +153,31 @@ class PostLabelWorkerTest {
 
     @Test
     fun `worker fails returning error when api returns any errors`() {
+        val error = "Test API Error"
         every { labelApiResponse.hasError() } returns true
-        every { apiManager.createLabel(any()) } returns labelApiResponse
+        every { labelApiResponse.error } returns error
 
         val result = worker.doWork()
 
-        assertEquals(ListenableWorker.Result.failure(), result)
+        val expectedFailure = ListenableWorker.Result.failure(
+            Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
+        )
+        assertEquals(expectedFailure, result)
     }
 
     @Test
-    fun `worker does not save label when api returns label with empty ID`() {
+    fun `worker fails returning error when api returns label with empty ID`() {
+        val error = "Test API Error"
         every { labelApiResponse.hasError() } returns false
-        every { apiManager.createLabel(any()) } returns labelApiResponse
         every { labelApiResponse.label.id } returns ""
+        every { labelApiResponse.error } returns error
 
-        worker.doWork()
+        val result = worker.doWork()
 
+        val expectedFailure = ListenableWorker.Result.failure(
+            Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
+        )
+        assertEquals(expectedFailure, result)
         verify(exactly = 0) { repository.saveLabel(any()) }
     }
 }
