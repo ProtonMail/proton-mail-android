@@ -31,8 +31,8 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
-import androidx.work.Operation
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.mapper.LabelUiModelMapper
@@ -173,7 +173,7 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
                                     display: Int,
                                     exclusive: Int,
                                     update: Boolean,
-                                    labelId: String?): Operation {
+                                    labelId: String?): WorkRequest {
         return PostLabelWorker.Enqueuer(workManager).enqueue(
             labelName,
             color,

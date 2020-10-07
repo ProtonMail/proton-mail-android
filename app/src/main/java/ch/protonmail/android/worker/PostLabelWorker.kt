@@ -23,8 +23,8 @@ import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.CoroutineWorker
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Operation
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -119,9 +119,9 @@ class PostLabelWorker @WorkerInject constructor(
                     display: Int? = 0,
                     exclusive: Int? = 0,
                     update: Boolean? = false,
-                    labelId: String? = null): Operation {
+                    labelId: String? = null): OneTimeWorkRequest {
 
-            val postLabelWorker = OneTimeWorkRequestBuilder<PostLabelWorker>()
+            val postLabelWorkerRequest = OneTimeWorkRequestBuilder<PostLabelWorker>()
                 .setInputData(workDataOf(
                     KEY_INPUT_DATA_LABEL_ID to labelId,
                     KEY_INPUT_DATA_LABEL_NAME to labelName,
@@ -132,7 +132,8 @@ class PostLabelWorker @WorkerInject constructor(
                 ))
                 .build()
 
-            return workManager.enqueue(postLabelWorker)
+            workManager.enqueue(postLabelWorkerRequest)
+            return postLabelWorkerRequest
         }
     }
 
