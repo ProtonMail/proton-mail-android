@@ -33,6 +33,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -73,111 +74,132 @@ class PostLabelWorkerTest {
 
     @Test
     fun `worker succeeds when create label is performed without passing labelId parameter`() {
-        every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
+        runBlockingTest {
+            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        assertEquals(ListenableWorker.Result.success(), result)
+            assertEquals(ListenableWorker.Result.success(), result)
+        }
     }
 
     @Test
     fun `worker fails when labelName parameter is not passed`() {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns null
+        runBlockingTest {
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns null
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        assertEquals(ListenableWorker.Result.failure(), result)
+            assertEquals(ListenableWorker.Result.failure(), result)
+        }
     }
 
     @Test
     fun `worker fails when color parameter is not passed`() {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns null
+        runBlockingTest {
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns null
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        assertEquals(ListenableWorker.Result.failure(), result)
+            assertEquals(ListenableWorker.Result.failure(), result)
+        }
     }
 
     @Test
     fun `worker saves label in repository when creation succeeds`() {
-        every { labelApiResponse.hasError() } returns false
-        every { apiManager.createLabel(any()) } returns labelApiResponse
+        runBlockingTest {
+            every { labelApiResponse.hasError() } returns false
+            every { apiManager.createLabel(any()) } returns labelApiResponse
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        verify { repository.saveLabel(any()) }
-        assertEquals(ListenableWorker.Result.success(), result)
+            verify { repository.saveLabel(any()) }
+            assertEquals(ListenableWorker.Result.success(), result)
+        }
     }
 
     @Test
     fun `worker invokes create label API when it's a create label request`() {
-        every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
-        val labelBody = LabelBody("labelName", "labelColor", 0, 0)
+        runBlockingTest {
+            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns false
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
+            val labelBody = LabelBody("labelName", "labelColor", 0, 0)
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        verify { apiManager.createLabel(labelBody) }
-        assertEquals(ListenableWorker.Result.success(), result)
+            verify { apiManager.createLabel(labelBody) }
+            assertEquals(ListenableWorker.Result.success(), result)
+        }
     }
 
     @Test
     fun `worker invokes update label API when it's a update label request`() {
-        every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns true
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns "labelID"
-        val labelBody = LabelBody("labelName", "labelColor", 0, 0)
+        runBlockingTest {
+            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns true
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns "labelID"
+            val labelBody = LabelBody("labelName", "labelColor", 0, 0)
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        verify { apiManager.updateLabel("labelID", labelBody) }
-        assertEquals(ListenableWorker.Result.success(), result)
+            verify { apiManager.updateLabel("labelID", labelBody) }
+            assertEquals(ListenableWorker.Result.success(), result)
+        }
     }
 
     @Test
     fun `worker fails when updating label without passing a valid labelID`() {
-        every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns true
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
-        every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
-        val labelBody = LabelBody("labelName", "labelColor", 0, 0)
+        runBlockingTest {
+            every { parameters.inputData.getBoolean(KEY_INPUT_DATA_IS_UPDATE, false) } returns true
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_NAME) } returns "labelName"
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_COLOR) } returns "labelColor"
+            every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
+            val labelBody = LabelBody("labelName", "labelColor", 0, 0)
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        verify { apiManager.updateLabel("labelID", labelBody) wasNot Called }
-        assertEquals(ListenableWorker.Result.failure(), result)
+            val expectedFailure = ListenableWorker.Result.failure(
+                Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, "Missing required LabelID parameter").build()
+            )
+            verify { apiManager.updateLabel("labelID", labelBody) wasNot Called }
+            assertEquals(expectedFailure, result)
+        }
     }
 
     @Test
     fun `worker fails returning error when api returns any errors`() {
-        val error = "Test API Error"
-        every { labelApiResponse.hasError() } returns true
-        every { labelApiResponse.error } returns error
+        runBlockingTest {
+            val error = "Test API Error"
+            every { labelApiResponse.hasError() } returns true
+            every { labelApiResponse.error } returns error
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        val expectedFailure = ListenableWorker.Result.failure(
-            Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
-        )
-        assertEquals(expectedFailure, result)
+            val expectedFailure = ListenableWorker.Result.failure(
+                Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
+            )
+            assertEquals(expectedFailure, result)
+        }
     }
 
     @Test
     fun `worker fails returning error when api returns label with empty ID`() {
-        val error = "Test API Error"
-        every { labelApiResponse.hasError() } returns false
-        every { labelApiResponse.label.id } returns ""
-        every { labelApiResponse.error } returns error
+        runBlockingTest {
+            val error = "Test API Error"
+            every { labelApiResponse.hasError() } returns false
+            every { labelApiResponse.label.id } returns ""
+            every { labelApiResponse.error } returns error
 
-        val result = worker.doWork()
+            val result = worker.doWork()
 
-        val expectedFailure = ListenableWorker.Result.failure(
-            Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
-        )
-        assertEquals(expectedFailure, result)
-        verify(exactly = 0) { repository.saveLabel(any()) }
+            val expectedFailure = ListenableWorker.Result.failure(
+                Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
+            )
+            assertEquals(expectedFailure, result)
+            verify(exactly = 0) { repository.saveLabel(any()) }
+        }
     }
 }

@@ -22,16 +22,17 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
+import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Operation
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.data.LabelRepository
+import java.io.IOException
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
@@ -46,34 +47,53 @@ class PostLabelWorker @WorkerInject constructor(
     @Assisted val workerParams: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
     private val labelRepository: LabelRepository
-) : Worker(context, workerParams) {
+) : CoroutineWorker(context, workerParams) {
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val labelName = getLabelNameParam() ?: return Result.failure()
         val color = getLabelColorParam() ?: return Result.failure()
         val display = getDisplayParam()
         val exclusive = getExclusiveParam()
 
-        val labelResponse = if (isUpdateParam()) {
-            val validLabelId = getLabelIdParam() ?: return Result.failure()
-            apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
-        } else {
-            apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
-        }
+        runCatching(
+            createOrUpdateLabel(labelName, color, display, exclusive)
+        ).fold(onSuccess = { labelResponse ->
 
-        if (labelResponse.hasError()) {
-//            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, errorText))
-            return Result.failure(workDataOf(KEY_POST_LABEL_WORKER_RESULT_ERROR to labelResponse.error))
-        }
+            if (labelResponse.hasError()) {
+                return failureResultWithError(labelResponse.error)
+            }
 
-        if (hasInvalidLabelApiResponse(labelResponse)) {
-//            AppUtil.postEventOnUi(LabelAddedEvent(Status.FAILED, labelResponse.error))
-            return Result.failure(workDataOf(KEY_POST_LABEL_WORKER_RESULT_ERROR to labelResponse.error))
-        }
+            if (hasInvalidLabelApiResponse(labelResponse)) {
+                return failureResultWithError(labelResponse.error)
+            }
 
-        labelRepository.saveLabel(labelResponse.label)
-//        AppUtil.postEventOnUi(LabelAddedEvent(Status.SUCCESS, null))
-        return Result.success()
+            labelRepository.saveLabel(labelResponse.label)
+            return Result.success()
+
+        }, onFailure = {
+            return failureResultWithError(it.localizedMessage)
+        })
+    }
+
+    private fun failureResultWithError(error: String): Result {
+        val errorData = workDataOf(KEY_POST_LABEL_WORKER_RESULT_ERROR to error)
+        return Result.failure(errorData)
+    }
+
+    private fun createOrUpdateLabel(
+        labelName: String,
+        color: String,
+        display: Int,
+        exclusive: Int): PostLabelWorker.() -> LabelResponse {
+
+        return {
+            if (isUpdateParam()) {
+                val validLabelId = getLabelIdParam() ?: throw IOException("Missing required LabelID parameter")
+                apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
+            } else {
+                apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
+            }
+        }
     }
 
     @Suppress("SENSELESS_COMPARISON")
