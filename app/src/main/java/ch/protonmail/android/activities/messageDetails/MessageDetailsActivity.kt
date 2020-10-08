@@ -445,17 +445,6 @@ internal class MessageDetailsActivity :
         buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
     }
 
-    private inner class MessageDetailsRetryListener : RetryListener() {
-        override fun onClick(v: View) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true)
-            viewModel.fetchMessageDetails(false)
-            networkSnackBarUtil.getCheckingConnectionSnackBar(
-                mSnackLayout
-            ).show()
-        }
-    }
-
-    private val messageDetailsRetryListener = MessageDetailsRetryListener()
     private fun showNoConnSnackExtended() {
         if (!networkSnackBarUtil.isNoConnectionShown()) {
             Timber.v("Show no connection")
@@ -464,7 +453,13 @@ internal class MessageDetailsActivity :
                 mSnackLayout,
                 mUserManager.user,
                 this,
-                messageDetailsRetryListener
+                {
+                    mNetworkUtil.setCurrentlyHasConnectivity(true)
+                    viewModel.fetchMessageDetails(false)
+                    networkSnackBarUtil.getCheckingConnectionSnackBar(
+                        mSnackLayout
+                    ).show()
+                }
             ).show()
         }
         invalidateOptionsMenu()

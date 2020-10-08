@@ -19,13 +19,11 @@
 package ch.protonmail.android.activities
 
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.StringRes
 import butterknife.BindView
 import ch.protonmail.android.R
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
 import ch.protonmail.android.utils.NetworkSnackBarUtil
-import com.google.android.material.snackbar.SnackbarContentLayout
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -43,22 +41,16 @@ abstract class BaseConnectivityActivity : BaseActivity() {
 //    protected var pingHandler = Handler()
 //    protected var pingRunnable: Runnable = Runnable { sendPing() }
 
-    private var connectivityRetryListener = RetryListener()
-
-    protected open inner class RetryListener : View.OnClickListener {
-
-        override fun onClick(v: View) {
-            val checkForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
-                mSnackLayout
-            )
-            checkForConnectivitySnack.show()
-            networkSnackBarUtil.hideCheckingConnectionSnackBar()
+    fun onRetryDefaultListener() {
+        networkSnackBarUtil.getCheckingConnectionSnackBar(
+            mSnackLayout
+        ).show()
+        networkSnackBarUtil.hideCheckingConnectionSnackBar()
 
 //            pingHandler.removeCallbacks(pingRunnable)
 //            pingHandler.postDelayed(pingRunnable, 3000)
 
-            retryWithDoh()
-        }
+        retryWithDoh()
     }
 
     protected fun retryWithDoh() {
@@ -74,23 +66,24 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     @JvmOverloads
     @Deprecated("Use [NetworkSnackBarUtil] instead")
     protected fun showNoConnSnack(
-        listener: RetryListener? = null,
+        listener: View.OnClickListener? = null,
         @StringRes message: Int = R.string.no_connectivity_detected_troubleshoot,
         view: View = mSnackLayout,
         callback: INetworkConfiguratorCallback
     ) {
         Timber.d("showNoConnSnack listener:$listener")
+        listener?.onClick(view)
         val user = mUserManager.user
         val noConnectivitySnack = networkSnackBarUtil.getNoConnectionSnackBar(
             view,
             user,
             callback,
-            listener ?: connectivityRetryListener,
+            { listener?.onClick(view) ?: onRetryDefaultListener() },
             message
         )
         noConnectivitySnack.show()
 
-        val contentLayout = (noConnectivitySnack.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
+//        val contentLayout = (noConnectivitySnack.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
 //        val button: TextView = contentLayout.actionView
         networkSnackBarUtil.hideCheckingConnectionSnackBar()
 

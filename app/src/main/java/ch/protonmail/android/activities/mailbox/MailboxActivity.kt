@@ -703,7 +703,7 @@ class MailboxActivity :
         registerReceiver(humanVerificationBroadcastReceiver, filter)
     }
 
-    private var connectivityRetryListener = View.OnClickListener {
+    private fun onConnectivityRetryListener() {
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
         }
@@ -1048,13 +1048,12 @@ class MailboxActivity :
     private fun showNoConnSnackAndScheduleRetry() {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
         mConnectivitySnackLayout?.let {
-            val noConnectivitySnackBar = networkSnackBarUtil.getNoConnectionSnackBar(
+            networkSnackBarUtil.getNoConnectionSnackBar(
                 parentView = it,
                 user = mUserManager.user,
-                callback = this,
-                listener = connectivityRetryListener
-            )
-            noConnectivitySnackBar.show()
+                netConfiguratorCallback = this,
+                onRetryClick = { onConnectivityRetryListener() }
+            ).show()
         }
 
         if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {

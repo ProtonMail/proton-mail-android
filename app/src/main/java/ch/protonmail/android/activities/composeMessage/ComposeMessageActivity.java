@@ -800,13 +800,12 @@ public class ComposeMessageActivity
         addRecipientsToView(recipients, recipient);
     }
 
-    protected class ConnectivityRetryListener extends RetryListener {
+    protected class ConnectivityRetryListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
             Snackbar mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(getMSnackLayout());
             mCheckForConnectivitySnack.show();
-            super.onClick(v);
         }
     }
 

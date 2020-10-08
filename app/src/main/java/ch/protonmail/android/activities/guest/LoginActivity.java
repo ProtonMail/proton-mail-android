@@ -191,7 +191,7 @@ public class LoginActivity extends BaseLoginActivity {
         }
     }
 
-    protected class ConnectivityRetryListener extends RetryListener {
+    protected class ConnectivityRetryListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
@@ -200,7 +200,6 @@ public class LoginActivity extends BaseLoginActivity {
                     getMSnackLayout());
             mCheckForConnectivitySnack.show();
             onSignIn();
-            super.onClick(v);
         }
     }
 

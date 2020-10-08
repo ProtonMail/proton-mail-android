@@ -620,7 +620,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         outState.putParcelable(STATE_ADDRESS, addressChosen);
     }
 
-    protected class ConnectivityRetryListener extends RetryListener {
+    protected class ConnectivityRetryListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
@@ -629,7 +629,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
                     getMSnackLayout());
             mCheckForConnectivitySnack.show();
             checkDirectEnabled();
-            super.onClick(v);
         }
     }
 }

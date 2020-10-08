@@ -47,19 +47,20 @@ import ch.protonmail.android.contacts.list.search.SearchExpandListener
 import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.events.AttachmentFailedEvent
-import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
+import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
 import timber.log.Timber
+import javax.inject.Inject
 
 // region constants
 const val REQUEST_CODE_CONTACT_DETAILS = 1
@@ -79,8 +80,6 @@ class ContactsActivity :
     }
 
     override val jobManager: JobManager get() = mJobManager
-
-    private val contactsConnectivityRetryListener = ConnectivityRetryListener()
 
     private var alreadyCheckedPermission = false
 
@@ -145,6 +144,13 @@ class ContactsActivity :
             this,
             ::onContactsFetchedEvent
         )
+
+        contactsViewModel.hasConnection.observe(
+            this,
+            {
+                onConnectivityEvent(it)
+            }
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -164,9 +170,7 @@ class ContactsActivity :
 
     override fun onResume() {
         super.onResume()
-        if (!mNetworkUtil.isConnected()) {
-            showNoConnSnack(callback = this)
-        }
+        contactsViewModel.launchPing()
     }
 
     override fun onStart() {
@@ -188,29 +192,28 @@ class ContactsActivity :
         super.onStop()
     }
 
-    private inner class ConnectivityRetryListener : RetryListener() {
-        override fun onClick(v: View) {
-            super.onClick(v)
-            mNetworkUtil.setCurrentlyHasConnectivity(true)
-            val checkForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
-                layout_no_connectivity_info
-            )
-            checkForConnectivitySnack.show()
+    private fun contactsConnectivityRetryListener() {
+        mNetworkUtil.setCurrentlyHasConnectivity(true)
+        networkSnackBarUtil.getCheckingConnectionSnackBar(
+            layout_no_connectivity_info
+        ).show()
 
-            // Dimitar: manually check if we have network connectivity and initiate DOH if we do
-            if (mNetworkUtil.isConnectedAndHasConnectivity()) {
-                // TODO: DoH
+        // Dimitar: manually check if we have network connectivity and initiate DOH if we do
+        if (mNetworkUtil.isConnectedAndHasConnectivity()) {
+            // TODO: DoH
 //                mJobManager.addJobInBackground(DnsOverHttpsJob(this@ContactsActivity, this@ContactsActivity))
-            }
         }
     }
 
-    @Subscribe
-    fun onConnectivityEvent(event: ConnectivityEvent) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(listener = contactsConnectivityRetryListener, view = layout_no_connectivity_info, callback = this)
+    private fun onConnectivityEvent(hasConnection: Boolean) {
+        if (!hasConnection) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                mSnackLayout,
+                mUserManager.user,
+                this,
+                { contactsConnectivityRetryListener() }
+            ).show()
         } else {
-            mPingHasConnection = true
             hideNoConnSnack()
         }
     }

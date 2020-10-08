@@ -62,13 +62,13 @@ class NetworkSnackBarUtil @Inject constructor() {
         parentView: View,
         user: User,
         netConfiguratorCallback: INetworkConfiguratorCallback,
-        onRetryClick: View.OnClickListener?,
+        onRetryClick: (() -> Unit)?,
         @StringRes messageRes: Int = R.string.no_connectivity_detected_troubleshoot,
         isTopSnackBar: Boolean = false
     ): Snackbar {
         val snackBar = noConnectionSnackBar
             ?: Snackbar.make(parentView, messageRes, Snackbar.LENGTH_INDEFINITE).apply {
-                setAction(context.getString(R.string.retry), onRetryClick)
+                setAction(context.getString(R.string.retry)) { onRetryClick?.invoke() }
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
                 view.apply {
                     setBackgroundColor(ContextCompat.getColor(context, R.color.red))

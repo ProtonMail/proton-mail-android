@@ -174,14 +174,13 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         mSignIn.setClickable(true);
     }
 
-    protected class ConnectivityRetryListener extends RetryListener {
+    protected class ConnectivityRetryListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
             mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(getMSnackLayout());
             mCheckForConnectivitySnack.show();
-            super.onClick(v);
         }
     }
 

@@ -24,24 +24,34 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.fetch.FetchContactsData
 import timber.log.Timber
 
 class ContactsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
-    private val fetchContactsData: FetchContactsData
+    private val fetchContactsData: FetchContactsData,
+    private val sendPing: SendPing
 ) : ViewModel() {
 
     private val fetchContactsTrigger: MutableLiveData<Unit> = MutableLiveData()
+    private val _pingTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val fetchContactsResult: LiveData<Boolean> =
         fetchContactsTrigger.switchMap { fetchContactsData() }
+
+    val hasConnection: LiveData<Boolean> = _pingTrigger
+        .switchMap { sendPing() }
 
     fun fetchContacts() {
         Timber.v("fetchContacts")
         fetchContactsTrigger.value = Unit
     }
 
-    fun isPaidUser(): Boolean = userManager.user.isPaidUser
+    fun launchPing() {
+        Timber.v("Launch ping")
+        _pingTrigger.value = Unit
+    }
 
+    fun isPaidUser(): Boolean = userManager.user.isPaidUser
 }
