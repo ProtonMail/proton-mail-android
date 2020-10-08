@@ -29,10 +29,10 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
-import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseConnectivityActivity
@@ -86,9 +86,8 @@ class ContactsActivity :
 
     private var alreadyCheckedPermission = false
 
-    @Inject
-    lateinit var contactsViewModelFactory: ContactsViewModelFactory
-    private lateinit var contactsViewModel: ContactsViewModel
+
+    private val contactsViewModel: ContactsViewModel by viewModels()
 
     lateinit var pagerAdapter: ContactsFragmentsPagerAdapter
 
@@ -122,9 +121,6 @@ class ContactsActivity :
             setTitle(R.string.contacts)
         }
 
-        contactsViewModel =
-            ViewModelProviders.of(this, contactsViewModelFactory)
-                .get(ContactsViewModel::class.java)
         pagerAdapter = ContactsFragmentsPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = pagerAdapter
         viewPager?.addOnPageChangeListener(ViewPagerOnPageSelected(this@ContactsActivity::onPageSelected))

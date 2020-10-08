@@ -18,12 +18,12 @@
  */
 package ch.protonmail.android.contacts
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.fetch.FetchContactsData
-import javax.inject.Inject
 
-class ContactsViewModel @Inject constructor(
+class ContactsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData
 ) : ViewModel() {
