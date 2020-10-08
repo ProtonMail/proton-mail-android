@@ -1450,8 +1450,7 @@ class MailboxActivity : NavigationActivity(),
                 }
 
                 if (state == WorkInfo.State.FAILED) {
-                    val outputData = it.outputData
-                    val errorMessage = outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+                    val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
                         ?: getString(R.string.label_invalid)
                     showToast(errorMessage, Toast.LENGTH_SHORT)
                 }

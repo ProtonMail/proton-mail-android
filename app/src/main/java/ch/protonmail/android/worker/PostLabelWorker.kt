@@ -57,22 +57,25 @@ class PostLabelWorker @WorkerInject constructor(
 
         runCatching(
             createOrUpdateLabel(labelName, color, display, exclusive)
-        ).fold(onSuccess = { labelResponse ->
+        ).fold(
+            onSuccess = { labelResponse ->
 
-            if (labelResponse.hasError()) {
-                return failureResultWithError(labelResponse.error)
+                if (labelResponse.hasError()) {
+                    return failureResultWithError(labelResponse.error)
+                }
+
+                if (hasInvalidLabelApiResponse(labelResponse)) {
+                    return failureResultWithError(labelResponse.error)
+                }
+
+                labelRepository.saveLabel(labelResponse.label)
+                return Result.success()
+
+            },
+            onFailure = {
+                return failureResultWithError(it.localizedMessage)
             }
-
-            if (hasInvalidLabelApiResponse(labelResponse)) {
-                return failureResultWithError(labelResponse.error)
-            }
-
-            labelRepository.saveLabel(labelResponse.label)
-            return Result.success()
-
-        }, onFailure = {
-            return failureResultWithError(it.localizedMessage)
-        })
+        )
     }
 
     private fun failureResultWithError(error: String): Result {
@@ -84,7 +87,8 @@ class PostLabelWorker @WorkerInject constructor(
         labelName: String,
         color: String,
         display: Int,
-        exclusive: Int): PostLabelWorker.() -> LabelResponse {
+        exclusive: Int
+    ): PostLabelWorker.() -> LabelResponse {
 
         return {
             if (isUpdateParam()) {
@@ -114,23 +118,25 @@ class PostLabelWorker @WorkerInject constructor(
 
     class Enqueuer(private val workManager: WorkManager) {
 
-        fun enqueue(labelName: String,
-                    color: String,
-                    display: Int? = 0,
-                    exclusive: Int? = 0,
-                    update: Boolean? = false,
-                    labelId: String? = null): OneTimeWorkRequest {
+        fun enqueue(
+            labelName: String,
+            color: String,
+            display: Int? = 0,
+            exclusive: Int? = 0,
+            update: Boolean? = false,
+            labelId: String? = null): OneTimeWorkRequest {
 
             val postLabelWorkerRequest = OneTimeWorkRequestBuilder<PostLabelWorker>()
-                .setInputData(workDataOf(
-                    KEY_INPUT_DATA_LABEL_ID to labelId,
-                    KEY_INPUT_DATA_LABEL_NAME to labelName,
-                    KEY_INPUT_DATA_LABEL_COLOR to color,
-                    KEY_INPUT_DATA_LABEL_EXCLUSIVE to exclusive,
-                    KEY_INPUT_DATA_IS_UPDATE to update,
-                    KEY_INPUT_DATA_LABEL_DISPLAY to display
-                ))
-                .build()
+                .setInputData(
+                    workDataOf(
+                        KEY_INPUT_DATA_LABEL_ID to labelId,
+                        KEY_INPUT_DATA_LABEL_NAME to labelName,
+                        KEY_INPUT_DATA_LABEL_COLOR to color,
+                        KEY_INPUT_DATA_LABEL_EXCLUSIVE to exclusive,
+                        KEY_INPUT_DATA_IS_UPDATE to update,
+                        KEY_INPUT_DATA_LABEL_DISPLAY to display
+                    )
+                ).build()
 
             workManager.enqueue(postLabelWorkerRequest)
             return postLabelWorkerRequest

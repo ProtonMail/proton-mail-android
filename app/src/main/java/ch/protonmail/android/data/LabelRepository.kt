@@ -22,6 +22,6 @@ package ch.protonmail.android.data
 import ch.protonmail.android.api.models.room.messages.Label
 
 interface LabelRepository {
-    fun saveLabel(label: Label)
+    suspend fun saveLabel(label: Label)
 
 }

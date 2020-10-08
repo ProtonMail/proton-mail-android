@@ -109,4 +109,3 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         assertTrue(request is WorkRequest)
     }
 }
-

@@ -184,6 +184,25 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
         )
     }
 
+    class Factory(
+        private val jobManager: JobManager,
+        private val messagesDatabase: MessagesDatabase,
+        private val type: LabelUiModel.Type,
+        private val workManager: WorkManager,
+        private val labelMapper: LabelUiModelMapper = LabelUiModelMapper(isLabelEditable = true)
+    ) : ViewModelProvider.NewInstanceFactory() {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+            LabelsManagerViewModel(
+                jobManager,
+                messagesDatabase,
+                type,
+                labelMapper,
+                workManager
+            ) as T
+    }
+
 }
 
 /** A class that hold editing progress of a Label */

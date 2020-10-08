@@ -31,7 +31,6 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewMo
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
@@ -41,15 +40,12 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.data.LabelRepository
-import ch.protonmail.android.data.RoomLabelRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 
 /*
  * Created by kadrikj on 8/28/18. */
@@ -133,20 +129,15 @@ internal class ViewModelModule {
 
     @Provides
     internal fun provideAccountManagerViewModelFactory(
-            application: ProtonMailApplication,
-            userManager: UserManager,
-            accountManager: AccountManager
+        application: ProtonMailApplication,
+        userManager: UserManager,
+        accountManager: AccountManager
     ) = AccountManagerViewModel.Factory(application, userManager, accountManager)
 
     @Provides
     fun providePinFragmentViewModelFactory(pinFragmentViewModelFactory: PinFragmentViewModelFactory):
-            ViewModelProvider.NewInstanceFactory {
+        ViewModelProvider.NewInstanceFactory {
         return pinFragmentViewModelFactory
     }
-
-    @Provides
-    internal fun provideLabelRepository(
-        @Named("messages") messagesDao: MessagesDao
-    ): LabelRepository = RoomLabelRepository(messagesDao)
 
 }

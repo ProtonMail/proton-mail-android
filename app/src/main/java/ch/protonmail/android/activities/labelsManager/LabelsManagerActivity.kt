@@ -29,6 +29,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.CREATE
@@ -36,7 +37,9 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.Stat
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UPDATE
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
-import ch.protonmail.android.events.LabelAddedEvent
+import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.events.LabelDeletedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
@@ -48,6 +51,8 @@ import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
+import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
+import ch.protonmail.libs.core.utils.showToast
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
@@ -329,10 +334,40 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             .show()
     }
 
-    /** Save the current editing Label */
     private fun saveCurrentLabel() {
-        viewModel.saveLabel()
+        val saveLabelRequest = viewModel.saveLabel()
+        getWorkManager().getWorkInfoByIdLiveData(saveLabelRequest.id).observe(
+            this,
+            { displayLabelCreationOutcome(it) }
+        )
+
         state = UNDEFINED
+    }
+
+    private fun displayLabelCreationOutcome(workInfo: WorkInfo) {
+        val success = workInfo.state == WorkInfo.State.SUCCEEDED
+        val errorMessage = workInfo.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+
+        if (success && createOnly) onBackPressed()
+
+        labels_grid_view.isVisible = true
+
+        val message = when (type) {
+            FOLDERS -> {
+                when (success) {
+                    true -> getString(R.string.folder_created)
+                    false -> errorMessage ?: getString(R.string.folder_invalid)
+                }
+            }
+            LABELS -> {
+                when (success) {
+                    true -> getString(R.string.label_created)
+                    false -> errorMessage ?: getString(R.string.label_invalid)
+                }
+            }
+        }
+
+        showToast(message, Toast.LENGTH_SHORT)
     }
 
     /** Select a random Color for the Label */
@@ -413,34 +448,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     @Subscribe
     @Suppress("unused") // EventBus
-    fun onLabelAddedEvent(event: LabelAddedEvent) {
-        val success = event.status == Status.SUCCESS
-        val error = event.error
-        if (success && createOnly) onBackPressed()
-
-        labels_grid_view.isVisible = true
-
-        val message = when (type) {
-            FOLDERS -> {
-                when (success) {
-                    true -> getString(R.string.folder_created)
-                    false -> error ?: getString(R.string.folder_invalid)
-                }
-            }
-            LABELS -> {
-                when (success) {
-                    true -> getString(R.string.label_created)
-                    false -> error ?: getString(R.string.label_invalid)
-                }
-            }
-        }
-
-        showToast(message, Toast.LENGTH_SHORT)
-    }
-
-    @Subscribe
-    @Suppress("unused") // EventBus
-    fun onLogoutEvent(@Suppress("UNUSED_PARAMETER") event: LogoutEvent) {
+    fun onLogoutEvent( @Suppress("UNUSED_PARAMETER") event: LogoutEvent ) {
         moveToLogin()
     }
 

@@ -21,11 +21,14 @@ package ch.protonmail.android.data
 
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDao
+import javax.inject.Inject
 import javax.inject.Named
 
-class RoomLabelRepository(@Named("messages") var messagesDao: MessagesDao) : LabelRepository {
+class RoomLabelRepository @Inject constructor(
+    @Named("messages") var messagesDao: MessagesDao
+) : LabelRepository {
 
-    override fun saveLabel(label: Label) {
+    override suspend fun saveLabel(label: Label) {
         messagesDao.saveLabel(label)
     }
 
