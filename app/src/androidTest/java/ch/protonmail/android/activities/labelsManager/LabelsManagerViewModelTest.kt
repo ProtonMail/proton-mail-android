@@ -22,11 +22,13 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.every
+import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -35,7 +37,7 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import me.proton.core.test.kotlin.CoroutinesTest
-import me.proton.core.test.kotlin.coroutinesTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -43,34 +45,39 @@ import org.junit.Test
  * Test suite for [LabelsManagerViewModel]
  * @author Davide Farella
  */
-internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
+internal class LabelsManagerViewModelTest : CoroutinesTest {
 
-    @get:Rule val archRule = InstantTaskExecutorRule()
+    @get:Rule
+    val archRule = InstantTaskExecutorRule()
 
     @RelaxedMockK
     private lateinit var workManager: WorkManager
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val messagesDatabase =
-            MessagesDatabaseFactory.buildInMemoryDatabase(context).getDatabase()
+    private val messagesDatabase = MessagesDatabaseFactory.buildInMemoryDatabase(context).getDatabase()
+
+    private lateinit var viewModel: LabelsManagerViewModel
 
     private val savedState = mockk<SavedStateHandle> {
         every { get<Boolean>(EXTRA_MANAGE_FOLDERS) } returns false
     }
 
-    private val viewModel by lazy {
-        LabelsManagerViewModel(
-            jobManager = mockk(),
-            savedStateHandle = savedState,
-            messagesDatabase = messagesDatabase,
-            deleteLabel = mockk(),
-            workManager = workManager
-        )
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+        viewModel =
+            LabelsManagerViewModel(
+                jobManager = mockk(),
+                savedStateHandle = savedState,
+                messagesDatabase = messagesDatabase,
+                deleteLabel = mockk(),
+                workManager = workManager
+            )
     }
 
     @Test
-    fun verify_checked_state_is_updated_correctly_for_adapter_items() {
+    fun verifyCheckedStateIsUpdatedCorrectlyForAdapterItems() {
         val adapter = LabelsCirclesAdapter()
         viewModel.labels.observeDataForever(adapter::submitList)
 
@@ -93,6 +100,13 @@ internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
         viewModel.onLabelSelected("1", false)
         runBlocking { delay(50) } // Wait for async delivery
         assertFalse(adapter.currentList!![0]!!.isChecked)
+    }
+
+    @Test
+    fun saveLabelReturnsObservableWorkRequest() {
+        val request = viewModel.saveLabel()
+
+        assertTrue(request is WorkRequest)
     }
 }
 

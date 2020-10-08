@@ -141,21 +141,21 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
     }
 
     /** Save the editing label */
-    fun saveLabel() {
-        if ( labelEditor != null ) {
-            with ( labelEditor!!.buildParams() ) {
+    fun saveLabel(): WorkRequest {
+        labelEditor?.let {
+            return with(it.buildParams()) {
                 createOrUpdateLabel(labelName, color, display, exclusive, update, labelId)
             }
-        } else {
-            createOrUpdateLabel(
-                tempLabelName.toString(),
-                tempLabelColor.toColorHex(),
-                0,
-                type.toExclusive(),
-                false,
-                null
-            )
         }
+
+        return createOrUpdateLabel(
+            tempLabelName.toString(),
+            tempLabelColor.toColorHex(),
+            0,
+            type.toExclusive(),
+            false,
+            null
+        )
     }
 
     /** Set a [ColorInt] for the current editing Label */
