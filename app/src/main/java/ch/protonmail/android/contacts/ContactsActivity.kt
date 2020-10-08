@@ -192,11 +192,10 @@ class ContactsActivity :
         override fun onClick(v: View) {
             super.onClick(v)
             mNetworkUtil.setCurrentlyHasConnectivity(true)
-            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
-                layout_no_connectivity_info,
-                this@ContactsActivity
+            val checkForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
+                layout_no_connectivity_info
             )
-            mCheckForConnectivitySnack!!.show()
+            checkForConnectivitySnack.show()
 
             // Dimitar: manually check if we have network connectivity and initiate DOH if we do
             if (mNetworkUtil.isConnectedAndHasConnectivity()) {
@@ -209,7 +208,7 @@ class ContactsActivity :
     @Subscribe
     fun onConnectivityEvent(event: ConnectivityEvent) {
         if (!event.hasConnection()) {
-            showNoConnSnack(contactsConnectivityRetryListener, view = layout_no_connectivity_info, callback = this)
+            showNoConnSnack(listener = contactsConnectivityRetryListener, view = layout_no_connectivity_info, callback = this)
         } else {
             mPingHasConnection = true
             hideNoConnSnack()

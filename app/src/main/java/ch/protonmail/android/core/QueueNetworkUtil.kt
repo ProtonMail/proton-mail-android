@@ -88,7 +88,7 @@ class QueueNetworkUtil @Inject constructor(
                 hasConnection = hasConnection && isInternetAccessible
             }
             if (checkReal && currentStatus != hasConnection) {
-                Timber.d("Network statuses differs, show connectivity event on UI")
+                Timber.d("Network statuses differs hasConnection $hasConnection currentStatus $currentStatus")
                 AppUtil.postEventOnUi(ConnectivityEvent(hasConnection))
             } else if (checkReal) {
                 if (hasConnection) {

@@ -164,10 +164,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
     val hasConnection: LiveData<Boolean> = _pingTrigger.switchMap {
-        sendPing().map { hasConnectivity ->
-            onConnectivityEvent(hasConnectivity)
-            hasConnectivity
-        }
+        sendPing().map { onConnectivityEvent(it) }
     }
 
     init {
@@ -515,10 +512,11 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         _pingTrigger.value = Unit
     }
 
-    private fun onConnectivityEvent(hasConnectivity: Boolean) {
+    private fun onConnectivityEvent(hasConnectivity: Boolean): Boolean {
         if (hasConnectivity && !requestPending.get()) {
             fetchMessageDetails(false)
         }
+        return hasConnectivity
     }
 
     fun remoteContentDisplayed() {

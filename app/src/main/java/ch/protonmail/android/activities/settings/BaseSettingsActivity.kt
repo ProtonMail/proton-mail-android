@@ -58,7 +58,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.events.FetchLabelsEvent
-import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.OnFirstLoginJob
@@ -69,7 +68,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.utils.moveToLogin
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
 import java.util.*

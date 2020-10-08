@@ -36,6 +36,7 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithCustomView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.scopes.ActivityScoped
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -82,6 +83,7 @@ class NetworkSnackBarUtil @Inject constructor() {
                 }
             }
         noConnectionSnackBar = snackBar
+        Timber.d("getNoConnectionSnackBar $snackBar $parentView")
         return snackBar
     }
 
@@ -106,6 +108,7 @@ class NetworkSnackBarUtil @Inject constructor() {
             }
         }
         checkingConnectionSnackBar = snackBar
+        Timber.d("getCheckingConnectionSnackBar $snackBar $parentView")
         return snackBar
     }
 

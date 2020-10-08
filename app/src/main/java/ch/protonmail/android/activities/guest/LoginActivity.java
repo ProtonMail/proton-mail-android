@@ -59,11 +59,13 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.text.Charsets;
 
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
+@AndroidEntryPoint
 public class LoginActivity extends BaseLoginActivity {
 
     @BindView(R.id.username)
@@ -195,7 +197,7 @@ public class LoginActivity extends BaseLoginActivity {
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
             mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
-                    getMSnackLayout(), LoginActivity.this);
+                    getMSnackLayout());
             mCheckForConnectivitySnack.show();
             onSignIn();
             super.onClick(v);

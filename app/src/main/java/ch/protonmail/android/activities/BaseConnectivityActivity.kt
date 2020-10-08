@@ -18,17 +18,13 @@
  */
 package ch.protonmail.android.activities
 
-import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.StringRes
 import butterknife.BindView
 import ch.protonmail.android.R
-import ch.protonmail.android.jobs.PingJob
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
 import ch.protonmail.android.utils.NetworkSnackBarUtil
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.SnackbarContentLayout
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,31 +34,28 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     @Inject
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
+//    @Inject
+//    lateinit var sendPing: SendPing
+
     @BindView(R.id.layout_no_connectivity_info)
     protected lateinit var mSnackLayout: View
-    var mNoConnectivitySnack: Snackbar? = null
-    protected var mCheckForConnectivitySnack: Snackbar? = null
 
-    protected var pingHandler = Handler()
-    protected var pingRunnable: Runnable = Runnable {
-        mJobManager.addJobInBackground(PingJob())
-    }
+//    protected var pingHandler = Handler()
+//    protected var pingRunnable: Runnable = Runnable { sendPing() }
 
     private var connectivityRetryListener = RetryListener()
 
     protected open inner class RetryListener : View.OnClickListener {
 
         override fun onClick(v: View) {
-            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
-                mSnackLayout,
-                this@BaseConnectivityActivity
+            val checkForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
+                mSnackLayout
             )
-            mCheckForConnectivitySnack?.show()
-            if (mNoConnectivitySnack != null && mNoConnectivitySnack!!.isShownOrQueued) {
-                mNoConnectivitySnack!!.dismiss()
-            }
-            pingHandler.removeCallbacks(pingRunnable)
-            pingHandler.postDelayed(pingRunnable, 3000)
+            checkForConnectivitySnack.show()
+            networkSnackBarUtil.hideCheckingConnectionSnackBar()
+
+//            pingHandler.removeCallbacks(pingRunnable)
+//            pingHandler.postDelayed(pingRunnable, 3000)
 
             retryWithDoh()
         }
@@ -79,43 +72,38 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     }
 
     @JvmOverloads
+    @Deprecated("Use [NetworkSnackBarUtil] instead")
     protected fun showNoConnSnack(
         listener: RetryListener? = null,
         @StringRes message: Int = R.string.no_connectivity_detected_troubleshoot,
         view: View = mSnackLayout,
         callback: INetworkConfiguratorCallback
     ) {
+        Timber.d("showNoConnSnack listener:$listener")
         val user = mUserManager.user
-        mNoConnectivitySnack = mNoConnectivitySnack ?: networkSnackBarUtil.getNoConnectionSnackBar(
+        val noConnectivitySnack = networkSnackBarUtil.getNoConnectionSnackBar(
             view,
-            this,
-            listener ?: connectivityRetryListener,
-
-            message,
             user,
-            callback, false
+            callback,
+            listener ?: connectivityRetryListener,
+            message
         )
-        mNoConnectivitySnack!!.show()
-        val contentLayout = (mNoConnectivitySnack!!.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
-        val vvv: TextView = contentLayout.actionView
-        mCheckForConnectivitySnack?.saveDismiss()
+        noConnectivitySnack.show()
 
-        if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {
-            window.decorView.postDelayed(
-                { vvv.callOnClick() },
-                500
-            )
-        }
+        val contentLayout = (noConnectivitySnack.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
+//        val button: TextView = contentLayout.actionView
+        networkSnackBarUtil.hideCheckingConnectionSnackBar()
+
+//        if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {
+//            window.decorView.postDelayed(
+//                { button.callOnClick() },
+//                500
+//            )
+//        }
     }
 
     protected fun hideNoConnSnack() {
-        mNoConnectivitySnack?.saveDismiss()
-        mCheckForConnectivitySnack?.saveDismiss()
-    }
-
-    private fun Snackbar.saveDismiss() {
-        if (isShownOrQueued) {
-            dismiss()
-        }
+        networkSnackBarUtil.hideCheckingConnectionSnackBar()
+        networkSnackBarUtil.hideNoConnectionSnackBar()
     }
 }

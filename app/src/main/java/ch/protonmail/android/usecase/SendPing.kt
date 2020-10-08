@@ -42,5 +42,3 @@ class SendPing @Inject constructor(
         }
     }
 }
-
-

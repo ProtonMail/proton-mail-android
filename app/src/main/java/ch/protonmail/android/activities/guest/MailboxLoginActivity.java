@@ -179,7 +179,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(getMSnackLayout(), MailboxLoginActivity.this);
+            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(getMSnackLayout());
             mCheckForConnectivitySnack.show();
             super.onClick(v);
         }

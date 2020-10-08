@@ -436,7 +436,8 @@ public class ComposeMessageActivity
 
         mAddressesSpinner.setSelection(mSelectedAddressPosition);
 
-        getPingHandler().postDelayed(getPingRunnable(), 0);
+        // TODO:throw new IllegalStateException("TODO Handle the following post ping ");
+        //getPingHandler().postDelayed(getPingRunnable(), 0);
 
         mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
@@ -803,7 +804,7 @@ public class ComposeMessageActivity
         @Override
         public void onClick(View v) {
             mNetworkUtil.setCurrentlyHasConnectivity(true);
-            Snackbar mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(getMSnackLayout(), ComposeMessageActivity.this);
+            Snackbar mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(getMSnackLayout());
             mCheckForConnectivitySnack.show();
             super.onClick(v);
         }

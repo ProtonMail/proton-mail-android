@@ -225,12 +225,6 @@ class MailboxActivity :
     lateinit var contactsRepository: ContactsRepository
 
     @Inject
-    lateinit var deleteMessageUseCase: DeleteMessage
-
-    @Inject
-    lateinit var sendPing: SendPing
-
-    @Inject
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
@@ -711,7 +705,7 @@ class MailboxActivity :
 
     private var connectivityRetryListener = View.OnClickListener {
         mConnectivitySnackLayout?.let {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(it, this).show()
+            networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
         }
         retryConnection()
     }
@@ -1055,11 +1049,10 @@ class MailboxActivity :
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
         mConnectivitySnackLayout?.let {
             val noConnectivitySnackBar = networkSnackBarUtil.getNoConnectionSnackBar(
-                snackBarLayout = it,
-                context = this,
-                listener = connectivityRetryListener,
+                parentView = it,
                 user = mUserManager.user,
-                callback = this
+                callback = this,
+                listener = connectivityRetryListener
             )
             noConnectivitySnackBar.show()
         }
@@ -1154,6 +1147,7 @@ class MailboxActivity :
 
     @Subscribe
     fun onMailboxLoaded(event: MailboxLoadedEvent?) {
+        Timber.v("Mailbox loaded status ${event?.status}")
         if (event == null || (event.uuid != null && event.uuid != syncUUID)) {
             return
         }
@@ -1180,7 +1174,6 @@ class MailboxActivity :
     private fun onConnectivityEvent(hasConnection: Boolean) {
         Timber.v("onConnectivityEvent hasConnection: $hasConnection")
         if (!isDohOngoing) {
-            mPingHasConnection = hasConnection
             Timber.d("DoH NOT ongoing showing UI")
             if (!hasConnection) {
                 showNoConnSnackAndScheduleRetry()

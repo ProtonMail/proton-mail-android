@@ -36,7 +36,6 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -48,7 +47,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
@@ -451,65 +449,37 @@ internal class MessageDetailsActivity :
         override fun onClick(v: View) {
             mNetworkUtil.setCurrentlyHasConnectivity(true)
             viewModel.fetchMessageDetails(false)
-            super.onClick(v)
+            networkSnackBarUtil.getCheckingConnectionSnackBar(
+                mSnackLayout
+            ).show()
         }
     }
 
     private val messageDetailsRetryListener = MessageDetailsRetryListener()
     private fun showNoConnSnackExtended() {
-        val noConnectivitySnack = mNoConnectivitySnack
-        if (noConnectivitySnack == null || !noConnectivitySnack.isShownOrQueued) {
-            showNoConnSnack(
-                messageDetailsRetryListener,
-                R.string.no_connectivity_detected_troubleshoot,
-                coordinatorLayout,
-                this
-            )
-            calculateAndUpdateActionButtonsPosition()
+        if (!networkSnackBarUtil.isNoConnectionShown()) {
+            Timber.v("Show no connection")
+            networkSnackBarUtil.hideCheckingConnectionSnackBar()
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                mSnackLayout,
+                mUserManager.user,
+                this,
+                messageDetailsRetryListener
+            ).show()
         }
         invalidateOptionsMenu()
     }
 
     private fun hideNoConnSnackExtended() {
-        val noConnectivitySnackBar = mNoConnectivitySnack
-        if (noConnectivitySnackBar == null || !noConnectivitySnackBar.isShownOrQueued) {
-            return
-        }
         hideNoConnSnack()
         invalidateOptionsMenu()
-    }
-
-    private var coordinatorHeight = -1
-    private fun calculateAndUpdateActionButtonsPosition() {
-        val snackBar = mNoConnectivitySnack ?: return
-        snackBar.addCallback(noConnectivitySnackBarCallback)
-    }
-
-    private var noConnectivitySnackBarCallback: Snackbar.Callback = object : Snackbar.Callback() {
-        override fun onShown(sb: Snackbar) {
-            super.onShown(sb)
-            val height = sb.view.height
-            val params = coordinatorLayout.layoutParams as RelativeLayout.LayoutParams
-            coordinatorHeight = params.height
-            params.height = 2 * height
-            coordinatorLayout.layoutParams = params
-        }
-
-        override fun onDismissed(transientBottomBar: Snackbar, event: Int) {
-            super.onDismissed(transientBottomBar, event)
-            if (coordinatorHeight > 0) {
-                val params = coordinatorLayout.layoutParams as RelativeLayout.LayoutParams
-                params.height = coordinatorHeight
-                coordinatorLayout.layoutParams = params
-            }
-        }
     }
 
     private fun listenForConnectivityEvent() {
         viewModel.hasConnection.observe(
             this,
             { isConnectionActive ->
-                BaseActivity.mPingHasConnection = isConnectionActive
+                Timber.v("isConnectionActive:$isConnectionActive")
                 if (isConnectionActive) {
                     hideNoConnSnackExtended()
                 } else {
