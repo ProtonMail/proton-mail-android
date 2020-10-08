@@ -19,57 +19,73 @@
 package ch.protonmail.android.api.segments.user
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.CreateUserBody
+import ch.protonmail.android.api.models.DirectEnabledResponse
+import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
+import ch.protonmail.android.api.models.KeySalts
+import ch.protonmail.android.api.models.PasswordVerifier
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.UserInfo
+import ch.protonmail.android.api.models.VerificationCodeBody
 import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
 import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.Logger
-import com.google.gson.Gson
 import java.io.IOException
 
 // region constants
 const val MAIL_TYPE = 1
 // endregion
 
-class UserApi (private val service : UserService,
-               private val pubService : UserPubService) : UserApiSpec {
+class UserApi(
+    private val service: UserService,
+    private val pubService: UserPubService
+) : UserApiSpec {
 
     @Throws(IOException::class)
-    override fun fetchUserInfo() : UserInfo =
-            ParseUtils.parse(service.fetchUserInfo().execute())
+    override fun fetchUserInfoBlocking(): UserInfo =
+        ParseUtils.parse(service.fetchUserInfoCall().execute())
+
+    override suspend fun fetchUserInfo(): UserInfo =
+        service.fetchUserInfo()
 
     @Throws(IOException::class)
-    override fun fetchUserInfo(username: String) : UserInfo =
-            ParseUtils.parse(service.fetchUserInfo(RetrofitTag(username)).execute())
+    override fun fetchUserInfoBlocking(username: String): UserInfo =
+        ParseUtils.parse(service.fetchUserInfoCall(RetrofitTag(username)).execute())
 
     @Throws(IOException::class)
     override fun fetchKeySalts(): KeySalts =
-            ParseUtils.parse(service.fetchKeySalts().execute())
+        ParseUtils.parse(service.fetchKeySalts().execute())
 
     @Throws(IOException::class)
     override fun fetchHumanVerificationOptions(): HumanVerifyOptionsResponse =
-            ParseUtils.parse(service.fetchHumanVerificationOptions().execute())
+        ParseUtils.parse(service.fetchHumanVerificationOptions().execute())
 
     @Throws(IOException::class)
     override fun postHumanVerification(body: PostHumanVerificationBody): ResponseBody? =
-            ParseUtils.parse(service.postHumanVerification(body).execute())
+        ParseUtils.parse(service.postHumanVerification(body).execute())
 
     @Throws(IOException::class)
-    override fun createUser(username: String, password: PasswordVerifier, updateMe: Boolean, tokenType: String, token: String, timestamp : String, jwsResult:String): UserInfo {
+    override fun createUser(
+        username: String,
+        password: PasswordVerifier,
+        updateMe: Boolean,
+        tokenType: String,
+        token: String,
+        timestamp: String,
+        jwsResult: String
+    ): UserInfo {
         val body = CreateUserBody(username, password, if (updateMe) 1 else 0, tokenType, token, timestamp, jwsResult)
         return ParseUtils.parse(pubService.createUser(body).execute())
     }
 
     @Throws(IOException::class)
-    override fun sendVerificationCode(verificationCodeBody: VerificationCodeBody): ResponseBody {
-        return ParseUtils.parse(pubService.sendVerificationCode(verificationCodeBody).execute())
-    }
+    override fun sendVerificationCode(verificationCodeBody: VerificationCodeBody): ResponseBody =
+        ParseUtils.parse(pubService.sendVerificationCode(verificationCodeBody).execute())
 
     @Throws(IOException::class)
     override fun isUsernameAvailable(username: String): ResponseBody =
-            ParseUtils.parse(pubService.isUsernameAvailable(username).execute())
+        ParseUtils.parse(pubService.isUsernameAvailable(username).execute())
 
     @Throws(IOException::class)
     override fun fetchDirectEnabled(): DirectEnabledResponse =
-            ParseUtils.parse(pubService.fetchDirectEnabled(MAIL_TYPE).execute())
+        ParseUtils.parse(pubService.fetchDirectEnabled(MAIL_TYPE).execute())
 }
