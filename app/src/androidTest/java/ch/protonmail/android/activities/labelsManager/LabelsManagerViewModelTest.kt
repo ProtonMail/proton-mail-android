@@ -19,13 +19,13 @@
 package ch.protonmail.android.activities.labelsManager
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
-import ch.protonmail.android.mapper.LabelUiModelMapper
-import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.libs.core.utils.EMPTY_STRING
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
@@ -50,12 +50,16 @@ internal class LabelsManagerViewModelTest: CoroutinesTest by coroutinesTest {
     private val messagesDatabase =
             MessagesDatabaseFactory.buildInMemoryDatabase(context).getDatabase()
 
+    private val savedState = mockk<SavedStateHandle> {
+        every { get<Boolean>(EXTRA_MANAGE_FOLDERS) } returns false
+    }
+
     private val viewModel by lazy {
         LabelsManagerViewModel(
-                jobManager = mockk(),
-                messagesDatabase = messagesDatabase,
-                type = LabelUiModel.Type.LABELS,
-                labelMapper = LabelUiModelMapper(isLabelEditable = false)
+            jobManager = mockk(),
+            savedStateHandle = savedState,
+            messagesDatabase = messagesDatabase,
+            deleteLabel = mockk()
         )
     }
 

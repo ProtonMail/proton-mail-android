@@ -1,38 +1,37 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.groups
 
-import androidx.lifecycle.ViewModel
-import ch.protonmail.android.api.models.ResponseBody
-import com.google.gson.Gson
-import retrofit2.HttpException
+package ch.protonmail.android.utils.extensions
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 
 /**
- * Created by kadrikj on 9/21/18. */
-open class ContactGroupsBaseViewModel: ViewModel() {
-
-    fun parseErrorApiResponse(exception: HttpException): String? {
-        return try {
-            val responseBody = Gson().fromJson(exception.response()?.errorBody()?.string(), ResponseBody::class.java)
-            responseBody.error
-        } catch (e: Exception) {
-            null
-        }
+ * Emits the items that pass through the predicate.
+ * As per https://stackoverflow.com/questions/61694154/livedata-with-filters
+ * and https://github.com/adibfara/Lives/blob/master/lives/src/main/java/com/snakydesign/livedataextensions/Filtering.kt
+ */
+inline fun <T> LiveData<T>.filter(crossinline predicate: (T?) -> Boolean): LiveData<T> {
+    val mutableLiveData: MediatorLiveData<T> = MediatorLiveData()
+    mutableLiveData.addSource(this) {
+        if (predicate(it))
+            mutableLiveData.value = it
     }
+    return mutableLiveData
 }

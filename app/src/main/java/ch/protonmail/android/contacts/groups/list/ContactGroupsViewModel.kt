@@ -19,25 +19,29 @@
 package ch.protonmail.android.contacts.groups.list
 
 import android.annotation.SuppressLint
+import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.text.TextUtils
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
-import io.reactivex.Completable
 import io.reactivex.Scheduler
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 8/22/18. */
-class ContactGroupsViewModel @Inject constructor(private val contactGroupsRepository: ContactGroupsRepository,
-                                                 private val userManager: UserManager) : ViewModel(), ISearchListenerViewModel {
+class ContactGroupsViewModel @Inject constructor(
+    private val contactGroupsRepository: ContactGroupsRepository,
+    private val userManager: UserManager,
+    private val deleteLabel: DeleteLabel
+) : ViewModel(), ISearchListenerViewModel {
 
     private val _contactGroupsResult: MutableLiveData<List<ContactLabel>> = MutableLiveData()
     private val _contactGroupsError: MutableLiveData<Event<String>> = MutableLiveData()
@@ -77,15 +81,15 @@ class ContactGroupsViewModel @Inject constructor(private val contactGroupsReposi
     fun fetchContactGroups(schedulers: Scheduler) {
         if (TextUtils.isEmpty(_searchPhrase)) {
             contactGroupsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
-                    .observeOn(schedulers).subscribe(
-                            {
-                                _contactGroups = it
-                                _contactGroupsResult.postValue(it)
-                            },
-                            {
-                                _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                            }
-                    )
+                .observeOn(schedulers).subscribe(
+                    {
+                        _contactGroups = it
+                        _contactGroupsResult.postValue(it)
+                    },
+                    {
+                        _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                    }
+                )
         } else {
             setSearchPhrase(_searchPhrase)
         }
@@ -100,41 +104,39 @@ class ContactGroupsViewModel @Inject constructor(private val contactGroupsReposi
             }
             val searchPhraseQuery = "%$searchPhrase%"
             contactGroupsRepository.getContactGroups(searchPhraseQuery).subscribeOn(ThreadSchedulers.io())
-                    .observeOn(ThreadSchedulers.main()).subscribe(
-                            {
-                                _contactGroupsResult.postValue(it)
-                            },
-                            {
-                                _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_GROUP_LIST.name)
-                            }
-                    )
+                .observeOn(ThreadSchedulers.main()).subscribe(
+                    {
+                        _contactGroupsResult.postValue(it)
+                    },
+                    {
+                        _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_GROUP_LIST.name)
+                    }
+                )
         }
     }
 
     fun deleteSelected(contactGroups: List<ContactLabel>) {
-        Completable.concat(contactGroups.map {
-            contactGroupsRepository.delete(it)
-                    .onErrorComplete()
-                    .doOnError { error ->
-                        _contactGroupsError.value = Event(error.message ?: error.localizedMessage)
-                    }
-        }).subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main())
-                .subscribe()
+        val labelIds = contactGroups.map { it.ID }
+        Timber.v("Delete labelIds $labelIds")
+        viewModelScope.launch {
+            deleteLabel(labelIds)
+            // reply with empty success status
+            _contactGroupsResult.value = emptyList()
+        }
     }
 
     @SuppressLint("CheckResult")
     fun getContactGroupEmails(contactLabel: ContactLabel) {
         contactGroupsRepository.getContactGroupEmails(contactLabel.ID)
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main()).subscribe(
-                        {
-                            _contactGroupEmailsResult.postValue(Event(it))
-                        },
-                        {
-                            _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                        }
-                )
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.main()).subscribe(
+                {
+                    _contactGroupEmailsResult.postValue(Event(it))
+                },
+                {
+                    _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                }
+            )
     }
 
     fun isPaidUser(): Boolean = userManager.user?.isPaidUser ?: false

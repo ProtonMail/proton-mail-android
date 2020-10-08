@@ -49,6 +49,7 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -184,6 +185,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
         contactGroupDetailsViewModel.deleteGroupStatus.observe(this, {
             it?.getContentIfNotHandled()?.let { status ->
+                Timber.v("deleteGroupStatus received $status")
                 when (status) {
                     ContactGroupDetailsViewModel.Status.SUCCESS -> {
                         saveLastInteraction()

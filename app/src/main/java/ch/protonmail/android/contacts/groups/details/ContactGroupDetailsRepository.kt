@@ -20,30 +20,21 @@ package ch.protonmail.android.contacts.groups.details
 
 import android.util.Log
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.jobs.DeleteLabelJob
 import ch.protonmail.android.jobs.PostLabelJob
 import com.birbit.android.jobqueue.JobManager
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.io.IOException
 import javax.inject.Inject
-import javax.inject.Singleton
 
-/*
- * Created by kadrikj on 8/23/18. */
-
-@Singleton
 class ContactGroupDetailsRepository @Inject constructor(
-    val jobManager: JobManager,
-    val api: ProtonMailApiManager,
+    private val jobManager: JobManager,
+    private val api: ProtonMailApiManager,
     private val databaseProvider: DatabaseProvider
 ) {
 
@@ -75,23 +66,5 @@ class ContactGroupDetailsRepository @Inject constructor(
                                 contactLabel.exclusive.makeInt(), false, contactLabel.ID))
                     }
                 }
-    }
-
-    fun delete(contactLabel: ContactLabel): Completable {
-        return api.deleteLabel(contactLabel.ID)
-                .doOnSuccess {
-                    it?.let {
-                        if (it.code == Constants.RESPONSE_CODE_OK) {
-                            contactsDatabase.deleteContactGroup(contactLabel)
-                        } else {
-                            throw ApiException(it, it.error)
-                        }
-                    }
-                }
-                .doOnError {
-                    if (it is IOException) {
-                        jobManager.addJobInBackground(DeleteLabelJob(contactLabel.ID))
-                    }
-                }.toCompletable()
     }
 }

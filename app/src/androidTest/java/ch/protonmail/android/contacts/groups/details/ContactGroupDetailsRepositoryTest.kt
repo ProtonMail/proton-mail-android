@@ -20,7 +20,7 @@ package ch.protonmail.android.contacts.groups.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.EmptyResultSetException
-import ch.protonmail.android.api.ProtonMailApi
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.IConverterFactory
@@ -36,19 +36,18 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.reactivex.Flowable
 import io.reactivex.Single
-import junit.framework.Assert.assertEquals
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
+import kotlin.test.assertEquals
 
-/**
- * Created by kadrikj on 8/27/18. */
 class ContactGroupDetailsRepositoryTest {
     //region mocks
     private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true)
     private val database = mockk<ContactsDatabase>(relaxed = true)
     private val jobManager = mockk<JobManager>(relaxed = true)
+    private val workManager = mockk<WorkManager>(relaxed = true)
     private val contactLabelFactory = mockk<IConverterFactory<ServerLabel, ContactLabel>>(relaxed = true)
     private val databaseProvider = mockk<DatabaseProvider>(relaxed = true) {
         every { provideContactsDao(any()) } returns database

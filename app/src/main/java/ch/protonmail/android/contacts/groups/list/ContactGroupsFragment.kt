@@ -51,6 +51,7 @@ import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.libs.core.utils.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts_groups.*
+import timber.log.Timber
 import java.io.Serializable
 import javax.inject.Inject
 
@@ -198,6 +199,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     private fun startObserving() {
         contactGroupsViewModel.contactGroupsResult.observe(this, {
+            Timber.v("contactGroupsResult $it")
             if (it.isEmpty()) {
                 noResults.visibility = VISIBLE
             } else {
