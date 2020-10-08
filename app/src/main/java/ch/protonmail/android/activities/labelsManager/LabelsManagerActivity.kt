@@ -37,11 +37,7 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.Stat
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UPDATE
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
-import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.LabelDeletedEvent
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.uiModel.LabelUiModel.Type.FOLDERS
@@ -52,7 +48,6 @@ import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
-import ch.protonmail.libs.core.utils.showToast
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*

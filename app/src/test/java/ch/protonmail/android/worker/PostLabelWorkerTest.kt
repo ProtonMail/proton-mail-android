@@ -30,6 +30,7 @@ import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.data.LabelRepository
 import io.mockk.Called
 import io.mockk.MockKAnnotations
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
@@ -114,7 +115,7 @@ class PostLabelWorkerTest {
 
             val result = worker.doWork()
 
-            verify { repository.saveLabel(any()) }
+            coVerify { repository.saveLabel(any()) }
             assertEquals(ListenableWorker.Result.success(), result)
         }
     }
@@ -199,7 +200,7 @@ class PostLabelWorkerTest {
                 Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, error).build()
             )
             assertEquals(expectedFailure, result)
-            verify(exactly = 0) { repository.saveLabel(any()) }
+            coVerify(exactly = 0) { repository.saveLabel(any()) }
         }
     }
 }
