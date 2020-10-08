@@ -25,6 +25,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.squareup.otto.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,15 +36,18 @@ import ch.protonmail.android.activities.fragments.BillingFragment;
 import ch.protonmail.android.activities.fragments.CreateAccountBaseFragment;
 import ch.protonmail.android.activities.fragments.HumanVerificationCaptchaDialogFragment;
 import ch.protonmail.android.activities.fragments.HumanVerificationDialogFragment;
+import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.LoginInfoResponse;
 import ch.protonmail.android.api.models.PaymentMethod;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
 import ch.protonmail.android.jobs.DonateJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
+import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 
 /**
@@ -349,5 +354,11 @@ public class BillingActivity extends BaseActivity implements
     @Override
     public void startAddressSetup() {
 
+    }
+
+    @Subscribe
+    public void onLogoutEvent(LogoutEvent event) {
+        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
+        finish();
     }
 }

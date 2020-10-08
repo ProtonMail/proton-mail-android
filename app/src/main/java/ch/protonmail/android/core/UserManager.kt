@@ -39,6 +39,7 @@ import ch.protonmail.android.api.services.LogoutService
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
+import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
@@ -482,7 +483,8 @@ class UserManager @Inject constructor(
             AppUtil.deleteSecurePrefs(username, false)
             AppUtil.deleteDatabases(app.applicationContext, username)
             setUsernameAndReload(nextLoggedInAccount)
-            AppUtil.postEventOnUi(ForceSwitchedAccountEvent(nextLoggedInAccount, username))
+            val event = ForceSwitchedAccountEvent(nextLoggedInAccount, username)
+            ForceSwitchedAccountNotifier.notifier.postValue(event)
             TokenManager.clearInstance(username)
         }
     }

@@ -39,7 +39,6 @@ import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerVi
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import ch.protonmail.android.R
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers.allOf
@@ -134,11 +133,48 @@ object UICustomViewActions {
 
             override fun checkCondition() = try {
                 val rv = ActivityProvider.currentActivity!!.findViewById<RecyclerView>(id)
-                waitUntilLoaded{ rv }
+                waitUntilLoaded { rv }
                 rv.adapter!!.itemCount > 0
             } catch (e: Exception) {
                 errorMessage = e.message.toString()
                 false
+            }
+        })
+    }
+
+    fun waitForAdapterItemWithIdAndText(
+        @IdRes recyclerViewId: Int,
+        @IdRes viewId: Int,
+        text: String,
+        timeout: Long = 5000L
+    ) {
+        ProtonWatcher.setTimeout(timeout)
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+            var errorMessage = ""
+
+            override fun getDescription() =
+                "RecyclerView: ${targetContext.resources.getResourceName(recyclerViewId)} was not populated with items"
+
+            override fun checkCondition(): Boolean {
+                try {
+                    val rv = ActivityProvider.currentActivity!!.findViewById<RecyclerView>(recyclerViewId)
+                    waitUntilLoaded { rv }
+                    var isMatches: Boolean
+                    var actualText: String
+                    for (i in 0..rv.adapter!!.itemCount) {
+                        val item = rv.getChildAt(i)
+                        if (item != null) {
+                            actualText = item.findViewById<TextView>(viewId)?.text.toString()
+                            isMatches = actualText == text
+                            if (isMatches) {
+                                return true
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    errorMessage = e.message.toString()
+                }
+                return false
             }
         })
     }
@@ -190,16 +226,16 @@ object UICustomViewActions {
         }
     }
 
-    fun checkItemDoesNotExist(subject: String, date: String): PositionableRecyclerViewAction =
-        CheckItemDoesNotExist(subject, date)
+    fun checkMessageDoesNotExist(subject: String, date: String): PositionableRecyclerViewAction =
+        CheckMessageDoesNotExist(subject, date)
 
-    class CheckItemDoesNotExist(
+    class CheckMessageDoesNotExist(
         private val subject: String,
         private val date: String
     ) : PositionableRecyclerViewAction {
 
         override fun atPosition(position: Int): PositionableRecyclerViewAction =
-            checkItemDoesNotExist(subject, date)
+            checkMessageDoesNotExist(subject, date)
 
         override fun getDescription(): String = "Checking if message with subject exists in the list."
 
@@ -222,6 +258,76 @@ object UICustomViewActions {
                 }
             }
             assertFalse(isMatches, "RecyclerView should not contain item with subject: \"$subject\"")
+        }
+    }
+
+    fun checkContactDoesNotExist(name: String, email: String): PositionableRecyclerViewAction =
+        CheckContactDoesNotExist(name, email)
+
+    class CheckContactDoesNotExist(
+        private val name: String,
+        private val email: String
+    ) : PositionableRecyclerViewAction {
+
+        override fun atPosition(position: Int): PositionableRecyclerViewAction =
+            checkContactDoesNotExist(name, email)
+
+        override fun getDescription(): String = "Checking if contact with name and email exists in the list."
+
+        override fun getConstraints(): Matcher<View> = allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
+
+        override fun perform(uiController: UiController?, view: View?) {
+            var isMatches = true
+            var contactName = ""
+            var contactEmail = ""
+            val recyclerView = view as RecyclerView
+            for (i in 0..recyclerView.adapter!!.itemCount) {
+                val item = recyclerView.getChildAt(i)
+                if (item != null) {
+                    contactName = item.findViewById<TextView>(R.id.contact_name)?.text.toString()
+                    contactEmail = item.findViewById<TextView>(R.id.email)?.text.toString()
+                    isMatches = contactName == name && contactEmail == email
+                    if (isMatches) {
+                        break
+                    }
+                }
+            }
+            assertFalse(isMatches, "RecyclerView should not contain contact with name: \"$name\"")
+        }
+    }
+
+    fun checkGroupDoesNotExist(name: String, email: String): PositionableRecyclerViewAction =
+        CheckGroupDoesNotExist(name, email)
+
+    class CheckGroupDoesNotExist(
+        private val name: String,
+        private val email: String
+    ) : PositionableRecyclerViewAction {
+
+        override fun atPosition(position: Int): PositionableRecyclerViewAction =
+            checkGroupDoesNotExist(name, email)
+
+        override fun getDescription(): String = "Checking if contact with name and email exists in the list."
+
+        override fun getConstraints(): Matcher<View> = allOf(isAssignableFrom(RecyclerView::class.java), isDisplayed())
+
+        override fun perform(uiController: UiController?, view: View?) {
+            var isMatches = true
+            var contactName = ""
+            var contactEmail = ""
+            val recyclerView = view as RecyclerView
+            for (i in 0..recyclerView.adapter!!.itemCount) {
+                val item = recyclerView.getChildAt(i)
+                if (item != null) {
+                    contactName = item.findViewById<TextView>(R.id.contact_name)?.text.toString()
+                    contactEmail = item.findViewById<TextView>(R.id.email)?.text.toString()
+                    isMatches = contactName == name && contactEmail == email
+                    if (isMatches) {
+                        break
+                    }
+                }
+            }
+            assertFalse(isMatches, "RecyclerView should not contain contact with name: \"$name\"")
         }
     }
 

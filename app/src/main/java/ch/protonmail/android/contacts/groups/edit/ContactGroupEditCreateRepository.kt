@@ -19,6 +19,7 @@
 package ch.protonmail.android.contacts.groups.edit
 
 import android.util.Log
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
@@ -28,8 +29,8 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.jobs.CreateContactGroupJob
-import ch.protonmail.android.contacts.groups.jobs.RemoveMembersFromContactGroupJob
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
+import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -38,38 +39,34 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/*
- * Created by kadrikj on 9/5/18. */
-
-@Singleton
 class ContactGroupEditCreateRepository @Inject constructor(
     val jobManager: JobManager,
+    val workManager: WorkManager,
     val api: ProtonMailApiManager,
     private val databaseProvider: DatabaseProvider
 ) {
-
     private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupEditCreateRepository"); databaseProvider.provideContactsDao() }
 
     fun editContactGroup(contactLabel: ContactLabel): Completable {
         val contactLabelConverterFactory = ContactLabelFactory()
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
         return api.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
-                .doOnComplete {
-                    val joins = contactsDatabase.fetchJoins(contactLabel.ID)
-                    contactsDatabase.saveContactGroupLabel(contactLabel)
-                    contactsDatabase.saveContactEmailContactLabel(joins)
+            .doOnComplete {
+                val joins = contactsDatabase.fetchJoins(contactLabel.ID)
+                contactsDatabase.saveContactGroupLabel(contactLabel)
+                contactsDatabase.saveContactEmailContactLabel(joins)
+            }
+            .doOnError { throwable ->
+                if (throwable is IOException) {
+                    jobManager.addJobInBackground(CreateContactGroupJob(contactLabel.name, contactLabel.color, contactLabel.display,
+                        contactLabel.exclusive.makeInt(), true, contactLabel.ID))
                 }
-                .doOnError { throwable ->
-                    if (throwable is IOException) {
-                        jobManager.addJobInBackground(CreateContactGroupJob(contactLabel.name, contactLabel.color, contactLabel.display,
-                                contactLabel.exclusive.makeInt(), true, contactLabel.ID))
-                    }
-                }
+            }
     }
 
     fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
         return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
-                .toObservable()
+            .toObservable()
     }
 
     fun removeMembersFromContactGroup(contactGroupId: String, contactGroupName: String, membersList: List<String>): Completable {
@@ -77,18 +74,22 @@ class ContactGroupEditCreateRepository @Inject constructor(
             return Completable.complete()
         }
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
-        return api.unlabelContactEmails(labelContactsBody)
-                .doOnComplete {
-                    val list = ArrayList<ContactEmailContactLabelJoin>()
-                    for (contactEmail in membersList) {
-                        list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
-                    }
-                    contactsDatabase.deleteContactEmailContactLabel(list)
-                }.doOnError { throwable ->
-                    if (throwable is IOException) {
-                        jobManager.addJobInBackground(RemoveMembersFromContactGroupJob(contactGroupId, contactGroupName, membersList))
-                    }
+        return api.unlabelContactEmailsCompletable(labelContactsBody)
+            .doOnComplete {
+                val list = ArrayList<ContactEmailContactLabelJoin>()
+                for (contactEmail in membersList) {
+                    list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
+                contactsDatabase.deleteContactEmailContactLabel(list)
+            }.doOnError { throwable ->
+                if (throwable is IOException) {
+                    RemoveMembersFromContactGroupWorker.Enqueuer(workManager).enqueue(
+                        contactGroupId,
+                        contactGroupName,
+                        membersList
+                    )
+                }
+            }
     }
 
     fun setMembersForContactGroup(contactGroupId: String, contactGroupName: String, membersList: List<String>): Completable {
@@ -97,30 +98,30 @@ class ContactGroupEditCreateRepository @Inject constructor(
         }
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
         return api.labelContacts(labelContactsBody)
-                .doOnComplete {
-                    val list = ArrayList<ContactEmailContactLabelJoin>()
-                    for (contactEmail in membersList) {
-                        list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
-                    }
-                    getContactGroupEmails(contactGroupId).test().values()
-                    contactsDatabase.saveContactEmailContactLabel(list)
-                }.doOnError { throwable ->
-                    if (throwable is IOException) {
-                        jobManager.addJobInBackground(SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList))
-                    }
+            .doOnComplete {
+                val list = ArrayList<ContactEmailContactLabelJoin>()
+                for (contactEmail in membersList) {
+                    list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
+                getContactGroupEmails(contactGroupId).test().values()
+                contactsDatabase.saveContactEmailContactLabel(list)
+            }.doOnError { throwable ->
+                if (throwable is IOException) {
+                    jobManager.addJobInBackground(SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList))
+                }
+            }
     }
 
     fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
         val contactLabelConverterFactory = ContactLabelFactory()
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
         return api.createLabelCompletable(labelBody.labelBody)
-                .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
-                .doOnError { throwable ->
-                    if (throwable is IOException) {
-                        jobManager.addJobInBackground(CreateContactGroupJob(contactLabel.name, contactLabel.color, contactLabel.display,
-                                contactLabel.exclusive.makeInt(), false, contactLabel.ID))
-                    }
+            .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
+            .doOnError { throwable ->
+                if (throwable is IOException) {
+                    jobManager.addJobInBackground(CreateContactGroupJob(contactLabel.name, contactLabel.color, contactLabel.display,
+                        contactLabel.exclusive.makeInt(), false, contactLabel.ID))
                 }
+            }
     }
 }

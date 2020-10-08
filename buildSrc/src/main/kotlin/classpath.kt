@@ -28,6 +28,7 @@ import studio.forface.easygradle.dsl.android.*
 val ScriptHandlerScope.classpathDependencies: DependencyHandlerScope.() -> Unit get() = {
     classpath(`android-gradle-plugin`)
     classpath(`browserstack-gradle-plugin`)
+    classpath(`google-services`)
     classpath(`hilt-android-gradle-plugin`)
     classpath(`hugo-plugin`)
     classpath(`kotlin-gradle-plugin`)

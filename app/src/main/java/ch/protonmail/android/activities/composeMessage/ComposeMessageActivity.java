@@ -22,6 +22,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -189,9 +190,9 @@ import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRA
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
 @AndroidEntryPoint
-public class ComposeMessageActivity 
-        extends BaseContactsActivity 
-        implements MessagePasswordButton.OnMessagePasswordChangedListener, 
+public class ComposeMessageActivity
+        extends BaseContactsActivity
+        implements MessagePasswordButton.OnMessagePasswordChangedListener,
         MessageExpirationView.OnMessageExpirationChangedListener,
         LoaderManager.LoaderCallbacks<Cursor>,
         HumanVerificationCaptchaDialogFragment.IHumanVerificationListener,
@@ -310,6 +311,8 @@ public class ComposeMessageActivity
 
     String composerInstanceId;
 
+    Menu menu;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_compose_message;
@@ -397,7 +400,7 @@ public class ComposeMessageActivity
                 // upload attachments if using pgp/mime
                 composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), mComposeBodyEditText.getText().toString());
             }
-        } catch (Exception exc){
+        } catch (Exception exc) {
             Timber.tag("588").e(exc, "Exception on create (upload attachments)");
 
         }
@@ -488,7 +491,7 @@ public class ComposeMessageActivity
                                     DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
                 }
                 composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
-            } catch (Exception exc){
+            } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on fetch message details event");
             }
         });
@@ -603,7 +606,7 @@ public class ComposeMessageActivity
                         getString(R.string.original_message_divider),
                         getString(R.string.reply_prefix_on),
                         DateUtil.formatDetailedDateTime(this, composeMessageViewModel.getMessageDataResult().getMessageTimestamp())));
-            } catch (Exception exc){
+            } catch (Exception exc) {
                 Timber.tag("588").e(exc, "Exception on initialise message body");
             }
         } else if (extras != null && extras.containsKey(EXTRA_MESSAGE_ID) && extras.getBoolean(EXTRA_REPLY_FROM_GCM, false)) {
@@ -809,7 +812,7 @@ public class ComposeMessageActivity
 
     @Subscribe
     public void onConnectivityEvent(ConnectivityEvent event) {
-        if(!isDohOngoing) {
+        if (!isDohOngoing) {
             if (!event.hasConnection()) {
                 showNoConnSnack(new ConnectivityRetryListener(), this);
             } else {
@@ -1001,6 +1004,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
             mUpdateDraftPmMeChanged = false;
         }
+        disableSendButton(false);
     }
 
     @Override
@@ -1044,7 +1048,11 @@ public class ComposeMessageActivity
             // get messageId from one of the attachments and use it to start DownloadEmbeddedAttachmentsWorker
             for (LocalAttachment localAttachment : embeddedAttachmentsList) {
                 if (!TextUtils.isEmpty(localAttachment.getMessageId())) {
-                    DownloadEmbeddedAttachmentsWorker.Companion.enqueue(localAttachment.getMessageId(), mUserManager.getUsername(),null);
+                    DownloadEmbeddedAttachmentsWorker.Companion.enqueue(
+                            localAttachment.getMessageId(),
+                            mUserManager.getUsername(),
+                            null
+                    );
                     break;
                 }
             }
@@ -1127,6 +1135,8 @@ public class ComposeMessageActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.compose_message_menu, menu);
+        this.menu = menu;
+        disableSendButton(true);
         return true;
     }
 
@@ -1294,7 +1304,7 @@ public class ComposeMessageActivity
                 try {
                     message.setAddressID(user.getSenderAddressIdByEmail((String) mAddressesSpinner.getSelectedItem()));
                     message.setSenderName(user.getSenderAddressNameByEmail((String) mAddressesSpinner.getSelectedItem()));
-                } catch (Exception exc){
+                } catch (Exception exc) {
                     Timber.tag("588").e(exc, "Exception on fill message with user inputs");
                 }
             } else {
@@ -1862,6 +1872,7 @@ public class ComposeMessageActivity
     @Subscribe
     public void onDownloadEmbeddedImagesEvent(DownloadEmbeddedImagesEvent event) {
         if (event.getStatus().equals(Status.SUCCESS)) {
+            Timber.v("onDownloadEmbeddedImagesEvent %s", event.getStatus());
             String content = composeMessageViewModel.getMessageDataResult().getContent();
             String css = AppUtil.readTxt(this, R.raw.editor);
             Transformer contentTransformer = new ViewportTransformer(UiUtil.getRenderWidth(getWindowManager()), css);
@@ -2226,8 +2237,8 @@ public class ComposeMessageActivity
                         }
                         messageSender = new MessageSender(nonAliasAddress.getDisplayName(), nonAliasAddress.getEmail());
                     } catch (NullPointerException e) {
-                        Timber.d(e, "Inside "+this.getClass().getName() + " nonAliasAddress was null");
-                        messageSender = new MessageSender("","");
+                        Timber.d(e, "Inside " + this.getClass().getName() + " nonAliasAddress was null");
+                        messageSender = new MessageSender("", "");
                     }
                 }
                 localMessage.setSender(messageSender);
@@ -2267,6 +2278,18 @@ public class ComposeMessageActivity
         } else {
             mToRecipientsView.requestFocus();
             UiUtil.toggleKeyboard(this, mToRecipientsView);
+        }
+    }
+
+    private void disableSendButton(boolean disable) {
+        // Find the menu item you want to style
+        MenuItem item = menu.getItem(0);
+        if (disable) {
+            item.setEnabled(false);
+            item.setIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.white_30)));
+        } else {
+            item.setEnabled(true);
+            item.setIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
         }
     }
 }

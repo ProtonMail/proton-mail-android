@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.contacts.details.edit
 
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactData
@@ -42,10 +43,10 @@ import javax.inject.Singleton
 
 @Singleton
 class EditContactDetailsRepository @Inject constructor(
+    workManager: WorkManager,
     jobManager: JobManager,
     api: ProtonMailApiManager,
-    databaseProvider: DatabaseProvider
-): ContactDetailsRepository(jobManager, api, databaseProvider) {
+    databaseProvider: DatabaseProvider): ContactDetailsRepository(workManager, jobManager, api, databaseProvider) {
 
     fun clearEmail(email: String) {
         contactsDao.clearByEmail(email)

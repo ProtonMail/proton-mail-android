@@ -64,6 +64,40 @@ object MailboxMatchers {
     }
 
     /**
+     * Matches the Mailbox message represented by [MessagesListItemView] by message subject and sender.
+     * Subject must be unique in a list in order to use this matcher.
+     *
+     * @param subject - message subject
+     * @param to - message sender email
+     */
+    fun withMessageSubjectAndRecipient(subject: String, to: String): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedMatcher<RecyclerView.ViewHolder,
+            MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
+
+            val messagesList = ArrayList<String>()
+
+            override fun describeTo(description: Description) {
+                description.appendText("Message item with subject and recipient: \"$subject\"\n")
+                description.appendText("Here is the actual list of messages:\n")
+                messagesList.forEach { description.appendText(" - \"$it\"\n") }
+            }
+
+            override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
+                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val messageToTextView = item.itemView.findViewById<TextView>(R.id.messageSenderTextView)
+                val actualSubject = messageSubjectView.text.toString()
+                val actualTo = messageToTextView.text.toString()
+                return if (messageSubjectView != null && messageToTextView != null) {
+                    subject == actualSubject && to == actualTo
+                } else {
+                    messagesList.add("Subject: $actualSubject, to: $actualTo")
+                    false
+                }
+            }
+        }
+    }
+
+    /**
      * Matches the Mailbox message represented by [MessagesListItemView] by message subject part.
      * Subject must be unique in a list in order to use this matcher.
      *

@@ -103,7 +103,7 @@ import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.events.payment.GetPaymentMethodsEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
-import ch.protonmail.android.gcm.GcmUtil;
+import ch.protonmail.android.fcm.FcmUtil;
 import ch.protonmail.android.jobs.FetchContactsDataJob;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
@@ -126,6 +126,7 @@ import studio.forface.viewstatestore.ViewStateStoreConfig;
 import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
+import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
@@ -582,7 +583,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 jobManager.addJobInBackground(new FetchContactsDataJob());
             }
             if (BuildConfig.REREGISTER_FOR_PUSH) {
-                GcmUtil.setTokenSent(false);
+                FcmUtil.setTokenSent(false);
             }
             jobManager.addJobInBackground(new FetchLabelsJob());
             //new version will get set in RegisterGcmJob
@@ -666,6 +667,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     if (secureSharedPreferencesForUser.contains(PREF_LATEST_EVENT)) {
                         secureSharedPreferencesForUser.edit().remove(PREF_LATEST_EVENT).apply();
                     }
+                }
+                if (previousVersion < FCM_MIGRATION_VERSION) {
+                    FcmUtil.setTokenSent(false);
                 }
             }
         } else {

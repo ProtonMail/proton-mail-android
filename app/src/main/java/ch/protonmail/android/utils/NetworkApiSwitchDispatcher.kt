@@ -20,14 +20,13 @@ package ch.protonmail.android.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
-import androidx.work.*
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import ch.protonmail.android.BuildConfig
-import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import timber.log.Timber
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 // region constants

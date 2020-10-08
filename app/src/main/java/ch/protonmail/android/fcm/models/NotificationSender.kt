@@ -16,19 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events;
+package ch.protonmail.android.fcm.models
 
-public class LogoutEvent {
-    public final Status status;
-    public final String username;
+import com.google.gson.annotations.SerializedName
 
-    public LogoutEvent(Status status) {
-        this.status = status;
-        this.username = null;
-    }
-
-    public LogoutEvent(Status status, String username) {
-        this.status = status;
-        this.username = username;
-    }
-}
+data class NotificationSender(
+        @SerializedName("Address") val senderEmail: String? = null,
+        @SerializedName("Name") val senderName: String? = null
+)

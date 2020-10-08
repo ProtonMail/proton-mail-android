@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
+import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
+import ch.protonmail.android.uitests.testsHelper.StringUtils.getEmailString
+
 /**
  * Contains users and data used in UI test runs.
  */
@@ -59,9 +62,10 @@ object TestData {
     const val searchMessageSubjectNotFound = "MessageNotFound :O"
 
     // CONTACT DATA
-    const val newContactName = "A new contact"
+    val newContactName = getAlphaNumericStringWithSpecialCharacters()
     val editContactName = "Edited on ${System.currentTimeMillis()}"
     const val editEmailAddress = "test@pm.test"
+    val newEmailAddress = "${getEmailString()}@pm.me"
 
     // GROUP DATA
     val newGroupName = "A New group #${System.currentTimeMillis()}"

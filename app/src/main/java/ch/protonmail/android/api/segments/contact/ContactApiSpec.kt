@@ -18,7 +18,13 @@
  */
 package ch.protonmail.android.api.segments.contact
 
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.ContactEmailsResponseV2
+import ch.protonmail.android.api.models.ContactResponse
+import ch.protonmail.android.api.models.ContactsDataResponse
+import ch.protonmail.android.api.models.CreateContact
+import ch.protonmail.android.api.models.CreateContactV2BodyItem
+import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import io.reactivex.Completable
@@ -32,7 +38,7 @@ interface ContactApiSpec {
     fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse?
 
     @Throws(IOException::class)
-    fun fetchContactEmails(pageSize : Int) : List<ContactEmailsResponseV2?>
+    fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?>
 
     @Throws(IOException::class)
     fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>
@@ -50,11 +56,15 @@ interface ContactApiSpec {
     fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse?
 
     @Throws(IOException::class)
-    fun deleteContact(contactIds: IDList) : Single<DeleteContactResponse>
+    fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse>
+
+    suspend fun deleteContact(contactIds: IDList): DeleteContactResponse
 
     @Throws(IOException::class)
     fun labelContacts(labelContactsBody: LabelContactsBody): Completable
 
     @Throws(IOException::class)
-    fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable
+    fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable
+
+    suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody)
 }

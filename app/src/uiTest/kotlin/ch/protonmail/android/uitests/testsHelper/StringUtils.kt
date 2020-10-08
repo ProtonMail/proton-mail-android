@@ -41,4 +41,12 @@ object StringUtils {
             .map(source::get)
             .joinToString("")
     }
+
+    fun getEmailString(length: Long = 10): String {
+        val source = "abcdefghijklmnopqrstuuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!#\$%&'*+-=?^_`{|}~"
+        return Random().ints(length, 0, source.length)
+            .toArray()
+            .map(source::get)
+            .joinToString("")
+    }
 }

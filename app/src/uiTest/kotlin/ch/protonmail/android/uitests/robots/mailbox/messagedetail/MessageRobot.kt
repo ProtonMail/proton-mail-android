@@ -20,6 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
@@ -76,26 +77,6 @@ class MessageRobot {
         return MessageMoreOptions()
     }
 
-    fun verifyMessageContainsAttachment(): MessageRobot {
-        UIActions.wait.forViewWithId(R.id.attachment_title)
-        return this
-    }
-
-    fun verifyQuotedHeaderShown(): MessageRobot {
-        UIActions.wait.forViewWithId(R.id.quoted_header)
-        return this
-    }
-
-    fun verifyAttachmentsAdded(): MessageRobot {
-        UIActions.check.viewWithIdIsDisplayed(R.id.attachment_count)
-        return this
-    }
-
-    fun verifyAttachmentsNotAdded(): MessageRobot {
-        UIActions.check.viewWithIdIsNotDisplayed(R.id.attachment_count)
-        return this
-    }
-
     fun navigateUpToSearch(): SearchRobot {
         UIActions.system.clickHamburgerOrUpButton()
         return SearchRobot()
@@ -104,6 +85,12 @@ class MessageRobot {
     fun navigateUpToSent(): SentRobot {
         UIActions.system.clickHamburgerOrUpButton()
         return SentRobot()
+    }
+
+    fun clickSendButtonFromDrafts(): DraftsRobot {
+        UIActions.id.clickViewWithId(sendMessageId)
+        UIActions.wait.forViewWithText(R.string.message_sent)
+        return DraftsRobot()
     }
 
     inner class MessageMoreOptions {
@@ -137,4 +124,8 @@ class MessageRobot {
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+
+    companion object {
+        const val sendMessageId = R.id.send_message
+    }
 }

@@ -23,7 +23,7 @@ import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.gcm.GcmUtil
+import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.Params
@@ -43,7 +43,7 @@ class LogoutJob(username: String) : ProtonMailBaseJob(Params(Priority.HIGH).pers
             val loggedInUsers = accountManager.getLoggedInUsers()
             if (loggedInUsers.isEmpty() || (loggedInUsers.size == 1 && loggedInUsers[0] == username)) {
                 Logger.doLog("unregistering from GCM")
-                val registrationId = GcmUtil.getRegistrationId()
+                val registrationId = FcmUtil.getRegistrationId()
                 if (registrationId.isNotEmpty()) {
                     getApi().unregisterDevice(registrationId)
                 }

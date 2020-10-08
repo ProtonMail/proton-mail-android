@@ -18,17 +18,21 @@
  */
 package ch.protonmail.android.api.segments.contact
 
+import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.ContactsDataResponse
-import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.CreateContactBody
 import ch.protonmail.android.api.models.CreateContactV2BodyItem
 import ch.protonmail.android.api.models.DeleteContactResponse
-import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.UpdateContactResponseV2
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
+import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
+import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
+import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -38,12 +42,6 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
-
-import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
-import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
 
 interface ContactService {
     @GET("contacts")
@@ -71,7 +69,11 @@ interface ContactService {
 
     @PUT("contacts/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun deleteContact(@Body contactId: IDList): Single<DeleteContactResponse>
+    fun deleteContactSingle(@Body contactId: IDList): Single<DeleteContactResponse>
+
+    @PUT("contacts/delete")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun deleteContact(@Body contactId: IDList): DeleteContactResponse
 
     @DELETE("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -83,5 +85,9 @@ interface ContactService {
 
     @PUT("contacts/emails/unlabel")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun unlabelContactEmails(@Body labelContactsBody: LabelContactsBody): Completable
+    fun unlabelContactEmailsCompletable(@Body labelContactsBody: LabelContactsBody): Completable
+
+    @PUT("contacts/emails/unlabel")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun unlabelContactEmails(@Body labelContactsBody: LabelContactsBody)
 }

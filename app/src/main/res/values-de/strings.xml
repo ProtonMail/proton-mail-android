@@ -19,7 +19,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="protonmail">ProtonMail</string>
-    <string name="encrypted_emails">Verschlüsselte Nachricht</string>
+    <string name="encrypted_emails">Verschlüsselte Nachrichten</string>
     <string name="secure_email_swiss">Sicherer E-Mail-Dienst\naus der Schweiz</string>
     <string name="decrypt_mailbox"><b>Postfach</b> entschlüsseln</string>
     <string name="decrypt">Entschlüsseln</string>
@@ -470,8 +470,8 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="inline_header">%d eingebettete Grafiken</string>
     <string name="select">Auswählen</string>
     <string name="change_currency">Währung ändern</string>
-    <string name="switch_billing_monthly">Zu monatlich wecheln</string>
-    <string name="switch_billing_yearly">Zu jährlich wechseln</string>
+    <string name="switch_billing_monthly">Zu monatlicher Zahlweise wechseln</string>
+    <string name="switch_billing_yearly">Zu jährlicher Zahlweise wechseln</string>
     <string name="warning">Warnhinweis</string>
     <string name="empty_recovery_email_question">Warnhinweis: Sie haben keine Wiederherstellungs-E-Mail-Adresse angegeben, so dass eine Wiederherstellung des Kontos nicht möglich ist, wenn Sie Ihr Passwort vergessen haben. Ohne Wiederherstellungs-E-Mail-Adresse fortfahren?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>

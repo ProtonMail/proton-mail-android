@@ -44,6 +44,7 @@ import ch.protonmail.android.jobs.user.FetchUserSettingsJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
 import kotlinx.android.synthetic.main.activity_change_password.*
 
@@ -139,9 +140,8 @@ class ChangePasswordActivity : BaseActivity() {
     }
 
     @Subscribe
-    fun onLogoutEvent(event: LogoutEvent) {
-        startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
-        finish()
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 
     @Subscribe

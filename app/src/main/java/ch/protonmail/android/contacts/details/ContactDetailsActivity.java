@@ -35,6 +35,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -85,6 +86,7 @@ import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.activities.UpsellingActivity;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.contactDetails.ExtractFullContactDetailsTask;
+import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.room.contacts.ContactLabel;
@@ -99,8 +101,8 @@ import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
 import ch.protonmail.android.events.ContactDetailsFetchedEvent;
 import ch.protonmail.android.events.ContactEvent;
+import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.jobs.DeleteContactJob;
 import ch.protonmail.android.jobs.FetchContactDetailsJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
@@ -362,9 +364,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (itemId == R.id.action_delete) {
             DialogInterface.OnClickListener clickListener = (dialog, which) -> {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                    DeleteContactJob deleteContactsJob = new DeleteContactJob(Arrays.asList(mContactId));
-                    mJobManager.addJobInBackground(deleteContactsJob);
-                    new Handler().postDelayed(() -> finish(), 500);
+                    contactDetailsViewModel.deleteContact(mContactId);
+                    new Handler(Looper.getMainLooper()).postDelayed(this::finish, 500);
                 }
                 dialog.dismiss();
             };
@@ -403,7 +404,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (contact != null && contact.getEncryptedData() != null) {
             encData = contact.getEncryptedData();
         } else {
-            hasDecryptionError =  true;
+            hasDecryptionError = true;
         }
 
         for (ContactEncryptedData contactEncryptedData : encData) {
@@ -691,12 +692,12 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             ViewCompat.setBackgroundTintList(fabWeb, ColorStateList.valueOf(getResources().getColor(R.color.new_purple)));
         }
 
-        File vcfFile = new File(this.getExternalFilesDir(null), mDisplayName+".vcf");
+        File vcfFile = new File(this.getExternalFilesDir(null), mDisplayName + ".vcf");
         try {
             FileWriter fw = new FileWriter(vcfFile);
-            if(mVCardType0!=null){
+            if (mVCardType0 != null) {
                 fw.write(mVCardType0);
-            } else if(mVCardType2!=null) {
+            } else if (mVCardType2 != null) {
                 fw.write(mVCardType2);
             }
             fw.close();
@@ -1123,6 +1124,12 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         float percentage = (float) Math.abs(offset) / (float) maxScroll;
         handleAlphaOnTitle(percentage);
         handleToolbarTitleVisibility(percentage);
+    }
+
+    @Subscribe
+    public void onLogoutEvent(LogoutEvent event) {
+        startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
+        finish();
     }
 
     private void handleToolbarTitleVisibility(float percentage) {

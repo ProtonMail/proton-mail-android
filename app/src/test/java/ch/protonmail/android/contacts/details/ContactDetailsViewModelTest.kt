@@ -68,7 +68,8 @@ internal class ContactDetailsViewModelTest :
                     }
                 }
             },
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN
@@ -86,7 +87,8 @@ internal class ContactDetailsViewModelTest :
         val viewModel = ContactDetailsViewModel(
             dispatchers,
             downloadFile = mockk(),
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN
@@ -104,7 +106,8 @@ internal class ContactDetailsViewModelTest :
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } answers  { throw FileNotFoundException() }
             },
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN
@@ -125,7 +128,8 @@ internal class ContactDetailsViewModelTest :
             downloadFile = mockk {
                 coEvery { invoke(url = any()) } returns mockk()
             },
-            contactDetailsRepository = mockk()
+            contactDetailsRepository = mockk(),
+            workManager = mockk()
         )
 
         // WHEN

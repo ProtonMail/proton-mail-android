@@ -184,6 +184,9 @@ open class BaseTest {
             automation.executeShellCommand("settings put secure show_ime_with_hard_keyboard 0")
             // Disable floating notification pop-ups
             automation.executeShellCommand("settings put global heads_up_notifications_enabled 0")
+            automation.executeShellCommand("settings put global animator_duration_scale 0.0")
+            automation.executeShellCommand("settings put global transition_animation_scale 0.0")
+            automation.executeShellCommand("settings put global window_animation_scale 0.0")
         }
 
         private fun clearLogcat() {

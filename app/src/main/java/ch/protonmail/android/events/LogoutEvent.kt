@@ -16,23 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.groups
+package ch.protonmail.android.events
 
-import androidx.lifecycle.ViewModel
-import ch.protonmail.android.api.models.ResponseBody
-import com.google.gson.Gson
-import retrofit2.HttpException
-
-/**
- * Created by kadrikj on 9/21/18. */
-open class ContactGroupsBaseViewModel: ViewModel() {
-
-    fun parseErrorApiResponse(exception: HttpException): String? {
-        return try {
-            val responseBody = Gson().fromJson(exception.response()?.errorBody()?.string(), ResponseBody::class.java)
-            responseBody.error
-        } catch (e: Exception) {
-            null
-        }
-    }
-}
+data class LogoutEvent @JvmOverloads constructor(
+    @JvmField val status: Status,
+    val username: String? = null
+)

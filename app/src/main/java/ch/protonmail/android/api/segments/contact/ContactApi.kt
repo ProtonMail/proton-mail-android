@@ -19,13 +19,19 @@
 package ch.protonmail.android.api.segments.contact
 
 import androidx.annotation.WorkerThread
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.ContactEmailsResponseV2
+import ch.protonmail.android.api.models.ContactResponse
+import ch.protonmail.android.api.models.ContactsDataResponse
+import ch.protonmail.android.api.models.CreateContact
+import ch.protonmail.android.api.models.CreateContactBody
+import ch.protonmail.android.api.models.CreateContactV2BodyItem
+import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import io.reactivex.Completable
-
 import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Call
@@ -38,9 +44,12 @@ class ContactApi (private val service : ContactService) : BaseApi(), ContactApiS
     }
 
     @Throws(IOException::class)
-    override fun unlabelContactEmails(labelContactsBody: LabelContactsBody): Completable {
-        return service.unlabelContactEmails(labelContactsBody)
+    override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable {
+        return service.unlabelContactEmailsCompletable(labelContactsBody)
     }
+
+    override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) =
+        service.unlabelContactEmails(labelContactsBody)
 
     @Throws(IOException::class)
     override fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse? {
@@ -95,7 +104,11 @@ class ContactApi (private val service : ContactService) : BaseApi(), ContactApiS
     }
 
     @Throws(IOException::class)
-    override fun deleteContact(contactIds: IDList) : Single<DeleteContactResponse> {
+    override fun deleteContactSingle(contactIds: IDList) : Single<DeleteContactResponse> {
+        return service.deleteContactSingle(contactIds)
+    }
+
+    override suspend fun deleteContact(contactIds: IDList) : DeleteContactResponse {
         return service.deleteContact(contactIds)
     }
 }

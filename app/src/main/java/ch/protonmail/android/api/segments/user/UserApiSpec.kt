@@ -18,30 +18,45 @@
  */
 package ch.protonmail.android.api.segments.user
 
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.DirectEnabledResponse
+import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
+import ch.protonmail.android.api.models.KeySalts
+import ch.protonmail.android.api.models.PasswordVerifier
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.UserInfo
+import ch.protonmail.android.api.models.VerificationCodeBody
 import ch.protonmail.android.api.models.requests.PostHumanVerificationBody
-import retrofit2.Call
 import java.io.IOException
 
 interface UserApiSpec {
 
     @Throws(IOException::class)
-    fun fetchUserInfo() : UserInfo
+    fun fetchUserInfoBlocking(): UserInfo
+
+    suspend fun fetchUserInfo(): UserInfo
 
     @Throws(IOException::class)
-    fun fetchUserInfo(username: String) : UserInfo
+    fun fetchUserInfoBlocking(username: String): UserInfo
 
     @Throws(IOException::class)
-    fun fetchKeySalts() : KeySalts
+    fun fetchKeySalts(): KeySalts
 
     @Throws(IOException::class)
-    fun fetchHumanVerificationOptions() : HumanVerifyOptionsResponse
+    fun fetchHumanVerificationOptions(): HumanVerifyOptionsResponse
 
     @Throws(IOException::class)
     fun postHumanVerification(body: PostHumanVerificationBody): ResponseBody?
 
     @Throws(IOException::class)
-    fun createUser(username: String, password: PasswordVerifier, updateMe: Boolean, tokenType: String, token: String, timestamp:String, payload:String): UserInfo
+    fun createUser(
+        username: String,
+        password: PasswordVerifier,
+        updateMe: Boolean,
+        tokenType: String,
+        token: String,
+        timestamp:String,
+        payload:String
+    ): UserInfo
 
     @Throws(IOException::class)
     fun sendVerificationCode(verificationCodeBody: VerificationCodeBody): ResponseBody

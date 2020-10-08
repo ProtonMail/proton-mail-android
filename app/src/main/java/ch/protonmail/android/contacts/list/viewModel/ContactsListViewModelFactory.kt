@@ -22,31 +22,38 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.loader.app.LoaderManager
-import ch.protonmail.android.api.ProtonMailApiManager
+import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.contacts.list.listView.ContactItemListFactory
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsLoaderCallbacksFactory
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsCallbacksFactory
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
-import com.birbit.android.jobqueue.JobManager
 
-/**
- * Created by Kamil Rajtar on 23.08.18.  */
-class ContactsListViewModelFactory(private val application: Application, private val loaderManager: LoaderManager,
-                                   private val jobManager: JobManager, private val api: ProtonMailApiManager) : ViewModelProvider.Factory {
-	override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-		val contactsDatabase = ContactsDatabaseFactory.getInstance(application.applicationContext).getDatabase()
-		val contactItemFactory = ContactItemListFactory()
-		val androidContactsLoaderCallbacksFactory = AndroidContactsLoaderCallbacksFactory(application.applicationContext, contactItemFactory::convert)
-		val androidContactsRepository = AndroidContactsRepository(loaderManager,
-				androidContactsLoaderCallbacksFactory)
-		val androidContactsDetailsCallbacksFactory = AndroidContactDetailsCallbacksFactory(application.applicationContext)
-		val androidContactsDetailsRepository = AndroidContactDetailsRepository(loaderManager, androidContactsDetailsCallbacksFactory)
-		val contactListRepository = ContactListRepository(jobManager, api, contactsDatabase)
+class ContactsListViewModelFactory(
+    private val application: Application,
+    private val loaderManager: LoaderManager,
+    private val workManager: WorkManager
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(
+        modelClass: Class<T>
+    ): T {
+        val contactsDatabase =
+            ContactsDatabaseFactory.getInstance(application.applicationContext).getDatabase()
+        val contactItemFactory = ContactItemListFactory()
+        val androidContactsLoaderCallbacksFactory =
+            AndroidContactsLoaderCallbacksFactory(application.applicationContext, contactItemFactory::convert)
+        val androidContactsRepository = AndroidContactsRepository(
+            loaderManager,
+            androidContactsLoaderCallbacksFactory
+        )
+        val androidContactsDetailsCallbacksFactory =
+            AndroidContactDetailsCallbacksFactory(application.applicationContext)
+        val androidContactsDetailsRepository =
+            AndroidContactDetailsRepository(loaderManager, androidContactsDetailsCallbacksFactory)
 
 		return ContactsListViewModel(
-			contactsDatabase, contactListRepository,
+			contactsDatabase, workManager,
 			androidContactsRepository, androidContactsDetailsRepository) as T
 	}
 }

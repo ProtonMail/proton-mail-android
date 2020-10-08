@@ -1019,7 +1019,7 @@ na dostęp do pamięci wewnętrznej.</string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Obraz nie został znaleziony</string>
-    <string name="error_image_bad_url">Adres URL obrazu jest nieprawidłowy</string>
+    <string name="error_image_bad_url">Adres URL obrazu posiada nieprawidłowy format</string>
     <!-- endregion -->
     <string name="allowed">Dozwolone</string>
     <string name="denied">Niedozwolone</string>

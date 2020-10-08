@@ -30,22 +30,28 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateActivity
+import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.RecyclerViewEmptyViewSupport
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import com.google.android.material.appbar.AppBarLayout
+import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
+import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.abs
 
 // region constants
 const val EXTRA_CONTACT_GROUP = "extra_contact_group"
@@ -76,7 +82,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         contactGroupDetailsViewModel =
-                ViewModelProviders.of(this, contactGroupDetailsViewModelFactory)
+                ViewModelProvider(this, contactGroupDetailsViewModelFactory)
                     .get(ContactGroupDetailsViewModel::class.java)
         initAdapter()
         startObserving()
@@ -92,7 +98,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             //  Vertical offset == 0 indicates appBar is fully expanded.
-            if (Math.abs(verticalOffset) > 0) {
+            if (abs(verticalOffset) > 0) {
                 appBarExpanded = false
                 invalidateOptionsMenu()
             } else {
@@ -100,6 +106,16 @@ class ContactGroupDetailsActivity : BaseActivity() {
                 invalidateOptionsMenu()
             }
         })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ProtonMailApplication.getApplication().bus.register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -124,7 +140,11 @@ class ContactGroupDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun initCollapsingToolbar(color: Int, name: String, emailsCount: Int) {
+    private fun initCollapsingToolbar(
+        color: Int,
+        name: String,
+        emailsCount: Int
+    ) {
         collapsingToolbar.apply {
             setBackgroundColor(color)
             setContentScrimColor(color)
@@ -134,12 +154,15 @@ class ContactGroupDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun setTitle(name: String?, emailsCount: Int) {
+    private fun setTitle(
+        name: String?,
+        emailsCount: Int
+    ) {
         titleTextView.text = if (name == null) "" else String.format(getString(R.string.contact_group_toolbar_title), name, resources.getQuantityString(R.plurals.contact_group_members, emailsCount, emailsCount))
     }
 
     private fun startObserving() {
-        contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this, Observer {
+        contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this, {
             contactGroupEmailsAdapter.setData(it ?: ArrayList())
             if (it != null && TextUtils.isEmpty(filterView.text.toString())) {
                 this.name = contactGroupDetailsViewModel.getData()?.name.toString()
@@ -160,8 +183,9 @@ class ContactGroupDetailsActivity : BaseActivity() {
             initCollapsingToolbar(color, it.name, it.contactEmailsCount)
         })
 
-        contactGroupDetailsViewModel.deleteGroupStatus.observe(this, Observer {
+        contactGroupDetailsViewModel.deleteGroupStatus.observe(this, {
             it?.getContentIfNotHandled()?.let { status ->
+                Timber.v("deleteGroupStatus received $status")
                 when (status) {
                     ContactGroupDetailsViewModel.Status.SUCCESS -> {
                         saveLastInteraction()
@@ -226,5 +250,11 @@ class ContactGroupDetailsActivity : BaseActivity() {
         setResult(Activity.RESULT_OK)
         saveLastInteraction()
         finish()
+    }
+
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

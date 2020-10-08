@@ -16,21 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events;
+package ch.protonmail.android.fcm.models
 
-/**
- * Created by dino on 12/28/17.
- */
+import com.google.gson.annotations.SerializedName
 
-public class ContactDeleteEvent {
-
-    private Status status;
-
-    public ContactDeleteEvent(Status status) {
-        this.status = status;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-}
+data class NotificationData(
+        @SerializedName("type") val type: String? = null,
+        @SerializedName("version") val version: Int = 0,
+        @SerializedName("data") val data: NotificationEncryptedData? = null
+)

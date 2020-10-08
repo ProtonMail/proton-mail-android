@@ -385,10 +385,10 @@ public class LoginService extends ProtonJobIntentService {
 
     private void handleFetchUserDetails() {
         try {
-            UserInfo userInfo = api.fetchUserInfo();
+            UserInfo userInfo = api.fetchUserInfoBlocking();
             UserSettingsResponse userSettingsResponse = api.fetchUserSettings();
             MailSettingsResponse mailSettingsResponse = api.fetchMailSettings();
-            AddressesResponse addressesResponse = api.fetchAddresses();
+            AddressesResponse addressesResponse = api.fetchAddressesBlocking();
             MailSettings mailSettings = mailSettingsResponse.getMailSettings();
             mailSettings.setUsername(userInfo.getUser().getName());
             UserSettings userSettings = userSettingsResponse.getUserSettings();
@@ -535,10 +535,10 @@ public class LoginService extends ProtonJobIntentService {
                 if (!checkPassphrase) {
                     AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
                 } else {
-                    UserInfo userInfo = api.fetchUserInfo();
+                    UserInfo userInfo = api.fetchUserInfoBlocking();
                     UserSettingsResponse userSettings = api.fetchUserSettings();
                     MailSettingsResponse mailSettings = api.fetchMailSettings();
-                    AddressesResponse addresses = api.fetchAddresses();
+                    AddressesResponse addresses = api.fetchAddressesBlocking();
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
@@ -629,7 +629,7 @@ public class LoginService extends ProtonJobIntentService {
                     AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
                 } else {
                     userManager.setUsernameAndReload(username);
-                    UserInfo userInfo = api.fetchUserInfo();
+                    UserInfo userInfo = api.fetchUserInfoBlocking();
                     if (!userManager.canConnectAccount() && !userInfo.getUser().isPaidUser()) {
                         userManager.logoutAccount(username);
                         if (!TextUtils.isEmpty(currentPrimary)) {
@@ -643,7 +643,7 @@ public class LoginService extends ProtonJobIntentService {
 
                     UserSettingsResponse userSettings = api.fetchUserSettings();
                     MailSettingsResponse mailSettings = api.fetchMailSettings();
-                    AddressesResponse addresses = api.fetchAddresses();
+                    AddressesResponse addresses = api.fetchAddressesBlocking();
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
@@ -715,7 +715,7 @@ public class LoginService extends ProtonJobIntentService {
         if (infoResponse == null || (loginHelperData.status == AuthStatus.FAILED && loginHelperData.postLoginEvent)) {
             if (loginHelperData.redirectToSetup) {
                 try {
-                    AddressesResponse addressResponse = api.fetchAddresses();
+                    AddressesResponse addressResponse = api.fetchAddressesBlocking();
                     User user = loginHelperData.user;
                     AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, loginHelperData.keySalt, loginHelperData.redirectToSetup,
                             user, username, loginHelperData.domainName, addressResponse.getAddresses()));
@@ -756,7 +756,7 @@ public class LoginService extends ProtonJobIntentService {
             keySalt = loginResponse.getKeySalt();
 
             if (keySalt == null) { // new response doesn't contain salt
-                UserInfo userInfo = api.fetchUserInfo();
+                UserInfo userInfo = api.fetchUserInfoBlocking();
                 KeySalts keySalts = api.fetchKeySalts();
 
                 String primaryKeyId = null;
@@ -800,10 +800,10 @@ public class LoginService extends ProtonJobIntentService {
 
             if (redirectToSetup && !signUp) {
                 status = AuthStatus.FAILED;
-                UserInfo userInfo = api.fetchUserInfo();
+                UserInfo userInfo = api.fetchUserInfoBlocking();
                 UserSettingsResponse userSettingsResp = api.fetchUserSettings();
                 MailSettingsResponse mailSettingsResp = api.fetchMailSettings();
-                AddressesResponse addressesResponse = api.fetchAddresses();
+                AddressesResponse addressesResponse = api.fetchAddressesBlocking();
                 user = userInfo.getUser();
                 userManager.setUserSettings(userSettingsResp.getUserSettings());
                 userManager.setMailSettings(mailSettingsResp.getMailSettings());
@@ -858,10 +858,10 @@ public class LoginService extends ProtonJobIntentService {
                 status = AuthStatus.FAILED;
             } else {
                 status = AuthStatus.SUCCESS;
-                UserInfo userInfo = api.fetchUserInfo();
+                UserInfo userInfo = api.fetchUserInfoBlocking();
                 UserSettingsResponse userSettings = api.fetchUserSettings();
                 MailSettingsResponse mailSettings = api.fetchMailSettings();
-                AddressesResponse addressesResponse = api.fetchAddresses();
+                AddressesResponse addressesResponse = api.fetchAddressesBlocking();
                 User user = userInfo.getUser();
                 userManager.setUserSettings(userSettings.getUserSettings());
                 userManager.setMailSettings(mailSettings.getMailSettings());

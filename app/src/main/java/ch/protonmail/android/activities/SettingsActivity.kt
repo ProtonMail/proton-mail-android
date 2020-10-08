@@ -24,8 +24,10 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.events.FetchLabelsEvent
+import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
+import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
 
 /**
@@ -60,7 +62,8 @@ class SettingsActivity : BaseSettingsActivity() {
 
     override fun renderViews() {
 
-        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!) user.defaultAddress.email else user.getDisplayNameForAddress(user.addressId)!!
+        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!)
+            user.defaultAddress.email else user.getDisplayNameForAddress(user.addressId)!!
         setHeader(SettingsEnum.ACCOUNT, mDisplayName)
 
         if (null != user.addresses && user.addresses.size > 0) {
@@ -88,16 +91,24 @@ class SettingsActivity : BaseSettingsActivity() {
         val autoLockSettingValue = if (mPinValue) getString(R.string.enabled) else getString(R.string.disabled)
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 
-        val allowSecureConnectionsViaThirdPartiesSettingValue = if (user.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(R.string.denied)
+        val allowSecureConnectionsViaThirdPartiesSettingValue =
+            if (user.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(R.string.denied)
         setValue(SettingsEnum.CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdPartiesSettingValue)
 
         setValue(SettingsEnum.COMBINED_CONTACTS, if (user.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled))
 
-        setValue(SettingsEnum.APP_VERSION, String.format(getString(R.string.app_version_code), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)))
+        setValue(SettingsEnum.APP_VERSION, String.format(getString(R.string.app_version_code),
+            AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)))
     }
 
     @Subscribe
     override fun onLabelsLoadedEvent(event: FetchLabelsEvent) {
         super.onLabelsLoadedEvent(event)
+    }
+
+    @Subscribe
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onLogoutEvent(event: LogoutEvent?) {
+        moveToLogin()
     }
 }

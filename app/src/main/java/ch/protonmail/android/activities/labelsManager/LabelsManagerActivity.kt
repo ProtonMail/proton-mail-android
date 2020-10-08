@@ -23,21 +23,20 @@ import android.util.DisplayMetrics
 import android.view.MenuItem
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
-import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.*
+import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.CREATE
+import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UNDEFINED
+import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UPDATE
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.LabelAddedEvent
-import ch.protonmail.android.events.LabelDeletedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
@@ -45,10 +44,12 @@ import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.uiModel.LabelUiModel.Type.FOLDERS
 import ch.protonmail.android.uiModel.LabelUiModel.Type.LABELS
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
+import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
-import ch.protonmail.libs.core.utils.showToast
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
 import studio.forface.viewstatestore.ViewStateActivity
 import kotlin.random.Random
@@ -68,26 +69,24 @@ const val EXTRA_CREATE_ONLY = "create_only"
  *
  * @author Davide Farella
  */
-
+@AndroidEntryPoint
 class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
-
-    /** @return an instance of [getApplicationContext] casted as [ProtonMailApplication] */
-    private val app get() = applicationContext as ProtonMailApplication
 
     /** Lazy instance of [LabelColorsAdapter] */
     private val colorsAdapter by lazy {
-        LabelColorsAdapter( applicationContext, colorOptions, R.layout.label_color_item_circle )
+        LabelColorsAdapter(applicationContext, colorOptions, R.layout.label_color_item_circle)
     }
 
     /** [IntArray] of the available colors */
-    private val colorOptions by lazy { resources.getIntArray( R.array.label_colors ) }
+    private val colorOptions by lazy { resources.getIntArray(R.array.label_colors) }
 
     /**
      * Whether this `Activity` is enabled only to create a Label / Folder
      * Default is `false`
      */
-    private val createOnly
-            by lazy { intent?.extras?.getBoolean( EXTRA_CREATE_ONLY, false ) ?: false }
+    private val createOnly by lazy {
+        intent?.extras?.getBoolean(EXTRA_CREATE_ONLY, false) ?: false
+    }
 
     /** [LabelsCirclesAdapter] for show `Labels` or `Folders` */
     private val labelsAdapter = LabelsCirclesAdapter().apply {
@@ -96,15 +95,16 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     /** Whether this `Activity` must use a Popup Style. Default is `false` */
-    private val popupStyle
-            by lazy { intent?.extras?.getBoolean( EXTRA_POPUP_STYLE, false ) ?: false }
+    private val popupStyle by lazy {
+        intent?.extras?.getBoolean(EXTRA_POPUP_STYLE, false) ?: false
+    }
 
     /** Current [State] of the `Activity` */
     private var state: State = UNDEFINED
-        set( value ) {
-            if ( field != value ) {
+        set(value) {
+            if (field != value) {
                 field = value
-                onStateChange( value )
+                onStateChange(value)
             }
         }
 
@@ -115,34 +115,24 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
      * @see Type.LABELS
      */
     private val type by lazy {
-        val managingFolders = intent?.extras?.getBoolean( EXTRA_MANAGE_FOLDERS, false ) ?: false
-        if ( managingFolders ) FOLDERS else LABELS
+        val managingFolders = intent?.extras?.getBoolean(EXTRA_MANAGE_FOLDERS, false) ?: false
+        if (managingFolders) FOLDERS else LABELS
     }
 
-    /** [LabelsManagerViewModel.Factory] for [LabelsManagerViewModel] */
-    private val viewModelFactory by lazy {
-        val messagesDatabase = MessagesDatabaseFactory.getInstance( applicationContext ).getDatabase()
-        LabelsManagerViewModel.Factory( mJobManager, messagesDatabase, type ) // TODO: use DI for create Factory with variable param ( type )
-    }
-
-    /** A Lazy instance of [LabelsManagerViewModel] */
-    private val viewModel by lazy {
-        ViewModelProviders.of( this, viewModelFactory )
-                .get( LabelsManagerViewModel::class.java )
-    }
+    private val viewModel: LabelsManagerViewModel by viewModels()
 
     /** @return [LayoutRes] for the content View */
     override fun getLayoutId() = R.layout.activity_labels_manager
 
-    override fun onCreate( savedInstanceState: Bundle? ) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         // If is popupStyle set the relative theme
-        if ( popupStyle ) setTheme( R.style.PopupTheme )
-        super.onCreate( savedInstanceState )
+        if (popupStyle) setTheme(R.style.PopupTheme)
+        super.onCreate(savedInstanceState)
 
         // Setup the action bar
         supportActionBar?.run {
-            if ( popupStyle ) hide()
-            else setDisplayHomeAsUpEnabled( true )
+            if (popupStyle) hide()
+            else setDisplayHomeAsUpEnabled(true)
         }
 
         // Setup Views
@@ -150,68 +140,75 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
         delete_labels.isEnabled = false
         labels_grid_view.apply {
             val gridLayoutParams = layoutParams as LinearLayout.LayoutParams
-            val itemHeight = resources.getDimensionPixelSize( R.dimen.label_color_item_size ) + resources.getDimensionPixelSize( R.dimen.fields_default_space )
+            val itemHeight = resources.getDimensionPixelSize(R.dimen.label_color_item_size) +
+                resources.getDimensionPixelSize(R.dimen.fields_default_space)
             gridLayoutParams.height = colorOptions.size * itemHeight / COLOR_PICKER_COLUMNS
 
             adapter = colorsAdapter
         }
 
-        if ( createOnly ) state = CREATE else UNDEFINED
+        if (createOnly) state = CREATE else UNDEFINED
 
         // Set listeners
         delete_labels.setOnClickListener { showDeleteConfirmation() }
-        label_name.onTextChange( ::onLabelNameChange )
+        label_name.onTextChange(::onLabelNameChange)
         save_new_label.setOnClickListener { saveCurrentLabel() }
         labels_grid_view
-                .setOnItemClickListener { _, _, position, _ -> onLabelColorChange( position ) }
+            .setOnItemClickListener { _, _, position, _ -> onLabelColorChange(position) }
 
         // Setup Labels RecyclerView
         labels_recycler_view.apply {
             adapter = labelsAdapter
-            layoutManager = LinearLayoutManager( context )
+            layoutManager = LinearLayoutManager(context)
         }
 
         // Observe labels
-        viewModel.labels.observeData( ::onLabels )
+        viewModel.labels.observeData(::onLabels)
 
         // Observe labels selection
         viewModel.hasSelectedLabels.observeData { delete_labels.isEnabled = it }
+
+        // Observe deleted labels
+        viewModel.hasSuccessfullyDeletedMessages.observe(
+            this, { onLabelDeletedEvent(it) }
+        )
     }
 
     /** Custom setup if [popupStyle] */
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if ( popupStyle ) {
+        if (popupStyle) {
             val metrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics( metrics )
+            windowManager.defaultDisplay.getMetrics(metrics)
             val width = metrics.widthPixels
             val height = metrics.heightPixels
 
-            window.setLayout( ( width * 0.99f ).toInt(), ( height * 0.95f ).toInt() )
+            window.setLayout(
+                (width * 0.99f).toInt(), (height * 0.95f).toInt()
+            )
         }
     }
 
     /** Register to EventBus */
     override fun onStart() {
         super.onStart()
-        app.bus.register( this )
+        app.bus.register(this)
     }
 
     /** Unregister from EventBus */
     override fun onStop() {
-        app.bus.unregister( this )
+        app.bus.unregister(this)
         super.onStop()
     }
 
-    override fun onOptionsItemSelected( item: MenuItem ): Boolean {
-        if ( item.itemId == android.R.id.home ) onBackPressed()
-        return super.onOptionsItemSelected( item )
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) onBackPressed()
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
-        if ( state != UNDEFINED && ! createOnly ) {
+        if (state != UNDEFINED && !createOnly) {
             state = UNDEFINED
-
         } else {
             saveLastInteraction()
             super.onBackPressed()
@@ -220,107 +217,115 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** Close the soft keyboard */
     private fun closeKeyboard() {
-        UiUtil.hideKeyboard( this, label_name )
+        UiUtil.hideKeyboard(this, label_name)
     }
 
     /** When labels are received from [LabelsManagerViewModel] */
-    private fun onLabels( labels: PagedList<LabelUiModel> ) {
+    private fun onLabels(labels: PagedList<LabelUiModel>) {
         no_labels.isVisible = labels.isEmpty()
         delete_labels.isVisible = labels.isNotEmpty()
-        labelsAdapter.submitList( labels )
+        labelsAdapter.submitList(labels)
     }
 
     /** When a Label is clicked */
-    private fun onLabelClick( label: LabelUiModel ) {
+    private fun onLabelClick(label: LabelUiModel) {
         state = UPDATE
 
-        label_name.setText( label.name )
+        label_name.setText(label.name)
         add_label_container.isVisible = true
-        toggleColorPicker( true )
+        toggleColorPicker(true)
 
-        val currentColorPosition = colorOptions.indexOf( label.color )
-        colorsAdapter.setChecked( currentColorPosition )
+        val currentColorPosition = colorOptions.indexOf(label.color)
+        colorsAdapter.setChecked(currentColorPosition)
 
         // Set viewModel
         viewModel.apply {
-            onLabelEdit( label )
-            setLabelColor( colorOptions[currentColorPosition] )
+            onLabelEdit(label)
+            setLabelColor(colorOptions[currentColorPosition])
         }
     }
 
     /** When Label color is changed in the [labels_grid_view] */
-    private fun onLabelColorChange( positionInColorOptions: Int ) {
-        colorsAdapter.setChecked( positionInColorOptions )
-        viewModel.setLabelColor( colorOptions[positionInColorOptions] )
+    private fun onLabelColorChange(positionInColorOptions: Int) {
+        colorsAdapter.setChecked(positionInColorOptions)
+        viewModel.setLabelColor(colorOptions[positionInColorOptions])
         closeKeyboard()
     }
 
     /** When Label name is changed in the [label_name] `EditText` */
-    private fun onLabelNameChange( name: CharSequence ) {
+    private fun onLabelNameChange(name: CharSequence) {
         save_new_label.isVisible = name.isNotBlank()
 
-        if ( name.isEmpty() ) {
+        if (name.isEmpty()) {
             state = UNDEFINED
 
-        } else if ( state == UNDEFINED ) state = CREATE
+        } else if (state == UNDEFINED) state = CREATE
 
-        viewModel.setLabelName( name )
+        viewModel.setLabelName(name)
     }
 
     /** When a Label is selected or unselected */
-    private fun onLabelSelectionChange( label: LabelUiModel, isSelected: Boolean ) {
-        viewModel.onLabelSelected( label.labelId, isSelected )
+    private fun onLabelSelectionChange(label: LabelUiModel, isSelected: Boolean) {
+        viewModel.onLabelSelected(
+            label.labelId, isSelected
+        )
     }
 
     /** When the [state] is changed */
-    private fun onStateChange( state: State ) {
-        when ( state ) {
+    private fun onStateChange(state: State) {
+        when (state) {
 
             UNDEFINED -> {
                 viewModel.onNewLabel()
-                toggleColorPicker( false )
+                toggleColorPicker(false)
                 closeKeyboard()
-                label_name.setText( "" )
+                label_name.setText("")
 
-                save_new_label.setText( when ( type ) {
-                    LABELS -> R.string.save_new_label
-                    FOLDERS -> R.string.save_new_folder
-                } )
+                save_new_label.setText(
+                    when (type) {
+                        LABELS -> R.string.save_new_label
+                        FOLDERS -> R.string.save_new_folder
+                    }
+                )
             }
 
             CREATE -> {
                 selectRandomColor()
-                toggleColorPicker( true )
+                toggleColorPicker(true)
 
-                save_new_label.setText( when ( type ) {
-                    LABELS -> R.string.save_new_label
-                    FOLDERS -> R.string.save_new_folder
-                } )
+                save_new_label.setText(
+                    when (type) {
+                        LABELS -> R.string.save_new_label
+                        FOLDERS -> R.string.save_new_folder
+                    }
+                )
             }
 
             UPDATE -> {
-                toggleColorPicker( true )
+                toggleColorPicker(true)
 
-                save_new_label.setText( when ( type ) {
-                    LABELS -> R.string.update_label
-                    FOLDERS -> R.string.update_folder
-                } )
+                save_new_label.setText(
+                    when (type) {
+                        LABELS -> R.string.update_label
+                        FOLDERS -> R.string.update_folder
+                    }
+                )
             }
         }
     }
 
     /** Show a message that prompt the user to confirm the deletion */
     private fun showDeleteConfirmation() {
-        val title = when ( type ) {
+        val title = when (type) {
             LABELS -> R.string.delete_label_confirmation_title
             FOLDERS -> R.string.delete_folder_confirmation_title
         }
-        AlertDialog.Builder( this )
-                .setTitle( title )
-                .setMessage( R.string.delete_label_confirmation_message )
-                .setPositiveButton( R.string.okay ) { _, _ -> viewModel.deleteSelectedLabels() }
-                .setNegativeButton( R.string.cancel ) { _, _ -> }
-                .show()
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(R.string.delete_label_confirmation_message)
+            .setPositiveButton(R.string.okay) { _, _ -> viewModel.deleteSelectedLabels() }
+            .setNegativeButton(R.string.cancel) { _, _ -> }
+            .show()
     }
 
     /** Save the current editing Label */
@@ -331,13 +336,13 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     /** Select a random Color for the Label */
     private fun selectRandomColor() {
-        val index = Random.nextInt( colorOptions.size )
-        colorsAdapter.setChecked( index )
-        viewModel.setLabelColor( colorOptions[index] )
+        val index = Random.nextInt(colorOptions.size)
+        colorsAdapter.setChecked(index)
+        viewModel.setLabelColor(colorOptions[index])
     }
 
     /** Show or hide the color picker */
-    private fun toggleColorPicker( show: Boolean ) {
+    private fun toggleColorPicker(show: Boolean) {
         label_color_parent.isVisible = show
         labels_list_view_parent.isVisible = !show
     }
@@ -347,64 +352,74 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
      * @see [type]
      */
     private fun initTexts() {
-        setTitle( when ( type ) {
-            LABELS -> R.string.labels_and_folders
-            FOLDERS -> R.string.folders_manager
-        } )
+        setTitle(
+            when (type) {
+                LABELS -> R.string.labels_and_folders
+                FOLDERS -> R.string.folders_manager
+            }
+        )
 
-        save_new_label.setText( when ( type ) {
-            LABELS -> R.string.save_new_label
-            FOLDERS -> R.string.save_new_folder
-        } )
+        save_new_label.setText(
+            when (type) {
+                LABELS -> R.string.save_new_label
+                FOLDERS -> R.string.save_new_folder
+            }
+        )
 
-        no_labels.setText( when ( type ) {
-            LABELS -> R.string.no_labels
-            FOLDERS -> R.string.no_folders
-        } )
+        no_labels.setText(
+            when (type) {
+                LABELS -> R.string.no_labels
+                FOLDERS -> R.string.no_folders
+            }
+        )
 
-        labels_dialog_title.setText( when ( type ) {
-            LABELS -> R.string.label_add_new
-            FOLDERS -> R.string.folder_add_new
-        } )
+        labels_dialog_title.setText(
+            when (type) {
+                LABELS -> R.string.label_add_new
+                FOLDERS -> R.string.folder_add_new
+            }
+        )
 
-        label_name.setHint( when ( type ) {
-            LABELS -> R.string.label_name
-            FOLDERS -> R.string.folder_name
-        } )
+        label_name.setHint(
+            when (type) {
+                LABELS -> R.string.label_name
+                FOLDERS -> R.string.folder_name
+            }
+        )
 
-        available_labels_title.setText( when ( type ) {
-            LABELS -> R.string.available_labels
-            FOLDERS -> R.string.available_folders
-        } )
+        available_labels_title.setText(
+            when (type) {
+                LABELS -> R.string.available_labels
+                FOLDERS -> R.string.available_folders
+            }
+        )
 
-        labels_colors_title.setText( when ( type ) {
-            LABELS -> R.string.choose_label_color
-            FOLDERS -> R.string.choose_folder_color
-        } )
+        labels_colors_title.setText(
+            when (type) {
+                LABELS -> R.string.choose_label_color
+                FOLDERS -> R.string.choose_folder_color
+            }
+        )
     }
 
-    @Subscribe
-    @Suppress("unused") // EventBus
-    fun onLabelDeletedEvent( event: LabelDeletedEvent ) {
-        val success = event.status == Status.SUCCESS
-        val message = when ( type ) {
-            FOLDERS -> if ( success ) R.string.folder_deleted else R.string.folder_deleted_error
-            LABELS -> if ( success ) R.string.label_deleted else R.string.label_deleted_error
+    private fun onLabelDeletedEvent(isSuccessful: Boolean) {
+        val message = when (type) {
+            FOLDERS -> if (isSuccessful) R.string.folder_deleted else R.string.folder_deleted_error
+            LABELS -> if (isSuccessful) R.string.label_deleted else R.string.label_deleted_error
         }
-
-        showToast( message, Toast.LENGTH_SHORT )
+        showToast(message, Toast.LENGTH_SHORT)
     }
 
     @Subscribe
     @Suppress("unused") // EventBus
-    fun onLabelAddedEvent( event: LabelAddedEvent ) {
+    fun onLabelAddedEvent(event: LabelAddedEvent) {
         val success = event.status == Status.SUCCESS
         val error = event.error
-        if ( success && createOnly ) onBackPressed()
+        if (success && createOnly) onBackPressed()
 
         labels_grid_view.isVisible = true
 
-        val message = when ( type ) {
+        val message = when (type) {
             FOLDERS -> {
                 when (success) {
                     true -> getString(R.string.folder_created)
@@ -419,12 +434,12 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             }
         }
 
-        showToast(message!!, Toast.LENGTH_SHORT)
+        showToast(message, Toast.LENGTH_SHORT)
     }
 
     @Subscribe
     @Suppress("unused") // EventBus
-    fun onLogoutEvent( @Suppress("UNUSED_PARAMETER") event: LogoutEvent ) {
+    fun onLogoutEvent(@Suppress("UNUSED_PARAMETER") event: LogoutEvent) {
         moveToLogin()
     }
 
@@ -437,8 +452,10 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     enum class State {
         /** State is not defined */
         UNDEFINED,
+
         /** The `Activity` is currently creating a Label */
         CREATE,
+
         /** The `Activity` is currently updating a Label */
         UPDATE
     }

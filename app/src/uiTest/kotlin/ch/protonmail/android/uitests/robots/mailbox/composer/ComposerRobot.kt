@@ -26,13 +26,14 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessageExpirationRobot
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot.MessagePasswordRobot
+import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.click
-import ch.protonmail.android.uitests.testsHelper.insert
+import ch.protonmail.android.uitests.testsHelper.type
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 
@@ -123,7 +124,7 @@ class ComposerRobot {
         days: Int,
         password: String,
         hint: String
-    ): InboxRobot {
+    ): InboxRobot =
         composeMessage(to, subject, body)
             .setMessagePassword()
             .definePasswordWithHint(password, hint)
@@ -133,45 +134,41 @@ class ComposerRobot {
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
             .send()
-        return InboxRobot()
-    }
 
-    fun sendMessageCameraCaptureAttachment(to: String, subject: String, body: String): InboxRobot {
+    fun sendMessageCameraCaptureAttachment(to: String, subject: String, body: String): InboxRobot =
         composeMessage(to, subject, body)
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
             .send()
-        return InboxRobot()
-    }
 
-    fun sendMessageWithFileAttachment(to: String, subject: String, body: String): InboxRobot {
+    fun sendMessageWithFileAttachment(to: String, subject: String, body: String): InboxRobot =
         composeMessage(to, subject, body)
             .attachments()
             .addFileAttachment(logoDrawable)
             .send()
-        return InboxRobot()
-    }
 
-    fun sendMessageTwoImageCaptureAttachments(to: String, subject: String, body: String): InboxRobot {
+    fun sendMessageTwoImageCaptureAttachments(to: String, subject: String, body: String): InboxRobot =
         composeMessage(to, subject, body)
             .attachments()
             .addTwoImageCaptureAttachments(logoDrawable, welcomeDrawable)
             .send()
-        return InboxRobot()
-    }
 
-    fun draftSubjectBody(messageSubject: String): ComposerRobot {
-        subject(messageSubject)
+    fun draftToSubjectBody(to: String, messageSubject: String, body: String): ComposerRobot =
+        recipients(to)
+            .subject(messageSubject)
             .body(TestData.messageBody)
-        return this
-    }
 
-    fun draftSubjectBodyAttachment(messageSubject: String): ComposerRobot {
-        draftSubjectBody(messageSubject)
+    fun draftSubjectBody(messageSubject: String, body: String): ComposerRobot =
+        subject(messageSubject)
+            .body(body)
+
+    fun draftSubjectBodyAttachment(to: String, messageSubject: String, body: String): ComposerRobot {
+        return draftToSubjectBody(to, messageSubject, body)
             .attachments()
             .addImageCaptureAttachment(logoDrawable)
-        return this
     }
+
+    fun editBodyAndReply(messageBody: String): MessageRobot = body(messageBody).reply()
 
     fun clickUpButton(): ComposerRobot {
         UIActions.system.clickHamburgerOrUpButton()
@@ -183,15 +180,30 @@ class ComposerRobot {
         return InboxRobot()
     }
 
-    fun editBodyAndReply(messageBody: String): MessageRobot = body(messageBody).reply()
+    fun confirmDraftSavingFromDrafts(): DraftsRobot {
+        UIActions.system.clickPositiveDialogButton()
+        return DraftsRobot()
+    }
 
     private fun composeMessage(to: String, subject: String, body: String): ComposerRobot =
         recipients(to)
             .subject(subject)
             .body(body)
 
-    private fun recipients(email: String): ComposerRobot {
+    fun recipients(email: String): ComposerRobot {
         UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, email)
+        return this
+    }
+
+    fun changeSenderTo(email: String): ComposerRobot = clickFromField().selectSender(email)
+
+    private fun clickFromField(): ComposerRobot {
+        UIActions.wait.forViewWithId(R.id.addresses_spinner).click()
+        return this
+    }
+
+    private fun selectSender(email: String): ComposerRobot {
+        UIActions.wait.forViewWithText(email).click()
         return this
     }
 
@@ -206,7 +218,7 @@ class ComposerRobot {
     }
 
     fun subject(text: String): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.message_title).insert(text)
+        UIActions.wait.forViewWithId(R.id.message_title).type(text)
         return this
     }
 
@@ -240,7 +252,7 @@ class ComposerRobot {
         return MessageAttachmentsRobot()
     }
 
-    private fun send(): InboxRobot {
+    fun send(): InboxRobot {
         waitForConditionAndSend()
         return InboxRobot()
     }
@@ -268,8 +280,8 @@ class ComposerRobot {
     private fun waitForConditionAndSend() {
         UIActions.wait.forViewWithId(R.id.tokenPgpText)
         UIActions.id.clickViewWithId(sendMessageId)
-        UIActions.wait.forViewWithText(sendMessageId)
-        UIActions.wait.untilViewWithTextIsGone(sendMessageId)
+        UIActions.wait.forViewWithText(R.string.message_sent)
+        UIActions.wait.untilViewWithTextIsGone(R.string.message_sent)
     }
 
     /**
@@ -337,10 +349,32 @@ class ComposerRobot {
         }
     }
 
+    /**
+     * Contains all the validations that can be performed by [ComposerRobot].
+     */
+    class Verify {
+
+        fun messageWithSubjectOpened(subject: String) {
+            UIActions.wait.forViewWithIdAndText(R.id.message_title, subject)
+        }
+
+        fun toFieldContains(email: String) {
+            UIActions.check.viewWithIdIsContainsText(R.id.to_recipients, email)
+        }
+
+        fun fromEmailIs(email: String): DraftsRobot {
+            UIActions.wait.forViewWithTextAndParentId(email, addressSpinnerId)
+            return DraftsRobot()
+        }
+    }
+
+    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+
     companion object {
         const val sendMessageId = R.id.send_message
         const val logoDrawable = R.drawable.logo
         const val welcomeDrawable = R.drawable.welcome
+        const val addressSpinnerId = R.id.addresses_spinner
         const val ok = R.id.ok
     }
 }

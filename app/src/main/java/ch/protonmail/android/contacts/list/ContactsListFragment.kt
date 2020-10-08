@@ -36,9 +36,10 @@ import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Operation
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.fragments.BaseFragment
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
 import ch.protonmail.android.contacts.REQUEST_CODE_CONTACT_DETAILS
@@ -57,29 +58,36 @@ import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.extensions.setDefaultIfEmpty
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.libs.core.utils.ViewModelProvider
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts.*
+import timber.log.Timber
+import javax.inject.Inject
 
 // region constants
 private const val TAG_CONTACTS_LIST_FRAGMENT = "ProtonMail.ContactsFragment"
 private const val EXTRA_PERMISSION = "extra_permission"
 // endregion
 
+@AndroidEntryPoint
 class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private lateinit var viewModel: ContactsListViewModel
     private lateinit var contactsAdapter: ContactsListAdapter
     private var hasContactsPermission: Boolean = false
+
+    @Inject
+    lateinit var workManager: WorkManager
+
     override var actionMode: ActionMode? = null
         private set
 
     private val listener: IContactsListFragmentListener by lazy {
-        context as? IContactsListFragmentListener
+        activity as? IContactsListFragmentListener
             ?: throw IllegalStateException("Activity must implement IContactsListFragmentListener")
     }
 
@@ -97,9 +105,9 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
         menu.findItem(R.id.transform_phone_contacts).isVisible =
-                contactsAdapter.getSelectedItems!!.none(
-                    ContactItem::isProtonMailContact
-                )
+            contactsAdapter.getSelectedItems!!.none(
+                ContactItem::isProtonMailContact
+            )
         return true
     }
 
@@ -114,7 +122,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         position: Int,
         id: Long,
         checked: Boolean
-    ) {}
+    ) {
+    }
 
     override fun onDestroyActionMode(mode: ActionMode?) {
         actionMode!!.finish()
@@ -122,7 +131,10 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         contactsAdapter.endSelectionMode()
         UiUtil.setStatusBarColor(
             requireActivity() as AppCompatActivity,
-            ContextCompat.getColor(requireContext(), R.color.dark_purple_statusbar)
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.dark_purple_statusbar
+            )
         )
 
         listener.setTitle(getString(R.string.contacts))
@@ -135,28 +147,33 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         val allContactsProtonMail = selectedContacts.all(ContactItem::isProtonMailContact)
 
         when (menuItemId) {
-            R.id.delete_contacts -> if (!allContactsProtonMail) {
-                requireContext().showToast(R.string.please_select_only_phone_contacts)
-            } else {
-                DialogUtils.showDeleteConfirmationDialog(
-                    requireContext(), getString(R.string.delete),
-                    requireContext().resources.getQuantityString(
-                        R.plurals.are_you_sure_delete_contact,
-                        contactsAdapter.getSelectedItems!!.toList().size,
-                        contactsAdapter.getSelectedItems!!.toList().size)
-                ) {
-                    onDelete()
+            R.id.delete_contacts ->
+                if (!allContactsProtonMail) {
+                    requireContext().showToast(R.string.please_select_only_phone_contacts)
+                } else {
+                    DialogUtils.showDeleteConfirmationDialog(
+                        requireContext(),
+                        getString(R.string.delete),
+                        requireContext().resources.getQuantityString(
+                            R.plurals.are_you_sure_delete_contact,
+                            contactsAdapter.getSelectedItems!!.toList().size,
+                            contactsAdapter.getSelectedItems!!.toList().size
+                        )
+                    ) {
+                        onDelete()
+                        mode.finish()
+                    }
+                }
+            R.id.transform_phone_contacts ->
+                if (!allContactsLocal) {
+                    requireContext().showToast(R.string.please_select_only_phone_contacts)
+                } else {
+                    LocalContactsConverter(listener.jobManager, viewModel)
+                        .startConversion(
+                            contactsAdapter.getSelectedItems!!.toList()
+                        )
                     mode.finish()
                 }
-
-            }
-            R.id.transform_phone_contacts -> if (!allContactsLocal) {
-                requireContext().showToast(R.string.please_select_only_phone_contacts)
-            } else {
-                LocalContactsConverter(listener.jobManager, viewModel)
-                    .startConversion(contactsAdapter.getSelectedItems!!.toList())
-                mode.finish()
-            }
         }
 
         return true
@@ -188,8 +205,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         val factory = ContactsListViewModelFactory(
             application,
             loaderManager,
-            listener.jobManager,
-            application.app.api as ProtonMailApiManager
+            workManager
         )
         viewModel = ViewModelProvider(this, factory).get(ContactsListViewModel::class.java)
 
@@ -199,32 +215,38 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun startObserving() {
-        viewModel.contactItems.observe(this, { contactItems ->
-            if (contactItems.isEmpty()) {
-                noResults.visibility = VISIBLE
-            } else {
-                noResults.visibility = GONE
+        viewModel.contactItems.observe(
+            this,
+            { contactItems ->
+                if (contactItems.isEmpty()) {
+                    noResults.visibility = VISIBLE
+                } else {
+                    noResults.visibility = GONE
+                }
+                contactsAdapter.apply {
+                    setData(contactItems!!)
+                    val count = contactItems.size - contactItems
+                        .count { contactItem -> contactItem.contactId == "-1" }
+                    listener.dataUpdated(0, count)
+                }
             }
-            contactsAdapter.apply {
-                setData(contactItems!!)
-                val count = contactItems.size - contactItems
-                    .count { contactItem -> contactItem.contactId == "-1" }
-                listener.dataUpdated(0, count)
-            }
-        })
+        )
         val progressDialogFactory = ProgressDialogFactory(requireContext())
         viewModel.uploadProgress.observe(
             this,
             UploadProgressObserver(progressDialogFactory::create)
         )
-        viewModel.contactToConvert.observe(this, Observer {
-            val localContact = it?.getContentIfNotHandled() ?: return@Observer
-            val intent = EditContactDetailsActivity.startConvertContactActivity(
-                requireContext(),
-                localContact
-            )
-            listener.doStartActivityForResult(intent, REQUEST_CODE_CONVERT_CONTACT)
-        })
+        viewModel.contactToConvert.observe(
+            this,
+            Observer {
+                val localContact = it?.getContentIfNotHandled() ?: return@Observer
+                val intent = EditContactDetailsActivity.startConvertContactActivity(
+                    requireContext(),
+                    localContact
+                )
+                listener.doStartActivityForResult(intent, REQUEST_CODE_CONVERT_CONTACT)
+            }
+        )
     }
 
     override fun getLayoutResourceId() = R.layout.fragment_contacts
@@ -239,7 +261,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 if (viewModel.hasPermission) {
                     val contacts = viewModel.androidContacts.value
                     contacts?.let {
-                        context?.showConvertsContactsDialog(localContactsConverter, contacts)
+                        context?.showConvertsContactsDialog(localContactsConverter, it)
                     }
                 } else {
                     listener.doRequestContactsPermission()
@@ -286,12 +308,16 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     }
 
     override fun onDelete() {
-        viewModel.contactsDeleteError.observe(this, {
-            it?.getContentIfNotHandled()?.let { message ->
-                context?.showToast(message.setDefaultIfEmpty(getString(R.string.default_error_message)))
+        viewModel.deleteSelected(getSelectedContactsIds()).observe(
+            this,
+            { state ->
+                if (state is Operation.State.FAILURE) {
+                    context?.showToast(getString(R.string.default_error_message))
+                } else {
+                    Timber.v("Delete contacts state $state")
+                }
             }
-        })
-        viewModel.deleteSelected(getSelectedContactsIds())
+        )
     }
 
     @Subscribe

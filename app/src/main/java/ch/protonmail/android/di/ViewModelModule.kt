@@ -21,6 +21,7 @@
 package ch.protonmail.android.di
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
@@ -30,6 +31,9 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewMo
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
+import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
+import ch.protonmail.android.compose.ComposeMessageRepository
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
