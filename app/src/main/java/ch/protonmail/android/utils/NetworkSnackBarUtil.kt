@@ -53,28 +53,28 @@ class NetworkSnackBarUtil @Inject constructor() {
      *
      * @param parentView view to which the snackBar should be attached, e.g. findViewById(android.R.id.content)
      * @param user current user
-     * @param callback
-     * @param listener retry click listener
-     * @param message optional custom message resource
+     * @param netConfiguratorCallback
+     * @param onRetryClick retry click listener
+     * @param messageRes optional custom message title resource
      * @param isTopSnackBar optional flag forcing snackBar to the top
      */
     fun getNoConnectionSnackBar(
         parentView: View,
         user: User,
-        callback: INetworkConfiguratorCallback,
-        listener: View.OnClickListener?,
-        @StringRes message: Int = R.string.no_connectivity_detected_troubleshoot,
+        netConfiguratorCallback: INetworkConfiguratorCallback,
+        onRetryClick: View.OnClickListener?,
+        @StringRes messageRes: Int = R.string.no_connectivity_detected_troubleshoot,
         isTopSnackBar: Boolean = false
     ): Snackbar {
         val snackBar = noConnectionSnackBar
-            ?: Snackbar.make(parentView, message, Snackbar.LENGTH_INDEFINITE).apply {
-                setAction(context.getString(R.string.retry), listener)
+            ?: Snackbar.make(parentView, messageRes, Snackbar.LENGTH_INDEFINITE).apply {
+                setAction(context.getString(R.string.retry), onRetryClick)
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
                 view.apply {
                     setBackgroundColor(ContextCompat.getColor(context, R.color.red))
                     isClickable = true
                     isFocusable = true
-                    setOnClickListener { showNoConnectionTroubleshootDialog(context, user, callback) }
+                    setOnClickListener { showNoConnectionTroubleshootDialog(context, user, netConfiguratorCallback) }
                     applyTopGravity(isTopSnackBar)
 
                     findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
