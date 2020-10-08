@@ -35,31 +35,38 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithCustomView
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Utility methods for displaying network error snackbars.
- *
- * Defined as Singleton in order to be able to determine if a given snackbar instance is still displayed.
  */
-@Singleton
+@ActivityScoped
 class NetworkSnackBarUtil @Inject constructor() {
 
     private var noConnectionSnackBar: Snackbar? = null
     private var checkingConnectionSnackBar: Snackbar? = null
 
+    /**
+     * Provides ready [Snackbar] for displaying "No connection" with appropriate styling.
+     *
+     * @param parentView view to which the snackBar should be attached, e.g. findViewById(android.R.id.content)
+     * @param user current user
+     * @param callback
+     * @param listener retry click listener
+     * @param message optional custom message resource
+     * @param isTopSnackBar optional flag forcing snackBar to the top
+     */
     fun getNoConnectionSnackBar(
-        snackBarLayout: View,
-        context: Context,
-        listener: View.OnClickListener?,
-        @StringRes message: Int = R.string.no_connectivity_detected_troubleshoot,
+        parentView: View,
         user: User,
         callback: INetworkConfiguratorCallback,
+        listener: View.OnClickListener?,
+        @StringRes message: Int = R.string.no_connectivity_detected_troubleshoot,
         isTopSnackBar: Boolean = false
     ): Snackbar {
-        val snackbar = noConnectionSnackBar
-            ?: Snackbar.make(snackBarLayout, message, Snackbar.LENGTH_INDEFINITE).apply {
+        val snackBar = noConnectionSnackBar
+            ?: Snackbar.make(parentView, message, Snackbar.LENGTH_INDEFINITE).apply {
                 setAction(context.getString(R.string.retry), listener)
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
                 view.apply {
@@ -74,17 +81,21 @@ class NetworkSnackBarUtil @Inject constructor() {
                     }
                 }
             }
-        noConnectionSnackBar = snackbar
-        return snackbar
+        noConnectionSnackBar = snackBar
+        return snackBar
     }
 
+    /**
+     * Provides ready [Snackbar] for displaying checking connection message with an appropriate styling.
+     *
+     * @param parentView view to which the snackar should be attached, e.g. findViewById(android.R.id.content)
+     */
     fun getCheckingConnectionSnackBar(
-        snackBarLayout: View,
-        context: Context
+        parentView: View
     ): Snackbar {
-        val snackbar = checkingConnectionSnackBar ?: Snackbar.make(
-            snackBarLayout,
-            context.getString(R.string.connectivity_checking),
+        val snackBar = checkingConnectionSnackBar ?: Snackbar.make(
+            parentView,
+            parentView.context.getString(R.string.connectivity_checking),
             Snackbar.LENGTH_LONG
         ).apply {
             view.apply {
@@ -94,8 +105,8 @@ class NetworkSnackBarUtil @Inject constructor() {
                 }
             }
         }
-        checkingConnectionSnackBar = snackbar
-        return snackbar
+        checkingConnectionSnackBar = snackBar
+        return snackBar
     }
 
     fun isNoConnectionShown() = noConnectionSnackBar?.isShownOrQueued ?: false
