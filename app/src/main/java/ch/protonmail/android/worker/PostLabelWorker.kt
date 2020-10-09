@@ -33,7 +33,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.data.LabelRepository
-import java.io.IOException
 
 internal const val KEY_INPUT_DATA_LABEL_NAME = "keyInputDataLabelName"
 internal const val KEY_INPUT_DATA_LABEL_ID = "keyInputDataLabelId"
@@ -93,7 +92,8 @@ class PostLabelWorker @WorkerInject constructor(
 
         return {
             if (isUpdateParam()) {
-                val validLabelId = getLabelIdParam() ?: throw IOException("Missing required LabelID parameter")
+                val validLabelId = getLabelIdParam()
+                    ?: throw IllegalArgumentException("Missing required LabelID parameter")
                 apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
             } else {
                 apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
