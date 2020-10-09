@@ -142,21 +142,4 @@ public class LabelBody {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LabelBody labelBody = (LabelBody) o;
-        return display == labelBody.display &&
-                exclusive == labelBody.exclusive &&
-                type == labelBody.type &&
-                notify == labelBody.notify &&
-                Objects.equals(name, labelBody.name) &&
-                Objects.equals(color, labelBody.color);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, color, display, exclusive, type, notify);
-    }
 }

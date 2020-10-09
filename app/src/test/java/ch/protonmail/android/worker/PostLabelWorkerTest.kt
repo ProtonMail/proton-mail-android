@@ -36,6 +36,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -160,13 +161,16 @@ class PostLabelWorkerTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_LABEL_ID) } returns null
             val labelBody = LabelBody("labelName", "labelColor", 0, 0)
 
-            val result = worker.doWork()
+            val result = kotlin.runCatching {
+                worker.doWork()
+            }.exceptionOrNull()
 
-            val expectedFailure = ListenableWorker.Result.failure(
-                Data.Builder().putString(KEY_POST_LABEL_WORKER_RESULT_ERROR, "Missing required LabelID parameter").build()
-            )
+            // Note that at runtime this exception will be wrapped into a WorkInfo.Result by the CoroutineWorker
+            val expectedException = "Missing required LabelID parameter"
+
+            assertEquals(expectedException, result!!.message)
+            assertTrue(result is IllegalArgumentException)
             verify { apiManager.updateLabel("labelID", labelBody) wasNot Called }
-            assertEquals(expectedFailure, result)
         }
     }
 

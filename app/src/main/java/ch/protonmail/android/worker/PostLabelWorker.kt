@@ -55,27 +55,18 @@ class PostLabelWorker @WorkerInject constructor(
         val display = getDisplayParam()
         val exclusive = getExclusiveParam()
 
-        runCatching(
-            createOrUpdateLabel(labelName, color, display, exclusive)
-        ).fold(
-            onSuccess = { labelResponse ->
+        val labelResponse = createOrUpdateLabel(labelName, color, display, exclusive)
 
-                if (labelResponse.hasError()) {
-                    return failureResultWithError(labelResponse.error)
-                }
+        if (labelResponse.hasError()) {
+            return failureResultWithError(labelResponse.error)
+        }
 
-                if (hasInvalidLabelApiResponse(labelResponse)) {
-                    return failureResultWithError(labelResponse.error)
-                }
+        if (hasInvalidLabelApiResponse(labelResponse)) {
+            return failureResultWithError(labelResponse.error)
+        }
 
-                labelRepository.saveLabel(labelResponse.label)
-                return Result.success()
-
-            },
-            onFailure = {
-                return failureResultWithError(it.localizedMessage)
-            }
-        )
+        labelRepository.saveLabel(labelResponse.label)
+        return Result.success()
     }
 
     private fun failureResultWithError(error: String): Result {
@@ -88,22 +79,17 @@ class PostLabelWorker @WorkerInject constructor(
         color: String,
         display: Int,
         exclusive: Int
-    ): PostLabelWorker.() -> LabelResponse {
-
-        return {
-            if (isUpdateParam()) {
-                val validLabelId = getLabelIdParam()
-                    ?: throw IllegalArgumentException("Missing required LabelID parameter")
-                apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
-            } else {
-                apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
-            }
+    ): LabelResponse {
+        return if (isUpdateParam()) {
+            val validLabelId = getLabelIdParam()
+                ?: throw IllegalArgumentException("Missing required LabelID parameter")
+            apiManager.updateLabel(validLabelId, LabelBody(labelName, color, display, exclusive))
+        } else {
+            apiManager.createLabel(LabelBody(labelName, color, display, exclusive))
         }
     }
 
-    @Suppress("SENSELESS_COMPARISON")
-    private fun hasInvalidLabelApiResponse(labelResponse: LabelResponse) =
-        labelResponse.label == null || labelResponse.label.id.isEmpty()
+    private fun hasInvalidLabelApiResponse(labelResponse: LabelResponse) = labelResponse.label.id.isEmpty()
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)
 
@@ -125,7 +111,8 @@ class PostLabelWorker @WorkerInject constructor(
             display: Int? = 0,
             exclusive: Int? = 0,
             update: Boolean? = false,
-            labelId: String? = null): LiveData<WorkInfo> {
+            labelId: String? = null
+        ): LiveData<WorkInfo> {
 
             val postLabelWorkerRequest = OneTimeWorkRequestBuilder<PostLabelWorker>()
                 .setInputData(
