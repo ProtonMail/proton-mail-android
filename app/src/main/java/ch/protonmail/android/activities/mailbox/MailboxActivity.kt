@@ -291,7 +291,7 @@ class MailboxActivity :
                 }
             }
         )
-        mailboxViewModel.hasPingSucceededLiveData.observe(
+        mailboxViewModel.hasConnectivity.observe(
             this,
             { onConnectivityEvent(it) }
         )
@@ -703,7 +703,7 @@ class MailboxActivity :
         registerReceiver(humanVerificationBroadcastReceiver, filter)
     }
 
-    private fun onConnectivityRetryListener() {
+    private fun onConnectivityCheckRetry() {
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
         }
@@ -712,8 +712,7 @@ class MailboxActivity :
 
     private fun retryConnection() {
         Timber.v("retryConnection")
-        mNetworkUtil.setCurrentlyHasConnectivity(true)
-        mailboxViewModel.launchPing()
+        mailboxViewModel.checkConnectivity()
         syncUUID = UUID.randomUUID().toString()
         if (mNetworkUtil.isConnected()) {
             handler.postDelayed(FetchMessagesRetryRunnable(this), 3000)
@@ -845,9 +844,7 @@ class MailboxActivity :
         registerHumanVerificationReceiver()
         checkDelinquency()
         no_messages_layout.visibility = View.GONE
-        if (!mNetworkUtil.isConnectedAndHasConnectivity()) {
-            showNoConnSnackAndScheduleRetry()
-        }
+        mailboxViewModel.checkConnectivity()
         checkForDraftedMessages()
         val mailboxLocation = mailboxLocationMain.value
         if (mailboxLocation == MessageLocationType.INBOX) {
@@ -1052,7 +1049,7 @@ class MailboxActivity :
                 parentView = it,
                 user = mUserManager.user,
                 netConfiguratorCallback = this,
-                onRetryClick = { onConnectivityRetryListener() }
+                onRetryClick = { onConnectivityCheckRetry() }
             ).show()
         }
 
@@ -1211,9 +1208,7 @@ class MailboxActivity :
                 showNoConnSnackAndScheduleRetry()
             }
             Status.SUCCESS -> {
-                if (mNetworkUtil.isConnectedAndHasConnectivity()) {
-                    hideNoConnSnack()
-                }
+                hideNoConnSnack()
             }
             else -> {
                 return

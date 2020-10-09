@@ -147,9 +147,7 @@ class ContactsActivity :
 
         contactsViewModel.hasConnection.observe(
             this,
-            {
-                onConnectivityEvent(it)
-            }
+            { onConnectivityEvent(it) }
         )
     }
 
@@ -192,7 +190,7 @@ class ContactsActivity :
         super.onStop()
     }
 
-    private fun connectivityRetryListener() {
+    private fun onConnectivityCheckRetry() {
         networkSnackBarUtil.getCheckingConnectionSnackBar(
             mSnackLayout
         ).show()
@@ -208,7 +206,7 @@ class ContactsActivity :
                 mSnackLayout,
                 mUserManager.user,
                 this,
-                { connectivityRetryListener() }
+                { onConnectivityCheckRetry() }
             ).show()
         }
     }

@@ -25,13 +25,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.fetch.FetchContactsData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
-private const val NETWORK_CHECK_DELAY = 800L
 
 class ContactsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,

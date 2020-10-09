@@ -54,6 +54,7 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
+import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.AppUtil
@@ -64,6 +65,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import com.squareup.otto.Subscribe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -507,9 +509,19 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    fun launchPing() {
-        Timber.v("Launch ping")
+    fun checkConnectivity() {
+        Timber.v("checkConnectivity launch ping")
         _pingTrigger.value = Unit
+    }
+
+    /**
+     * Check connectivity with a delay allowing snack bar to be displayed.
+     */
+    fun checkConnectivityDelayed() {
+        viewModelScope.launch {
+            delay(NETWORK_CHECK_DELAY)
+            checkConnectivity()
+        }
     }
 
     private fun onConnectivityEvent(hasConnectivity: Boolean): Boolean {

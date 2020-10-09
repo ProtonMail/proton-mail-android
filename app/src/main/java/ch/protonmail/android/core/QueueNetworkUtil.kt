@@ -67,8 +67,7 @@ class QueueNetworkUtil @Inject constructor(
 
     fun isConnected(): Boolean = hasConn(false)
 
-    fun isConnectedAndHasConnectivity(): Boolean = hasConn(true)
-
+    @Deprecated("Use [NetworkConnectivityManager] instead")
     fun setCurrentlyHasConnectivity(currentlyHasConnectivity: Boolean) =
         updateRealConnectivity(currentlyHasConnectivity)
 

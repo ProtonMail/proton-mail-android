@@ -246,7 +246,7 @@ internal class MessageDetailsActivity :
     override fun onResume() {
         super.onResume()
         checkDelinquency()
-        viewModel.launchPing()
+        viewModel.checkConnectivity()
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
@@ -453,16 +453,19 @@ internal class MessageDetailsActivity :
                 mSnackLayout,
                 mUserManager.user,
                 this,
-                {
-                    mNetworkUtil.setCurrentlyHasConnectivity(true)
-                    viewModel.fetchMessageDetails(false)
-                    networkSnackBarUtil.getCheckingConnectionSnackBar(
-                        mSnackLayout
-                    ).show()
-                }
+                { onConnectivityCheckRetry() }
             ).show()
         }
         invalidateOptionsMenu()
+    }
+
+    private fun onConnectivityCheckRetry() {
+        viewModel.fetchMessageDetails(false)
+        networkSnackBarUtil.getCheckingConnectionSnackBar(
+            mSnackLayout
+        ).show()
+
+        viewModel.checkConnectivityDelayed()
     }
 
     private fun hideNoConnSnackExtended() {

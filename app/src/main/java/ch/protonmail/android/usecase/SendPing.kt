@@ -29,6 +29,7 @@ import ch.protonmail.android.worker.PingWorker
 import timber.log.Timber
 import javax.inject.Inject
 
+internal const val NETWORK_CHECK_DELAY = 800L
 /**
  * Use case responsible for scheduling Worker that sends a ping message through [PingWorker]
  * and processes the result.

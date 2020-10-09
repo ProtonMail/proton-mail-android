@@ -87,7 +87,7 @@ class MailboxViewModel @ViewModelInject constructor(
         get() = _manageLimitReachedWarningOnTryCompose
     val toastMessageMaxLabelsReached: LiveData<Event<MaxLabelsReached>>
         get() = _toastMessageMaxLabelsReached
-    val hasPingSucceededLiveData: LiveData<Boolean> =
+    val hasConnectivity: LiveData<Boolean> =
         _pingTrigger.switchMap { sendPing() }
 
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
@@ -237,8 +237,8 @@ class MailboxViewModel @ViewModelInject constructor(
             _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
         }
 
-    fun launchPing() {
-        Timber.v("Launch ping")
+    fun checkConnectivity() {
+        Timber.v("checkConnectivity launch ping")
         _pingTrigger.value = Unit
     }
 
