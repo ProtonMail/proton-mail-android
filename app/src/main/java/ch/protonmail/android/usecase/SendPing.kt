@@ -38,12 +38,16 @@ class SendPing @Inject constructor(
     private val connectivityManager: NetworkConnectivityManager
 ) {
 
-    operator fun invoke(): LiveData<Boolean> {
-        val workInfoLiveData = workerEnqueuer.enqueue()
+    private fun isInternetAvailable(): Boolean {
+        Timber.v("isInternetAvailable check ${connectivityManager.isInternetConnectionPossible()}")
+        return connectivityManager.isInternetConnectionPossible()
+    }
 
+    operator fun invoke(): LiveData<Boolean> {
+        Timber.v("SendPing invoked")
         return liveData {
-            emit(connectivityManager.isInternetConnectionPossible())
-            emitSource(getPingState(workInfoLiveData))
+            emit(isInternetAvailable())
+            emitSource(getPingState(workerEnqueuer.enqueue()))
         }
     }
 
@@ -51,7 +55,9 @@ class SendPing @Inject constructor(
         return workInfoLiveData
             .filter { it?.state?.isFinished == true }
             .map { workInfo ->
-                Timber.v("SendPing finishedState ${workInfo?.state} Net ${connectivityManager.isInternetConnectionPossible()}")
+                Timber.v(
+                    "SendPing State: ${workInfo?.state} Net: ${connectivityManager.isInternetConnectionPossible()}"
+                )
                 workInfo?.state == WorkInfo.State.SUCCEEDED
             }
     }

@@ -170,7 +170,7 @@ class ContactsActivity :
 
     override fun onResume() {
         super.onResume()
-        contactsViewModel.launchPing()
+        contactsViewModel.checkConnectivity()
     }
 
     override fun onStart() {
@@ -192,29 +192,24 @@ class ContactsActivity :
         super.onStop()
     }
 
-    private fun contactsConnectivityRetryListener() {
-        mNetworkUtil.setCurrentlyHasConnectivity(true)
+    private fun connectivityRetryListener() {
         networkSnackBarUtil.getCheckingConnectionSnackBar(
-            layout_no_connectivity_info
+            mSnackLayout
         ).show()
 
-        // Dimitar: manually check if we have network connectivity and initiate DOH if we do
-        if (mNetworkUtil.isConnectedAndHasConnectivity()) {
-            // TODO: DoH
-//                mJobManager.addJobInBackground(DnsOverHttpsJob(this@ContactsActivity, this@ContactsActivity))
-        }
+        contactsViewModel.checkConnectivityDelayed()
     }
 
     private fun onConnectivityEvent(hasConnection: Boolean) {
+        Timber.v("onConnectivityEvent")
+        hideNoConnSnack()
         if (!hasConnection) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
                 mUserManager.user,
                 this,
-                { contactsConnectivityRetryListener() }
+                { connectivityRetryListener() }
             ).show()
-        } else {
-            hideNoConnSnack()
         }
     }
 

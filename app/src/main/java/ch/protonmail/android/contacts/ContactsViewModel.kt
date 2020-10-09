@@ -23,10 +23,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.fetch.FetchContactsData
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
+
+private const val NETWORK_CHECK_DELAY = 800L
 
 class ContactsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
@@ -43,15 +48,25 @@ class ContactsViewModel @ViewModelInject constructor(
     val hasConnection: LiveData<Boolean> = _pingTrigger
         .switchMap { sendPing() }
 
+    fun isPaidUser(): Boolean = userManager.user.isPaidUser
+
     fun fetchContacts() {
         Timber.v("fetchContacts")
         fetchContactsTrigger.value = Unit
     }
 
-    fun launchPing() {
-        Timber.v("Launch ping")
+    fun checkConnectivity() {
+        Timber.v("checkConnectivity launch ping")
         _pingTrigger.value = Unit
     }
 
-    fun isPaidUser(): Boolean = userManager.user.isPaidUser
+    /**
+     * Check connectivity with a delay allowing snack bar to be displayed.
+     */
+    fun checkConnectivityDelayed() {
+        viewModelScope.launch {
+            delay(NETWORK_CHECK_DELAY)
+            checkConnectivity()
+        }
+    }
 }
