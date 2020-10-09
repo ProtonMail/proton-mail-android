@@ -31,6 +31,7 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import ch.protonmail.android.api.models.room.messages.Label
@@ -141,7 +142,7 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
     }
 
     /** Save the editing label */
-    fun saveLabel(): WorkRequest {
+    fun saveLabel(): LiveData<WorkInfo> {
         labelEditor?.let {
             return with(it.buildParams()) {
                 createOrUpdateLabel(labelName, color, display, exclusive, update, labelId)
@@ -173,7 +174,7 @@ internal class LabelsManagerViewModel @ViewModelInject constructor(
                                     display: Int,
                                     exclusive: Int,
                                     update: Boolean,
-                                    labelId: String?): WorkRequest {
+                                    labelId: String?): LiveData<WorkInfo> {
         return PostLabelWorker.Enqueuer(workManager).enqueue(
             labelName,
             color,

@@ -51,7 +51,6 @@ import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
-import me.proton.core.util.android.workmanager.activity.getWorkManager
 import studio.forface.viewstatestore.ViewStateActivity
 import kotlin.random.Random
 
@@ -330,11 +329,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     }
 
     private fun saveCurrentLabel() {
-        val saveLabelRequest = viewModel.saveLabel()
-        getWorkManager().getWorkInfoByIdLiveData(saveLabelRequest.id).observe(
-            this,
-            { displayLabelCreationOutcome(it) }
-        )
+        viewModel.saveLabel().observe(this, { displayLabelCreationOutcome(it) })
 
         state = UNDEFINED
     }

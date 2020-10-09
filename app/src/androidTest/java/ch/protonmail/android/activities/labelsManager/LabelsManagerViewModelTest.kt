@@ -19,16 +19,17 @@
 package ch.protonmail.android.activities.labelsManager
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.libs.core.utils.EMPTY_STRING
-import io.mockk.every
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -103,9 +104,9 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun saveLabelReturnsObservableWorkRequest() {
+    fun saveLabelReturnsWorkInfoLiveData() {
         val request = viewModel.saveLabel()
 
-        assertTrue(request is WorkRequest)
+        assertTrue(request is LiveData<WorkInfo>)
     }
 }

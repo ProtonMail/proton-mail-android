@@ -1438,8 +1438,8 @@ class MailboxActivity : NavigationActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        val postLabelRequest = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
-        getWorkManager().getWorkInfoByIdLiveData(postLabelRequest.id).observe(
+        val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
+        postLabelResult.observe(
             this,
             {
                 val state: WorkInfo.State = it.state
