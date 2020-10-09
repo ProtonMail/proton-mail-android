@@ -234,6 +234,9 @@ class MessageDetailsRepository @Inject constructor(
     }
 
     fun saveMessagesInOneTransaction(messages: List<Message>) {
+        if (messages.isEmpty()) {
+            return
+        }
         messages.forEach { message ->
             checkSaveFlagAndSaveFile(message)
         }
@@ -254,11 +257,14 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    fun saveAllSearchMessagesInDB(messages:List<Message>) {
+    fun saveAllSearchMessagesInDB(messages: List<Message>) {
         messages.map(this::saveSearchMessageInDB)
     }
 
     fun saveSearchMessagesInOneTransaction(messages:List<Message>) {
+        if (messages.isEmpty()) {
+            return
+        }
         messages.forEach { message ->
             checkSaveFlagAndSaveFile(message)
         }

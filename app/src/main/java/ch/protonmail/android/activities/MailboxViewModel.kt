@@ -182,7 +182,8 @@ class MailboxViewModel(
     }
 
     private fun resolveMessageLabels(
-        message: Message, checkedLabelIds: MutableList<String>,
+        message: Message,
+        checkedLabelIds: MutableList<String>,
         unchangedLabels: List<String>,
         currentContactLabels: List<Label>?
     ): ApplyRemoveLabels? {

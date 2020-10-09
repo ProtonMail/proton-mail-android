@@ -49,12 +49,12 @@ class DeleteMessageTest {
     @MockK
     private lateinit var repository: MessageDetailsRepository
 
-    private lateinit var deleteMessageUseCase: DeleteMessage
+    private lateinit var deleteMessage: DeleteMessage
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        deleteMessageUseCase = DeleteMessage(TestDispatcherProvider, repository, db, workScheduler)
+        deleteMessage = DeleteMessage(TestDispatcherProvider, repository, db, workScheduler)
     }
 
     @Test
@@ -74,9 +74,38 @@ class DeleteMessageTest {
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
-            val response = deleteMessageUseCase(listOf(messId))
+            val response = deleteMessage(listOf(messId))
 
             // then
+            verify { repository.saveMessagesInOneTransaction(listOf(message)) }
+            verify { repository.saveSearchMessagesInOneTransaction(emptyList()) }
+            verify { workScheduler.enqueue(listOf(messId)) }
+            assertTrue(response.isSuccessfullyDeleted)
+        }
+    }
+
+    @Test
+    fun verifyThatSearchMessageIsSuccessfullyDeletedWithoutPendingMessagesInTheDb() {
+        runBlockingTest {
+            // given
+            val messId = "Id1"
+            val operation = mockk<Operation>(relaxed = true)
+            val searchMessage = mockk<Message>(relaxed = true)
+            every { db.findPendingUploadByMessageId(any()) } returns null
+            every { db.findPendingSendByMessageId(any()) } returns null
+            every { repository.findMessageById(messId) } returns null
+            every { repository.findSearchMessageById(messId) } returns searchMessage
+            every { repository.saveSearchMessageInDB(searchMessage) } returns Unit
+            every { repository.saveMessagesInOneTransaction(any()) } returns Unit
+            every { repository.saveSearchMessagesInOneTransaction(any()) } returns Unit
+            every { workScheduler.enqueue(any()) } returns operation
+
+            // when
+            val response = deleteMessage(listOf(messId))
+
+            // then
+            verify { repository.saveMessagesInOneTransaction(emptyList()) }
+            verify { repository.saveSearchMessagesInOneTransaction(listOf(searchMessage)) }
             verify { workScheduler.enqueue(listOf(messId)) }
             assertTrue(response.isSuccessfullyDeleted)
         }
@@ -100,9 +129,11 @@ class DeleteMessageTest {
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
-            val response = deleteMessageUseCase(listOf(messId))
+            val response = deleteMessage(listOf(messId))
 
             // then
+            verify { repository.saveMessagesInOneTransaction(emptyList()) }
+            verify { repository.saveSearchMessagesInOneTransaction(emptyList()) }
             verify { workScheduler.enqueue(emptyList()) }
             assertFalse(response.isSuccessfullyDeleted)
         }
@@ -129,9 +160,11 @@ class DeleteMessageTest {
             every { workScheduler.enqueue(any()) } returns operation
 
             // when
-            val response = deleteMessageUseCase(listOf(messId))
+            val response = deleteMessage(listOf(messId))
 
             // then
+            verify { repository.saveMessagesInOneTransaction(emptyList()) }
+            verify { repository.saveSearchMessagesInOneTransaction(emptyList()) }
             verify { workScheduler.enqueue(emptyList()) }
             assertFalse(response.isSuccessfullyDeleted)
         }

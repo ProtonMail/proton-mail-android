@@ -120,7 +120,7 @@ class DeleteMessageWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            assertEquals(operationResult, expected)
+            assertEquals(expected, operationResult)
         }
     }
 }

@@ -39,7 +39,7 @@ import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.milliseconds
 
-class FetchContactsEmailsWorker @WorkerInject constructor (
+class FetchContactsEmailsWorker @WorkerInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
     private val contactEmailsManager: ContactEmailsManager
@@ -47,15 +47,17 @@ class FetchContactsEmailsWorker @WorkerInject constructor (
 
     override suspend fun doWork(): Result {
         return runCatching { contactEmailsManager.refresh() }
-            .fold(onSuccess = {
-                // TODO: remove and observe Work directly
-                AppUtil.postEventOnUi(ContactsFetchedEvent(Status.SUCCESS))
-                success()
-            }, onFailure = {
-                // TODO: remove and observe Work directly
-                AppUtil.postEventOnUi(ContactsFetchedEvent(Status.FAILED))
-                failure(it)
-            }
+            .fold(
+                onSuccess = {
+                    // TODO: remove and observe Work directly
+                    AppUtil.postEventOnUi(ContactsFetchedEvent(Status.SUCCESS))
+                    success()
+                },
+                onFailure = {
+                    // TODO: remove and observe Work directly
+                    AppUtil.postEventOnUi(ContactsFetchedEvent(Status.FAILED))
+                    failure(it)
+                }
             )
     }
 

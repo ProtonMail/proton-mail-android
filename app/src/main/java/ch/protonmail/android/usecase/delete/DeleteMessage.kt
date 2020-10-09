@@ -22,6 +22,8 @@ package ch.protonmail.android.usecase.delete
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingSend
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -81,16 +83,22 @@ class DeleteMessage @Inject constructor(
             val pendingUploads = pendingActionsDatabase.findPendingUploadByMessageId(id)
             val pendingForSending = pendingActionsDatabase.findPendingSendByMessageId(id)
 
-            if (pendingUploads == null && (pendingForSending == null || pendingForSending.sent == false)) {
-                // do the logic below if there is no pending upload and not pending send for the message
-                // trying to be deleted
-                // or if there is a failed pending send expressed by value `false` in the nullable Sent
-                // property of the PendingSend class
-                validMessageIdList.add(id)
-            } else {
+            if (areThereAnyPendingUplandsOrSends(pendingUploads, pendingForSending)) {
                 invalidMessageIdList.add(id)
+            } else {
+                validMessageIdList.add(id)
             }
         }
         return validMessageIdList to invalidMessageIdList
     }
+
+    /**
+     * Verify pending uploads.
+     *
+     * @return true if
+     * there is a pending upload or pending send message
+     * or if there is a failed pending send expressed by the nullable Sent property of the PendingSend class
+     */
+    private fun areThereAnyPendingUplandsOrSends(pendingUploads: PendingUpload?, pendingForSending: PendingSend?) =
+        pendingUploads != null || !(pendingForSending == null || pendingForSending.sent == false)
 }
