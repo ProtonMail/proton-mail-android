@@ -20,8 +20,11 @@
 package ch.protonmail.android.usecase
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
+import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.PingWorker
 import timber.log.Timber
 import javax.inject.Inject
@@ -31,14 +34,25 @@ import javax.inject.Inject
  * and processes the result.
  */
 class SendPing @Inject constructor(
-    private val workerEnqueuer: PingWorker.Enqueuer
+    private val workerEnqueuer: PingWorker.Enqueuer,
+    private val connectivityManager: NetworkConnectivityManager
 ) {
 
     operator fun invoke(): LiveData<Boolean> {
         val workInfoLiveData = workerEnqueuer.enqueue()
-        return workInfoLiveData.map { workInfo ->
-            Timber.v("SendPing finishedState ${workInfo?.state}")
-            workInfo?.state == WorkInfo.State.SUCCEEDED
+
+        return liveData {
+            emit(connectivityManager.isInternetConnectionPossible())
+            emitSource(getPingState(workInfoLiveData))
         }
+    }
+
+    private fun getPingState(workInfoLiveData: LiveData<WorkInfo?>): LiveData<Boolean> {
+        return workInfoLiveData
+            .filter { it?.state?.isFinished == true }
+            .map { workInfo ->
+                Timber.v("SendPing finishedState ${workInfo?.state} Net ${connectivityManager.isInternetConnectionPossible()}")
+                workInfo?.state == WorkInfo.State.SUCCEEDED
+            }
     }
 }

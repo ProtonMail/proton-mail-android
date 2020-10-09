@@ -21,6 +21,7 @@ package ch.protonmail.android.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import androidx.work.WorkManager
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
@@ -169,6 +170,10 @@ object ApplicationModule {
     @Provides
     fun workManager(context: Context): WorkManager =
         WorkManager.getInstance(context)
+
+    @Provides
+    fun connectivityManager(context: Context): ConnectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     @Provides
     fun contactLabelFactory(): IConverterFactory<ServerLabel, ContactLabel> = ContactLabelFactory()

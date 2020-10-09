@@ -23,19 +23,21 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.worker.PingWorker
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
+import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class SendPingTest {
+class SendPingTest : CoroutinesTest {
 
     @get:Rule
     val archRule = InstantTaskExecutorRule()
@@ -43,22 +45,30 @@ class SendPingTest {
     @MockK
     private lateinit var workEnqueuer: PingWorker.Enqueuer
 
+    @MockK
+    private lateinit var connectionManager: NetworkConnectivityManager
+
     private lateinit var sendPingUseCase: SendPing
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        sendPingUseCase = SendPing(workEnqueuer)
+        sendPingUseCase = SendPing(
+            workEnqueuer,
+            connectionManager
+        )
     }
 
     @Test
     fun verifyThatTrueIsReturnedWhenOperationSucceeds() {
         // given
         val workInfoLiveData = MutableLiveData<WorkInfo>()
+        val isInternetAvailable = false
         workInfoLiveData.value = mockk {
-            every { state } returns  WorkInfo.State.SUCCEEDED
+            every { state } returns WorkInfo.State.SUCCEEDED
         }
         every { workEnqueuer.enqueue() } returns workInfoLiveData
+        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
         val observer = mockk<Observer<Boolean>>(relaxed = true)
         val expected = true
 
@@ -68,6 +78,7 @@ class SendPingTest {
 
         // then
         assertNotNull(response.value)
+        verify { observer.onChanged(isInternetAvailable) }
         verify { observer.onChanged(expected) }
         assertEquals(expected, response.value)
     }
@@ -76,10 +87,12 @@ class SendPingTest {
     fun verifyThatFalseIsReturnedWhenOperationFails() {
         // given
         val workInfoLiveData = MutableLiveData<WorkInfo>()
+        val isInternetAvailable = true
         workInfoLiveData.value = mockk {
-            every { state } returns  WorkInfo.State.FAILED
+            every { state } returns WorkInfo.State.FAILED
         }
         every { workEnqueuer.enqueue() } returns workInfoLiveData
+        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
 
         val observer = mockk<Observer<Boolean>>(relaxed = true)
         val expected = false
@@ -90,21 +103,23 @@ class SendPingTest {
 
         // then
         assertNotNull(response.value)
+        verify { observer.onChanged(isInternetAvailable) }
         verify { observer.onChanged(expected) }
         assertEquals(expected, response.value)
     }
 
     @Test
-    fun verifyThatFalseIsReturnedWhenOperationIsOngoing() {
+    fun verifyThatOnlyInitialNetworkStatusIsReturnedWhenOperationIsOngoingAndNothingLater() {
         // given
         val workInfoLiveData = MutableLiveData<WorkInfo>()
+        val isInternetAvailable = true
         workInfoLiveData.value = mockk {
-            every { state } returns  WorkInfo.State.RUNNING
+            every { state } returns WorkInfo.State.RUNNING
         }
         every { workEnqueuer.enqueue() } returns workInfoLiveData
+        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
 
         val observer = mockk<Observer<Boolean>>(relaxed = true)
-        val expected = false
 
         // when
         val response = sendPingUseCase()
@@ -112,7 +127,7 @@ class SendPingTest {
 
         // then
         assertNotNull(response.value)
-        verify { observer.onChanged(expected) }
-        assertEquals(expected, response.value)
+        verify(exactly = 1) { observer.onChanged(isInternetAvailable) }
+        assertEquals(isInternetAvailable, response.value)
     }
 }

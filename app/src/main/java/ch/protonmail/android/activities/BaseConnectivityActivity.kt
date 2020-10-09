@@ -42,6 +42,7 @@ abstract class BaseConnectivityActivity : BaseActivity() {
 //    protected var pingRunnable: Runnable = Runnable { sendPing() }
 
     fun onRetryDefaultListener() {
+        Timber.v("onRetryDefaultListener")
         networkSnackBarUtil.getCheckingConnectionSnackBar(
             mSnackLayout
         ).show()

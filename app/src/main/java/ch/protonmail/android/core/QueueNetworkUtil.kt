@@ -24,8 +24,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
 import timber.log.Timber
@@ -89,7 +87,6 @@ class QueueNetworkUtil @Inject constructor(
             }
             if (checkReal && currentStatus != hasConnection) {
                 Timber.d("Network statuses differs hasConnection $hasConnection currentStatus $currentStatus")
-                AppUtil.postEventOnUi(ConnectivityEvent(hasConnection))
             } else if (checkReal) {
                 if (hasConnection) {
                     networkConfigurator.startAutoRetry()
