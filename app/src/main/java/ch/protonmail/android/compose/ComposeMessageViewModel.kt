@@ -26,6 +26,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
@@ -51,6 +52,8 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.FetchPublicKeysJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
+import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -61,6 +64,7 @@ import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.HashMap
@@ -81,7 +85,8 @@ class ComposeMessageViewModel @Inject constructor(
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val postMessageServiceFactory: PostMessageServiceFactory,
-    private val deleteMessage: DeleteMessage
+    private val deleteMessage: DeleteMessage,
+    private val verifyConnection: VerifyConnection
 ) : ViewModel() {
 
     // region events data
@@ -102,6 +107,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
+    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     private val _androidContacts = java.util.ArrayList<MessageRecipient>()
     private val _protonMailContacts = java.util.ArrayList<MessageRecipient>()
@@ -170,6 +176,8 @@ class ComposeMessageViewModel @Inject constructor(
         set(value) {
             _androidContactsLoaded = value
         }
+    val hasConnectivity: LiveData<Boolean> =
+        _verifyConnectionTrigger.switchMap { verifyConnection() }
 
     // endregion
     // region getters
@@ -245,9 +253,10 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     fun prepareMessageData(messageTitle: String, attachments: ArrayList<LocalAttachment>) {
-        _messageDataResult = composeMessageRepository.prepareMessageData(_messageDataResult,
-                messageTitle,
-                attachments
+        _messageDataResult = composeMessageRepository.prepareMessageData(
+            _messageDataResult,
+            messageTitle,
+            attachments
         )
     }
 
@@ -261,44 +270,44 @@ class ComposeMessageViewModel @Inject constructor(
             return
         }
         composeMessageRepository.getContactGroupsFromDB(username, userManager.user.combinedContacts)
-                .flatMap {
-                    for (group in it) {
-                        val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
-                        val recipients = ArrayList<MessageRecipient>()
-                        for (email in emails) {
-                            val recipient = MessageRecipient(email.name, email.email)
-                            recipient.group = group.name
-                            recipient.groupIcon = R.string.contact_group_groups_icon
-                            recipient.groupColor =
-                                    Color.parseColor(UiUtil.normalizeColor(group.color))
-                            recipients.add(recipient)
-                        }
-                        _groupsRecipientsMap[group] = recipients
+            .flatMap {
+                for (group in it) {
+                    val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
+                    val recipients = ArrayList<MessageRecipient>()
+                    for (email in emails) {
+                        val recipient = MessageRecipient(email.name, email.email)
+                        recipient.group = group.name
+                        recipient.groupIcon = R.string.contact_group_groups_icon
+                        recipient.groupColor =
+                            Color.parseColor(UiUtil.normalizeColor(group.color))
+                        recipients.add(recipient)
                     }
-                    Observable.just(it)
+                    _groupsRecipientsMap[group] = recipients
                 }
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main()).subscribe(
-                        {
-                            _data = it
-                            handleContactGroupsResult()
-                            _setupCompleteValue = true
-                            sendingInProcess = false
-                            _setupComplete.postValue(Event(true))
-                            if (!_protonMailContactsLoaded) {
-                                loadPMContacts()
-                            }
-                        },
-                        {
-                            _data = ArrayList()
-                            _setupCompleteValue = false
-                            sendingInProcess = false
-                            _setupComplete.postValue(Event(false))
-                            if (!_protonMailContactsLoaded) {
-                                loadPMContacts()
-                            }
-                        }
-                )
+                Observable.just(it)
+            }
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.main()).subscribe(
+                {
+                    _data = it
+                    handleContactGroupsResult()
+                    _setupCompleteValue = true
+                    sendingInProcess = false
+                    _setupComplete.postValue(Event(true))
+                    if (!_protonMailContactsLoaded) {
+                        loadPMContacts()
+                    }
+                },
+                {
+                    _data = ArrayList()
+                    _setupCompleteValue = false
+                    sendingInProcess = false
+                    _setupComplete.postValue(Event(false))
+                    if (!_protonMailContactsLoaded) {
+                        loadPMContacts()
+                    }
+                }
+            )
     }
 
     fun getContactGroupRecipients(group: ContactLabel): List<MessageRecipient> {
@@ -312,9 +321,9 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun saveAttachmentsToDatabase(
-            localAttachments: List<Attachment>,
-            dispatcher: CoroutineDispatcher,
-            uploadAttachments: Boolean
+        localAttachments: List<Attachment>,
+        dispatcher: CoroutineDispatcher,
+        uploadAttachments: Boolean
     ): List<String> {
         val result = ArrayList<String>()
         for (i in localAttachments.indices) {
@@ -329,8 +338,13 @@ class ComposeMessageViewModel @Inject constructor(
             attachmentId?.let {
                 result.add(attachmentId)
             }
-            val savedAttachment = composeMessageRepository.findAttachmentByMessageIdFileNameAndPath(attachment.messageId, attachment.fileName
-                    ?: "", attachment.filePath ?: "", messageDataResult.isTransient, dispatcher)
+            val savedAttachment = composeMessageRepository.findAttachmentByMessageIdFileNameAndPath(
+                attachment.messageId,
+                attachment.fileName ?: "",
+                attachment.filePath ?: "",
+                messageDataResult.isTransient,
+                dispatcher
+            )
             if (savedAttachment == null) {
                 saveAttachment(attachment, dispatcher)
             }
@@ -353,10 +367,10 @@ class ComposeMessageViewModel @Inject constructor(
             val messageId = event.messageId
             composeMessageRepository.markMessageRead(messageId)
             MessageBuilderData.Builder()
-                    .fromOld(_messageDataResult)
-                    .message(message)
-                    .decryptedMessage(decryptedMessage!!)
-                    .build()
+                .fromOld(_messageDataResult)
+                .message(message)
+                .decryptedMessage(decryptedMessage!!)
+                .build()
             _actionType = UserAction.SAVE_DRAFT
         }
     }
@@ -396,12 +410,16 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                postMessageServiceFactory.startUpdateDraftService(_dbId!!, message.decryptedBody
-                        ?: "",
-                        newAttachments, uploadAttachments, _oldSenderAddressId)
+                postMessageServiceFactory.startUpdateDraftService(
+                    _dbId!!,
+                    message.decryptedBody ?: "",
+                    newAttachments,
+                    uploadAttachments,
+                    _oldSenderAddressId
+                )
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
-                            ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
+                        ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
                 }
                 setIsDirty(false)
                 //endregion
@@ -422,12 +440,22 @@ class ComposeMessageViewModel @Inject constructor(
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message, IO)
                     newAttachments = saveAttachmentsToDatabase(
-                            composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
-                            IO, uploadAttachments)
+                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
+                        IO,
+                        uploadAttachments
+                    )
                 }
-                postMessageServiceFactory.startCreateDraftService(_dbId!!, _draftId.get(), parentId,
-                        _actionId, message.decryptedBody
-                        ?: "", uploadAttachments, newAttachments, _oldSenderAddressId, _messageDataResult.isTransient)
+                postMessageServiceFactory.startCreateDraftService(
+                    _dbId!!,
+                    _draftId.get(),
+                    parentId,
+                    _actionId,
+                    message.decryptedBody ?: "",
+                    uploadAttachments,
+                    newAttachments,
+                    _oldSenderAddressId,
+                    _messageDataResult.isTransient
+                )
                 _oldSenderAddressId = ""
                 setIsDirty(false)
                 //endregion
@@ -444,7 +472,8 @@ class ComposeMessageViewModel @Inject constructor(
         // we need to compare them and find out which are new attachments
         if (uploadAttachments && localAttachmentsList.isNotEmpty()) {
             newAttachments = saveAttachmentsToDatabase(
-                    composeMessageRepository.createAttachmentList(localAttachmentsList, IO), IO, uploadAttachments)
+                composeMessageRepository.createAttachmentList(localAttachmentsList, IO), IO, uploadAttachments
+            )
         }
         val currentAttachmentsList = messageDataResult.attachmentList
         setAttachmentList(currentAttachmentsList)
@@ -452,24 +481,24 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun removePendingDraft(messageDbId: Long) =
-            withContext(IO) {
-                messageDetailsRepository.deletePendingDraft(messageDbId)
-            }
+        withContext(IO) {
+            messageDetailsRepository.deletePendingDraft(messageDbId)
+        }
 
     private suspend fun insertPendingDraft(messageDbId: Long, dispatcher: CoroutineDispatcher) =
-            withContext(dispatcher) {
-                messageDetailsRepository.insertPendingDraft(messageDbId, dispatcher)
-            }
+        withContext(dispatcher) {
+            messageDetailsRepository.insertPendingDraft(messageDbId, dispatcher)
+        }
 
     private suspend fun saveMessage(message: Message, dispatcher: CoroutineDispatcher): Long =
-            withContext(dispatcher) {
-                messageDetailsRepository.saveMessageInDB(message)
-            }
+        withContext(dispatcher) {
+            messageDetailsRepository.saveMessageInDB(message)
+        }
 
     private suspend fun saveAttachment(attachment: Attachment, dispatcher: CoroutineDispatcher): Long =
-            withContext(dispatcher) {
-                composeMessageRepository.saveAttachment(attachment)
-            }
+        withContext(dispatcher) {
+            composeMessageRepository.saveAttachment(attachment)
+        }
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
         val user = userManager.user
@@ -497,9 +526,9 @@ class ComposeMessageViewModel @Inject constructor(
         // sanitize alias address so it points to original address
         val nonAliasAddress = "${email.substringBefore("+", email.substringBefore("@"))}@${email.substringAfter("@")}"
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .addressId(userManager.user.getSenderAddressIdByEmail(nonAliasAddress))
-                .build()
+            .fromOld(_messageDataResult)
+            .addressId(userManager.user.getSenderAddressIdByEmail(nonAliasAddress))
+            .build()
     }
 
     fun getAddressById(): Address = userManager.user.getAddressById(_messageDataResult.addressId)
@@ -581,32 +610,36 @@ class ComposeMessageViewModel @Inject constructor(
     @SuppressLint("CheckResult")
     fun findDraftMessageById() {
         composeMessageRepository.findMessageByIdSingle(_draftId.get())
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.io())
-                .flatMap {
-                    if (it.messageBody.isNullOrEmpty()) {
-                        composeMessageRepository.startFetchDraftDetail(_draftId.get())
-                    } else {
-                        it.isDownloaded = true
-                        val attachments = composeMessageRepository.getAttachments2(it, _messageDataResult.isTransient)
-                        it.setAttachmentList(attachments)
-                        _messageDataResult = MessageBuilderData.Builder()
-                                .fromOld(_messageDataResult)
-                                .attachmentList(ArrayList(LocalAttachment.createLocalAttachmentList(attachments)))
-                                .message(it)
-                                .messageId()
-                                .build()
-                        _dbId = it.dbId
-                    }
-                    Single.just(it)
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.io())
+            .flatMap {
+                if (it.messageBody.isNullOrEmpty()) {
+                    composeMessageRepository.startFetchDraftDetail(_draftId.get())
+                } else {
+                    it.isDownloaded = true
+                    val attachments = composeMessageRepository.getAttachments2(it, _messageDataResult.isTransient)
+                    it.setAttachmentList(attachments)
+                    _messageDataResult = MessageBuilderData.Builder()
+                        .fromOld(_messageDataResult)
+                        .attachmentList(ArrayList(LocalAttachment.createLocalAttachmentList(attachments)))
+                        .message(it)
+                        .messageId()
+                        .build()
+                    _dbId = it.dbId
                 }
-                .subscribe({
+                Single.just(it)
+            }
+            .subscribe(
+                {
                     _loadingDraftResult.postValue(_messageDataResult.message)
-                }, {
+                },
+                {
                     composeMessageRepository.startFetchDraftDetail(_draftId.get())
                     _messageResultError.postValue(
-                            Event(PostResult(it.message ?: "", Status.FAILED)))
-                })
+                        Event(PostResult(it.message ?: "", Status.FAILED))
+                    )
+                }
+            )
     }
 
     fun openAttachmentsScreen() {
@@ -621,18 +654,18 @@ class ComposeMessageViewModel @Inject constructor(
                     if (oldList.size <= messageAttachments.size) {
                         val attachments = LocalAttachment.createLocalAttachmentList(messageAttachments)
                         _messageDataResult = MessageBuilderData.Builder()
-                                .fromOld(_messageDataResult)
-                                .attachmentList(ArrayList(attachments))
-                                .build()
+                            .fromOld(_messageDataResult)
+                            .attachmentList(ArrayList(attachments))
+                            .build()
                         _openAttachmentsScreenResult.postValue(attachments)
                         return@launch
                     }
                 }
             }
             _messageDataResult = MessageBuilderData.Builder()
-                    .fromOld(_messageDataResult)
-                    .attachmentList(ArrayList(oldList))
-                    .build()
+                .fromOld(_messageDataResult)
+                .attachmentList(ArrayList(oldList))
+                .build()
             _openAttachmentsScreenResult.postValue(oldList)
         }
     }
@@ -654,21 +687,21 @@ class ComposeMessageViewModel @Inject constructor(
         viewModelScope.launch {
             val isOfflineDraftSaved: Boolean
             isOfflineDraftSaved =
-                    if (event.status == Status.NO_NETWORK) {
-                        true
-                    } else {
-                        val draftId = _draftId.get()
-                        if (!TextUtils.isEmpty(draftId) && !TextUtils.isEmpty(newMessageId)) {
-                            composeMessageRepository.deleteMessageById(draftId, IO)
-                        }
-                        false
+                if (event.status == Status.NO_NETWORK) {
+                    true
+                } else {
+                    val draftId = _draftId.get()
+                    if (!TextUtils.isEmpty(draftId) && !TextUtils.isEmpty(newMessageId)) {
+                        composeMessageRepository.deleteMessageById(draftId, IO)
                     }
+                    false
+                }
 
             setOfflineDraftSaved(isOfflineDraftSaved)
             var draftMessage: Message? = null
             if (eventMessage != null) {
                 val eventMessageAttachmentList =
-                        composeMessageRepository.getAttachments(eventMessage, _messageDataResult.isTransient, IO)
+                    composeMessageRepository.getAttachments(eventMessage, _messageDataResult.isTransient, IO)
 
                 for (localAttachment in _messageDataResult.attachmentList) {
                     for (attachment in eventMessageAttachmentList) {
@@ -737,14 +770,17 @@ class ComposeMessageViewModel @Inject constructor(
             messageDetailsRepository.deletePendingDraft(message.dbId!!)
 
             val newAttachments = calculateNewAttachments(true)
-            postMessageServiceFactory.startSendingMessage(_dbId!!,
-                    messageDataResult.message.decryptedBody ?: "",
-                    messageDataResult.messagePassword,
-                    messageDataResult.passwordHint,
-                    messageDataResult.expirationTime!!,
-                    parentId, _actionId,
-                    newAttachments,
-                    ArrayList(messageDataResult.sendPreferences.values), _oldSenderAddressId)
+            postMessageServiceFactory.startSendingMessage(
+                _dbId!!,
+                messageDataResult.message.decryptedBody ?: "",
+                messageDataResult.messagePassword,
+                messageDataResult.passwordHint,
+                messageDataResult.expirationTime!!,
+                parentId, _actionId,
+                newAttachments,
+                ArrayList(messageDataResult.sendPreferences.values),
+                _oldSenderAddressId
+            )
             _dbIdWatcher.postValue(_dbId)
         }
     }
@@ -754,9 +790,9 @@ class ComposeMessageViewModel @Inject constructor(
             val messageAttachments = composeMessageRepository.getAttachments(loadedMessage, _messageDataResult.isTransient, IO)
             val localAttachments = LocalAttachment.createLocalAttachmentList(messageAttachments).toMutableList()
             _messageDataResult = MessageBuilderData.Builder()
-                    .fromOld(_messageDataResult)
-                    .attachmentList(ArrayList(localAttachments))
-                    .build()
+                .fromOld(_messageDataResult)
+                .attachmentList(ArrayList(localAttachments))
+                .build()
         }
     }
 
@@ -785,10 +821,10 @@ class ComposeMessageViewModel @Inject constructor(
         }
 
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .signature(signature)
-                .mobileSignature(mobileSignature)
-                .build()
+            .fromOld(_messageDataResult)
+            .signature(signature)
+            .mobileSignature(mobileSignature)
+            .build()
 
         return signatureBuilder
     }
@@ -803,9 +839,9 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun setSignature(signature: String) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .signature(signature)
-                .build()
+            .fromOld(_messageDataResult)
+            .signature(signature)
+            .build()
 
         signatureContainsHtml = with(_messageDataResult.signature) {
             val afterTagOpen = substringAfter("<", "")
@@ -827,84 +863,84 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun processSignature(signature: String): String {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .signature(signature)
-                .build()
+            .fromOld(_messageDataResult)
+            .signature(signature)
+            .build()
         return signature
     }
 
     fun setContent(content: String) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .content(content)
-                .build()
+            .fromOld(_messageDataResult)
+            .content(content)
+            .build()
     }
 
     fun setIsDirty(isDirty: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .isDirty(isDirty)
-                .build()
+            .fromOld(_messageDataResult)
+            .isDirty(isDirty)
+            .build()
     }
 
     fun setSender(senderName: String, senderAddress: String) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .messageSenderName(senderName)
-                .senderEmailAddress(senderAddress)
-                .build()
+            .fromOld(_messageDataResult)
+            .messageSenderName(senderName)
+            .senderEmailAddress(senderAddress)
+            .build()
     }
 
     fun setMessagePassword(
-            messagePassword: String?,
-            passwordHint: String?,
-            isPasswordValid: Boolean,
-            expiresIn: Long?,
-            isRespondInlineButtonVisible: Boolean
+        messagePassword: String?,
+        passwordHint: String?,
+        isPasswordValid: Boolean,
+        expiresIn: Long?,
+        isRespondInlineButtonVisible: Boolean
     ) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .messagePassword(messagePassword)
-                .passwordHint(passwordHint)
-                .isPasswordValid(isPasswordValid)
-                .expirationTime(expiresIn)
-                .isRespondInlineButtonVisible(isRespondInlineButtonVisible)
-                .build()
+            .fromOld(_messageDataResult)
+            .messagePassword(messagePassword)
+            .passwordHint(passwordHint)
+            .isPasswordValid(isPasswordValid)
+            .expirationTime(expiresIn)
+            .isRespondInlineButtonVisible(isRespondInlineButtonVisible)
+            .build()
     }
 
     fun setRespondInline(respondInline: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .isRespondInlineChecked(respondInline)
-                .build()
+            .fromOld(_messageDataResult)
+            .isRespondInlineChecked(respondInline)
+            .build()
     }
 
     fun setIsRespondInlineButtonVisible(isRespondInlineButtonVisible: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .isRespondInlineButtonVisible(isRespondInlineButtonVisible)
-                .build()
+            .fromOld(_messageDataResult)
+            .isRespondInlineButtonVisible(isRespondInlineButtonVisible)
+            .build()
     }
 
     fun setIsMessageBodyVisible(isMessageBodyVisible: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .isMessageBodyVisible(isMessageBodyVisible)
-                .build()
+            .fromOld(_messageDataResult)
+            .isMessageBodyVisible(isMessageBodyVisible)
+            .build()
     }
 
     fun setAttachmentList(attachments: ArrayList<LocalAttachment>) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .attachmentList(attachments)
-                .build()
+            .fromOld(_messageDataResult)
+            .attachmentList(attachments)
+            .build()
     }
 
     fun setEmbeddedAttachmentList(embeddedAttachments: ArrayList<LocalAttachment>?) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .embeddedAttachmentsList(embeddedAttachments ?: ArrayList())
-                .build()
+            .fromOld(_messageDataResult)
+            .embeddedAttachmentsList(embeddedAttachments ?: ArrayList())
+            .build()
     }
 
     private fun existsAsPMContact(email: String): Boolean {
@@ -939,20 +975,20 @@ class ComposeMessageViewModel @Inject constructor(
         for (username in loggedInUsernames) {
             fetchContactGroups(username)
             composeMessageRepository.findAllMessageRecipients(username)
-                    .subscribeOn(ThreadSchedulers.io())
-                    .observeOn(ThreadSchedulers.main())
-                    .subscribe {
-                        if (it != null) {
-                            _protonMailContacts.addAll(it) // no groups
-                            val groupedContactsAndGroups = ArrayList<MessageRecipient>(_protonMailContacts)
-                            groupedContactsAndGroups.addAll(0, _protonMailGroups)
-                            _pmMessageRecipientsResult.postValue(groupedContactsAndGroups)
-                            _mergedContactsLiveData.removeSource(pmMessageRecipientsResult)
-                            _mergedContactsLiveData.addSource(pmMessageRecipientsResult) { value ->
-                                _mergedContactsLiveData.postValue(value)
-                            }
+                .subscribeOn(ThreadSchedulers.io())
+                .observeOn(ThreadSchedulers.main())
+                .subscribe {
+                    if (it != null) {
+                        _protonMailContacts.addAll(it) // no groups
+                        val groupedContactsAndGroups = ArrayList<MessageRecipient>(_protonMailContacts)
+                        groupedContactsAndGroups.addAll(0, _protonMailGroups)
+                        _pmMessageRecipientsResult.postValue(groupedContactsAndGroups)
+                        _mergedContactsLiveData.removeSource(pmMessageRecipientsResult)
+                        _mergedContactsLiveData.addSource(pmMessageRecipientsResult) { value ->
+                            _mergedContactsLiveData.postValue(value)
                         }
                     }
+                }
         }
     }
 
@@ -981,14 +1017,14 @@ class ComposeMessageViewModel @Inject constructor(
 
     @JvmOverloads
     fun setMessageBody(
-            composerBody: String? = null,
-            messageBody: String,
-            setComposerContent: Boolean,
-            isPlainText: Boolean,
-            senderNameAddressFormat: String,
-            originalMessageDividerString: String,
-            replyPrefixOnString: String,
-            formattedDateTimeString: String
+        composerBody: String? = null,
+        messageBody: String,
+        setComposerContent: Boolean,
+        isPlainText: Boolean,
+        senderNameAddressFormat: String,
+        originalMessageDividerString: String,
+        replyPrefixOnString: String,
+        formattedDateTimeString: String
     ): MessageBodySetup {
         val messageBodySetup = MessageBodySetup()
         val user = userManager.user
@@ -1017,7 +1053,7 @@ class ComposeMessageViewModel @Inject constructor(
         if (!TextUtils.isEmpty(messageBody)) {
             messageBodySetup.webViewVisibility = true
             val sender =
-                    String.format(senderNameAddressFormat, _messageDataResult.senderName, _messageDataResult.senderEmailAddress)
+                String.format(senderNameAddressFormat, _messageDataResult.senderName, _messageDataResult.senderEmailAddress)
             setQuotationHeader(sender, originalMessageDividerString, replyPrefixOnString, formattedDateTimeString)
             builder.append("<blockquote class=\"protonmail_quote\">")
             builder.append(NEW_LINE)
@@ -1037,10 +1073,10 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private fun setQuotationHeader(
-            sender: String,
-            originalMessageDividerString: String,
-            replyPrefixOnString: String,
-            formattedDateTimeString: String
+        sender: String,
+        originalMessageDividerString: String,
+        replyPrefixOnString: String,
+        formattedDateTimeString: String
     ) {
         val originalMessageBuilder = StringBuilder()
         originalMessageBuilder.append(NEW_LINE)
@@ -1073,44 +1109,44 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun setShowImages(showImages: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .showImages(showImages)
-                .build()
+            .fromOld(_messageDataResult)
+            .showImages(showImages)
+            .build()
     }
 
     fun setShowRemoteContent(showRemoteContent: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .showRemoteContent(showRemoteContent)
-                .build()
+            .fromOld(_messageDataResult)
+            .showRemoteContent(showRemoteContent)
+            .build()
     }
 
     fun setQuotedHeader(quotedHeaderString: Spanned) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .quotedHeader(quotedHeaderString)
-                .build()
+            .fromOld(_messageDataResult)
+            .quotedHeader(quotedHeaderString)
+            .build()
     }
 
     fun setMessageTimestamp(messageTimestamp: Long) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .messageTimestamp(messageTimestamp)
-                .build()
+            .fromOld(_messageDataResult)
+            .messageTimestamp(messageTimestamp)
+            .build()
     }
 
     fun setOfflineDraftSaved(offlineDraftSaved: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .offlineDraftSaved(offlineDraftSaved)
-                .build()
+            .fromOld(_messageDataResult)
+            .offlineDraftSaved(offlineDraftSaved)
+            .build()
     }
 
     fun setInitialMessageContent(initialMessageContent: String) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .initialMessageContent(initialMessageContent)
-                .build()
+            .fromOld(_messageDataResult)
+            .initialMessageContent(initialMessageContent)
+            .build()
     }
 
     fun addSendPreferences(sendPreference: SendPreference) {
@@ -1118,9 +1154,9 @@ class ComposeMessageViewModel @Inject constructor(
         sendPreferencesTemp += sendPreference.emailAddress to sendPreference
 
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .sendPreferences(sendPreferencesTemp)
-                .build()
+            .fromOld(_messageDataResult)
+            .sendPreferences(sendPreferencesTemp)
+            .build()
     }
 
     class MessageBodySetup {
@@ -1133,9 +1169,9 @@ class ComposeMessageViewModel @Inject constructor(
 
     @JvmOverloads
     fun setBeforeSaveDraft(
-            uploadAttachments: Boolean,
-            contentFromComposeBodyEditText: String,
-            userAction: UserAction = UserAction.SAVE_DRAFT
+        uploadAttachments: Boolean,
+        contentFromComposeBodyEditText: String,
+        userAction: UserAction = UserAction.SAVE_DRAFT
     ) {
         setUploadAttachments(uploadAttachments)
 
@@ -1206,9 +1242,9 @@ class ComposeMessageViewModel @Inject constructor(
 
     private fun setUploadAttachments(uploadAttachments: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
-                .fromOld(_messageDataResult)
-                .uploadAttachments(uploadAttachments)
-                .build()
+            .fromOld(_messageDataResult)
+            .uploadAttachments(uploadAttachments)
+            .build()
     }
 
     fun getSignatureByEmailAddress(email: String): String {
@@ -1222,11 +1258,14 @@ class ComposeMessageViewModel @Inject constructor(
             composeMessageRepository.findMessageByIdObservable(_draftId.get()).toObservable()
                 .subscribeOn(ThreadSchedulers.io())
                 .observeOn(ThreadSchedulers.main())
-                .subscribe({
-                    if (Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.SENT || Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.ALL_SENT) {
-                        _closeComposer.postValue(Event(true))
-                    }
-                }, { })
+                .subscribe(
+                    {
+                        if (Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.SENT || Constants.MessageLocationType.fromInt(it.location) == Constants.MessageLocationType.ALL_SENT) {
+                            _closeComposer.postValue(Event(true))
+                        }
+                    },
+                    { }
+                )
         }
     }
 
@@ -1244,6 +1283,20 @@ class ComposeMessageViewModel @Inject constructor(
             }
         } else {
             setBeforeSaveDraft(false, messageDataResult.content, UserAction.SAVE_DRAFT)
+        }
+    }
+
+    fun checkConnectivity() {
+        _verifyConnectionTrigger.value = Unit
+    }
+
+    /**
+     * Check connectivity with a delay allowing snack bar to be displayed.
+     */
+    fun checkConnectivityDelayed() {
+        viewModelScope.launch {
+            delay(NETWORK_CHECK_DELAY)
+            checkConnectivity()
         }
     }
 }

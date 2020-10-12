@@ -205,7 +205,7 @@ class ContactsActivity :
 
     private fun onConnectivityEvent(hasConnection: Boolean) {
         Timber.v("onConnectivityEvent")
-        hideNoConnSnack()
+        networkSnackBarUtil.hideAllSnackBars()
         if (!hasConnection) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
