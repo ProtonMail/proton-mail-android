@@ -46,6 +46,11 @@ class SentRobot : MailboxRobotInterface {
         return this
     }
 
+    override fun refreshMessageList(): SentRobot {
+        super.refreshMessageList()
+        return SentRobot()
+    }
+
     /**
      * Handles Mailbox selection state actions and verifications after user long click one of the messages.
      */

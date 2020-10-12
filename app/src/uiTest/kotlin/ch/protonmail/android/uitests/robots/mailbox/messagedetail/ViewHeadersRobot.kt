@@ -32,7 +32,7 @@ class ViewHeadersRobot {
      */
     class Verify {
         fun messageHeadersDisplayed() {
-            UIActions.check.viewWithIdIsDisplayed(R.id.viewHeadersText)
+            UIActions.wait.forViewWithId(R.id.viewHeadersText)
         }
     }
 

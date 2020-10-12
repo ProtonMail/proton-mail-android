@@ -22,6 +22,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.User
+import ch.protonmail.android.uitests.testsHelper.click
 import ch.protonmail.android.uitests.testsHelper.insert
 
 /**
@@ -88,12 +89,12 @@ class LoginRobot {
         }
 
         private fun confirm2Fa(): InboxRobot {
-            UIActions.system.clickPositiveDialogButton()
+            UIActions.wait.forViewWithId(android.R.id.button1).click()
             return InboxRobot()
         }
 
         private fun confirm2FaMailbox(): MailboxPasswordRobot {
-            UIActions.system.clickPositiveDialogButton()
+            UIActions.wait.untilViewWithIdEnabled(android.R.id.button1).click()
             return MailboxPasswordRobot()
         }
 

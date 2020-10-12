@@ -37,16 +37,13 @@ class ProtonFailureHandler(instrumentation: Instrumentation) : FailureHandler {
     }
 
     override fun handle(error: Throwable, viewMatcher: Matcher<View>) {
-        when (ProtonWatcher.status) {
-            ProtonWatcher.CONDITION_NOT_MET -> {
-                // just delegate as we are in the condition check loop
-                delegate.handle(error, viewMatcher)
-            }
-            else -> {
-                val file = File(artifactsPath, "${testName.methodName}-screenshot.png")
-                Falcon.takeScreenshot(ActivityProvider.currentActivity, file)
-                delegate.handle(error, viewMatcher)
-            }
+        if (ProtonWatcher.status == ProtonWatcher.CONDITION_NOT_MET) {
+            // just delegate as we are in the condition check loop
+            delegate.handle(error, viewMatcher)
+        } else {
+            val file = File(artifactsPath, "${testName.methodName}-screenshot.png")
+            Falcon.takeScreenshot(ActivityProvider.currentActivity, file)
+            delegate.handle(error, viewMatcher)
         }
     }
 }

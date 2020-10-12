@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
-import androidx.fragment.app.FragmentActivity
+import android.app.Activity
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
@@ -27,17 +27,17 @@ import androidx.test.runner.lifecycle.Stage
  * Provides an activity which is in [Stage.RESUMED].
  */
 object ActivityProvider {
-    val currentActivity: FragmentActivity? get() = getActivity()
+    val currentActivity: Activity? get() = getActivity()
 
-    private fun getActivity(): FragmentActivity? {
-        val currentActivity = arrayOfNulls<FragmentActivity>(1)
+    private fun getActivity(): Activity? {
+        val currentActivity = arrayOfNulls<Activity>(1)
         getInstrumentation().runOnMainSync {
             val activities = ActivityLifecycleMonitorRegistry
                 .getInstance()
                 .getActivitiesInStage(Stage.RESUMED)
 
             if (activities.iterator().hasNext()) {
-                currentActivity[0] = activities.iterator().next() as FragmentActivity
+                currentActivity[0] = activities.iterator().next() as Activity
             }
         }
         return currentActivity[0]

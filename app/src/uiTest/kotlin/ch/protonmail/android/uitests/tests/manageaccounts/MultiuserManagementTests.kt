@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.uitests.tests.manageaccounts
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
@@ -29,7 +28,6 @@ import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Test
 import org.junit.experimental.categories.Category
 
-@LargeTest
 class MultiuserManagementTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
@@ -61,20 +59,6 @@ class MultiuserManagementTests : BaseTest() {
             .menuDrawer()
             .accountsList()
             .verify { accountAdded(twoPassUser.email) }
-    }
-
-    @Test
-    fun connectTwoPassAccountWithTwoFa() {
-        loginRobot
-            .loginUser(onePassUser)
-            .menuDrawer()
-            .accountsList()
-            .manageAccounts()
-            .addAccount()
-            .connectTwoPassAccountWithTwoFa(twoPassUserWith2FA)
-            .menuDrawer()
-            .accountsList()
-            .verify { accountAdded(twoPassUserWith2FA.email) }
     }
 
     @Test
@@ -233,20 +217,6 @@ class MultiuserManagementTests : BaseTest() {
             .verify { accountLoggedOut(onePassUserWith2FA.name) }
     }
 
-    @Test
-    fun addTwoFreeAccounts() {
-        loginRobot
-            .loginUserWithTwoFa(twoPassUserWith2FA)
-            .provideTwoFaCodeMailbox(twoPassUserWith2FA.twoFaCode)
-            .decryptMailbox(twoPassUserWith2FA.mailboxPassword)
-            .menuDrawer()
-            .accountsList()
-            .manageAccounts()
-            .addAccount()
-            .connectSecondFreeOnePassAccountWithTwoFa(onePassUserWith2FA)
-            .verify { limitReachedDialogDisplayed() }
-    }
-
     @Category(SmokeTest::class)
     @Test
     fun switchAccount() {
@@ -263,5 +233,31 @@ class MultiuserManagementTests : BaseTest() {
             .accountsList()
             .manageAccounts()
             .verify { switchedToAccount(onePassUser.name) }
+    }
+
+    fun addTwoFreeAccounts() {
+        loginRobot
+            .loginUserWithTwoFa(twoPassUserWith2FA)
+            .provideTwoFaCodeMailbox(twoPassUserWith2FA.twoFaCode)
+            .decryptMailbox(twoPassUserWith2FA.mailboxPassword)
+            .menuDrawer()
+            .accountsList()
+            .manageAccounts()
+            .addAccount()
+            .connectSecondFreeOnePassAccountWithTwoFa(onePassUserWith2FA)
+            .verify { limitReachedDialogDisplayed() }
+    }
+
+    fun connectTwoPassAccountWithTwoFa() {
+        loginRobot
+            .loginUser(onePassUser)
+            .menuDrawer()
+            .accountsList()
+            .manageAccounts()
+            .addAccount()
+            .connectTwoPassAccountWithTwoFa(twoPassUserWith2FA)
+            .menuDrawer()
+            .accountsList()
+            .verify { accountAdded(twoPassUserWith2FA.email) }
     }
 }

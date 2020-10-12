@@ -22,6 +22,7 @@ import ch.protonmail.android.uitests.tests.composer.ForwardMessageTests
 import ch.protonmail.android.uitests.tests.composer.ReplyToMessageTests
 import ch.protonmail.android.uitests.tests.composer.SendNewMessageTests
 import ch.protonmail.android.uitests.tests.contacts.ContactsTests
+import ch.protonmail.android.uitests.tests.drafts.DraftsTests
 import ch.protonmail.android.uitests.tests.inbox.InboxTests
 import ch.protonmail.android.uitests.tests.inbox.SearchTests
 import ch.protonmail.android.uitests.tests.login.LoginTests
@@ -42,6 +43,8 @@ import org.junit.runners.Suite
     ReplyToMessageTests::class,
     // Contacts tests
     ContactsTests::class,
+    // Drafts tests
+    DraftsTests::class,
     // Inbox tests
     InboxTests::class,
     // Login tests

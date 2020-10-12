@@ -102,6 +102,7 @@ import ch.protonmail.android.utils.ui.MODE_ACCORDION
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteConfirmationDialog
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
+import ch.protonmail.android.views.MessageActionButton
 import ch.protonmail.android.views.PMWebViewClient
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
@@ -205,6 +206,10 @@ internal class MessageDetailsActivity :
         } else {
             continueSetup()
         }
+
+        findViewById<MessageActionButton>(R.id.reply).isEnabled = false
+        findViewById<MessageActionButton>(R.id.reply_all).isEnabled = false
+        findViewById<MessageActionButton>(R.id.forward).isEnabled = false
     }
 
     private fun continueSetup() {
@@ -870,6 +875,10 @@ internal class MessageDetailsActivity :
                 UiUtil.showInfoSnack(mSnackLayout, this@MessageDetailsActivity, R.string.decryption_error_desc).show()
                 return
             }
+            findViewById<MessageActionButton>(R.id.reply).isEnabled = true
+            findViewById<MessageActionButton>(R.id.reply_all).isEnabled = true
+            findViewById<MessageActionButton>(R.id.forward).isEnabled = true
+
             messageExpandableAdapter.setMessageData(message)
             messageExpandableAdapter.refreshRecipientsLayout()
             if (viewModel.refreshedKeys) {

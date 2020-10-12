@@ -45,6 +45,11 @@ class DraftsRobot : MailboxRobotInterface {
         return this
     }
 
+    override fun refreshMessageList(): DraftsRobot {
+        super.refreshMessageList()
+        return this
+    }
+
     fun moreOptions(): DraftsRobot {
         UIActions.system.clickMoreOptionsButton()
         return this

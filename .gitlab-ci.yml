@@ -30,6 +30,8 @@ stages:
 #####################
 .detekt-analysis-common:
   stage: analyze
+  except:
+    - schedules
   tags:
     - android
   script:
@@ -52,6 +54,7 @@ detekt analysis:
     - release
     - prerelease
     - tags
+    - schedules
 
 build debug:
   stage: build
@@ -67,6 +70,8 @@ build debug:
 
 build prerelease:
   stage: build
+  except:
+    - schedules
   only:
     - prerelease
     - tags
@@ -81,6 +86,8 @@ build prerelease:
 
 build release:
   stage: build
+  except:
+    - schedules
   only:
     - releases
   tags:
@@ -95,6 +102,8 @@ build release:
 
 unit tests:
   stage: test
+  except:
+    - schedules
   tags:
     - android
   script:
@@ -103,6 +112,8 @@ unit tests:
 
 firebase tests:
   stage: test
+  except:
+    - schedules
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
@@ -121,13 +132,57 @@ firebase tests:
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
       --num-flaky-test-attempts=2
+      --timeout 30m
 
-#UI tests:
-#  stage: test
-#  tags:
-#    - android
-#  script:
-#    - ./gradlew eBDTOB -PUSER1="$USER1" -PUSER2="$USER2" -PUSER3="$USER3" -PUSER4="$USER4" -PRECIPIENT1="$RECIPIENT1" -PRECIPIENT2="$RECIPIENT2" -PRECIPIENT3="$RECIPIENT3" -PRECIPIENT4="$RECIPIENT4" -PBROWSERSTACK_USER="$BROWSERSTACK_USER" -PBROWSERSTACK_KEY="$BROWSERSTACK_KEY"
+firebase regression tests:
+  stage: test
+  rules:
+    - if: '$TEST_TYPE == "regression"'
+  script:
+    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+    - mkdir -p /opt
+    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+    - /opt/google-cloud-sdk/install.sh --quiet
+    - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components update
+    - echo $CLOUD_PROJECT_ID_MAIL
+    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
+    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
+    - gcloud auth activate-service-account --key-file /tmp/service-account.json
+    - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+    - gcloud beta --quiet firebase test android run
+      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
+      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+      --device model=Pixel2,version=$API_LEVEL
+      --test-targets "class ch.protonmail.android.uitests.tests.suites.RegressionSuite"
+      --use-orchestrator
+      --num-uniform-shards=20
+      --timeout 1h
+
+firebase feature tests:
+  stage: test
+  rules:
+    - if: '$TEST_TYPE == "feature"'
+  script:
+    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
+    - mkdir -p /opt
+    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
+    - /opt/google-cloud-sdk/install.sh --quiet
+    - source /opt/google-cloud-sdk/path.bash.inc
+    - gcloud components update
+    - echo $CLOUD_PROJECT_ID_MAIL
+    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
+    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
+    - gcloud auth activate-service-account --key-file /tmp/service-account.json
+    - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+    - gcloud --quiet firebase test android run
+      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
+      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
+      --device model=Pixel2,version=$API_LEVEL
+      --test-targets "class ch.protonmail.android.uitests.tests.$TEST_CLASS"
+      --use-orchestrator
+      --num-flaky-test-attempts=1
+      --timeout 1h
 
 include:
   - project: 'translations/generator'
@@ -147,13 +202,18 @@ i18n-sync-crowdin:
   variables:
       I18N_SYNC_CROWDIN_PROJECT: 'android-mail'
   extends: .i18n-sync-crowdin-shared
+  except:
+    variables:
+      - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
 
 i18n-commit-locales:
   stage: bot-i18n
   variables:
       I18N_COMMIT_CROWDIN_PROJECT: 'android-mail'
   extends: .i18n-commit-locales-shared
-
+  except:
+    variables:
+        - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
 
 release-publish-github:
   stage: manual-release
@@ -185,5 +245,3 @@ publish-github:
       RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
       RELEASE_GITHUB_BRANCH: 'release'
   extends: .release-make-release
-
-

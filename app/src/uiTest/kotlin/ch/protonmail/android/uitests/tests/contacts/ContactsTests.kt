@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.uitests.tests.contacts
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
@@ -28,16 +27,12 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkGroupDoesNotExist
-import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
-import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.experimental.categories.Category
-import org.junit.runners.MethodSorters
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@LargeTest
 class ContactsTests : BaseTest() {
 
     private lateinit var contactsRobot: ContactsRobot
@@ -52,7 +47,6 @@ class ContactsTests : BaseTest() {
             .contacts()
     }
 
-    @TestId("1419")
     @Test
     fun createContact() {
         val name = TestData.newContactName
@@ -60,6 +54,8 @@ class ContactsTests : BaseTest() {
         contactsRobot
             .addContact()
             .setNameEmailAndSave(name, email)
+            .openOptionsMenu()
+            .refresh()
             .clickContactByEmail(email)
             .deleteContact()
             .verify { contactDoesNotExists(name, email) }
@@ -76,6 +72,8 @@ class ContactsTests : BaseTest() {
         contactsRobot
             .addContact()
             .setNameEmailAndSave(name, email)
+            .openOptionsMenu()
+            .refresh()
             .clickContactByEmail(email)
             .editContact()
             .editNameEmailAndSave(editedName, editedEmail)
@@ -93,12 +91,15 @@ class ContactsTests : BaseTest() {
         contactsRobot
             .addContact()
             .setNameEmailAndSave(name, email)
+            .openOptionsMenu()
+            .refresh()
             .clickContactByEmail(email)
             .deleteContact()
             .verify { contactDoesNotExists(name, email) }
     }
 
     @TestId("1421")
+    @Test
     fun createGroup() {
         val contactEmail = internalEmailTrustedKeys
         val groupName = getEmailString()
@@ -110,6 +111,8 @@ class ContactsTests : BaseTest() {
             .manageAddresses()
             .addContactToGroup(contactEmail.email)
             .done()
+            .openOptionsMenu()
+            .refresh()
             .groupsView()
             .clickGroupWithMembersCount(groupName, groupMembersCount)
             .deleteGroup()
@@ -118,6 +121,7 @@ class ContactsTests : BaseTest() {
     }
 
     @TestId("1422")
+    @Test
     fun editGroup() {
         val contactEmail = internalEmailTrustedKeys
         val groupName = getEmailString()
@@ -130,11 +134,15 @@ class ContactsTests : BaseTest() {
             .manageAddresses()
             .addContactToGroup(contactEmail.email)
             .done()
+            .openOptionsMenu()
+            .refresh()
             .groupsView()
             .clickGroup(groupName)
             .edit()
             .editNameAndSave(newGroupName)
             .navigateUp()
+            .openOptionsMenu()
+            .refresh()
             .groupsView()
             .clickGroupWithMembersCount(newGroupName, groupMembersCount)
             .deleteGroup()
@@ -143,6 +151,7 @@ class ContactsTests : BaseTest() {
     }
 
     @TestId("21240")
+    @Test
     fun deleteGroup() {
         val contactEmail = internalEmailTrustedKeys
         val groupName = getEmailString()
@@ -154,20 +163,13 @@ class ContactsTests : BaseTest() {
             .manageAddresses()
             .addContactToGroup(contactEmail.email)
             .done()
+            .openOptionsMenu()
+            .refresh()
             .groupsView()
             .clickGroupWithMembersCount(groupName, groupMembersCount)
             .deleteGroup()
             .groupsView()
             .verify { checkGroupDoesNotExist(groupName, groupMembersCount) }
-    }
-
-    @TestId("1606")
-    @Test
-    fun contactListRefresh() {
-        contactsRobot
-            .openOptionsMenu()
-            .refresh()
-            .verify { contactsRefreshed() }
     }
 
     @TestId("30833")
@@ -183,9 +185,8 @@ class ContactsTests : BaseTest() {
             .navigateUpToInbox()
             .menuDrawer()
             .sent()
-            .verify {
-                messageWithSubjectExists(subject)
-            }
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
     }
 
     @TestId("1423")
@@ -197,12 +198,11 @@ class ContactsTests : BaseTest() {
         contactsRobot
             .groupsView()
             .clickSendMessageToGroup(groupName)
-            .sendMessageToContact(subject, body)
+            .sendMessageToGroup(subject, body)
             .navigateUpToInbox()
             .menuDrawer()
             .sent()
-            .verify {
-                messageWithSubjectExists(subject)
-            }
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
     }
 }

@@ -21,6 +21,8 @@ package ch.protonmail.android.uitests.tests
 import android.Manifest.permission.READ_CONTACTS
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.app.Activity
+import android.app.Instrumentation
 import android.content.Context
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -29,6 +31,7 @@ import android.widget.Toast
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers.isInternal
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
@@ -41,6 +44,7 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.User
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -72,8 +76,10 @@ open class BaseTest {
         Log.d(testTag, "Starting test execution for test: ${testName.methodName}")
         // Show toast with test case name for better test analysis in recorded videos especially on Firebase.
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            Toast.makeText(targetContext, testName.methodName, twoSeconds).show()
+            Toast.makeText(targetContext, testName.methodName, tenSeconds).show()
         }
+        Intents.intending(not(isInternal()))
+            .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, null))
     }
 
     @After
@@ -107,7 +113,7 @@ open class BaseTest {
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
-        private const val twoSeconds = 2000
+        private const val tenSeconds = 10000
         val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         @JvmStatic

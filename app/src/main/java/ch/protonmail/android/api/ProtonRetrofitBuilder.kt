@@ -277,7 +277,7 @@ class ProtonRetrofitSecure(
                 endpointUri,
                 TEN_SECONDS,
                 interceptor,
-                HttpLoggingInterceptor.Level.BODY,
+                HttpLoggingInterceptor.Level.BASIC,
                 spec,
                 serverTimeInterceptor
         )

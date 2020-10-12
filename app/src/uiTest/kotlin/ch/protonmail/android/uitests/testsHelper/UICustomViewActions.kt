@@ -32,6 +32,7 @@ import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -40,6 +41,8 @@ import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
+import ch.protonmail.android.contacts.list.listView.ContactsListAdapter
+import ch.protonmail.android.uitests.testsHelper.ActivityProvider.currentActivity
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
@@ -52,92 +55,165 @@ object UICustomViewActions {
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
-        try {
-            ProtonWatcher.setTimeout(timeout)
-            ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-                var errorMessage = ""
-
-                override fun getDescription() = "UICustomViewActions.waitUntilViewAppears $errorMessage"
-
-                override fun checkCondition(): Boolean {
-                    return try {
-                        interaction.check(matches(isDisplayed()))
-                        true
-                    } catch (e: PerformException) {
-                        errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
-                        false
-                    } catch (e: NoMatchingViewException) {
-                        errorMessage = e.viewMatcherDescription
-                        false
-                    } catch (e: NoMatchingRootException) {
-                        false
-                    } catch (e: AppNotIdleException) {
-                        false
-                    } catch (e: AmbiguousViewMatcherException) {
-                        false
-                    } catch (e: AssertionFailedError) {
-                        false
-                    }
-                }
-            })
-        } catch (e: Throwable) {
-            if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                throw e
-            }
-        }
-        return interaction
+        val errorDescription = "UICustomViewActions.waitUntilViewAppears"
+        return waitUntilMatcherFulfilled(
+            interaction,
+            assertion = matches(isDisplayed()),
+            timeout = timeout,
+            errorDescription = errorDescription
+        )
     }
 
     fun waitUntilViewIsGone(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
-        try {
-            ProtonWatcher.setTimeout(timeout)
-            ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-                var errorMessage = ""
+        val errorDescription = "UICustomViewActions.waitUntilViewAppears"
+        return waitUntilMatcherFulfilled(
+            interaction,
+            assertion = doesNotExist(),
+            timeout = timeout,
+            errorDescription = errorDescription
+        )
+    }
 
-                override fun getDescription() = "waitForElement - $errorMessage"
+    fun waitUntilMatcherFulfilled(
+        interaction: ViewInteraction,
+        assertion: ViewAssertion,
+        timeout: Long = TIMEOUT_10S,
+        errorDescription: String = ""
+    ): ViewInteraction {
+        ProtonWatcher.setTimeout(timeout)
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+            var errorMessage = ""
 
-                override fun checkCondition() = try {
-                    interaction.check(doesNotExist())
+            override fun getDescription() = "UICustomViewActions.waitUntilMatcherFulfilled $errorMessage"
+
+            override fun checkCondition(): Boolean {
+                return try {
+                    interaction.check(assertion)
                     true
                 } catch (e: PerformException) {
                     errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
-                    false
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
                 } catch (e: NoMatchingViewException) {
                     errorMessage = e.viewMatcherDescription
-                    false
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
                 } catch (e: NoMatchingRootException) {
-                    false
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
                 } catch (e: AppNotIdleException) {
-                    false
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
                 } catch (e: AmbiguousViewMatcherException) {
-                    false
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
                 } catch (e: AssertionFailedError) {
-                    false
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
                 }
-            })
-        } catch (e: Throwable) {
-            if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                throw e
             }
-        }
+        })
+        return interaction
+    }
+
+    fun performActionWithRetry(
+        interaction: ViewInteraction,
+        action: ViewAction,
+        timeout: Long = TIMEOUT_10S
+    ): ViewInteraction {
+        ProtonWatcher.setTimeout(timeout)
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+            var errorMessage = ""
+
+            override fun getDescription() = "UICustomViewActions.waitUntilMatcherFulfilled $errorMessage"
+
+            override fun checkCondition(): Boolean {
+                return try {
+                    interaction.perform(action)
+                    true
+                } catch (e: PerformException) {
+                    errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
+                } catch (e: NoMatchingViewException) {
+                    errorMessage = e.viewMatcherDescription
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
+                } catch (e: NoMatchingRootException) {
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
+                } catch (e: AppNotIdleException) {
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
+                } catch (e: AmbiguousViewMatcherException) {
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
+                } catch (e: AssertionFailedError) {
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
+                }
+            }
+        })
         return interaction
     }
 
     fun waitUntilRecyclerViewPopulated(@IdRes id: Int, timeout: Long = TIMEOUT_10S) {
         ProtonWatcher.setTimeout(timeout)
         ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-            var errorMessage = ""
 
             override fun getDescription() =
                 "RecyclerView: ${targetContext.resources.getResourceName(id)} was not populated with items"
 
             override fun checkCondition() = try {
-                val rv = ActivityProvider.currentActivity!!.findViewById<RecyclerView>(id)
-                waitUntilLoaded { rv }
-                rv.adapter!!.itemCount > 0
-            } catch (e: Exception) {
-                errorMessage = e.message.toString()
-                false
+                val rv = currentActivity!!.findViewById<RecyclerView>(id)
+                if (rv != null) {
+                    waitUntilLoaded { rv }
+                    rv.adapter!!.itemCount > 0
+                } else {
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw Exception(getDescription())
+                    } else {
+                        false
+                    }
+                }
+            } catch (e: Throwable) {
+                throw e
             }
         })
     }
@@ -150,29 +226,28 @@ object UICustomViewActions {
     ) {
         ProtonWatcher.setTimeout(timeout)
         ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-            var errorMessage = ""
 
             override fun getDescription() =
                 "RecyclerView: ${targetContext.resources.getResourceName(recyclerViewId)} was not populated with items"
 
             override fun checkCondition(): Boolean {
                 try {
-                    val rv = ActivityProvider.currentActivity!!.findViewById<RecyclerView>(recyclerViewId)
+                    val rv = currentActivity!!.findViewById<RecyclerView>(recyclerViewId)
                     waitUntilLoaded { rv }
-                    var isMatches: Boolean
-                    var actualText: String
-                    for (i in 0..rv.adapter!!.itemCount) {
-                        val item = rv.getChildAt(i)
-                        if (item != null) {
-                            actualText = item.findViewById<TextView>(viewId)?.text.toString()
-                            isMatches = actualText == text
-                            if (isMatches) {
-                                return true
+
+                    (rv.adapter!! as ContactsListAdapter).items.forEach {
+                        return if (it.getEmail() == text) {
+                            return true
+                        } else {
+                            if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                                throw Exception(getDescription())
+                            } else {
+                                false
                             }
                         }
                     }
                 } catch (e: Exception) {
-                    errorMessage = e.message.toString()
+                    throw  e
                 }
                 return false
             }
@@ -219,9 +294,9 @@ object UICustomViewActions {
             val recyclerView = view as RecyclerView
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager
             val messageSubject = layoutManager.getChildAt(position)
-                ?.findViewById<TextView>(R.id.messageTitleTextView)!!.text.toString()
+                ?.findViewById<TextView>(R.id.messageTitleTextView)?.text.toString()
             val messageDate = layoutManager.getChildAt(position)
-                ?.findViewById<TextView>(R.id.messageDateTextView)!!.text.toString()
+                ?.findViewById<TextView>(R.id.messageDateTextView)?.text.toString()
             saveSubject.invoke(messageSubject, messageDate)
         }
     }
