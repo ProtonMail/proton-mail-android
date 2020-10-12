@@ -536,7 +536,7 @@ public class LoginService extends ProtonJobIntentService {
                 boolean checkPassphrase = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), generatedMailboxPassword);
                 if (!checkPassphrase) {
                     AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
-                } else {
+                } else if(openPGP.checkKeyIsCorrect(tokenManager.getEncPrivateKey(), generatedMailboxPassword)) {
                     UserInfo userInfo = api.fetchUserInfoBlocking();
                     UserSettingsResponse userSettings = api.fetchUserSettings();
                     MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
@@ -561,6 +561,18 @@ public class LoginService extends ProtonJobIntentService {
                             }
                         }
                     }
+                } else {
+                    AppUtil.postEventOnUi(
+                        new LoginEvent(
+                            AuthStatus.INCORRECT_KEY_PARAMETERS,
+                            null,
+                            false,
+                            null,
+                            username,
+                            null,
+                            null
+                        )
+                    );
                 }
             } else {
                 doOfflineMailboxLogin(generatedMailboxPassword, username);
@@ -629,7 +641,7 @@ public class LoginService extends ProtonJobIntentService {
                 boolean checkPassphrase = openPGP.checkPassphrase(tokenManager.getEncPrivateKey(), generatedMailboxPassword);
                 if (!checkPassphrase) {
                     AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
-                } else {
+                } else if(openPGP.checkKeyIsCorrect(tokenManager.getEncPrivateKey(), generatedMailboxPassword)) {
                     userManager.setUsernameAndReload(username);
                     UserInfo userInfo = api.fetchUserInfoBlocking();
                     if (!userManager.canConnectAccount() && !userInfo.getUser().isPaidUser()) {
@@ -658,6 +670,18 @@ public class LoginService extends ProtonJobIntentService {
                         launchInitialDataFetch.invoke(true, true);
                         userManager.firstLoginDone();
                     }
+                } else {
+                    AppUtil.postEventOnUi(
+                        new LoginEvent(
+                            AuthStatus.INCORRECT_KEY_PARAMETERS,
+                            null,
+                            false,
+                            null,
+                            username,
+                            null,
+                            null
+                        )
+                    );
                 }
             } else {
                 doOfflineMailboxLogin(generatedMailboxPassword, username);
@@ -722,7 +746,7 @@ public class LoginService extends ProtonJobIntentService {
                     AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, loginHelperData.keySalt, loginHelperData.redirectToSetup,
                             user, username, loginHelperData.domainName, addressResponse.getAddresses()));
                 } catch (Exception e) {
-                    // FIXME:
+                    Timber.e(e);
                 }
             } else {
                 AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, null, false, null, username, null, null));
@@ -914,8 +938,22 @@ public class LoginService extends ProtonJobIntentService {
             if (!isPwdOk) {
                 AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
             } else {
-                userManager.setUsernameAndReload(username);
-                AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
+                if(openPGP.checkKeyIsCorrect(tokenManager.getEncPrivateKey(), mailboxPassword)) {
+                    userManager.setUsernameAndReload(username);
+                    AppUtil.postEventOnUi(new MailboxLoginEvent(AuthStatus.SUCCESS));
+                } else {
+                    AppUtil.postEventOnUi(
+                        new LoginEvent(
+                            AuthStatus.INCORRECT_KEY_PARAMETERS,
+                            null,
+                            false,
+                            null,
+                            username,
+                            null,
+                            null
+                        )
+                    );
+                }
             }
         }
     }
@@ -1039,6 +1077,4 @@ public class LoginService extends ProtonJobIntentService {
             AppUtil.postEventOnUi(new CreateUserEvent(status, error));
         }
     }
-
-
 }

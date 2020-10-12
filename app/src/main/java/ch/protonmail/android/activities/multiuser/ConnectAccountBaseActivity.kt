@@ -107,6 +107,10 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
                 resetState()
                 showToast(R.string.invalid_mailbox_password, Gravity.CENTER)
             }
+            AuthStatus.INCORRECT_KEY_PARAMETERS -> {
+                resetState()
+                showToast(R.string.incorrect_key_parameters, Gravity.CENTER)
+            }
             AuthStatus.NOT_SIGNED_UP -> {
                 resetState()
                 showToast(R.string.not_signed_up, Gravity.CENTER)

@@ -215,6 +215,11 @@ public abstract class BaseLoginActivity extends BaseConnectivityActivity {
                 onMailboxInvalidCredential();
             }
             break;
+            case INCORRECT_KEY_PARAMETERS: {
+                TextExtensions.showToast(this, R.string.incorrect_key_parameters, Toast.LENGTH_LONG, Gravity.CENTER);
+                onMailboxInvalidCredential();
+            }
+            break;
             case NOT_SIGNED_UP: {
                 TextExtensions.showToast(this, R.string.not_signed_up, Toast.LENGTH_LONG, Gravity.CENTER);
                 onMailboxNotSignedUp();
