@@ -55,8 +55,8 @@ import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
-import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -85,7 +85,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     messageRendererFactory: MessageRenderer.Factory,
     private val deleteMessageUseCase: DeleteMessage,
-    private val sendPing: SendPing
+    private val verifyConnection: VerifyConnection
 ) : ViewModel() {
 
     private val messageId: String = savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID)
@@ -121,7 +121,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
-    private val _pingTrigger: MutableLiveData<Unit> = MutableLiveData()
+    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     var nonBrokenEmail: String? = null
     var bodyString: String? = null
@@ -165,8 +165,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
-    val hasConnection: LiveData<Boolean> = _pingTrigger.switchMap {
-        sendPing().map { onConnectivityEvent(it) }
+    val hasConnection: LiveData<Boolean> = _verifyConnectionTrigger.switchMap {
+        verifyConnection().map { onConnectivityEvent(it) }
     }
 
     init {
@@ -511,7 +511,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     fun checkConnectivity() {
         Timber.v("checkConnectivity launch ping")
-        _pingTrigger.value = Unit
+        _verifyConnectionTrigger.value = Unit
     }
 
     /**

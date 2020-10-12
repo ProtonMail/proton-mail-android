@@ -32,11 +32,13 @@ import timber.log.Timber
 import javax.inject.Inject
 
 internal const val NETWORK_CHECK_DELAY = 800L
+
 /**
- * Use case responsible for scheduling Worker that sends a ping message through [PingWorker]
- * and processes the result.
+ * Use case responsible for scheduling Worker that sends a ping message through [PingWorker], processing the result
+ * and listening to system network disconnections events. It emits LiveData<Boolean> with true corresponding to
+ * network connection being available and false otherwise.
  */
-class SendPing @Inject constructor(
+class VerifyConnection @Inject constructor(
     private val workerEnqueuer: PingWorker.Enqueuer,
     private val connectivityManager: NetworkConnectivityManager
 ) {
@@ -47,7 +49,7 @@ class SendPing @Inject constructor(
     }
 
     operator fun invoke(): LiveData<Boolean> {
-        Timber.v("SendPing invoked")
+        Timber.v("VerifyConnection invoked")
         return liveData {
             emit(isInternetAvailable())
             emitSource(getPingState(workerEnqueuer.enqueue()))

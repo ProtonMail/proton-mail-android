@@ -41,7 +41,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class SendPingTest : CoroutinesTest {
+class VerifyConnectionTest : CoroutinesTest {
 
     @get:Rule
     val archRule = InstantTaskExecutorRule()
@@ -52,12 +52,12 @@ class SendPingTest : CoroutinesTest {
     @MockK
     private lateinit var connectionManager: NetworkConnectivityManager
 
-    private lateinit var sendPingUseCase: SendPing
+    private lateinit var verifyConnectionUseCase: VerifyConnection
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        sendPingUseCase = SendPing(
+        verifyConnectionUseCase = VerifyConnection(
             workEnqueuer,
             connectionManager
         )
@@ -79,7 +79,7 @@ class SendPingTest : CoroutinesTest {
         val expected = true
 
         // when
-        val response = sendPingUseCase()
+        val response = verifyConnectionUseCase()
         response.observeForever(observer)
 
         // then
@@ -106,7 +106,7 @@ class SendPingTest : CoroutinesTest {
         val expected = false
 
         // when
-        val response = sendPingUseCase()
+        val response = verifyConnectionUseCase()
         response.observeForever(observer)
 
         // then
@@ -132,7 +132,7 @@ class SendPingTest : CoroutinesTest {
         val observer = mockk<Observer<Boolean>>(relaxed = true)
 
         // when
-        val response = sendPingUseCase()
+        val response = verifyConnectionUseCase()
         response.observeForever(observer)
 
         // then
@@ -157,7 +157,7 @@ class SendPingTest : CoroutinesTest {
         val expectedWorkerState = true
 
         // when
-        val response = sendPingUseCase()
+        val response = verifyConnectionUseCase()
 
         // then
         response.captureValues {
@@ -181,7 +181,7 @@ class SendPingTest : CoroutinesTest {
         val expectedWorkerState = true
 
         // when
-        val response = sendPingUseCase()
+        val response = verifyConnectionUseCase()
 
         // then
         response.captureValues {

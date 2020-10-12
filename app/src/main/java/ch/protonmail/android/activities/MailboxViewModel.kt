@@ -32,8 +32,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
 import com.birbit.android.jobqueue.JobManager
@@ -58,7 +58,7 @@ class MailboxViewModel @ViewModelInject constructor(
     val userManager: UserManager,
     private val jobManager: JobManager,
     private val deleteMessage: DeleteMessage,
-    private val sendPing: SendPing
+    private val verifyConnection: VerifyConnection
 ) : ViewModel() {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
@@ -75,7 +75,7 @@ class MailboxViewModel @ViewModelInject constructor(
         MutableLiveData()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
-    private val _pingTrigger: MutableLiveData<Unit> = MutableLiveData()
+    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -88,7 +88,7 @@ class MailboxViewModel @ViewModelInject constructor(
     val toastMessageMaxLabelsReached: LiveData<Event<MaxLabelsReached>>
         get() = _toastMessageMaxLabelsReached
     val hasConnectivity: LiveData<Boolean> =
-        _pingTrigger.switchMap { sendPing() }
+        _verifyConnectionTrigger.switchMap { verifyConnection() }
 
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = _hasSuccessfullyDeletedMessages
@@ -239,7 +239,7 @@ class MailboxViewModel @ViewModelInject constructor(
 
     fun checkConnectivity() {
         Timber.v("checkConnectivity launch ping")
-        _pingTrigger.value = Unit
+        _verifyConnectionTrigger.value = Unit
     }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)

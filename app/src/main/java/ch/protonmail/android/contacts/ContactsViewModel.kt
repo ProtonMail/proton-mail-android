@@ -26,8 +26,8 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
-import ch.protonmail.android.usecase.SendPing
 import ch.protonmail.android.usecase.fetch.FetchContactsData
+import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -35,17 +35,17 @@ import timber.log.Timber
 class ContactsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData,
-    private val sendPing: SendPing
+    private val verifyConnection: VerifyConnection
 ) : ViewModel() {
 
     private val fetchContactsTrigger: MutableLiveData<Unit> = MutableLiveData()
-    private val _pingTrigger: MutableLiveData<Unit> = MutableLiveData()
+    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val fetchContactsResult: LiveData<Boolean> =
         fetchContactsTrigger.switchMap { fetchContactsData() }
 
-    val hasConnection: LiveData<Boolean> = _pingTrigger
-        .switchMap { sendPing() }
+    val hasConnection: LiveData<Boolean> = _verifyConnectionTrigger
+        .switchMap { verifyConnection() }
 
     fun isPaidUser(): Boolean = userManager.user.isPaidUser
 
@@ -56,7 +56,7 @@ class ContactsViewModel @ViewModelInject constructor(
 
     fun checkConnectivity() {
         Timber.v("checkConnectivity launch ping")
-        _pingTrigger.value = Unit
+        _verifyConnectionTrigger.value = Unit
     }
 
     /**

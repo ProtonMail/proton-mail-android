@@ -33,7 +33,7 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
 //    @Inject
-//    lateinit var sendPing: SendPing
+//    lateinit var sendPing: VerifyConnection
 
     @BindView(R.id.layout_no_connectivity_info)
     protected lateinit var mSnackLayout: View
