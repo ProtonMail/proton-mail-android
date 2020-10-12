@@ -30,51 +30,103 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.messages.receive.LabelResponse
+import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
+import ch.protonmail.android.core.Constants
 
-internal const val KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_NAME = "keyCreateContactGroupInputDataLabelName"
-internal const val KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_ID = "keyCreateContactGroupInputDataLabelId"
-internal const val KEY_CREATE_CONTACT_GROUP_INPUT_DATA_IS_UPDATE = "keyCreateContactGroupInputDataIsUpdate"
-internal const val KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_COLOR = "keyCreateContactGroupInputDataLabelColor"
-internal const val KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_DISPLAY = "keyCreateContactGroupInputDataLabelIsDisplay"
-internal const val KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_EXCLUSIVE = "keyCreateContactGroupInputDataLabelExclusive"
-internal const val KEY_CREATE_CONTACT_GROUP_WORKER_RESULT_ERROR = "keyCreateContactGroupResultDataPostLabelWorkerError"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME = "keyCreateContactGroupInputDataName"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID = "keyCreateContactGroupInputDataId"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE = "keyCreateContactGroupInputDataIsUpdate"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR = "keyCreateContactGroupInputDataColor"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY = "keyCreateContactGroupInputDataIsDisplay"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE = "keyCreateContactGroupInputDataExclusive"
+internal const val KEY_RESULT_DATA_CREATE_CONTACT_GROUP_ERROR = "keyCreateContactGroupResultWorkerError"
 
 class CreateContactGroupWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val api: ProtonMailApiManager
+    private val apiManager: ProtonMailApiManager,
+    private val repository: ContactGroupsRepository
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        TODO("Not yet implemented")
+        val groupName = getContactGroupNameParam() ?: return Result.failure()
+        val color = getContactGroupColorParam() ?: return Result.failure()
+
+        val response = createContactGroup(groupName, color)
+
+        if (response.hasError()) {
+            return failureResultWithError(response.error)
+        }
+
+        if (hasInvalidApiResponse(response)) {
+            return failureResultWithError(response.error)
+        }
+
+        repository.saveContactGroup(response.contactGroup)
+        return Result.success()
     }
+
+    private fun failureResultWithError(error: String): Result {
+        val errorData = workDataOf(KEY_RESULT_DATA_CREATE_CONTACT_GROUP_ERROR to error)
+        return Result.failure(errorData)
+    }
+
+    private fun createContactGroup(name: String, color: String): LabelResponse {
+        val display = getDisplayParam()
+        val exclusive = getExclusiveParam()
+
+        return if (isUpdateParam()) {
+            val validContactGroupId = getContactGroupIdParam() ?: throw missingContactGroupIdError()
+            apiManager.updateLabel(validContactGroupId, LabelBody(name, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
+        } else {
+            apiManager.createLabel(LabelBody(name, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
+        }
+    }
+
+    private fun missingContactGroupIdError() = IllegalArgumentException("Missing required ID parameter to create contact group")
+
+    private fun hasInvalidApiResponse(labelResponse: LabelResponse) = labelResponse.contactGroup.ID.isEmpty()
+
+    private fun getContactGroupIdParam() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID)
+
+    private fun getExclusiveParam() = inputData.getInt(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE, 0)
+
+    private fun getDisplayParam() = inputData.getInt(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY, 0)
+
+    private fun getContactGroupColorParam() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR)
+
+    private fun getContactGroupNameParam() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME)
+
+    private fun isUpdateParam() = inputData.getBoolean(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false)
 
 }
 
 class Enqueuer(private val workManager: WorkManager) {
     fun enqueue(
-        labelName: String,
+        name: String,
         color: String,
         display: Int? = 0,
         exclusive: Int? = 0,
         update: Boolean? = false,
-        labelId: String? = null
+        Id: String? = null
     ): LiveData<WorkInfo> {
 
-        val postLabelWorkerRequest = OneTimeWorkRequestBuilder<CreateContactGroupWorker>()
+        val createContactGroupRequest = OneTimeWorkRequestBuilder<CreateContactGroupWorker>()
             .setInputData(
                 workDataOf(
-                    KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_ID to labelId,
-                    KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_NAME to labelName,
-                    KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_COLOR to color,
-                    KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_EXCLUSIVE to exclusive,
-                    KEY_CREATE_CONTACT_GROUP_INPUT_DATA_IS_UPDATE to update,
-                    KEY_CREATE_CONTACT_GROUP_INPUT_DATA_LABEL_DISPLAY to display
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID to Id,
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME to name,
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR to color,
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE to exclusive,
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE to update,
+                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY to display
                 )
             ).build()
 
-        workManager.enqueue(postLabelWorkerRequest)
-        return workManager.getWorkInfoByIdLiveData(postLabelWorkerRequest.id)
+        workManager.enqueue(createContactGroupRequest)
+        return workManager.getWorkInfoByIdLiveData(createContactGroupRequest.id)
     }
 }
 

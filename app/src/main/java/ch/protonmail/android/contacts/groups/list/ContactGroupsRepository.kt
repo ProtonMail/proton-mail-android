@@ -94,4 +94,8 @@ class ContactGroupsRepository @Inject constructor(
         return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
             .toObservable()
     }
+
+    fun saveContactGroup(contactLabel: ContactLabel) {
+        TODO("Not yet implemented")
+    }
 }
