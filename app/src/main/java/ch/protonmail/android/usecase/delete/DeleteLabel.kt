@@ -41,7 +41,7 @@ class DeleteLabel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val contactsDatabase: ContactsDatabase,
     @Named("messages") private val messagesDatabase: MessagesDatabase,
-    private val workerScheduler: DeleteLabelWorker.Enqueuer
+    private val deleteLabelWorker: DeleteLabelWorker.Enqueuer
 ) {
 
     suspend operator fun invoke(labelIds: List<String>): LiveData<Boolean> =
@@ -61,7 +61,7 @@ class DeleteLabel @Inject constructor(
             }
 
             // schedule worker to remove label ids over the network
-            workerScheduler.enqueue(labelIds)
+            deleteLabelWorker.enqueue(labelIds)
                 .filter { it?.state?.isFinished == true }
                 .map { workInfo ->
                     Timber.v("Finished worker State ${workInfo.state}")
