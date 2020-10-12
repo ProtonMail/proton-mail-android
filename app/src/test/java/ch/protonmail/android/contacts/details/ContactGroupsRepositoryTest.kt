@@ -1,22 +1,22 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.groups
+package ch.protonmail.android.contacts.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -25,15 +25,16 @@ import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
+import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
-import org.junit.Assert
-import org.junit.Before
+import org.junit.Assert.*
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -58,8 +59,9 @@ class ContactGroupsRepositoryTest {
     private val label3 = ContactLabel("c", "cc")
     private val label4 = ContactLabel("d", "dd")
 
-    @Before
+    @BeforeEach
     fun setUp() {
+        MockKAnnotations.init(this)
         every { protonMailApi.fetchContactGroupsAsObservable() } answers {
             Observable.just(listOf(label1, label2, label3, label4)).delay(500, TimeUnit.MILLISECONDS)
         }
@@ -73,6 +75,7 @@ class ContactGroupsRepositoryTest {
 
         val testObserver: TestObserver<List<ContactLabel>> = contactGroupsRepository.getContactGroups().test()
 
+        testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
         testObserver.awaitTerminalEvent()
         testObserver.assertNoErrors()
         testObserver.assertValueCount(2)
@@ -89,7 +92,7 @@ class ContactGroupsRepositoryTest {
         testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
         testObserver.awaitCount(2)
         testObserver.assertValueCount(2)
-        Assert.assertEquals(listOf(label1, label2, label3, label4), testObserver.values()[1])
+        assertEquals(listOf(label1, label2, label3, label4), testObserver.values()[1])
     }
 
     @Test
