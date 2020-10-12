@@ -63,10 +63,6 @@ class ContactGroupsViewModel @Inject constructor(
     val contactGroupEmailsError: LiveData<Event<String>>
         get() = _contactGroupEmailsError
 
-    fun reloadDependencies() {
-        contactGroupsRepository.reloadDependencies()
-    }
-
     @SuppressLint("CheckResult")
     fun watchForJoins(schedulers: Scheduler) {
         contactGroupsRepository.getJoins()
