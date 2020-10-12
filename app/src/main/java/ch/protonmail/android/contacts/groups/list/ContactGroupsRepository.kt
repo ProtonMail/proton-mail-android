@@ -55,6 +55,15 @@ class ContactGroupsRepository @Inject constructor(
         return getContactGroupsFromDB(filter)
     }
 
+    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
+        return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
+            .toObservable()
+    }
+
+    fun saveContactGroup(contactLabel: ContactLabel) {
+        TODO("Not yet implemented")
+    }
+
     private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
         return api.fetchContactGroupsAsObservable().doOnNext {
             contactsDatabase.clearContactGroupsLabelsTable()
@@ -88,14 +97,5 @@ class ContactGroupsRepository @Inject constructor(
                     .toFlowable()
             }
             .toObservable()
-    }
-
-    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
-        return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
-            .toObservable()
-    }
-
-    fun saveContactGroup(contactLabel: ContactLabel) {
-        TODO("Not yet implemented")
     }
 }
