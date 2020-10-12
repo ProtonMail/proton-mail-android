@@ -114,16 +114,21 @@ class NetworkSnackBarUtil @Inject constructor() {
 
     fun isNoConnectionShown() = noConnectionSnackBar?.isShownOrQueued ?: false
 
+    fun isCheckingConnectionShown() = checkingConnectionSnackBar?.isShownOrQueued ?: false
+
     fun hideNoConnectionSnackBar() {
         noConnectionSnackBar?.dismiss()
         noConnectionSnackBar = null
     }
 
-    fun isCheckingConnectionShown() = checkingConnectionSnackBar?.isShownOrQueued ?: false
-
     fun hideCheckingConnectionSnackBar() {
         checkingConnectionSnackBar?.dismiss()
         checkingConnectionSnackBar = null
+    }
+
+    fun hideAllSnackBars() {
+        hideNoConnectionSnackBar()
+        hideCheckingConnectionSnackBar()
     }
 
     private fun showNoConnectionTroubleshootDialog(

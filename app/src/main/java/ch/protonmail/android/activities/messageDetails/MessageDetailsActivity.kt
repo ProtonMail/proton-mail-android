@@ -249,6 +249,11 @@ internal class MessageDetailsActivity :
         viewModel.checkConnectivity()
     }
 
+    override fun onPause() {
+        networkSnackBarUtil.hideAllSnackBars()
+        super.onPause()
+    }
+
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val webView = v as WebView

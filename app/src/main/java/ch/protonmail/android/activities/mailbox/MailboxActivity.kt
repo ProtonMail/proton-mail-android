@@ -867,6 +867,7 @@ class MailboxActivity :
             unregisterReceiver(showDraftedSnackBroadcastReceiver)
             unregisterReceiver(humanVerificationBroadcastReceiver)
         }
+        networkSnackBarUtil.hideAllSnackBars()
         super.onPause()
     }
 

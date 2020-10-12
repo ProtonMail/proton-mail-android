@@ -97,7 +97,6 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     }
 
     protected fun hideNoConnSnack() {
-        networkSnackBarUtil.hideCheckingConnectionSnackBar()
-        networkSnackBarUtil.hideNoConnectionSnackBar()
+        networkSnackBarUtil.hideAllSnackBars()
     }
 }
