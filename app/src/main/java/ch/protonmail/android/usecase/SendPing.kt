@@ -26,6 +26,8 @@ import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.PingWorker
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -49,6 +51,11 @@ class SendPing @Inject constructor(
         return liveData {
             emit(isInternetAvailable())
             emitSource(getPingState(workerEnqueuer.enqueue()))
+
+            // get system connection events
+            connectivityManager.isConnectionAvailableFlow()
+                .filter { !it } // only disconnections
+                .collect { emit(it) }
         }
     }
 

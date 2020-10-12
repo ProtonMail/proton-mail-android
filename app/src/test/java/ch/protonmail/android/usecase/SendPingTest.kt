@@ -24,12 +24,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.utils.captureValues
 import ch.protonmail.android.worker.PingWorker
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.take
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Rule
@@ -67,8 +71,10 @@ class SendPingTest : CoroutinesTest {
         workInfoLiveData.value = mockk {
             every { state } returns WorkInfo.State.SUCCEEDED
         }
+        val connectionsFlow = flow<Boolean> {}
         every { workEnqueuer.enqueue() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
         val observer = mockk<Observer<Boolean>>(relaxed = true)
         val expected = true
 
@@ -91,8 +97,10 @@ class SendPingTest : CoroutinesTest {
         workInfoLiveData.value = mockk {
             every { state } returns WorkInfo.State.FAILED
         }
+        val connectionsFlow = flow<Boolean> {}
         every { workEnqueuer.enqueue() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
 
         val observer = mockk<Observer<Boolean>>(relaxed = true)
         val expected = false
@@ -116,8 +124,10 @@ class SendPingTest : CoroutinesTest {
         workInfoLiveData.value = mockk {
             every { state } returns WorkInfo.State.RUNNING
         }
+        val connectionsFlow = flow<Boolean> {}
         every { workEnqueuer.enqueue() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
 
         val observer = mockk<Observer<Boolean>>(relaxed = true)
 
@@ -129,5 +139,53 @@ class SendPingTest : CoroutinesTest {
         assertNotNull(response.value)
         verify(exactly = 1) { observer.onChanged(isInternetAvailable) }
         assertEquals(isInternetAvailable, response.value)
+    }
+
+    @Test
+    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionDrops() {
+        // given
+        val workInfoLiveData = MutableLiveData<WorkInfo>()
+        val isInternetAvailable = false
+        val newConnectionEvent = false
+        workInfoLiveData.value = mockk {
+            every { state } returns WorkInfo.State.SUCCEEDED
+        }
+        val connectionsFlow = flowOf(newConnectionEvent).take(1)
+        every { workEnqueuer.enqueue() } returns workInfoLiveData
+        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
+        val expectedWorkerState = true
+
+        // when
+        val response = sendPingUseCase()
+
+        // then
+        response.captureValues {
+            assertEquals(listOf(isInternetAvailable, expectedWorkerState, newConnectionEvent), values)
+        }
+    }
+
+    @Test
+    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionEventIsNotTakenIntoAccount() {
+        // given
+        val workInfoLiveData = MutableLiveData<WorkInfo>()
+        val isInternetAvailable = false
+        val newConnectionEvent = true
+        workInfoLiveData.value = mockk {
+            every { state } returns WorkInfo.State.SUCCEEDED
+        }
+        val connectionsFlow = flowOf(newConnectionEvent).take(1)
+        every { workEnqueuer.enqueue() } returns workInfoLiveData
+        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
+        val expectedWorkerState = true
+
+        // when
+        val response = sendPingUseCase()
+
+        // then
+        response.captureValues {
+            assertEquals(listOf(isInternetAvailable, expectedWorkerState), values)
+        }
     }
 }
