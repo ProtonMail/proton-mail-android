@@ -80,7 +80,7 @@ abstract class BaseConnectivityActivity : BaseActivity() {
             user,
             callback,
             { listener?.onClick(view) ?: onRetryDefaultListener() },
-            message
+            messageRes = message
         )
         noConnectivitySnack.show()
 

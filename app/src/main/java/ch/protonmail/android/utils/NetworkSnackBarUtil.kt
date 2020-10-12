@@ -28,6 +28,7 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
@@ -55,6 +56,7 @@ class NetworkSnackBarUtil @Inject constructor() {
      * @param user current user
      * @param netConfiguratorCallback
      * @param onRetryClick retry click listener
+     * @param anchorViewId optional view to which snackBar should be anchored above
      * @param messageRes optional custom message title resource
      * @param isTopSnackBar optional flag forcing snackBar to the top
      */
@@ -63,11 +65,13 @@ class NetworkSnackBarUtil @Inject constructor() {
         user: User,
         netConfiguratorCallback: INetworkConfiguratorCallback,
         onRetryClick: (() -> Unit)?,
+        @IdRes anchorViewId: Int? = null,
         @StringRes messageRes: Int = R.string.no_connectivity_detected_troubleshoot,
         isTopSnackBar: Boolean = false
     ): Snackbar {
         val snackBar = noConnectionSnackBar
             ?: Snackbar.make(parentView, messageRes, Snackbar.LENGTH_INDEFINITE).apply {
+                anchorViewId?.let { setAnchorView(it) }
                 setAction(context.getString(R.string.retry)) { onRetryClick?.invoke() }
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
                 view.apply {
@@ -91,9 +95,11 @@ class NetworkSnackBarUtil @Inject constructor() {
      * Provides ready [Snackbar] for displaying checking connection message with an appropriate styling.
      *
      * @param parentView view to which the snackar should be attached, e.g. findViewById(android.R.id.content)
+     * @param anchorViewId optional view to which snackBar should be anchored above
      */
     fun getCheckingConnectionSnackBar(
-        parentView: View
+        parentView: View,
+        @IdRes anchorViewId: Int? = null
     ): Snackbar {
         val snackBar = checkingConnectionSnackBar ?: Snackbar.make(
             parentView,
@@ -101,6 +107,7 @@ class NetworkSnackBarUtil @Inject constructor() {
             Snackbar.LENGTH_LONG
         ).apply {
             view.apply {
+                anchorViewId?.let { setAnchorView(it) }
                 setBackgroundColor(ContextCompat.getColor(context, R.color.blue))
                 findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
                     setTextColor(Color.WHITE)

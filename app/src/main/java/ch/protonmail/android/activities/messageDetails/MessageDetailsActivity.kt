@@ -458,7 +458,8 @@ internal class MessageDetailsActivity :
                 mSnackLayout,
                 mUserManager.user,
                 this,
-                { onConnectivityCheckRetry() }
+                { onConnectivityCheckRetry() },
+                anchorViewId = R.id.action_buttons
             ).show()
         }
         invalidateOptionsMenu()
@@ -467,7 +468,8 @@ internal class MessageDetailsActivity :
     private fun onConnectivityCheckRetry() {
         viewModel.fetchMessageDetails(false)
         networkSnackBarUtil.getCheckingConnectionSnackBar(
-            mSnackLayout
+            mSnackLayout,
+            R.id.action_buttons
         ).show()
 
         viewModel.checkConnectivityDelayed()

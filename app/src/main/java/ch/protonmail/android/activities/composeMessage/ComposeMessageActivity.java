@@ -800,7 +800,7 @@ public class ComposeMessageActivity
     @NotNull
     private Function0<Unit> onConnectivityCheckRetry() {
         return () -> {
-            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout).show();
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
             composeMessageViewModel.checkConnectivityDelayed();
             return null;
         };
@@ -815,6 +815,7 @@ public class ComposeMessageActivity
                         mUserManager.getUser(),
                         this,
                         onConnectivityCheckRetry(),
+                        null,
                         R.string.no_connectivity_detected_troubleshoot,
                         false
                 ).show();
