@@ -25,8 +25,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.core.NetworkConnectivityManager
-import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.delay
@@ -39,9 +37,7 @@ import javax.inject.Inject
  */
 class ConnectivityBaseViewModel @Inject constructor(
     private val verifyConnection: VerifyConnection,
-    private val connectivityManager: NetworkConnectivityManager,
-    private val networkConfigurator: NetworkConfigurator,
-    private val userManager: UserManager
+    private val networkConfigurator: NetworkConfigurator
 ) : ViewModel() {
 
     private val verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
@@ -65,13 +61,5 @@ class ConnectivityBaseViewModel @Inject constructor(
         }
     }
 
-    private fun retryWithDoh() {
-        if (connectivityManager.isInternetConnectionPossible()) {
-            val isThirdPartyConnectionsEnabled = userManager.user.allowSecureConnectionsViaThirdParties
-            if (isThirdPartyConnectionsEnabled) {
-                Timber.d("Third party connections enabled, attempting DoH...")
-                networkConfigurator.refreshDomainsAsync()
-            }
-        }
-    }
+    private fun retryWithDoh() = networkConfigurator.tryRetryWithDoh()
 }

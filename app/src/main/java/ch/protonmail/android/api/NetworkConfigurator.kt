@@ -22,7 +22,9 @@ import android.content.SharedPreferences
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
 import ch.protonmail.android.api.models.doh.ProxyList
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.di.DohProviders
@@ -50,7 +52,9 @@ private const val TAG = "NetworkConfigurator"
 class NetworkConfigurator @Inject constructor(
     @DohProviders private val dohProviders: Array<DnsOverHttpsProviderRFC8484>,
     @DefaultSharedPreferences private val prefs: SharedPreferences,
-    @AppCoroutineScope private val scope: CoroutineScope
+    @AppCoroutineScope private val scope: CoroutineScope,
+    private val userManager: UserManager,
+    private val connectivityManager: NetworkConnectivityManager,
 ) {
 
     lateinit var networkSwitcher: INetworkSwitcher
@@ -64,9 +68,19 @@ class NetworkConfigurator @Inject constructor(
         }
     }
 
+    fun tryRetryWithDoh() {
+        if (connectivityManager.isInternetConnectionPossible()) {
+            val isThirdPartyConnectionsEnabled = userManager.user.allowSecureConnectionsViaThirdParties
+            if (isThirdPartyConnectionsEnabled) {
+                Timber.d("Third party connections enabled, attempting DoH...")
+                refreshDomainsAsync()
+            }
+        }
+    }
+
     private suspend fun queryDomains() {
         val freshAlternativeUrls = mutableListOf<String>()
-        val user = ProtonMailApplication.getApplication().userManager.user
+        val user = userManager.user
         if (!user.allowSecureConnectionsViaThirdParties) {
             networkSwitcher.reconfigureProxy(null) // force switch to old proxy
             user.usingDefaultApi = true
