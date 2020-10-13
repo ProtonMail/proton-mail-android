@@ -18,16 +18,15 @@
  */
 package ch.protonmail.android.contacts.groups.edit
 
-import android.util.Log
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.jobs.CreateContactGroupJob
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
@@ -42,18 +41,17 @@ class ContactGroupEditCreateRepository @Inject constructor(
     val jobManager: JobManager,
     val workManager: WorkManager,
     val api: ProtonMailApiManager,
-    private val databaseProvider: DatabaseProvider,
+    private val contactsDao: ContactsDao,
     private val contactLabelFactory: ContactLabelFactory
 ) {
-    private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupEditCreateRepository"); databaseProvider.provideContactsDao() }
 
     fun editContactGroup(contactLabel: ContactLabel): Completable {
         val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
         return api.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
             .doOnComplete {
-                val joins = contactsDatabase.fetchJoins(contactLabel.ID)
-                contactsDatabase.saveContactGroupLabel(contactLabel)
-                contactsDatabase.saveContactEmailContactLabel(joins)
+                val joins = contactsDao.fetchJoins(contactLabel.ID)
+                contactsDao.saveContactGroupLabel(contactLabel)
+                contactsDao.saveContactEmailContactLabel(joins)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -64,7 +62,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     }
 
     fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
-        return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
+        return contactsDao.findAllContactsEmailsByContactGroupAsyncObservable(id)
             .toObservable()
     }
 
@@ -79,7 +77,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                 for (contactEmail in membersList) {
                     list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
-                contactsDatabase.deleteContactEmailContactLabel(list)
+                contactsDao.deleteContactEmailContactLabel(list)
             }.doOnError { throwable ->
                 if (throwable is IOException) {
                     RemoveMembersFromContactGroupWorker.Enqueuer(workManager).enqueue(
@@ -103,7 +101,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                     list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
                 getContactGroupEmails(contactGroupId).test().values()
-                contactsDatabase.saveContactEmailContactLabel(list)
+                contactsDao.saveContactEmailContactLabel(list)
             }.doOnError { throwable ->
                 if (throwable is IOException) {
                     jobManager.addJobInBackground(SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList))
@@ -115,7 +113,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
         val contactLabelConverterFactory = ContactLabelFactory()
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
         return api.createLabelCompletable(labelBody.labelBody)
-            .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
+            .doOnSuccess { label -> contactsDao.saveContactGroupLabel(label) }
             .doOnError { throwable ->
                 if (throwable is IOException) {
                     jobManager.addJobInBackground(CreateContactGroupJob(contactLabel.name, contactLabel.color, contactLabel.display,

@@ -21,9 +21,9 @@ package ch.protonmail.android.contacts.groups.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.InjectMockKs
@@ -44,7 +44,7 @@ class ContactGroupEditCreateRepositoryTest {
     private lateinit var apiManager: ProtonMailApiManager
 
     @RelaxedMockK
-    private lateinit var databaseProvider: DatabaseProvider
+    private lateinit var contactsDao: ContactsDao
    
     @RelaxedMockK
     private lateinit var contactLabelFactory: ContactLabelFactory
