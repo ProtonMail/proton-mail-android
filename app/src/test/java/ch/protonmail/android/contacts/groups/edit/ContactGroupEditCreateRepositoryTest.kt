@@ -23,6 +23,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
+import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import com.birbit.android.jobqueue.JobManager
@@ -31,6 +32,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
+import io.mockk.verifyOrder
+import io.reactivex.Completable
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -47,7 +50,7 @@ class ContactGroupEditCreateRepositoryTest {
 
     @RelaxedMockK
     private lateinit var contactsDao: ContactsDao
-   
+
     @RelaxedMockK
     private lateinit var contactLabelFactory: ContactLabelFactory
 
@@ -78,6 +81,24 @@ class ContactGroupEditCreateRepositoryTest {
         repository.editContactGroup(contactLabel)
 
         verify { apiManager.updateLabelCompletable(contactGroupId, updateLabelRequest.labelBody) }
+    }
+
+    @Test
+    fun `when editContactGroup succeeds then save contact group and contact email to the DB`() {
+        val contactGroupId = "contact-group-id"
+        val contactLabel = ContactLabel(contactGroupId, "name", "color")
+        val emailLabelJoinedList = listOf(ContactEmailContactLabelJoin("emailId", "labelId"))
+        every { apiManager.updateLabelCompletable(any(), any()) } returns Completable.complete()
+        every { contactsDao.fetchJoins(contactGroupId) } returns emailLabelJoinedList
+
+        val testObserver = repository.editContactGroup(contactLabel).test()
+
+        testObserver.awaitTerminalEvent()
+        verifyOrder {
+            contactsDao.fetchJoins(contactGroupId)
+            contactsDao.saveContactGroupLabel(contactLabel)
+            contactsDao.saveContactEmailContactLabel(emailLabelJoinedList)
+        }
     }
 
 }
