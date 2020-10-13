@@ -203,12 +203,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     }
 
     @Override
-    protected void onPause() {
-        networkSnackBarUtil.hideAllSnackBars();
-        super.onPause();
-    }
-
-    @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
         if (fragment instanceof BillingFragment) {
             billingFragment = (BillingFragment) fragment;

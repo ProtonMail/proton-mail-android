@@ -711,7 +711,6 @@ class MailboxActivity :
     }
 
     private fun retryConnection() {
-        Timber.v("retryConnection")
         mailboxViewModel.checkConnectivity()
         syncUUID = UUID.randomUUID().toString()
         if (mNetworkUtil.isConnected()) {

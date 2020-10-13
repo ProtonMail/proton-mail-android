@@ -147,12 +147,6 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void onPause() {
-        networkSnackBarUtil.hideAllSnackBars();
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         if (!mIsUnRegistered) {

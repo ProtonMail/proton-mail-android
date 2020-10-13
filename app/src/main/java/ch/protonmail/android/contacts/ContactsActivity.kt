@@ -171,11 +171,6 @@ class ContactsActivity :
         contactsViewModel.checkConnectivity()
     }
 
-    override fun onPause() {
-        networkSnackBarUtil.hideAllSnackBars()
-        super.onPause()
-    }
-
     override fun onStart() {
         super.onStart()
         mApp.bus.register(this)

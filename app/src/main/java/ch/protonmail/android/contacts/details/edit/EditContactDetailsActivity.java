@@ -320,12 +320,6 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     @Override
-    protected void onPause() {
-        networkSnackBarUtil.hideAllSnackBars();
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         ProtonMailApplication.getApplication().getBus().unregister(this);

@@ -438,9 +438,6 @@ public class ComposeMessageActivity
 
         mAddressesSpinner.setSelection(mSelectedAddressPosition);
 
-        // TODO:throw new IllegalStateException("TODO Handle the following post ping ");
-        //getPingHandler().postDelayed(getPingRunnable(), 0);
-
         mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
         composeMessageViewModel.startGetAvailableDomainsJob();
@@ -1035,7 +1032,6 @@ public class ComposeMessageActivity
 
     @Override
     protected void onPause() {
-        networkSnackBarUtil.hideAllSnackBars();
         UiUtil.hideKeyboard(this);
         super.onPause();
     }

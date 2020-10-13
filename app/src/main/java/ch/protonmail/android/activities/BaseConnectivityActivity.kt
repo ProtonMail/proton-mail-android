@@ -32,4 +32,8 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     @BindView(R.id.layout_no_connectivity_info)
     protected lateinit var mSnackLayout: View
 
+    override fun onPause() {
+        networkSnackBarUtil.hideAllSnackBars()
+        super.onPause()
+    }
 }

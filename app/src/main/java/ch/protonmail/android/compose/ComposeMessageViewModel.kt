@@ -51,7 +51,6 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.FetchPublicKeysJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
-import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -64,7 +63,6 @@ import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.HashMap
@@ -285,7 +283,8 @@ class ComposeMessageViewModel @Inject constructor(
                 Observable.just(it)
             }
             .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main()).subscribe(
+            .observeOn(ThreadSchedulers.main())
+            .subscribe(
                 {
                     _data = it
                     handleContactGroupsResult()

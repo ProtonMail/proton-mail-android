@@ -154,11 +154,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         viewModel.checkConnectivity()
     }
 
-    override fun onPause() {
-        networkSnackBarUtil.hideAllSnackBars()
-        super.onPause()
-    }
-
     override fun onStop() {
         super.onStop()
         ProtonMailApplication.getApplication().bus.unregister(this)

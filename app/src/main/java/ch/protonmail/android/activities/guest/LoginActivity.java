@@ -163,12 +163,6 @@ public class LoginActivity extends BaseLoginActivity {
     }
 
     @Override
-    protected void onPause() {
-        networkSnackBarUtil.hideAllSnackBars();
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         ProtonMailApplication.getApplication().getBus().unregister(this);
@@ -216,7 +210,6 @@ public class LoginActivity extends BaseLoginActivity {
     private Function0<Unit> onConnectivityCheckRetry() {
         return () -> {
             networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
-            // TODO: Create a view Model for this class
             viewModel.checkConnectivityDelayed();
             onSignIn();
             return null;
