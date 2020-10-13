@@ -18,17 +18,19 @@
  */
 package ch.protonmail.android.api.models.contacts.receive
 
-import ch.protonmail.android.api.models.factories.*
+import ch.protonmail.android.api.models.factories.IConverterFactory
+import ch.protonmail.android.api.models.factories.makeInt
+import ch.protonmail.android.api.models.factories.parseBoolean
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.extensions.notNull
 import ch.protonmail.android.utils.extensions.notNullOrEmpty
+import javax.inject.Inject
 
-/**
- * Created by kadrikj on 8/21/18. */
-class ContactLabelFactory : IConverterFactory<ServerLabel, ContactLabel> {
+class ContactLabelFactory @Inject constructor() : IConverterFactory<ServerLabel, ContactLabel> {
+
     override fun createServerObjectFromDBObject(dbObject: ContactLabel): ServerLabel {
         val id = dbObject.ID
         val name = dbObject.name.notNullOrEmpty(Fields.Label.NAME)

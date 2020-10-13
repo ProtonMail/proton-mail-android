@@ -37,19 +37,18 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import java.io.IOException
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class ContactGroupEditCreateRepository @Inject constructor(
     val jobManager: JobManager,
     val workManager: WorkManager,
     val api: ProtonMailApiManager,
-    private val databaseProvider: DatabaseProvider
+    private val databaseProvider: DatabaseProvider,
+    private val contactLabelFactory: ContactLabelFactory
 ) {
     private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupEditCreateRepository"); databaseProvider.provideContactsDao() }
 
     fun editContactGroup(contactLabel: ContactLabel): Completable {
-        val contactLabelConverterFactory = ContactLabelFactory()
-        val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
+        val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
         return api.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
             .doOnComplete {
                 val joins = contactsDatabase.fetchJoins(contactLabel.ID)
