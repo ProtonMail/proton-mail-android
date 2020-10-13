@@ -40,13 +40,13 @@ class ContactLabelFactory @Inject constructor() : IConverterFactory<ServerLabel,
         val exclusive = dbObject.exclusive.notNull(Fields.Label.EXCLUSIVE).makeInt()
         val type = Constants.LABEL_TYPE_CONTACT_GROUPS
         return ServerLabel(
-                ID = id,
-                name = name,
-                color = color,
-                display = display,
-                order = order,
-                exclusive = exclusive,
-                type = type)
+            ID = id,
+            name = name,
+            color = color,
+            display = display,
+            order = order,
+            exclusive = exclusive,
+            type = type)
     }
 
     override fun createDBObjectFromServerObject(serverObject: ServerLabel): ContactLabel {

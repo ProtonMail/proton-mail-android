@@ -40,14 +40,14 @@ import javax.inject.Inject
 class ContactGroupEditCreateRepository @Inject constructor(
     val jobManager: JobManager,
     val workManager: WorkManager,
-    val api: ProtonMailApiManager,
+    val apiManager: ProtonMailApiManager,
     private val contactsDao: ContactsDao,
     private val contactLabelFactory: ContactLabelFactory
 ) {
 
     fun editContactGroup(contactLabel: ContactLabel): Completable {
         val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
-        return api.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
+        return apiManager.updateLabelCompletable(contactLabel.ID, labelBody.labelBody)
             .doOnComplete {
                 val joins = contactsDao.fetchJoins(contactLabel.ID)
                 contactsDao.saveContactGroupLabel(contactLabel)
@@ -71,7 +71,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             return Completable.complete()
         }
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
-        return api.unlabelContactEmailsCompletable(labelContactsBody)
+        return apiManager.unlabelContactEmailsCompletable(labelContactsBody)
             .doOnComplete {
                 val list = ArrayList<ContactEmailContactLabelJoin>()
                 for (contactEmail in membersList) {
@@ -94,7 +94,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             return Completable.complete()
         }
         val labelContactsBody = LabelContactsBody(contactGroupId, membersList)
-        return api.labelContacts(labelContactsBody)
+        return apiManager.labelContacts(labelContactsBody)
             .doOnComplete {
                 val list = ArrayList<ContactEmailContactLabelJoin>()
                 for (contactEmail in membersList) {
@@ -112,7 +112,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
         val contactLabelConverterFactory = ContactLabelFactory()
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
-        return api.createLabelCompletable(labelBody.labelBody)
+        return apiManager.createLabelCompletable(labelBody.labelBody)
             .doOnSuccess { label -> contactsDao.saveContactGroupLabel(label) }
             .doOnError { throwable ->
                 if (throwable is IOException) {
