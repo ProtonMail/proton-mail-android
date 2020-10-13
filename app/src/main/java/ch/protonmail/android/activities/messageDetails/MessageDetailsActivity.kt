@@ -451,17 +451,15 @@ internal class MessageDetailsActivity :
     }
 
     private fun showNoConnSnackExtended() {
-        if (!networkSnackBarUtil.isNoConnectionShown()) {
-            Timber.v("Show no connection")
-            networkSnackBarUtil.hideCheckingConnectionSnackBar()
-            networkSnackBarUtil.getNoConnectionSnackBar(
-                mSnackLayout,
-                mUserManager.user,
-                this,
-                { onConnectivityCheckRetry() },
-                anchorViewId = R.id.action_buttons
-            ).show()
-        }
+        Timber.v("Show no connection")
+        networkSnackBarUtil.hideAllSnackBars()
+        networkSnackBarUtil.getNoConnectionSnackBar(
+            mSnackLayout,
+            mUserManager.user,
+            this,
+            { onConnectivityCheckRetry() },
+            anchorViewId = R.id.action_buttons
+        ).show()
         invalidateOptionsMenu()
     }
 
@@ -476,7 +474,7 @@ internal class MessageDetailsActivity :
     }
 
     private fun hideNoConnSnackExtended() {
-        hideNoConnSnack()
+        networkSnackBarUtil.hideNoConnectionSnackBar()
         invalidateOptionsMenu()
     }
 

@@ -19,12 +19,9 @@
 package ch.protonmail.android.activities
 
 import android.view.View
-import androidx.annotation.StringRes
 import butterknife.BindView
 import ch.protonmail.android.R
-import ch.protonmail.android.utils.INetworkConfiguratorCallback
 import ch.protonmail.android.utils.NetworkSnackBarUtil
-import timber.log.Timber
 import javax.inject.Inject
 
 abstract class BaseConnectivityActivity : BaseActivity() {
@@ -32,71 +29,7 @@ abstract class BaseConnectivityActivity : BaseActivity() {
     @Inject
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
 
-//    @Inject
-//    lateinit var sendPing: VerifyConnection
-
     @BindView(R.id.layout_no_connectivity_info)
     protected lateinit var mSnackLayout: View
 
-//    protected var pingHandler = Handler()
-//    protected var pingRunnable: Runnable = Runnable { sendPing() }
-
-    fun onRetryDefaultListener() {
-        Timber.v("onRetryDefaultListener")
-        networkSnackBarUtil.getCheckingConnectionSnackBar(
-            mSnackLayout
-        ).show()
-        networkSnackBarUtil.hideCheckingConnectionSnackBar()
-
-//            pingHandler.removeCallbacks(pingRunnable)
-//            pingHandler.postDelayed(pingRunnable, 3000)
-
-        retryWithDoh()
-    }
-
-    protected fun retryWithDoh() {
-        if (mNetworkUtil.isConnected()) {
-            val thirdPartyConnectionsEnabled = mUserManager.user.allowSecureConnectionsViaThirdParties
-            if (thirdPartyConnectionsEnabled) {
-                Timber.d("Third party connections enabled, attempting DoH...")
-                networkConfigurator.refreshDomainsAsync() // refreshDomains(false) // switch to new here
-            }
-        }
-    }
-
-    @JvmOverloads
-    @Deprecated("Use [NetworkSnackBarUtil] instead")
-    protected fun showNoConnSnack(
-        listener: View.OnClickListener? = null,
-        @StringRes message: Int = R.string.no_connectivity_detected_troubleshoot,
-        view: View = mSnackLayout,
-        callback: INetworkConfiguratorCallback
-    ) {
-        Timber.d("showNoConnSnack listener:$listener")
-        listener?.onClick(view)
-        val user = mUserManager.user
-        val noConnectivitySnack = networkSnackBarUtil.getNoConnectionSnackBar(
-            view,
-            user,
-            callback,
-            { listener?.onClick(view) ?: onRetryDefaultListener() },
-            messageRes = message
-        )
-        noConnectivitySnack.show()
-
-//        val contentLayout = (noConnectivitySnack.view as ViewGroup).getChildAt(0) as SnackbarContentLayout
-//        val button: TextView = contentLayout.actionView
-        networkSnackBarUtil.hideCheckingConnectionSnackBar()
-
-//        if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {
-//            window.decorView.postDelayed(
-//                { button.callOnClick() },
-//                500
-//            )
-//        }
-    }
-
-    protected fun hideNoConnSnack() {
-        networkSnackBarUtil.hideAllSnackBars()
-    }
 }

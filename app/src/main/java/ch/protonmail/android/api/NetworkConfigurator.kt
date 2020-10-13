@@ -28,7 +28,6 @@ import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.di.DohProviders
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
@@ -57,7 +56,7 @@ class NetworkConfigurator @Inject constructor(
     lateinit var networkSwitcher: INetworkSwitcher
     private var isRunning = false
 
-    fun refreshDomainsAsync() = scope.async {
+    fun refreshDomainsAsync() = scope.launch {
         if (!isRunning) {
             isRunning = true
             callback?.startDohSignal()

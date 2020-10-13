@@ -115,13 +115,8 @@ class NetworkSnackBarUtil @Inject constructor() {
             }
         }
         checkingConnectionSnackBar = snackBar
-        Timber.d("getCheckingConnectionSnackBar $snackBar $parentView")
         return snackBar
     }
-
-    fun isNoConnectionShown() = noConnectionSnackBar?.isShownOrQueued ?: false
-
-    fun isCheckingConnectionShown() = checkingConnectionSnackBar?.isShownOrQueued ?: false
 
     fun hideNoConnectionSnackBar() {
         noConnectionSnackBar?.dismiss()

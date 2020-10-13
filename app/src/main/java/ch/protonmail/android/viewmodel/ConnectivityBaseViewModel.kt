@@ -24,6 +24,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.delay
@@ -35,17 +38,20 @@ import javax.inject.Inject
  * Base view model for activities that require connectivity check logic.
  */
 class ConnectivityBaseViewModel @Inject constructor(
-    verifyConnection: VerifyConnection
+    private val verifyConnection: VerifyConnection,
+    private val connectivityManager: NetworkConnectivityManager,
+    private val networkConfigurator: NetworkConfigurator,
+    private val userManager: UserManager
 ) : ViewModel() {
 
-    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
+    private val verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val hasConnectivity: LiveData<Boolean> =
-        _verifyConnectionTrigger.switchMap { verifyConnection() }
+        verifyConnectionTrigger.switchMap { verifyConnection() }
 
     fun checkConnectivity() {
         Timber.v("checkConnectivity launch ping")
-        _verifyConnectionTrigger.value = Unit
+        verifyConnectionTrigger.value = Unit
     }
 
     /**
@@ -54,7 +60,18 @@ class ConnectivityBaseViewModel @Inject constructor(
     fun checkConnectivityDelayed() {
         viewModelScope.launch {
             delay(NETWORK_CHECK_DELAY)
+            retryWithDoh()
             checkConnectivity()
+        }
+    }
+
+    private fun retryWithDoh() {
+        if (connectivityManager.isInternetConnectionPossible()) {
+            val isThirdPartyConnectionsEnabled = userManager.user.allowSecureConnectionsViaThirdParties
+            if (isThirdPartyConnectionsEnabled) {
+                Timber.d("Third party connections enabled, attempting DoH...")
+                networkConfigurator.refreshDomainsAsync()
+            }
         }
     }
 }
