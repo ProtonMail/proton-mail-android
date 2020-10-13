@@ -71,7 +71,6 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.AttachmentFailedEvent
-import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
@@ -83,10 +82,13 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
+import timber.log.Timber
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.inject.Inject
 
 // region constants
 const val EXTRA_CURRENT_MAILBOX_LOCATION = "Extra_Current_Mailbox_Location"
@@ -94,6 +96,9 @@ const val EXTRA_CURRENT_MAILBOX_LABEL_ID = "Extra_Current_Mailbox_Label_ID"
 // endregion
 
 abstract class BaseSettingsActivity : BaseConnectivityActivity() {
+
+    @Inject
+    lateinit var viewModel: ConnectivityBaseViewModel
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -142,15 +147,21 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         ProtonMailApplication.getApplication().bus.register(this)
     }
 
-    override fun onStop() {
-        super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
-    }
-
     override fun onResume() {
         super.onResume()
         user = mUserManager.user
         settingsAdapter.notifyDataSetChanged()
+        viewModel.checkConnectivity()
+    }
+
+    override fun onPause() {
+        networkSnackBarUtil.hideAllSnackBars()
+        super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ProtonMailApplication.getApplication().bus.unregister(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -187,7 +198,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
         user = mUserManager.user
 
-        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!) user.defaultAddress.email else user.getDisplayNameForAddress(user.addressId)!!
+        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!)
+            user.defaultAddress.email
+        else
+            user.getDisplayNameForAddress(user.addressId)!!
+
+        viewModel.hasConnectivity.observe(
+            this,
+            { onConnectivityEvent(it) }
+        )
     }
 
     override fun setContentView(layoutResID: Int) {
@@ -454,15 +473,26 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         }
     }
 
-
-    @Subscribe
-    fun onConnectivityEvent(event: ConnectivityEvent) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(callback = this)
+    private fun onConnectivityEvent(hasConnection: Boolean) {
+        Timber.v("onConnectivityEvent hasConnection:$hasConnection")
+        if (!hasConnection) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                mSnackLayout,
+                mUserManager.user,
+                this,
+                { onConnectivityCheckRetry() }
+            ).show()
         } else {
-            mPingHasConnection = true
-            hideNoConnSnack()
+            networkSnackBarUtil.hideAllSnackBars()
         }
+    }
+
+    private fun onConnectivityCheckRetry() {
+        networkSnackBarUtil.getCheckingConnectionSnackBar(
+            mSnackLayout
+        ).show()
+
+        viewModel.checkConnectivityDelayed()
     }
 
     @Subscribe

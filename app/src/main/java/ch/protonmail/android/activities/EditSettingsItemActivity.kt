@@ -55,6 +55,7 @@ import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.views.CustomFontEditText
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
 
 // region constants
@@ -75,6 +76,7 @@ enum class SettingsItem {
     BACKGROUND_SYNC
 }
 
+@AndroidEntryPoint
 class EditSettingsItemActivity : BaseSettingsActivity() {
 
     private var settingsItemType: SettingsItem = SettingsItem.DISPLAY_NAME_AND_SIGNATURE

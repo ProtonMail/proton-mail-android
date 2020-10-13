@@ -165,7 +165,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
-    val hasConnection: LiveData<Boolean> = _verifyConnectionTrigger.switchMap {
+    val hasConnectivity: LiveData<Boolean> = _verifyConnectionTrigger.switchMap {
         verifyConnection().map { onConnectivityEvent(it) }
     }
 

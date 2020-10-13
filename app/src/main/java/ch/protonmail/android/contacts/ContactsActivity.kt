@@ -145,7 +145,7 @@ class ContactsActivity :
             ::onContactsFetchedEvent
         )
 
-        contactsViewModel.hasConnection.observe(
+        contactsViewModel.hasConnectivity.observe(
             this,
             { onConnectivityEvent(it) }
         )
@@ -204,7 +204,7 @@ class ContactsActivity :
     }
 
     private fun onConnectivityEvent(hasConnection: Boolean) {
-        Timber.v("onConnectivityEvent")
+        Timber.v("onConnectivityEvent hasConnection:$hasConnection")
         networkSnackBarUtil.hideAllSnackBars()
         if (!hasConnection) {
             networkSnackBarUtil.getNoConnectionSnackBar(

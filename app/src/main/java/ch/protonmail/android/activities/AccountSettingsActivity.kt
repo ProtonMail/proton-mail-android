@@ -30,11 +30,13 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import java.util.Locale
 
+@AndroidEntryPoint
 class AccountSettingsActivity : BaseSettingsActivity() {
 
     override fun getLayoutId(): Int = R.layout.activity_settings

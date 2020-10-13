@@ -29,7 +29,9 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingsActivity : BaseSettingsActivity() {
 
     override fun getLayoutId(): Int = R.layout.activity_settings

@@ -481,7 +481,7 @@ internal class MessageDetailsActivity :
     }
 
     private fun listenForConnectivityEvent() {
-        viewModel.hasConnection.observe(
+        viewModel.hasConnectivity.observe(
             this,
             { isConnectionActive ->
                 Timber.v("isConnectionActive:$isConnectionActive")

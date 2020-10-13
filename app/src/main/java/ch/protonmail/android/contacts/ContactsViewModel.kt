@@ -44,7 +44,7 @@ class ContactsViewModel @ViewModelInject constructor(
     val fetchContactsResult: LiveData<Boolean> =
         fetchContactsTrigger.switchMap { fetchContactsData() }
 
-    val hasConnection: LiveData<Boolean> = _verifyConnectionTrigger
+    val hasConnectivity: LiveData<Boolean> = _verifyConnectionTrigger
         .switchMap { verifyConnection() }
 
     fun isPaidUser(): Boolean = userManager.user.isPaidUser
