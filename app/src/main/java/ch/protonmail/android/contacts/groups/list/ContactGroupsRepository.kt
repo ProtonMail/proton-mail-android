@@ -53,7 +53,7 @@ class ContactGroupsRepository @Inject constructor(
     }
 
     fun saveContactGroup(contactLabel: ContactLabel) {
-        TODO("Not yet implemented")
+        contactsDao.saveContactGroupLabel(contactLabel)
     }
 
     private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {

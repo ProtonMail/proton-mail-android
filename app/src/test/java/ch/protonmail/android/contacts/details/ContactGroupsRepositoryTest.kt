@@ -28,6 +28,7 @@ import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.verify
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
@@ -103,5 +104,15 @@ class ContactGroupsRepositoryTest {
         testObserver.awaitTerminalEvent()
         testObserver.assertValue(listOf(label1, label2, label3))
         testObserver.assertError(IOException::class.java)
+    }
+
+    @Test
+    fun saveContactGroupStoresGivenContactGroupInDatabase() {
+        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, contactsDao)
+        val contactGroup = ContactLabel("Id", "name", "color")
+
+        contactGroupsRepository.saveContactGroup(contactGroup)
+
+        verify { contactsDao.saveContactGroupLabel(contactGroup) }
     }
 }
