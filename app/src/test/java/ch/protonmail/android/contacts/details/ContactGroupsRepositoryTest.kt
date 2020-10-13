@@ -22,17 +22,16 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.observers.TestObserver
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -43,6 +42,7 @@ class ContactGroupsRepositoryTest {
 
     @get:Rule
     val instantTaskExecutionRule = InstantTaskExecutorRule()
+
     @get:Rule
     val testSchedulerRule = TestSchedulerRule()
 
@@ -50,7 +50,10 @@ class ContactGroupsRepositoryTest {
     private lateinit var protonMailApi: ProtonMailApiManager
 
     @RelaxedMockK
-    private lateinit var  contactsDao: ContactsDao
+    private lateinit var contactsDao: ContactsDao
+
+    @InjectMockKs
+    private lateinit var contactGroupsRepository: ContactGroupsRepository
 
     private val label1 = ContactLabel("a", "aa")
     private val label2 = ContactLabel("b", "bb")
@@ -68,9 +71,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun testDbAndAPIEventsEmitted() {
-        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, contactsDao)
-
-        val testObserver: TestObserver<List<ContactLabel>> = contactGroupsRepository.getContactGroups().test()
+        val testObserver = contactGroupsRepository.getContactGroups().test()
 
         testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
         testObserver.awaitTerminalEvent()
@@ -80,8 +81,6 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun testDbEventBeforeAPIEvent() {
-        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, contactsDao)
-
         val testObserver = contactGroupsRepository.getContactGroups().test()
 
         testObserver.assertValueCount(1)
@@ -94,8 +93,7 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun testApiErrorEvent() {
-        every { protonMailApi.fetchContactGroupsAsObservable() } returns Observable.error(IOException(":("))
-        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, contactsDao)
+        every { protonMailApi.fetchContactGroupsAsObservable() } answers { Observable.error(IOException(":(")) }
 
         val testObserver = contactGroupsRepository.getContactGroups().test()
 
@@ -108,11 +106,11 @@ class ContactGroupsRepositoryTest {
 
     @Test
     fun saveContactGroupStoresGivenContactGroupInDatabase() {
-        val contactGroupsRepository = ContactGroupsRepository(protonMailApi, contactsDao)
         val contactGroup = ContactLabel("Id", "name", "color")
 
         contactGroupsRepository.saveContactGroup(contactGroup)
 
         verify { contactsDao.saveContactGroupLabel(contactGroup) }
     }
+
 }
