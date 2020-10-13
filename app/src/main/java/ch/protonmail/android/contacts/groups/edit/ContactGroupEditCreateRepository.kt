@@ -22,7 +22,9 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
+import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.factories.makeInt
+import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
@@ -42,7 +44,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     val workManager: WorkManager,
     val apiManager: ProtonMailApiManager,
     private val contactsDao: ContactsDao,
-    private val contactLabelFactory: ContactLabelFactory
+    private val contactLabelFactory: IConverterFactory<ServerLabel, ContactLabel>
 ) {
 
     fun editContactGroup(contactLabel: ContactLabel): Completable {

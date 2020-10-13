@@ -27,9 +27,8 @@ import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.extensions.notNull
 import ch.protonmail.android.utils.extensions.notNullOrEmpty
-import javax.inject.Inject
 
-class ContactLabelFactory @Inject constructor() : IConverterFactory<ServerLabel, ContactLabel> {
+class ContactLabelFactory : IConverterFactory<ServerLabel, ContactLabel> {
 
     override fun createServerObjectFromDBObject(dbObject: ContactLabel): ServerLabel {
         val id = dbObject.ID

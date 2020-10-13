@@ -25,7 +25,11 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
+import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
+import ch.protonmail.android.api.models.factories.IConverterFactory
+import ch.protonmail.android.api.models.messages.receive.ServerLabel
+import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.core.ProtonMailApplication
@@ -167,6 +171,9 @@ object ApplicationModule {
     @Provides
     fun workManager(context: Context): WorkManager =
         WorkManager.getInstance(context)
+
+    @Provides
+    fun contactLabelFactory(): IConverterFactory<ServerLabel, ContactLabel> = ContactLabelFactory()
 }
 
 @Module
