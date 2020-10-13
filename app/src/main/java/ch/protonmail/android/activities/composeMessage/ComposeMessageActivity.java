@@ -22,7 +22,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -30,6 +29,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.Spannable;
@@ -1721,6 +1721,7 @@ public class ComposeMessageActivity
         composeMessageViewModel.onMessageLoaded(loadedMessage);
         renderViews();
         new SaveMassageTask(messageDetailsRepository, loadedMessage).execute();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false),500);
     }
 
     private void setInlineContent(String messageBody, boolean clean, boolean isPlainText) {
@@ -2283,13 +2284,15 @@ public class ComposeMessageActivity
 
     private void disableSendButton(boolean disable) {
         // Find the menu item you want to style
-        MenuItem item = menu.getItem(0);
-        if (disable) {
-            item.setEnabled(false);
-            item.setIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.white_30)));
-        } else {
-            item.setEnabled(true);
-            item.setIconTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+        if (menu != null) {
+            MenuItem item = menu.getItem(0);
+            if (disable) {
+                item.setEnabled(false);
+                item.getIcon().setColorFilter(getResources().getColor(R.color.white_30), PorterDuff.Mode.MULTIPLY);
+            } else {
+                item.setEnabled(true);
+                item.getIcon().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.MULTIPLY);
+            }
         }
     }
 }
