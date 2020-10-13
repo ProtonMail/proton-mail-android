@@ -74,16 +74,24 @@ class CreateContactGroupWorker @WorkerInject constructor(
     }
 
     private fun createContactGroup(name: String, color: String): LabelResponse {
-        val display = getDisplayParam()
-        val exclusive = getExclusiveParam()
+        val labelBody = buildLabelBody(name, color)
 
-        return if (isUpdateParam()) {
+        if (isUpdateParam()) {
             val validContactGroupId = getContactGroupIdParam() ?: throw missingContactGroupIdError()
-            apiManager.updateLabel(validContactGroupId, LabelBody(name, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
-        } else {
-            apiManager.createLabel(LabelBody(name, color, display, exclusive, Constants.LABEL_TYPE_CONTACT_GROUPS))
+            return apiManager.updateLabel(validContactGroupId, labelBody)
         }
+
+        return apiManager.createLabel(labelBody)
     }
+
+    private fun buildLabelBody(name: String, color: String) =
+        LabelBody(
+            name,
+            color,
+            getDisplayParam(),
+            getExclusiveParam(),
+            Constants.LABEL_TYPE_CONTACT_GROUPS
+        )
 
     private fun missingContactGroupIdError() = IllegalArgumentException("Missing required ID parameter to create contact group")
 
