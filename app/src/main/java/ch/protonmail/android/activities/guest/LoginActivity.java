@@ -61,6 +61,7 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -87,7 +88,7 @@ public class LoginActivity extends BaseLoginActivity {
     private AlertDialog m2faAlertDialog;
 
     @Inject
-    LoginViewModel loginViewModel;
+    ConnectivityBaseViewModel viewModel;
 
     @Override
     protected int getLayoutId() {
@@ -144,7 +145,7 @@ public class LoginActivity extends BaseLoginActivity {
             DialogUtils.Companion.showInfoDialog(this, getString(R.string.update_app_title), getString(R.string.update_app), null);
         }
         mAppVersion.setText(String.format(getString(R.string.app_version_code_login), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)));
-        loginViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
+        viewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     @Override
@@ -158,7 +159,7 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loginViewModel.checkConnectivity();
+        viewModel.checkConnectivity();
     }
 
     @Override
@@ -216,7 +217,7 @@ public class LoginActivity extends BaseLoginActivity {
         return () -> {
             networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
             // TODO: Create a view Model for this class
-            loginViewModel.checkConnectivityDelayed();
+            viewModel.checkConnectivityDelayed();
             onSignIn();
             return null;
         };

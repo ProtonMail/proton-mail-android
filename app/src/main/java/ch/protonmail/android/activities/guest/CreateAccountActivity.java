@@ -33,12 +33,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
@@ -62,7 +65,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AddressSetupEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.AvailablePlansEvent;
-import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.GetDirectEnabledEvent;
 import ch.protonmail.android.events.KeysSetupEvent;
 import ch.protonmail.android.events.Status;
@@ -77,12 +79,15 @@ import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel;
+import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import timber.log.Timber;
 
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
-/**
- * Created by dkadrikj on 16.7.15.
- */
+@AndroidEntryPoint
 public class CreateAccountActivity extends BaseConnectivityActivity implements
         CreateAccountFragment.ICreateAccountListener,
         BillingFragment.IBillingListener,
@@ -97,13 +102,15 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     private static final String STATE_DOMAIN = "domain";
     private static final String STATE_ADDRESS = "address";
 
+    @Inject
+    ConnectivityBaseViewModel viewModel;
+
     @BindView(R.id.fragmentContainer)
     View fragmentContainer;
     @BindView(R.id.progress_container)
     View mProgressContainer;
     @BindView(R.id.progress_circular)
     ProgressBar mProgressBar;
-    private Snackbar mCheckForConnectivitySnack;
 
     private SelectAccountTypeFragment selectAccountFragment;
     private CreateAccountFragment createUsernameFragment;
@@ -128,7 +135,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     private AllCurrencyPlans mAllCurrencyPlans;
     private List<String> availableDomains;
 
-    private ConnectivityRetryListener connectivityRetryListener = new ConnectivityRetryListener();
     private Constants.CurrencyType currency;
     private int amount;
     private String selectedPlanId;
@@ -181,12 +187,25 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
 
             checkDirectEnabled();
         }
+        viewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         ProtonMailApplication.getApplication().getBus().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.checkConnectivity();
+    }
+
+    @Override
+    protected void onPause() {
+        networkSnackBarUtil.hideAllSnackBars();
+        super.onPause();
     }
 
     @Override
@@ -554,17 +573,34 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         }
     }
 
-    @Subscribe
-    public void onConnectivityEvent(ConnectivityEvent event) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(connectivityRetryListener, this);
+    private void onConnectivityEvent(boolean hasConnectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
+        if (!hasConnectivity) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                    mSnackLayout,
+                    mUserManager.getUser(),
+                    this,
+                    onConnectivityCheckRetry(),
+                    null,
+                    R.string.no_connectivity_detected_troubleshoot,
+                    false
+            ).show();
         } else {
             if (captchaFragment != null && captchaFragment.isAdded()) {
                 captchaFragment.connectionArrived();
             }
-            mPingHasConnection = true;
-            hideNoConnSnack();
+            networkSnackBarUtil.hideAllSnackBars();
         }
+    }
+
+    @NotNull
+    private Function0<Unit> onConnectivityCheckRetry() {
+        return () -> {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            viewModel.checkConnectivityDelayed();
+            checkDirectEnabled();
+            return null;
+        };
     }
 
     private void checkDirectEnabled() {
@@ -607,7 +643,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
                 break;
             case NO_NETWORK:
                 checkDirectEnabled();
-                showNoConnSnack(connectivityRetryListener, this);
+                onConnectivityEvent(false);
                 break;
         }
     }
@@ -618,18 +654,5 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         outState.putString(STATE_USERNAME, mUserName);
         outState.putString(STATE_DOMAIN, mDomain);
         outState.putParcelable(STATE_ADDRESS, addressChosen);
-    }
-
-    protected class ConnectivityRetryListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
-                    getMSnackLayout(),
-                    null);
-            mCheckForConnectivitySnack.show();
-            checkDirectEnabled();
-        }
     }
 }

@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.activities.guest
+package ch.protonmail.android.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -31,7 +31,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class LoginViewModel @Inject constructor(
+/**
+ * Base view model for activities that require connectivity check logic.
+ */
+class ConnectivityBaseViewModel @Inject constructor(
     verifyConnection: VerifyConnection
 ) : ViewModel() {
 
