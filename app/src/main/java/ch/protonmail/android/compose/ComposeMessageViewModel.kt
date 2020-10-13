@@ -25,14 +25,13 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.AccountManager
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
@@ -58,6 +57,7 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -86,8 +86,9 @@ class ComposeMessageViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val postMessageServiceFactory: PostMessageServiceFactory,
     private val deleteMessage: DeleteMessage,
-    private val verifyConnection: VerifyConnection
-) : ViewModel() {
+    verifyConnection: VerifyConnection,
+    networkConfigurator: NetworkConfigurator
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     // region events data
     private val _mergedContactsLiveData: MediatorLiveData<List<MessageRecipient>> = MediatorLiveData()
@@ -107,7 +108,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
-    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     private val _androidContacts = java.util.ArrayList<MessageRecipient>()
     private val _protonMailContacts = java.util.ArrayList<MessageRecipient>()
@@ -176,8 +176,6 @@ class ComposeMessageViewModel @Inject constructor(
         set(value) {
             _androidContactsLoaded = value
         }
-    val hasConnectivity: LiveData<Boolean> =
-        _verifyConnectionTrigger.switchMap { verifyConnection() }
 
     // endregion
     // region getters
@@ -1283,20 +1281,6 @@ class ComposeMessageViewModel @Inject constructor(
             }
         } else {
             setBeforeSaveDraft(false, messageDataResult.content, UserAction.SAVE_DRAFT)
-        }
-    }
-
-    fun checkConnectivity() {
-        _verifyConnectionTrigger.value = Unit
-    }
-
-    /**
-     * Check connectivity with a delay allowing snack bar to be displayed.
-     */
-    fun checkConnectivityDelayed() {
-        viewModelScope.launch {
-            delay(NETWORK_CHECK_DELAY)
-            checkConnectivity()
         }
     }
 }

@@ -28,14 +28,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -54,7 +53,6 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
-import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.AppUtil
@@ -62,10 +60,10 @@ import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -85,8 +83,9 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     messageRendererFactory: MessageRenderer.Factory,
     private val deleteMessageUseCase: DeleteMessage,
-    private val verifyConnection: VerifyConnection
-) : ViewModel() {
+    verifyConnection: VerifyConnection,
+    networkConfigurator: NetworkConfigurator
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val messageId: String = savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID)
         ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
@@ -121,7 +120,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
-    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     var nonBrokenEmail: String? = null
     var bodyString: String? = null
@@ -164,10 +162,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
-
-    val hasConnectivity: LiveData<Boolean> = _verifyConnectionTrigger.switchMap {
-        verifyConnection().map { onConnectivityEvent(it) }
-    }
 
     init {
         tryFindMessage()
@@ -507,28 +501,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         if (event.success) {
             Timber.v("FetchMessage success")
         }
-    }
-
-    fun checkConnectivity() {
-        Timber.v("checkConnectivity launch ping")
-        _verifyConnectionTrigger.value = Unit
-    }
-
-    /**
-     * Check connectivity with a delay allowing snack bar to be displayed.
-     */
-    fun checkConnectivityDelayed() {
-        viewModelScope.launch {
-            delay(NETWORK_CHECK_DELAY)
-            checkConnectivity()
-        }
-    }
-
-    private fun onConnectivityEvent(hasConnectivity: Boolean): Boolean {
-        if (hasConnectivity && !requestPending.get()) {
-            fetchMessageDetails(false)
-        }
-        return hasConnectivity
     }
 
     fun remoteContentDisplayed() {

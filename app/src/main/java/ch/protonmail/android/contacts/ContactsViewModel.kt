@@ -21,31 +21,25 @@ package ch.protonmail.android.contacts
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
-import ch.protonmail.android.usecase.fetch.FetchContactsData
 import ch.protonmail.android.usecase.VerifyConnection
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import ch.protonmail.android.usecase.fetch.FetchContactsData
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import timber.log.Timber
 
 class ContactsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData,
-    private val verifyConnection: VerifyConnection
-) : ViewModel() {
+    verifyConnection: VerifyConnection,
+    networkConfigurator: NetworkConfigurator
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     private val fetchContactsTrigger: MutableLiveData<Unit> = MutableLiveData()
-    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val fetchContactsResult: LiveData<Boolean> =
         fetchContactsTrigger.switchMap { fetchContactsData() }
-
-    val hasConnectivity: LiveData<Boolean> = _verifyConnectionTrigger
-        .switchMap { verifyConnection() }
 
     fun isPaidUser(): Boolean = userManager.user.isPaidUser
 
@@ -54,18 +48,4 @@ class ContactsViewModel @ViewModelInject constructor(
         fetchContactsTrigger.value = Unit
     }
 
-    fun checkConnectivity() {
-        Timber.v("checkConnectivity launch ping")
-        _verifyConnectionTrigger.value = Unit
-    }
-
-    /**
-     * Check connectivity with a delay allowing snack bar to be displayed.
-     */
-    fun checkConnectivityDelayed() {
-        viewModelScope.launch {
-            delay(NETWORK_CHECK_DELAY)
-            checkConnectivity()
-        }
-    }
 }

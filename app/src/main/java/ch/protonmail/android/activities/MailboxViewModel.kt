@@ -21,10 +21,9 @@ package ch.protonmail.android.activities
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
@@ -32,17 +31,17 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.ArrayList
 import java.util.HashMap
 import kotlin.collections.set
@@ -58,8 +57,9 @@ class MailboxViewModel @ViewModelInject constructor(
     val userManager: UserManager,
     private val jobManager: JobManager,
     private val deleteMessage: DeleteMessage,
-    private val verifyConnection: VerifyConnection
-) : ViewModel() {
+    verifyConnection: VerifyConnection,
+    networkConfigurator: NetworkConfigurator
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
     var pendingUploadsLiveData = messageDetailsRepository.findAllPendingUploadsAsync()
@@ -75,7 +75,6 @@ class MailboxViewModel @ViewModelInject constructor(
         MutableLiveData()
     private val _toastMessageMaxLabelsReached = MutableLiveData<Event<MaxLabelsReached>>()
     private val _hasSuccessfullyDeletedMessages = MutableLiveData<Boolean>()
-    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val manageLimitReachedWarning: LiveData<Event<Boolean>>
         get() = _manageLimitReachedWarning
@@ -87,8 +86,6 @@ class MailboxViewModel @ViewModelInject constructor(
         get() = _manageLimitReachedWarningOnTryCompose
     val toastMessageMaxLabelsReached: LiveData<Event<MaxLabelsReached>>
         get() = _toastMessageMaxLabelsReached
-    val hasConnectivity: LiveData<Boolean> =
-        _verifyConnectionTrigger.switchMap { verifyConnection() }
 
     val hasSuccessfullyDeletedMessages: LiveData<Boolean>
         get() = _hasSuccessfullyDeletedMessages
@@ -236,11 +233,6 @@ class MailboxViewModel @ViewModelInject constructor(
             val deleteMessagesResult = deleteMessage(messageIds)
             _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
         }
-
-    fun checkConnectivity() {
-        Timber.v("checkConnectivity launch ping")
-        _verifyConnectionTrigger.value = Unit
-    }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }

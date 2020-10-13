@@ -35,7 +35,7 @@ import javax.inject.Inject
 /**
  * Base view model for activities that require connectivity check logic.
  */
-class ConnectivityBaseViewModel @Inject constructor(
+open class ConnectivityBaseViewModel @Inject constructor(
     private val verifyConnection: VerifyConnection,
     private val networkConfigurator: NetworkConfigurator
 ) : ViewModel() {

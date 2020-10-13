@@ -485,6 +485,7 @@ internal class MessageDetailsActivity :
                 Timber.v("isConnectionActive:$isConnectionActive")
                 if (isConnectionActive) {
                     hideNoConnSnackExtended()
+                    viewModel.fetchMessageDetails(false)
                 } else {
                     showNoConnSnackExtended()
                 }

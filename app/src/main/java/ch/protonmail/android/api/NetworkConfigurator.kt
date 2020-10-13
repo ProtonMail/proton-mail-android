@@ -54,7 +54,7 @@ class NetworkConfigurator @Inject constructor(
     @DefaultSharedPreferences private val prefs: SharedPreferences,
     @AppCoroutineScope private val scope: CoroutineScope,
     private val userManager: UserManager,
-    private val connectivityManager: NetworkConnectivityManager,
+    private val connectivityManager: NetworkConnectivityManager
 ) {
 
     lateinit var networkSwitcher: INetworkSwitcher
