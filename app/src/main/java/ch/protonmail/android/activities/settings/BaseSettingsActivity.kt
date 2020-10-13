@@ -24,7 +24,9 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.provider.Settings.*
+import android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS
+import android.provider.Settings.EXTRA_APP_PACKAGE
+import android.provider.Settings.EXTRA_CHANNEL_ID
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -34,7 +36,20 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.*
+import ch.protonmail.android.activities.AccountSettingsActivity
+import ch.protonmail.android.activities.AccountTypeActivity
+import ch.protonmail.android.activities.BaseConnectivityActivity
+import ch.protonmail.android.activities.ChangePasswordActivity
+import ch.protonmail.android.activities.DefaultAddressActivity
+import ch.protonmail.android.activities.EXTRA_CURRENT_ACTION
+import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
+import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_VALUE
+import ch.protonmail.android.activities.EXTRA_SWIPE_ID
+import ch.protonmail.android.activities.EditSettingsItemActivity
+import ch.protonmail.android.activities.SettingsItem
+import ch.protonmail.android.activities.SnoozeNotificationsActivity
+import ch.protonmail.android.activities.SwipeChooserActivity
+import ch.protonmail.android.activities.SwipeType
 import ch.protonmail.android.activities.labelsManager.EXTRA_MANAGE_FOLDERS
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
@@ -70,9 +85,8 @@ import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.extensions.showToast
 import com.google.gson.Gson
 import com.squareup.otto.Subscribe
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.ArrayList
 
 // region constants
 const val EXTRA_CURRENT_MAILBOX_LOCATION = "Extra_Current_Mailbox_Location"
@@ -117,7 +131,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     init {
         settingsAdapter.onItemClick = { settingItem ->
 
-            if (!settingItem.isSection && (settingItem.settingType==SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN || settingItem.settingType==SettingsItemUiModel.SettingsItemTypeEnum.BUTTON)) {
+            if (!settingItem.isSection && (settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.DRILL_DOWN || settingItem.settingType == SettingsItemUiModel.SettingsItemTypeEnum.BUTTON)) {
                 selectItem(settingItem.settingId)
             }
         }
@@ -279,28 +293,40 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 startActivity(labelsManagerIntent)
             }
             SettingsEnum.FOLDERS_MANAGER -> {
-                val foldersManagerIntent = AppUtil.decorInAppIntent(Intent(this, LabelsManagerActivity::class.java))
+                val foldersManagerIntent = AppUtil.decorInAppIntent(
+                    Intent(
+                        this,
+                        LabelsManagerActivity::class.java
+                    )
+                )
                 foldersManagerIntent.putExtra(EXTRA_MANAGE_FOLDERS, true)
                 startActivity(foldersManagerIntent)
             }
             SettingsEnum.SWIPING_GESTURE -> {
                 val swipeGestureIntent = Intent(this, EditSettingsItemActivity::class.java)
                 swipeGestureIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.SWIPE)
-                startActivityForResult(AppUtil.decorInAppIntent(swipeGestureIntent), SettingsEnum.SWIPING_GESTURE.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(swipeGestureIntent),
+                    SettingsEnum.SWIPING_GESTURE.ordinal
+                )
             }
             SettingsEnum.SWIPE_LEFT -> {
                 val swipeLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
                 swipeLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.leftSwipeAction)
                 swipeLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.LEFT)
-                startActivityForResult(AppUtil.decorInAppIntent(swipeLeftChooserIntent),
-                        SettingsEnum.SWIPE_LEFT.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(swipeLeftChooserIntent),
+                    SettingsEnum.SWIPE_LEFT.ordinal
+                )
             }
             SettingsEnum.SWIPE_RIGHT -> {
                 val rightLeftChooserIntent = Intent(this, SwipeChooserActivity::class.java)
                 rightLeftChooserIntent.putExtra(EXTRA_CURRENT_ACTION, mUserManager.mailSettings!!.rightSwipeAction)
                 rightLeftChooserIntent.putExtra(EXTRA_SWIPE_ID, SwipeType.RIGHT)
-                startActivityForResult(AppUtil.decorInAppIntent(rightLeftChooserIntent),
-                        SettingsEnum.SWIPE_RIGHT.ordinal)
+                startActivityForResult(
+                    AppUtil.decorInAppIntent(rightLeftChooserIntent),
+                    SettingsEnum.SWIPE_RIGHT.ordinal
+                )
             }
             SettingsEnum.LOCAL_STORAGE_LIMIT -> {
                 val attachmentStorageIntent = Intent(this, AttachmentStorageActivity::class.java)
@@ -348,9 +374,16 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showToast(R.string.processing_request, gravity = Gravity.CENTER)
                 if (canClick.getAndSet(false)) {
                     run {
-                        AppUtil.clearStorage(contactsDatabase, messagesDatabase, searchDatabase,
-                                notificationsDatabase, countersDatabase, attachmentMetadataDatabase,
-                                pendingActionsDatabase, true)
+                        AppUtil.clearStorage(
+                            contactsDatabase,
+                            messagesDatabase,
+                            searchDatabase,
+                            notificationsDatabase,
+                            countersDatabase,
+                            attachmentMetadataDatabase,
+                            pendingActionsDatabase,
+                            true
+                        )
                         mJobManager.addJobInBackground(OnFirstLoginJob(true))
                         mJobManager.addJobInBackground(FetchByLocationJob(mMailboxLocation, mLabelId, true, null, false))
                     }

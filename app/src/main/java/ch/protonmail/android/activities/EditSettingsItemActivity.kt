@@ -86,9 +86,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
     private var initializedRemote = false
     private var initializedEbedded = false
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_edit_settings_item
-    }
+    override fun getLayoutId(): Int = R.layout.activity_edit_settings_item
 
     override fun onStop() {
         super.onStop()
@@ -210,7 +208,11 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     setEnabled(SettingsEnum.MOBILE_SIGNATURE, user.isShowMobileSignature)
                 } else {
                     setEnabled(SettingsEnum.MOBILE_SIGNATURE, true)
-                    setSettingDisabled(SettingsEnum.MOBILE_SIGNATURE, true, getString(R.string.mobile_signature_is_premium))
+                    setSettingDisabled(
+                        SettingsEnum.MOBILE_SIGNATURE,
+                        true,
+                        getString(R.string.mobile_signature_is_premium)
+                    )
                 }
 
                 setEditTextListener(SettingsEnum.SIGNATURE) {
@@ -372,10 +374,14 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 actionBarTitle = R.string.settings_background_sync
             }
             SettingsItem.SWIPE -> {
-                setValue(SettingsEnum.SWIPE_LEFT,
-                    getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription))
-                setValue(SettingsEnum.SWIPE_RIGHT,
-                    getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription))
+                setValue(
+                    SettingsEnum.SWIPE_LEFT,
+                    getString(SwipeAction.values()[mUserManager.mailSettings!!.leftSwipeAction].actionDescription)
+                )
+                setValue(
+                    SettingsEnum.SWIPE_RIGHT,
+                    getString(SwipeAction.values()[mUserManager.mailSettings!!.rightSwipeAction].actionDescription)
+                )
                 actionBarTitle = R.string.swiping_gesture
             }
             SettingsItem.LABELS_AND_FOLDERS -> {
@@ -401,7 +407,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 actionBarTitle = R.string.push_notifications
             }
             SettingsItem.COMBINED_CONTACTS -> {
-                setValue(SettingsEnum.COMBINED_CONTACTS, getString(R.string.turn_combined_contacts_on))
+                setValue(
+                    SettingsEnum.COMBINED_CONTACTS,
+                    getString(R.string.turn_combined_contacts_on)
+                )
                 setEnabled(SettingsEnum.COMBINED_CONTACTS, user.combinedContacts)
 
                 setToggleListener(SettingsEnum.COMBINED_CONTACTS) { _: View, isChecked: Boolean ->
@@ -416,7 +425,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                 actionBarTitle = R.string.combined_contacts
             }
             SettingsItem.CONNECTIONS_VIA_THIRD_PARTIES -> {
-                setValue(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, getString(R.string.allow_secure_connections_via_third_parties_settings_description))
+                setValue(
+                    SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES,
+                    getString(R.string.allow_secure_connections_via_third_parties_settings_description)
+                )
                 setEnabled(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES, user.allowSecureConnectionsViaThirdParties)
 
                 setToggleListener(SettingsEnum.ALLOW_SECURE_CONNECTIONS_VIA_THIRD_PARTIES) { _: View, isChecked: Boolean ->
