@@ -22,10 +22,12 @@ package ch.protonmail.android.contacts.groups.edit
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
+import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
@@ -58,11 +60,24 @@ class ContactGroupEditCreateRepositoryTest {
     }
 
     @Test
-    fun `editContactGroup calls labelConverterFactory to map DB object to Server Object`() {
+    fun `when editContactGroup is called labelConverterFactory maps DB object to Server Object`() {
         val contactLabel = ContactLabel("Id", "name", "color")
 
         repository.editContactGroup(contactLabel)
 
         verify { contactLabelFactory.createServerObjectFromDBObject(contactLabel) }
     }
+
+    @Test
+    fun `when editContactGroup is called updateLabelCompletable API gets called with the request object`() {
+        val contactGroupId = "contact-group-id"
+        val contactLabel = ContactLabel(contactGroupId, "name", "color")
+        val updateLabelRequest = ServerLabel(contactGroupId, "name", "color", 0, 0, 0, 0)
+        every { contactLabelFactory.createServerObjectFromDBObject(contactLabel) } returns updateLabelRequest
+
+        repository.editContactGroup(contactLabel)
+
+        verify { apiManager.updateLabelCompletable(contactGroupId, updateLabelRequest.labelBody) }
+    }
+
 }
