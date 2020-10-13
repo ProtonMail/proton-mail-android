@@ -806,7 +806,7 @@ public class ComposeMessageActivity
         };
     }
 
-    public void onConnectivityEvent(boolean hasConnectivity) {
+    private void onConnectivityEvent(boolean hasConnectivity) {
         Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", hasConnectivity, isDohOngoing);
         if (!isDohOngoing) {
             if (!hasConnectivity) {

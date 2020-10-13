@@ -783,9 +783,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         return new ContactAddressView(this, titleText, optionTitleText, standardOptionUIValues, standardOptionValues, rootView);
     }
 
-    @Subscribe
-    public void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", hasConnectivity, isDohOngoing);
+    private void onConnectivityEvent(boolean hasConnectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
         if (!hasConnectivity) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,

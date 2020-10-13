@@ -35,10 +35,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -49,7 +52,6 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.Login2FAEvent;
 import ch.protonmail.android.events.LoginEvent;
@@ -60,7 +62,10 @@ import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import kotlin.text.Charsets;
+import timber.log.Timber;
 
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
@@ -78,9 +83,11 @@ public class LoginActivity extends BaseLoginActivity {
     Button mSignIn;
     @BindView(R.id.app_version)
     TextView mAppVersion;
-    private Snackbar mCheckForConnectivitySnack;
     private boolean mDisableBack = false;
     private AlertDialog m2faAlertDialog;
+
+    @Inject
+    LoginViewModel loginViewModel;
 
     @Override
     protected int getLayoutId() {
@@ -137,6 +144,7 @@ public class LoginActivity extends BaseLoginActivity {
             DialogUtils.Companion.showInfoDialog(this, getString(R.string.update_app_title), getString(R.string.update_app), null);
         }
         mAppVersion.setText(String.format(getString(R.string.app_version_code_login), AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)));
+        loginViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     @Override
@@ -145,6 +153,18 @@ public class LoginActivity extends BaseLoginActivity {
         ProtonMailApplication.getApplication().getBus().register(this);
         UiUtil.hideKeyboard(LoginActivity.this);
         ProtonMailApplication.getApplication().resetLoginInfoEvent();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loginViewModel.checkConnectivity();
+    }
+
+    @Override
+    protected void onPause() {
+        networkSnackBarUtil.hideAllSnackBars();
+        super.onPause();
     }
 
     @Override
@@ -191,28 +211,31 @@ public class LoginActivity extends BaseLoginActivity {
         }
     }
 
-    protected class ConnectivityRetryListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = networkSnackBarUtil.getCheckingConnectionSnackBar(
-                    getMSnackLayout(),
-                    null);
-            mCheckForConnectivitySnack.show();
+    @NotNull
+    private Function0<Unit> onConnectivityCheckRetry() {
+        return () -> {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            // TODO: Create a view Model for this class
+            loginViewModel.checkConnectivityDelayed();
             onSignIn();
-        }
+            return null;
+        };
     }
 
-    private ConnectivityRetryListener connectivityRetryListener = new ConnectivityRetryListener();
-
-    @Subscribe
-    public void onConnectivityEvent(ConnectivityEvent event) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(connectivityRetryListener, this);
+    private void onConnectivityEvent(boolean hasConnectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
+        if (!hasConnectivity) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                    mSnackLayout,
+                    mUserManager.getUser(),
+                    this,
+                    onConnectivityCheckRetry(),
+                    null,
+                    R.string.no_connectivity_detected_troubleshoot,
+                    false
+            ).show();
         } else {
-            mPingHasConnection = true;
-            hideNoConnSnack();
+            networkSnackBarUtil.hideAllSnackBars();
         }
     }
 
