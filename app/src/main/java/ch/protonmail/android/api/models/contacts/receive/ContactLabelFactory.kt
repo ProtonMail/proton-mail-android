@@ -34,9 +34,9 @@ class ContactLabelFactory : IConverterFactory<ServerLabel, ContactLabel> {
         val id = dbObject.ID
         val name = dbObject.name.notNullOrEmpty(Fields.Label.NAME)
         val color = dbObject.color.notNullOrEmpty(Fields.Label.COLOR)
-        val display = dbObject.display.notNull(Fields.Label.DISPLAY)
-        val order = dbObject.order.notNull(Fields.Label.ORDER)
-        val exclusive = dbObject.exclusive.notNull(Fields.Label.EXCLUSIVE).makeInt()
+        val display = dbObject.display
+        val order = dbObject.order
+        val exclusive = dbObject.exclusive.makeInt()
         val type = Constants.LABEL_TYPE_CONTACT_GROUPS
         return ServerLabel(
             ID = id,
