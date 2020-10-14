@@ -29,8 +29,8 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.contacts.groups.jobs.CreateContactGroupJob
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
+import ch.protonmail.android.worker.CreateContactGroupWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
@@ -44,7 +44,8 @@ class ContactGroupEditCreateRepository @Inject constructor(
     val workManager: WorkManager,
     val apiManager: ProtonMailApiManager,
     private val contactsDao: ContactsDao,
-    private val contactLabelFactory: IConverterFactory<ServerLabel, ContactLabel>
+    private val contactLabelFactory: IConverterFactory<ServerLabel, ContactLabel>,
+    private val createContactGroupWorker: CreateContactGroupWorker.Enqueuer
 ) {
 
     fun editContactGroup(contactLabel: ContactLabel): Completable {
@@ -57,8 +58,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
-                    jobManager.addJobInBackground(CreateContactGroupJob(contactLabel.name, contactLabel.color, contactLabel.display,
-                        contactLabel.exclusive.makeInt(), true, contactLabel.ID))
+                    enqueueCreateContactGroupWorker(contactLabel, true)
                 }
             }
     }
@@ -118,9 +118,19 @@ class ContactGroupEditCreateRepository @Inject constructor(
             .doOnSuccess { label -> contactsDao.saveContactGroupLabel(label) }
             .doOnError { throwable ->
                 if (throwable is IOException) {
-                    jobManager.addJobInBackground(CreateContactGroupJob(contactLabel.name, contactLabel.color, contactLabel.display,
-                        contactLabel.exclusive.makeInt(), false, contactLabel.ID))
+                    enqueueCreateContactGroupWorker(contactLabel, false)
                 }
             }
+    }
+
+    private fun enqueueCreateContactGroupWorker(contactLabel: ContactLabel, isUpdate: Boolean) {
+        createContactGroupWorker.enqueue(
+            contactLabel.name,
+            contactLabel.color,
+            contactLabel.display,
+            contactLabel.exclusive.makeInt(),
+            isUpdate,
+            contactLabel.ID
+        )
     }
 }

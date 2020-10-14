@@ -34,6 +34,7 @@ import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
+import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME = "keyCreateContactGroupInputDataName"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID = "keyCreateContactGroupInputDataId"
@@ -109,7 +110,7 @@ class CreateContactGroupWorker @WorkerInject constructor(
 
     private fun isUpdateParam() = inputData.getBoolean(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false)
 
-    class Enqueuer(private val workManager: WorkManager) {
+    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         fun enqueue(
             name: String,
             color: String,

@@ -26,6 +26,7 @@ import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -36,6 +37,7 @@ import io.mockk.verifyOrder
 import io.reactivex.Completable
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.IOException
 
 class ContactGroupEditCreateRepositoryTest {
 
@@ -53,6 +55,9 @@ class ContactGroupEditCreateRepositoryTest {
 
     @RelaxedMockK
     private lateinit var contactLabelFactory: ContactLabelFactory
+
+    @RelaxedMockK
+    private lateinit var createContactGroupWorker: CreateContactGroupWorker.Enqueuer
 
     @InjectMockKs
     private lateinit var repository: ContactGroupEditCreateRepository
@@ -99,6 +104,20 @@ class ContactGroupEditCreateRepositoryTest {
             contactsDao.saveContactGroupLabel(contactLabel)
             contactsDao.saveContactEmailContactLabel(emailLabelJoinedList)
         }
+    }
+
+    @Test
+    fun `when editContactGroup API call fails then createContactGroupWorker is called`() {
+        val contactGroupId = "contact-group-id"
+        val contactLabel = ContactLabel(contactGroupId, "name", "color")
+        val apiError = IOException("Test-exception")
+        every { apiManager.updateLabelCompletable(any(), any()) } returns Completable.error(apiError)
+
+        val testObserver = repository.editContactGroup(contactLabel).test()
+
+        testObserver.awaitTerminalEvent()
+        testObserver.assertError(apiError)
+        verify { createContactGroupWorker.enqueue("name", "color", 0, 0, true, contactGroupId) }
     }
 
 }
