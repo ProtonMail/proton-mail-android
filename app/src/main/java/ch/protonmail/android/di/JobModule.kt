@@ -26,6 +26,7 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
+import ch.protonmail.android.worker.FetchMailSettingsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.config.Configuration
 import com.birbit.android.jobqueue.log.CustomLogger
@@ -92,4 +93,5 @@ interface JobEntryPoint {
     fun messageDetailsRepository(): MessageDetailsRepository
     fun queueNetworkUtil(): QueueNetworkUtil
     fun userManager(): UserManager
+    fun fetchMailSettingsWorkerEnqueuer(): FetchMailSettingsWorker.Enqueuer
 }

@@ -387,7 +387,7 @@ public class LoginService extends ProtonJobIntentService {
         try {
             UserInfo userInfo = api.fetchUserInfoBlocking();
             UserSettingsResponse userSettingsResponse = api.fetchUserSettings();
-            MailSettingsResponse mailSettingsResponse = api.fetchMailSettings();
+            MailSettingsResponse mailSettingsResponse = api.fetchMailSettingsBlocking();
             AddressesResponse addressesResponse = api.fetchAddressesBlocking();
             MailSettings mailSettings = mailSettingsResponse.getMailSettings();
             mailSettings.setUsername(userInfo.getUser().getName());
@@ -537,7 +537,7 @@ public class LoginService extends ProtonJobIntentService {
                 } else {
                     UserInfo userInfo = api.fetchUserInfoBlocking();
                     UserSettingsResponse userSettings = api.fetchUserSettings();
-                    MailSettingsResponse mailSettings = api.fetchMailSettings();
+                    MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
                     AddressesResponse addresses = api.fetchAddressesBlocking();
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
@@ -642,7 +642,7 @@ public class LoginService extends ProtonJobIntentService {
                     }
 
                     UserSettingsResponse userSettings = api.fetchUserSettings();
-                    MailSettingsResponse mailSettings = api.fetchMailSettings();
+                    MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
                     AddressesResponse addresses = api.fetchAddressesBlocking();
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
@@ -802,7 +802,7 @@ public class LoginService extends ProtonJobIntentService {
                 status = AuthStatus.FAILED;
                 UserInfo userInfo = api.fetchUserInfoBlocking();
                 UserSettingsResponse userSettingsResp = api.fetchUserSettings();
-                MailSettingsResponse mailSettingsResp = api.fetchMailSettings();
+                MailSettingsResponse mailSettingsResp = api.fetchMailSettingsBlocking();
                 AddressesResponse addressesResponse = api.fetchAddressesBlocking();
                 user = userInfo.getUser();
                 userManager.setUserSettings(userSettingsResp.getUserSettings());
@@ -860,7 +860,7 @@ public class LoginService extends ProtonJobIntentService {
                 status = AuthStatus.SUCCESS;
                 UserInfo userInfo = api.fetchUserInfoBlocking();
                 UserSettingsResponse userSettings = api.fetchUserSettings();
-                MailSettingsResponse mailSettings = api.fetchMailSettings();
+                MailSettingsResponse mailSettings = api.fetchMailSettingsBlocking();
                 AddressesResponse addressesResponse = api.fetchAddressesBlocking();
                 User user = userInfo.getUser();
                 userManager.setUserSettings(userSettings.getUserSettings());

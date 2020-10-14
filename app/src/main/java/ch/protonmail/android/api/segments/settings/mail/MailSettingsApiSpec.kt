@@ -25,10 +25,12 @@ import java.io.IOException
 interface MailSettingsApiSpec {
 
     @Throws(IOException::class)
-    fun fetchMailSettings(): MailSettingsResponse
+    fun fetchMailSettingsBlocking(): MailSettingsResponse
+
+    suspend fun fetchMailSettings(): MailSettingsResponse
 
     @Throws(IOException::class)
-    fun fetchMailSettings(username: String): MailSettingsResponse
+    fun fetchMailSettingsBlocking(username: String): MailSettingsResponse
 
     @Throws(IOException::class)
     fun updateSignature(signature: String): ResponseBody?

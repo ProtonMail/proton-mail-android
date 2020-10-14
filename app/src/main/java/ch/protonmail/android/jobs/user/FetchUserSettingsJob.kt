@@ -54,7 +54,7 @@ class FetchUserSettingsJob(
         if (username != null) {
             userInfo = getApi().fetchUserInfoBlocking(username!!)
             userSettings = getApi().fetchUserSettings(username!!)
-            mailSettings = getApi().fetchMailSettings(username!!)
+            mailSettings = getApi().fetchMailSettingsBlocking(username!!)
             addresses = getApi().fetchAddressesBlocking(username!!)
             getUserManager().setUserInfo(userInfo, username, mailSettings.mailSettings,
                 userSettings.userSettings, addresses.addresses)
@@ -78,7 +78,7 @@ class FetchUserSettingsJob(
         } else {
             userInfo = getApi().fetchUserInfoBlocking()
             userSettings = getApi().fetchUserSettings()
-            mailSettings = getApi().fetchMailSettings()
+            mailSettings = getApi().fetchMailSettingsBlocking()
             addresses = getApi().fetchAddressesBlocking()
             getUserManager().setUserInfo(userInfo, mailSettings = mailSettings.mailSettings,
                 userSettings = userSettings.userSettings, addresses = addresses.addresses)

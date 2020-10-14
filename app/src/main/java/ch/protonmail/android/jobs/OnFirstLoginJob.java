@@ -58,7 +58,7 @@ public class OnFirstLoginJob extends ProtonMailBaseJob {
             fetchContactsEmailsWorkerEnqueuer.enqueue(FETCH_CONTACT_DELAY_MS);
             jobManager.addJob(new FetchContactsDataJob());
         }
-        jobManager.addJob(new FetchMailSettingsJob());
+        getEntryPoint().fetchMailSettingsWorkerEnqueuer().invoke();
     }
 
     private void fetchAllMailbox() {
