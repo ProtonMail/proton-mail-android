@@ -27,7 +27,7 @@ stages:
   - bot-release
 
 #####################
-detekt analysis:
+.detekt-analysis-common:
   stage: analyze
   tags:
     - android
@@ -36,6 +36,19 @@ detekt analysis:
   artifacts:
     reports:
         codequality: config/detekt/reports/mergedReport.json
+
+detekt analysis release:
+  extends: .detekt-analysis-common
+  allow_failure: true
+  only:
+    - release
+    - prerelease
+
+detekt analysis:
+  extends: .detekt-analysis-common
+  except:
+    - release
+    - prerelease
 
 build debug:
   stage: build
