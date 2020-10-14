@@ -141,7 +141,7 @@ class NetworkConfigurator @Inject constructor(
             val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                 val result = try {
                     networkSwitcher.tryRequest { service ->
-                        service.pingAsync()
+                        service.ping()
                     }
                 } catch (e: Exception) {
                     Timber.e(e, "Exception while pinging API before using alternative routing")
@@ -164,7 +164,7 @@ class NetworkConfigurator @Inject constructor(
                 val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                     val result = try {
                         networkSwitcher.tryRequest { service ->
-                            service.pingAsync()
+                            service.ping()
                         }
                     } catch (e: Exception) {
                         Timber.e(e, "Exception while pinging alternative routing URL")
