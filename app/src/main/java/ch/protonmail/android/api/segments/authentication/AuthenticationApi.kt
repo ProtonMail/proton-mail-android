@@ -19,21 +19,35 @@
 package ch.protonmail.android.api.segments.authentication
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.LoginBody
+import ch.protonmail.android.api.models.LoginInfoBody
+import ch.protonmail.android.api.models.LoginInfoResponse
+import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.ModulusResponse
+import ch.protonmail.android.api.models.RefreshBody
+import ch.protonmail.android.api.models.RefreshResponse
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.TwoFABody
+import ch.protonmail.android.api.models.TwoFAResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.utils.ConstantTime
 import java.io.IOException
 
-class AuthenticationApi(private val service: AuthenticationService,
-                        private val pubService: AuthenticationPubService) : BaseApi(), AuthenticationApiSpec {
+class AuthenticationApi(
+    private val service: AuthenticationService,
+    private val pubService: AuthenticationPubService
+) : BaseApi(), AuthenticationApiSpec {
 
     @Throws(IOException::class)
     override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse =
-            ParseUtils.parse(pubService.post2fa(twoFABody).execute())
+        ParseUtils.parse(pubService.post2fa(twoFABody).execute())
 
     @Throws(IOException::class)
-    override fun revokeAccess(username: String): ResponseBody =
+    override fun revokeAccessBlocking(username: String): ResponseBody =
+        ParseUtils.parse(service.revoke(RetrofitTag(username)).execute())
+
+    override suspend fun revokeAccess(username: String): ResponseBody =
         ParseUtils.parse(service.revoke(RetrofitTag(username)).execute())
 
     @Throws(IOException::class)

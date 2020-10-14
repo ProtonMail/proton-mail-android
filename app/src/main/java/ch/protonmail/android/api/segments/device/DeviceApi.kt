@@ -23,7 +23,7 @@ import ch.protonmail.android.api.models.RegisterDeviceBody
 import ch.protonmail.android.api.segments.BaseApi
 import java.io.IOException
 
-class DeviceApi (private val service : DeviceService) : BaseApi(), DeviceApiSpec {
+class DeviceApi(private val service: DeviceService) : BaseApi(), DeviceApiSpec {
 
     @Throws(IOException::class)
     override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) {
@@ -31,7 +31,10 @@ class DeviceApi (private val service : DeviceService) : BaseApi(), DeviceApiSpec
     }
 
     @Throws(IOException::class)
-    override fun unregisterDevice(deviceToken: String) {
-        service.unregisterDevice(deviceToken).execute()
+    override fun unregisterDeviceBlocking(deviceToken: String) {
+        service.unregisterDeviceBlocking(deviceToken).execute()
     }
+
+    override suspend fun unregisterDevice(deviceToken: String) =
+        service.unregisterDevice(deviceToken)
 }

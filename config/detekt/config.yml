@@ -2,7 +2,7 @@
 
 # Default excluded files are `` ['**/test/**', '**/**Test/**', '**/buildSrc/**'] ``
 build:
-  maxIssues: 999999 # No threshold set
+  maxIssues: 12480
   excludeCorrectable: false
   weights:
     # complexity: 2

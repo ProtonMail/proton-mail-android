@@ -20,12 +20,16 @@ package ch.protonmail.android.api.segments.device
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.RegisterDeviceBody
-import okhttp3.ResponseBody
-import retrofit2.Call
-
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import retrofit2.http.*
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.Query
+import retrofit2.http.Tag
 
 interface DeviceService {
 
@@ -35,6 +39,10 @@ interface DeviceService {
 
     @DELETE("devices")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun unregisterDevice(@Query("DeviceToken") deviceToken: String): Call<ResponseBody>
+    fun unregisterDeviceBlocking(@Query("DeviceToken") deviceToken: String): Call<ResponseBody>
 
+    @DELETE("devices")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun unregisterDevice(@Query("DeviceToken") deviceToken: String):
+        ch.protonmail.android.api.models.ResponseBody
 }

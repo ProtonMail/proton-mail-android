@@ -29,6 +29,7 @@ import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
 
+@Deprecated("Replaced with [LogoutWorker]")
 class LogoutJob(username: String) : ProtonMailBaseJob(Params(Priority.HIGH).persist(), username) {
 
     @Throws(Throwable::class)
@@ -45,14 +46,14 @@ class LogoutJob(username: String) : ProtonMailBaseJob(Params(Priority.HIGH).pers
                 Logger.doLog("unregistering from GCM")
                 val registrationId = FcmUtil.getRegistrationId()
                 if (registrationId.isNotEmpty()) {
-                    getApi().unregisterDevice(registrationId)
+                    getApi().unregisterDeviceBlocking(registrationId)
                 }
-                AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS, username))
+                AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             }
             accountManager.clear()
             // Revoke access token through API
             if (username.isNotEmpty()) {
-                getApi().revokeAccess(username)
+                getApi().revokeAccessBlocking(username)
             }
         }
         AppUtil.deleteSecurePrefs(username, getUserManager().nextLoggedInAccountOtherThanCurrent == null)

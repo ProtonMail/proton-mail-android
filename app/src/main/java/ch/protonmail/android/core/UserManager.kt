@@ -476,7 +476,7 @@ class UserManager @Inject constructor(
             reset()
             tokenManager?.clear()
             AppUtil.deleteDatabases(app.applicationContext, username)
-            AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS, username))
+            AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             TokenManager.clearAllInstances()
         } else {
             accountManager.onSuccessfulLogout(username)

@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.events
 
+@Deprecated("Should not be used after migration to Logout Worker")
 data class LogoutEvent @JvmOverloads constructor(
-    @JvmField val status: Status,
-    val username: String? = null
+    @JvmField val status: Status
 )

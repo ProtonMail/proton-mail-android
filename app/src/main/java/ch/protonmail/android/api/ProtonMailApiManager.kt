@@ -176,7 +176,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
-    override fun revokeAccess(username: String): ResponseBody = api.revokeAccess(username)
+    override fun revokeAccessBlocking(username: String): ResponseBody = api.revokeAccessBlocking(username)
+
+    override suspend fun revokeAccess(username: String): ResponseBody = api.revokeAccess(username)
 
     override fun loginInfo(username: String): LoginInfoResponse = api.loginInfo(username)
 
@@ -223,7 +225,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
 
-    override fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
+    override fun unregisterDeviceBlocking(deviceToken: String) = api.unregisterDeviceBlocking(deviceToken)
+
+    override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
 
     override fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
 

@@ -82,7 +82,7 @@ class LogoutService : JobIntentService() {
             } ?: false
             if (hasMailboxPassword) {
                 username!! // Can not be null if `hasMailboxPassword` is `true`
-                api.revokeAccess(username)
+                api.revokeAccessBlocking(username)
                 TokenManager.clearInstance(username)
             }
             jobManager.cancelJobs(TagConstraint.ALL)
