@@ -32,9 +32,9 @@ import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
-import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
 import ch.protonmail.libs.core.utils.ViewModelFactory
 import ezvcard.Ezvcard

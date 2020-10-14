@@ -25,12 +25,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.usecase.NETWORK_CHECK_DELAY
 import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+
+internal const val NETWORK_CHECK_DELAY = 800L
 
 /**
  * Base view model for activities that require connectivity check logic.

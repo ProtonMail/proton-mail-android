@@ -81,7 +81,7 @@ class PingWorker @WorkerInject constructor(
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         private val uniqueWorkerName = "PingWorker"
 
-        fun enqueue(): LiveData<WorkInfo?> {
+        fun enqueue() {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -95,8 +95,9 @@ class PingWorker @WorkerInject constructor(
                 workRequest
             )
             Timber.v("Scheduled ping work request id:${workRequest.id}")
-
-            return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
+
+        fun getWorkInfoState(): LiveData<List<WorkInfo>?> =
+            workManager.getWorkInfosForUniqueWorkLiveData(uniqueWorkerName)
     }
 }

@@ -20,55 +20,77 @@
 package ch.protonmail.android.usecase
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
-import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.PingWorker
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import timber.log.Timber
 import javax.inject.Inject
-
-internal const val NETWORK_CHECK_DELAY = 800L
 
 /**
  * Use case responsible for scheduling Worker that sends a ping message through [PingWorker], processing the result
  * and listening to system network disconnections events. It emits LiveData<Boolean> with true corresponding to
  * network connection being available and false otherwise.
+ *
+ * The idea followed here is that when we get a disconnection event from the system and we no longer have a network
+ * interface with an internet capability we will emit false from this use case and the UI should display a
+ * no connection snackbar.
+ *
+ * In order to ensure that we have the connection back we schedule a ping message on a unique worker
+ * (because we can go through somehow restricted network and
+ * just a system connectivity event might be not enough to check if we can really reach our servers).
+ * When the ping is successful we emit true from the use case, the UI should hide the snack bar etc.
  */
 class VerifyConnection @Inject constructor(
-    private val workerEnqueuer: PingWorker.Enqueuer,
+    private val pingWorkerEnqueuer: PingWorker.Enqueuer,
     private val connectivityManager: NetworkConnectivityManager
 ) {
 
-    private fun isInternetAvailable(): Boolean {
-        Timber.v("isInternetAvailable check ${connectivityManager.isInternetConnectionPossible()}")
-        return connectivityManager.isInternetConnectionPossible()
-    }
-
     operator fun invoke(): LiveData<Boolean> {
         Timber.v("VerifyConnection invoked")
-        return liveData {
-            emit(isInternetAvailable())
-            emitSource(getPingState(workerEnqueuer.enqueue()))
 
-            // get system connection events
-            connectivityManager.isConnectionAvailableFlow()
-                .filter { !it } // only disconnections
-                .collect { emit(it) }
-        }
+        val connectivityManagerFlow = connectivityManager.isConnectionAvailableFlow()
+            .filter { !it } // observe only disconnections
+            .onEach {
+                pingWorkerEnqueuer.enqueue() // re-schedule ping
+            }
+
+        return flowOf(
+            getPingStateList(pingWorkerEnqueuer.getWorkInfoState()),
+            connectivityManagerFlow
+        ).flattenMerge()
+            .onStart {
+                pingWorkerEnqueuer.enqueue()
+                emit(connectivityManager.isInternetConnectionPossible()) // start with current net state
+            }
+            .asLiveData()
     }
 
-    private fun getPingState(workInfoLiveData: LiveData<WorkInfo?>): LiveData<Boolean> {
+    private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<Boolean> {
         return workInfoLiveData
-            .filter { it?.state?.isFinished == true }
-            .map { workInfo ->
+            .map { workInfoList ->
+                val hasSucceededEvents = mutableListOf<Boolean>()
+                workInfoList?.forEach { info ->
+                    if (info.state.isFinished) {
+                        hasSucceededEvents.add(info.state == WorkInfo.State.SUCCEEDED)
+                    }
+                }
                 Timber.v(
-                    "SendPing State: ${workInfo?.state} Net: ${connectivityManager.isInternetConnectionPossible()}"
+                    "SendPing State: $hasSucceededEvents Net: ${connectivityManager.isInternetConnectionPossible()}"
                 )
-                workInfo?.state == WorkInfo.State.SUCCEEDED
+                hasSucceededEvents
             }
+            .asFlow()
+            .filter { it.isNotEmpty() }
+            .map { it[0] }
     }
 }
