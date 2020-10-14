@@ -20,7 +20,6 @@ package ch.protonmail.android.contacts.groups.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.factories.makeInt
@@ -112,8 +111,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
     }
 
     fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
-        val contactLabelConverterFactory = ContactLabelFactory()
-        val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
+        val labelBody = contactLabelFactory.createServerObjectFromDBObject(contactLabel)
         return apiManager.createLabelCompletable(labelBody.labelBody)
             .doOnSuccess { label -> contactsDao.saveContactGroupLabel(label) }
             .doOnError { throwable ->

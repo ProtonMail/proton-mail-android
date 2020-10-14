@@ -35,6 +35,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
 import io.mockk.verifyOrder
 import io.reactivex.Completable
+import io.reactivex.Single
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -120,4 +121,48 @@ class ContactGroupEditCreateRepositoryTest {
         verify { createContactGroupWorker.enqueue("name", "color", 0, 0, true, contactGroupId) }
     }
 
+    @Test
+    fun `when createContactGroup is called labelConverterFactory maps DB object to Server Object`() {
+        val contactLabel = ContactLabel("Id", "name", "color")
+
+        repository.createContactGroup(contactLabel)
+
+        verify { contactLabelFactory.createServerObjectFromDBObject(contactLabel) }
+    }
+
+    @Test
+    fun `when createContactGroup is called createLabelCompletable API gets called with the request object`() {
+        val contactGroupId = "contact-group-id"
+        val contactLabel = ContactLabel(contactGroupId, "name", "color")
+        val updateLabelRequest = ServerLabel(contactGroupId, "name", "color", 0, 0, 0, 0)
+        every { contactLabelFactory.createServerObjectFromDBObject(contactLabel) } returns updateLabelRequest
+
+        repository.createContactGroup(contactLabel)
+
+        verify { apiManager.createLabelCompletable(updateLabelRequest.labelBody) }
+    }
+
+    @Test
+    fun `when createContactGroup succeeds then save contact group to the DB`() {
+        val contactLabel = ContactLabel("", "name", "color", 1, 0, false, 2)
+        every { apiManager.createLabelCompletable(any()) } returns Single.just(contactLabel)
+
+        val testObserver = repository.createContactGroup(contactLabel).test()
+
+        testObserver.awaitTerminalEvent()
+        verify { contactsDao.saveContactGroupLabel(contactLabel) }
+    }
+
+    @Test
+    fun `when createContactGroup API call fails then createContactGroupWorker is called`() {
+        val contactLabel = ContactLabel("", "name", "color", 1, 0, false, 2)
+        val apiError = IOException("test-exception")
+        every { apiManager.createLabelCompletable(any()) } returns Single.error(apiError)
+
+        val testObserver = repository.createContactGroup(contactLabel).test()
+
+        testObserver.awaitTerminalEvent()
+        testObserver.assertError(apiError)
+        verify { createContactGroupWorker.enqueue("name", "color", 1, 0, false, "") }
+    }
 }
