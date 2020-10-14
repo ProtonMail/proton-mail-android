@@ -20,6 +20,7 @@ variables:
   ANDROID_SDK_TOOLS:   "26.1.1"
 
 stages:
+  - manual-release
   - analyze
   - build
   - test
@@ -27,7 +28,7 @@ stages:
   - bot-release
 
 #####################
-detekt analysis:
+.detekt-analysis-common:
   stage: analyze
   tags:
     - android
@@ -36,6 +37,21 @@ detekt analysis:
   artifacts:
     reports:
         codequality: config/detekt/reports/mergedReport.json
+
+detekt analysis release:
+  extends: .detekt-analysis-common
+  allow_failure: true
+  only:
+    - release
+    - prerelease
+    - tags
+
+detekt analysis:
+  extends: .detekt-analysis-common
+  except:
+    - release
+    - prerelease
+    - tags
 
 build debug:
   stage: build
@@ -140,7 +156,7 @@ i18n-commit-locales:
 
 
 release-publish-github:
-  stage: bot-release
+  stage: manual-release
   when: 'manual'
   variables:
     RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
