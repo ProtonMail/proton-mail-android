@@ -20,6 +20,7 @@ variables:
   ANDROID_SDK_TOOLS:   "26.1.1"
 
 stages:
+  - manual-release
   - analyze
   - build
   - test
@@ -156,7 +157,7 @@ i18n-commit-locales:
 
 
 release-publish-github:
-  stage: bot-release
+  stage: manual-release
   when: 'manual'
   variables:
     RELEASE_SYNC_PUBLIC_URL: git@github.com:ProtonMail/proton-mail-android.git
