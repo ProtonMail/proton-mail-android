@@ -43,12 +43,14 @@ detekt analysis release:
   only:
     - release
     - prerelease
+    - tags
 
 detekt analysis:
   extends: .detekt-analysis-common
   except:
     - release
     - prerelease
+    - tags
 
 build debug:
   stage: build
