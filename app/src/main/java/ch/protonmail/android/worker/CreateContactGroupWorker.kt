@@ -109,32 +109,32 @@ class CreateContactGroupWorker @WorkerInject constructor(
 
     private fun isUpdateParam() = inputData.getBoolean(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE, false)
 
-}
+    class Enqueuer(private val workManager: WorkManager) {
+        fun enqueue(
+            name: String,
+            color: String,
+            display: Int? = 0,
+            exclusive: Int? = 0,
+            update: Boolean? = false,
+            Id: String? = null
+        ): LiveData<WorkInfo> {
 
-class Enqueuer(private val workManager: WorkManager) {
-    fun enqueue(
-        name: String,
-        color: String,
-        display: Int? = 0,
-        exclusive: Int? = 0,
-        update: Boolean? = false,
-        Id: String? = null
-    ): LiveData<WorkInfo> {
+            val createContactGroupRequest = OneTimeWorkRequestBuilder<CreateContactGroupWorker>()
+                .setInputData(
+                    workDataOf(
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID to Id,
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME to name,
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR to color,
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE to exclusive,
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE to update,
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY to display
+                    )
+                ).build()
 
-        val createContactGroupRequest = OneTimeWorkRequestBuilder<CreateContactGroupWorker>()
-            .setInputData(
-                workDataOf(
-                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID to Id,
-                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME to name,
-                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR to color,
-                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE to exclusive,
-                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_IS_UPDATE to update,
-                    KEY_INPUT_DATA_CREATE_CONTACT_GROUP_DISPLAY to display
-                )
-            ).build()
-
-        workManager.enqueue(createContactGroupRequest)
-        return workManager.getWorkInfoByIdLiveData(createContactGroupRequest.id)
+            workManager.enqueue(createContactGroupRequest)
+            return workManager.getWorkInfoByIdLiveData(createContactGroupRequest.id)
+        }
     }
+
 }
 
