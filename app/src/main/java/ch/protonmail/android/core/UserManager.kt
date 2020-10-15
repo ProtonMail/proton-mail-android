@@ -58,6 +58,7 @@ const val LOGIN_STATE_TO_INBOX = 3
 
 const val PREF_PIN = "mailbox_pin"
 const val PREF_USERNAME = "username"
+
 /**
  * When user login successfully PREF_IS_LOGGED_IN  = true
  * When user logout PREF_IS_LOGGED_IN = false
@@ -91,7 +92,6 @@ class UserManager @Inject constructor(
     private val userReferences = HashMap<String, User>()
     private var mCheckTimestamp: Float = 0.toFloat()
     private var mMailboxPassword: String? = null
-//    private var mMailboxPin: String? = null
     private val app: ProtonMailApplication = context.app
     private var mGeneratingKeyPair: Boolean = false
 
@@ -105,8 +105,10 @@ class UserManager @Inject constructor(
                 AppUtil.postEventOnUi(mGenerateKeyPairEvent)
             }
             if (mCreateUserOnKeyPairGenerationFinish) {
-                LoginService.startCreateUser(mNewUserUsername, mNewUserPassword, mNewUserUpdateMe,
-                        mNewUserTokenType, mNewUserToken)
+                LoginService.startCreateUser(
+                    mNewUserUsername, mNewUserPassword, mNewUserUpdateMe,
+                    mNewUserTokenType, mNewUserToken
+                )
             } else {
                 mCreateUserOnKeyPairGenerationFinish = false
             }
@@ -175,7 +177,7 @@ class UserManager @Inject constructor(
 
     val isFirstLogin: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) &&
-                prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
+            prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
 
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
@@ -323,11 +325,11 @@ class UserManager @Inject constructor(
     }
 
     fun createUser(
-            username: String,
-            password: ByteArray,
-            updateMe: Boolean,
-            tokenType: Constants.TokenType,
-            token: String
+        username: String,
+        password: ByteArray,
+        updateMe: Boolean,
+        tokenType: Constants.TokenType,
+        token: String
     ) {
         if (this.privateKey == null && mGeneratingKeyPair) {
             mCreateUserOnKeyPairGenerationFinish = true
@@ -346,27 +348,31 @@ class UserManager @Inject constructor(
     }
 
     fun login(
-            username: String,
-            password: ByteArray,
-            response: LoginInfoResponse?,
-            fallbackAuthVersion: Int,
-            signUp: Boolean
+        username: String,
+        password: ByteArray,
+        response: LoginInfoResponse?,
+        fallbackAuthVersion: Int,
+        signUp: Boolean
     ) {
-        LoginService.startLogin(username, password, response, fallbackAuthVersion, signUp)
+        LoginService.startLogin(
+            username, password, response, fallbackAuthVersion, signUp
+        )
     }
 
     fun twoFA(
-            username: String,
-            password: ByteArray,
-            twoFactor: String?,
-            infoResponse: LoginInfoResponse?,
-            loginResponse: LoginResponse?,
-            fallbackAuthVersion: Int,
-            signUp: Boolean,
-            isConnecting: Boolean
+        username: String,
+        password: ByteArray,
+        twoFactor: String?,
+        infoResponse: LoginInfoResponse?,
+        loginResponse: LoginResponse?,
+        fallbackAuthVersion: Int,
+        signUp: Boolean,
+        isConnecting: Boolean
     ) {
-        LoginService.start2FA(username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
-                signUp, isConnecting)
+        LoginService.start2FA(
+            username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
+            signUp, isConnecting
+        )
     }
 
     fun mailboxLogin(username: String, mailboxPassword: String, keySalt: String?, signUp: Boolean) {
@@ -382,11 +388,11 @@ class UserManager @Inject constructor(
     }
 
     fun connectAccountLogin(
-            username: String,
-            password: ByteArray,
-            twoFactor: String?,
-            response: LoginInfoResponse?,
-            fallbackAuthVersion: Int
+        username: String,
+        password: ByteArray,
+        twoFactor: String?,
+        response: LoginInfoResponse?,
+        fallbackAuthVersion: Int
     ) {
         LoginService.startConnectAccount(username, password, twoFactor, response, fallbackAuthVersion)
     }
@@ -423,8 +429,8 @@ class UserManager @Inject constructor(
         val accountManager = AccountManager.getInstance(context)
         val currentPrimary = this.username
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
-                ?: // fallback to "last user logout"
-                return logoutLastActiveAccount()
+            ?: // fallback to "last user logout"
+            return logoutLastActiveAccount()
         LogoutService.startLogout(false, username)
         accountManager.onSuccessfulLogout(username)
         AppUtil.deleteSecurePrefs(username, false)
@@ -594,19 +600,19 @@ class UserManager @Inject constructor(
         val exists = tokenManager?.let {
             !TextUtils.isEmpty(it.authAccessToken)
         }
-        return exists?: false
+        return exists ?: false
     }
 
     @JvmOverloads
     fun setUserInfo(
-            userInfo: UserInfo,
-            username: String? = null,
-            mailSettings: MailSettings,
-            userSettings: UserSettings,
-            addresses: List<Address>
+        userInfo: UserInfo,
+        username: String? = null,
+        mailSettings: MailSettings,
+        userSettings: UserSettings,
+        addresses: List<Address>
     ) {
         val user = userInfo.user
-        user.username = username?: this.username
+        user.username = username ?: this.username
         user.setAddressIdEmail()
         user.setAddresses(addresses)
         this.mailSettings = mailSettings
@@ -644,7 +650,7 @@ class UserManager @Inject constructor(
     }
 
     fun getTokenManager(username: String): TokenManager? {
-        val tokenManager = TokenManager.getInstance(username, openPgp)
+        val tokenManager = TokenManager.getInstance(username)
         // make sure the private key is here
         tokenManager?.let {
             if (it.encPrivateKey.isNullOrBlank()) {
@@ -696,12 +702,12 @@ class UserManager @Inject constructor(
 
 
     fun setSnoozeScheduled(
-            isOn: Boolean,
-            startTimeHour: Int,
-            startTimeMinute: Int,
-            endTimeHour: Int,
-            endTimeMinute: Int,
-            repeatingDays: String
+        isOn: Boolean,
+        startTimeHour: Int,
+        startTimeMinute: Int,
+        endTimeHour: Int,
+        endTimeMinute: Int,
+        repeatingDays: String
     ) {
         snoozeSettings!!.snoozeScheduled = isOn
         snoozeSettings!!.snoozeScheduledStartTimeHour = startTimeHour
@@ -720,7 +726,7 @@ class UserManager @Inject constructor(
         snoozeSettings!!.save(username)
     }
 
-    private fun loadSettings(username : String){
+    private fun loadSettings(username: String) {
         if (username.isBlank()) {
             return
         }

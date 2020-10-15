@@ -24,9 +24,13 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -34,9 +38,12 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -71,6 +78,18 @@ class LogoutWorkerTest {
             userManager,
             TestDispatcherProvider
         )
+        mockkStatic(AppUtil::class)
+        mockkStatic(TokenManager::class)
+        mockkStatic(FcmUtil::class)
+        mockkStatic(ProtonMailApplication::class)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(AppUtil::class)
+        unmockkStatic(TokenManager::class)
+        unmockkStatic(FcmUtil::class)
+        unmockkStatic(ProtonMailApplication::class)
     }
 
     @Test
@@ -78,24 +97,31 @@ class LogoutWorkerTest {
         runBlockingTest {
             // given
             val testUserName = "testUserName"
-            val testLoggedInName = "testLoggedInName"
+            val registrationId = "Id1234"
             every { userManager.username } returns testUserName
+            val tokenManager = mockk<TokenManager>(relaxed = true)
+            every { userManager.getTokenManager(testUserName) } returns tokenManager
             every { userManager.nextLoggedInAccountOtherThanCurrent } returns null
-            every { accountManager.getLoggedInUsers() } returns listOf(testLoggedInName)
+            every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
             every { accountManager.clear() } returns Unit
+            every { AppUtil.deleteSecurePrefs(testUserName, any()) } returns Unit
+            every { ProtonMailApplication.getApplication().getSecureSharedPreferences(testUserName) } returns mockk(relaxed = true)
+            every { TokenManager.getInstance(testUserName) } returns tokenManager
+            every { FcmUtil.getRegistrationId() } returns registrationId
 
             val revokeResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
+            coEvery { api.unregisterDevice(registrationId) } returns revokeResponse
             coEvery { api.revokeAccess(testUserName) } returns revokeResponse
             val expected = ListenableWorker.Result.success()
-
 
             // when
             val result = worker.doWork()
 
             // then
             verify { accountManager.clear() }
+            coVerify { api.unregisterDevice(registrationId) }
             coVerify { api.revokeAccess(testUserName) }
             assertEquals(expected, result)
         }
