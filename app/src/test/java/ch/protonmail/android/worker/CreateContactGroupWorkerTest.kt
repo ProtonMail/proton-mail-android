@@ -33,14 +33,15 @@ import io.mockk.Called
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
 
 class CreateContactGroupWorkerTest {
 
@@ -59,6 +60,9 @@ class CreateContactGroupWorkerTest {
     @RelaxedMockK
     private lateinit var createContactGroupApiResponse: LabelResponse
 
+    private var dispatcherProvider = TestDispatcherProvider
+
+    @InjectMockKs
     private lateinit var worker: CreateContactGroupWorker
 
     @BeforeEach
@@ -67,13 +71,6 @@ class CreateContactGroupWorkerTest {
         every { apiManager.createLabel(any()) } returns createContactGroupApiResponse
         every { apiManager.updateLabel(any(), any()) } returns createContactGroupApiResponse
         every { createContactGroupApiResponse.contactGroup } returns ContactLabel("labelID", "name", "color")
-
-        worker = CreateContactGroupWorker(
-            context,
-            parameters,
-            apiManager,
-            repository
-        )
     }
 
     @Test

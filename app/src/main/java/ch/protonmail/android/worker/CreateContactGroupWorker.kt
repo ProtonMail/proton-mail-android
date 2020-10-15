@@ -34,6 +34,8 @@ import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.core.Constants
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME = "keyCreateContactGroupInputDataName"
@@ -48,14 +50,17 @@ class CreateContactGroupWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
-    private val repository: ContactGroupsRepository
+    private val repository: ContactGroupsRepository,
+    private val dispatcherProvider: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         val groupName = getContactGroupNameParam() ?: return Result.failure()
         val color = getContactGroupColorParam() ?: return Result.failure()
 
-        val response = createContactGroup(groupName, color)
+        val response = withContext(dispatcherProvider.Io) {
+            createContactGroup(groupName, color)
+        }
 
         if (response.hasError()) {
             return failureResultWithError(response.error)
@@ -94,7 +99,8 @@ class CreateContactGroupWorker @WorkerInject constructor(
             Constants.LABEL_TYPE_CONTACT_GROUPS
         )
 
-    private fun missingContactGroupIdError() = IllegalArgumentException("Missing required ID parameter to create contact group")
+    private fun missingContactGroupIdError() =
+        IllegalArgumentException("Missing required ID parameter to create contact group")
 
     private fun hasInvalidApiResponse(labelResponse: LabelResponse) = labelResponse.contactGroup.ID.isEmpty()
 
@@ -117,13 +123,13 @@ class CreateContactGroupWorker @WorkerInject constructor(
             display: Int? = 0,
             exclusive: Int? = 0,
             update: Boolean? = false,
-            Id: String? = null
+            id: String? = null
         ): LiveData<WorkInfo> {
 
             val createContactGroupRequest = OneTimeWorkRequestBuilder<CreateContactGroupWorker>()
                 .setInputData(
                     workDataOf(
-                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID to Id,
+                        KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID to id,
                         KEY_INPUT_DATA_CREATE_CONTACT_GROUP_NAME to name,
                         KEY_INPUT_DATA_CREATE_CONTACT_GROUP_COLOR to color,
                         KEY_INPUT_DATA_CREATE_CONTACT_GROUP_EXCLUSIVE to exclusive,
