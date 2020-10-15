@@ -75,7 +75,7 @@ class ContactGroupsViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun fetchContactGroups(schedulers: Scheduler) {
-        if (TextUtils.isEmpty(_searchPhrase)) {
+        if (_searchPhrase.isEmpty()) {
             contactGroupsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
                 .observeOn(schedulers).subscribe(
                     {
