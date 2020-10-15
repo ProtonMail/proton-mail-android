@@ -267,7 +267,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun markMessageAsUnRead(messageIds: IDList) = api.markMessageAsUnRead(messageIds)
 
-    override fun deleteMessage(messageIds: IDList) = api.deleteMessage(messageIds)
+    override suspend fun deleteMessage(messageIds: IDList) = api.deleteMessage(messageIds)
 
     override fun emptyDrafts() = api.emptyDrafts()
 

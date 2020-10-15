@@ -55,6 +55,7 @@ import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import com.squareup.otto.Subscribe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -69,14 +70,15 @@ import java.util.concurrent.atomic.AtomicBoolean
  * TODO reduce [LiveData]s and keep only a single version of the message
  */
 
-internal class MessageDetailsViewModel (
+internal class MessageDetailsViewModel(
     val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     messageRendererFactory: MessageRenderer.Factory,
     val messageId: String,
-    private val isTransientMessage: Boolean
+    private val isTransientMessage: Boolean,
+    private val deleteMessageUseCase: DeleteMessage
 ) : ViewModel() {
 
     private val messageRenderer
@@ -281,10 +283,10 @@ internal class MessageDetailsViewModel (
             init {
                 addSource(this@MessageDetailsViewModel.message) {
                     message = it
-                    message?.senderEmail?.let{ senderEmail ->
+                    message?.senderEmail?.let { senderEmail ->
                         addSource(contactsRepository.findContactEmailByEmailLiveData(senderEmail)) { contactEmail ->
                             contact = contactEmail ?: ContactEmail("", message?.senderEmail ?: "", message?.senderName)
-                            if(!decrypted) {
+                            if (!decrypted) {
                                 refreshedKeys = true
                                 viewModelScope.launch {
                                     withContext(IO) {
@@ -294,7 +296,7 @@ internal class MessageDetailsViewModel (
                             }
                         }
                     }
-                    if(!decrypted) {
+                    if (!decrypted) {
                         refreshedKeys = true
                         viewModelScope.launch {
                             withContext(IO) {
@@ -577,13 +579,20 @@ internal class MessageDetailsViewModel (
 
     fun isPgpEncrypted(): Boolean = message.value?.messageEncryption?.isPGPEncrypted ?: false
 
+    fun deleteMessage(messageId: String) {
+        viewModelScope.launch {
+            deleteMessageUseCase(listOf(messageId))
+        }
+    }
+
     /** [ViewModelProvider.Factory] for create a [MessageDetailsViewModel] */
     class Factory(
-            private val messageDetailsRepository: MessageDetailsRepository,
-            private val userManager: UserManager,
-            private val contactsRepository: ContactsRepository,
-            private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-            private val messageRendererFactory: MessageRenderer.Factory
+        private val messageDetailsRepository: MessageDetailsRepository,
+        private val userManager: UserManager,
+        private val contactsRepository: ContactsRepository,
+        private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
+        private val messageRendererFactory: MessageRenderer.Factory,
+        private val deleteMessage: DeleteMessage
     ) : ViewModelProvider.Factory {
 
         /**
@@ -600,7 +609,7 @@ internal class MessageDetailsViewModel (
             return MessageDetailsViewModel(
                     messageDetailsRepository, userManager, contactsRepository,
                     attachmentMetadataDatabase, messageRendererFactory,
-                    messageId, isTransientMessage
+                    messageId, isTransientMessage, deleteMessage
             ) as T
         }
     }

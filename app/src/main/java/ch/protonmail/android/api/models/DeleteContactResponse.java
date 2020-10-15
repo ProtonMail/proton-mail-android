@@ -24,10 +24,6 @@ import java.util.List;
 
 import ch.protonmail.android.api.utils.Fields;
 
-/**
- * Created by dkadrikj on 8/28/16.
- */
-
 public class DeleteContactResponse {
 
     @SerializedName(Fields.Response.CODE)

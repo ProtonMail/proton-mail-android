@@ -21,9 +21,6 @@ package ch.protonmail.android.api.segments.key
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.models.*
 import ch.protonmail.android.api.models.address.KeyActivationBody
-import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.Path
 import java.io.IOException
 
 

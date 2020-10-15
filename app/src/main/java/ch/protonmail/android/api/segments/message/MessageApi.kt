@@ -20,21 +20,21 @@ package ch.protonmail.android.api.segments.message
 
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.NewMessage
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
+import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
-import ch.protonmail.android.core.Constants
-import retrofit2.Call
-import java.io.IOException
-import ch.protonmail.android.api.models.messages.receive.MessageResponse
+import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
+import ch.protonmail.android.core.Constants
 import io.reactivex.Observable
+import retrofit2.Call
 import timber.log.Timber
+import java.io.IOException
 
 class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpec {
 
@@ -70,10 +70,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         service.unRead(messageIds).execute()
     }
 
-    @Throws(IOException::class)
-    override fun deleteMessage(messageIds: IDList) {
-        service.delete(messageIds).execute()
-    }
+    override suspend fun deleteMessage(messageIds: IDList) = service.delete(messageIds)
 
     @Throws(IOException::class)
     override fun emptyDrafts() {

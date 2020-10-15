@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.segments.message
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.NewMessage
@@ -32,7 +33,15 @@ import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import io.reactivex.Observable
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
+import retrofit2.http.Tag
 
 interface MessageService {
 
@@ -42,7 +51,7 @@ interface MessageService {
 
     @PUT("mail/v4/messages/delete")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun delete(@Body messageIds: IDList): Call<ResponseBody>
+    suspend fun delete(@Body messageIds: IDList): DeleteContactResponse
 
     @PUT("mail/v4/messages/read")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

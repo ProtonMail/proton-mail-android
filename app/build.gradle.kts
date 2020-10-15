@@ -292,7 +292,10 @@ dependencies {
         `timber`,
         `trustKit`,
         `viewStateStore`,
-        `viewStateStore-paging`
+        `viewStateStore-paging`,
+        `mail-android`,
+        `mail-android-activation`,
+        `remark`
     )
 
     kapt(
