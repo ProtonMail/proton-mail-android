@@ -26,10 +26,13 @@ import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.os.Build
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.seconds
 
 /**
  * Monitors active network connection using [NetworkConnectivityManager].
@@ -64,9 +67,12 @@ class NetworkConnectivityManager @Inject constructor(
             }
 
             override fun onLost(network: Network?) {
-                Timber.d("Network $network lost isInternetPossible: ${isInternetConnectionPossible()}")
-                if (!isInternetConnectionPossible()) {
-                    offer(false)
+                launch {
+                    delay(2.seconds)
+                    Timber.d("Network $network lost isInternetPossible: ${isInternetConnectionPossible()}")
+                    if (!isInternetConnectionPossible()) {
+                        offer(false)
+                    }
                 }
             }
 

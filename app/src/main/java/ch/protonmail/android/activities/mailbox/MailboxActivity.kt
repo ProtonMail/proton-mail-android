@@ -160,8 +160,6 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.servers.notification.EXTRA_USERNAME
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
-import ch.protonmail.android.usecase.SendPing
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -345,7 +343,8 @@ class MailboxActivity :
             }
         )
 
-        mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this,
+        mailboxViewModel.hasSuccessfullyDeletedMessages.observe(
+            this,
             { isSuccess ->
                 Timber.v("Delete message status is success $isSuccess")
                 if (!isSuccess) {
