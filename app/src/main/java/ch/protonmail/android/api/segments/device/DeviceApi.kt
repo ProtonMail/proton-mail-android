@@ -30,11 +30,6 @@ class DeviceApi(private val service: DeviceService) : BaseApi(), DeviceApiSpec {
         service.registerDevice(registerDeviceBody, RetrofitTag(username)).execute()
     }
 
-    @Throws(IOException::class)
-    override fun unregisterDeviceBlocking(deviceToken: String) {
-        service.unregisterDeviceBlocking(deviceToken).execute()
-    }
-
     override suspend fun unregisterDevice(deviceToken: String) =
         service.unregisterDevice(deviceToken)
 }

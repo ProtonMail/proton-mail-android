@@ -39,10 +39,6 @@ interface DeviceService {
 
     @DELETE("devices")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun unregisterDeviceBlocking(@Query("DeviceToken") deviceToken: String): Call<ResponseBody>
-
-    @DELETE("devices")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun unregisterDevice(@Query("DeviceToken") deviceToken: String):
         ch.protonmail.android.api.models.ResponseBody
 }

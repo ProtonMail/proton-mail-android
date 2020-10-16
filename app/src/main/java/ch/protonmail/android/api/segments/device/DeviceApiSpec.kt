@@ -27,8 +27,5 @@ interface DeviceApiSpec {
     @Throws(IOException::class)
     fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String)
 
-    @Throws(IOException::class)
-    fun unregisterDeviceBlocking(deviceToken: String)
-
     suspend fun unregisterDevice(deviceToken: String): ResponseBody
 }

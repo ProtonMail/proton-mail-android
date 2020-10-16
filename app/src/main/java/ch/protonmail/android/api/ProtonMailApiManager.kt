@@ -225,8 +225,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
 
-    override fun unregisterDeviceBlocking(deviceToken: String) = api.unregisterDeviceBlocking(deviceToken)
-
     override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
 
     override fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
