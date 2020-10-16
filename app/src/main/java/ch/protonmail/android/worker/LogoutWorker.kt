@@ -37,7 +37,6 @@ import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.AppUtil
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -46,6 +45,7 @@ import javax.inject.Inject
 
 private const val MAX_RETRY_COUNT = 3
 internal const val KEY_INPUT_USER_NAME = "KeyInputUserName"
+internal const val KEY_INPUT_FCM_REGISTRATION_ID = "KeyInputRegistrationId"
 
 /**
  * Work Manager Worker responsible for sending various logout related network calls.
@@ -66,6 +66,7 @@ class LogoutWorker @WorkerInject constructor(
     override suspend fun doWork(): Result =
         runCatching {
             val userName = inputData.getString(KEY_INPUT_USER_NAME) ?: userManager.username
+            val registrationId = inputData.getString(KEY_INPUT_FCM_REGISTRATION_ID) ?: ""
 
             if (userName.isEmpty()) {
                 throw IllegalArgumentException("Cannot proceed with an empty user name")
@@ -74,17 +75,17 @@ class LogoutWorker @WorkerInject constructor(
             Timber.v("Unregistering user: $userName")
 
             val loggedInUsers = accountManager.getLoggedInUsers()
+            // Unregister FCM only if this is the last user on the device
             if (loggedInUsers.isEmpty() || loggedInUsers.size == 1 && loggedInUsers[0] == userName) {
-                val registrationId = FcmUtil.getRegistrationId()
                 if (registrationId.isNotEmpty()) {
                     withContext(dispatchers.Io) {
                         Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
                         api.unregisterDevice(registrationId)
                     }
                 }
-                AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             }
             accountManager.clear()
+            AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
 
             // Revoke access token through API
             withContext(dispatchers.Io) {
@@ -112,16 +113,21 @@ class LogoutWorker @WorkerInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        fun enqueue(userName: String): LiveData<WorkInfo> {
+        fun enqueue(userName: String, fcmRegistrationId: String): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             val workRequest = OneTimeWorkRequestBuilder<LogoutWorker>()
                 .setConstraints(constraints)
-                .setInputData(workDataOf(KEY_INPUT_USER_NAME to userName))
+                .setInputData(
+                    workDataOf(
+                        KEY_INPUT_USER_NAME to userName,
+                        KEY_INPUT_FCM_REGISTRATION_ID to fcmRegistrationId
+                    )
+                )
                 .build()
             workManager.enqueue(workRequest)
-            Timber.v("Scheduling logout for $userName")
+            Timber.v("Scheduling logout for $userName token: $fcmRegistrationId")
             return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
     }

@@ -37,10 +37,10 @@ import java.io.IOException
 import javax.inject.Inject
 
 // region constants
-private const val TAG_LOGOUT_SERVICE = "LogoutService"
 private const val ACTION_LOGOUT_ONLINE = "ACTION_LOGOUT_ONLINE"
 private const val ACTION_LOGOUT_OFFLINE = "ACTION_LOGOUT_OFFLINE"
 private const val EXTRA_USERNAME = "EXTRA_USERNAME"
+private const val EXTRA_FCM_REGISTRATION_ID = "EXTRA_FCM_REGISTRATION_ID"
 // endregion
 
 @AndroidEntryPoint
@@ -64,21 +64,12 @@ class LogoutService : JobIntentService() {
     @Inject
     internal lateinit var workManager: WorkManager
 
-    companion object {
-
-        @JvmOverloads
-        fun startLogout(online: Boolean, username: String? = null) {
-            val context = ProtonMailApplication.getApplication()
-            val intent = Intent(context, LogoutService::class.java)
-            intent.action = if (online) ACTION_LOGOUT_ONLINE else ACTION_LOGOUT_OFFLINE
-            intent.putExtra(EXTRA_USERNAME, username)
-            enqueueWork(context, LogoutService::class.java, Constants.JOB_INTENT_SERVICE_ID_LOGOUT, intent)
-        }
-    }
-
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
-            ACTION_LOGOUT_ONLINE -> logoutOnline(intent.getStringExtra(EXTRA_USERNAME))
+            ACTION_LOGOUT_ONLINE -> logoutOnline(
+                intent.getStringExtra(EXTRA_USERNAME),
+                intent.getStringExtra(EXTRA_FCM_REGISTRATION_ID)
+            )
             ACTION_LOGOUT_OFFLINE -> logoutOffline(intent.getStringExtra(EXTRA_USERNAME))
         }
     }
@@ -102,11 +93,23 @@ class LogoutService : JobIntentService() {
         }
     }
 
-    private fun logoutOnline(username: String?) {
+    private fun logoutOnline(username: String?, fcmRegistrationId: String) {
         jobManager.cancelJobs(TagConstraint.ALL)
         jobManager.clear()
-        val cancelResult = workManager.cancelAllWork()
-        Timber.v("Cancel work result ${cancelResult.state}")
-        logoutWorkerEnqueuer.enqueue(username ?: userManager.username)
+        workManager.cancelAllWork()
+        logoutWorkerEnqueuer.enqueue(username ?: userManager.username, fcmRegistrationId)
+    }
+
+    companion object {
+
+        @JvmOverloads
+        fun startLogout(online: Boolean, username: String? = null, fcmRegistrationId: String? = null) {
+            val context = ProtonMailApplication.getApplication()
+            val intent = Intent(context, LogoutService::class.java)
+            intent.action = if (online) ACTION_LOGOUT_ONLINE else ACTION_LOGOUT_OFFLINE
+            intent.putExtra(EXTRA_USERNAME, username)
+            intent.putExtra(EXTRA_FCM_REGISTRATION_ID, fcmRegistrationId)
+            enqueueWork(context, LogoutService::class.java, Constants.JOB_INTENT_SERVICE_ID_LOGOUT, intent)
+        }
     }
 }

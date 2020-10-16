@@ -32,7 +32,6 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -84,7 +83,6 @@ class LogoutWorkerTest {
         )
         mockkStatic(AppUtil::class)
         mockkStatic(TokenManager::class)
-        mockkStatic(FcmUtil::class)
         mockkStatic(ProtonMailApplication::class)
     }
 
@@ -92,7 +90,6 @@ class LogoutWorkerTest {
     fun tearDown() {
         unmockkStatic(AppUtil::class)
         unmockkStatic(TokenManager::class)
-        unmockkStatic(FcmUtil::class)
         unmockkStatic(ProtonMailApplication::class)
     }
 
@@ -102,7 +99,10 @@ class LogoutWorkerTest {
             // given
             val testUserName = "testUserName"
             val registrationId = "Id1234"
-            every { parameters.inputData } returns workDataOf(KEY_INPUT_USER_NAME to testUserName)
+            every { parameters.inputData } returns workDataOf(
+                KEY_INPUT_USER_NAME to testUserName,
+                KEY_INPUT_FCM_REGISTRATION_ID to registrationId
+            )
             every { userManager.username } returns ""
             val tokenManager = mockk<TokenManager>(relaxed = true)
             every { userManager.getTokenManager(testUserName) } returns tokenManager
@@ -113,7 +113,6 @@ class LogoutWorkerTest {
             every { AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS)) } returns Unit
             every { ProtonMailApplication.getApplication().getSecureSharedPreferences(testUserName) } returns mockk(relaxed = true)
             every { TokenManager.getInstance(testUserName) } returns tokenManager
-            every { FcmUtil.getRegistrationId() } returns registrationId
 
             val revokeResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
@@ -143,7 +142,6 @@ class LogoutWorkerTest {
             every { userManager.username } returns testUserName
             every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
             val expected = ListenableWorker.Result.retry()
-            every { FcmUtil.getRegistrationId() } returns registrationId
             coEvery { api.unregisterDevice(registrationId) } throws testException
 
             // when
@@ -161,13 +159,12 @@ class LogoutWorkerTest {
             val registrationId = "Id1234"
             val exceptionMessage = "TestException"
             val testException = Exception(exceptionMessage)
-            every { parameters.inputData } returns workDataOf()
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_FCM_REGISTRATION_ID to registrationId)
             every { userManager.username } returns testUserName
             every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to exceptionMessage)
             )
-            every { FcmUtil.getRegistrationId() } returns registrationId
             coEvery { api.unregisterDevice(registrationId) } throws testException
 
             // when
@@ -177,6 +174,7 @@ class LogoutWorkerTest {
             val result = worker.doWork()
 
             // then
+            coVerify { api.unregisterDevice(registrationId) }
             assertEquals(expected, result)
         }
 

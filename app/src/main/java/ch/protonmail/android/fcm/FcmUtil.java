@@ -21,10 +21,13 @@ package ch.protonmail.android.fcm;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
+import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
+import timber.log.Timber;
 
 public class FcmUtil {
     private static final String TAG_FCM_UTIL = "FcmUtil";
@@ -46,6 +49,7 @@ public class FcmUtil {
      * @return registration ID, or empty string if there is no existing
      * registration ID.
      */
+    @NonNull
     public static String getRegistrationId() {
         final ProtonMailApplication app = ProtonMailApplication.getApplication();
         final SharedPreferences prefs = app.getDefaultSharedPreferences();
@@ -59,7 +63,7 @@ public class FcmUtil {
         // since the existing registration ID is not guaranteed to work with
         // the new app version.
         int registeredVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = AppUtil.getAppVersionCode(app);
+        int currentVersion = BuildConfig.VERSION_CODE;
         if (registeredVersion != currentVersion) {
             Logger.doLog(TAG_FCM_UTIL, "App version changed");
             return "";
@@ -79,7 +83,8 @@ public class FcmUtil {
     public static void setRegistrationId(String registrationId) {
         final ProtonMailApplication app = ProtonMailApplication.getApplication();
         final SharedPreferences prefs = app.getDefaultSharedPreferences();
-        int appVersion = AppUtil.getAppVersionCode(app);
+        int appVersion = BuildConfig.VERSION_CODE;
+        Timber.v("Saving version:%s registration ID: %s", appVersion, registrationId);
         // the commit is because the saving of registration id is considered always to be called from a background thread
         prefs.edit()
                 .putString(Constants.Prefs.PREF_REGISTRATION_ID, registrationId)

@@ -43,6 +43,7 @@ import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
@@ -431,7 +432,7 @@ class UserManager @Inject constructor(
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
             ?: // fallback to "last user logout"
             return logoutLastActiveAccount()
-        LogoutService.startLogout(false, username)
+        LogoutService.startLogout(false, username = username)
         accountManager.onSuccessfulLogout(username)
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
@@ -446,7 +447,8 @@ class UserManager @Inject constructor(
         loginState = LOGIN_STATE_NOT_INITIALIZED
         AppUtil.deleteDatabases(app.applicationContext, username, clearDoneListener)
         saveBackupSettings()
-        LogoutService.startLogout(true, username)
+        // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
+        LogoutService.startLogout(true, username = username, fcmRegistrationId = FcmUtil.getRegistrationId())
         setRememberMailboxLogin(false)
         firstLoginRemove()
         reset()

@@ -20,16 +20,16 @@ package ch.protonmail.android.fcm
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.ProtonJobIntentService
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.RegisterDeviceBody
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 // region constants
@@ -70,16 +70,17 @@ class PMRegistrationIntentService : ProtonJobIntentService() {
      * @param token The new token.
      */
     @Throws(Exception::class)
-    private fun sendRegistrationToServer(token: String?) {
+    private fun sendRegistrationToServer(token: String) {
+        Timber.v("Send Fcm token $token")
         FcmUtil.setRegistrationId(token)
 
         var exception: Exception? = null
         for (username in AccountManager.getInstance(baseContext).getLoggedInUsers()) {
             try {
-                protonMailApiManager.registerDevice(RegisterDeviceBody(ProtonMailApplication.getApplication()), username)
-            } catch (e: Exception) {
-                Log.e(TAG_PM_REGISTRATION_INTENT_SERVICE, "error registering user for FCM", e)
-                exception = e
+                protonMailApiManager.registerDevice(RegisterDeviceBody(token), username)
+            } catch (ioException: IOException) {
+                Timber.w(ioException, "error registering user for FCM")
+                exception = ioException
             }
 
         }
