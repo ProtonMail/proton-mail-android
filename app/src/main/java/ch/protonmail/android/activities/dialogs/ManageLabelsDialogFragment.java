@@ -64,10 +64,6 @@ import ch.protonmail.android.views.ThreeStateButton;
 import ch.protonmail.android.views.ThreeStateCheckBox;
 import dagger.hilt.android.AndroidEntryPoint;
 
-/*
- * Created by dkadrikj on 19.7.15.
- */
-
 @AndroidEntryPoint
 public class ManageLabelsDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
 
@@ -120,8 +116,12 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
      * @param checkedLabels pass null if you do not need labels checked
      * @return new instance of {@link ManageLabelsDialogFragment}
      */
-    public static ManageLabelsDialogFragment newInstance(Set<String> checkedLabels, HashMap<String, Integer> numberOfMessagesSelected,
-                                                         ArrayList<String> messageIds, boolean showCheckboxes) {
+    public static ManageLabelsDialogFragment newInstance(
+            Set<String> checkedLabels,
+            HashMap<String, Integer> numberOfMessagesSelected,
+            ArrayList<String> messageIds,
+            boolean showCheckboxes
+    ) {
         ManageLabelsDialogFragment fragment = new ManageLabelsDialogFragment();
         Bundle extras = new Bundle();
         extras.putStringArrayList(ARGUMENT_CHECKED_LABELS, new ArrayList<>(checkedLabels));
@@ -161,7 +161,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: check for  Channel is unrecoverably broken and will be disposed
         Bundle extras = getArguments();
         if (extras != null && extras.containsKey(ARGUMENT_CHECKED_LABELS)) {
             mCheckedLabels = getArguments().getStringArrayList(ARGUMENT_CHECKED_LABELS);
@@ -179,9 +178,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @Override
     protected void initUi(final View rootView) {
         mList.setOnItemLongClickListener(labelItemLongClick);
-        if (mLabelCreationListener != null) {
-            // TODO:
-        }
         mColorsGrid.setOnItemClickListener(this);
         mArchiveCheckbox.getButton().numberOfStates = 2;
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getContext().getApplicationContext()).getDatabase();
