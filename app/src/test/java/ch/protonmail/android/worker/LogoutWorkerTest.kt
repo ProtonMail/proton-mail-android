@@ -30,6 +30,8 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.events.LogoutEvent
+import ch.protonmail.android.events.Status
 import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
@@ -108,6 +110,7 @@ class LogoutWorkerTest {
             every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
             every { accountManager.clear() } returns Unit
             every { AppUtil.deleteSecurePrefs(testUserName, any()) } returns Unit
+            every { AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS)) } returns Unit
             every { ProtonMailApplication.getApplication().getSecureSharedPreferences(testUserName) } returns mockk(relaxed = true)
             every { TokenManager.getInstance(testUserName) } returns tokenManager
             every { FcmUtil.getRegistrationId() } returns registrationId

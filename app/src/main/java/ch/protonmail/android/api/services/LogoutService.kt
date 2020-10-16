@@ -20,6 +20,7 @@ package ch.protonmail.android.api.services
 
 import android.content.Intent
 import androidx.core.app.JobIntentService
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.Constants
@@ -59,6 +60,9 @@ class LogoutService : JobIntentService() {
 
     @Inject
     internal lateinit var logoutWorkerEnqueuer: LogoutWorker.Enqueuer
+
+    @Inject
+    internal lateinit var workManager: WorkManager
 
     companion object {
 
@@ -101,6 +105,8 @@ class LogoutService : JobIntentService() {
     private fun logoutOnline(username: String?) {
         jobManager.cancelJobs(TagConstraint.ALL)
         jobManager.clear()
+        val cancelResult = workManager.cancelAllWork()
+        Timber.v("Cancel work result ${cancelResult.state}")
         logoutWorkerEnqueuer.enqueue(username ?: userManager.username)
     }
 }
