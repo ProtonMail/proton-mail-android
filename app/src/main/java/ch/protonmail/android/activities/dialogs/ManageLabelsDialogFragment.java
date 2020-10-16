@@ -146,16 +146,16 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mLabelStateChangeListener = (ILabelsChangeListener) activity;
+            mLabelStateChangeListener = (ILabelsChangeListener) context;
         } catch (ClassCastException e) {
             // not throwing error, since the user of this dialog is not obligated to listen for
             // labels state change
         }
         try {
-            mLabelCreationListener = (ILabelCreationListener) activity;
+            mLabelCreationListener = (ILabelCreationListener) context;
         } catch (ClassCastException e) {
             // not throwing error since the user of this fragment may not want to create new labels
         }
