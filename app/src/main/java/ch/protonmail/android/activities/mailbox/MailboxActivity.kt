@@ -680,14 +680,19 @@ class MailboxActivity : NavigationActivity(),
         if (checkPlayServices()) {
             val tokenSent = FcmUtil.isTokenSent()
             if (!tokenSent) {
-                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        task.result?.let { result ->
-                            startRegistration(this, result.token)
+                try {
+                    FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            task.result?.let { result ->
+                                startRegistration(this, result.token)
+                            }
+                        } else {
+                            Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
                         }
-                    } else {
-                        Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
                     }
+                } catch (exc: IllegalArgumentException) {
+                    Toast.makeText(this, R.string.invalid_firebase_api_key_message, Toast.LENGTH_LONG).show()
+                    Timber.e(exc, getString(R.string.invalid_firebase_api_key_message))
                 }
             }
         }
