@@ -22,6 +22,7 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
@@ -59,7 +60,7 @@ class LogoutWorkerTest {
     @RelaxedMockK
     private lateinit var context: Context
 
-    @RelaxedMockK
+    @MockK
     private lateinit var parameters: WorkerParameters
 
     @MockK
@@ -70,6 +71,7 @@ class LogoutWorkerTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        every { parameters.taskExecutor } returns mockk(relaxed = true)
         worker = LogoutWorker(
             context,
             parameters,
@@ -98,7 +100,8 @@ class LogoutWorkerTest {
             // given
             val testUserName = "testUserName"
             val registrationId = "Id1234"
-            every { userManager.username } returns testUserName
+            every { parameters.inputData } returns workDataOf(KEY_INPUT_USER_NAME to testUserName)
+            every { userManager.username } returns ""
             val tokenManager = mockk<TokenManager>(relaxed = true)
             every { userManager.getTokenManager(testUserName) } returns tokenManager
             every { userManager.nextLoggedInAccountOtherThanCurrent } returns null
@@ -126,4 +129,68 @@ class LogoutWorkerTest {
             assertEquals(expected, result)
         }
 
+    @Test
+    fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursRetryWillBeReturned() =
+        runBlockingTest {
+            // given
+            val testUserName = "testUserName"
+            val registrationId = "Id1234"
+            val testException = Exception("TestException")
+            every { parameters.inputData } returns workDataOf()
+            every { userManager.username } returns testUserName
+            every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
+            val expected = ListenableWorker.Result.retry()
+            every { FcmUtil.getRegistrationId() } returns registrationId
+            coEvery { api.unregisterDevice(registrationId) } throws testException
+
+            // when
+            val result = worker.doWork()
+
+            // then
+            assertEquals(expected, result)
+        }
+
+    @Test
+    fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursMoreTHanThreeTimesAndFailureIsReturned() =
+        runBlockingTest {
+            // given
+            val testUserName = "testUserName"
+            val registrationId = "Id1234"
+            val exceptionMessage = "TestException"
+            val testException = Exception(exceptionMessage)
+            every { parameters.inputData } returns workDataOf()
+            every { userManager.username } returns testUserName
+            every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to exceptionMessage)
+            )
+            every { FcmUtil.getRegistrationId() } returns registrationId
+            coEvery { api.unregisterDevice(registrationId) } throws testException
+
+            // when
+            worker.doWork()
+            worker.doWork()
+            worker.doWork()
+            val result = worker.doWork()
+
+            // then
+            assertEquals(expected, result)
+        }
+
+    @Test
+    fun verifyThatEmptyUserNameWillCauseResultFailureToBeReturnedWithoutRetry() =
+        runBlockingTest {
+            // given
+            every { parameters.inputData } returns workDataOf()
+            every { userManager.username } returns ""
+            val expected = ListenableWorker.Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with an empty user name")
+            )
+
+            // when
+            val result = worker.doWork()
+
+            // then
+            assertEquals(expected, result)
+        }
 }

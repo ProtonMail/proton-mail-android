@@ -30,10 +30,13 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.events.LogoutEvent
+import ch.protonmail.android.events.Status
 import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.utils.AppUtil
 import kotlinx.coroutines.withContext
@@ -42,6 +45,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 private const val MAX_RETRY_COUNT = 3
+internal const val KEY_INPUT_USER_NAME = "KeyInputUserName"
 
 /**
  * Work Manager Worker responsible for sending various logout related network calls.
@@ -57,9 +61,15 @@ class LogoutWorker @WorkerInject constructor(
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
+    var retryCount = 0
+
     override suspend fun doWork(): Result =
-        withContext(dispatchers.Io) {
-            val userName = userManager.username
+        runCatching {
+            val userName = inputData.getString(KEY_INPUT_USER_NAME) ?: userManager.username
+
+            if (userName.isEmpty()) {
+                throw IllegalArgumentException("Cannot proceed with an empty user name")
+            }
 
             Timber.v("Unregistering user: $userName")
 
@@ -67,48 +77,51 @@ class LogoutWorker @WorkerInject constructor(
             if (loggedInUsers.isEmpty() || loggedInUsers.size == 1 && loggedInUsers[0] == userName) {
                 val registrationId = FcmUtil.getRegistrationId()
                 if (registrationId.isNotEmpty()) {
-                    Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
-                    api.unregisterDevice(registrationId)
+                    withContext(dispatchers.Io) {
+                        Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
+                        api.unregisterDevice(registrationId)
+                    }
                 }
-                //AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
+                AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             }
             accountManager.clear()
 
             // Revoke access token through API
-            if (userName.isNotEmpty()) {
-                api.revokeAccess(userName)
+            withContext(dispatchers.Io) {
+                if (userName.isNotEmpty()) {
+                    api.revokeAccess(userName)
+                }
             }
 
             AppUtil.deleteSecurePrefs(userName, userManager.nextLoggedInAccountOtherThanCurrent == null)
             userManager.getTokenManager(userName)?.clear()
             TokenManager.clearInstance(userName)
-
-            Result.success()
-        }
-
-    fun shouldReRunOnThrowable(exception: Exception, runCount: Int, maxRunCount: Int): Result {
-        return if (!
-            (
-                exception.cause is IllegalArgumentException &&
-                    (exception.cause as IllegalArgumentException).message == "value == null"
-                )
+        }.fold(
+            onSuccess = { Result.success() },
+            onFailure = { shouldReRunOnThrowable(it) }
         )
+
+    private fun shouldReRunOnThrowable(throwable: Throwable): Result =
+        if (throwable !is IllegalArgumentException && retryCount < MAX_RETRY_COUNT) {
+            ++retryCount
             Result.retry()
-        else
-            Result.failure()
-    }
+        } else {
+            retryCount = 0
+            Result.failure(workDataOf(KEY_WORKER_ERROR_DESCRIPTION to throwable.message))
+        }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        fun enqueue(): LiveData<WorkInfo> {
+        fun enqueue(userName: String): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
             val workRequest = OneTimeWorkRequestBuilder<LogoutWorker>()
                 .setConstraints(constraints)
+                .setInputData(workDataOf(KEY_INPUT_USER_NAME to userName))
                 .build()
             workManager.enqueue(workRequest)
-
+            Timber.v("Scheduling logout for $userName")
             return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
     }

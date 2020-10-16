@@ -26,7 +26,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.jobs.LogoutJob
+import ch.protonmail.android.worker.LogoutWorker
 import ch.protonmail.libs.core.utils.takeIfNotBlank
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
@@ -47,12 +47,18 @@ class LogoutService : JobIntentService() {
 
     @Inject
     internal lateinit var jobManager: JobManager
+
     @Inject
     internal lateinit var networkUtils: QueueNetworkUtil
+
     @Inject
     internal lateinit var userManager: UserManager
+
     @Inject
     internal lateinit var api: ProtonMailApiManager
+
+    @Inject
+    internal lateinit var logoutWorkerEnqueuer: LogoutWorker.Enqueuer
 
     companion object {
 
@@ -87,14 +93,14 @@ class LogoutService : JobIntentService() {
             }
             jobManager.cancelJobs(TagConstraint.ALL)
             jobManager.clear()
-        } catch (e: IOException) {
-            Timber.e(e)
+        } catch (ioException: IOException) {
+            Timber.e(ioException, "LogoutOffline exception")
         }
     }
 
     private fun logoutOnline(username: String?) {
         jobManager.cancelJobs(TagConstraint.ALL)
         jobManager.clear()
-        jobManager.addJobInBackground(LogoutJob(username ?: userManager.username))
+        logoutWorkerEnqueuer.enqueue(username ?: userManager.username)
     }
 }
