@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.activities.dialogs;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
@@ -60,6 +62,8 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.UserUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel;
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModelFactory;
 import ch.protonmail.android.views.ThreeStateButton;
 import ch.protonmail.android.views.ThreeStateCheckBox;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -96,6 +100,9 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @BindView(R.id.list_divider)
     View mListDivider;
 
+    @Inject
+    protected ManageLabelsDialogViewModelFactory manageLabelsDialogViewModelFactory;
+
     private ILabelsChangeListener mLabelStateChangeListener;
     private ILabelCreationListener mLabelCreationListener;
     private LabelsAdapter mAdapter;
@@ -109,6 +116,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     private boolean mCreationMode = false;
     private boolean mShowCheckboxes;
     private int mCurrentSelection = -1;
+    private ManageLabelsDialogViewModel viewModel;
 
     /**
      * Instantiates a new fragment of this class.
@@ -161,6 +169,9 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        viewModel = manageLabelsDialogViewModelFactory.create(ManageLabelsDialogViewModel.class);
+
         Bundle extras = getArguments();
         if (extras != null && extras.containsKey(ARGUMENT_CHECKED_LABELS)) {
             mCheckedLabels = getArguments().getStringArrayList(ARGUMENT_CHECKED_LABELS);

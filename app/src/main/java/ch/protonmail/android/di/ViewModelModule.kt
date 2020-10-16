@@ -49,7 +49,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 internal class ViewModelModule {
 
-    // region view models factories
     @Provides
     fun provideAddressChooserViewModelFactory(addressChooserViewModelFactory: AddressChooserViewModelFactory):
             ViewModelProvider.NewInstanceFactory {
@@ -114,6 +113,12 @@ internal class ViewModelModule {
     fun providePinFragmentViewModelFactory(pinFragmentViewModelFactory: PinFragmentViewModelFactory):
         ViewModelProvider.NewInstanceFactory {
         return pinFragmentViewModelFactory
+    }
+
+    @Provides
+    fun provideManageLabelsDialogViewModelFactory(factory: ManageLabelsDialogViewModelFactory):
+        ViewModelProvider.NewInstanceFactory {
+        return factory
     }
 
 }
