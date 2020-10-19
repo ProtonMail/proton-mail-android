@@ -45,7 +45,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
 
     fun onDoneClicked(
         isCreationMode: Boolean,
-        newLabelColor: String?,
+        labelColor: String?,
         checkedLabelIds: List<String>,
         isShowCheckboxes: Boolean,
         mArchiveCheckboxState: Int,
@@ -54,12 +54,8 @@ class ManageLabelsDialogViewModel @Inject constructor(
     ) {
 
         if (isCreationMode) {
-            if (newLabelColor.isNullOrEmpty()) {
-                viewState.value = ShowMissingColorError
-            } else {
 //                mCreationMode = false
-                onSaveClicked(labelName, labelItemsList)
-            }
+            createLabel(labelName, labelColor, labelItemsList)
         } else {
 //            val maxLabelsAllowed = UserUtils.getMaxAllowedLabels(userManager)
 //            if (checkedLabelIds.size > maxLabelsAllowed) {
@@ -84,7 +80,16 @@ class ManageLabelsDialogViewModel @Inject constructor(
         }
     }
 
-    private fun onSaveClicked(labelName: String, labelItemsList: List<LabelsAdapter.LabelItem>) {
+    private fun createLabel(
+        labelName: String,
+        labelColor: String?,
+        labelItemsList: List<LabelsAdapter.LabelItem>
+    ) {
+        if (labelColor.isNullOrEmpty()) {
+            viewState.value = ShowMissingColorError
+            return
+        }
+
         if (labelName.isEmpty()) {
             viewState.value = ViewState.ShowMissingNameError
             return

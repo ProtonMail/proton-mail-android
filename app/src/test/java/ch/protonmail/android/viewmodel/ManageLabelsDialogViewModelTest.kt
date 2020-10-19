@@ -72,7 +72,8 @@ class ManageLabelsDialogViewModelTest {
             emptyList()
         )
 
-        verify { mockObserver.onChanged(viewModel.viewState.value as ShowMissingColorError) }
+        val showMissingColorError = viewModel.viewState.value as ShowMissingColorError
+        verifySequence { mockObserver.onChanged(showMissingColorError) }
     }
 
     @Test
