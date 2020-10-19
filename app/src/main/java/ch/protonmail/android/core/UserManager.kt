@@ -191,7 +191,7 @@ class UserManager @Inject constructor(
      */
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val username: String
-        get() = prefs.getString(PREF_USERNAME, "")
+        get() = prefs.getString(PREF_USERNAME, "")!!
 
     val incorrectPinAttempts: Int
         get() {

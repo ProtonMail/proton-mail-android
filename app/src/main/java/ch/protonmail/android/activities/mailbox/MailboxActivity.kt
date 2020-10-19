@@ -728,14 +728,14 @@ class MailboxActivity : NavigationActivity(),
         super.onNewIntent(intent)
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
         if (intent.extras != null && intent.extras!!.containsKey(EXTRA_SWITCHED_TO_USER)) {
-            switchAccountProcedure(intent.getStringExtra(EXTRA_SWITCHED_TO_USER))
+            switchAccountProcedure(intent.getStringExtra(EXTRA_SWITCHED_TO_USER)!!)
         } else if (intent.getBooleanExtra(EXTRA_SWITCHED_USER, false)) {
             onSwitchedAccounts()
         } else if (intent.getBooleanExtra(EXTRA_LOGOUT, false)) {
             onLogout()
         } else if (intent.extras != null && intent.extras!!.containsKey(EXTRA_USERNAME)) {
             if (mUserManager.username != intent.getStringExtra(EXTRA_USERNAME)) {
-                switchAccountProcedure(intent.getStringExtra(EXTRA_USERNAME))
+                switchAccountProcedure(intent.getStringExtra(EXTRA_USERNAME)!!)
             }
         } else {
             checkRegistration()
@@ -1610,8 +1610,7 @@ class MailboxActivity : NavigationActivity(),
                 }
                 REQUEST_CODE_VALIDATE_PIN -> {
                     if (data!!.hasExtra(EXTRA_TOTAL_COUNT_EVENT)) {
-                        val totalCountEvent: Any = data.getSerializableExtra(
-                            EXTRA_TOTAL_COUNT_EVENT)
+                        val totalCountEvent: Any? = data.getSerializableExtra(EXTRA_TOTAL_COUNT_EVENT)
                         if (totalCountEvent is MessageCountsEvent) {
                             onMessageCountsEvent(totalCountEvent)
                         }
@@ -1684,7 +1683,7 @@ class MailboxActivity : NavigationActivity(),
         var errorText = getString(R.string.message_drafted)
         if (intent.hasExtra(Constants.ERROR)) {
             val extraText = intent.getStringExtra(Constants.ERROR)
-            if (extraText.isNotEmpty()) {
+            if (!extraText.isNullOrEmpty()) {
                 errorText = extraText
             }
         }

@@ -127,8 +127,8 @@ internal class NotificationSettingsActivity : BaseActivity(), ViewStateActivity 
     override fun onActivityResult( requestCode: Int, resultCode: Int, data: Intent? ) {
         if ( resultCode == Activity.RESULT_OK ) {
             if ( requestCode == REQUEST_CODE_PICK_RINGTONE ) {
-                val uri = data!!.getParcelableExtra<Uri>( RingtoneManager.EXTRA_RINGTONE_PICKED_URI )
-                viewModel.setRingtone( uri )
+                val uri = data!!.getParcelableExtra<Uri>( RingtoneManager.EXTRA_RINGTONE_PICKED_URI )!!
+                viewModel.setRingtone(uri)
             }
         } else super.onActivityResult( requestCode, resultCode, data )
     }

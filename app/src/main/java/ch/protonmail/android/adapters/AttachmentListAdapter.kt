@@ -20,7 +20,6 @@ package ch.protonmail.android.adapters
 
 import android.content.Context
 import android.content.Intent
-import android.text.TextUtils
 import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
@@ -35,18 +34,18 @@ import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.worker.DeleteAttachmentWorker
 import java.io.File
 import java.util.ArrayList
-import java.util.Collections
 import java.util.Comparator
 
 
 class AttachmentListAdapter(
     context: Context,
-    private var mAttachmentList: ArrayList<LocalAttachment>?,
-    private var mNumEmbeddedImages: Int,
+    attachmentsList: List<LocalAttachment>?,
+    private var numberOfEmbeddedImages: Int,
     private val workManager: WorkManager
-) : ArrayAdapter<LocalAttachment>(context, 0, mAttachmentList) {
-    private val mInflater: LayoutInflater = LayoutInflater.from(context)
-    private val mListener: IAttachmentListener
+) : ArrayAdapter<LocalAttachment>(context, 0, attachmentsList ?: emptyList()) {
+
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private val listener: IAttachmentListener
 
     private val attachmentSortComparator = Comparator<LocalAttachment> { lhs, rhs ->
         val embeddedImageCompare = java.lang.Boolean.valueOf(lhs.isEmbeddedImage).compareTo(rhs.isEmbeddedImage)
@@ -55,28 +54,23 @@ class AttachmentListAdapter(
         } else lhs.displayName.compareTo(rhs.displayName, ignoreCase = true)
     }
 
+    private var attachmentsList = attachmentsList?.sortedWith(attachmentSortComparator) ?: emptyList()
+
     val data: ArrayList<LocalAttachment>
-        get() {
-            return if (mAttachmentList == null) {
-                mAttachmentList = ArrayList()
-                ArrayList()
-            } else ArrayList(mAttachmentList)
-        }
+        get() = ArrayList(attachmentsList)
 
     init {
-        mListener = context as IAttachmentListener
-        Collections.sort(mAttachmentList, attachmentSortComparator)
+        listener = context as IAttachmentListener
         sort(attachmentSortComparator)
         notifyDataSetChanged()
     }
 
     fun updateData(attachmentList: ArrayList<LocalAttachment>, numEmbeddedImages: Int) {
         clear()
-        mNumEmbeddedImages = numEmbeddedImages
-        mAttachmentList = ArrayList(attachmentList)
-        addAll(mAttachmentList!!)
+        numberOfEmbeddedImages = numEmbeddedImages
+        attachmentsList = attachmentList.sortedWith(attachmentSortComparator)
+        addAll(attachmentsList)
         sort(attachmentSortComparator)
-        Collections.sort(mAttachmentList!!, attachmentSortComparator)
         notifyDataSetChanged()
     }
 
@@ -88,9 +82,9 @@ class AttachmentListAdapter(
             previousAttachment = getItem(position - 1)
         }
         view = if (attachment!!.isEmbeddedImage && (position == 0 || !previousAttachment!!.isEmbeddedImage)) {
-            mInflater.inflate(R.layout.attachment_inline_first_list_item, parent, false)
+            inflater.inflate(R.layout.attachment_inline_first_list_item, parent, false)
         } else {
-            mInflater.inflate(R.layout.attachment_list_item, parent, false)
+            inflater.inflate(R.layout.attachment_list_item, parent, false)
         }
 
         val attachmentName = view.findViewById<TextView>(R.id.attachment_name)
@@ -101,7 +95,7 @@ class AttachmentListAdapter(
 
         if (embeddedImageHeader != null && attachment.isEmbeddedImage) {
             embeddedImageHeader.visibility = View.VISIBLE
-            embeddedImageHeader.text = String.format(context.getString(R.string.inline_header), mNumEmbeddedImages)
+            embeddedImageHeader.text = String.format(context.getString(R.string.inline_header), numberOfEmbeddedImages)
         } else if (embeddedImageHeader != null) {
             embeddedImageHeader.visibility = View.GONE
         }
@@ -118,17 +112,16 @@ class AttachmentListAdapter(
         removeButton.setOnClickListener {
             val isEmbedded = attachment.isEmbeddedImage
             remove(attachment)
-            val localAttachmentIterator = mAttachmentList!!.iterator()
-            while (localAttachmentIterator.hasNext()) {
-                val localAttachment = localAttachmentIterator.next()
-                if (!TextUtils.isEmpty(attachment.attachmentId) && localAttachment.attachmentId == attachment.attachmentId || TextUtils.isEmpty(attachment.attachmentId) && attachment.displayName == localAttachment.displayName) {
-                    localAttachmentIterator.remove()
-                }
+            attachmentsList = attachmentsList.filterNot {
+                attachment.attachmentId.isNotEmpty() &&
+                    it.attachmentId == attachment.attachmentId ||
+                    attachment.attachmentId.isEmpty() &&
+                    attachment.displayName == it.displayName
             }
             if (isEmbedded) {
-                mNumEmbeddedImages -= 1
+                numberOfEmbeddedImages -= 1
             }
-            mListener.onAttachmentDeleted(count, mNumEmbeddedImages)
+            listener.onAttachmentDeleted(count, numberOfEmbeddedImages)
 
             DeleteAttachmentWorker.Enqueuer(workManager).enqueue(attachment.attachmentId)
         }

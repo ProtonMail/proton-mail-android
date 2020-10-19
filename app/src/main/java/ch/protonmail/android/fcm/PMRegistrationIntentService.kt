@@ -70,7 +70,7 @@ class PMRegistrationIntentService : ProtonJobIntentService() {
      * @param token The new token.
      */
     @Throws(Exception::class)
-    private fun sendRegistrationToServer(token: String) {
+    private fun sendRegistrationToServer(token: String?) {
         FcmUtil.setRegistrationId(token)
 
         var exception: Exception? = null
