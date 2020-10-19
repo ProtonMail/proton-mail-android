@@ -56,15 +56,12 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.NetworkUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
-import ch.protonmail.android.worker.FetchContactsDataWorker
-import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
 import javax.inject.Inject
-import kotlin.time.seconds
 
 // region constants
 const val REQUEST_CODE_CONTACT_DETAILS = 1
@@ -84,12 +81,6 @@ class ContactsActivity :
     }
 
     override val jobManager: JobManager get() = mJobManager
-
-    @Inject
-    lateinit var enqueueFetchContactsEmails: FetchContactsEmailsWorker.Enqueuer
-
-    @Inject
-    lateinit var enqueueFetchContactsData: FetchContactsDataWorker.Enqueuer
 
     private val contactsConnectivityRetryListener = ConnectivityRetryListener()
 
@@ -236,7 +227,7 @@ class ContactsActivity :
             }
             R.id.action_sync -> {
                 progressLayoutView!!.visibility = View.VISIBLE
-                refresh()
+                contactsViewModel.fetchContacts()
                 return true
             }
             else -> {
@@ -247,11 +238,6 @@ class ContactsActivity :
                 return true
             }
         }
-    }
-
-    private fun refresh() {
-        enqueueFetchContactsData.enqueue()
-        enqueueFetchContactsEmails(2.seconds)
     }
 
     private fun MenuItem.configureSearch() {
