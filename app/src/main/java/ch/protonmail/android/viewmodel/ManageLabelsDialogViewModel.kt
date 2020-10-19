@@ -34,17 +34,6 @@ class ManageLabelsDialogViewModel @Inject constructor(
     private val userManager: UserManager
 ) : ViewModel() {
 
-    sealed class ViewState {
-        object ShowMissingColorError : ViewState()
-        object ShowMissingNameError : ViewState()
-        object ShowLabelNameDuplicatedError : ViewState()
-        object SelectedLabelsChangedEvent : ViewState()
-        object SelectedLabelsChangedArchive : ViewState()
-        object HideLabelsView : ViewState()
-        class ShowApplicableLabelsThresholdExceededError(val maxLabelsAllowed: Int) : ViewState()
-        class ShowLabelCreatedEvent(val labelName: String) : ViewState()
-    }
-
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
 
     var creationMode: Boolean = false
@@ -53,7 +42,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
         isCreationMode: Boolean,
         labelColor: String?,
         checkedLabelIds: List<String>,
-        mArchiveCheckboxState: Int,
+        archiveCheckboxState: Int,
         labelName: String,
         labelItemsList: List<LabelsAdapter.LabelItem>
     ) {
@@ -61,22 +50,27 @@ class ManageLabelsDialogViewModel @Inject constructor(
         if (isCreationMode) {
             creationMode = false
             createLabel(labelName, labelColor, labelItemsList)
-        } else {
-            if (userManager.didReachLabelsThreshold(checkedLabelIds.size)) {
-                val maxLabelsAllowed = userManager.getMaxLabelsAllowed()
-                viewState.value = ViewState.ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
-                return
-            }
-            if (mArchiveCheckboxState == ThreeStateButton.STATE_CHECKED ||
-                mArchiveCheckboxState == ThreeStateButton.STATE_PRESSED) {
-                viewState.value = ViewState.SelectedLabelsChangedArchive
-            } else {
-                viewState.value = ViewState.SelectedLabelsChangedEvent
-            }
-
-            viewState.value = ViewState.HideLabelsView
+            return
         }
+
+        if (userManager.didReachLabelsThreshold(checkedLabelIds.size)) {
+            val maxLabelsAllowed = userManager.getMaxLabelsAllowed()
+            viewState.value = ViewState.ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
+            return
+        }
+
+        if (isArchiveOptionSelected(archiveCheckboxState)) {
+            viewState.value = ViewState.SelectedLabelsChangedArchive
+        } else {
+            viewState.value = ViewState.SelectedLabelsChangedEvent
+        }
+
+        viewState.value = ViewState.HideLabelsView
     }
+
+    private fun isArchiveOptionSelected(archiveCheckboxState: Int) =
+        archiveCheckboxState == ThreeStateButton.STATE_CHECKED ||
+            archiveCheckboxState == ThreeStateButton.STATE_PRESSED
 
     private fun createLabel(
         labelName: String,
@@ -103,5 +97,15 @@ class ManageLabelsDialogViewModel @Inject constructor(
         viewState.value = ViewState.ShowLabelCreatedEvent(labelName)
     }
 
+    sealed class ViewState {
+        object ShowMissingColorError : ViewState()
+        object ShowMissingNameError : ViewState()
+        object ShowLabelNameDuplicatedError : ViewState()
+        object SelectedLabelsChangedEvent : ViewState()
+        object SelectedLabelsChangedArchive : ViewState()
+        object HideLabelsView : ViewState()
+        class ShowApplicableLabelsThresholdExceededError(val maxLabelsAllowed: Int) : ViewState()
+        class ShowLabelCreatedEvent(val labelName: String) : ViewState()
+    }
 
 }
