@@ -774,7 +774,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
         checkedLabelIds: List<String>,
         unchangedLabels: List<String>?,
         messageIds: List<String>?,
-        messagesToArchive: List<String>
+        messagesToArchive: List<String>?
     ) {
         val message = viewModel.decryptedMessageData.value
         onLabelsChecked(checkedLabelIds.toMutableList(), unchangedLabels, messageIds)
