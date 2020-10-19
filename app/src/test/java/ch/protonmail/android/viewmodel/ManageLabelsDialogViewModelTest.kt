@@ -30,7 +30,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -65,9 +64,24 @@ class ManageLabelsDialogViewModelTest {
             "",
             emptyList(),
             false,
-            STATE_UNPRESSED
+            STATE_UNPRESSED,
+            "label-name"
         )
 
         verify { mockObserver.onChanged(viewModel.viewState.value as ShowMissingColorError) }
+    }
+
+    @Test
+    fun `show MissingNameError when creating a label without passing a valid name`() {
+        viewModel.onDoneClicked(
+            true,
+            "some-color",
+            emptyList(),
+            false,
+            STATE_UNPRESSED,
+            ""
+        )
+
+        verify { mockObserver.onChanged(viewModel.viewState.value as ShowMissingNameError) }
     }
 }

@@ -68,6 +68,8 @@ import ch.protonmail.android.views.ThreeStateButton;
 import ch.protonmail.android.views.ThreeStateCheckBox;
 import dagger.hilt.android.AndroidEntryPoint;
 
+import static ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.*;
+
 @AndroidEntryPoint
 public class ManageLabelsDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
 
@@ -185,14 +187,14 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         mShowCheckboxes = getArguments().getBoolean(ARGUMENT_SHOW_CHECKBOXES);
     }
 
-    private void viewStateChanged(ManageLabelsDialogViewModel.ViewState viewState) {
-        if (isShowMissingColorError(viewState)) {
+    private void viewStateChanged(ViewState viewState) {
+        if (viewState instanceof ViewState.ShowMissingColorError) {
             Toast.makeText(getContext(), R.string.please_choose_color, Toast.LENGTH_SHORT).show();
         }
-    }
 
-    private boolean isShowMissingColorError(ManageLabelsDialogViewModel.ViewState viewState) {
-        return viewState instanceof ManageLabelsDialogViewModel.ViewState.ShowMissingColorError;
+        if(viewState instanceof ViewState.ShowMissingNameError) {
+            Toast.makeText(getContext(), R.string.label_name_empty, Toast.LENGTH_SHORT).show();
+        }
     }
 
     AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
@@ -244,7 +246,8 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                 mSelectedNewLabelColor,
                 getCheckedLabels(),
                 mShowCheckboxes,
-                mArchiveCheckbox.getState()
+                mArchiveCheckbox.getState(),
+                mLabelName.getText().toString()
         );
 
         if (mCreationMode) {
@@ -343,7 +346,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         }
     }
 
-    public void onSaveClicked() {
+    private void onSaveClicked() {
         String labelName = mLabelName.getText().toString();
         if (TextUtils.isEmpty(labelName)) {
             TextExtensions.showToast(getActivity(), R.string.label_name_empty, Toast.LENGTH_SHORT);

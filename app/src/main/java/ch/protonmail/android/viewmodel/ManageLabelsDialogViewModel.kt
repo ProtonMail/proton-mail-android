@@ -24,8 +24,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.UserUtils
-import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.*
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingColorError
 import ch.protonmail.android.views.ThreeStateButton
 import javax.inject.Inject
 import javax.inject.Named
@@ -37,6 +36,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
 
     sealed class ViewState {
         object ShowMissingColorError : ViewState()
+        object ShowMissingNameError : ViewState()
     }
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
@@ -46,16 +46,16 @@ class ManageLabelsDialogViewModel @Inject constructor(
         newLabelColor: String?,
         checkedLabelIds: List<String>,
         isShowCheckboxes: Boolean,
-        mArchiveCheckboxState: Int
+        mArchiveCheckboxState: Int,
+        labelName: String
     ) {
 
         if (isCreationMode) {
             if (newLabelColor.isNullOrEmpty()) {
                 viewState.value = ShowMissingColorError
-//                showToast(getActivity(), R.string.please_choose_color, Toast.LENGTH_SHORT)
             } else {
 //                mCreationMode = false
-//                onSaveClicked()
+                onSaveClicked(labelName)
             }
         } else {
 //            val maxLabelsAllowed = UserUtils.getMaxAllowedLabels(userManager)
@@ -79,6 +79,29 @@ class ManageLabelsDialogViewModel @Inject constructor(
             }
 //            dismissAllowingStateLoss()
         }
+    }
+
+    private fun onSaveClicked(labelName: String) {
+        if (labelName.isEmpty()) {
+            viewState.value = ViewState.ShowMissingNameError
+            return
+        }
+//        for (item in mLabels) {
+//            if (item.name == labelName) {
+//                showToast(getActivity(), R.string.label_name_duplicate, Toast.LENGTH_SHORT)
+//                return
+//            }
+//        }
+//
+//        mColorsGrid.setVisibility(View.GONE)
+//        mLabelName.setText("")
+//        mList.setVisibility(View.VISIBLE)
+//        UiUtil.hideKeyboard(getActivity(), mLabelName)
+//        if (mLabelCreationListener != null) {
+//            mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor)
+//        }
+//        setDoneTitle(R.string.label_apply)
+//        setDialogTitle(R.string.labels_title_apply)
     }
 
 
