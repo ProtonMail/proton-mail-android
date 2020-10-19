@@ -44,9 +44,10 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ContactService {
+
     @GET("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun contacts(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): Call<ContactsDataResponse>
+    suspend fun contacts(@Query("Page") page: Int, @Query("PageSize") pageSize: Int): ContactsDataResponse
 
     @GET("contacts/emails")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

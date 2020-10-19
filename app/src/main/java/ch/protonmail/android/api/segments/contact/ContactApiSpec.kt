@@ -34,8 +34,7 @@ import java.io.IOException
 
 interface ContactApiSpec {
 
-    @Throws(IOException::class)
-    fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse?
+    suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse
 
     @Throws(IOException::class)
     fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?>

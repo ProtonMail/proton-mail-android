@@ -51,12 +51,12 @@ import ch.protonmail.android.events.ContactsFetchedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
-import ch.protonmail.android.jobs.FetchContactsDataJob
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.NetworkUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
+import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.github.clans.fab.FloatingActionButton
@@ -73,7 +73,8 @@ const val REQUEST_CODE_CONVERT_CONTACT = 3
 // endregion
 
 @AndroidEntryPoint
-class ContactsActivity : BaseConnectivityActivity(),
+class ContactsActivity :
+    BaseConnectivityActivity(),
     IContactsListFragmentListener,
     ContactsActivityContract {
 
@@ -87,9 +88,13 @@ class ContactsActivity : BaseConnectivityActivity(),
     @Inject
     lateinit var enqueueFetchContactsEmails: FetchContactsEmailsWorker.Enqueuer
 
+    @Inject
+    lateinit var enqueueFetchContactsData: FetchContactsDataWorker.Enqueuer
+
     private val contactsConnectivityRetryListener = ConnectivityRetryListener()
 
     private var alreadyCheckedPermission = false
+
     @Inject
     lateinit var contactsViewModelFactory: ContactsViewModelFactory
     private lateinit var contactsViewModel: ContactsViewModel
@@ -127,8 +132,8 @@ class ContactsActivity : BaseConnectivityActivity(),
         }
 
         contactsViewModel =
-                ViewModelProviders.of(this, contactsViewModelFactory)
-                    .get(ContactsViewModel::class.java)
+            ViewModelProviders.of(this, contactsViewModelFactory)
+                .get(ContactsViewModel::class.java)
         pagerAdapter = ContactsFragmentsPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = pagerAdapter
         viewPager?.addOnPageChangeListener(ViewPagerOnPageSelected(this@ContactsActivity::onPageSelected))
@@ -245,7 +250,7 @@ class ContactsActivity : BaseConnectivityActivity(),
     }
 
     private fun refresh() {
-        mJobManager.addJobInBackground(FetchContactsDataJob())
+        enqueueFetchContactsData.enqueue()
         enqueueFetchContactsEmails(2.seconds)
     }
 
@@ -265,7 +270,7 @@ class ContactsActivity : BaseConnectivityActivity(),
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.queryHint = getString(R.string.search_contacts)
         searchView.imeOptions = EditorInfo.IME_ACTION_SEARCH or EditorInfo.IME_FLAG_NO_EXTRACT_UI or
-                EditorInfo.IME_FLAG_NO_FULLSCREEN
+            EditorInfo.IME_FLAG_NO_FULLSCREEN
         searchView.setOnQueryTextListener(SearchViewQueryListener(searchView, searchListeners))
         val closeButton = searchView.findViewById<ImageView>(R.id.search_close_btn)
         closeButton.setOnClickListener(OnSearchClose(searchView, searchListeners))

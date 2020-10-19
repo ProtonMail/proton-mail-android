@@ -23,6 +23,7 @@ import com.birbit.android.jobqueue.Params;
 
 import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.worker.FetchContactsDataWorker;
 import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 
 /**
@@ -56,7 +57,10 @@ public class OnFirstLoginJob extends ProtonMailBaseJob {
             FetchContactsEmailsWorker.Enqueuer fetchContactsEmailsWorkerEnqueuer =
                     getEntryPoint().fetchContactsEmailsWorkerEnqueuer();
             fetchContactsEmailsWorkerEnqueuer.enqueue(FETCH_CONTACT_DELAY_MS);
-            jobManager.addJob(new FetchContactsDataJob());
+
+            FetchContactsDataWorker.Enqueuer fetchContactsDataWorkerEnqueuer =
+                    getEntryPoint().fetchContactsDataWorkerEnqueuer();
+            fetchContactsDataWorkerEnqueuer.enqueue();
         }
         getEntryPoint().fetchMailSettingsWorkerEnqueuer().invoke();
     }

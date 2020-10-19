@@ -27,16 +27,11 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.jobs.FetchContactsDataJob
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import kotlin.time.seconds
-
-/**
- * Created by dino on 10/10/17.
- */
 
 class FetchUserSettingsJob(
     username: String? = null
@@ -45,6 +40,7 @@ class FetchUserSettingsJob(
     @Throws(Throwable::class)
     override fun onRun() {
         val enqueueFetchContactsEmails = entryPoint.fetchContactsEmailsWorkerEnqueuer()
+        val fetchContactsData = entryPoint.fetchContactsDataWorkerEnqueuer()
 
         val userInfo: UserInfo
         val userSettings: UserSettingsResponse
@@ -70,7 +66,7 @@ class FetchUserSettingsJob(
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, true)
                 getJobManager().addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX,
                     null, true, null, false))
-                getJobManager().addJobInBackground(FetchContactsDataJob())
+                fetchContactsData.enqueue()
                 enqueueFetchContactsEmails(2.seconds)
             } else {
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, false)
