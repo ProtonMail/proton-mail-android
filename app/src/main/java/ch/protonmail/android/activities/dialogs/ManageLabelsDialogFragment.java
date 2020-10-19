@@ -200,6 +200,25 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         if(viewState instanceof ViewState.ShowLabelNameDuplicatedError) {
             Toast.makeText(getContext(), R.string.label_name_duplicate, Toast.LENGTH_SHORT).show();
         }
+
+        if (viewState instanceof ViewState.ShowLabelCreatedEvent) {
+            ViewState.ShowLabelCreatedEvent labelCreatedEvent = (ViewState.ShowLabelCreatedEvent) viewState;
+            showLabelCreated(labelCreatedEvent.getLabelName());
+        }
+    }
+
+    private void showLabelCreated(String labelName) {
+        mColorsGrid.setVisibility(View.GONE);
+        mLabelName.setText("");
+        mList.setVisibility(View.VISIBLE);
+        UiUtil.hideKeyboard(getActivity(), mLabelName);
+
+        if (mLabelCreationListener != null) {
+            mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor);
+        }
+
+        setDoneTitle(R.string.label_apply);
+        setDialogTitle(R.string.labels_title_apply);
     }
 
     AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
@@ -256,35 +275,35 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                 mLabels
         );
 
-        if (mCreationMode) {
-            if (TextUtils.isEmpty(mSelectedNewLabelColor)) {
-                TextExtensions.showToast(getActivity(), R.string.please_choose_color, Toast.LENGTH_SHORT);
-            } else {
-                mCreationMode = false;
-                onSaveClicked();
-            }
-        } else {
-            List<String> checkedLabelIds = getCheckedLabels();
-            int maxLabelsAllowed = UserUtils.getMaxAllowedLabels(ProtonMailApplication.getApplication().getUserManager());
-            if (checkedLabelIds.size() > maxLabelsAllowed) {
-                if (isAdded()) {
-                    TextExtensions.showToast(getActivity(), String.format(getString(R.string.max_labels_selected), maxLabelsAllowed), Toast.LENGTH_SHORT);
-                }
-                return;
-            }
-            if (mShowCheckboxes && mLabelStateChangeListener != null) {
-                if (mArchiveCheckbox.getState() == ThreeStateButton.STATE_CHECKED ||
-                        mArchiveCheckbox.getState() == ThreeStateButton.STATE_PRESSED) {
-                    // also archive
-                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null : getUnchangedLabels(), mMessageIds, mMessageIds);
-                } else {
-                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null :  getUnchangedLabels(), mMessageIds);
-                }
-            } else if (!mShowCheckboxes) {
-                mLabelCreationListener.onLabelsDeleted(getCheckedLabels());
-            }
-            dismissAllowingStateLoss();
-        }
+//        if (mCreationMode) {
+//            if (TextUtils.isEmpty(mSelectedNewLabelColor)) {
+//                TextExtensions.showToast(getActivity(), R.string.please_choose_color, Toast.LENGTH_SHORT);
+//            } else {
+//                mCreationMode = false;
+//                onSaveClicked();
+//            }
+//        } else {
+//            List<String> checkedLabelIds = getCheckedLabels();
+//            int maxLabelsAllowed = UserUtils.getMaxAllowedLabels(ProtonMailApplication.getApplication().getUserManager());
+//            if (checkedLabelIds.size() > maxLabelsAllowed) {
+//                if (isAdded()) {
+//                    TextExtensions.showToast(getActivity(), String.format(getString(R.string.max_labels_selected), maxLabelsAllowed), Toast.LENGTH_SHORT);
+//                }
+//                return;
+//            }
+//            if (mShowCheckboxes && mLabelStateChangeListener != null) {
+//                if (mArchiveCheckbox.getState() == ThreeStateButton.STATE_CHECKED ||
+//                        mArchiveCheckbox.getState() == ThreeStateButton.STATE_PRESSED) {
+//                    // also archive
+//                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null : getUnchangedLabels(), mMessageIds, mMessageIds);
+//                } else {
+//                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null :  getUnchangedLabels(), mMessageIds);
+//                }
+//            } else if (!mShowCheckboxes) {
+//                mLabelCreationListener.onLabelsDeleted(getCheckedLabels());
+//            }
+//            dismissAllowingStateLoss();
+//        }
     }
 
     private TextWatcher newLabelWatcher = new TextWatcher() {

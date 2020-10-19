@@ -31,6 +31,8 @@ import io.mockk.MockKAnnotations
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
+import io.mockk.verifySequence
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -85,7 +87,8 @@ class ManageLabelsDialogViewModelTest {
             emptyList()
         )
 
-        verify { mockObserver.onChanged(viewModel.viewState.value as ShowMissingNameError) }
+        val showMissingNameError = viewModel.viewState.value as ShowMissingNameError
+        verifySequence { mockObserver.onChanged(showMissingNameError) }
     }
 
     @Test
@@ -104,7 +107,24 @@ class ManageLabelsDialogViewModelTest {
             listOf(labelItem)
         )
 
-        verify { mockObserver.onChanged(viewModel.viewState.value as ShowLabelNameDuplicatedError) }
-        // TODO verify return
+        val showDuplicatedNameError = viewModel.viewState.value as ShowLabelNameDuplicatedError
+        verifySequence { mockObserver.onChanged(showDuplicatedNameError) }
+    }
+
+    @Test
+    fun `show LabelCreatedEvent when creating a label succeeds`() {
+        viewModel.onDoneClicked(
+            true,
+            "some-color",
+            emptyList(),
+            false,
+            STATE_UNPRESSED,
+            "new-label-name",
+            emptyList()
+        )
+
+        val showLabelCreatedEvent = viewModel.viewState.value as ShowLabelCreatedEvent
+        verify { mockObserver.onChanged(showLabelCreatedEvent) }
+        assertEquals("new-label-name", showLabelCreatedEvent.labelName)
     }
 }

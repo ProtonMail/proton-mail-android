@@ -38,6 +38,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
         object ShowMissingColorError : ViewState()
         object ShowMissingNameError : ViewState()
         object ShowLabelNameDuplicatedError : ViewState()
+        class ShowLabelCreatedEvent(val labelName: String) : ViewState()
     }
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
@@ -96,16 +97,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
                 return
             }
 
-//
-//        mColorsGrid.setVisibility(View.GONE)
-//        mLabelName.setText("")
-//        mList.setVisibility(View.VISIBLE)
-//        UiUtil.hideKeyboard(getActivity(), mLabelName)
-//        if (mLabelCreationListener != null) {
-//            mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor)
-//        }
-//        setDoneTitle(R.string.label_apply)
-//        setDialogTitle(R.string.labels_title_apply)
+        viewState.value = ViewState.ShowLabelCreatedEvent(labelName)
     }
 
 
