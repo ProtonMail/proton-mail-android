@@ -21,6 +21,7 @@ package ch.protonmail.android.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.*
@@ -65,7 +66,8 @@ class ManageLabelsDialogViewModelTest {
             emptyList(),
             false,
             STATE_UNPRESSED,
-            "label-name"
+            "label-name",
+            emptyList()
         )
 
         verify { mockObserver.onChanged(viewModel.viewState.value as ShowMissingColorError) }
@@ -79,9 +81,30 @@ class ManageLabelsDialogViewModelTest {
             emptyList(),
             false,
             STATE_UNPRESSED,
-            ""
+            "",
+            emptyList()
         )
 
         verify { mockObserver.onChanged(viewModel.viewState.value as ShowMissingNameError) }
+    }
+
+    @Test
+    fun `show LabelNameDuplicatedError when creating a label with a name which is already used`() {
+        val labelName = "label-name-already-in-use"
+        val labelItem = LabelsAdapter.LabelItem(false)
+        labelItem.name = labelName
+
+        viewModel.onDoneClicked(
+            true,
+            "some-color",
+            emptyList(),
+            false,
+            STATE_UNPRESSED,
+            labelName,
+            listOf(labelItem)
+        )
+
+        verify { mockObserver.onChanged(viewModel.viewState.value as ShowLabelNameDuplicatedError) }
+        // TODO verify return
     }
 }

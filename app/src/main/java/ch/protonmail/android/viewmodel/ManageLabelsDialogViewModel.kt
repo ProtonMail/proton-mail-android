@@ -19,9 +19,9 @@
 
 package ch.protonmail.android.viewmodel
 
-import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingColorError
@@ -37,6 +37,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
     sealed class ViewState {
         object ShowMissingColorError : ViewState()
         object ShowMissingNameError : ViewState()
+        object ShowLabelNameDuplicatedError : ViewState()
     }
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
@@ -47,7 +48,8 @@ class ManageLabelsDialogViewModel @Inject constructor(
         checkedLabelIds: List<String>,
         isShowCheckboxes: Boolean,
         mArchiveCheckboxState: Int,
-        labelName: String
+        labelName: String,
+        labelItemsList: List<LabelsAdapter.LabelItem>
     ) {
 
         if (isCreationMode) {
@@ -55,7 +57,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
                 viewState.value = ShowMissingColorError
             } else {
 //                mCreationMode = false
-                onSaveClicked(labelName)
+                onSaveClicked(labelName, labelItemsList)
             }
         } else {
 //            val maxLabelsAllowed = UserUtils.getMaxAllowedLabels(userManager)
@@ -81,17 +83,19 @@ class ManageLabelsDialogViewModel @Inject constructor(
         }
     }
 
-    private fun onSaveClicked(labelName: String) {
+    private fun onSaveClicked(labelName: String, labelItemsList: List<LabelsAdapter.LabelItem>) {
         if (labelName.isEmpty()) {
             viewState.value = ViewState.ShowMissingNameError
             return
         }
-//        for (item in mLabels) {
-//            if (item.name == labelName) {
-//                showToast(getActivity(), R.string.label_name_duplicate, Toast.LENGTH_SHORT)
-//                return
-//            }
-//        }
+
+        labelItemsList
+            .find { it.name == labelName }
+            ?.let {
+                viewState.value = ViewState.ShowLabelNameDuplicatedError
+                return
+            }
+
 //
 //        mColorsGrid.setVisibility(View.GONE)
 //        mLabelName.setText("")

@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -195,6 +196,10 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         if(viewState instanceof ViewState.ShowMissingNameError) {
             Toast.makeText(getContext(), R.string.label_name_empty, Toast.LENGTH_SHORT).show();
         }
+
+        if(viewState instanceof ViewState.ShowLabelNameDuplicatedError) {
+            Toast.makeText(getContext(), R.string.label_name_duplicate, Toast.LENGTH_SHORT).show();
+        }
     }
 
     AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
@@ -247,7 +252,8 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                 getCheckedLabels(),
                 mShowCheckboxes,
                 mArchiveCheckbox.getState(),
-                mLabelName.getText().toString()
+                mLabelName.getText().toString(),
+                mLabels
         );
 
         if (mCreationMode) {
