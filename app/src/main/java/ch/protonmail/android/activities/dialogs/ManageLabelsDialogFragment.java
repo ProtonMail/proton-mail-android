@@ -220,6 +220,10 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                     mMessageIds
             );
         }
+
+        if (viewState instanceof ViewState.HideLabelsView) {
+            dismissAllowingStateLoss();
+        }
     }
 
     private void showLabelCreated(String labelName) {

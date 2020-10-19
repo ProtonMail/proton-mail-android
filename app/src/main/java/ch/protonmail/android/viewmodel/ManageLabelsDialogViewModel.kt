@@ -40,6 +40,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
         object ShowLabelNameDuplicatedError : ViewState()
         object SelectedLabelsChangedEvent : ViewState()
         object SelectedLabelsChangedArchive : ViewState()
+        object HideLabelsView : ViewState()
         class ShowApplicableLabelsThresholdExceededError(val maxLabelsAllowed: Int) : ViewState()
         class ShowLabelCreatedEvent(val labelName: String) : ViewState()
     }
@@ -73,7 +74,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
                 viewState.value = ViewState.SelectedLabelsChangedEvent
             }
 
-//            dismissAllowingStateLoss()
+            viewState.value = ViewState.HideLabelsView
         }
     }
 

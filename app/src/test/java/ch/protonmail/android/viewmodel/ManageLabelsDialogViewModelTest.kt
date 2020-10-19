@@ -32,12 +32,14 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifySequence
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentCaptor
 
 class ManageLabelsDialogViewModelTest {
 
@@ -166,7 +168,9 @@ class ManageLabelsDialogViewModelTest {
     @Test
     fun `dispatch SelectedLabelsChanged when labels selection changes`() {
         val checkedLabelIds = emptyList<String>()
+        val firedStates = slot<ViewState>()
         every { userManager.didReachLabelsThreshold(checkedLabelIds.size) } returns false
+        every { mockObserver.onChanged(capture(firedStates)) } answers { println(firedStates) }
 
         viewModel.onDoneClicked(
             false,
@@ -177,14 +181,15 @@ class ManageLabelsDialogViewModelTest {
             emptyList()
         )
 
-        val selectedLabelsChangedEvent = viewModel.viewState.value as SelectedLabelsChangedEvent
-        verifySequence { mockObserver.onChanged(selectedLabelsChangedEvent) }
+        verify(exactly = 2) { mockObserver.onChanged(or(SelectedLabelsChangedEvent, HideLabelsView)) }
     }
 
     @Test
     fun `dispatch SelectedLabelsChangedArchive when labels selection changes and archive option selected`() {
         val checkedLabelIds = emptyList<String>()
+        val firedStates = slot<ViewState>()
         every { userManager.didReachLabelsThreshold(checkedLabelIds.size) } returns false
+        every { mockObserver.onChanged(capture(firedStates)) } answers { println(firedStates) }
 
         viewModel.onDoneClicked(
             false,
@@ -195,7 +200,23 @@ class ManageLabelsDialogViewModelTest {
             emptyList()
         )
 
-        val selectedLabelsArchive = viewModel.viewState.value as SelectedLabelsChangedArchive
-        verifySequence { mockObserver.onChanged(selectedLabelsArchive) }
+        verify(exactly = 2) { mockObserver.onChanged(or(SelectedLabelsChangedArchive, HideLabelsView)) }
+    }
+
+    @Test
+    fun `onDoneClicked dismisses label manager view when labels changes were applied successfully`() {
+        val checkedLabelIds = emptyList<String>()
+
+        viewModel.onDoneClicked(
+            false,
+            "",
+            checkedLabelIds,
+            STATE_UNPRESSED,
+            "",
+            emptyList()
+        )
+
+       val hideLabelsView = viewModel.viewState.value as HideLabelsView
+        verify { mockObserver.onChanged(hideLabelsView) }
     }
 }
