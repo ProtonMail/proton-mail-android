@@ -19,12 +19,55 @@
 
 package ch.protonmail.android.viewmodel
 
-import org.junit.jupiter.api.Test
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
+import ch.protonmail.android.api.models.room.messages.MessagesDao
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.*
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.*
+import ch.protonmail.android.views.ThreeStateButton.STATE_UNPRESSED
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.verify
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 
 class ManageLabelsDialogViewModelTest {
 
-    @Test
-    fun test() {
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @RelaxedMockK
+    private lateinit var messagesDao: MessagesDao
+
+    @RelaxedMockK
+    private lateinit var userManager: UserManager
+
+    @RelaxedMockK
+    private lateinit var mockObserver: Observer<ViewState>
+
+    @InjectMockKs
+    private lateinit var viewModel: ManageLabelsDialogViewModel
+
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+        viewModel.viewState.observeForever(mockObserver)
+    }
+
+    @Test
+    fun `show MissingColorError when creating a label without passing a valid color`() {
+        viewModel.onDoneClicked(
+            true,
+            "",
+            emptyList(),
+            false,
+            STATE_UNPRESSED
+        )
+
+        verify { mockObserver.onChanged(viewModel.viewState.value as ShowMissingColorError) }
     }
 }

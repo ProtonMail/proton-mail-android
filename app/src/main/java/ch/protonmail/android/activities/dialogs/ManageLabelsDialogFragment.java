@@ -171,6 +171,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         super.onCreate(savedInstanceState);
 
         viewModel = manageLabelsDialogViewModelFactory.create(ManageLabelsDialogViewModel.class);
+        viewModel.getViewState().observe(this, this::viewStateChanged);
 
         Bundle extras = getArguments();
         if (extras != null && extras.containsKey(ARGUMENT_CHECKED_LABELS)) {
@@ -182,6 +183,16 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
             mMessageIds = null;
         }
         mShowCheckboxes = getArguments().getBoolean(ARGUMENT_SHOW_CHECKBOXES);
+    }
+
+    private void viewStateChanged(ManageLabelsDialogViewModel.ViewState viewState) {
+        if (isShowMissingColorError(viewState)) {
+            Toast.makeText(getContext(), R.string.please_choose_color, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isShowMissingColorError(ManageLabelsDialogViewModel.ViewState viewState) {
+        return viewState instanceof ManageLabelsDialogViewModel.ViewState.ShowMissingColorError;
     }
 
     AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
@@ -227,6 +238,15 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
 
     @OnClick(R.id.done)
     public void onDoneClicked() {
+
+        viewModel.onDoneClicked(
+                mCreationMode,
+                mSelectedNewLabelColor,
+                getCheckedLabels(),
+                mShowCheckboxes,
+                mArchiveCheckbox.getState()
+        );
+
         if (mCreationMode) {
             if (TextUtils.isEmpty(mSelectedNewLabelColor)) {
                 TextExtensions.showToast(getActivity(), R.string.please_choose_color, Toast.LENGTH_SHORT);
