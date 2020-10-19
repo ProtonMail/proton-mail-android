@@ -38,8 +38,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
-import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -57,8 +55,7 @@ class LogoutWorker @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
     private val accountManager: AccountManager,
-    private val userManager: UserManager,
-    private val dispatchers: DispatcherProvider
+    private val userManager: UserManager
 ) : CoroutineWorker(context, params) {
 
     var retryCount = 0
@@ -78,20 +75,16 @@ class LogoutWorker @WorkerInject constructor(
             // Unregister FCM only if this is the last user on the device
             if (loggedInUsers.isEmpty() || loggedInUsers.size == 1 && loggedInUsers[0] == userName) {
                 if (registrationId.isNotEmpty()) {
-                    withContext(dispatchers.Io) {
-                        Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
-                        api.unregisterDevice(registrationId)
-                    }
+                    Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
+                    api.unregisterDevice(registrationId)
                 }
             }
             accountManager.clear()
             AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
 
             // Revoke access token through API
-            withContext(dispatchers.Io) {
-                if (userName.isNotEmpty()) {
-                    api.revokeAccess(userName)
-                }
+            if (userName.isNotEmpty()) {
+                api.revokeAccess(userName)
             }
 
             AppUtil.deleteSecurePrefs(userName, userManager.nextLoggedInAccountOtherThanCurrent == null)

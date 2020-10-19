@@ -44,7 +44,6 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -78,8 +77,7 @@ class LogoutWorkerTest {
             parameters,
             api,
             accountManager,
-            userManager,
-            TestDispatcherProvider
+            userManager
         )
         mockkStatic(AppUtil::class)
         mockkStatic(TokenManager::class)
@@ -152,7 +150,7 @@ class LogoutWorkerTest {
         }
 
     @Test
-    fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursMoreTHanThreeTimesAndFailureIsReturned() =
+    fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursMoreThanThreeTimesAndFailureIsReturned() =
         runBlockingTest {
             // given
             val testUserName = "testUserName"
