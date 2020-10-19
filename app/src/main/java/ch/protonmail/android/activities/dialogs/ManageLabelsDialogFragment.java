@@ -203,6 +203,23 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                     Toast.LENGTH_SHORT
             ).show();
         }
+
+        if (viewState instanceof ViewState.SelectedLabelsChangedEvent) {
+            mLabelStateChangeListener.onLabelsChecked(
+                    getCheckedLabels(),
+                    mMessageIds == null ? null : getUnchangedLabels(),
+                    mMessageIds
+            );
+        }
+
+        if (viewState instanceof ViewState.SelectedLabelsChangedArchive) {
+            mLabelStateChangeListener.onLabelsChecked(
+                    getCheckedLabels(),
+                    mMessageIds == null ? null : getUnchangedLabels(),
+                    mMessageIds,
+                    mMessageIds
+            );
+        }
     }
 
     private void showLabelCreated(String labelName) {

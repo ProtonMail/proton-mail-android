@@ -26,6 +26,7 @@ import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.*
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.*
+import ch.protonmail.android.views.ThreeStateButton.STATE_CHECKED
 import ch.protonmail.android.views.ThreeStateButton.STATE_UNPRESSED
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -160,5 +161,41 @@ class ManageLabelsDialogViewModelTest {
         val labelsThresholdError = viewModel.viewState.value as ShowApplicableLabelsThresholdExceededError
         verifySequence { mockObserver.onChanged(labelsThresholdError) }
         assertEquals(3, labelsThresholdError.maxLabelsAllowed)
+    }
+
+    @Test
+    fun `dispatch SelectedLabelsChanged when labels selection changes`() {
+        val checkedLabelIds = emptyList<String>()
+        every { userManager.didReachLabelsThreshold(checkedLabelIds.size) } returns false
+
+        viewModel.onDoneClicked(
+            false,
+            "",
+            checkedLabelIds,
+            STATE_UNPRESSED,
+            "",
+            emptyList()
+        )
+
+        val selectedLabelsChangedEvent = viewModel.viewState.value as SelectedLabelsChangedEvent
+        verifySequence { mockObserver.onChanged(selectedLabelsChangedEvent) }
+    }
+
+    @Test
+    fun `dispatch SelectedLabelsChangedArchive when labels selection changes and archive option selected`() {
+        val checkedLabelIds = emptyList<String>()
+        every { userManager.didReachLabelsThreshold(checkedLabelIds.size) } returns false
+
+        viewModel.onDoneClicked(
+            false,
+            "",
+            checkedLabelIds,
+            STATE_CHECKED,
+            "",
+            emptyList()
+        )
+
+        val selectedLabelsArchive = viewModel.viewState.value as SelectedLabelsChangedArchive
+        verifySequence { mockObserver.onChanged(selectedLabelsArchive) }
     }
 }

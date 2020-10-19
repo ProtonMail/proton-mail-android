@@ -38,6 +38,8 @@ class ManageLabelsDialogViewModel @Inject constructor(
         object ShowMissingColorError : ViewState()
         object ShowMissingNameError : ViewState()
         object ShowLabelNameDuplicatedError : ViewState()
+        object SelectedLabelsChangedEvent : ViewState()
+        object SelectedLabelsChangedArchive : ViewState()
         class ShowApplicableLabelsThresholdExceededError(val maxLabelsAllowed: Int) : ViewState()
         class ShowLabelCreatedEvent(val labelName: String) : ViewState()
     }
@@ -66,10 +68,11 @@ class ManageLabelsDialogViewModel @Inject constructor(
             }
             if (mArchiveCheckboxState == ThreeStateButton.STATE_CHECKED ||
                 mArchiveCheckboxState == ThreeStateButton.STATE_PRESSED) {
-//                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), if (mMessageIds == null) null else getUnchangedLabels(), mMessageIds, mMessageIds)
+                viewState.value = ViewState.SelectedLabelsChangedArchive
             } else {
-//                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), if (mMessageIds == null) null else getUnchangedLabels(), mMessageIds)
+                viewState.value = ViewState.SelectedLabelsChangedEvent
             }
+
 //            dismissAllowingStateLoss()
         }
     }

@@ -23,7 +23,6 @@ import androidx.fragment.app.FragmentManager
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import java.util.*
 
 /**
