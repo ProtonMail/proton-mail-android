@@ -43,6 +43,8 @@ class ManageLabelsDialogViewModel @Inject constructor(
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
 
+    private var creationMode: Boolean = false
+
     fun onDoneClicked(
         isCreationMode: Boolean,
         labelColor: String?,
@@ -54,7 +56,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
     ) {
 
         if (isCreationMode) {
-//                mCreationMode = false
+            creationMode = false
             createLabel(labelName, labelColor, labelItemsList)
         } else {
 //            val maxLabelsAllowed = UserUtils.getMaxAllowedLabels(userManager)

@@ -61,6 +61,23 @@ class ManageLabelsDialogViewModelTest {
     }
 
     @Test
+    fun `switch creationMode flag to false when executing a creation`() {
+        viewModel.creationMode = true
+
+        viewModel.onDoneClicked(
+            true,
+            "",
+            emptyList(),
+            false,
+            STATE_UNPRESSED,
+            "",
+            emptyList()
+        )
+
+        assertEquals(false, viewModel.creationMode)
+    }
+
+    @Test
     fun `show MissingColorError when creating a label without passing a valid color`() {
         viewModel.onDoneClicked(
             true,
