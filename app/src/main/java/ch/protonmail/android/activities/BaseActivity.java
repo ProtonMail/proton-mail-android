@@ -77,6 +77,7 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
+import ch.protonmail.android.usecase.fetch.FetchOnFirstLogin;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
@@ -128,6 +129,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected FetchUserInfoWorker.Enqueuer fetchUserInfoWorkerEnqueuer;
     @Inject
     protected FetchMailSettingsWorker.Enqueuer fetchMailSettingsWorkerEnqueuer;
+    @Inject
+    protected FetchOnFirstLogin fetchOnFirstLogin;
 
     @Nullable
     @BindView(R.id.toolbar)
@@ -269,7 +272,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void loadMailSettings() {
         mUserManager.setMailSettings(MailSettings.Companion.load(mUserManager.getUsername()));
         if (mUserManager.getMailSettings() == null) {
-            fetchMailSettingsWorkerEnqueuer.invoke();
+            fetchMailSettingsWorkerEnqueuer.enqueue();
         }
     }
 

@@ -74,7 +74,6 @@ import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.jobs.OnFirstLoginJob
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
@@ -398,7 +397,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                             pendingActionsDatabase,
                             true
                         )
-                        mJobManager.addJobInBackground(OnFirstLoginJob(true))
+                        fetchOnFirstLogin()
                         mJobManager.addJobInBackground(FetchByLocationJob(mMailboxLocation, mLabelId, true, null, false))
                     }
                 }

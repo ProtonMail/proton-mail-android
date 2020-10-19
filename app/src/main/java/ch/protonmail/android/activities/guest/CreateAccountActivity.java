@@ -72,7 +72,6 @@ import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.GetDirectEnabledJob;
-import ch.protonmail.android.jobs.OnFirstLoginJob;
 import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
 import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
@@ -544,7 +543,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
             if (mUserManager.isFirstLogin()) {
                 LoginService.fetchUserDetails();
                 mJobManager.start();
-                mJobManager.addJobInBackground(new OnFirstLoginJob(true));
+                fetchOnFirstLogin.invoke(true, false);
                 mUserManager.firstLoginDone();
             }
         }
