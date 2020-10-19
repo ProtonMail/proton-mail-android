@@ -20,7 +20,6 @@ package ch.protonmail.android.api.services
 
 import android.content.Intent
 import androidx.core.app.JobIntentService
-import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.core.Constants
@@ -61,9 +60,6 @@ class LogoutService : JobIntentService() {
     @Inject
     internal lateinit var logoutWorkerEnqueuer: LogoutWorker.Enqueuer
 
-    @Inject
-    internal lateinit var workManager: WorkManager
-
     override fun onHandleWork(intent: Intent) {
         when (intent.action) {
             ACTION_LOGOUT_ONLINE -> logoutOnline(
@@ -96,7 +92,6 @@ class LogoutService : JobIntentService() {
     private fun logoutOnline(username: String?, fcmRegistrationId: String) {
         jobManager.cancelJobs(TagConstraint.ALL)
         jobManager.clear()
-        workManager.cancelAllWork()
         logoutWorkerEnqueuer.enqueue(username ?: userManager.username, fcmRegistrationId)
     }
 
