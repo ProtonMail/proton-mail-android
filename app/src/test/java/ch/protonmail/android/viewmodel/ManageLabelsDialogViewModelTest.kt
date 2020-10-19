@@ -69,7 +69,6 @@ class ManageLabelsDialogViewModelTest {
             true,
             "",
             emptyList(),
-            false,
             STATE_UNPRESSED,
             "",
             emptyList()
@@ -84,7 +83,6 @@ class ManageLabelsDialogViewModelTest {
             true,
             "",
             emptyList(),
-            false,
             STATE_UNPRESSED,
             "label-name",
             emptyList()
@@ -100,7 +98,6 @@ class ManageLabelsDialogViewModelTest {
             true,
             "some-color",
             emptyList(),
-            false,
             STATE_UNPRESSED,
             "",
             emptyList()
@@ -120,7 +117,6 @@ class ManageLabelsDialogViewModelTest {
             true,
             "some-color",
             emptyList(),
-            false,
             STATE_UNPRESSED,
             labelName,
             listOf(labelItem)
@@ -136,7 +132,6 @@ class ManageLabelsDialogViewModelTest {
             true,
             "some-color",
             emptyList(),
-            false,
             STATE_UNPRESSED,
             "new-label-name",
             emptyList()
@@ -157,7 +152,6 @@ class ManageLabelsDialogViewModelTest {
             false,
             "",
             checkedLabelIds,
-            false,
             STATE_UNPRESSED,
             "",
             emptyList()

@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities.dialogs;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
@@ -39,7 +38,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
@@ -59,7 +57,6 @@ import ch.protonmail.android.api.models.room.messages.Label;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.utils.UiUtil;
-import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel;
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModelFactory;
 import ch.protonmail.android.views.ThreeStateCheckBox;
@@ -73,7 +70,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     public static final String ARGUMENT_CHECKED_LABELS = "ch.protonmail.android.ARG_CHECKED_LABELS";
     public static final String ARGUMENT_NUMBER_SELECTED_MESSAGES = "ch.protonmail.android.ARG_NUMBER_SELECTED_MESSAGES";
     public static final String ARGUMENT_MESSAGE_IDS = "ch.protonmail.android.ARG_MESSAGE_IDS";
-    public static final String ARGUMENT_SHOW_CHECKBOXES = "ch.protonmail.android.ARG_SHOW_CHECKBOXES";
 
     @Nullable
     @BindView(R.id.progress_bar)
@@ -113,7 +109,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     private String mSelectedNewLabelColor;
     private int[] mColorOptions;
     private boolean mCreationMode = false;
-    private boolean mShowCheckboxes;
     private int mCurrentSelection = -1;
     private ManageLabelsDialogViewModel viewModel;
 
@@ -126,15 +121,13 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     public static ManageLabelsDialogFragment newInstance(
             Set<String> checkedLabels,
             HashMap<String, Integer> numberOfMessagesSelected,
-            ArrayList<String> messageIds,
-            boolean showCheckboxes
+            ArrayList<String> messageIds
     ) {
         ManageLabelsDialogFragment fragment = new ManageLabelsDialogFragment();
         Bundle extras = new Bundle();
         extras.putStringArrayList(ARGUMENT_CHECKED_LABELS, new ArrayList<>(checkedLabels));
         extras.putSerializable(ARGUMENT_NUMBER_SELECTED_MESSAGES, numberOfMessagesSelected);
         extras.putStringArrayList(ARGUMENT_MESSAGE_IDS, messageIds);
-        extras.putBoolean(ARGUMENT_SHOW_CHECKBOXES, showCheckboxes);
         fragment.setArguments(extras);
         return fragment;
     }
@@ -181,7 +174,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
             mCheckedLabels = new ArrayList<>();
             mMessageIds = null;
         }
-        mShowCheckboxes = getArguments().getBoolean(ARGUMENT_SHOW_CHECKBOXES);
     }
 
     private void viewStateChanged(ViewState viewState) {
@@ -223,8 +215,8 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
             mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor);
         }
 
-        setDoneTitle(R.string.label_apply);
-        setDialogTitle(R.string.labels_title_apply);
+        setDoneTitle();
+        setDialogTitle();
     }
 
     AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
@@ -251,11 +243,8 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         });
 
         mLabelName.addTextChangedListener(newLabelWatcher);
-        setDialogTitle(R.string.labels_title_apply);
-        setDoneTitle(R.string.label_apply);
-        if (!mShowCheckboxes) {
-            mArchiveContainer.setVisibility(View.GONE);
-        }
+        setDialogTitle();
+        setDoneTitle();
     }
 
     @Override
@@ -275,7 +264,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                 mCreationMode,
                 mSelectedNewLabelColor,
                 getCheckedLabels(),
-                mShowCheckboxes,
                 mArchiveCheckbox.getState(),
                 mLabelName.getText().toString(),
                 mLabels
@@ -326,8 +314,8 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                 mList.setVisibility(View.VISIBLE);
                 mLabelName.setVisibility(View.VISIBLE);
                 UiUtil.hideKeyboard(getActivity(), mLabelName);
-                setDoneTitle(R.string.label_apply);
-                setDialogTitle(R.string.labels_title_apply);
+                setDoneTitle();
+                setDialogTitle();
                 mCurrentSelection = -1;
             } else {
                 if (!mCreationMode) {
@@ -348,59 +336,13 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         }
     };
 
-    private void setDoneTitle(@StringRes int doneRes) {
-        if (doneRes == R.string.label_apply) {
-            if (mShowCheckboxes) {
-                mDone.setText(getString(doneRes));
-            } else {
-                mDone.setText(getString(R.string.label_delete));
-                mDone.setTextColor(Color.RED);
-            }
-        } else {
-            if (!mShowCheckboxes) {
-                mDone.setText(getString(doneRes));
-            }
-        }
+    private void setDoneTitle() {
+        mDone.setText(getString(R.string.label_apply));
     }
 
-    private void setDialogTitle(@StringRes int titleRes) {
-        if (titleRes == R.string.labels_title_apply) {
-            if (mShowCheckboxes) {
-                mTitle.setText(getString(titleRes));
-            } else {
-                mTitle.setText(getString(R.string.labels_title));
-            }
-        } else {
-            if (!mShowCheckboxes) {
-                mTitle.setText(getString(titleRes));
-            }
-        }
+    private void setDialogTitle() {
+        mTitle.setText(getString(R.string.labels_title_apply));
     }
-
-    private void onSaveClicked() {
-        String labelName = mLabelName.getText().toString();
-        if (TextUtils.isEmpty(labelName)) {
-            TextExtensions.showToast(getActivity(), R.string.label_name_empty, Toast.LENGTH_SHORT);
-            return;
-        }
-        for (LabelsAdapter.LabelItem item : mLabels){
-            if (item.name.equals(labelName)){
-                TextExtensions.showToast(getActivity(), R.string.label_name_duplicate, Toast.LENGTH_SHORT);
-                return;
-            }
-        }
-
-        mColorsGrid.setVisibility(View.GONE);
-        mLabelName.setText("");
-        mList.setVisibility(View.VISIBLE);
-        UiUtil.hideKeyboard(getActivity(), mLabelName);
-        if (mLabelCreationListener != null) {
-            mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor);
-        }
-        setDoneTitle(R.string.label_apply);
-        setDialogTitle(R.string.labels_title_apply);
-    }
-
 
     class LabelsObserver implements Observer<List<Label>>{
 

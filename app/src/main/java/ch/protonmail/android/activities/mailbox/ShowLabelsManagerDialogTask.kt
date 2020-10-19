@@ -48,7 +48,7 @@ internal class ShowLabelsManagerDialogTask(private val fragmentManager: Fragment
 			attachedLabels.addAll(messageLabelIds)
 		}
 		val manageLabelsDialogFragment=ManageLabelsDialogFragment.newInstance(
-				attachedLabels,numberOfSelectedMessages,ArrayList(messageIds),true)
+            attachedLabels, numberOfSelectedMessages, ArrayList(messageIds))
 		val transaction=fragmentManager.beginTransaction()
 		transaction.add(manageLabelsDialogFragment,manageLabelsDialogFragment.fragmentKey)
 		transaction.commitAllowingStateLoss()

@@ -695,7 +695,7 @@ internal class MessageDetailsActivity :
 
     private fun showLabelsManagerDialog(fragmentManager: FragmentManager, message: Message) {
         val attachedLabels = HashSet(message.labelIDsNotIncludingLocations)
-        val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(attachedLabels, null, null, true)
+        val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(attachedLabels, null, null)
         fragmentManager.commit(allowStateLoss = true) {
             add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
             addToBackStack(null)

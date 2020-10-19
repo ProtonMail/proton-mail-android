@@ -50,7 +50,6 @@ class ManageLabelsDialogViewModel @Inject constructor(
         isCreationMode: Boolean,
         labelColor: String?,
         checkedLabelIds: List<String>,
-        isShowCheckboxes: Boolean,
         mArchiveCheckboxState: Int,
         labelName: String,
         labelItemsList: List<LabelsAdapter.LabelItem>
@@ -65,16 +64,11 @@ class ManageLabelsDialogViewModel @Inject constructor(
                 viewState.value = ViewState.ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
                 return
             }
-            if (isShowCheckboxes) {
-                if (mArchiveCheckboxState == ThreeStateButton.STATE_CHECKED ||
-                    mArchiveCheckboxState == ThreeStateButton.STATE_PRESSED) {
-                    // also archive
+            if (mArchiveCheckboxState == ThreeStateButton.STATE_CHECKED ||
+                mArchiveCheckboxState == ThreeStateButton.STATE_PRESSED) {
 //                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), if (mMessageIds == null) null else getUnchangedLabels(), mMessageIds, mMessageIds)
-                } else {
+            } else {
 //                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), if (mMessageIds == null) null else getUnchangedLabels(), mMessageIds)
-                }
-            } else if (!isShowCheckboxes) {
-//                mLabelCreationListener.onLabelsDeleted(getCheckedLabels())
             }
 //            dismissAllowingStateLoss()
         }
