@@ -28,6 +28,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.SerializedName;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
@@ -89,6 +90,24 @@ public class LabelBody {
 
     public int getNotify() {
         return notify;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LabelBody labelBody = (LabelBody) o;
+        return display == labelBody.display &&
+                exclusive == labelBody.exclusive &&
+                type == labelBody.type &&
+                notify == labelBody.notify &&
+                Objects.equals(name, labelBody.name) &&
+                Objects.equals(color, labelBody.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, color, display, exclusive, type, notify);
     }
 
     public static class LabelBodySerializer implements JsonSerializer<LabelBody> {

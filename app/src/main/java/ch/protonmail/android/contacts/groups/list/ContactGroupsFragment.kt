@@ -154,7 +154,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
         contactGroupsViewModel = ViewModelProvider(this, contactGroupsViewModelFactory)
             .get(ContactGroupsViewModel::class.java)
-        contactGroupsViewModel.reloadDependencies()
         initAdapter()
     }
 

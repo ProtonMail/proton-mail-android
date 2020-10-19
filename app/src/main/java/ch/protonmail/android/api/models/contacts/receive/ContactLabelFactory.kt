@@ -18,7 +18,9 @@
  */
 package ch.protonmail.android.api.models.contacts.receive
 
-import ch.protonmail.android.api.models.factories.*
+import ch.protonmail.android.api.models.factories.IConverterFactory
+import ch.protonmail.android.api.models.factories.makeInt
+import ch.protonmail.android.api.models.factories.parseBoolean
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.utils.Fields
@@ -26,25 +28,24 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.extensions.notNull
 import ch.protonmail.android.utils.extensions.notNullOrEmpty
 
-/**
- * Created by kadrikj on 8/21/18. */
 class ContactLabelFactory : IConverterFactory<ServerLabel, ContactLabel> {
+
     override fun createServerObjectFromDBObject(dbObject: ContactLabel): ServerLabel {
         val id = dbObject.ID
         val name = dbObject.name.notNullOrEmpty(Fields.Label.NAME)
         val color = dbObject.color.notNullOrEmpty(Fields.Label.COLOR)
-        val display = dbObject.display.notNull(Fields.Label.DISPLAY)
-        val order = dbObject.order.notNull(Fields.Label.ORDER)
-        val exclusive = dbObject.exclusive.notNull(Fields.Label.EXCLUSIVE).makeInt()
+        val display = dbObject.display
+        val order = dbObject.order
+        val exclusive = dbObject.exclusive.makeInt()
         val type = Constants.LABEL_TYPE_CONTACT_GROUPS
         return ServerLabel(
-                ID = id,
-                name = name,
-                color = color,
-                display = display,
-                order = order,
-                exclusive = exclusive,
-                type = type)
+            ID = id,
+            name = name,
+            color = color,
+            display = display,
+            order = order,
+            exclusive = exclusive,
+            type = type)
     }
 
     override fun createDBObjectFromServerObject(serverObject: ServerLabel): ContactLabel {
