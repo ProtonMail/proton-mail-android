@@ -38,12 +38,13 @@ class ManageLabelsDialogViewModel @Inject constructor(
         object ShowMissingColorError : ViewState()
         object ShowMissingNameError : ViewState()
         object ShowLabelNameDuplicatedError : ViewState()
+        class ShowApplicableLabelsThresholdExceededError(val maxLabelsAllowed: Int) : ViewState()
         class ShowLabelCreatedEvent(val labelName: String) : ViewState()
     }
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
 
-    private var creationMode: Boolean = false
+    var creationMode: Boolean = false
 
     fun onDoneClicked(
         isCreationMode: Boolean,
@@ -59,14 +60,11 @@ class ManageLabelsDialogViewModel @Inject constructor(
             creationMode = false
             createLabel(labelName, labelColor, labelItemsList)
         } else {
-//            val maxLabelsAllowed = UserUtils.getMaxAllowedLabels(userManager)
-//            if (checkedLabelIds.size > maxLabelsAllowed) {
-
-//                if (isAdded()) {
-//                    getActivity().showToast(String.format(getString(R.string.max_labels_selected), maxLabelsAllowed), Toast.LENGTH_SHORT)
-//                }
-//                return
-//            }
+            if (userManager.didReachLabelsThreshold(checkedLabelIds.size)) {
+                val maxLabelsAllowed = userManager.getMaxLabelsAllowed()
+                viewState.value = ViewState.ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
+                return
+            }
             if (isShowCheckboxes) {
                 if (mArchiveCheckboxState == ThreeStateButton.STATE_CHECKED ||
                     mArchiveCheckboxState == ThreeStateButton.STATE_PRESSED) {

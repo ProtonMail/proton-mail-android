@@ -28,6 +28,7 @@ import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.*
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.*
 import ch.protonmail.android.views.ThreeStateButton.STATE_UNPRESSED
 import io.mockk.MockKAnnotations
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
@@ -144,5 +145,26 @@ class ManageLabelsDialogViewModelTest {
         val showLabelCreatedEvent = viewModel.viewState.value as ShowLabelCreatedEvent
         verify { mockObserver.onChanged(showLabelCreatedEvent) }
         assertEquals("new-label-name", showLabelCreatedEvent.labelName)
+    }
+
+    @Test
+    fun `show ShowApplicableLabelsThreasholdExceededError when applying a number of labels that exceeds the allowance for the user`() {
+        val checkedLabelIds = emptyList<String>()
+        every { userManager.getMaxLabelsAllowed() } returns 3
+        every { userManager.didReachLabelsThreshold(checkedLabelIds.size) } returns true
+
+        viewModel.onDoneClicked(
+            false,
+            "",
+            checkedLabelIds,
+            false,
+            STATE_UNPRESSED,
+            "",
+            emptyList()
+        )
+
+        val labelsThresholdError = viewModel.viewState.value as ShowApplicableLabelsThresholdExceededError
+        verifySequence { mockObserver.onChanged(labelsThresholdError) }
+        assertEquals(3, labelsThresholdError.maxLabelsAllowed)
     }
 }

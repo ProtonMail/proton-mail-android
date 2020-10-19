@@ -24,6 +24,7 @@ import android.text.TextUtils
 import androidx.annotation.IntDef
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import ch.protonmail.android.R
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.local.SnoozeSettings
@@ -740,5 +741,37 @@ class UserManager @Inject constructor(
 
     fun removeEmptyUserReferences() {
         userReferences.remove("")
+    }
+
+    fun didReachLabelsThreshold(numberOfLabels: Int): Boolean = getMaxLabelsAllowed() < numberOfLabels
+
+    fun getMaxLabelsAllowed(): Int {
+        val accountTypes = app.resources.getStringArray(R.array.account_type_names).asList()
+        val maxLabelsPerPlanArray = app.resources.getIntArray(R.array.max_labels_per_plan).asList()
+        val organization = app.organization
+
+        var paidUser = false
+        var planName = accountTypes[0] // free
+
+        var maxLabelsAllowed = maxLabelsPerPlanArray[0] // free
+
+
+        if (organization != null) {
+            planName = organization.planName
+            paidUser = user.isPaidUser && !TextUtils.isEmpty(organization.planName)
+        }
+        if (!paidUser) {
+            return maxLabelsAllowed
+        }
+
+        for (i in 1 until accountTypes.size) {
+            val accountName = accountTypes[i]
+            if (accountName.equals(planName, ignoreCase = true)) {
+                maxLabelsAllowed = maxLabelsPerPlanArray[i]
+                break
+            }
+        }
+
+        return maxLabelsAllowed
     }
 }

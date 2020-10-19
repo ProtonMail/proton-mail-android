@@ -47,7 +47,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -59,13 +58,10 @@ import ch.protonmail.android.adapters.LabelsAdapter;
 import ch.protonmail.android.api.models.room.messages.Label;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
-import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.utils.UiUtil;
-import ch.protonmail.android.utils.UserUtils;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel;
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModelFactory;
-import ch.protonmail.android.views.ThreeStateButton;
 import ch.protonmail.android.views.ThreeStateCheckBox;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -204,6 +200,16 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         if (viewState instanceof ViewState.ShowLabelCreatedEvent) {
             ViewState.ShowLabelCreatedEvent labelCreatedEvent = (ViewState.ShowLabelCreatedEvent) viewState;
             showLabelCreated(labelCreatedEvent.getLabelName());
+        }
+
+        if (viewState instanceof ViewState.ShowApplicableLabelsThresholdExceededError) {
+            ViewState.ShowApplicableLabelsThresholdExceededError error
+                    = (ViewState.ShowApplicableLabelsThresholdExceededError) viewState;
+            Toast.makeText(
+                    getContext(),
+                    String.format(getString(R.string.max_labels_selected), error.getMaxLabelsAllowed()),
+                    Toast.LENGTH_SHORT
+            ).show();
         }
     }
 
