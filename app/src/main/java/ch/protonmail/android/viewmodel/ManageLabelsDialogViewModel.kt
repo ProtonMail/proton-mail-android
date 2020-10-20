@@ -48,7 +48,6 @@ class ManageLabelsDialogViewModel @Inject constructor(
     ) {
 
         if (isCreationMode) {
-            creationMode = false
             createLabel(labelName, labelColor, labelItemsList)
             return
         }
