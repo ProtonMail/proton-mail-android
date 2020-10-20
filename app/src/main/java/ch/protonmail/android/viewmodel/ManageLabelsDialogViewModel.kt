@@ -36,8 +36,6 @@ class ManageLabelsDialogViewModel @Inject constructor(
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
 
-    var creationMode: Boolean = false
-
     fun onDoneClicked(
         isCreationMode: Boolean,
         labelColor: String?,
