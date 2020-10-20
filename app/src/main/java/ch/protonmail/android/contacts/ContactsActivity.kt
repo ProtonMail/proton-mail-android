@@ -33,6 +33,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseConnectivityActivity
@@ -47,9 +48,7 @@ import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.events.ContactsFetchedEvent
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
@@ -61,7 +60,7 @@ import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
-import javax.inject.Inject
+import timber.log.Timber
 
 // region constants
 const val REQUEST_CODE_CONTACT_DETAILS = 1
@@ -85,7 +84,6 @@ class ContactsActivity :
     private val contactsConnectivityRetryListener = ConnectivityRetryListener()
 
     private var alreadyCheckedPermission = false
-
 
     private val contactsViewModel: ContactsViewModel by viewModels()
 
@@ -144,6 +142,10 @@ class ContactsActivity :
             startActivity(intent)
             addFab.close(false)
         }
+        contactsViewModel.fetchContactsResult.observe(
+            this,
+            ::onContactsFetchedEvent
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -222,7 +224,7 @@ class ContactsActivity :
                 return true
             }
             R.id.action_sync -> {
-                progressLayoutView!!.visibility = View.VISIBLE
+                progressLayoutView?.isVisible = true
                 contactsViewModel.fetchContacts()
                 return true
             }
@@ -276,12 +278,11 @@ class ContactsActivity :
         showToast(getString(R.string.attachment_failed, event.messageSubject, event.attachmentName))
     }
 
-    @Subscribe
-    @Suppress("unused")
-    fun onContactsFetchedEvent(event: ContactsFetchedEvent) {
-        progressLayoutView!!.visibility = View.GONE
+    private fun onContactsFetchedEvent(isSuccessful: Boolean) {
+        Timber.v("onContactsFetchedEvent isSuccessful:$isSuccessful")
+        progressLayoutView?.isVisible = false
         val toastTextId =
-            if (event.status == Status.SUCCESS) R.string.fetching_contacts_success
+            if (isSuccessful) R.string.fetching_contacts_success
             else R.string.fetching_contacts_failure
         showToast(toastTextId, Toast.LENGTH_SHORT)
     }

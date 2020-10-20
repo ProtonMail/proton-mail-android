@@ -19,8 +19,13 @@
 
 package ch.protonmail.android.usecase.fetch
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
+import androidx.work.WorkInfo
+import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.time.seconds
 
@@ -29,8 +34,19 @@ class FetchContactsData @Inject constructor(
     private val fetchContactsEmailsWorker: FetchContactsEmailsWorker.Enqueuer
 ) {
 
-    operator fun invoke() {
-        fetchContactsEmailsWorker(2.seconds)
-        fetchContactsDataWorker.enqueue()
+    operator fun invoke(): LiveData<Boolean> {
+        fetchContactsEmailsWorker.enqueue(2.seconds.toLongMilliseconds())
+            .filter { it?.state?.isFinished == true }
+            .map { workInfo ->
+                Timber.v("Finished contacts emails worker State ${workInfo.state}")
+            }
+
+        // we return just contact data status for now
+        return fetchContactsDataWorker.enqueue()
+            .filter { it?.state?.isFinished == true }
+            .map { workInfo ->
+                Timber.v("Finished contacts data worker State ${workInfo.state}")
+                workInfo.state == WorkInfo.State.SUCCEEDED
+            }
     }
 }

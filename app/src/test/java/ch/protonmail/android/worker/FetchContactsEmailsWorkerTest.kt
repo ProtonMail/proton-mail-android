@@ -22,26 +22,18 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.ContactsDataResponse
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.core.Constants
+import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import io.mockk.MockKAnnotations
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.workmanager.toWorkData
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class FetchContactsDataWorkerTest {
+class FetchContactsEmailsWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -50,38 +42,27 @@ class FetchContactsDataWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @MockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactEmailsManager: ContactEmailsManager
 
-    @MockK
-    private lateinit var api: ProtonMailApiManager
-
-    private lateinit var worker: FetchContactsDataWorker
+    private lateinit var worker: FetchContactsEmailsWorker
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = FetchContactsDataWorker(context, parameters, api, contactsDao, TestDispatcherProvider)
+        worker = FetchContactsEmailsWorker(context, parameters, contactEmailsManager)
     }
 
     @Test
     fun verityThatInNormalConditionSuccessResultIsReturned() =
         runBlockingTest {
             // given
-            val contact = mockk<ContactData>(relaxed = true)
-            val contactsList = listOf(contact)
-            val response = mockk<ContactsDataResponse> {
-                every { contacts } returns contactsList
-                every { total } returns contactsList.size
-            }
-            coEvery { api.fetchContacts(0, Constants.CONTACTS_PAGE_SIZE) } returns response
-            every { contactsDao.saveAllContactsData(contactsList) } returns listOf(1)
+            every { contactEmailsManager.refresh() } returns Unit
             val expected = ListenableWorker.Result.success()
 
             // when
             val operationResult = worker.doWork()
 
             // then
-            verify { contactsDao.saveAllContactsData(contactsList) }
             assertEquals(expected, operationResult)
         }
 
@@ -92,7 +73,7 @@ class FetchContactsDataWorkerTest {
             // given
             val exceptionMessage = "testException"
             val testException = Exception(exceptionMessage)
-            coEvery { api.fetchContacts(0, Constants.CONTACTS_PAGE_SIZE) } throws testException
+            every { contactEmailsManager.refresh() } throws testException
             val expected = ListenableWorker.Result.failure(WorkerError(exceptionMessage).toWorkData())
 
             // when

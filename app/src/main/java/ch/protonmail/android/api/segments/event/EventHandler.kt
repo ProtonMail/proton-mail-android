@@ -104,7 +104,7 @@ class EventHandler @AssistedInject constructor(
     private val userManager: UserManager,
     private val jobManager: JobManager,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val enqueueFetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
+    private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     @Assisted val username: String
 ) {
@@ -129,7 +129,7 @@ class EventHandler @AssistedInject constructor(
         contactsDao.clearContactEmailsLabelsJoin()
         contactsDao.clearContactEmailsCache()
         contactsDao.clearContactGroupsLabelsTable()
-        enqueueFetchContactEmails()
+        fetchContactEmails.enqueue()
         fetchContactsData.enqueue()
     }
 

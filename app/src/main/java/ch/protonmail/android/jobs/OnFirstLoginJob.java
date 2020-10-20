@@ -31,7 +31,7 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker;
  */
 public class OnFirstLoginJob extends ProtonMailBaseJob {
 
-    private static final int FETCH_CONTACT_DELAY_MS = 2000;
+    private static final long FETCH_CONTACT_DELAY_MS = 2000;
     private final boolean refreshDetails;
     private final boolean refreshContacts;
 

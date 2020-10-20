@@ -36,10 +36,10 @@ class ContactEmailsManager @Inject constructor(
     fun refresh() {
         // fetch and prepare data
         val contactLabelList = apiManager.fetchContactGroups()
-                .map { it.contactGroups }
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.io())
-                .blockingGet()
+            .map { it.contactGroups }
+            .subscribeOn(ThreadSchedulers.io())
+            .observeOn(ThreadSchedulers.io())
+            .blockingGet()
         val list = contactApi.fetchContactEmails(Constants.CONTACTS_PAGE_SIZE)
         val allContactEmails = ArrayList<ContactEmail>()
         list.forEach {

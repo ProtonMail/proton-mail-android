@@ -19,16 +19,29 @@
 package ch.protonmail.android.contacts
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.fetch.FetchContactsData
+import timber.log.Timber
 
 class ContactsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
     private val fetchContactsData: FetchContactsData
 ) : ViewModel() {
 
+    private val fetchContactsTrigger: MutableLiveData<Unit> = MutableLiveData()
+
+    val fetchContactsResult: LiveData<Boolean> =
+        fetchContactsTrigger.switchMap { fetchContactsData() }
+
+    fun fetchContacts() {
+        Timber.v("fetchContacts")
+        fetchContactsTrigger.value = Unit
+    }
+
     fun isPaidUser(): Boolean = userManager.user.isPaidUser
 
-    fun fetchContacts() = fetchContactsData()
 }

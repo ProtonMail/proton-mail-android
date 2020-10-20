@@ -39,7 +39,7 @@ class FetchUserSettingsJob(
 
     @Throws(Throwable::class)
     override fun onRun() {
-        val enqueueFetchContactsEmails = entryPoint.fetchContactsEmailsWorkerEnqueuer()
+        val fetchContactsEmails = entryPoint.fetchContactsEmailsWorkerEnqueuer()
         val fetchContactsData = entryPoint.fetchContactsDataWorkerEnqueuer()
 
         val userInfo: UserInfo
@@ -67,7 +67,7 @@ class FetchUserSettingsJob(
                 getJobManager().addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX,
                     null, true, null, false))
                 fetchContactsData.enqueue()
-                enqueueFetchContactsEmails(2.seconds)
+                fetchContactsEmails.enqueue(2.seconds.toLongMilliseconds())
             } else {
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, false)
             }

@@ -579,7 +579,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 new RefreshMessagesAndAttachments(messagesDatabase).execute();
             }
             if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn()) {
-                new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
+                new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
             if (BuildConfig.REREGISTER_FOR_PUSH) {
