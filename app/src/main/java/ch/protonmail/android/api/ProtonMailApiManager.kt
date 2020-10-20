@@ -125,8 +125,8 @@ import javax.inject.Singleton
  * which can work directly with the Proton API or use any alternative proxy.
  */
 @Singleton
-class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
-    : BaseApi(),
+class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
+    BaseApi(),
     AddressApiSpec,
     AttachmentApiSpec,
     AuthenticationApiSpec,
@@ -352,9 +352,13 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun upgradeLoginPassword(upgradePasswordBody: UpgradePasswordBody): ResponseBody? = api.upgradeLoginPassword(upgradePasswordBody)
 
-    override fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+    @Deprecated(message = "Use non-blocking version of the function", replaceWith = ReplaceWith("fetchMailSettings()"))
+    override fun fetchMailSettingsBlocking(): MailSettingsResponse = api.fetchMailSettingsBlocking()
 
-    override fun fetchMailSettings(username: String): MailSettingsResponse = api.fetchMailSettings(username)
+    override suspend fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+
+    override fun fetchMailSettingsBlocking(username: String): MailSettingsResponse =
+        api.fetchMailSettingsBlocking(username)
 
     override fun updateSignature(signature: String): ResponseBody? = api.updateSignature(signature)
 
