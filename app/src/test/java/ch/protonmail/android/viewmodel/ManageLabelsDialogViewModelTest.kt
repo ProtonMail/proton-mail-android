@@ -24,8 +24,15 @@ import androidx.lifecycle.Observer
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.*
-import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.*
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedArchive
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedEvent
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowApplicableLabelsThresholdExceededError
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelCreatedEvent
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelNameDuplicatedError
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingColorError
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingNameError
 import ch.protonmail.android.views.ThreeStateButton.STATE_CHECKED
 import ch.protonmail.android.views.ThreeStateButton.STATE_UNPRESSED
 import io.mockk.MockKAnnotations
@@ -35,11 +42,10 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifySequence
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentCaptor
 
 class ManageLabelsDialogViewModelTest {
 
@@ -200,7 +206,23 @@ class ManageLabelsDialogViewModelTest {
             emptyList()
         )
 
-       val hideLabelsView = viewModel.viewState.value as HideLabelsView
+        val hideLabelsView = viewModel.viewState.value as HideLabelsView
         verify { mockObserver.onChanged(hideLabelsView) }
+    }
+
+    @Test
+    fun `onTextChanged fires ShowLabelCreationViews when labelName is not empty`() {
+        viewModel.onTextChanged("label-being-typed")
+
+        val showLabelCreationViews = viewModel.viewState.value as ViewState.ShowLabelCreationViews
+        verifySequence { mockObserver.onChanged(showLabelCreationViews) }
+    }
+
+    @Test
+    fun `onTextChanged fires HideLabelCreationViews when labelName is empty`() {
+        viewModel.onTextChanged("")
+
+        val hideLabelCreationViews = viewModel.viewState.value as ViewState.HideLabelCreationViews
+        verifySequence { mockObserver.onChanged(hideLabelCreationViews) }
     }
 }

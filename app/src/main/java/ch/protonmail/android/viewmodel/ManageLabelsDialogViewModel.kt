@@ -94,6 +94,15 @@ class ManageLabelsDialogViewModel @Inject constructor(
         viewState.value = ViewState.ShowLabelCreatedEvent(labelName)
     }
 
+    fun onTextChanged(labelName: String) {
+        if (labelName.isNotEmpty()) {
+            viewState.value = ViewState.ShowLabelCreationViews
+            return
+        }
+
+        viewState.value = ViewState.HideLabelCreationViews
+    }
+
     sealed class ViewState {
         object ShowMissingColorError : ViewState()
         object ShowMissingNameError : ViewState()
@@ -101,6 +110,8 @@ class ManageLabelsDialogViewModel @Inject constructor(
         object SelectedLabelsChangedEvent : ViewState()
         object SelectedLabelsChangedArchive : ViewState()
         object HideLabelsView : ViewState()
+        object ShowLabelCreationViews : ViewState()
+        object HideLabelCreationViews : ViewState()
         class ShowApplicableLabelsThresholdExceededError(val maxLabelsAllowed: Int) : ViewState()
         class ShowLabelCreatedEvent(val labelName: String) : ViewState()
     }

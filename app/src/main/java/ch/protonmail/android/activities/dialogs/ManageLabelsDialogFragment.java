@@ -22,7 +22,6 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
@@ -62,7 +61,7 @@ import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModelFactory;
 import ch.protonmail.android.views.ThreeStateCheckBox;
 import dagger.hilt.android.AndroidEntryPoint;
 
-import static ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.*;
+import static ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState;
 
 @AndroidEntryPoint
 public class ManageLabelsDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
@@ -224,6 +223,28 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         if (viewState instanceof ViewState.HideLabelsView) {
             dismissAllowingStateLoss();
         }
+
+        if (viewState instanceof ViewState.ShowLabelCreationViews) {
+            if (!mCreationMode) {
+                mCreationMode = true;
+                inflateColors();
+                randomCheck();
+                mAddLabelContainer.setVisibility(View.VISIBLE);
+                mDone.setText(getString(R.string.label_add));
+                mTitle.setText(getString(R.string.labels_title_add));
+            }
+        }
+
+        if (viewState instanceof ViewState.HideLabelCreationViews) {
+            mCreationMode = false;
+            mColorsGrid.setVisibility(View.GONE);
+            mList.setVisibility(View.VISIBLE);
+            mLabelName.setVisibility(View.VISIBLE);
+            UiUtil.hideKeyboard(getActivity(), mLabelName);
+            setDoneTitle();
+            setDialogTitle();
+            mCurrentSelection = -1;
+        }
     }
 
     private void showLabelCreated(String labelName) {
@@ -298,25 +319,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (TextUtils.isEmpty(mLabelName.getText())) {
-                mCreationMode = false;
-                mColorsGrid.setVisibility(View.GONE);
-                mList.setVisibility(View.VISIBLE);
-                mLabelName.setVisibility(View.VISIBLE);
-                UiUtil.hideKeyboard(getActivity(), mLabelName);
-                setDoneTitle();
-                setDialogTitle();
-                mCurrentSelection = -1;
-            } else {
-                if (!mCreationMode) {
-                    mCreationMode = true;
-                    inflateColors();
-                    randomCheck();
-                    mAddLabelContainer.setVisibility(View.VISIBLE);
-                    mDone.setText(getString(R.string.label_add));
-                    mTitle.setText(getString(R.string.labels_title_add));
-                }
-            }
+            viewModel.onTextChanged(mLabelName.getText().toString());
         }
 
         @Override
