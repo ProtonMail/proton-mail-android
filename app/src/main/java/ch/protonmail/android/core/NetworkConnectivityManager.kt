@@ -62,11 +62,11 @@ class NetworkConnectivityManager @Inject constructor(
      */
     fun isConnectionAvailableFlow(): Flow<Boolean> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network?) {
+            override fun onAvailable(network: Network) {
                 Timber.v("Network $network available")
             }
 
-            override fun onLost(network: Network?) {
+            override fun onLost(network: Network) {
                 launch {
                     delay(2.seconds)
                     Timber.d("Network $network lost isInternetPossible: ${isInternetConnectionPossible()}")
