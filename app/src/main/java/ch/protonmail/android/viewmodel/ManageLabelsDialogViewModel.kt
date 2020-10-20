@@ -51,18 +51,55 @@ class ManageLabelsDialogViewModel @Inject constructor(
         }
 
         if (userManager.didReachLabelsThreshold(checkedLabelIds.size)) {
-            val maxLabelsAllowed = userManager.getMaxLabelsAllowed()
-            viewState.value = ViewState.ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
+            liveDataShowLabelsThresholdError(userManager.getMaxLabelsAllowed())
             return
         }
 
         if (isArchiveOptionSelected(archiveCheckboxState)) {
-            viewState.value = ViewState.SelectedLabelsChangedArchive
+            liveDataPostSelectedLabelsChangedArchive()
         } else {
-            viewState.value = ViewState.SelectedLabelsChangedEvent
+            liveDataPostSelectedLabelsChanged()
         }
 
+        liveDataHideLabelsView()
+    }
+
+    fun onTextChanged(labelName: String, creationViewsVisible: Boolean) {
+
+        if (labelName.isNotEmpty()) {
+            if (creationViewsVisible) {
+                return
+            }
+
+            liveDataShowLabelCreationViews()
+            return
+        }
+
+        liveDataHideLabelCreationViews()
+    }
+
+    private fun liveDataHideLabelCreationViews() {
+        viewState.value = ViewState.HideLabelCreationViews
+    }
+
+    private fun liveDataShowLabelCreationViews() {
+        viewState.value = ViewState.ShowLabelCreationViews
+    }
+
+    private fun liveDataHideLabelsView() {
         viewState.value = ViewState.HideLabelsView
+    }
+
+    private fun liveDataPostSelectedLabelsChanged() {
+        viewState.value = ViewState.SelectedLabelsChangedEvent
+    }
+
+    private fun liveDataPostSelectedLabelsChangedArchive() {
+        viewState.value = ViewState.SelectedLabelsChangedArchive
+    }
+
+    private fun liveDataShowLabelsThresholdError(maxLabelsAllowed: Int) {
+        viewState.value = ViewState.ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
     }
 
     private fun isArchiveOptionSelected(archiveCheckboxState: Int) =
@@ -75,37 +112,39 @@ class ManageLabelsDialogViewModel @Inject constructor(
         labelItemsList: List<LabelsAdapter.LabelItem>
     ) {
         if (labelColor.isNullOrEmpty()) {
-            viewState.value = ShowMissingColorError
+            liveDataShowMissingColorError()
             return
         }
 
         if (labelName.isEmpty()) {
-            viewState.value = ViewState.ShowMissingNameError
+            liveDataShowMissingNameError()
             return
         }
 
         labelItemsList
             .find { it.name == labelName }
             ?.let {
-                viewState.value = ViewState.ShowLabelNameDuplicatedError
+                liveDataShowDuplicatedNameError()
                 return
             }
 
+        liveDataShowLabelCreatedEvent(labelName)
+    }
+
+    private fun liveDataShowLabelCreatedEvent(labelName: String) {
         viewState.value = ViewState.ShowLabelCreatedEvent(labelName)
     }
 
-    fun onTextChanged(labelName: String, creationViewsVisible: Boolean) {
+    private fun liveDataShowDuplicatedNameError() {
+        viewState.value = ViewState.ShowLabelNameDuplicatedError
+    }
 
-        if (labelName.isNotEmpty()) {
-            if (creationViewsVisible) {
-                return
-            }
+    private fun liveDataShowMissingNameError() {
+        viewState.value = ViewState.ShowMissingNameError
+    }
 
-            viewState.value = ViewState.ShowLabelCreationViews
-            return
-        }
-
-        viewState.value = ViewState.HideLabelCreationViews
+    private fun liveDataShowMissingColorError() {
+        viewState.value = ShowMissingColorError
     }
 
     sealed class ViewState {
