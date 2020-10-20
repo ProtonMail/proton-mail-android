@@ -77,6 +77,8 @@ class LogoutWorker @WorkerInject constructor(
                 if (registrationId.isNotEmpty()) {
                     Timber.v("Unregistering from Firebase Cloud Messaging (FCM)")
                     api.unregisterDevice(registrationId)
+                } else {
+                    Timber.w("LogoutWorker called with empty FCM registration token")
                 }
             }
             accountManager.clear()

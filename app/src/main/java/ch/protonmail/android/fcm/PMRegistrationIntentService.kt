@@ -26,21 +26,15 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.RegisterDeviceBody
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
 // region constants
-private const val TAG_PM_REGISTRATION_INTENT_SERVICE = "PMRegIntentService"
 private const val PREF_REGISTRATION_COMPLETE = "registrationComplete"
 private const val EXTRA_FCM_TOKEN = "fcmToken"
 // endregion
-
-/*
- * Created by dkadrikj on 1/7/16.
- */
 
 @AndroidEntryPoint
 class PMRegistrationIntentService : ProtonJobIntentService() {
@@ -50,10 +44,10 @@ class PMRegistrationIntentService : ProtonJobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
         try {
-            sendRegistrationToServer(intent.getStringExtra(EXTRA_FCM_TOKEN))
+            sendRegistrationToServer(requireNotNull(intent.getStringExtra(EXTRA_FCM_TOKEN)))
             FcmUtil.setTokenSent(true)
         } catch (e: Exception) {
-            Logger.doLogException(TAG_PM_REGISTRATION_INTENT_SERVICE, "Failed to complete token refresh", e)
+            Timber.w(e, "Failed to complete token refresh")
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
             FcmUtil.setTokenSent(false)
@@ -95,7 +89,11 @@ class PMRegistrationIntentService : ProtonJobIntentService() {
         fun startRegistration(context: Context, token: String) {
             val intent = Intent(context, PMRegistrationIntentService::class.java)
             intent.putExtra(EXTRA_FCM_TOKEN, token)
-            enqueueWork(context, PMRegistrationIntentService::class.java, Constants.JOB_INTENT_SERVICE_ID_REGISTRATION, intent)
+            enqueueWork(
+                context,
+                PMRegistrationIntentService::class.java,
+                Constants.JOB_INTENT_SERVICE_ID_REGISTRATION, intent
+            )
         }
     }
 }

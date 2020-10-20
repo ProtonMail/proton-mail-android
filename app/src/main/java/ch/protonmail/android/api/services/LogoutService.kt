@@ -64,7 +64,7 @@ class LogoutService : JobIntentService() {
         when (intent.action) {
             ACTION_LOGOUT_ONLINE -> logoutOnline(
                 intent.getStringExtra(EXTRA_USERNAME),
-                intent.getStringExtra(EXTRA_FCM_REGISTRATION_ID)
+                intent.getStringExtra(EXTRA_FCM_REGISTRATION_ID) ?: ""
             )
             ACTION_LOGOUT_OFFLINE -> logoutOffline(intent.getStringExtra(EXTRA_USERNAME))
         }
