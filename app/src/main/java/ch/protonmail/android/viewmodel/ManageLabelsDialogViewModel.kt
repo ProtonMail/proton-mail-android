@@ -95,6 +95,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
     }
 
     fun onTextChanged(labelName: String, creationViewsVisible: Boolean) {
+
         if (labelName.isNotEmpty()) {
             if (creationViewsVisible) {
                 return

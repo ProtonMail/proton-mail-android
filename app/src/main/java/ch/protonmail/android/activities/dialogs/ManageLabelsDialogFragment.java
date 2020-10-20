@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
@@ -110,6 +111,8 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     private int mCurrentSelection = -1;
     private ManageLabelsDialogViewModel viewModel;
 
+    AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
+
     /**
      * Instantiates a new fragment of this class.
      *
@@ -140,14 +143,11 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         super.onAttach(context);
         try {
             mLabelStateChangeListener = (ILabelsChangeListener) context;
-        } catch (ClassCastException e) {
-            // not throwing error, since the user of this dialog is not obligated to listen for
-            // labels state change
-        }
-        try {
             mLabelCreationListener = (ILabelCreationListener) context;
         } catch (ClassCastException e) {
-            // not throwing error since the user of this fragment may not want to create new labels
+            // not throwing error since the user of this fragment:
+            // * is not forced to listen for labels state change
+            // * may not want to create new labels
         }
     }
 
@@ -173,90 +173,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
             mMessageIds = null;
         }
     }
-
-    private void viewStateChanged(ViewState viewState) {
-        if (viewState instanceof ViewState.ShowMissingColorError) {
-            Toast.makeText(getContext(), R.string.please_choose_color, Toast.LENGTH_SHORT).show();
-        }
-
-        if(viewState instanceof ViewState.ShowMissingNameError) {
-            Toast.makeText(getContext(), R.string.label_name_empty, Toast.LENGTH_SHORT).show();
-        }
-
-        if(viewState instanceof ViewState.ShowLabelNameDuplicatedError) {
-            Toast.makeText(getContext(), R.string.label_name_duplicate, Toast.LENGTH_SHORT).show();
-        }
-
-        if (viewState instanceof ViewState.ShowLabelCreatedEvent) {
-            ViewState.ShowLabelCreatedEvent labelCreatedEvent = (ViewState.ShowLabelCreatedEvent) viewState;
-            showLabelCreated(labelCreatedEvent.getLabelName());
-        }
-
-        if (viewState instanceof ViewState.ShowApplicableLabelsThresholdExceededError) {
-            ViewState.ShowApplicableLabelsThresholdExceededError error
-                    = (ViewState.ShowApplicableLabelsThresholdExceededError) viewState;
-            Toast.makeText(
-                    getContext(),
-                    String.format(getString(R.string.max_labels_selected), error.getMaxLabelsAllowed()),
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
-
-        if (viewState instanceof ViewState.SelectedLabelsChangedEvent) {
-            mLabelStateChangeListener.onLabelsChecked(
-                    getCheckedLabels(),
-                    mMessageIds == null ? null : getUnchangedLabels(),
-                    mMessageIds
-            );
-        }
-
-        if (viewState instanceof ViewState.SelectedLabelsChangedArchive) {
-            mLabelStateChangeListener.onLabelsChecked(
-                    getCheckedLabels(),
-                    mMessageIds == null ? null : getUnchangedLabels(),
-                    mMessageIds,
-                    mMessageIds
-            );
-        }
-
-        if (viewState instanceof ViewState.HideLabelsView) {
-            dismissAllowingStateLoss();
-        }
-
-        if (viewState instanceof ViewState.ShowLabelCreationViews) {
-            inflateColors();
-            randomCheck();
-            mAddLabelContainer.setVisibility(View.VISIBLE);
-            mDone.setText(getString(R.string.label_add));
-            mTitle.setText(getString(R.string.labels_title_add));
-        }
-
-        if (viewState instanceof ViewState.HideLabelCreationViews) {
-            mColorsGrid.setVisibility(View.GONE);
-            mList.setVisibility(View.VISIBLE);
-            mLabelName.setVisibility(View.VISIBLE);
-            UiUtil.hideKeyboard(getActivity(), mLabelName);
-            setDoneTitle();
-            setDialogTitle();
-            mCurrentSelection = -1;
-        }
-    }
-
-    private void showLabelCreated(String labelName) {
-        mColorsGrid.setVisibility(View.GONE);
-        mLabelName.setText("");
-        mList.setVisibility(View.VISIBLE);
-        UiUtil.hideKeyboard(getActivity(), mLabelName);
-
-        if (mLabelCreationListener != null) {
-            mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor);
-        }
-
-        setDoneTitle();
-        setDialogTitle();
-    }
-
-    AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
 
     @Override
     protected void initUi(final View rootView) {
@@ -336,8 +252,116 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         mTitle.setText(getString(R.string.labels_title_apply));
     }
 
-    class LabelsObserver implements Observer<List<Label>> {
+    private void viewStateChanged(ViewState viewState) {
+        if (viewState instanceof ViewState.ShowMissingColorError) {
+            showToast(R.string.please_choose_color);
+        }
 
+        if (viewState instanceof ViewState.ShowMissingNameError) {
+            showToast(R.string.label_name_empty);
+        }
+
+        if (viewState instanceof ViewState.ShowLabelNameDuplicatedError) {
+            showToast(R.string.label_name_duplicate);
+        }
+
+        if (viewState instanceof ViewState.ShowLabelCreatedEvent) {
+            showLabelCreated((ViewState.ShowLabelCreatedEvent) viewState);
+        }
+
+        if (viewState instanceof ViewState.ShowApplicableLabelsThresholdExceededError) {
+            showApplicableLabelsThresholdError(
+                    (ViewState.ShowApplicableLabelsThresholdExceededError) viewState
+            );
+        }
+
+        if (viewState instanceof ViewState.SelectedLabelsChangedEvent) {
+            dispatchLabelsCheckedEvent();
+        }
+
+        if (viewState instanceof ViewState.SelectedLabelsChangedArchive) {
+            dispatchLabelsCheckedArchiveEvent();
+        }
+
+        if (viewState instanceof ViewState.HideLabelsView) {
+            dismissAllowingStateLoss();
+        }
+
+        if (viewState instanceof ViewState.ShowLabelCreationViews) {
+            showLabelCreationViews();
+        }
+
+        if (viewState instanceof ViewState.HideLabelCreationViews) {
+            hideLabelCreationViews();
+        }
+    }
+
+    private void hideLabelCreationViews() {
+        mColorsGrid.setVisibility(View.GONE);
+        mList.setVisibility(View.VISIBLE);
+        mLabelName.setVisibility(View.VISIBLE);
+        UiUtil.hideKeyboard(getActivity(), mLabelName);
+        setDoneTitle();
+        setDialogTitle();
+        mCurrentSelection = -1;
+    }
+
+    private void showLabelCreationViews() {
+        showLabelColorsGrid();
+        selectRandomColor();
+        mAddLabelContainer.setVisibility(View.VISIBLE);
+        mDone.setText(getString(R.string.label_add));
+        mTitle.setText(getString(R.string.labels_title_add));
+    }
+
+    private void dispatchLabelsCheckedArchiveEvent() {
+        mLabelStateChangeListener.onLabelsChecked(
+                getCheckedLabels(),
+                mMessageIds == null ? null : getUnchangedLabels(),
+                mMessageIds,
+                mMessageIds
+        );
+    }
+
+    private void dispatchLabelsCheckedEvent() {
+        mLabelStateChangeListener.onLabelsChecked(
+                getCheckedLabels(),
+                mMessageIds == null ? null : getUnchangedLabels(),
+                mMessageIds
+        );
+    }
+
+    private void showApplicableLabelsThresholdError(
+            ViewState.ShowApplicableLabelsThresholdExceededError error
+    ) {
+        Toast.makeText(
+                getContext(),
+                String.format(getString(R.string.max_labels_selected), error.getMaxLabelsAllowed()),
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    private void showToast(@StringRes int messageId) {
+        Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showLabelCreated(ViewState.ShowLabelCreatedEvent labelCreatedEvent) {
+        String labelName = labelCreatedEvent.getLabelName();
+        mColorsGrid.setVisibility(View.GONE);
+        mLabelName.setText("");
+        mList.setVisibility(View.VISIBLE);
+        UiUtil.hideKeyboard(getActivity(), mLabelName);
+
+        if (mLabelCreationListener != null) {
+            mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor);
+        }
+
+        setDoneTitle();
+        setDialogTitle();
+    }
+
+
+    class LabelsObserver implements Observer<List<Label>> {
         @Override
         public void onChanged(@Nullable List<Label> labels) {
             mLabels = new ArrayList<>();
@@ -411,7 +435,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         return unchangedLabelIds;
     }
 
-    private void inflateColors() {
+    private void showLabelColorsGrid() {
         mColorOptions = getResources().getIntArray(R.array.label_colors);
         mColorsAdapter = new LabelColorsAdapter(getActivity(), mColorOptions, R.layout.label_color_item);
         mColorsGrid.setAdapter(mColorsAdapter);
@@ -427,7 +451,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         UiUtil.hideKeyboard(getActivity(), mLabelName);
     }
 
-    private void randomCheck() {
+    private void selectRandomColor() {
         if (mCurrentSelection == -1) {
             Random random = new Random();
             mCurrentSelection = random.nextInt(mColorOptions.length);
