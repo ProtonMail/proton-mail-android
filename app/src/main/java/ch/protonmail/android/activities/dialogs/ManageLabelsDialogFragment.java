@@ -280,7 +280,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
 
     @OnClick(R.id.done)
     public void onDoneClicked() {
-
         viewModel.onDoneClicked(
                 mCreationMode,
                 mSelectedNewLabelColor,
@@ -289,36 +288,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
                 mLabelName.getText().toString(),
                 mLabels
         );
-
-//        if (mCreationMode) {
-//            if (TextUtils.isEmpty(mSelectedNewLabelColor)) {
-//                TextExtensions.showToast(getActivity(), R.string.please_choose_color, Toast.LENGTH_SHORT);
-//            } else {
-//                mCreationMode = false;
-//                onSaveClicked();
-//            }
-//        } else {
-//            List<String> checkedLabelIds = getCheckedLabels();
-//            int maxLabelsAllowed = UserUtils.getMaxAllowedLabels(ProtonMailApplication.getApplication().getUserManager());
-//            if (checkedLabelIds.size() > maxLabelsAllowed) {
-//                if (isAdded()) {
-//                    TextExtensions.showToast(getActivity(), String.format(getString(R.string.max_labels_selected), maxLabelsAllowed), Toast.LENGTH_SHORT);
-//                }
-//                return;
-//            }
-//            if (mShowCheckboxes && mLabelStateChangeListener != null) {
-//                if (mArchiveCheckbox.getState() == ThreeStateButton.STATE_CHECKED ||
-//                        mArchiveCheckbox.getState() == ThreeStateButton.STATE_PRESSED) {
-//                    // also archive
-//                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null : getUnchangedLabels(), mMessageIds, mMessageIds);
-//                } else {
-//                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null :  getUnchangedLabels(), mMessageIds);
-//                }
-//            } else if (!mShowCheckboxes) {
-//                mLabelCreationListener.onLabelsDeleted(getCheckedLabels());
-//            }
-//            dismissAllowingStateLoss();
-//        }
     }
 
     private TextWatcher newLabelWatcher = new TextWatcher() {
