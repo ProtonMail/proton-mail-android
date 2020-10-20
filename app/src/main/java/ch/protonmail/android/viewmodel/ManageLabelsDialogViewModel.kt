@@ -94,8 +94,12 @@ class ManageLabelsDialogViewModel @Inject constructor(
         viewState.value = ViewState.ShowLabelCreatedEvent(labelName)
     }
 
-    fun onTextChanged(labelName: String) {
+    fun onTextChanged(labelName: String, creationViewsVisible: Boolean) {
         if (labelName.isNotEmpty()) {
+            if (creationViewsVisible) {
+                return
+            }
+
             viewState.value = ViewState.ShowLabelCreationViews
             return
         }

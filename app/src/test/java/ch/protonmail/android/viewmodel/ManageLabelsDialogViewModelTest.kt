@@ -212,15 +212,22 @@ class ManageLabelsDialogViewModelTest {
 
     @Test
     fun `onTextChanged fires ShowLabelCreationViews when labelName is not empty`() {
-        viewModel.onTextChanged("label-being-typed")
+        viewModel.onTextChanged("label-being-typed", false)
 
         val showLabelCreationViews = viewModel.viewState.value as ViewState.ShowLabelCreationViews
         verifySequence { mockObserver.onChanged(showLabelCreationViews) }
     }
 
     @Test
+    fun `onTextChanged does not fire ShowLabelCreationViews when label name not empty and views already visible`() {
+        viewModel.onTextChanged("label-being-typed", true)
+
+        verify(exactly = 0) { mockObserver.onChanged(any()) }
+    }
+
+    @Test
     fun `onTextChanged fires HideLabelCreationViews when labelName is empty`() {
-        viewModel.onTextChanged("")
+        viewModel.onTextChanged("", false)
 
         val hideLabelCreationViews = viewModel.viewState.value as ViewState.HideLabelCreationViews
         verifySequence { mockObserver.onChanged(hideLabelCreationViews) }

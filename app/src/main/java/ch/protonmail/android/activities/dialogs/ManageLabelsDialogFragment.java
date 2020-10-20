@@ -107,7 +107,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     private List<String> mMessageIds;
     private String mSelectedNewLabelColor;
     private int[] mColorOptions;
-    private boolean mCreationMode = false;
     private int mCurrentSelection = -1;
     private ManageLabelsDialogViewModel viewModel;
 
@@ -225,18 +224,14 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         }
 
         if (viewState instanceof ViewState.ShowLabelCreationViews) {
-            if (!mCreationMode) {
-                mCreationMode = true;
-                inflateColors();
-                randomCheck();
-                mAddLabelContainer.setVisibility(View.VISIBLE);
-                mDone.setText(getString(R.string.label_add));
-                mTitle.setText(getString(R.string.labels_title_add));
-            }
+            inflateColors();
+            randomCheck();
+            mAddLabelContainer.setVisibility(View.VISIBLE);
+            mDone.setText(getString(R.string.label_add));
+            mTitle.setText(getString(R.string.labels_title_add));
         }
 
         if (viewState instanceof ViewState.HideLabelCreationViews) {
-            mCreationMode = false;
             mColorsGrid.setVisibility(View.GONE);
             mList.setVisibility(View.VISIBLE);
             mLabelName.setVisibility(View.VISIBLE);
@@ -302,7 +297,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @OnClick(R.id.done)
     public void onDoneClicked() {
         viewModel.onDoneClicked(
-                mCreationMode,
+                isCreatingNewLabel(),
                 mSelectedNewLabelColor,
                 getCheckedLabels(),
                 mArchiveCheckbox.getState(),
@@ -319,7 +314,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            viewModel.onTextChanged(mLabelName.getText().toString());
+            viewModel.onTextChanged(mLabelName.getText().toString(), isCreatingNewLabel());
         }
 
         @Override
@@ -329,6 +324,10 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         }
     };
 
+    private boolean isCreatingNewLabel() {
+        return mColorsGrid.getVisibility() == View.VISIBLE;
+    }
+
     private void setDoneTitle() {
         mDone.setText(getString(R.string.label_apply));
     }
@@ -337,7 +336,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         mTitle.setText(getString(R.string.labels_title_apply));
     }
 
-    class LabelsObserver implements Observer<List<Label>>{
+    class LabelsObserver implements Observer<List<Label>> {
 
         @Override
         public void onChanged(@Nullable List<Label> labels) {
