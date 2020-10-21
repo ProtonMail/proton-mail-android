@@ -329,17 +329,13 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private fun saveCurrentLabel() {
         viewModel.saveLabel().observe(this, {
-            if (isWorkerProcessing(it)) {
-                return@observe
+            if (it.state.isFinished) {
+                displayLabelCreationOutcome(it)
             }
-            displayLabelCreationOutcome(it)
         })
 
         state = UNDEFINED
     }
-
-    private fun isWorkerProcessing(it: WorkInfo) =
-        it.state != WorkInfo.State.SUCCEEDED && it.state != WorkInfo.State.FAILED
 
     private fun displayLabelCreationOutcome(workInfo: WorkInfo) {
         val success = workInfo.state == WorkInfo.State.SUCCEEDED
