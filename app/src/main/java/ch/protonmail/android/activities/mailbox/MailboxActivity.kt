@@ -56,6 +56,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_LOGOUT
@@ -129,11 +130,9 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
-import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxLoginEvent
@@ -153,7 +152,6 @@ import ch.protonmail.android.jobs.FetchLabelsJob
 import ch.protonmail.android.jobs.PingJob
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostStarJob
@@ -177,6 +175,8 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedIn
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnackbar
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
+import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -186,6 +186,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.UUID
@@ -1437,7 +1438,24 @@ class MailboxActivity : NavigationActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        mJobManager.addJobInBackground(PostLabelJob(labelName, color, 0, 0, false, null))
+        val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
+        postLabelResult.observe(
+            this,
+            {
+                val state: WorkInfo.State = it.state
+
+                if (state == WorkInfo.State.SUCCEEDED) {
+                    showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
+                    return@observe
+                }
+
+                if (state == WorkInfo.State.FAILED) {
+                    val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+                        ?: getString(R.string.label_invalid)
+                    showToast(errorMessage, Toast.LENGTH_SHORT)
+                }
+            }
+        )
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {
@@ -1457,25 +1475,6 @@ class MailboxActivity : NavigationActivity(),
             unchangedLabels = mutableListOf()
         }
         mailboxViewModel.processLabels(messageIds, checkedLabelIds, unchangedLabels)
-    }
-
-    @Subscribe
-    fun onLabelAddedEvent(event: LabelAddedEvent) {
-        if (!catchLabelEvents) {
-            return
-        }
-        val message: String? = if (event.status == Status.SUCCESS) {
-            getString(R.string.label_created)
-        } else {
-            if (event.error.isNullOrEmpty()) {
-                getString(R.string.label_invalid)
-            } else {
-                event.error
-            }
-        }
-        if (!message.isNullOrEmpty()) {
-            showToast(message, Toast.LENGTH_SHORT)
-        }
     }
 
     @Subscribe

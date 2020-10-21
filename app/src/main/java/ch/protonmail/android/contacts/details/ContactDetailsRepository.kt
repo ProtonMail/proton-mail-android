@@ -29,8 +29,8 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
-import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
+import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -98,11 +98,13 @@ open class ContactDetailsRepository @Inject constructor(
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
-                    jobManager.addJobInBackground(
-                        PostLabelJob(
-                            contactLabel.name, contactLabel.color, contactLabel.display,
-                            contactLabel.exclusive.makeInt(), false, contactLabel.ID
-                        )
+                    PostLabelWorker.Enqueuer(workManager).enqueue(
+                        contactLabel.name,
+                        contactLabel.color,
+                        contactLabel.display,
+                        contactLabel.exclusive.makeInt(),
+                        false,
+                        contactLabel.ID
                     )
                 }
             }

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -29,6 +29,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.CREATE
@@ -36,9 +37,7 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.Stat
 import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity.State.UPDATE
 import ch.protonmail.android.adapters.LabelColorsAdapter
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
-import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.uiModel.LabelUiModel.Type.FOLDERS
@@ -48,6 +47,7 @@ import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.onTextChange
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
+import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_labels_manager.*
@@ -328,10 +328,44 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             .show()
     }
 
-    /** Save the current editing Label */
     private fun saveCurrentLabel() {
-        viewModel.saveLabel()
+        viewModel.saveLabel().observe(this, {
+            if (isWorkerProcessing(it)) {
+                return@observe
+            }
+            displayLabelCreationOutcome(it)
+        })
+
         state = UNDEFINED
+    }
+
+    private fun isWorkerProcessing(it: WorkInfo) =
+        it.state != WorkInfo.State.SUCCEEDED && it.state != WorkInfo.State.FAILED
+
+    private fun displayLabelCreationOutcome(workInfo: WorkInfo) {
+        val success = workInfo.state == WorkInfo.State.SUCCEEDED
+        val errorMessage = workInfo.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+
+        if (success && createOnly) onBackPressed()
+
+        labels_grid_view.isVisible = true
+
+        val message = when (type) {
+            FOLDERS -> {
+                when (success) {
+                    true -> getString(R.string.folder_created)
+                    false -> errorMessage ?: getString(R.string.folder_invalid)
+                }
+            }
+            LABELS -> {
+                when (success) {
+                    true -> getString(R.string.label_created)
+                    false -> errorMessage ?: getString(R.string.label_invalid)
+                }
+            }
+        }
+
+        showToast(message, Toast.LENGTH_SHORT)
     }
 
     /** Select a random Color for the Label */
@@ -412,34 +446,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     @Subscribe
     @Suppress("unused") // EventBus
-    fun onLabelAddedEvent(event: LabelAddedEvent) {
-        val success = event.status == Status.SUCCESS
-        val error = event.error
-        if (success && createOnly) onBackPressed()
-
-        labels_grid_view.isVisible = true
-
-        val message = when (type) {
-            FOLDERS -> {
-                when (success) {
-                    true -> getString(R.string.folder_created)
-                    false -> error ?: getString(R.string.folder_invalid)
-                }
-            }
-            LABELS -> {
-                when (success) {
-                    true -> getString(R.string.label_created)
-                    false -> error ?: getString(R.string.label_invalid)
-                }
-            }
-        }
-
-        showToast(message, Toast.LENGTH_SHORT)
-    }
-
-    @Subscribe
-    @Suppress("unused") // EventBus
-    fun onLogoutEvent(@Suppress("UNUSED_PARAMETER") event: LogoutEvent) {
+    fun onLogoutEvent( @Suppress("UNUSED_PARAMETER") event: LogoutEvent ) {
         moveToLogin()
     }
 
