@@ -24,7 +24,16 @@ import androidx.lifecycle.ViewModel
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelCreationViews
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedArchive
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedEvent
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowApplicableLabelsThresholdExceededError
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelCreatedEvent
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelCreationViews
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelNameDuplicatedError
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingColorError
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingNameError
 import ch.protonmail.android.views.ThreeStateButton
 import javax.inject.Inject
 import javax.inject.Named
@@ -46,7 +55,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
     ) {
 
         if (isCreationMode) {
-            createLabel(labelName, labelColor, labelItemsList)
+            viewState.value = createLabel(labelName, labelColor, labelItemsList)
             return
         }
 
@@ -79,27 +88,27 @@ class ManageLabelsDialogViewModel @Inject constructor(
     }
 
     private fun liveDataHideLabelCreationViews() {
-        viewState.value = ViewState.HideLabelCreationViews
+        viewState.value = HideLabelCreationViews
     }
 
     private fun liveDataShowLabelCreationViews() {
-        viewState.value = ViewState.ShowLabelCreationViews
+        viewState.value = ShowLabelCreationViews
     }
 
     private fun liveDataHideLabelsView() {
-        viewState.value = ViewState.HideLabelsView
+        viewState.value = HideLabelsView
     }
 
     private fun liveDataPostSelectedLabelsChanged() {
-        viewState.value = ViewState.SelectedLabelsChangedEvent
+        viewState.value = SelectedLabelsChangedEvent
     }
 
     private fun liveDataPostSelectedLabelsChangedArchive() {
-        viewState.value = ViewState.SelectedLabelsChangedArchive
+        viewState.value = SelectedLabelsChangedArchive
     }
 
     private fun liveDataShowLabelsThresholdError(maxLabelsAllowed: Int) {
-        viewState.value = ViewState.ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
+        viewState.value = ShowApplicableLabelsThresholdExceededError(maxLabelsAllowed)
     }
 
     private fun isArchiveOptionSelected(archiveCheckboxState: Int) =
@@ -110,41 +119,22 @@ class ManageLabelsDialogViewModel @Inject constructor(
         labelName: String,
         labelColor: String?,
         labelItemsList: List<LabelsAdapter.LabelItem>
-    ) {
+    ): ViewState {
         if (labelColor.isNullOrEmpty()) {
-            liveDataShowMissingColorError()
-            return
+            return ShowMissingColorError
         }
 
         if (labelName.isEmpty()) {
-            liveDataShowMissingNameError()
-            return
+            return ShowMissingNameError
         }
 
         labelItemsList
             .find { it.name == labelName }
             ?.let {
-                liveDataShowDuplicatedNameError()
-                return
+                return ShowLabelNameDuplicatedError
             }
 
-        liveDataShowLabelCreatedEvent(labelName)
-    }
-
-    private fun liveDataShowLabelCreatedEvent(labelName: String) {
-        viewState.value = ViewState.ShowLabelCreatedEvent(labelName)
-    }
-
-    private fun liveDataShowDuplicatedNameError() {
-        viewState.value = ViewState.ShowLabelNameDuplicatedError
-    }
-
-    private fun liveDataShowMissingNameError() {
-        viewState.value = ViewState.ShowMissingNameError
-    }
-
-    private fun liveDataShowMissingColorError() {
-        viewState.value = ShowMissingColorError
+        return ShowLabelCreatedEvent(labelName)
     }
 
     sealed class ViewState {
