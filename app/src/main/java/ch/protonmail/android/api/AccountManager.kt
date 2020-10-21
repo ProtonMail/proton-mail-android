@@ -26,17 +26,17 @@ import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.getStringList
-import ch.protonmail.android.utils.putStringList
 import kotlinx.coroutines.withContext
+import me.proton.core.util.android.sharedpreferences.get
+import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotEmpty
+import me.proton.core.util.kotlin.unsupported
 import javax.inject.Inject
 
 // region constants
-// TODO make private after the migration to use Ids instead of usernames, so tests can rely of AccountManager
-//  implementation directly
-const val PREF_ALL_SAVED = "Pref.saved.ids"
-const val PREF_ALL_LOGGED_IN = "Pref.loggedIn.ids"
+private const val PREF_ALL_SAVED = "Pref.saved.ids"
+private const val PREF_ALL_LOGGED_IN = "Pref.loggedIn.ids"
 const val PREF_USERNAMES_LOGGED_IN = "PREF_USERNAMES_LOGGED_IN"
 const val PREF_USERNAMES_LOGGED_OUT = "PREF_USERNAMES_LOGGED_OUT" // logged out but saved
 // endregion
@@ -44,56 +44,98 @@ const val PREF_USERNAMES_LOGGED_OUT = "PREF_USERNAMES_LOGGED_OUT" // logged out 
 /**
  * AccountManager stores information about all local users currently logged in or logged out, but saved.
  */
-class AccountManager private constructor(
+class AccountManager(
     @DefaultSharedPreferences
     private val sharedPreferences: SharedPreferences
 ) {
 
-    fun onSuccessfulLogin(username: String) {
-        if (username.isBlank()) return
-
-        sharedPreferences.edit {
-            putStringList(
-                PREF_USERNAMES_LOGGED_IN,
-                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())?.plus(username)?.distinct()
-            )
-            putStringList(
-                PREF_USERNAMES_LOGGED_OUT,
-                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, emptyList())?.minus(username)
-            )
-        }
+    fun setLoggedIn(userId: Id) {
+        setLoggedIn(setOf(userId))
     }
 
-    fun onSuccessfulLogout(username: String) {
-        if (username.isBlank()) return
+    fun setLoggedIn(userIds: Collection<Id>) {
+        sharedPreferences[PREF_ALL_LOGGED_IN] =
+            sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) + userIds.map { it.s }
 
-        sharedPreferences.edit {
-            putStringList(
-                PREF_USERNAMES_LOGGED_IN,
-                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())?.minus(username)
-            )
-            putStringList(
-                PREF_USERNAMES_LOGGED_OUT,
-                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, emptyList())?.plus(username)?.distinct()
-            )
-        }
+        setSaved(userIds)
+    }
+
+    fun setLoggedOut(userId: Id) {
+        setLoggedOut(setOf(userId))
+    }
+
+    fun setLoggedOut(userIds: Collection<Id>) {
+        sharedPreferences[PREF_ALL_LOGGED_IN] =
+            sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userIds.map { it.s }
+
+        setSaved(userIds)
     }
 
     /**
-     * Removes from logged-out list.
+     * Completely remove the given [userId] from logged in and logged out lists
      */
-    fun removeFromSaved(username: String) {
-        sharedPreferences.edit {
-            putStringList(
-                PREF_USERNAMES_LOGGED_OUT,
-                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null)?.minus(username)
-            )
-        }
+    fun remove(userId: Id) {
+        sharedPreferences[PREF_ALL_LOGGED_IN] =
+            sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userId.s
+
+        sharedPreferences[PREF_ALL_SAVED] =
+            sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userId.s
     }
 
-    fun getLoggedInUsers(): List<String> =
-        sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null) ?: emptyList()
+    private fun setSaved(userIds: Collection<Id>) {
+        sharedPreferences[PREF_ALL_SAVED] =
+            sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
+    }
 
+    @Deprecated(
+        "Use 'setLoggedIn' with User Id",
+        ReplaceWith("setLoggedIn(userId)"),
+        DeprecationLevel.ERROR
+    )
+    fun onSuccessfulLogin(username: String) {
+        unsupported
+    }
+
+    @Deprecated(
+        "Use 'setLoggedOut' with User Id",
+        ReplaceWith("setLoggedOut(userId)"),
+        DeprecationLevel.ERROR
+    )
+    fun onSuccessfulLogout(username: String) {
+        unsupported
+    }
+
+    @Deprecated(
+        "Use 'remove' with User Id",
+        ReplaceWith("remove(userId)"),
+        DeprecationLevel.ERROR
+    )
+    fun removeFromSaved(username: String) {
+        unsupported
+    }
+
+    fun allLoggedIn(): Set<Id> =
+        sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet())
+
+    fun allLoggedOut(): Set<Id> =
+        allSaved() - allLoggedIn()
+
+    fun allSaved(): Set<Id> =
+        sharedPreferences.get(PREF_ALL_SAVED, emptySet())
+
+    @Deprecated(
+        "Use 'allLoggedIn' with User Id",
+        ReplaceWith("allLoggedIn()"),
+        DeprecationLevel.ERROR
+    )
+    fun getLoggedInUsers(): List<String> =
+        unsupported
+
+    @Deprecated(
+        "This components is not aware of the current user, nor the primary one, so it's not the right" +
+            "candidate for this. No replacement provided",
+        level = DeprecationLevel.ERROR
+    )
     fun getNextLoggedInAccountOtherThan(username: String, currentPrimary: String): String? {
         val otherLoggedInAccounts = sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null)
             ?.minus(username)
@@ -103,6 +145,11 @@ class AccountManager private constructor(
             ?: otherLoggedInAccounts?.firstOrNull()
     }
 
+    @Deprecated(
+        "Use 'allLoggedOut' with User Id",
+        ReplaceWith("allLoggedOut()"),
+        DeprecationLevel.ERROR
+    )
     fun getSavedUsers(): List<String> =
         sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null) ?: emptyList()
 
@@ -139,27 +186,15 @@ class AccountManager private constructor(
 
             val allUsernamesToIds = secureSharedPreferencesMigration(allSavedUsernames + allLoggedUsernames)
 
-            // TODO: use AccountManager.set after the migration to use Ids instead of usernames
+            accountManager.apply {
+                // SecureSharedPreferences.UsernameToIdMigration has already printed to log if some id is not
+                //   found, so we just ignore it here
+                setSaved(allSavedUsernames.mapNotNull { allUsernamesToIds[it] })
+                setLoggedIn(allLoggedUsernames.mapNotNull { allUsernamesToIds[it] })
+            }
+
             defaultSharedPreferences.edit {
-
-                putStringSet(
-                    PREF_ALL_SAVED,
-                    allSavedUsernames
-                        // SecureSharedPreferences.UsernameToIdMigration has already printed to log if some id is not
-                        //   found, so we just ignore it here
-                        .mapNotNull { allUsernamesToIds[it]?.s }
-                        .toMutableSet()
-                )
                 remove(PREF_USERNAMES_LOGGED_OUT)
-
-                putStringSet(
-                    PREF_ALL_LOGGED_IN,
-                    allLoggedUsernames
-                        // SecureSharedPreferences.UsernameToIdMigration has already printed to log if some id is not
-                        //   found, so we just ignore it here
-                        .mapNotNull { allUsernamesToIds[it]?.s }
-                        .toMutableSet()
-                )
                 remove(PREF_USERNAMES_LOGGED_IN)
             }
         }

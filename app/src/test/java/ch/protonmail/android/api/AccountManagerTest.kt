@@ -48,13 +48,14 @@ class AccountManagerTest {
         private val user3 = "username3" to Id("id3")
         private val user4 = "username4" to Id("id4")
 
+        private val defaultPreferences = newMockSharedPreferences
+        private val accountManager = AccountManager(defaultPreferences)
         private val secureSharedPreferencesMigration: SecureSharedPreferences.UsernameToIdMigration = mockk {
             coEvery { this@mockk(any()) } returns mapOf(user1, user2, user3, user4)
         }
-        private val defaultPreferences = newMockSharedPreferences
         private val migration = AccountManager.UsernameToIdMigration(
             dispatchers,
-            mockk(),
+            accountManager,
             secureSharedPreferencesMigration,
             defaultPreferences.apply {
                 edit {
@@ -78,12 +79,12 @@ class AccountManagerTest {
 
             migration()
 
-            assert that defaultPreferences.getStringSet(PREF_ALL_LOGGED_IN, emptySet())!! * {
+            assert that accountManager.allLoggedIn() * {
                 +size() equals 2
                 it contains user1.second.s
                 it contains user2.second.s
             }
-            assert that defaultPreferences.getStringSet(PREF_ALL_SAVED, emptySet())!! * {
+            assert that accountManager.allLoggedOut() * {
                 +size() equals 2
                 it contains user3.second.s
                 it contains user4.second.s
@@ -96,11 +97,8 @@ class AccountManagerTest {
 
             migration()
 
-            assert that defaultPreferences.getStringSet(PREF_ALL_LOGGED_IN, emptySet()) equals
-                setOf(user1.second.s)
-
-            assert that defaultPreferences.getStringSet(PREF_ALL_SAVED, emptySet()) equals
-                setOf(user3.second.s)
+            assert that accountManager.allLoggedIn() equals setOf(user1.second.s)
+            assert that accountManager.allLoggedOut() equals setOf(user3.second.s)
         }
     }
 }
