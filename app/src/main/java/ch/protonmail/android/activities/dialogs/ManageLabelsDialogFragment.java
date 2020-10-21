@@ -279,7 +279,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
             dispatchLabelsCheckedEvent();
         }
 
-        if (viewState instanceof ViewState.SelectedLabelsChangedArchive) {
+        if (viewState instanceof ViewState.SelectedLabelsArchiveEvent) {
             dispatchLabelsCheckedArchiveEvent();
         }
 

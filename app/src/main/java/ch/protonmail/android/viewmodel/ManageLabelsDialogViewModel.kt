@@ -26,7 +26,7 @@ import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelCreationViews
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
-import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedArchive
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsArchiveEvent
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedEvent
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowApplicableLabelsThresholdExceededError
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelCreatedEvent
@@ -104,7 +104,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
     }
 
     private fun liveDataPostSelectedLabelsChangedArchive() {
-        viewState.value = SelectedLabelsChangedArchive
+        viewState.value = SelectedLabelsArchiveEvent
     }
 
     private fun liveDataShowLabelsThresholdError(maxLabelsAllowed: Int) {
@@ -142,7 +142,7 @@ class ManageLabelsDialogViewModel @Inject constructor(
         object ShowMissingNameError : ViewState()
         object ShowLabelNameDuplicatedError : ViewState()
         object SelectedLabelsChangedEvent : ViewState()
-        object SelectedLabelsChangedArchive : ViewState()
+        object SelectedLabelsArchiveEvent : ViewState()
         object HideLabelsView : ViewState()
         object ShowLabelCreationViews : ViewState()
         object HideLabelCreationViews : ViewState()

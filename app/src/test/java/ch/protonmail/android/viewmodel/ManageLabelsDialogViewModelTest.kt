@@ -26,7 +26,7 @@ import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.HideLabelsView
-import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedArchive
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsArchiveEvent
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.SelectedLabelsChangedEvent
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowApplicableLabelsThresholdExceededError
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelCreatedEvent
@@ -190,7 +190,7 @@ class ManageLabelsDialogViewModelTest {
             emptyList()
         )
 
-        verify(exactly = 2) { mockObserver.onChanged(or(SelectedLabelsChangedArchive, HideLabelsView)) }
+        verify(exactly = 2) { mockObserver.onChanged(or(SelectedLabelsArchiveEvent, HideLabelsView)) }
     }
 
     @Test
