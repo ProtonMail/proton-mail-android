@@ -1,4 +1,3 @@
-
 # ProtonMail for Android
 
 Copyright (c) 2020 Proton Technologies AG
@@ -29,6 +28,14 @@ Then, go to the app’s root directory in the command line tool and run:
 
 - `./gradlew assembleBetaDebug`
 - `adb install ./app/build/outputs/apk/beta/debug/ProtonMail-Android-1.XX.X-beta-debug.apk`
+
+### Note: In app notifications when building from source
+**When building from source, in app push notifications for new emails will not work out of the box.**
+
+The app uses Google's Firebase Cloud Messaging (FCM) service to deliver push notifications. However, we are not publishing the production version of the configuration files needed to set up this service, because the values specified within are deemed sensitive.
+Instead, we publish dummy versions of the files (`config/google-services/dummy-google-services.json` and `config/google-services/dummy-google-services-beta.json`) which allows you to build the app without push notifications. The dummy files will be copied to the relevant folders once you run the ./gradlew command.
+
+We may offer alternative push notification systems in the future which do not rely on Google services.
 
 ## Contributions
 
