@@ -22,14 +22,11 @@ import android.content.Context
 import android.graphics.Color
 import android.text.Html
 import android.text.method.LinkMovementMethod
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CompoundButton
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
-import androidx.annotation.StringRes
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import ch.protonmail.android.R
@@ -57,20 +54,20 @@ class NetworkSnackBarUtil @Inject constructor() {
      * @param netConfiguratorCallback
      * @param onRetryClick retry click listener
      * @param anchorViewId optional view to which snackBar should be anchored above
-     * @param messageRes optional custom message title resource
-     * @param isTopSnackBar optional flag forcing snackBar to the top
      */
     fun getNoConnectionSnackBar(
         parentView: View,
         user: User,
         netConfiguratorCallback: INetworkConfiguratorCallback,
         onRetryClick: (() -> Unit)?,
-        @IdRes anchorViewId: Int? = null,
-        @StringRes messageRes: Int = R.string.no_connectivity_detected_troubleshoot,
-        isTopSnackBar: Boolean = false
+        @IdRes anchorViewId: Int? = null
     ): Snackbar {
         val snackBar = noConnectionSnackBar
-            ?: Snackbar.make(parentView, messageRes, Snackbar.LENGTH_INDEFINITE).apply {
+            ?: Snackbar.make(
+                parentView,
+                R.string.no_connectivity_detected_troubleshoot,
+                Snackbar.LENGTH_INDEFINITE
+            ).apply {
                 anchorViewId?.let { setAnchorView(it) }
                 setAction(context.getString(R.string.retry)) { onRetryClick?.invoke() }
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
@@ -79,7 +76,6 @@ class NetworkSnackBarUtil @Inject constructor() {
                     isClickable = true
                     isFocusable = true
                     setOnClickListener { showNoConnectionTroubleshootDialog(context, user, netConfiguratorCallback) }
-                    applyTopGravity(isTopSnackBar)
 
                     findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
                         setTextColor(Color.WHITE)
@@ -160,14 +156,6 @@ class NetworkSnackBarUtil @Inject constructor() {
             troubleshootMessageView
         ) {
             callback.onApiProvidersChanged()
-        }
-    }
-
-    private fun View.applyTopGravity(isTopSnackBar: Boolean) {
-        if (isTopSnackBar) {
-            layoutParams = (layoutParams as FrameLayout.LayoutParams).apply {
-                gravity = Gravity.TOP
-            }
         }
     }
 }

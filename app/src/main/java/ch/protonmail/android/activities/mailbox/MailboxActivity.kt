@@ -1661,7 +1661,8 @@ class MailboxActivity :
                 }
                 REQUEST_CODE_VALIDATE_PIN -> {
                     if (data!!.hasExtra(EXTRA_TOTAL_COUNT_EVENT)) {
-                        val totalCountEvent: Any? = data.getSerializableExtra(EXTRA_TOTAL_COUNT_EVENT
+                        val totalCountEvent: Any? = data.getSerializableExtra(
+                            EXTRA_TOTAL_COUNT_EVENT
                         )
                         if (totalCountEvent is MessageCountsEvent) {
                             onMessageCountsEvent(totalCountEvent)

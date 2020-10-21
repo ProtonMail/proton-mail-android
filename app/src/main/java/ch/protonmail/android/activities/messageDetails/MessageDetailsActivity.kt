@@ -44,7 +44,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
@@ -104,7 +103,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteCo
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.views.PMWebViewClient
-import ch.protonmail.android.worker.DeleteMessageWorker
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job

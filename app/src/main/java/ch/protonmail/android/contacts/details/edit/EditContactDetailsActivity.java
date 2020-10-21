@@ -785,9 +785,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                     mUserManager.getUser(),
                     this,
                     onConnectivityCheckRetry(),
-                    null,
-                    R.string.no_connectivity_detected_troubleshoot,
-                    false
+                    null
             ).show();
         } else {
             networkSnackBarUtil.hideAllSnackBars();
