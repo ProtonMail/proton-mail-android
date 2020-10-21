@@ -20,7 +20,6 @@ package ch.protonmail.android.core
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.text.TextUtils
 import androidx.annotation.IntDef
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
@@ -601,7 +600,7 @@ class UserManager @Inject constructor(
 
     fun accessTokenExists(): Boolean {
         val exists = tokenManager?.let {
-            !TextUtils.isEmpty(it.authAccessToken)
+            it.authAccessToken?.isNotEmpty()
         }
         return exists ?: false
     }
@@ -758,7 +757,7 @@ class UserManager @Inject constructor(
 
         if (organization != null) {
             planName = organization.planName
-            paidUser = user.isPaidUser && !TextUtils.isEmpty(organization.planName)
+            paidUser = user.isPaidUser && organization.planName.isNotEmpty()
         }
         if (!paidUser) {
             return maxLabelsAllowed
