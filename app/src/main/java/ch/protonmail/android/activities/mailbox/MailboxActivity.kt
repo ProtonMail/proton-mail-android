@@ -1171,6 +1171,7 @@ class MailboxActivity :
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
             if (!hasConnection) {
+                setRefreshing(false)
                 showNoConnSnackAndScheduleRetry()
             } else {
                 hideNoConnSnack()

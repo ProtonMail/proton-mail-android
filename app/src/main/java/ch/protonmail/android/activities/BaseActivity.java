@@ -102,9 +102,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     public static final String EXTRA_IN_APP = "extra_in_app";
     public static final int REQUEST_CODE_VALIDATE_PIN = 998;
 
-    @Deprecated
-    protected static boolean mPingHasConnection;
-
     @Inject
     protected ProtonMailApplication mApp;
     @Inject
