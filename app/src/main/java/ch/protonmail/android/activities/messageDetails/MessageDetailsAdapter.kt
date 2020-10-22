@@ -236,7 +236,9 @@ class MessageDetailsAdapter(
             // Copy Subject to Clipboard at long press
             itemView.messageTitle.setOnLongClickListener {
                 clipboardManager?.let {
-                    it.primaryClip = ClipData.newPlainText(context.getString(R.string.email_subject), itemView.messageTitle.text)
+                    it.setPrimaryClip(
+                        ClipData.newPlainText(context.getString(R.string.email_subject), itemView.messageTitle.text)
+                    )
                     context.showToast(R.string.subject_copied, Toast.LENGTH_SHORT)
                     true
                 } ?: false
@@ -284,7 +286,7 @@ class MessageDetailsAdapter(
 
             webView.loadDataWithBaseURL(
                 Constants.DUMMY_URL_PREFIX,
-                content.takeIfNotEmpty() ?: message.decryptedHTML,
+                content.takeIfNotEmpty() ?: message.decryptedHTML!!,
                 "text/html",
                 UTF_8,
                 ""
@@ -315,7 +317,13 @@ class MessageDetailsAdapter(
 
         contentItem.content = contentData
         if (contentItem.isInit()) {
-            contentItem.messageWebView.loadDataWithBaseURL(Constants.DUMMY_URL_PREFIX, if (content.isEmpty()) message.decryptedHTML else content, "text/html", UTF_8, "")
+            contentItem.messageWebView.loadDataWithBaseURL(
+                Constants.DUMMY_URL_PREFIX,
+                if (content.isEmpty()) message.decryptedHTML!! else content,
+                "text/html",
+                UTF_8,
+                ""
+            )
         } else {
             setItems(arrayListOf(messageItem, contentItem))
         }

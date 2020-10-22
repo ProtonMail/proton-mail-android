@@ -48,6 +48,8 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.WorkManager
+import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
@@ -78,16 +80,13 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
-import ch.protonmail.android.events.LabelAddedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MessageSentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.PostDeleteJob
 import ch.protonmail.android.jobs.PostInboxJob
-import ch.protonmail.android.jobs.PostLabelJob
 import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
@@ -110,11 +109,15 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteCo
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.views.PMWebViewClient
+import ch.protonmail.android.worker.DeleteMessageWorker
+import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
+import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
+import me.proton.core.util.android.workmanager.activity.getWorkManager
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import timber.log.Timber
@@ -177,7 +180,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
             mUserManager.firstMessageDetailsDone()
         }
         markAsRead = true
-        messageId = intent.getStringExtra(EXTRA_MESSAGE_ID)
+        messageId = intent.getStringExtra(EXTRA_MESSAGE_ID)!!
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
         val currentAccountUsername = mUserManager.username
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
@@ -396,7 +399,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                 getString(R.string.delete_message),
                 getString(R.string.confirm_destructive_action)
             ) {
-                mJobManager.addJobInBackground(PostDeleteJob(listOf(messageId)))
+                viewModel.deleteMessage(messageId)
                 onBackPressed()
             }
             R.id.move_to_spam -> job = PostSpamJob(listOf(messageId))
@@ -574,23 +577,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     @Subscribe
-    @Suppress("unused")
-    fun onLabelAddedEvent(event: LabelAddedEvent) {
-        val message: String? = if (event.status == Status.SUCCESS) {
-            getString(R.string.label_created)
-        } else {
-            if (event.error.isNullOrEmpty()) {
-                getString(R.string.label_invalid)
-            } else {
-                event.error
-            }
-        }
-        if (!message.isNullOrEmpty()) {
-            showToast(message, Toast.LENGTH_SHORT)
-        }
-    }
-
-    @Subscribe
     @Suppress("UNUSED_PARAMETER")
     fun onMailSettingsEvent(event: MailSettingsEvent?) {
         loadMailSettings()
@@ -726,7 +712,25 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onLabelCreated(labelName: String, color: String) {
-        mJobManager.addJobInBackground(PostLabelJob(labelName, color, 0, 0, false, null))
+        val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
+        postLabelResult.observe(
+            this,
+            {
+                val state: WorkInfo.State = it.state
+
+                if (state == WorkInfo.State.SUCCEEDED) {
+                    showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
+                    return@observe
+                }
+
+                if (state == WorkInfo.State.FAILED) {
+                    val outputData = it.outputData
+                    val errorMessage = outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+                        ?: getString(R.string.label_invalid)
+                    showToast(errorMessage, Toast.LENGTH_SHORT)
+                }
+            }
+        )
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {
@@ -743,7 +747,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     private fun showLabelsManagerDialog(fragmentManager: FragmentManager, message: Message) {
         val attachedLabels = HashSet(message.labelIDsNotIncludingLocations)
         val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(attachedLabels, null, null, true)
-        fragmentManager.commit (allowStateLoss = true) {
+        fragmentManager.commit(allowStateLoss = true) {
             add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
             addToBackStack(null)
         }
@@ -773,7 +777,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
         checkedLabelIds: List<String>,
         unchangedLabels: List<String>?,
         messageIds: List<String>?,
-        messagesToArchive: List<String>
+        messagesToArchive: List<String>?
     ) {
         val message = viewModel.decryptedMessageData.value
         onLabelsChecked(checkedLabelIds.toMutableList(), unchangedLabels, messageIds)
@@ -792,14 +796,14 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
 
     private var showActionButtons = false
 
-    private inner class Copy (private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
+    private inner class Copy(private val text: CharSequence?) : MenuItem.OnMenuItemClickListener {
         override fun onMenuItemClick(item: MenuItem): Boolean {
             UiUtil.copy(this@MessageDetailsActivity, text)
             return true
         }
     }
 
-    private inner class Share (private val uri: String?) : MenuItem.OnMenuItemClickListener {
+    private inner class Share(private val uri: String?) : MenuItem.OnMenuItemClickListener {
         override fun onMenuItemClick(item: MenuItem): Boolean {
             val send = Intent(Intent.ACTION_SEND)
             send.type = "text/plain"

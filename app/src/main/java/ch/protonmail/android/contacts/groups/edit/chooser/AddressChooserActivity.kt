@@ -84,13 +84,16 @@ class AddressChooserActivity : BaseActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean = when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         android.R.id.home -> {
             onBackPressed()
             true
         }
         R.id.action_save -> {
-            val selected = addressChooserViewModel.updateSelected(contactGroupEmailsAdapter.getUnSelected(), contactGroupEmailsAdapter.getSelected())
+            val selected = addressChooserViewModel.updateSelected(
+                contactGroupEmailsAdapter.getUnSelected(),
+                contactGroupEmailsAdapter.getSelected()
+            )
             val intent = Intent()
             intent.putExtra(EXTRA_CONTACT_EMAILS, selected)
             setResult(Activity.RESULT_OK, intent)

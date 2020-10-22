@@ -107,9 +107,13 @@ class MessagesService : JobIntentService() {
                 val refreshMessages = intent.getBooleanExtra(EXTRA_REFRESH_MESSAGES, false)
                 if (Constants.MessageLocationType.fromInt(location)
                         in listOf(Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER)) {
-                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)
-                    handleFetchFirstLabelPage(Constants.MessageLocationType.LABEL, labelId,
-                            currentUser, refreshMessages)
+                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
+                    handleFetchFirstLabelPage(
+                        Constants.MessageLocationType.LABEL,
+                        labelId,
+                        currentUser,
+                        refreshMessages
+                    )
                 } else {
                     handleFetchFirstPage(Constants.MessageLocationType.fromInt(location), refreshDetails,
                             intent.getStringExtra(EXTRA_UUID), currentUser, refreshMessages)
@@ -122,10 +126,14 @@ class MessagesService : JobIntentService() {
                 val time = minOf(savedTime, extraTime)
                 if (Constants.MessageLocationType.fromInt(location) in listOf(Constants.MessageLocationType.LABEL,
                                 Constants.MessageLocationType.LABEL_FOLDER)) {
-                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)
+                    val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
                     val labelTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), labelId)
-                    handleFetchMessagesByLabel(Constants.MessageLocationType.fromInt(location), labelTime,
-                            labelId, currentUser)
+                    handleFetchMessagesByLabel(
+                        Constants.MessageLocationType.fromInt(location),
+                        labelTime,
+                        labelId,
+                        currentUser
+                    )
                 } else {
                     handleFetchMessages(Constants.MessageLocationType.fromInt(location), time, currentUser)
                 }

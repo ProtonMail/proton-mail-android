@@ -18,13 +18,22 @@
  */
 package ch.protonmail.android.api.segments.authentication
 
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.LoginInfoResponse
+import ch.protonmail.android.api.models.LoginResponse
+import ch.protonmail.android.api.models.ModulusResponse
+import ch.protonmail.android.api.models.RefreshBody
+import ch.protonmail.android.api.models.RefreshResponse
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.TwoFABody
+import ch.protonmail.android.api.models.TwoFAResponse
 import java.io.IOException
 
 interface AuthenticationApiSpec {
 
     @Throws(IOException::class)
-    fun revokeAccess(username: String): ResponseBody
+    fun revokeAccessBlocking(username: String): ResponseBody
+
+    suspend fun revokeAccess(username: String): ResponseBody
 
     @Throws(IOException::class)
     fun loginInfo(username: String): LoginInfoResponse

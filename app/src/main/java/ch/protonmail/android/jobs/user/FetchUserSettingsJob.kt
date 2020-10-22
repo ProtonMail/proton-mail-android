@@ -27,16 +27,11 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.jobs.FetchContactsDataJob
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import kotlin.time.seconds
-
-/**
- * Created by dino on 10/10/17.
- */
 
 class FetchUserSettingsJob(
     username: String? = null
@@ -44,7 +39,8 @@ class FetchUserSettingsJob(
 
     @Throws(Throwable::class)
     override fun onRun() {
-        val enqueueFetchContactsEmails = entryPoint.fetchContactsEmailsWorkerEnqueuer()
+        val fetchContactsEmails = entryPoint.fetchContactsEmailsWorkerEnqueuer()
+        val fetchContactsData = entryPoint.fetchContactsDataWorkerEnqueuer()
 
         val userInfo: UserInfo
         val userSettings: UserSettingsResponse
@@ -54,7 +50,7 @@ class FetchUserSettingsJob(
         if (username != null) {
             userInfo = getApi().fetchUserInfoBlocking(username!!)
             userSettings = getApi().fetchUserSettings(username!!)
-            mailSettings = getApi().fetchMailSettings(username!!)
+            mailSettings = getApi().fetchMailSettingsBlocking(username!!)
             addresses = getApi().fetchAddressesBlocking(username!!)
             getUserManager().setUserInfo(userInfo, username, mailSettings.mailSettings,
                 userSettings.userSettings, addresses.addresses)
@@ -70,15 +66,15 @@ class FetchUserSettingsJob(
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, true)
                 getJobManager().addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX,
                     null, true, null, false))
-                getJobManager().addJobInBackground(FetchContactsDataJob())
-                enqueueFetchContactsEmails(2.seconds)
+                fetchContactsData.enqueue()
+                fetchContactsEmails.enqueue(2.seconds.toLongMilliseconds())
             } else {
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, false)
             }
         } else {
             userInfo = getApi().fetchUserInfoBlocking()
             userSettings = getApi().fetchUserSettings()
-            mailSettings = getApi().fetchMailSettings()
+            mailSettings = getApi().fetchMailSettingsBlocking()
             addresses = getApi().fetchAddressesBlocking()
             getUserManager().setUserInfo(userInfo, mailSettings = mailSettings.mailSettings,
                 userSettings = userSettings.userSettings, addresses = addresses.addresses)

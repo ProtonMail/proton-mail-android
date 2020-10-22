@@ -77,8 +77,6 @@ import static ch.protonmail.android.servers.notification.NotificationServerKt.NO
 
 public class AppUtil {
 
-    private static final String TAG_APP_UTIL = "AppUtil";
-
     private static final int BUFFER_SIZE = 4096;
 
     private AppUtil() {

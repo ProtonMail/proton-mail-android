@@ -19,29 +19,21 @@
 package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class ContactGroupsRepository @Inject constructor(
     private val api: ProtonMailApiManager,
-    private val databaseProvider: DatabaseProvider
+    private val contactsDao: ContactsDao
 ) {
 
-    private var contactsDatabase = databaseProvider.provideContactsDao()
-
-    fun reloadDependencies() {
-        contactsDatabase = databaseProvider.provideContactsDao()
-    }
-
     fun getJoins(): Observable<List<ContactEmailContactLabelJoin>> {
-        return contactsDatabase.fetchJoinsObservable().toObservable()
+        return contactsDao.fetchJoinsObservable().toObservable()
     }
 
     fun getContactGroups(): Observable<List<ContactLabel>> {
@@ -55,19 +47,28 @@ class ContactGroupsRepository @Inject constructor(
         return getContactGroupsFromDB(filter)
     }
 
+    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
+        return contactsDao.findAllContactsEmailsByContactGroupAsyncObservable(id)
+            .toObservable()
+    }
+
+    fun saveContactGroup(contactLabel: ContactLabel) {
+        contactsDao.saveContactGroupLabel(contactLabel)
+    }
+
     private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
         return api.fetchContactGroupsAsObservable().doOnNext {
-            contactsDatabase.clearContactGroupsLabelsTable()
-            contactsDatabase.saveContactGroupsList(it)
+            contactsDao.clearContactGroupsLabelsTable()
+            contactsDao.saveContactGroupsList(it)
         }
     }
 
     private fun getContactGroupsFromDB(): Observable<List<ContactLabel>> {
-        return contactsDatabase.findContactGroupsObservable()
+        return contactsDao.findContactGroupsObservable()
             .flatMap { list ->
                 Observable.fromIterable(list)
                     .map {
-                        it.contactEmailsCount = contactsDatabase.countContactEmailsByLabelId(it.ID)
+                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
                         it
                     }
                     .toList()
@@ -77,21 +78,16 @@ class ContactGroupsRepository @Inject constructor(
     }
 
     private fun getContactGroupsFromDB(filter: String): Observable<List<ContactLabel>> {
-        return contactsDatabase.findContactGroupsObservable(filter)
+        return contactsDao.findContactGroupsObservable(filter)
             .flatMap { list ->
                 Observable.fromIterable(list)
                     .map {
-                        it.contactEmailsCount = contactsDatabase.countContactEmailsByLabelId(it.ID)
+                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
                         it
                     }
                     .toList()
                     .toFlowable()
             }
-            .toObservable()
-    }
-
-    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
-        return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
             .toObservable()
     }
 }

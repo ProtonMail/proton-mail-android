@@ -111,6 +111,11 @@ abstract class MessagesDatabase {
 
     @Transaction
     open fun saveMessage(message: Message): Long {
+        processMessageAttachments(message)
+        return saveMessageInfo(message)
+    }
+
+    private fun processMessageAttachments(message: Message) {
         val messageId = message.messageId
         var localAttachments: List<Attachment> = ArrayList()
         messageId?.let {
@@ -119,18 +124,18 @@ abstract class MessagesDatabase {
 
         var preservedAttachments = message.Attachments.map {
             Attachment(
-                    fileName = it.fileName,
-                    mimeType = it.mimeType,
-                    fileSize = it.fileSize,
-                    keyPackets = it.keyPackets,
-                    messageId = message.messageId ?: "",
-                    isUploaded = it.isUploaded,
-                    isUploading = it.isUploading,
-                    isNew = it.isNew,
-                    filePath = it.filePath,
-                    attachmentId = it.attachmentId,
-                    headers = it.headers,
-                    inline = it.inline)
+                fileName = it.fileName,
+                mimeType = it.mimeType,
+                fileSize = it.fileSize,
+                keyPackets = it.keyPackets,
+                messageId = message.messageId ?: "",
+                isUploaded = it.isUploaded,
+                isUploading = it.isUploading,
+                isNew = it.isNew,
+                filePath = it.filePath,
+                attachmentId = it.attachmentId,
+                headers = it.headers,
+                inline = it.inline)
         }
 
         if (message.embeddedImagesArray.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()) {
@@ -171,7 +176,14 @@ abstract class MessagesDatabase {
             saveAllAttachments(preservedAttachments)
         }
         message.Attachments = preservedAttachments
-        return saveMessageInfo(message)
+    }
+
+    @Transaction
+    open fun saveMessages(vararg messages: Message) {
+        messages.forEach {
+            processMessageAttachments(it)
+        }
+        return saveMessagesInfo(*messages)
     }
 
     @Deprecated("Use MessageDetailsRepository's methods that contain logic for large Message bodies")
@@ -191,6 +203,9 @@ abstract class MessagesDatabase {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveMessageInfo(message: Message): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun saveMessagesInfo(vararg messages: Message)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:dbId")
     abstract fun deleteByDbId(dbId: Long)

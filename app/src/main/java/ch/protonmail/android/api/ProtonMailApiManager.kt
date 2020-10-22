@@ -125,8 +125,8 @@ import javax.inject.Singleton
  * which can work directly with the Proton API or use any alternative proxy.
  */
 @Singleton
-class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
-    : BaseApi(),
+class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
+    BaseApi(),
     AddressApiSpec,
     AttachmentApiSpec,
     AuthenticationApiSpec,
@@ -176,7 +176,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
-    override fun revokeAccess(username: String): ResponseBody = api.revokeAccess(username)
+    override fun revokeAccessBlocking(username: String): ResponseBody = api.revokeAccessBlocking(username)
+
+    override suspend fun revokeAccess(username: String): ResponseBody = api.revokeAccess(username)
 
     override fun loginInfo(username: String): LoginInfoResponse = api.loginInfo(username)
 
@@ -197,7 +199,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
 
-    override fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse? = api.fetchContacts(page, pageSize)
+    override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse = api.fetchContacts(page, pageSize)
 
     override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> = api.fetchContactEmails(pageSize)
 
@@ -223,7 +225,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
 
-    override fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
+    override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
 
     override fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
 
@@ -267,7 +269,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun markMessageAsUnRead(messageIds: IDList) = api.markMessageAsUnRead(messageIds)
 
-    override fun deleteMessage(messageIds: IDList) = api.deleteMessage(messageIds)
+    override suspend fun deleteMessage(messageIds: IDList) = api.deleteMessage(messageIds)
 
     override fun emptyDrafts() = api.emptyDrafts()
 
@@ -352,9 +354,13 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi)
 
     override fun upgradeLoginPassword(upgradePasswordBody: UpgradePasswordBody): ResponseBody? = api.upgradeLoginPassword(upgradePasswordBody)
 
-    override fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+    @Deprecated(message = "Use non-blocking version of the function", replaceWith = ReplaceWith("fetchMailSettings()"))
+    override fun fetchMailSettingsBlocking(): MailSettingsResponse = api.fetchMailSettingsBlocking()
 
-    override fun fetchMailSettings(username: String): MailSettingsResponse = api.fetchMailSettings(username)
+    override suspend fun fetchMailSettings(): MailSettingsResponse = api.fetchMailSettings()
+
+    override fun fetchMailSettingsBlocking(username: String): MailSettingsResponse =
+        api.fetchMailSettingsBlocking(username)
 
     override fun updateSignature(signature: String): ResponseBody? = api.updateSignature(signature)
 

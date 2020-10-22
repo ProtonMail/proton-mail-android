@@ -18,13 +18,11 @@
  */
 package ch.protonmail.android.api.models;
 
-import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
 
-import ch.protonmail.android.fcm.FcmUtil;
-import ch.protonmail.android.utils.AppUtil;
+import ch.protonmail.android.BuildConfig;
 
 public class RegisterDeviceBody {
     private String DeviceToken;
@@ -34,12 +32,12 @@ public class RegisterDeviceBody {
     private String AppVersion;
     private int Environment;
 
-    public RegisterDeviceBody(@NonNull Context context) {
-        DeviceToken = FcmUtil.getRegistrationId();
+    public RegisterDeviceBody(@NonNull String fcmToken) {
+        DeviceToken = fcmToken;
         DeviceName = "Android";
         DeviceModel = Build.MODEL;
         DeviceVersion = "" + Build.VERSION.SDK_INT;
-        AppVersion = "Android_" + AppUtil.getAppVersionName(context.getApplicationContext()); // TODO remove context
+        AppVersion = "Android_" + BuildConfig.VERSION_NAME;
         Environment = 4;
     }
 }

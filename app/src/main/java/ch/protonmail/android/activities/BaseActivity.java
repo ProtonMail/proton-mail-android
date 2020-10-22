@@ -47,12 +47,6 @@ import com.birbit.android.jobqueue.JobManager;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
 
-import ch.protonmail.android.activities.mailbox.MailboxActivity;
-import ch.protonmail.android.activities.multiuser.AccountManagerActivity;
-import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
-import ch.protonmail.android.worker.FetchUserInfoWorker;
-import timber.log.Timber;
-
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -76,10 +70,10 @@ import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MessageSentEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.jobs.FetchMailSettingsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
@@ -88,7 +82,10 @@ import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.worker.FetchMailSettingsWorker;
+import ch.protonmail.android.worker.FetchUserInfoWorker;
 import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID;
 import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ID;
@@ -131,6 +128,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected WorkManager workManager;
     @Inject
     protected FetchUserInfoWorker.Enqueuer fetchUserInfoWorkerEnqueuer;
+    @Inject
+    protected FetchMailSettingsWorker.Enqueuer fetchMailSettingsWorkerEnqueuer;
 
     @Nullable
     @BindView(R.id.toolbar)
@@ -272,7 +271,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void loadMailSettings() {
         mUserManager.setMailSettings(MailSettings.Companion.load(mUserManager.getUsername()));
         if (mUserManager.getMailSettings() == null) {
-            mJobManager.addJobInBackground(new FetchMailSettingsJob());
+            fetchMailSettingsWorkerEnqueuer.invoke();
         }
     }
 

@@ -19,13 +19,14 @@
 package ch.protonmail.android.contacts.groups.details
 
 import android.util.Log
+import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.jobs.PostLabelJob
+import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -35,7 +36,8 @@ import javax.inject.Inject
 class ContactGroupDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
-    private val databaseProvider: DatabaseProvider
+    private val databaseProvider: DatabaseProvider,
+    private val workManager: WorkManager
 ) {
 
     private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupDetailsRepository"); databaseProvider.provideContactsDao() }
@@ -62,8 +64,14 @@ class ContactGroupDetailsRepository @Inject constructor(
                 .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
                 .doOnError { throwable ->
                     if (throwable is IOException) {
-                        jobManager.addJobInBackground(PostLabelJob(contactLabel.name, contactLabel.color, contactLabel.display,
-                                contactLabel.exclusive.makeInt(), false, contactLabel.ID))
+                        PostLabelWorker.Enqueuer(workManager).enqueue(
+                            contactLabel.name,
+                            contactLabel.color,
+                            contactLabel.display,
+                            contactLabel.exclusive.makeInt(),
+                            false,
+                            contactLabel.ID
+                        )
                     }
                 }
     }

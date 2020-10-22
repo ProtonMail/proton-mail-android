@@ -31,9 +31,6 @@ import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewMo
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.compose.ComposeMessageRepository
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
@@ -44,6 +41,7 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -93,17 +91,19 @@ internal class ViewModelModule {
 
     @Provides
     fun provideMessageDetailsViewModelFactory(
-            messageDetailsRepository: MessageDetailsRepository,
-            userManager: UserManager,
-            contactsRepository: ContactsRepository,
-            attachmentMetadataDatabase: AttachmentMetadataDatabase,
-            messageRendererFactory: MessageRenderer.Factory
+        messageDetailsRepository: MessageDetailsRepository,
+        userManager: UserManager,
+        contactsRepository: ContactsRepository,
+        attachmentMetadataDatabase: AttachmentMetadataDatabase,
+        messageRendererFactory: MessageRenderer.Factory,
+        deleteMessage: DeleteMessage
     ) = MessageDetailsViewModel.Factory(
-            messageDetailsRepository,
-            userManager,
-            contactsRepository,
-            attachmentMetadataDatabase,
-            messageRendererFactory
+        messageDetailsRepository,
+        userManager,
+        contactsRepository,
+        attachmentMetadataDatabase,
+        messageRendererFactory,
+        deleteMessage
     )
 
     @Provides
@@ -129,16 +129,15 @@ internal class ViewModelModule {
 
     @Provides
     internal fun provideAccountManagerViewModelFactory(
-            application: ProtonMailApplication,
-            userManager: UserManager,
-            accountManager: AccountManager
+        application: ProtonMailApplication,
+        userManager: UserManager,
+        accountManager: AccountManager
     ) = AccountManagerViewModel.Factory(application, userManager, accountManager)
 
     @Provides
     fun providePinFragmentViewModelFactory(pinFragmentViewModelFactory: PinFragmentViewModelFactory):
-            ViewModelProvider.NewInstanceFactory {
+        ViewModelProvider.NewInstanceFactory {
         return pinFragmentViewModelFactory
     }
-    // endregion
 
 }

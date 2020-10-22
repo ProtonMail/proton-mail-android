@@ -21,37 +21,44 @@ package ch.protonmail.android.api.segments.settings.mail
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.requests.*
+import ch.protonmail.android.api.models.requests.DisplayName
+import ch.protonmail.android.api.models.requests.ShowImages
+import ch.protonmail.android.api.models.requests.Signature
+import ch.protonmail.android.api.models.requests.SwipeLeft
+import ch.protonmail.android.api.models.requests.SwipeRight
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import java.io.IOException
 
-
 class MailSettingsApi(private val service: MailSettingsService) : BaseApi(), MailSettingsApiSpec {
 
     @Throws(IOException::class)
-    override fun fetchMailSettings(): MailSettingsResponse = ParseUtils.parse(service.fetchMailSettings().execute())
+    override fun fetchMailSettingsBlocking(): MailSettingsResponse =
+        ParseUtils.parse(service.fetchMailSettingsCall().execute())
+
+    override suspend fun fetchMailSettings(): MailSettingsResponse = service.fetchMailSettings()
 
     @Throws(IOException::class)
-    override fun fetchMailSettings(username : String): MailSettingsResponse = ParseUtils.parse(service.fetchMailSettings(RetrofitTag(username)).execute())
+    override fun fetchMailSettingsBlocking(username: String): MailSettingsResponse =
+        ParseUtils.parse(service.fetchMailSettingsCall(RetrofitTag(username)).execute())
 
     @Throws(IOException::class)
     override fun updateSignature(signature: String): ResponseBody? =
-            ParseUtils.parse(service.updateSignature(Signature(signature)).execute())
+        ParseUtils.parse(service.updateSignature(Signature(signature)).execute())
 
     @Throws(IOException::class)
     override fun updateDisplayName(displayName: String): ResponseBody? =
-            ParseUtils.parse(service.updateDisplay(DisplayName(displayName)).execute())
+        ParseUtils.parse(service.updateDisplay(DisplayName(displayName)).execute())
 
     @Throws(IOException::class)
     override fun updateLeftSwipe(swipeSelection: Int): ResponseBody? =
-            ParseUtils.parse(service.updateLeftSwipe(SwipeLeft(swipeSelection)).execute())
+        ParseUtils.parse(service.updateLeftSwipe(SwipeLeft(swipeSelection)).execute())
 
     @Throws(IOException::class)
     override fun updateRightSwipe(swipeSelection: Int): ResponseBody? =
-            ParseUtils.parse(service.updateRightSwipe(SwipeRight(swipeSelection)).execute())
+        ParseUtils.parse(service.updateRightSwipe(SwipeRight(swipeSelection)).execute())
 
     @Throws(IOException::class)
     override fun updateAutoShowImages(autoShowImages: Int): ResponseBody? =
-            ParseUtils.parse(service.updateAutoShowImages(ShowImages(autoShowImages)).execute())
+        ParseUtils.parse(service.updateAutoShowImages(ShowImages(autoShowImages)).execute())
 }

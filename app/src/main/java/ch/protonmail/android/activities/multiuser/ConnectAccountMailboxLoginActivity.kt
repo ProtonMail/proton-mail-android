@@ -94,8 +94,8 @@ class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
         ProtonMailApplication.getApplication().bus.register(this)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> onBackPressed()
         }
         return true
@@ -120,7 +120,7 @@ class ConnectAccountMailboxLoginActivity : ConnectAccountBaseActivity() {
         UiUtil.hideKeyboard(this, mailboxPassword)
         Handler().postDelayed({
             setupComplete = false
-            viewModel.mailboxLogin(mailboxPasswordValue, intent.getStringExtra(EXTRA_KEY_SALT))
+            viewModel.mailboxLogin(mailboxPasswordValue, intent.getStringExtra(EXTRA_KEY_SALT)!!)
         }, 1500)
     }
 

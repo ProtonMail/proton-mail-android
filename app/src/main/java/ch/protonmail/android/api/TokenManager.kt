@@ -25,7 +25,6 @@ import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication.getApplication
-import ch.protonmail.android.utils.crypto.OpenPGP
 
 // region constants
 private const val PREF_ENC_PRIV_KEY = "priv_key"
@@ -36,10 +35,11 @@ private const val PREF_TOKEN_SCOPE = "access_token_scope"
 // endregion
 
 /**
- * TokenManager stores separate credentials for every user in [SecureSharedPreferences][ch.protonmail.android.prefs.SecureSharedPreferences] file.
+ * TokenManager stores separate credentials for every user in
+ * [SecureSharedPreferences][ch.protonmail.android.prefs.SecureSharedPreferences] file.
  */
 
-class TokenManager private constructor(val username: String, private var openPGP: OpenPGP) {
+class TokenManager private constructor(val username: String) {
 
     private var accessToken: String? = null
     private var refreshToken: String? = null
@@ -82,12 +82,12 @@ class TokenManager private constructor(val username: String, private var openPGP
 
     private fun persist() {
         pref.edit()
-                .putString(PREF_REFRESH_TOKEN, refreshToken)
-                .putString(PREF_ENC_PRIV_KEY, encPrivateKey)
-                .putString(PREF_USER_UID, uID)
-                .putString(PREF_ACCESS_TOKEN, accessToken)
-                .putString(PREF_TOKEN_SCOPE, scope)
-                .apply()
+            .putString(PREF_REFRESH_TOKEN, refreshToken)
+            .putString(PREF_ENC_PRIV_KEY, encPrivateKey)
+            .putString(PREF_USER_UID, uID)
+            .putString(PREF_ACCESS_TOKEN, accessToken)
+            .putString(PREF_TOKEN_SCOPE, scope)
+            .apply()
     }
 
     fun handleRefresh(response: RefreshResponse) {
@@ -153,9 +153,9 @@ class TokenManager private constructor(val username: String, private var openPGP
          * Creates and caches instances of TokenManager for usernames.
          */
         @Synchronized
-        fun getInstance(username: String, openPGP: OpenPGP): TokenManager? {
+        fun getInstance(username: String): TokenManager? {
             return if (!username.isBlank()) tokenManagers.getOrPut(username) {
-                TokenManager(username, openPGP)
+                TokenManager(username)
             } else null
         }
     }
