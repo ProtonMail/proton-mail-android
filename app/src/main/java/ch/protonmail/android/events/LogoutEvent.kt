@@ -19,6 +19,5 @@
 package ch.protonmail.android.events
 
 data class LogoutEvent @JvmOverloads constructor(
-    @JvmField val status: Status,
-    val username: String? = null
+    @JvmField val status: Status
 )

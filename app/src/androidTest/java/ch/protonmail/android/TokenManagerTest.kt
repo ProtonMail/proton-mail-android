@@ -24,7 +24,6 @@ import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.utils.crypto.OpenPGP
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -35,8 +34,6 @@ import org.junit.Test
 
 @LargeTest
 internal class TokenManagerTest {
-
-    private val openPgp = OpenPGP()
 
     val username = "username"
     val accessToken = "9c196c6e621ddc7bd55609f274e6174ef7fe2e00"
@@ -74,7 +71,7 @@ internal class TokenManagerTest {
 
     @Test
     fun handle_login() {
-        val tokenManager = TokenManager.getInstance("user for access token", openPgp)
+        val tokenManager = TokenManager.getInstance("user for access token")
 
         tokenManager!!.handleLogin(loginResponse)
 
@@ -84,7 +81,7 @@ internal class TokenManagerTest {
 
     @Test
     fun clear_access_token() {
-        val tokenManager = TokenManager.getInstance(username, openPgp)
+        val tokenManager = TokenManager.getInstance(username)
 
         tokenManager!!.handleLogin(loginResponse)
 
@@ -95,7 +92,7 @@ internal class TokenManagerTest {
 
     @Test
     fun clear_token_manager_for_user() {
-        var tokenManager = TokenManager.getInstance(username, openPgp)
+        var tokenManager = TokenManager.getInstance(username)
 
         tokenManager!!.handleLogin(loginResponse)
 
@@ -104,7 +101,7 @@ internal class TokenManagerTest {
         assert(tokenManager.createRefreshBody().refreshToken.isNullOrBlank())
 
         // obtain TokenManager instance again after clearing
-        tokenManager = TokenManager.getInstance(username, openPgp)
+        tokenManager = TokenManager.getInstance(username)
 
         assertNull(tokenManager!!.authAccessToken)
         assert(tokenManager.createRefreshBody().refreshToken.isNullOrBlank())
@@ -112,7 +109,7 @@ internal class TokenManagerTest {
 
     @Test
     fun handle_refresh() {
-        val tokenManager = TokenManager.getInstance(username, openPgp)
+        val tokenManager = TokenManager.getInstance(username)
 
         tokenManager!!.handleLogin(loginResponse)
         tokenManager!!.handleRefresh(refreshResponse)
