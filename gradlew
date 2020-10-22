@@ -31,12 +31,17 @@ installPrivateConfig() {
     local outputDir='privateConfig';
     local repository="$(git remote get-url origin)";
     copyFiles() {
-      cp "$outputDir/sentry.properties" .
-      cp "$outputDir/google-services/google-services.json" "app/google-services.json"
-      cp "$outputDir/google-services-beta/google-services.json" "app/src/beta/google-services.json"
+        cp "$outputDir/sentry.properties" .
+        cp "$outputDir/google-services/google-services.json" "app/google-services.json"
+        cp "$outputDir/google-services-beta/google-services.json" "app/src/beta/google-services.json"
+    }
+    copyDummyGoogleSevicesFiles() {
+        cp "config/google-services/dummy-google-services.json" "app/google-services.json"
+        cp "config/google-services/dummy-google-services-beta.json" "app/src/beta/google-services.json"
     }
     # The branch does not exist for the public repository
     if [[ "$repository" =~ github\.com ]]; then
+        copyDummyGoogleSevicesFiles
         return 0
     fi;
     if [ -d "$outputDir" ]; then
