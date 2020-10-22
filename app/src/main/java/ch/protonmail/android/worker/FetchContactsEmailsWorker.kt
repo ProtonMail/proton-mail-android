@@ -22,22 +22,19 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
+import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker.Result.success
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Operation
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
-import ch.protonmail.android.events.ContactsFetchedEvent
-import ch.protonmail.android.events.Status
-import ch.protonmail.android.utils.AppUtil
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.milliseconds
 
 class FetchContactsEmailsWorker @WorkerInject constructor(
     @Assisted appContext: Context,
@@ -49,13 +46,9 @@ class FetchContactsEmailsWorker @WorkerInject constructor(
         return runCatching { contactEmailsManager.refresh() }
             .fold(
                 onSuccess = {
-                    // TODO: remove and observe Work directly
-                    AppUtil.postEventOnUi(ContactsFetchedEvent(Status.SUCCESS))
                     success()
                 },
                 onFailure = {
-                    // TODO: remove and observe Work directly
-                    AppUtil.postEventOnUi(ContactsFetchedEvent(Status.FAILED))
                     failure(it)
                 }
             )
@@ -63,26 +56,19 @@ class FetchContactsEmailsWorker @WorkerInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        operator fun invoke(delay: Duration = 0.milliseconds): Operation {
+        fun enqueue(delayMs: Long = 0): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
             val workRequest = OneTimeWorkRequestBuilder<FetchContactsEmailsWorker>()
                 .setConstraints(constraints)
-                .setInitialDelay(delay.toLongMilliseconds(), TimeUnit.MILLISECONDS)
+                .setInitialDelay(delayMs, TimeUnit.MILLISECONDS)
                 .build()
 
-            return workManager.enqueue(workRequest)
+            workManager.enqueue(workRequest)
+            Timber.v("Scheduling Fetch Contacts Emails Worker")
+            return workManager.getWorkInfoByIdLiveData(workRequest.id)
         }
-
-        @Deprecated(
-            "Use invoke with kotlin.time APIs, this is for Java only",
-            ReplaceWith("invoke(delayMs.milliseconds)", imports = ["kotlin.time.milliseconds"])
-        )
-        @JvmOverloads
-        fun enqueue(delayMs: Long = 0): Operation =
-            invoke(delayMs.milliseconds)
-
     }
 }

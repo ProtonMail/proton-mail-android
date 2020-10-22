@@ -52,7 +52,7 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
      * Use [.onProtonCancel] for custom cancellation logic.
      */
     override fun onCancel(cancelReason: Int, throwable: Throwable?) {
-        Timber.e(throwable, "${javaClass.name} cancelled, reason = $cancelReason, retryLimit = $retryLimit")
+        Timber.d(throwable, "${javaClass.name} cancelled, reason = $cancelReason, retryLimit = $retryLimit")
         try {
             onProtonCancel(cancelReason, throwable)
 

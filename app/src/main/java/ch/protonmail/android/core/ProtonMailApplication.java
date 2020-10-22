@@ -104,7 +104,6 @@ import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.events.payment.GetPaymentMethodsEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.FcmUtil;
-import ch.protonmail.android.jobs.FetchContactsDataJob;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
@@ -118,6 +117,7 @@ import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.crypto.OpenPGP;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.worker.FetchContactsDataWorker;
 import ch.protonmail.android.worker.FetchContactsEmailsWorker;
 import dagger.hilt.android.HiltAndroidApp;
 import io.sentry.Sentry;
@@ -579,8 +579,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 new RefreshMessagesAndAttachments(messagesDatabase).execute();
             }
             if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn()) {
-                new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
-                jobManager.addJobInBackground(new FetchContactsDataJob());
+                new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
+                new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
             if (BuildConfig.REREGISTER_FOR_PUSH) {
                 FcmUtil.setTokenSent(false);

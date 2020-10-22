@@ -37,7 +37,7 @@ import io.reactivex.Single
 import retrofit2.Call
 import java.io.IOException
 
-class ContactApi (private val service : ContactService) : BaseApi(), ContactApiSpec {
+class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpec {
     @Throws(IOException::class)
     override fun labelContacts(labelContactsBody: LabelContactsBody): Completable {
         return service.labelContacts(labelContactsBody)
@@ -51,18 +51,16 @@ class ContactApi (private val service : ContactService) : BaseApi(), ContactApiS
     override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) =
         service.unlabelContactEmails(labelContactsBody)
 
-    @Throws(IOException::class)
-    override fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse? {
-        return ParseUtils.parse(service.contacts(page, pageSize).execute())
-    }
+    override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse =
+        service.contacts(page, pageSize)
 
     @Throws(IOException::class)
-    override fun fetchContactEmails(pageSize : Int) : List<ContactEmailsResponseV2?> {
+    override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> {
         val list = ArrayList<ContactEmailsResponseV2?>()
         val pendingRequests = ArrayList<Call<ContactEmailsResponseV2>>()
         val firstPage = service.contactsEmails(0, pageSize).execute().body()
         list.add(firstPage!!)
-        for (i in 1..(firstPage.total + (pageSize - 1))/pageSize) {
+        for (i in 1..(firstPage.total + (pageSize - 1)) / pageSize) {
             pendingRequests.add(service.contactsEmails(i, pageSize))
         }
         list.addAll(executeAll(pendingRequests))
@@ -87,7 +85,7 @@ class ContactApi (private val service : ContactService) : BaseApi(), ContactApiS
         val service = service
         val list = ArrayList(contactIDs)
         return executeAll(list.map { contactId -> service.contactById(contactId) })
-                .mapIndexed { i, resp -> list[i] to resp }.toMap()
+            .mapIndexed { i, resp -> list[i] to resp }.toMap()
     }
 
     @Throws(IOException::class)
@@ -104,11 +102,10 @@ class ContactApi (private val service : ContactService) : BaseApi(), ContactApiS
     }
 
     @Throws(IOException::class)
-    override fun deleteContactSingle(contactIds: IDList) : Single<DeleteContactResponse> {
+    override fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse> {
         return service.deleteContactSingle(contactIds)
     }
 
-    override suspend fun deleteContact(contactIds: IDList) : DeleteContactResponse {
-        return service.deleteContact(contactIds)
-    }
+    override suspend fun deleteContact(contactIds: IDList): DeleteContactResponse =
+        service.deleteContact(contactIds)
 }

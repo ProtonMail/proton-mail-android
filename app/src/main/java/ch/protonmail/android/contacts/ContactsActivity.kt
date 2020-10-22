@@ -29,10 +29,11 @@ import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
-import androidx.lifecycle.ViewModelProviders
+import androidx.core.view.isVisible
 import androidx.viewpager.widget.ViewPager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseConnectivityActivity
@@ -47,24 +48,19 @@ import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.events.ContactsFetchedEvent
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
-import ch.protonmail.android.jobs.FetchContactsDataJob
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.NetworkUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
-import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.birbit.android.jobqueue.JobManager
 import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
-import javax.inject.Inject
-import kotlin.time.seconds
+import timber.log.Timber
 
 // region constants
 const val REQUEST_CODE_CONTACT_DETAILS = 1
@@ -73,7 +69,8 @@ const val REQUEST_CODE_CONVERT_CONTACT = 3
 // endregion
 
 @AndroidEntryPoint
-class ContactsActivity : BaseConnectivityActivity(),
+class ContactsActivity :
+    BaseConnectivityActivity(),
     IContactsListFragmentListener,
     ContactsActivityContract {
 
@@ -84,15 +81,11 @@ class ContactsActivity : BaseConnectivityActivity(),
 
     override val jobManager: JobManager get() = mJobManager
 
-    @Inject
-    lateinit var enqueueFetchContactsEmails: FetchContactsEmailsWorker.Enqueuer
-
     private val contactsConnectivityRetryListener = ConnectivityRetryListener()
 
     private var alreadyCheckedPermission = false
-    @Inject
-    lateinit var contactsViewModelFactory: ContactsViewModelFactory
-    private lateinit var contactsViewModel: ContactsViewModel
+
+    private val contactsViewModel: ContactsViewModel by viewModels()
 
     lateinit var pagerAdapter: ContactsFragmentsPagerAdapter
 
@@ -126,9 +119,6 @@ class ContactsActivity : BaseConnectivityActivity(),
             setTitle(R.string.contacts)
         }
 
-        contactsViewModel =
-                ViewModelProviders.of(this, contactsViewModelFactory)
-                    .get(ContactsViewModel::class.java)
         pagerAdapter = ContactsFragmentsPagerAdapter(this, supportFragmentManager)
         viewPager.adapter = pagerAdapter
         viewPager?.addOnPageChangeListener(ViewPagerOnPageSelected(this@ContactsActivity::onPageSelected))
@@ -152,6 +142,10 @@ class ContactsActivity : BaseConnectivityActivity(),
             startActivity(intent)
             addFab.close(false)
         }
+        contactsViewModel.fetchContactsResult.observe(
+            this,
+            ::onContactsFetchedEvent
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -230,8 +224,8 @@ class ContactsActivity : BaseConnectivityActivity(),
                 return true
             }
             R.id.action_sync -> {
-                progressLayoutView!!.visibility = View.VISIBLE
-                refresh()
+                progressLayoutView?.isVisible = true
+                contactsViewModel.fetchContacts()
                 return true
             }
             else -> {
@@ -242,11 +236,6 @@ class ContactsActivity : BaseConnectivityActivity(),
                 return true
             }
         }
-    }
-
-    private fun refresh() {
-        mJobManager.addJobInBackground(FetchContactsDataJob())
-        enqueueFetchContactsEmails(2.seconds)
     }
 
     private fun MenuItem.configureSearch() {
@@ -265,7 +254,7 @@ class ContactsActivity : BaseConnectivityActivity(),
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.queryHint = getString(R.string.search_contacts)
         searchView.imeOptions = EditorInfo.IME_ACTION_SEARCH or EditorInfo.IME_FLAG_NO_EXTRACT_UI or
-                EditorInfo.IME_FLAG_NO_FULLSCREEN
+            EditorInfo.IME_FLAG_NO_FULLSCREEN
         searchView.setOnQueryTextListener(SearchViewQueryListener(searchView, searchListeners))
         val closeButton = searchView.findViewById<ImageView>(R.id.search_close_btn)
         closeButton.setOnClickListener(OnSearchClose(searchView, searchListeners))
@@ -289,12 +278,11 @@ class ContactsActivity : BaseConnectivityActivity(),
         showToast(getString(R.string.attachment_failed, event.messageSubject, event.attachmentName))
     }
 
-    @Subscribe
-    @Suppress("unused")
-    fun onContactsFetchedEvent(event: ContactsFetchedEvent) {
-        progressLayoutView!!.visibility = View.GONE
+    private fun onContactsFetchedEvent(isSuccessful: Boolean) {
+        Timber.v("onContactsFetchedEvent isSuccessful:$isSuccessful")
+        progressLayoutView?.isVisible = false
         val toastTextId =
-            if (event.status == Status.SUCCESS) R.string.fetching_contacts_success
+            if (isSuccessful) R.string.fetching_contacts_success
             else R.string.fetching_contacts_failure
         showToast(toastTextId, Toast.LENGTH_SHORT)
     }
