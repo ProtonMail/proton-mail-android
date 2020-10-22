@@ -65,12 +65,12 @@ class ManageLabelsDialogViewModel @Inject constructor(
         }
 
         if (isArchiveOptionSelected(archiveCheckboxState)) {
-            liveDataPostSelectedLabelsChangedArchive()
+            viewState.value = SelectedLabelsArchiveEvent
         } else {
-            liveDataPostSelectedLabelsChanged()
+            viewState.value = SelectedLabelsChangedEvent
         }
 
-        liveDataHideLabelsView()
+        viewState.value = HideLabelsView
     }
 
     fun onTextChanged(labelName: String, creationViewsVisible: Boolean) {
@@ -80,31 +80,11 @@ class ManageLabelsDialogViewModel @Inject constructor(
                 return
             }
 
-            liveDataShowLabelCreationViews()
+            viewState.value = ShowLabelCreationViews
             return
         }
 
-        liveDataHideLabelCreationViews()
-    }
-
-    private fun liveDataHideLabelCreationViews() {
         viewState.value = HideLabelCreationViews
-    }
-
-    private fun liveDataShowLabelCreationViews() {
-        viewState.value = ShowLabelCreationViews
-    }
-
-    private fun liveDataHideLabelsView() {
-        viewState.value = HideLabelsView
-    }
-
-    private fun liveDataPostSelectedLabelsChanged() {
-        viewState.value = SelectedLabelsChangedEvent
-    }
-
-    private fun liveDataPostSelectedLabelsChangedArchive() {
-        viewState.value = SelectedLabelsArchiveEvent
     }
 
     private fun liveDataShowLabelsThresholdError(maxLabelsAllowed: Int) {
