@@ -26,7 +26,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.utils.extensions.inflate
 import ch.protonmail.android.utils.extensions.truncateToLength
-import ch.protonmail.android.views.ThreeStateButton
 import ch.protonmail.libs.core.ui.adapter.BasePagedAdapter
 import ch.protonmail.libs.core.ui.adapter.SelectableAdapter
 import kotlinx.android.synthetic.main.labels_circle_list_item.view.*
@@ -83,18 +82,12 @@ internal class LabelsCirclesAdapter :
             label_name.text = item.name.truncateToLength( 15 )
             label_edit.setImageResource( item.image )
             label_color.setColorFilter( item.color )
-            label_check.apply {
-                state = if ( item.isChecked )
-                    ThreeStateButton.STATE_CHECKED else ThreeStateButton.STATE_UNPRESSED
-            }
+            label_check.isChecked = item.isChecked
         }
 
         /** Toggle the check state of [View.label_check] */
         private fun toggleCheck() {
-            itemView.label_check.apply {
-                state = if ( state == ThreeStateButton.STATE_CHECKED )
-                    ThreeStateButton.STATE_UNPRESSED else ThreeStateButton.STATE_CHECKED
-            }
+            itemView.label_check.toggle()
         }
     }
 }
