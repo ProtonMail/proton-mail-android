@@ -28,7 +28,6 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.R
@@ -44,7 +43,6 @@ import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
 import ch.protonmail.android.utils.ui.RecyclerViewEmptyViewSupport
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
-import com.google.android.material.appbar.AppBarLayout
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
@@ -58,11 +56,6 @@ const val EXTRA_CONTACT_GROUP = "extra_contact_group"
 
 @AndroidEntryPoint
 class ContactGroupDetailsActivity : BaseActivity() {
-
-    companion object {
-        private var appBarExpanded = true
-        private var collapsedMenu: Menu? = null
-    }
 
     @Inject
     lateinit var contactGroupDetailsViewModelFactory: ContactGroupDetailsViewModelFactory
@@ -94,13 +87,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
             intent.putExtra(EXTRA_CONTACT_GROUP, contactGroupDetailsViewModel.getData() as Parcelable)
             startActivity(AppUtil.decorInAppIntent(intent))
         }
-
-        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            val isCollapsedOrCollapsing = verticalOffset < 0
-
-            appBarExpanded = isCollapsedOrCollapsing.not()
-            invalidateOptionsMenu()
-        })
     }
 
     override fun onStart() {
@@ -115,8 +101,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.delete_menu, menu)
-        collapsedMenu = menu
-        return true
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun initAdapter() {
@@ -153,7 +138,21 @@ class ContactGroupDetailsActivity : BaseActivity() {
         name: String?,
         emailsCount: Int
     ) {
-        titleTextView.text = if (name == null) "" else String.format(getString(R.string.contact_group_toolbar_title), name, resources.getQuantityString(R.plurals.contact_group_members, emailsCount, emailsCount))
+        collapsingToolbar.title = ""
+
+        name?.let {
+            val titleFormatted = String.format(
+                getString(R.string.contact_group_toolbar_title),
+                name,
+                resources.getQuantityString(
+                    R.plurals.contact_group_members,
+                    emailsCount,
+                    emailsCount
+                )
+            )
+            collapsingToolbar.title = titleFormatted
+        }
+
     }
 
     private fun startObserving() {
@@ -210,17 +209,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (collapsedMenu != null && !appBarExpanded) {
-            collapsingToolbar.title = this.name
-            titleTextView.text = " "
-            titleTextView.visibility = ViewGroup.GONE
-        } else {
-            setTitle(this.name, this.size)
-            collapsingToolbar.title = " "
-            titleTextView.visibility = ViewGroup.VISIBLE
-        }
-
-        return super.onPrepareOptionsMenu(collapsedMenu)
+        setTitle(this.name, this.size)
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

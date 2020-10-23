@@ -44,17 +44,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
             app:expandedTitleMarginStart="@dimen/activity_margin_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-            <TextView
-                android:id="@+id/titleTextView"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_gravity="bottom"
-                android:gravity="center_vertical"
-                android:textColor="@color/white"
-                android:textAppearance="@style/CollapsedAppBar"
-                android:layout_marginLeft="@dimen/activity_margin_content"
-                android:layout_marginStart="@dimen/activity_margin_content" />
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/animToolbar"
                 android:layout_width="match_parent"
