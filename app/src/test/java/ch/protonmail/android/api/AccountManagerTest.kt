@@ -40,54 +40,54 @@ import me.proton.core.test.android.mocks.newMockSharedPreferences
 import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.Test
 
-class AccountManagerTest {
+class AccountManagerTest : CoroutinesTest {
 
-    private val accountManager = AccountManager(newMockSharedPreferences)
+    private val accountManager = AccountManager(newMockSharedPreferences, dispatchers)
 
     @Test
-    fun `can set logged in a single user`() {
+    fun `can set logged in a single user`() = coroutinesTest {
         accountManager.setLoggedIn(Id("first"))
         assert that accountManager.allLoggedIn() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `can set logged in a list of users`() {
+    fun `can set logged in a list of users`() = coroutinesTest {
         accountManager.setLoggedIn(listOf(Id("first"), Id("second")))
         assert that accountManager.allLoggedIn() equals setOf(Id("first"), Id("second"))
         assert that accountManager.allSaved() equals setOf(Id("first"), Id("second"))
     }
 
     @Test
-    fun `set logged in skips duplicates`() {
+    fun `set logged in skips duplicates`() = coroutinesTest {
         accountManager.setLoggedIn(listOf(Id("first"), Id("first")))
         assert that accountManager.allLoggedIn() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `can set logged out a single user`() {
+    fun `can set logged out a single user`() = coroutinesTest {
         accountManager.setLoggedOut(Id("first"))
         assert that accountManager.allLoggedOut() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `can set logged out a list of users`() {
+    fun `can set logged out a list of users`() = coroutinesTest {
         accountManager.setLoggedOut(listOf(Id("first"), Id("second")))
         assert that accountManager.allLoggedOut() equals setOf(Id("first"), Id("second"))
         assert that accountManager.allSaved() equals setOf(Id("first"), Id("second"))
     }
 
     @Test
-    fun `set logged out skips duplicates`() {
+    fun `set logged out skips duplicates`() = coroutinesTest {
         accountManager.setLoggedOut(listOf(Id("first"), Id("first")))
         assert that accountManager.allLoggedOut() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `set logged out works after set logged in`() {
+    fun `set logged out works after set logged in`() = coroutinesTest {
         accountManager.setLoggedIn(listOf(Id("first"), Id("second")))
         accountManager.setLoggedOut(Id("first"))
 
@@ -96,7 +96,7 @@ class AccountManagerTest {
     }
 
     @Test
-    fun `set logged in works after set logged out`() {
+    fun `set logged in works after set logged out`() = coroutinesTest {
         accountManager.setLoggedOut(listOf(Id("first"), Id("second")))
         accountManager.setLoggedIn(Id("first"))
 
@@ -105,7 +105,7 @@ class AccountManagerTest {
     }
 
     @Test
-    fun `remove correctly removes from logged in, logged out and saved`() {
+    fun `remove correctly removes from logged in, logged out and saved`() = coroutinesTest {
         with(accountManager) {
             setLoggedIn(listOf(Id("first"), Id("second")))
             setLoggedOut(Id("third"))
@@ -121,7 +121,7 @@ class AccountManagerTest {
     }
 
     @Test
-    fun `clear correctly removes from logged in, logged out and saved`() {
+    fun `clear correctly removes from logged in, logged out and saved`() = coroutinesTest {
         with(accountManager) {
             setLoggedIn(listOf(Id("first"), Id("second")))
             setLoggedOut(Id("third"))
@@ -142,7 +142,7 @@ class AccountManagerTest {
         private val user4 = "username4" to Id("id4")
 
         private val defaultPreferences = newMockSharedPreferences
-        private val accountManager = AccountManager(defaultPreferences)
+        private val accountManager = AccountManager(defaultPreferences, dispatchers)
         private val secureSharedPreferencesMigration: SecureSharedPreferences.UsernameToIdMigration = mockk {
             coEvery { this@mockk(any()) } returns mapOf(user1, user2, user3, user4)
         }

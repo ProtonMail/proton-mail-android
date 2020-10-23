@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.core.content.edit
+import ch.protonmail.android.di.ApplicationModule
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -46,29 +47,26 @@ const val PREF_USERNAMES_LOGGED_OUT = "PREF_USERNAMES_LOGGED_OUT" // logged out 
  */
 class AccountManager(
     @DefaultSharedPreferences
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val dispatchers: DispatcherProvider
 ) {
 
-    // TODO: make suspended
-    fun setLoggedIn(userId: Id) {
+    suspend fun setLoggedIn(userId: Id) {
         setLoggedIn(setOf(userId))
     }
 
-    // TODO: make suspended
-    fun setLoggedIn(userIds: Collection<Id>) {
+    suspend fun setLoggedIn(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) + userIds.map { it.s }
 
         setSaved(userIds)
     }
 
-    // TODO: make suspended
-    fun setLoggedOut(userId: Id) {
+    suspend fun setLoggedOut(userId: Id) {
         setLoggedOut(setOf(userId))
     }
 
-    // TODO: make suspended
-    fun setLoggedOut(userIds: Collection<Id>) {
+    suspend fun setLoggedOut(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userIds.map { it.s }
 
@@ -78,8 +76,7 @@ class AccountManager(
     /**
      * Completely remove the given [userId] from logged in and logged out lists
      */
-    // TODO: make suspended
-    fun remove(userId: Id) {
+    suspend fun remove(userId: Id) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userId.s
 
@@ -87,7 +84,7 @@ class AccountManager(
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userId.s
     }
 
-    private fun setSaved(userIds: Collection<Id>) {
+    private suspend fun setSaved(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_SAVED] =
             sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
     }
@@ -119,17 +116,17 @@ class AccountManager(
         unsupported
     }
 
-    // TODO: make suspended
-    fun allLoggedIn(): Set<Id> =
+    suspend fun allLoggedIn(): Set<Id> = withContext(dispatchers.Io) {
         sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet())
+    }
 
-    // TODO: make suspended
-    fun allLoggedOut(): Set<Id> =
+    suspend fun allLoggedOut(): Set<Id> = withContext(dispatchers.Io) {
         allSaved() - allLoggedIn()
+    }
 
-    // TODO: make suspended
-    fun allSaved(): Set<Id> =
+    suspend fun allSaved(): Set<Id> = withContext(dispatchers.Io) {
         sharedPreferences.get(PREF_ALL_SAVED, emptySet())
+    }
 
     @Deprecated(
         "Use 'allLoggedIn' with User Id",
@@ -164,8 +161,7 @@ class AccountManager(
     /**
      * Removes all known lists of usernames.
      */
-    // TODO: make suspended
-    fun clear() {
+    suspend fun clear() = withContext(dispatchers.Io) {
         sharedPreferences.edit {
             // New
             remove(PREF_ALL_LOGGED_IN)
@@ -214,6 +210,9 @@ class AccountManager(
 
         @Deprecated("Inject the constructor directly")
         fun getInstance(context: Context): AccountManager =
-            AccountManager(PreferenceManager.getDefaultSharedPreferences(context))
+            AccountManager(
+                PreferenceManager.getDefaultSharedPreferences(context),
+                ApplicationModule.dispatcherProvider()
+            )
     }
 }
