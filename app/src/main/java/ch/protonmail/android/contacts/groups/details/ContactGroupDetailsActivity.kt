@@ -50,9 +50,7 @@ import kotlinx.android.synthetic.main.content_contact_group_details.*
 import timber.log.Timber
 import javax.inject.Inject
 
-// region constants
 const val EXTRA_CONTACT_GROUP = "extra_contact_group"
-// endregion
 
 @AndroidEntryPoint
 class ContactGroupDetailsActivity : BaseActivity() {
@@ -122,8 +120,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
     private fun initCollapsingToolbar(
         color: Int,
-        name: String,
-        emailsCount: Int
+        name: String
     ) {
         collapsingToolbar.apply {
             setBackgroundColor(color)
@@ -141,19 +138,21 @@ class ContactGroupDetailsActivity : BaseActivity() {
         collapsingToolbar.title = ""
 
         name?.let {
-            val titleFormatted = String.format(
-                getString(R.string.contact_group_toolbar_title),
-                name,
-                resources.getQuantityString(
-                    R.plurals.contact_group_members,
-                    emailsCount,
-                    emailsCount
-                )
-            )
-            collapsingToolbar.title = titleFormatted
+            collapsingToolbar.title = formatTitle(name, emailsCount)
         }
 
     }
+
+    private fun formatTitle(name: String?, emailsCount: Int): String =
+        String.format(
+            getString(R.string.contact_group_toolbar_title),
+            name,
+            resources.getQuantityString(
+                R.plurals.contact_group_members,
+                emailsCount,
+                emailsCount
+            )
+        )
 
     private fun startObserving() {
         contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this, {
@@ -174,7 +173,7 @@ class ContactGroupDetailsActivity : BaseActivity() {
             val color = Color.parseColor(colorString)
             this.name = it!!.name
             this.size = it.contactEmailsCount
-            initCollapsingToolbar(color, it.name, it.contactEmailsCount)
+            initCollapsingToolbar(color, it.name)
         })
 
         contactGroupDetailsViewModel.deleteGroupStatus.observe(this, {
