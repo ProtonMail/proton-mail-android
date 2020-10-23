@@ -51,7 +51,6 @@ import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.math.abs
 
 // region constants
 const val EXTRA_CONTACT_GROUP = "extra_contact_group"
@@ -97,14 +96,10 @@ class ContactGroupDetailsActivity : BaseActivity() {
         }
 
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            //  Vertical offset == 0 indicates appBar is fully expanded.
-            if (abs(verticalOffset) > 0) {
-                appBarExpanded = false
-                invalidateOptionsMenu()
-            } else {
-                appBarExpanded = true
-                invalidateOptionsMenu()
-            }
+            val isCollapsedOrCollapsing = verticalOffset < 0
+
+            appBarExpanded = isCollapsedOrCollapsing.not()
+            invalidateOptionsMenu()
         })
     }
 
