@@ -59,7 +59,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
     lateinit var contactGroupDetailsViewModelFactory: ContactGroupDetailsViewModelFactory
     private lateinit var contactGroupDetailsViewModel: ContactGroupDetailsViewModel
     private lateinit var contactGroupEmailsAdapter: ContactGroupEmailsAdapter
-    private var name = " "
     private var size = 0
 
     override fun getLayoutId() = R.layout.activity_contact_group_details
@@ -158,7 +157,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
         contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this, {
             contactGroupEmailsAdapter.setData(it ?: ArrayList())
             if (it != null && TextUtils.isEmpty(filterView.text.toString())) {
-                this.name = contactGroupDetailsViewModel.getData()?.name.toString()
                 this.size = it.size
                 setTitle(contactGroupDetailsViewModel.getData()?.name, it.size)
             }
@@ -171,7 +169,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
         contactGroupDetailsViewModel.setupUIData.observe(this, Observer {
             val colorString = UiUtil.normalizeColor(it?.color)
             val color = Color.parseColor(colorString)
-            this.name = it!!.name
             this.size = it.contactEmailsCount
             initCollapsingToolbar(color, it.name)
         })
@@ -205,11 +202,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
                 }
             })
         }
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        setTitle(this.name, this.size)
-        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
