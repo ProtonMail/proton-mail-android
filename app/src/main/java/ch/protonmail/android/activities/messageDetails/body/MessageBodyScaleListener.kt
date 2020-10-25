@@ -48,7 +48,6 @@ internal class MessageBodyScaleListener(private val wvScrollView:RecyclerView,
 		scaleFactor=Math.max(0.1f,Math.min(scaleFactor,10.0f))
 
 		val a=messageBodyWebView.scrollY
-		messageBodyWebView.scrollTo(0,0)
 		directParent.scrollTo(0,0)
 		messageInfoView.translationY=scaleFactor
 
