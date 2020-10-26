@@ -73,6 +73,12 @@ class AccountManager(
         setLoggedOut(setOf(userId))
     }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("setLoggedOut(userId)")
+    )
+    fun setLoggedOutBlocking(userId: Id) = runBlocking { setLoggedOut(userId) }
+
     suspend fun setLoggedOut(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userIds.map { it.s }
@@ -94,15 +100,6 @@ class AccountManager(
     private suspend fun setSaved(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_SAVED] =
             sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
-    }
-
-    @Deprecated(
-        "Use 'setLoggedOut' with User Id",
-        ReplaceWith("setLoggedOut(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun onSuccessfulLogout(username: String) {
-        unsupported
     }
 
     @Deprecated(

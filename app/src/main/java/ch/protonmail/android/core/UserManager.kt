@@ -435,7 +435,7 @@ class UserManager @Inject constructor(
             return logoutLastActiveAccount()
         Timber.v("logoutAccount new user:$nextLoggedInAccount")
         LogoutService.startLogout(false, username = username)
-        accountManager.onSuccessfulLogout(username)
+        accountManager.setLoggedOutBlocking(findUserIdForUsername.blocking(Name(username)))
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
         switchToAccount(nextLoggedInAccount)
@@ -486,7 +486,7 @@ class UserManager @Inject constructor(
             AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             TokenManager.clearAllInstances()
         } else {
-            accountManager.onSuccessfulLogout(username)
+            accountManager.setLoggedOutBlocking(findUserIdForUsername.blocking(Name(username)))
             AppUtil.deleteSecurePrefs(username, false)
             AppUtil.deleteDatabases(app.applicationContext, username)
             setUsernameAndReload(nextLoggedInAccount)
