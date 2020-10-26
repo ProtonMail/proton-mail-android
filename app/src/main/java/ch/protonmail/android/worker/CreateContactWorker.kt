@@ -32,32 +32,65 @@ import androidx.work.workDataOf
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import timber.log.Timber
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID = "keyCreateContactInputDataContactDataDBId"
-internal const val KEY_INPUT_DATA_CREATE_CONTACT_EMAILS = "keyCreateContactInputDataContactEmails"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED = "keyCreateContactInputDataContactEmails"
 
 private const val INVALID_CONTACT_DATA_DB_ID = -1L
 
 class CreateContactWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val contactsDao: ContactsDao
+    private val contactsDao: ContactsDao,
+    private val gson: Gson
 ) : CoroutineWorker(context, params) {
 
 
     override suspend fun doWork(): Result {
-        val contactDataDbId = getContactDataDatabaseId()
-        if (contactDataDbId == INVALID_CONTACT_DATA_DB_ID) {
-            return Result.failure()
-        }
+        val contactData = getContactData() ?: return Result.failure()
+        val contactEmails = getContactEmails() ?: return Result.failure()
 
-        val contactData = contactsDao.findContactDataByDbId(contactDataDbId)
+        contactEmails.forEach { it.contactId = contactData.contactId }
+        contactsDao.saveAllContactsEmails(contactEmails)
 
         return Result.success()
     }
 
-    private fun getContactDataDatabaseId() = inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, INVALID_CONTACT_DATA_DB_ID)
+    private fun getContactEmails(): List<ContactEmail>? {
+        val contactEmailsSerialised = getContactEmailsSerialised() ?: return null
+        return deserialize(contactEmailsSerialised)
+    }
+
+    private fun getContactData(): ContactData? {
+        val contactDataDbId = getContactDataDatabaseId()
+        if (contactDataDbId == INVALID_CONTACT_DATA_DB_ID) {
+            return null
+        }
+        return contactsDao.findContactDataByDbId(contactDataDbId)
+    }
+
+    private fun getContactEmailsSerialised() =
+        inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED)
+
+    private fun getContactDataDatabaseId() =
+        inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, INVALID_CONTACT_DATA_DB_ID)
+
+    private fun deserialize(contactEmailsSerialised: String): List<ContactEmail>? {
+        val emailListType: java.lang.reflect.Type = TypeToken.getParameterized(
+            List::class.java, ContactEmail::class.java
+        ).type
+
+        return try {
+            gson.fromJson<List<ContactEmail>>(contactEmailsSerialised, emailListType)
+        } catch (e: Exception) {
+            Timber.w(e)
+            null
+        }
+    }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         fun enqueue(
@@ -69,7 +102,7 @@ class CreateContactWorker @WorkerInject constructor(
                 .setInputData(
                     workDataOf(
                         KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID to contactData,
-                        KEY_INPUT_DATA_CREATE_CONTACT_EMAILS to contactEmails
+                        KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED to contactEmails
                     )
                 ).build()
 

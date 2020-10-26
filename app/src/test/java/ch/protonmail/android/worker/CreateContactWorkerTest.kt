@@ -20,10 +20,15 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.work.ListenableWorker
+import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.room.contacts.ContactData
+import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.core.QueueNetworkUtil
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -34,6 +39,8 @@ import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.lang.reflect.Type
+
 
 class CreateContactWorkerTest {
 
@@ -49,10 +56,21 @@ class CreateContactWorkerTest {
     @RelaxedMockK
     private lateinit var contactsDao: ContactsDao
 
-    private var dispatcherProvider = TestDispatcherProvider
+    @RelaxedMockK
+    private lateinit var gson: Gson
+
+    @RelaxedMockK
+    private lateinit var networkUtils: QueueNetworkUtil
 
     @InjectMockKs
     private lateinit var worker: CreateContactWorker
+
+    private var dispatcherProvider = TestDispatcherProvider
+
+    private val contactEmailsJson = """
+                [{"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID1","Email":"email@proton.com","Defaults":0,"Order":0},
+                {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID2","Email":"secondary@proton.com","Defaults":0,"Order":0}]
+        """.trimIndent()
 
     @BeforeEach
     fun setUp() {
@@ -66,21 +84,86 @@ class CreateContactWorkerTest {
 
             val result = worker.doWork()
 
-            assertEquals(ListenableWorker.Result.failure(), result)
+            assertEquals(Result.failure(), result)
         }
     }
 
     @Test
-    fun `worker reads contactData from DB`() {
+    fun `worker fails when requested contactEmails serialised parameter is not passed`() {
+        runBlockingTest {
+            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { null }
+
+            val result = worker.doWork()
+
+            assertEquals(Result.failure(), result)
+        }
+    }
+
+    @Test
+    fun `worker fails when contactEmails are not deserializable from json to List of ContactEmail`() {
+        runBlockingTest {
+            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { "{ invalid json }" }
+
+            val result = worker.doWork()
+
+            assertEquals(Result.failure(), result)
+        }
+    }
+
+    @Test
+    fun `worker reads contactData from DB using ID passed as parameter`() {
         runBlockingTest {
             val contactDataDbId = 123L
             every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
 
-            val result = worker.doWork()
+            worker.doWork()
 
             verify { contactsDao.findContactDataByDbId(contactDataDbId) }
-            assertEquals(ListenableWorker.Result.success(), result)
         }
     }
 
+    @Test
+    fun `worker saves contact emails with contact ID in database when all params are valid`() {
+        runBlockingTest {
+            givenParametersValidationSucceeds()
+
+            val result = worker.doWork()
+
+            val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
+            val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
+            val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
+            verify { contactsDao.saveAllContactsEmails(expectedContactEmails) }
+            assertEquals(Result.success(), result)
+        }
+    }
+
+    @Test
+    fun `worker saves contact locally and defer contacting API when network is absent`() {
+        runBlockingTest {
+            givenParametersValidationSucceeds()
+            every { networkUtils.isConnected() } answers { false }
+
+            val result = worker.doWork()
+
+            val error = "Contact saved, will be synced when connection is available"
+            val expectedFailure = Result.retry()
+            assertEquals(expectedFailure, result)
+        }
+    }
+
+    private fun givenParametersValidationSucceeds() {
+        val contactDataDbId = 123L
+        val deserialisedContactEmails = listOf(
+            ContactEmail("ID1", "email@proton.com", "Tom"),
+            ContactEmail("ID2", "secondary@proton.com", "Mike")
+        )
+        val emailListType: Type = TypeToken.getParameterized(
+            List::class.java, ContactEmail::class.java
+        ).type
+        val contactData = ContactData("contactDataId", "name")
+        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { contactEmailsJson }
+        every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
+        every { gson.fromJson<List<ContactEmail>>(contactEmailsJson, emailListType) } answers { deserialisedContactEmails }
+        every { contactsDao.findContactDataByDbId(contactDataDbId) } answers { contactData }
+    }
 }
