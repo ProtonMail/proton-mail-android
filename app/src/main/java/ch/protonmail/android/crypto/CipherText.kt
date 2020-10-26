@@ -22,7 +22,7 @@ import com.proton.gopenpgp.armor.Armor
 import com.proton.gopenpgp.constants.Constants
 import com.proton.gopenpgp.crypto.PGPSplitMessage
 
-class CipherText private constructor (
+class CipherText private constructor(
     val armored: String,
     val keyPacket: ByteArray,
     val dataPacket: ByteArray

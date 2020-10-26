@@ -203,9 +203,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> = api.fetchContactsEmailsByLabelId(page, labelId)
 
-    override fun fetchContactDetails(contactId: String): FullContactDetailsResponse? = api.fetchContactDetails(contactId)
+    override fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse? = api.fetchContactDetailsBlocking(contactId)
 
-    override fun fetchContactDetails(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> = api.fetchContactDetails(contactIDs)
+    override suspend fun fetchContactDetails(contactId: String): FullContactDetailsResponse = api.fetchContactDetails(contactId)
+
+    override fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> = api.fetchContactDetailsBlocking(contactIDs)
 
     override fun createContact(body: CreateContact): ContactResponse? = api.createContact(body)
 
