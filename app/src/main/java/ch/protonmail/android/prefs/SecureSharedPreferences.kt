@@ -468,7 +468,7 @@ private constructor(var context: Context, private val delegate: SharedPreference
     abstract inner class LongOnSharedPreferenceChangeListener(private val mWatchForKey: String) :
         SharedPreferences.OnSharedPreferenceChangeListener {
         abstract fun onKeyUpdated(newValue: Long)
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
             if (key == encryptProxyKey(mWatchForKey)) {
                 onKeyUpdated(getLong(mWatchForKey, 0L))
             }
