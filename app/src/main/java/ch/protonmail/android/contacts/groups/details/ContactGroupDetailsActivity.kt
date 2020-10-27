@@ -129,16 +129,10 @@ class ContactGroupDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun setTitle(
-        name: String?,
-        membersCount: Int
-    ) {
-        collapsingToolbar.title = ""
-
-        name?.let {
-            collapsingToolbar.title = formatTitle(name, membersCount)
-        }
-
+    private fun setTitle(name: String?, membersCount: Int) {
+        collapsingToolbar.title = name?.let {
+            formatTitle(name, membersCount)
+        } ?: ""
     }
 
     private fun formatTitle(name: String?, emailsCount: Int): String =
@@ -153,43 +147,38 @@ class ContactGroupDetailsActivity : BaseActivity() {
         )
 
     private fun startObserving() {
-        contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this,
-            {
-                contactGroupEmailsAdapter.setData(it ?: ArrayList())
-                if (it != null && TextUtils.isEmpty(filterView.text.toString())) {
-                    setTitle(contactGroupDetailsViewModel.getData()?.name, it.size)
-                }
-            })
+        contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this) {
+            contactGroupEmailsAdapter.setData(it ?: ArrayList())
+            if (it != null && TextUtils.isEmpty(filterView.text.toString())) {
+                setTitle(contactGroupDetailsViewModel.getData()?.name, it.size)
+            }
+        }
 
-        contactGroupDetailsViewModel.contactGroupEmailsEmpty.observe(
-            this,
-            {
-                contactGroupEmailsAdapter.setData(ArrayList())
-            })
+        contactGroupDetailsViewModel.contactGroupEmailsEmpty.observe(this) {
+            contactGroupEmailsAdapter.setData(ArrayList())
+        }
 
-        contactGroupDetailsViewModel.setupUIData.observe(this,
-            {
-                val colorString = UiUtil.normalizeColor(it?.color)
-                val color = Color.parseColor(colorString)
-                initCollapsingToolbar(color, it.name, it.contactEmailsCount)
-            })
+        contactGroupDetailsViewModel.setupUIData.observe(this) {
+            val colorString = UiUtil.normalizeColor(it?.color)
+            val color = Color.parseColor(colorString)
+            initCollapsingToolbar(color, it.name, it.contactEmailsCount)
+        }
 
-        contactGroupDetailsViewModel.deleteGroupStatus.observe(this,
-            {
-                it?.getContentIfNotHandled()?.let { status ->
-                    Timber.v("deleteGroupStatus received $status")
-                    when (status) {
-                        ContactGroupDetailsViewModel.Status.SUCCESS -> {
-                            saveLastInteraction()
-                            finish()
-                            showToast(resources.getQuantityString(R.plurals.group_deleted, 1))
-                        }
-                        ContactGroupDetailsViewModel.Status.ERROR -> showToast(status.message
-                            ?: getString(R.string.error))
+        contactGroupDetailsViewModel.deleteGroupStatus.observe(this) {
+            it?.getContentIfNotHandled()?.let { status ->
+                Timber.v("deleteGroupStatus received $status")
+                when (status) {
+                    ContactGroupDetailsViewModel.Status.SUCCESS -> {
+                        saveLastInteraction()
+                        finish()
+                        showToast(resources.getQuantityString(R.plurals.group_deleted, 1))
                     }
-
+                    ContactGroupDetailsViewModel.Status.ERROR ->
+                        showToast(status.message ?: getString(R.string.error))
                 }
-            })
+
+            }
+        }
     }
 
     private fun initFilterView() {
