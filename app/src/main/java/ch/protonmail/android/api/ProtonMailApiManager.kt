@@ -209,7 +209,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> = api.fetchContactDetailsBlocking(contactIDs)
 
-    override fun createContact(body: CreateContact): ContactResponse? = api.createContact(body)
+    override fun createContactBlocking(body: CreateContact): ContactResponse? = api.createContactBlocking(body)
+
+    override suspend fun createContact(body: CreateContact): ContactResponse? = api.createContact(body)
 
     override fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse? = api.updateContact(contactId, body)
 

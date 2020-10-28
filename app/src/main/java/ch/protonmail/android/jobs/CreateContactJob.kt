@@ -84,7 +84,7 @@ class CreateContactJob() : ProtonMailEndlessJob(
         contactEncryptedDataList.add(contactEncryptedDataType2)
         contactEncryptedDataList.add(contactEncryptedDataType3)
         val body = CreateContact(contactEncryptedDataList)
-        val response = getApi().createContact(body)
+        val response = getApi().createContactBlocking(body)
 
         if (response!!.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.ERROR, true))

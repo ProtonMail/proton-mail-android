@@ -23,10 +23,17 @@ import android.content.Context
 import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.ContactEncryptedData
+import ch.protonmail.android.api.models.CreateContact
+import ch.protonmail.android.api.models.room.contacts.ContactData
+import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.crypto.UserCrypto
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import io.mockk.MockKAnnotations
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
@@ -39,6 +46,7 @@ import org.junit.jupiter.api.Test
 
 
 class CreateContactWorkerTest {
+
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -56,7 +64,7 @@ class CreateContactWorkerTest {
     private lateinit var gson: Gson
 
     @RelaxedMockK
-    private lateinit var networkUtils: QueueNetworkUtil
+    private lateinit var crypto: UserCrypto
 
     @InjectMockKs
     private lateinit var worker: CreateContactWorker
@@ -118,5 +126,41 @@ class CreateContactWorkerTest {
         }
     }
 
+    @Test
+    fun workerInvokesCreateContactEndpointWithEncryptedContactData() {
+        runBlockingTest {
+            givenParametersValidationSucceeds()
+            val encryptedContactData = "encrypted-data"
+            val signedContactData = "signed-data"
+            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) } answers { encryptedContactData }
+            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData }
 
+            worker.doWork()
+
+            val encryptedData = crypto.encrypt(encryptedContactData, false).armored
+            val encryptDataSignature = crypto.sign(encryptedContactData)
+            val signedDataSignature = crypto.sign(signedContactData)
+            val contactEncryptedDataType2 = ContactEncryptedData(signedContactData, signedDataSignature, Constants.VCardType.SIGNED)
+            val contactEncryptedDataType3 = ContactEncryptedData(encryptedData, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
+            val contactEncryptedDataList = listOf(contactEncryptedDataType2, contactEncryptedDataType3)
+            val createContactRequest = CreateContact(contactEncryptedDataList)
+            coVerify { apiManager.createContact(createContactRequest) }
+        }
+    }
+
+    private fun givenParametersValidationSucceeds() {
+        val contactDataDbId = 123L
+        val deserialisedContactEmails = listOf(
+            ContactEmail("ID1", "email@proton.com", "Tom"),
+            ContactEmail("ID2", "secondary@proton.com", "Mike")
+        )
+        val emailListType = TypeToken.getParameterized(
+            List::class.java, ContactEmail::class.java
+        ).type
+        val contactData = ContactData("contactDataId", "name")
+        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { contactEmailsJson }
+        every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
+        every { gson.fromJson<List<ContactEmail>>(contactEmailsJson, emailListType) } answers { deserialisedContactEmails }
+        every { contactsDao.findContactDataByDbId(contactDataDbId) } answers { contactData }
+    }
 }

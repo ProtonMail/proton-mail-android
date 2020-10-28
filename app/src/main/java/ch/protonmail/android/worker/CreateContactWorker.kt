@@ -29,9 +29,14 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.ContactEncryptedData
+import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.crypto.UserCrypto
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import timber.log.Timber
@@ -39,22 +44,50 @@ import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID = "keyCreateContactInputDataContactDataDBId"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED = "keyCreateContactInputDataContactEmails"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA = "keyCreateContactInputDataEncryptedData"
+internal const val KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"
 
 private const val INVALID_CONTACT_DATA_DB_ID = -1L
 
 class CreateContactWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
+    private val apiManager: ProtonMailApiManager,
     private val contactsDao: ContactsDao,
-    private val gson: Gson
+    private val gson: Gson,
+    private val crypto: UserCrypto
 ) : CoroutineWorker(context, params) {
 
 
     override suspend fun doWork(): Result {
         val contactData = getContactData() ?: return Result.failure()
         val contactEmails = getContactEmails() ?: return Result.failure()
+        val encryptedDataParam = getInputEncryptedData() ?: return Result.failure()
+        val signedDataParam = getInputSignedData() ?: return Result.failure()
+
+        val body = createContactRequestBody(encryptedDataParam, signedDataParam)
+        apiManager.createContact(body)
 
         return Result.success()
+    }
+
+    private fun getInputSignedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
+
+    private fun getInputEncryptedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA)
+
+    private fun createContactRequestBody(encryptedDataParam: String, signedDataParam: String): CreateContact {
+        val encryptedData = crypto.encrypt(encryptedDataParam, false).armored
+        val encryptDataSignature = crypto.sign(encryptedDataParam)
+        val signedDataSignature = crypto.sign(signedDataParam)
+
+        val contactEncryptedDataType2 = ContactEncryptedData(signedDataParam, signedDataSignature, Constants.VCardType.SIGNED)
+        val contactEncryptedDataType3 = ContactEncryptedData(encryptedData, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED)
+
+        val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
+        contactEncryptedDataList.add(contactEncryptedDataType2)
+        contactEncryptedDataList.add(contactEncryptedDataType3)
+
+        return CreateContact(contactEncryptedDataList)
     }
 
     private fun getContactEmails(): List<ContactEmail>? {
