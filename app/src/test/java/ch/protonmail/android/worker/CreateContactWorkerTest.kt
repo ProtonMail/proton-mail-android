@@ -23,12 +23,9 @@ import android.content.Context
 import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.QueueNetworkUtil
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -39,7 +36,6 @@ import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.lang.reflect.Type
 
 
 class CreateContactWorkerTest {
@@ -122,48 +118,4 @@ class CreateContactWorkerTest {
         }
     }
 
-    @Test
-    fun `worker saves contact emails with contact ID in database when all params are valid`() {
-        runBlockingTest {
-            givenParametersValidationSucceeds()
-
-            val result = worker.doWork()
-
-            val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
-            val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
-            val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
-            verify { contactsDao.saveAllContactsEmails(expectedContactEmails) }
-            assertEquals(Result.success(), result)
-        }
-    }
-
-    @Test
-    fun `worker saves contact locally and defer contacting API when network is absent`() {
-        runBlockingTest {
-            givenParametersValidationSucceeds()
-            every { networkUtils.isConnected() } answers { false }
-
-            val result = worker.doWork()
-
-            val error = "Contact saved, will be synced when connection is available"
-            val expectedFailure = Result.retry()
-            assertEquals(expectedFailure, result)
-        }
-    }
-
-    private fun givenParametersValidationSucceeds() {
-        val contactDataDbId = 123L
-        val deserialisedContactEmails = listOf(
-            ContactEmail("ID1", "email@proton.com", "Tom"),
-            ContactEmail("ID2", "secondary@proton.com", "Mike")
-        )
-        val emailListType: Type = TypeToken.getParameterized(
-            List::class.java, ContactEmail::class.java
-        ).type
-        val contactData = ContactData("contactDataId", "name")
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { contactEmailsJson }
-        every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
-        every { gson.fromJson<List<ContactEmail>>(contactEmailsJson, emailListType) } answers { deserialisedContactEmails }
-        every { contactsDao.findContactDataByDbId(contactDataDbId) } answers { contactData }
-    }
 }

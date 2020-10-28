@@ -54,9 +54,6 @@ class CreateContactWorker @WorkerInject constructor(
         val contactData = getContactData() ?: return Result.failure()
         val contactEmails = getContactEmails() ?: return Result.failure()
 
-        contactEmails.forEach { it.contactId = contactData.contactId }
-        contactsDao.saveAllContactsEmails(contactEmails)
-
         return Result.success()
     }
 
