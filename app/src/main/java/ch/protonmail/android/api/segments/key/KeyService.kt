@@ -24,17 +24,26 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.SinglePasswordChange
 import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.address.KeyActivationBody
-import retrofit2.Call
-
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import retrofit2.http.*
+import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface KeyService {
 
     @GET("keys")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun getPublicKeys(@Query("Email") email: String): Call<PublicKeyResponse>
+    fun getPublicKeysBlocking(@Query("Email") email: String): Call<PublicKeyResponse>
+
+    @GET("keys")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun getPublicKeys(@Query("Email") email: String): PublicKeyResponse
 
     @PUT("keys/private")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

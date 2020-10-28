@@ -230,7 +230,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
 
-    override fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
+    override fun getPublicKeysBlocking(email: String): PublicKeyResponse = api.getPublicKeysBlocking(email)
+
+    override suspend fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
 
     override fun getPublicKeys(emails: Collection<String>): Map<String, PublicKeyResponse?> = api.getPublicKeys(emails)
 

@@ -25,6 +25,8 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
@@ -49,13 +51,15 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.DraftCreatedEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.jobs.FetchPublicKeysJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.fetch.FetchPublicKeys
+import ch.protonmail.android.usecase.model.EmailKeysRequest
+import ch.protonmail.android.usecase.model.EmailKeysResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
@@ -84,6 +88,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val postMessageServiceFactory: PostMessageServiceFactory,
     private val deleteMessage: DeleteMessage,
+    private val fetchPublicKeys: FetchPublicKeys,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -106,6 +111,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
+    private val fetchKeyDetailsTrigger = MutableLiveData<List<EmailKeysRequest>>()
 
     private val _androidContacts = java.util.ArrayList<MessageRecipient>()
     private val _protonMailContacts = java.util.ArrayList<MessageRecipient>()
@@ -173,6 +179,12 @@ class ComposeMessageViewModel @Inject constructor(
         get() = _androidContactsLoaded
         set(value) {
             _androidContactsLoaded = value
+        }
+    val fetchKeyDetailsResult: LiveData<List<EmailKeysResult>>
+        get() = fetchKeyDetailsTrigger.switchMap { request ->
+            liveData {
+                emit(fetchPublicKeys(request))
+            }
         }
 
     // endregion
@@ -407,13 +419,9 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                postMessageServiceFactory.startUpdateDraftService(
-                    _dbId!!,
-                    message.decryptedBody ?: "",
-                    newAttachments,
-                    uploadAttachments,
-                    _oldSenderAddressId
-                )
+                postMessageServiceFactory.startUpdateDraftService(_dbId!!, message.decryptedBody
+                    ?: "",
+                    newAttachments, uploadAttachments, _oldSenderAddressId)
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
                         ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
@@ -442,12 +450,8 @@ class ComposeMessageViewModel @Inject constructor(
                         uploadAttachments
                     )
                 }
-                postMessageServiceFactory.startCreateDraftService(
-                    _dbId!!,
-                    _draftId.get(),
-                    parentId,
-                    _actionId,
-                    message.decryptedBody ?: "",
+                postMessageServiceFactory.startCreateDraftService(_dbId!!, _draftId.get(), parentId,
+                    _actionId, message.decryptedBody ?: "",
                     uploadAttachments,
                     newAttachments,
                     _oldSenderAddressId,
@@ -549,8 +553,9 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.startFetchMessageDetail(draftId)
     }
 
-    fun startFetchPublicKeysJob(jobs: List<FetchPublicKeysJob.PublicKeysBatchJob>, retry: Boolean) {
-        composeMessageRepository.fetchPublicKeys(jobs, retry)
+    fun startFetchPublicKeys(request: List<EmailKeysRequest>, retry: Boolean) {
+        // TODO: Investigate what to do with this retry
+        fetchKeyDetailsTrigger.value = request
     }
 
     fun startSendPreferenceJob(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {

@@ -67,7 +67,7 @@ const val RESPONSE_CODE_EMAIL_FAILED_VALIDATION = 12006
 // endregion
 
 open class BaseApi {
-    protected inline fun <reified T : ResponseBody> executeAll(list : List<Call<T>>) : List<T?> {
+    protected inline fun <reified T : ResponseBody> executeAll(list: List<Call<T>>): List<T?> {
         if (list.isEmpty()) {
             return emptyList()
         }
