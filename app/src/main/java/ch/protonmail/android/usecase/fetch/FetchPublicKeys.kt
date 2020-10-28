@@ -41,7 +41,6 @@ class FetchPublicKeys @Inject constructor(
                 result.add(EmailKeysResult(publicKeys, request.recipientsType))
             }
             result
-            //AppUtil.postEventOnUi(FetchEmailKeysEvent(Status.SUCCESS, responses, mRetry))
         }
 
     private suspend fun getPublicKeys(emailSet: Set<String>): Map<String, String> {

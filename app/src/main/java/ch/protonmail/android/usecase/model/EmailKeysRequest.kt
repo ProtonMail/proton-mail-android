@@ -23,6 +23,7 @@ import ch.protonmail.android.core.Constants
 
 data class EmailKeysRequest(
     val emails: List<String>,
-    val recipientsType: Constants.RecipientLocationType
+    val recipientsType: Constants.RecipientLocationType,
+    val isSendRetryRequired: Boolean = false
 )
 

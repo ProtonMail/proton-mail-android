@@ -69,6 +69,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.HashMap
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -553,8 +554,8 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.startFetchMessageDetail(draftId)
     }
 
-    fun startFetchPublicKeys(request: List<EmailKeysRequest>, retry: Boolean) {
-        // TODO: Investigate what to do with this retry
+    fun startFetchPublicKeys(request: List<EmailKeysRequest>) {
+        Timber.v("startFetchPublicKeys $request")
         fetchKeyDetailsTrigger.value = request
     }
 

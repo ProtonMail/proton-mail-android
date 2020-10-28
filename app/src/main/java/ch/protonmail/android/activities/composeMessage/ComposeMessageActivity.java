@@ -671,10 +671,11 @@ public class ComposeMessageActivity
     }
 
     private void onFetchEmailKeysEvent(List<EmailKeysResult> results) {
-        Timber.v("onFetchEmailKeysEvent size: %d", results.size());
         mSendingPressed = false;
         mProgressView.setVisibility(View.GONE);
+        boolean isRetry = false;
         for (EmailKeysResult result : results) {
+            isRetry = isRetry || result.isSendRetryRequired() ;
             Map<String, String> keys = result.getKeysMap();
             Constants.RecipientLocationType location = result.getRecipientsType();
             if (location == Constants.RecipientLocationType.TO) {
@@ -686,10 +687,10 @@ public class ComposeMessageActivity
             }
         }
 
-        // TODO: Check what to do with this retry
-//            if (event.isRetry()) {
-//                sendMessage(false);
-//            }
+        Timber.v("onFetchEmailKeysEvent size:%d isRetry:%s", results.size(), isRetry);
+        if (isRetry) {
+            sendMessage(false);
+        }
     }
 
     @Subscribe
@@ -703,10 +704,8 @@ public class ComposeMessageActivity
                     .commitAllowingStateLoss();
         } else {
             Constants.TokenType method = Constants.TokenType.Companion.fromString(verificationMethods.get(0));
-            switch (method) {
-                case CAPTCHA:
-                    verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
-                    break;
+            if (method == Constants.TokenType.CAPTCHA) {
+                verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
             }
         }
     }
@@ -1248,8 +1247,8 @@ public class ComposeMessageActivity
                     }
                 }
 
-                EmailKeysRequest emailKeysRequest = new EmailKeysRequest(emailList, location);
-                composeMessageViewModel.startFetchPublicKeys(Collections.singletonList(emailKeysRequest), false);
+                EmailKeysRequest emailKeysRequest = new EmailKeysRequest(emailList, location, false);
+                composeMessageViewModel.startFetchPublicKeys(Collections.singletonList(emailKeysRequest));
                 GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
                 if (recipientsView.equals(mCcRecipientsView)) {
                     destination = GetSendPreferenceJob.Destination.CC;
@@ -1385,20 +1384,26 @@ public class ComposeMessageActivity
             boolean isValid = true;
             List<EmailKeysRequest> keysRequests = new ArrayList<>();
             if (!toMissingKeys.isEmpty()) {
-                keysRequests.add(new EmailKeysRequest(toMissingKeys, Constants.RecipientLocationType.TO));
+                keysRequests.add(
+                        new EmailKeysRequest(toMissingKeys, Constants.RecipientLocationType.TO, true)
+                );
                 isValid = false;
             }
             if (!ccMissingKeys.isEmpty()) {
-                keysRequests.add(new EmailKeysRequest(ccMissingKeys, Constants.RecipientLocationType.CC));
+                keysRequests.add(
+                        new EmailKeysRequest(ccMissingKeys, Constants.RecipientLocationType.CC, true)
+                );
                 isValid = false;
             }
             if (!bccMissingKeys.isEmpty()) {
-                keysRequests.add(new EmailKeysRequest(bccMissingKeys, Constants.RecipientLocationType.BCC));
+                keysRequests.add(
+                        new EmailKeysRequest(bccMissingKeys, Constants.RecipientLocationType.BCC, true)
+                );
                 isValid = false;
             }
             if (!isValid) {
                 if (mNetworkUtil.isConnected()) {
-                    composeMessageViewModel.startFetchPublicKeys(keysRequests, true);
+                    composeMessageViewModel.startFetchPublicKeys(keysRequests);
                     mProgressView.setVisibility(View.VISIBLE);
                     mProgressSpinner.setVisibility(View.VISIBLE);
                     mSendingPressed = true;
