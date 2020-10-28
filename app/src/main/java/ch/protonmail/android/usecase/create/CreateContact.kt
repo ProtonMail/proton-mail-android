@@ -20,10 +20,12 @@
 package ch.protonmail.android.usecase.create
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.map
+import androidx.work.WorkInfo
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -43,10 +45,20 @@ class CreateContact @Inject constructor(
             contactEmails.forEach { it.contactId = contactData.contactId }
             contactsDao.saveAllContactsEmails(contactEmails)
 
-            return@withContext liveData<CreateContactResult> { CreateContactResult.Success }
+            createContactScheduler.enqueue(contactData, contactEmails)
+                .filter { it?.state?.isFinished == true }
+                .map { workInfo ->
+                    if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        CreateContactResult.Success
+                    } else {
+                        CreateContactResult.Error
+                    }
+
+                }
         }
 
     sealed class CreateContactResult {
         object Success : CreateContactResult()
+        object Error : CreateContactResult()
     }
 }
