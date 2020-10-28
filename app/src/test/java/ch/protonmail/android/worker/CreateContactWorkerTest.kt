@@ -74,7 +74,7 @@ class CreateContactWorkerTest {
     }
 
     @Test
-    fun `worker fails when requested contactData database ID parameter is not passed`() {
+    fun workerFailsWhenRequestedContactDataDatabaseIdParameterIsNotPassed() {
         runBlockingTest {
             every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { -1 }
 
@@ -85,7 +85,7 @@ class CreateContactWorkerTest {
     }
 
     @Test
-    fun `worker fails when requested contactEmails serialised parameter is not passed`() {
+    fun workerFailsWhenRequestedContactEmailsSerialisedParameterIsNotPassed() {
         runBlockingTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { null }
 
@@ -96,7 +96,7 @@ class CreateContactWorkerTest {
     }
 
     @Test
-    fun `worker fails when contactEmails are not deserializable from json to List of ContactEmail`() {
+    fun workerFailsWhenContactEmailsAreNotDeserializableFromJsonToListOfContactEmail() {
         runBlockingTest {
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { "{ invalid json }" }
 
@@ -107,7 +107,7 @@ class CreateContactWorkerTest {
     }
 
     @Test
-    fun `worker reads contactData from DB using ID passed as parameter`() {
+    fun workerReadsContactDataFromDbUsingIdPassedAsParameter() {
         runBlockingTest {
             val contactDataDbId = 123L
             every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
@@ -117,5 +117,6 @@ class CreateContactWorkerTest {
             verify { contactsDao.findContactDataByDbId(contactDataDbId) }
         }
     }
+
 
 }
