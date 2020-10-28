@@ -42,7 +42,9 @@ import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper;
+import ch.protonmail.android.prefs.SecureSharedPreferences;
 import timber.log.Timber;
 
 import static ch.protonmail.android.core.Constants.LogTags.SENDING_FAILED_REASON_TAG;
@@ -171,13 +173,14 @@ public class User {
     // endregion
 
     @NonNull
-    public static User load(String username) {
-        final SharedPreferences securePrefs = ProtonMailApplication.getApplication().getSecureSharedPreferences(username);
+    @Deprecated
+    @kotlin.Deprecated(message = "Use usecase/LoadOldUser")
+    public static User load(Id userId, Context context) {
+        final SharedPreferences securePrefs =
+                SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
         final User user = new User();
         user.name = securePrefs.getString(PREF_USER_NAME, "");
-        if (!TextUtils.isEmpty(username)) {
-            user.username = username;
-        }
+        user.username = user.name;
         user.usedSpace = securePrefs.getLong(PREF_USED_SPACE, 0L);
         user.Signature = securePrefs.getString(PREF_SIGNATURE, "");
         user.role = securePrefs.getInt(PREF_ROLE, 0);
@@ -224,7 +227,7 @@ public class User {
         }
         user.ManuallyLocked = securePrefs.getBoolean(PREF_MANUALLY_LOCKED, false);
 
-        user.id = securePrefs.getString(PREF_USER_ID, "id");
+        user.id = securePrefs.getString(PREF_USER_ID, userId.getS());
         user.currency = securePrefs.getString(PREF_USER_CURRENCY, "eur");
         user.credit = securePrefs.getInt(PREF_USER_CREDIT, 0);
         user.isPrivate = securePrefs.getInt(PREF_USER_PRIVATE, 0);
@@ -232,6 +235,20 @@ public class User {
         user.isLegacyAccount = securePrefs.getBoolean(PREF_USER_LEGACY_ACCOUNT, true);
 
         return user;
+    }
+
+    @NonNull
+    @Deprecated
+    @kotlin.Deprecated(message = "Load using a Context")
+    public static User load(Id userId) {
+        return load(userId, ProtonMailApplication.getApplication());
+    }
+
+    @NonNull
+    @Deprecated
+    @kotlin.Deprecated(message = "Load with user Id")
+    public static User load(String username) {
+        throw new UnsupportedOperationException("Load with user Id");
     }
 
     /**

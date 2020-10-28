@@ -172,6 +172,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private MessagesDatabase messagesDatabase;
 
     @NonNull
+    @Deprecated // Using this is an ERROR!
+    @kotlin.Deprecated(message = "Use a better dependency strategy: ideally inject the needed " +
+            "dependency directly or, where not possible, inject the Application or the Context")
     public static ProtonMailApplication getApplication() {
         return sInstance;
     }
@@ -268,12 +271,14 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @NonNull
     public SharedPreferences getSecureSharedPreferences() {
-        return SecureSharedPreferences.Companion.getPrefs(ProtonMailApplication.getApplication(), "ProtonMailSSP", Context.MODE_PRIVATE);
+        return SecureSharedPreferences.Companion.getPrefs(this, "ProtonMailSSP", Context.MODE_PRIVATE);
     }
 
     @NonNull
+    @Deprecated // Using it is an ERROR!
+    @kotlin.Deprecated(message = "Use with user Id with SecureSharedPreferences.forUser")
     public SharedPreferences getSecureSharedPreferences(String username) {
-        return SecureSharedPreferences.Companion.getPrefsForUser(ProtonMailApplication.getApplication(), username);
+        throw new UnsupportedOperationException("Use with user Id with SecureSharedPreferences.forUser");
     }
 
     @NonNull
