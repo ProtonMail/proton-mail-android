@@ -33,14 +33,13 @@ import javax.inject.Inject
  */
 class FindUserIdForUsername @Inject constructor(
     private val dispatchers: DispatcherProvider,
-    private val accountManager: AccountManager
-    // private val userManager: UserManager // TODO fix circular dependency, by removing FindUserIdForUsername
-    //                                          dependency from userManger
+    private val accountManager: AccountManager,
+    private val loadUser: LoadUser
 ) {
 
     suspend operator fun invoke(username: Name): Id = withContext(dispatchers.Io) {
         accountManager.allSaved().first {
-            val user: User = TODO("userManager.getUser(it)") // UserManager does not support Id yet
+            val user: User = loadUser(it)
             user.name == username
         }
     }
