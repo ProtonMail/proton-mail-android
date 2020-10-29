@@ -24,6 +24,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.lifecycle.LiveData
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -83,19 +84,9 @@ class CreateContactWorker @WorkerInject constructor(
         }
 
         if (apiResponse.contactId.isNotEmpty()) {
-            val contactEmails: List<ContactEmail> = apiResponse.responses.flatMap {
-                it.response.contact.emails ?: emptyList()
-            }
-
-            val jsonContactEmails = gson.toJson(contactEmails)
-
-            val outputData = workDataOf(
-                KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
-                KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED to jsonContactEmails
-            )
+            val outputData = contactIdAndEmailsOutputData(apiResponse)
             return Result.success(outputData)
         }
-
 
         if (isContactAlreadyExistsError(apiResponse)) {
             return failureWithError(ContactAlreadyExistsError)
@@ -106,6 +97,20 @@ class CreateContactWorker @WorkerInject constructor(
         }
 
         return Result.success()
+    }
+
+    private fun contactIdAndEmailsOutputData(apiResponse: ContactResponse): Data {
+        val contactEmails: List<ContactEmail> = apiResponse.responses.flatMap {
+            it.response.contact.emails ?: emptyList()
+        }
+
+        val jsonContactEmails = gson.toJson(contactEmails)
+
+        val outputData = workDataOf(
+            KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
+            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED to jsonContactEmails
+        )
+        return outputData
     }
 
     private fun isInvalidEmailError(apiResponse: ContactResponse) =
