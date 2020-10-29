@@ -24,7 +24,7 @@ import androidx.lifecycle.map
 import androidx.work.WorkInfo
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker
 import kotlinx.coroutines.withContext
@@ -32,9 +32,9 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class CreateContact @Inject constructor(
-   private val dispatcherProvider: DispatcherProvider,
-   private val contactsDao: ContactsDao,
-   private val createContactScheduler: CreateContactWorker.Enqueuer
+    private val dispatcherProvider: DispatcherProvider,
+    private val contactsRepository: ContactDetailsRepository,
+    private val createContactScheduler: CreateContactWorker.Enqueuer
 ) {
 
     suspend operator fun invoke(
@@ -42,10 +42,11 @@ class CreateContact @Inject constructor(
         contactEmails: List<ContactEmail>,
         encryptedContactData: String,
         signedContactData: String
-    ): LiveData<CreateContactResult> =
-        withContext(dispatcherProvider.Io) {
+    ): LiveData<CreateContactResult> {
+
+        return withContext(dispatcherProvider.Io) {
             contactEmails.forEach { it.contactId = contactData.contactId }
-            contactsDao.saveAllContactsEmails(contactEmails)
+            contactsRepository.saveContactEmails(contactEmails)
 
             createContactScheduler.enqueue(encryptedContactData, signedContactData)
                 .filter { it?.state?.isFinished == true }
@@ -58,6 +59,8 @@ class CreateContact @Inject constructor(
 
                 }
         }
+
+    }
 
     sealed class CreateContactResult {
         object Success : CreateContactResult()

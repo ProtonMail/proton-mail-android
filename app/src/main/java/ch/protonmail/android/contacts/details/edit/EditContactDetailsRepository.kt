@@ -20,10 +20,10 @@ package ch.protonmail.android.contacts.details.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.jobs.CreateContactJob
 import ch.protonmail.android.jobs.UpdateContactJob
@@ -35,18 +35,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
-/*
- * Created by kadrikj on 9/26/18.
- */
-
-@Singleton
 class EditContactDetailsRepository @Inject constructor(
     workManager: WorkManager,
     jobManager: JobManager,
     api: ProtonMailApiManager,
-    databaseProvider: DatabaseProvider): ContactDetailsRepository(workManager, jobManager, api, databaseProvider) {
+    contactsDao: ContactsDao) : ContactDetailsRepository(workManager, jobManager, api, contactsDao) {
 
     fun clearEmail(email: String) {
         contactsDao.clearByEmail(email)
@@ -55,7 +49,7 @@ class EditContactDetailsRepository @Inject constructor(
     fun updateContact(contactId: String, contactName: String, emails: List<ContactEmail>,
                       vCardEncrypted: VCard, vCardSigned: VCard, mapEmailGroupsIds: HashMap<ContactEmail, List<ContactLabel>>) {
         jobManager.addJobInBackground(UpdateContactJob(contactId, contactName, emails, vCardEncrypted.write(),
-                vCardSigned.write(), mapEmailGroupsIds))
+            vCardSigned.write(), mapEmailGroupsIds))
     }
 
     fun createContact(contactName: String, emails: List<ContactEmail>, vCardEncrypted: VCard, vCardSigned: VCard) {

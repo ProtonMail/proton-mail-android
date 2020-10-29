@@ -18,16 +18,15 @@
  */
 package ch.protonmail.android.contacts.details
 
-import android.util.Log
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
@@ -37,17 +36,12 @@ import io.reactivex.Observable
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 open class ContactDetailsRepository @Inject constructor(
     private val workManager: WorkManager,
     protected val jobManager: JobManager,
     protected val api: ProtonMailApiManager,
-    protected val databaseProvider: DatabaseProvider
-) {
-
-    protected val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactDetailsRepository"); databaseProvider.provideContactsDao() }
+    protected val contactsDao: ContactsDao) {
 
     fun getContactGroups(id: String): Observable<List<ContactLabel>> {
         return contactsDao.findAllContactGroupsByContactEmailAsyncObservable(id)
@@ -149,5 +143,9 @@ open class ContactDetailsRepository @Inject constructor(
                     )
                 }
             }
+    }
+
+    fun saveContactEmails(emails: List<ContactEmail>) {
+        contactsDao.saveAllContactsEmails(emails)
     }
 }

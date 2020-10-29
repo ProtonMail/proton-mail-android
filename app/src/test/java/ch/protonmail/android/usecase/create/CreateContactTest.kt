@@ -25,7 +25,7 @@ import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.worker.CreateContactWorker
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -49,7 +49,7 @@ class CreateContactTest {
     private lateinit var createContactScheduler: CreateContactWorker.Enqueuer
 
     @RelaxedMockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactsRepository: ContactDetailsRepository
 
     @InjectMockKs
     private lateinit var createContact: CreateContact
@@ -70,14 +70,14 @@ class CreateContactTest {
     }
 
     @Test
-    fun createContactSavesContactEmailsWithContactIdInDatabase() {
+    fun createContactSavesContactEmailsWithContactIdToRepository() {
         runBlockingTest {
             createContact(contactData, contactEmails, encryptedData, signedData)
 
             val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
             val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
             val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
-            verify { contactsDao.saveAllContactsEmails(expectedContactEmails) }
+            verify { contactsRepository.saveContactEmails(expectedContactEmails) }
         }
     }
 
