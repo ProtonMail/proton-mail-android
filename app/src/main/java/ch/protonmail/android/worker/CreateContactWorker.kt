@@ -64,30 +64,27 @@ class CreateContactWorker @WorkerInject constructor(
 
 
     override suspend fun doWork(): Result {
-        val encryptedDataParam = getInputEncryptedData() ?: return Result.failure()
-        val signedDataParam = getInputSignedData() ?: return Result.failure()
+        val request = buildCreateContactRequestBody()
+        val response = apiManager.createContact(request)
 
-        val apiRequest = createContactRequestBody(encryptedDataParam, signedDataParam)
-        val apiResponse = apiManager.createContact(apiRequest)
-
-        if (apiResponse?.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
+        if (response?.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
             return failureWithError(ServerError)
         }
 
-        if (apiResponse.contactId.isNotEmpty()) {
-            val outputData = contactIdAndEmailsOutputData(apiResponse)
+        if (response.contactId.isNotEmpty()) {
+            val outputData = contactIdAndEmailsOutputData(response)
             return Result.success(outputData)
         }
 
-        if (isContactAlreadyExistsError(apiResponse)) {
+        if (isContactAlreadyExistsError(response)) {
             return failureWithError(ContactAlreadyExistsError)
         }
 
-        if (isInvalidEmailError(apiResponse)) {
+        if (isInvalidEmailError(response)) {
             return failureWithError(InvalidEmailError)
         }
 
-        if (isDuplicatedEmailError(apiResponse)) {
+        if (isDuplicatedEmailError(response)) {
             return failureWithError(DuplicatedEmailError)
         }
 
@@ -123,11 +120,10 @@ class CreateContactWorker @WorkerInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun getInputSignedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
+    private fun buildCreateContactRequestBody(): CreateContact {
+        val encryptedDataParam = getInputEncryptedData()
+        val signedDataParam = getInputSignedData()
 
-    private fun getInputEncryptedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA)
-
-    private fun createContactRequestBody(encryptedDataParam: String, signedDataParam: String): CreateContact {
         val encryptedData = crypto.encrypt(encryptedDataParam, false).armored
         val encryptDataSignature = crypto.sign(encryptedDataParam)
         val signedDataSignature = crypto.sign(signedDataParam)
@@ -141,6 +137,10 @@ class CreateContactWorker @WorkerInject constructor(
 
         return CreateContact(contactEncryptedDataList)
     }
+
+    private fun getInputSignedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) ?: ""
+
+    private fun getInputEncryptedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) ?: ""
 
     enum class CreateContactWorkerResult {
         ServerError,
