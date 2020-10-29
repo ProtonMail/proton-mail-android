@@ -28,15 +28,20 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import java.lang.reflect.Type
 import javax.inject.Inject
 
 class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val contactsRepository: ContactDetailsRepository,
-    private val createContactScheduler: CreateContactWorker.Enqueuer
+    private val createContactScheduler: CreateContactWorker.Enqueuer,
+    private val gson: Gson
 ) {
 
     suspend operator fun invoke(
@@ -69,9 +74,16 @@ class CreateContact @Inject constructor(
     }
 
     private fun updateLocalContactData(outputData: Data, contactData: ContactData) {
-        val contactServerId = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID)
-        contactsRepository.updateContactDataWithServerId(contactData, contactServerId!!)
+        val contactServerId = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID)!!
+        contactsRepository.updateContactDataWithServerId(contactData, contactServerId)
+
+        val emailsJson = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON)!!
+        val serverEmails = gson.fromJson<List<ContactEmail>>(emailsJson, emailsListGsonType())
+        contactsRepository.updateAllContactEmails(contactData.contactId, serverEmails)
     }
+
+    private fun emailsListGsonType(): Type = TypeToken.getParameterized(List::class.java, ContactEmail::class.java).type
+
 
     sealed class CreateContactResult {
         object Success : CreateContactResult()

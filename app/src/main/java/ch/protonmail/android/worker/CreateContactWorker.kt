@@ -52,7 +52,7 @@ internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA = "keyCreateCont
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME = "keyCreateContactWorkerResultError"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID = "keyCreateContactWorkerResultServerId"
-internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED = "keyCreateContactWorkerResultEmailsSerialised"
+internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON = "keyCreateContactWorkerResultEmailsSerialised"
 
 class CreateContactWorker @WorkerInject constructor(
     @Assisted context: Context,
@@ -111,7 +111,7 @@ class CreateContactWorker @WorkerInject constructor(
 
         return workDataOf(
             KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
-            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED to jsonContactEmails
+            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to jsonContactEmails
         )
     }
 

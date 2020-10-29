@@ -156,4 +156,12 @@ open class ContactDetailsRepository @Inject constructor(
             contactsDao.saveContactData(it)
         }
     }
+
+    fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>) {
+        contactId?.let {
+            val localContactEmails = contactsDao.findContactEmailsByContactId(it)
+            contactsDao.deleteAllContactsEmails(localContactEmails)
+            contactsDao.saveAllContactsEmails(contactServerEmails)
+        }
+    }
 }

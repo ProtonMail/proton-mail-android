@@ -76,4 +76,24 @@ class ContactDetailsRepositoryTest {
         val expectedContactData = contactData.copy(contactId = contactServerId)
         verify { contactsDao.saveContactData(expectedContactData) }
     }
+
+    @Test
+    fun updateAllContactEmailsRemovesAllExistingEmailsFromDbAndSavesServerOnes() {
+        val contactId = "contactId"
+        val localContactEmails = listOf(
+            ContactEmail("ID1", "email@proton.com", "Tom"),
+            ContactEmail("ID2", "secondary@proton.com", "Mike")
+        )
+        val serverEmails = listOf(
+            ContactEmail("ID3", "martin@proton.com", "Martin"),
+            ContactEmail("ID4", "kent@proton.com", "kent")
+        )
+        every { contactsDao.findContactEmailsByContactId(contactId) } returns localContactEmails
+
+        repository.updateAllContactEmails(contactId, serverEmails)
+
+        verify { contactsDao.findContactEmailsByContactId(contactId) }
+        verify { contactsDao.deleteAllContactsEmails(localContactEmails) }
+        verify { contactsDao.saveAllContactsEmails(serverEmails) }
+    }
 }

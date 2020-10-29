@@ -28,7 +28,10 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.worker.CreateContactWorker
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -40,6 +43,7 @@ import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.lang.reflect.Type
 import java.util.UUID
 
 class CreateContactTest {
@@ -52,6 +56,9 @@ class CreateContactTest {
 
     @RelaxedMockK
     private lateinit var contactsRepository: ContactDetailsRepository
+
+    @RelaxedMockK
+    private lateinit var gson: Gson
 
     @InjectMockKs
     private lateinit var createContact: CreateContact
@@ -88,8 +95,6 @@ class CreateContactTest {
         runBlockingTest {
             createContact(contactData, contactEmails, encryptedData, signedData)
 
-            val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
-            val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
             verify { createContactScheduler.enqueue(encryptedData, signedData) }
         }
     }
@@ -124,15 +129,50 @@ class CreateContactTest {
     fun createContactSavesContactDataWithServerIdWhenContactCreationThroughNetworkSucceeds() {
         runBlockingTest {
             val contactServerId = "contactServerId"
-            val workOutputData = workDataOf(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to contactServerId)
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to contactServerId,
+                KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to "{}"
+            )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+            every { gson.fromJson<List<ContactEmail>>(any<String>(), any<Type>()) } answers { emptyList() }
 
             val result = createContact(contactData, contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(CreateContact.CreateContactResult.Success, result.value)
             verify { contactsRepository.updateContactDataWithServerId(contactData, contactServerId) }
+        }
+    }
+
+    @Test
+    fun createContactReplacesContactEmailsWithServerOnesWhenContactCreationThroughNetworkSucceeds() {
+        runBlockingTest {
+            val emailListType = TypeToken.getParameterized(List::class.java, ContactEmail::class.java).type
+            val contactServerEmails = listOf(
+                ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId"),
+                ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
+            )
+            val serverEmailsJson = """
+                [{"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID1","Email":"email@proton.com","Name":"Tom","Defaults":0,"Order":0},
+                {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID2","Email":"secondary@proton.com","Name":"Mike","Defaults":0,"Order":0}
+             """.trimIndent()
+
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to "ID",
+                KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to serverEmailsJson
+            )
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+            every { gson.fromJson<List<ContactEmail>>(serverEmailsJson, emailListType) } returns contactServerEmails
+
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            assertEquals(CreateContact.CreateContactResult.Success, result.value)
+
+            verify { gson.fromJson(serverEmailsJson, emailListType) }
+            verify { contactsRepository.updateAllContactEmails(contactData.contactId, contactServerEmails) }
         }
     }
 

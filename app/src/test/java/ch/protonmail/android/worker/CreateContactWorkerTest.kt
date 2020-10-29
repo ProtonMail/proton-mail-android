@@ -172,7 +172,7 @@ class CreateContactWorkerTest {
             val expectedResult = Result.success(
                 Data.Builder()
                     .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID, contactId)
-                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED, contactEmailsOutputJson)
+                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON, contactEmailsOutputJson)
                     .build()
             )
 
