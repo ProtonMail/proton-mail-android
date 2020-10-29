@@ -34,9 +34,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
-import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
@@ -48,33 +46,24 @@ import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResul
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.InvalidEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.ServerError
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import timber.log.Timber
 import javax.inject.Inject
 
-internal const val KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID = "keyCreateContactInputDataContactDataDBId"
-internal const val KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED = "keyCreateContactInputDataContactEmails"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA = "keyCreateContactInputDataEncryptedData"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME = "keyCreateContactWorkerResultError"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID = "keyCreateContactWorkerResultServerId"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED = "keyCreateContactWorkerResultEmailsSerialised"
 
-private const val INVALID_CONTACT_DATA_DB_ID = -1L
-
 class CreateContactWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
-    private val contactsDao: ContactsDao,
     private val gson: Gson,
     private val crypto: UserCrypto
 ) : CoroutineWorker(context, params) {
 
 
     override suspend fun doWork(): Result {
-        getContactData() ?: return Result.failure()
-        getContactEmails() ?: return Result.failure()
         val encryptedDataParam = getInputEncryptedData() ?: return Result.failure()
         val signedDataParam = getInputSignedData() ?: return Result.failure()
 
@@ -153,38 +142,6 @@ class CreateContactWorker @WorkerInject constructor(
         return CreateContact(contactEncryptedDataList)
     }
 
-    private fun getContactEmails(): List<ContactEmail>? {
-        val contactEmailsSerialised = getContactEmailsSerialised() ?: return null
-        return deserialize(contactEmailsSerialised)
-    }
-
-    private fun getContactData(): ContactData? {
-        val contactDataDbId = getContactDataDatabaseId()
-        if (contactDataDbId == INVALID_CONTACT_DATA_DB_ID) {
-            return null
-        }
-        return contactsDao.findContactDataByDbId(contactDataDbId)
-    }
-
-    private fun getContactEmailsSerialised() =
-        inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED)
-
-    private fun getContactDataDatabaseId() =
-        inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, INVALID_CONTACT_DATA_DB_ID)
-
-    private fun deserialize(contactEmailsSerialised: String): List<ContactEmail>? {
-        val emailListType: java.lang.reflect.Type = TypeToken.getParameterized(
-            List::class.java, ContactEmail::class.java
-        ).type
-
-        return try {
-            gson.fromJson<List<ContactEmail>>(contactEmailsSerialised, emailListType)
-        } catch (e: Exception) {
-            Timber.w(e)
-            null
-        }
-    }
-
     enum class CreateContactWorkerResult {
         ServerError,
         ContactAlreadyExistsError,
@@ -193,17 +150,11 @@ class CreateContactWorker @WorkerInject constructor(
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
-        fun enqueue(
-            contactData: ContactData,
-            contactEmails: List<ContactEmail>
-        ): LiveData<WorkInfo> {
+        fun enqueue(): LiveData<WorkInfo> {
 
             val createContactRequest = OneTimeWorkRequestBuilder<CreateContactWorker>()
                 .setInputData(
-                    workDataOf(
-                        KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID to contactData,
-                        KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED to contactEmails
-                    )
+                    workDataOf()
                 ).build()
 
             workManager.enqueue(createContactRequest)

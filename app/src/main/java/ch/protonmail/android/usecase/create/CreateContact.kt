@@ -45,7 +45,7 @@ class CreateContact @Inject constructor(
             contactEmails.forEach { it.contactId = contactData.contactId }
             contactsDao.saveAllContactsEmails(contactEmails)
 
-            createContactScheduler.enqueue(contactData, contactEmails)
+            createContactScheduler.enqueue()
                 .filter { it?.state?.isFinished == true }
                 .map { workInfo ->
                     if (workInfo.state == WorkInfo.State.SUCCEEDED) {

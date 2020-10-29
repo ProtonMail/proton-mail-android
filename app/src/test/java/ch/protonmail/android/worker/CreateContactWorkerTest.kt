@@ -27,9 +27,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
-import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
@@ -37,7 +35,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -45,7 +42,6 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
@@ -65,9 +61,6 @@ class CreateContactWorkerTest {
     private lateinit var apiManager: ProtonMailApiManager
 
     @RelaxedMockK
-    private lateinit var contactsDao: ContactsDao
-
-    @RelaxedMockK
     private lateinit var gson: Gson
 
     @RelaxedMockK
@@ -81,11 +74,6 @@ class CreateContactWorkerTest {
 
     private var dispatcherProvider = TestDispatcherProvider
 
-    private val contactEmailsJson = """
-                [{"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID1","Email":"email@proton.com","Defaults":0,"Order":0},
-                {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID2","Email":"secondary@proton.com","Defaults":0,"Order":0}]
-        """.trimIndent()
-
     private val contactEmailsOutputJson = """
         [{"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId","Email":"first@pm.me","Name":"first contact","Defaults":0,"Order":0},
          {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId1","Email":"second@pm.me","Name":"second contact","Defaults":0,"Order":0},
@@ -93,60 +81,10 @@ class CreateContactWorkerTest {
     """.trimIndent()
 
     @Test
-    fun workerFailsWhenRequestedContactDataDatabaseIdParameterIsNotPassed() {
-        runBlockingTest {
-            givenContactEmailsParameterIsValid()
-            every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { -1 }
-
-            val result = worker.doWork()
-
-            assertEquals(Result.failure(), result)
-        }
-    }
-
-    @Test
-    fun workerFailsWhenRequestedContactEmailsSerialisedParameterIsNotPassed() {
-        runBlockingTest {
-            givenContactDataParameterIsValid()
-            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { null }
-
-            val result = worker.doWork()
-
-            assertEquals(Result.failure(), result)
-        }
-    }
-
-    @Test
-    fun workerFailsWhenContactEmailsAreNotDeserializableFromJsonToListOfContactEmail() {
-        runBlockingTest {
-            givenContactDataParameterIsValid()
-            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { "{ invalid json }" }
-
-            val result = worker.doWork()
-
-            assertEquals(Result.failure(), result)
-        }
-    }
-
-    @Test
-    fun workerReadsContactDataFromDbUsingIdPassedAsParameter() {
-        runBlockingTest {
-            val contactDataDbId = 123L
-            every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
-
-            worker.doWork()
-
-            verify { contactsDao.findContactDataByDbId(contactDataDbId) }
-        }
-    }
-
-    @Test
     fun workerInvokesCreateContactEndpointWithEncryptedContactData() {
         runBlockingTest {
             val encryptedContactData = "encrypted-data"
             val signedContactData = "signed-data"
-            givenContactDataParameterIsValid()
-            givenContactEmailsParameterIsValid()
             givenEncryptedContactDataParamsIsValid(encryptedContactData)
             givenSignedContactDataParamsIsValid(signedContactData)
             coEvery { apiManager.createContact(any()) } answers { apiResponse }
@@ -274,8 +212,6 @@ class CreateContactWorkerTest {
 
 
     private fun givenAllInputParametersAreValid() {
-        givenContactDataParameterIsValid()
-        givenContactEmailsParameterIsValid()
         givenEncryptedContactDataParamsIsValid()
         givenSignedContactDataParamsIsValid()
     }
@@ -288,24 +224,4 @@ class CreateContactWorkerTest {
         every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
     }
 
-    private fun givenContactDataParameterIsValid() {
-        val contactDataDbId = 123L
-        val contactData = ContactData("contactDataId", "name")
-
-        every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
-        every { contactsDao.findContactDataByDbId(contactDataDbId) } answers { contactData }
-    }
-
-    private fun givenContactEmailsParameterIsValid() {
-        val deserialisedContactEmails = listOf(
-            ContactEmail("ID1", "email@proton.com", "Tom"),
-            ContactEmail("ID2", "secondary@proton.com", "Mike")
-        )
-        val emailListType = TypeToken.getParameterized(
-            List::class.java, ContactEmail::class.java
-        ).type
-
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { contactEmailsJson }
-        every { gson.fromJson<List<ContactEmail>>(contactEmailsJson, emailListType) } answers { deserialisedContactEmails }
-    }
 }

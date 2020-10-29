@@ -97,7 +97,7 @@ class CreateContactTest {
             val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
             val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
             val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
-            verify { createContactScheduler.enqueue(contactData, expectedContactEmails) }
+            verify { createContactScheduler.enqueue() }
         }
     }
 
@@ -110,7 +110,7 @@ class CreateContactTest {
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED)
-            every { createContactScheduler.enqueue(any(), any()) } returns workerStatusLiveData
+            every { createContactScheduler.enqueue() } returns workerStatusLiveData
 
             val result = createContact(contactData, contactEmails)
             result.observeForever { }
@@ -128,7 +128,7 @@ class CreateContactTest {
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED)
-            every { createContactScheduler.enqueue(any(), any()) } returns workerStatusLiveData
+            every { createContactScheduler.enqueue() } returns workerStatusLiveData
 
             val result = createContact(contactData, contactEmails)
             result.observeForever { }
@@ -146,7 +146,7 @@ class CreateContactTest {
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.ENQUEUED)
-            every { createContactScheduler.enqueue(any(), any()) } returns workerStatusLiveData
+            every { createContactScheduler.enqueue() } returns workerStatusLiveData
 
             val result = createContact(contactData, contactEmails)
             result.observeForever { }
