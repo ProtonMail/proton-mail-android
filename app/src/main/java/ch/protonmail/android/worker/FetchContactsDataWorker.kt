@@ -38,6 +38,8 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
 
+private const val MAX_RETRY_COUNT = 3
+
 /**
  * Work Manager Worker responsible for fetching contacts.
  *
@@ -53,6 +55,8 @@ class FetchContactsDataWorker @WorkerInject constructor(
     private val contactsDao: ContactsDao,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
+
+    var retryCount = 0
 
     override suspend fun doWork(): Result =
         runCatching {
@@ -82,9 +86,19 @@ class FetchContactsDataWorker @WorkerInject constructor(
                 Result.success()
             },
             onFailure = {
-                failure(it)
+                shouldReRunOnThrowable(it)
             }
         )
+
+    private fun shouldReRunOnThrowable(throwable: Throwable): Result =
+        if (retryCount < MAX_RETRY_COUNT) {
+            ++retryCount
+            Timber.d(throwable, "Fetch Contacts Worker failure, retrying count:$retryCount")
+            Result.retry()
+        } else {
+            retryCount = 0
+            failure(throwable)
+        }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         fun enqueue(): LiveData<WorkInfo> {
