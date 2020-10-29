@@ -21,12 +21,14 @@ package ch.protonmail.android.usecase.create
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import androidx.work.Data
 import androidx.work.WorkInfo
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -50,16 +52,25 @@ class CreateContact @Inject constructor(
 
             createContactScheduler.enqueue(encryptedContactData, signedContactData)
                 .filter { it?.state?.isFinished == true }
-                .map { workInfo ->
-                    if (workInfo.state == WorkInfo.State.SUCCEEDED) {
-                        CreateContactResult.Success
-                    } else {
-                        CreateContactResult.Error
-                    }
-
-                }
+                .map { handleWorkResult(it, contactData) }
         }
 
+    }
+
+    private fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): CreateContactResult {
+        val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
+
+        if (workSucceeded) {
+            updateLocalContactData(workInfo.outputData, contactData)
+            return CreateContactResult.Success
+        }
+
+        return CreateContactResult.Error
+    }
+
+    private fun updateLocalContactData(outputData: Data, contactData: ContactData) {
+        val contactServerId = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID)
+        contactsRepository.updateContactDataWithServerId(contactData, contactServerId!!)
     }
 
     sealed class CreateContactResult {

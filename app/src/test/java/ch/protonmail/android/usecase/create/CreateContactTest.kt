@@ -21,12 +21,14 @@ package ch.protonmail.android.usecase.create
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
+import androidx.work.Data
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.worker.CreateContactWorker
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -93,19 +95,6 @@ class CreateContactTest {
     }
 
     @Test
-    fun createContactReturnsSuccessWhenContactCreationThroughNetworkSucceeds() {
-        runBlockingTest {
-            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED)
-            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
-
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
-            result.observeForever { }
-
-            assertEquals(CreateContact.CreateContactResult.Success, result.value)
-        }
-    }
-
-    @Test
     fun createContactReturnsErrorWhenContactCreationThroughNetworkFails() {
         runBlockingTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED)
@@ -131,12 +120,30 @@ class CreateContactTest {
         }
     }
 
-    private fun buildCreateContactWorkerResponse(endState: WorkInfo.State): MutableLiveData<WorkInfo> {
-        val outputData = workDataOf()
+    @Test
+    fun createContactSavesContactDataWithServerIdWhenContactCreationThroughNetworkSucceeds() {
+        runBlockingTest {
+            val contactServerId = "contactServerId"
+            val workOutputData = workDataOf(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to contactServerId)
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            assertEquals(CreateContact.CreateContactResult.Success, result.value)
+            verify { contactsRepository.updateContactDataWithServerId(contactData, contactServerId) }
+        }
+    }
+
+    private fun buildCreateContactWorkerResponse(
+        endState: WorkInfo.State,
+        outputData: Data? = workDataOf()
+    ): MutableLiveData<WorkInfo> {
         val workInfo = WorkInfo(
             UUID.randomUUID(),
             endState,
-            outputData,
+            outputData!!,
             emptyList(),
             outputData,
             0

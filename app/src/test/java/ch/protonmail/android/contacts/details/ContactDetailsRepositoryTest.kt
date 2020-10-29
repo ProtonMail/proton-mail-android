@@ -21,9 +21,11 @@ package ch.protonmail.android.contacts.details
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import com.birbit.android.jobqueue.JobManager
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
@@ -59,5 +61,19 @@ class ContactDetailsRepositoryTest {
         repository.saveContactEmails(emails)
 
         verify { contactsDao.saveAllContactsEmails(emails) }
+    }
+
+    @Test
+    fun updateContactDataWithServerIdReadsContactFromDbAndSavesItBackWithServerId() {
+        val contactDbId = 782L
+        val contactData = ContactData("contactDataId", "name").apply { dbId = contactDbId }
+        val contactServerId = "serverId"
+        every { contactsDao.findContactDataByDbId(contactDbId) } returns contactData
+
+        repository.updateContactDataWithServerId(contactData, contactServerId)
+
+        verify { contactsDao.findContactDataByDbId(contactDbId) }
+        val expectedContactData = contactData.copy(contactId = contactServerId)
+        verify { contactsDao.saveContactData(expectedContactData) }
     }
 }

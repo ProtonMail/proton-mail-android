@@ -23,6 +23,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.makeInt
+import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
@@ -147,5 +148,12 @@ open class ContactDetailsRepository @Inject constructor(
 
     fun saveContactEmails(emails: List<ContactEmail>) {
         contactsDao.saveAllContactsEmails(emails)
+    }
+
+    fun updateContactDataWithServerId(contactDataInDb: ContactData, contactServerId: String) {
+        contactsDao.findContactDataByDbId(contactDataInDb.dbId ?: -1)?.let {
+            it.contactId = contactServerId
+            contactsDao.saveContactData(it)
+        }
     }
 }
