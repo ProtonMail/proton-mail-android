@@ -410,13 +410,7 @@ internal class MessageDetailsActivity :
                 }
             }
             R.id.action_report_phishing -> showReportPhishingDialog(message)
-            R.id.action_print -> {
-                MessagePrinter(
-                    primaryBaseActivity,
-                    primaryBaseActivity.resources,
-                    primaryBaseActivity.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                ).printMessage(message!!, viewModel.bodyString ?: "")
-            }
+            R.id.action_print -> viewModel.printMessage(primaryBaseActivity)
         }
         if (job != null) {
             mJobManager.addJobInBackground(job)

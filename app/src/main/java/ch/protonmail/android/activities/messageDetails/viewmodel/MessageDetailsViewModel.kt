@@ -19,6 +19,8 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
+import android.content.res.Resources
+import android.print.PrintManager
 import android.util.Pair
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
@@ -31,6 +33,7 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
+import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -580,6 +583,18 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun deleteMessage(messageId: String) {
         viewModelScope.launch {
             deleteMessageUseCase(listOf(messageId))
+        }
+    }
+
+    fun printMessage(context: Context) {
+        val message = message.value
+        message?.let {
+            MessagePrinter(
+                context,
+                context.resources,
+                context.getSystemService(Context.PRINT_SERVICE) as PrintManager,
+                remoteContentDisplayed
+            ).printMessage(it, this.bodyString ?: "")
         }
     }
 }
