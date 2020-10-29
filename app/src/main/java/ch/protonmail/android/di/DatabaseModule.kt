@@ -28,66 +28,57 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
+import ch.protonmail.android.core.UserManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
-    @Singleton
+    @Named("messages_factory")
+    fun provideMessagesDatabaseFactory(context: Context, userManager: UserManager): MessagesDatabaseFactory =
+        MessagesDatabaseFactory.getInstance(context, userManager.username)
+
+    @Provides
     @Named("messages")
     fun provideMessagesDatabase(
         @Named("messages_factory") messagesDatabaseFactory: MessagesDatabaseFactory
     ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
 
     @Provides
-    @Singleton
-    @Named("messages_factory")
-    fun provideMessagesDatabaseFactory(context: Context): MessagesDatabaseFactory =
-        MessagesDatabaseFactory.getInstance(context)
-
-    @Provides
-    @Singleton
     @Named("messages_search")
     fun provideSearchMessagesDatabase(
         @Named("messages_search_factory") messagesDatabaseFactory: MessagesDatabaseFactory
     ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
 
     @Provides
-    @Singleton
     @Named("messages_search_factory")
     fun provideSearchMessagesDatabaseFactory(context: Context): MessagesDatabaseFactory =
         MessagesDatabaseFactory.getSearchDatabase(context)
 
     @Provides
-    @Singleton
     fun providePendingActionsDatabase(
         pendingActionsDatabaseFactory: PendingActionsDatabaseFactory
     ): PendingActionsDatabase = pendingActionsDatabaseFactory.getDatabase()
 
     @Provides
-    @Singleton
-    fun providePendingActionsDatabaseFactory(context: Context): PendingActionsDatabaseFactory =
-        PendingActionsDatabaseFactory.getInstance(context)
+    fun providePendingActionsDatabaseFactory(context: Context, userManager: UserManager) =
+        PendingActionsDatabaseFactory.getInstance(context, userManager.username)
 
     @Provides
-    @Singleton
-    fun provideAttachmentMetadataDatabase(context: Context): AttachmentMetadataDatabase =
-        AttachmentMetadataDatabaseFactory.getInstance(context).getDatabase()
+    fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDatabase =
+        AttachmentMetadataDatabaseFactory.getInstance(context, userManager.username).getDatabase()
 
     @Provides
-    @Singleton
-    fun provideContactsDatabaseFactory(context: Context): ContactsDatabaseFactory =
-        ContactsDatabaseFactory.getInstance(context)
+    fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactsDatabaseFactory =
+        ContactsDatabaseFactory.getInstance(context, userManager.username)
 
     @Provides
-    @Singleton
     fun provideContactsDatabase(factory: ContactsDatabaseFactory): ContactsDatabase =
         factory.getDatabase()
 }

@@ -87,7 +87,23 @@ class FetchContactsDataWorkerTest {
 
 
     @Test
-    fun verityThatWhenExceptionIsThrownFalseResultIsReturned() =
+    fun verityThatWhenExceptionIsThrownJustOnceRetryResultIsReturned() =
+        runBlockingTest {
+            // given
+            val exceptionMessage = "testException"
+            val testException = Exception(exceptionMessage)
+            coEvery { api.fetchContacts(0, Constants.CONTACTS_PAGE_SIZE) } throws testException
+            val expected = ListenableWorker.Result.retry()
+
+            // when
+            val operationResult = worker.doWork()
+
+            // then
+            assertEquals(expected, operationResult)
+        }
+
+    @Test
+    fun verityThatWhenExceptionIsThrownFalseResultIsReturnedAfterMoreThanThreeFailures() =
         runBlockingTest {
             // given
             val exceptionMessage = "testException"
@@ -96,6 +112,9 @@ class FetchContactsDataWorkerTest {
             val expected = ListenableWorker.Result.failure(WorkerError(exceptionMessage).toWorkData())
 
             // when
+            worker.doWork()
+            worker.doWork()
+            worker.doWork()
             val operationResult = worker.doWork()
 
             // then

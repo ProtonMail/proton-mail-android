@@ -49,7 +49,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.File
 import java.io.InputStream
@@ -92,7 +91,7 @@ object ApplicationModule {
     @CurrentUsername
     fun currentUserUsername(
         @DefaultSharedPreferences prefs: SharedPreferences
-    ): String = prefs[PREF_USERNAME]!!
+    ): String = requireNotNull(prefs.getString(PREF_USERNAME, ""))
 
     @Provides
     @Singleton
@@ -137,9 +136,8 @@ object ApplicationModule {
 
     @Provides
     fun mailSettings(
-        userManager: UserManager,
-        @CurrentUsername username: String
-    ) = userManager.getMailSettings(username)
+        userManager: UserManager
+    ) = userManager.mailSettings
 
     @Provides
     @Singleton
