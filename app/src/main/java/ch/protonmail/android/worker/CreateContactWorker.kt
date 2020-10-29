@@ -31,12 +31,19 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
+import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.ContactAlreadyExistsError
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.InvalidEmailError
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.ServerError
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import timber.log.Timber
@@ -46,6 +53,9 @@ internal const val KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID = "keyCreateContactI
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED = "keyCreateContactInputDataContactEmails"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA = "keyCreateContactInputDataEncryptedData"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"
+internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME = "keyCreateContactWorkerResultError"
+internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID = "keyCreateContactWorkerResultServerId"
+internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED = "keyCreateContactWorkerResultEmailsSerialised"
 
 private const val INVALID_CONTACT_DATA_DB_ID = -1L
 
@@ -60,15 +70,54 @@ class CreateContactWorker @WorkerInject constructor(
 
 
     override suspend fun doWork(): Result {
-        val contactData = getContactData() ?: return Result.failure()
-        val contactEmails = getContactEmails() ?: return Result.failure()
+        getContactData() ?: return Result.failure()
+        getContactEmails() ?: return Result.failure()
         val encryptedDataParam = getInputEncryptedData() ?: return Result.failure()
         val signedDataParam = getInputSignedData() ?: return Result.failure()
 
-        val body = createContactRequestBody(encryptedDataParam, signedDataParam)
-        apiManager.createContact(body)
+        val apiRequest = createContactRequestBody(encryptedDataParam, signedDataParam)
+        val apiResponse = apiManager.createContact(apiRequest)
+
+        if (apiResponse?.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
+            return failureWithError(ServerError)
+        }
+
+        if (apiResponse.contactId.isNotEmpty()) {
+            val contactEmails: List<ContactEmail> = apiResponse.responses.flatMap {
+                it.response.contact.emails ?: emptyList()
+            }
+
+            val jsonContactEmails = gson.toJson(contactEmails)
+
+            val outputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
+                KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED to jsonContactEmails
+            )
+            return Result.success(outputData)
+        }
+
+
+        if (isContactAlreadyExistsError(apiResponse)) {
+            return failureWithError(ContactAlreadyExistsError)
+        }
+
+        if (isInvalidEmailError(apiResponse)) {
+            return failureWithError(InvalidEmailError)
+        }
 
         return Result.success()
+    }
+
+    private fun isInvalidEmailError(apiResponse: ContactResponse) =
+        apiResponse.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL
+
+    private fun isContactAlreadyExistsError(apiResponse: ContactResponse) =
+        apiResponse.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_EXIST || apiResponse
+            .responseErrorCode == RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
+
+    private fun failureWithError(error: CreateContactWorkerResult): Result {
+        val errorData = workDataOf(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME to error.name)
+        return Result.failure(errorData)
     }
 
     private fun getInputSignedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
@@ -120,6 +169,12 @@ class CreateContactWorker @WorkerInject constructor(
             Timber.w(e)
             null
         }
+    }
+
+    enum class CreateContactWorkerResult {
+        ServerError,
+        ContactAlreadyExistsError,
+        InvalidEmailError
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {

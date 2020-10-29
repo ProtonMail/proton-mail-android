@@ -20,33 +20,39 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.work.Data
 import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
+import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-
+@ExtendWith(MockKExtension::class)
 class CreateContactWorkerTest {
-
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -66,6 +72,9 @@ class CreateContactWorkerTest {
     @RelaxedMockK
     private lateinit var crypto: UserCrypto
 
+    @RelaxedMockK
+    private lateinit var apiResponse: ContactResponse
+
     @InjectMockKs
     private lateinit var worker: CreateContactWorker
 
@@ -76,14 +85,16 @@ class CreateContactWorkerTest {
                 {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID2","Email":"secondary@proton.com","Defaults":0,"Order":0}]
         """.trimIndent()
 
-    @BeforeEach
-    fun setUp() {
-        MockKAnnotations.init(this)
-    }
+    private val contactEmailsOutputJson = """
+        [{"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId","Email":"first@pm.me","Name":"first contact","Defaults":0,"Order":0},
+         {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId1","Email":"second@pm.me","Name":"second contact","Defaults":0,"Order":0},
+         {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId2","Email":"third@pm.me","Name":"third contact","Defaults":0,"Order":0}]
+    """.trimIndent()
 
     @Test
     fun workerFailsWhenRequestedContactDataDatabaseIdParameterIsNotPassed() {
         runBlockingTest {
+            givenContactEmailsParameterIsValid()
             every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { -1 }
 
             val result = worker.doWork()
@@ -95,6 +106,7 @@ class CreateContactWorkerTest {
     @Test
     fun workerFailsWhenRequestedContactEmailsSerialisedParameterIsNotPassed() {
         runBlockingTest {
+            givenContactDataParameterIsValid()
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { null }
 
             val result = worker.doWork()
@@ -106,6 +118,7 @@ class CreateContactWorkerTest {
     @Test
     fun workerFailsWhenContactEmailsAreNotDeserializableFromJsonToListOfContactEmail() {
         runBlockingTest {
+            givenContactDataParameterIsValid()
             every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { "{ invalid json }" }
 
             val result = worker.doWork()
@@ -129,11 +142,13 @@ class CreateContactWorkerTest {
     @Test
     fun workerInvokesCreateContactEndpointWithEncryptedContactData() {
         runBlockingTest {
-            givenParametersValidationSucceeds()
             val encryptedContactData = "encrypted-data"
             val signedContactData = "signed-data"
-            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) } answers { encryptedContactData }
-            every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData }
+            givenContactDataParameterIsValid()
+            givenContactEmailsParameterIsValid()
+            givenEncryptedContactDataParamsIsValid(encryptedContactData)
+            givenSignedContactDataParamsIsValid(signedContactData)
+            coEvery { apiManager.createContact(any()) } answers { apiResponse }
 
             worker.doWork()
 
@@ -148,8 +163,124 @@ class CreateContactWorkerTest {
         }
     }
 
-    private fun givenParametersValidationSucceeds() {
+    @Test
+    fun workerReturnsErrorWhenContactCreationOnApiFails() {
+        runBlockingTest {
+            givenAllInputParametersAreValid()
+            every { apiResponse.code } returns 500
+            coEvery { apiManager.createContact(any()) } answers { apiResponse }
+
+            val result = worker.doWork()
+
+            val error = CreateContactWorkerResult.ServerError
+            val expectedFailure = Result.failure(
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+            )
+            assertEquals(expectedFailure, result)
+        }
+    }
+
+    @Test
+    fun workerReturnsServerContactIdAndAllResponsesContactEmailsSerialisedWhenApiCallSucceedsRetuningNonEmptyContactId() {
+        runBlockingTest {
+            val contactId = "serverContactId"
+            val serverContactEmails = listOf(ContactEmail("emailId", "first@pm.me", "first contact"))
+            val serverContactEmails1 = listOf(
+                ContactEmail("emailId1", "second@pm.me", "second contact"),
+                ContactEmail("emailId2", "third@pm.me", "third contact")
+            )
+            val expectedContactEmails = serverContactEmails.union(serverContactEmails1).toList()
+            val responses = mockk<ContactResponse.Responses> {
+                every { response.contact.emails } returns serverContactEmails
+            }
+            val responses1 = mockk<ContactResponse.Responses> {
+                every { response.contact.emails } returns serverContactEmails1
+            }
+            val responsesList = listOf(responses, responses1)
+            givenAllInputParametersAreValid()
+            every { apiResponse.code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
+            every { apiResponse.contactId } returns contactId
+            every { apiResponse.responses } returns responsesList
+            coEvery { apiManager.createContact(any()) } answers { apiResponse }
+            every { gson.toJson(expectedContactEmails) } returns contactEmailsOutputJson
+
+            val result = worker.doWork()
+
+            val expectedResult = Result.success(
+                Data.Builder()
+                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID, contactId)
+                    .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED, contactEmailsOutputJson)
+                    .build()
+            )
+
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun workerReturnsContactAlreadyExistsErrorWhenApiReturnsEmptyServerContactIdAndContactAlreadyExistsErrorCode() {
+        runBlockingTest {
+            givenAllInputParametersAreValid()
+            every { apiResponse.code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
+            every { apiResponse.responseErrorCode } returns RESPONSE_CODE_ERROR_EMAIL_EXIST
+            coEvery { apiManager.createContact(any()) } answers { apiResponse }
+
+            val result = worker.doWork()
+
+            val error = CreateContactWorkerResult.ContactAlreadyExistsError
+            val expectedFailure = Result.failure(
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+            )
+            assertEquals(expectedFailure, result)
+        }
+    }
+
+    @Test
+    fun workerReturnsInvalidEmailErrorWhenApiReturnsEmptyServerContactIdAndInvalidEmailErrorCode() {
+        runBlockingTest {
+            givenAllInputParametersAreValid()
+            every { apiResponse.code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
+            every { apiResponse.responseErrorCode } returns RESPONSE_CODE_ERROR_INVALID_EMAIL
+            coEvery { apiManager.createContact(any()) } answers { apiResponse }
+
+            val result = worker.doWork()
+
+            val error = CreateContactWorkerResult.InvalidEmailError
+            val expectedFailure = Result.failure(
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+            )
+            assertEquals(expectedFailure, result)
+        }
+    }
+
+    private fun givenAllInputParametersAreValid() {
+        givenContactDataParameterIsValid()
+        givenContactEmailsParameterIsValid()
+        givenEncryptedContactDataParamsIsValid()
+        givenSignedContactDataParamsIsValid()
+    }
+
+    private fun givenEncryptedContactDataParamsIsValid(
+        encryptedContactData: String? = "encrypted-data"
+    ) {
+        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) } answers { encryptedContactData!! }
+    }
+
+    private fun givenSignedContactDataParamsIsValid(
+        signedContactData: String? = "signed-data"
+    ) {
+        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
+    }
+
+    private fun givenContactDataParameterIsValid() {
         val contactDataDbId = 123L
+        val contactData = ContactData("contactDataId", "name")
+
+        every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
+        every { contactsDao.findContactDataByDbId(contactDataDbId) } answers { contactData }
+    }
+
+    private fun givenContactEmailsParameterIsValid() {
         val deserialisedContactEmails = listOf(
             ContactEmail("ID1", "email@proton.com", "Tom"),
             ContactEmail("ID2", "secondary@proton.com", "Mike")
@@ -157,10 +288,8 @@ class CreateContactWorkerTest {
         val emailListType = TypeToken.getParameterized(
             List::class.java, ContactEmail::class.java
         ).type
-        val contactData = ContactData("contactDataId", "name")
+
         every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED) } answers { contactEmailsJson }
-        every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_CONTACT_DATA_DB_ID, -1) } answers { contactDataDbId }
         every { gson.fromJson<List<ContactEmail>>(contactEmailsJson, emailListType) } answers { deserialisedContactEmails }
-        every { contactsDao.findContactDataByDbId(contactDataDbId) } answers { contactData }
     }
 }
