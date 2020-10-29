@@ -30,6 +30,7 @@ import ch.protonmail.android.api.models.CreateContact
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
@@ -253,6 +254,25 @@ class CreateContactWorkerTest {
         }
     }
 
+    @Test
+    fun workerReturnsDuplicatedEmailErrorWhenApiReturnsEmptyServerContactIdAndDuplicatedEmailErrorCode() {
+        runBlockingTest {
+            givenAllInputParametersAreValid()
+            every { apiResponse.code } returns Constants.RESPONSE_CODE_MULTIPLE_OK
+            every { apiResponse.responseErrorCode } returns RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
+            coEvery { apiManager.createContact(any()) } answers { apiResponse }
+
+            val result = worker.doWork()
+
+            val error = CreateContactWorkerResult.DuplicatedEmailError
+            val expectedFailure = Result.failure(
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+            )
+            assertEquals(expectedFailure, result)
+        }
+    }
+
+
     private fun givenAllInputParametersAreValid() {
         givenContactDataParameterIsValid()
         givenContactEmailsParameterIsValid()
@@ -260,15 +280,11 @@ class CreateContactWorkerTest {
         givenSignedContactDataParamsIsValid()
     }
 
-    private fun givenEncryptedContactDataParamsIsValid(
-        encryptedContactData: String? = "encrypted-data"
-    ) {
+    private fun givenEncryptedContactDataParamsIsValid(encryptedContactData: String? = "encrypted-data") {
         every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) } answers { encryptedContactData!! }
     }
 
-    private fun givenSignedContactDataParamsIsValid(
-        signedContactData: String? = "signed-data"
-    ) {
+    private fun givenSignedContactDataParamsIsValid(signedContactData: String? = "signed-data") {
         every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
     }
 

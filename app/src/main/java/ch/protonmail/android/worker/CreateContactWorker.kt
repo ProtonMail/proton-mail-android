@@ -38,11 +38,13 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.ContactAlreadyExistsError
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.DuplicatedEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.InvalidEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.ServerError
 import com.google.gson.Gson
@@ -96,8 +98,23 @@ class CreateContactWorker @WorkerInject constructor(
             return failureWithError(InvalidEmailError)
         }
 
+        if (isDuplicatedEmailError(apiResponse)) {
+            return failureWithError(DuplicatedEmailError)
+        }
+
         return Result.success()
     }
+
+
+    private fun isDuplicatedEmailError(apiResponse: ContactResponse) =
+        apiResponse.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
+
+    private fun isInvalidEmailError(apiResponse: ContactResponse) =
+        apiResponse.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL
+
+    private fun isContactAlreadyExistsError(apiResponse: ContactResponse) =
+        apiResponse.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_EXIST || apiResponse
+            .responseErrorCode == RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
 
     private fun contactIdAndEmailsOutputData(apiResponse: ContactResponse): Data {
         val contactEmails: List<ContactEmail> = apiResponse.responses.flatMap {
@@ -106,19 +123,11 @@ class CreateContactWorker @WorkerInject constructor(
 
         val jsonContactEmails = gson.toJson(contactEmails)
 
-        val outputData = workDataOf(
+        return workDataOf(
             KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
             KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_SERIALISED to jsonContactEmails
         )
-        return outputData
     }
-
-    private fun isInvalidEmailError(apiResponse: ContactResponse) =
-        apiResponse.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL
-
-    private fun isContactAlreadyExistsError(apiResponse: ContactResponse) =
-        apiResponse.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_EXIST || apiResponse
-            .responseErrorCode == RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
 
     private fun failureWithError(error: CreateContactWorkerResult): Result {
         val errorData = workDataOf(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME to error.name)
@@ -179,7 +188,8 @@ class CreateContactWorker @WorkerInject constructor(
     enum class CreateContactWorkerResult {
         ServerError,
         ContactAlreadyExistsError,
-        InvalidEmailError
+        InvalidEmailError,
+        DuplicatedEmailError
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
