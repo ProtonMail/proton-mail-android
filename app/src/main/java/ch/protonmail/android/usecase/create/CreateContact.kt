@@ -39,13 +39,15 @@ class CreateContact @Inject constructor(
 
     suspend operator fun invoke(
         contactData: ContactData,
-        contactEmails: List<ContactEmail>
+        contactEmails: List<ContactEmail>,
+        encryptedContactData: String,
+        signedContactData: String
     ): LiveData<CreateContactResult> =
         withContext(dispatcherProvider.Io) {
             contactEmails.forEach { it.contactId = contactData.contactId }
             contactsDao.saveAllContactsEmails(contactEmails)
 
-            createContactScheduler.enqueue()
+            createContactScheduler.enqueue(encryptedContactData, signedContactData)
                 .filter { it?.state?.isFinished == true }
                 .map { workInfo ->
                     if (workInfo.state == WorkInfo.State.SUCCEEDED) {

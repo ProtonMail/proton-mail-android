@@ -22,6 +22,8 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.Data
 import androidx.work.ListenableWorker.Result
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
@@ -42,6 +44,8 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
@@ -69,6 +73,9 @@ class CreateContactWorkerTest {
     @RelaxedMockK
     private lateinit var apiResponse: ContactResponse
 
+    @RelaxedMockK
+    private lateinit var workManager: WorkManager
+
     @InjectMockKs
     private lateinit var worker: CreateContactWorker
 
@@ -79,6 +86,23 @@ class CreateContactWorkerTest {
          {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId1","Email":"second@pm.me","Name":"second contact","Defaults":0,"Order":0},
          {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId2","Email":"third@pm.me","Name":"third contact","Defaults":0,"Order":0}]
     """.trimIndent()
+
+    @Test
+    fun enqueuerSchedulesCreateContactWorkSettingTheInputParamsCorrectly() {
+        val encryptedData = "encrypted contact data"
+        val signedData = "signed contact data"
+        val requestSlot = slot<OneTimeWorkRequest>()
+        every { workManager.enqueue(capture(requestSlot)) } answers { mockk() }
+
+        CreateContactWorker.Enqueuer(workManager).enqueue(encryptedData, signedData)
+
+        val inputData = requestSlot.captured.workSpec.input
+        val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA)
+        val actualSignedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
+        assertEquals(encryptedData, actualEncryptedData)
+        assertEquals(signedData, actualSignedData)
+        verify { workManager.getWorkInfoByIdLiveData(any()) }
+    }
 
     @Test
     fun workerInvokesCreateContactEndpointWithEncryptedContactData() {

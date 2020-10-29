@@ -68,13 +68,15 @@ class CreateContactTest {
     @Test
     fun createContactSavesContactEmailsWithContactIdInDatabase() {
         runBlockingTest {
+            val encryptedData = "encryptedContactData"
+            val signedData = "signedContactData"
             val contactData = ContactData("contactDataId", "name")
             val contactEmails = listOf(
                 ContactEmail("ID1", "email@proton.com", "Tom"),
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
 
-            createContact(contactData, contactEmails)
+            createContact(contactData, contactEmails, encryptedData, signedData)
 
             val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
             val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
@@ -86,33 +88,37 @@ class CreateContactTest {
     @Test
     fun createContactScheduleWorkerToCreateContactsThroughNetwork() {
         runBlockingTest {
+            val encryptedData = "encryptedContactData"
+            val signedData = "signedContactData"
             val contactData = ContactData("contactDataId", "name")
             val contactEmails = listOf(
                 ContactEmail("ID1", "email@proton.com", "Tom"),
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
 
-            createContact(contactData, contactEmails)
+            createContact(contactData, contactEmails, encryptedData, signedData)
 
             val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
             val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
             val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
-            verify { createContactScheduler.enqueue() }
+            verify { createContactScheduler.enqueue(encryptedData, signedData) }
         }
     }
 
     @Test
     fun createContactReturnsSuccessWhenContactCreationThroughNetworkSucceeds() {
         runBlockingTest {
+            val encryptedData = "encryptedContactData"
+            val signedData = "signedContactData"
             val contactData = ContactData("contactDataId", "name")
             val contactEmails = listOf(
                 ContactEmail("ID1", "email@proton.com", "Tom"),
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED)
-            every { createContactScheduler.enqueue() } returns workerStatusLiveData
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
 
-            val result = createContact(contactData, contactEmails)
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(CreateContact.CreateContactResult.Success, result.value)
@@ -122,15 +128,17 @@ class CreateContactTest {
     @Test
     fun createContactReturnsErrorWhenContactCreationThroughNetworkFails() {
         runBlockingTest {
+            val encryptedData = "encryptedContactData"
+            val signedData = "signedContactData"
             val contactData = ContactData("contactDataId", "name")
             val contactEmails = listOf(
                 ContactEmail("ID1", "email@proton.com", "Tom"),
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED)
-            every { createContactScheduler.enqueue() } returns workerStatusLiveData
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
 
-            val result = createContact(contactData, contactEmails)
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(CreateContact.CreateContactResult.Error, result.value)
@@ -140,15 +148,17 @@ class CreateContactTest {
     @Test
     fun createContactDoesNotEmitAnyValuesWhenContactCreationThroughNetworkIsPending() {
         runBlockingTest {
+            val encryptedData = "encryptedContactData"
+            val signedData = "signedContactData"
             val contactData = ContactData("contactDataId", "name")
             val contactEmails = listOf(
                 ContactEmail("ID1", "email@proton.com", "Tom"),
                 ContactEmail("ID2", "secondary@proton.com", "Mike")
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.ENQUEUED)
-            every { createContactScheduler.enqueue() } returns workerStatusLiveData
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
 
-            val result = createContact(contactData, contactEmails)
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(null, result.value)

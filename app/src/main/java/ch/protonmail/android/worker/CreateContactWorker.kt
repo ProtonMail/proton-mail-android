@@ -150,15 +150,19 @@ class CreateContactWorker @WorkerInject constructor(
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
-        fun enqueue(): LiveData<WorkInfo> {
 
+        fun enqueue(encryptedContactData: String, signedContactData: String): LiveData<WorkInfo> {
             val createContactRequest = OneTimeWorkRequestBuilder<CreateContactWorker>()
                 .setInputData(
-                    workDataOf()
+                    workDataOf(
+                        KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA to encryptedContactData,
+                        KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA to signedContactData
+                    )
                 ).build()
 
             workManager.enqueue(createContactRequest)
             return workManager.getWorkInfoByIdLiveData(createContactRequest.id)
         }
+
     }
 }
