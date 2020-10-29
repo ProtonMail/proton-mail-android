@@ -41,7 +41,6 @@ import ch.protonmail.android.utils.AppUtil
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val MAX_RETRY_COUNT = 3
 internal const val KEY_INPUT_USER_NAME = "KeyInputUserName"
 internal const val KEY_INPUT_FCM_REGISTRATION_ID = "KeyInputRegistrationId"
 
@@ -57,8 +56,6 @@ class LogoutWorker @WorkerInject constructor(
     private val accountManager: AccountManager,
     private val userManager: UserManager
 ) : CoroutineWorker(context, params) {
-
-    var retryCount = 0
 
     override suspend fun doWork(): Result =
         runCatching {
@@ -81,8 +78,8 @@ class LogoutWorker @WorkerInject constructor(
                     Timber.w("LogoutWorker called with empty FCM registration token")
                 }
             }
-            accountManager.clear()
             AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
+            accountManager.clear()
 
             // Revoke access token through API
             if (userName.isNotEmpty()) {
@@ -94,17 +91,11 @@ class LogoutWorker @WorkerInject constructor(
             TokenManager.clearInstance(userName)
         }.fold(
             onSuccess = { Result.success() },
-            onFailure = { shouldReRunOnThrowable(it) }
+            onFailure = { throwable ->
+                Timber.d(throwable, "Logout Failure")
+                Result.failure(workDataOf(KEY_WORKER_ERROR_DESCRIPTION to throwable.message))
+            }
         )
-
-    private fun shouldReRunOnThrowable(throwable: Throwable): Result =
-        if (throwable !is IllegalArgumentException && retryCount < MAX_RETRY_COUNT) {
-            ++retryCount
-            Result.retry()
-        } else {
-            retryCount = 0
-            Result.failure(workDataOf(KEY_WORKER_ERROR_DESCRIPTION to throwable.message))
-        }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
