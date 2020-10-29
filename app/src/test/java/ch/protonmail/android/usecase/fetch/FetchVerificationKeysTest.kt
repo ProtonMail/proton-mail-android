@@ -1,0 +1,199 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ *
+ * This file is part of ProtonMail.
+ *
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+
+package ch.protonmail.android.usecase.fetch
+
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.PublicKeyBody
+import ch.protonmail.android.api.models.PublicKeyResponse
+import ch.protonmail.android.api.models.User
+import ch.protonmail.android.api.models.address.Address
+import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.domain.entity.NotBlankString
+import ch.protonmail.android.domain.entity.PgpField
+import ch.protonmail.android.domain.entity.user.AddressKey
+import ch.protonmail.android.domain.entity.user.AddressKeys
+import ch.protonmail.android.utils.crypto.KeyInformation
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.mockk
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
+import org.junit.Before
+import org.junit.Test
+import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.test.Ignore
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+
+class FetchVerificationKeysTest : CoroutinesTest {
+
+    @MockK
+    private lateinit var api: ProtonMailApiManager
+
+    @MockK
+    private lateinit var userManager: UserManager
+
+    @MockK
+    private lateinit var contactsDao: ContactsDao
+
+    lateinit var useCase: FetchVerificationKeys
+
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+        val testUser = mockk<User> {
+            every { id } returns "id"
+            every { toNewUser() } returns mockk()
+            every { toNewUser().addresses } returns mockk()
+            val testAddresses = listOf(mockk<Address>())
+            val primaryKey = mockk<AddressKey> {
+                every {privateKey} returns PgpField.PrivateKey(NotBlankString("privateKey"))
+            }
+            val addressKeys = AddressKeys(
+                primaryKey = primaryKey,
+                keys = listOf(primaryKey)
+            )
+            val newAddresses = mockk<ch.protonmail.android.domain.entity.user.Address> {
+                every { email } returns EmailAddress("testemail@asd.com")
+                every { keys } returns addressKeys
+            }
+            val newTestAddresses = listOf(newAddresses)
+            every { toNewUser().addresses.sorted() } returns newTestAddresses
+            every { getAddresses() } returns CopyOnWriteArrayList(testAddresses)
+        }
+        every { userManager.user } returns testUser
+        every { userManager.username } returns "testUserName"
+        every { userManager.openPgp } returns mockk()
+        useCase = FetchVerificationKeys(api, userManager, contactsDao, TestDispatcherProvider)
+    }
+
+    @Test
+    fun verifyThatContactsAreFetchedCorrectlyFromRemoteApi() = runBlockingTest {
+        // given
+        val testEmail = "testEmail"
+        val testContactId = "contactId"
+        val testContactEmail = mockk<ContactEmail> {
+            every { contactId } returns testContactId
+        }
+        every { contactsDao.findContactEmailByEmail(testEmail) } returns testContactEmail
+        every { contactsDao.insertFullContactDetails(any()) } returns Unit
+        val fullContactDetailsResponse = mockk<FullContactDetailsResponse> {
+            every { contact } returns mockk {
+                every { contactId } returns "contactId"
+                every { name } returns "name"
+                every { uid } returns "uid"
+                every { createTime } returns 0
+                every { modifyTime } returns 0
+                every { size } returns 1
+                every { defaults } returns 1
+                every { encryptedData } returns mutableListOf()
+                every { emails } returns listOf(testContactEmail)
+                every { getPublicKeys(any(), any()) } returns listOf("testKey")
+            }
+        }
+        coEvery { api.fetchContactDetails(testContactId) } returns fullContactDetailsResponse
+        val publicKeyResponse = mockk<PublicKeyResponse> {
+            every { recipientType } returns PublicKeyResponse.RecipientType.INTERNAL
+            every { mimeType } returns "testMimeType"
+            every { keys } returns arrayOf(PublicKeyBody(0, "pubKey"))
+            every { code } returns Constants.RESPONSE_CODE_OK
+            every { hasError() } returns false
+        }
+        coEvery { api.getPublicKeys(testEmail) } returns publicKeyResponse
+        val expected =
+            listOf(
+                KeyInformation(
+                    null,
+                    null,
+                    false,
+                    null,
+                    true
+                )
+            )
+
+        // when
+        val result = useCase.invoke(testEmail)
+
+        // then
+        assertNotNull(result)
+        assertEquals(expected, result)
+    }
+
+    @Ignore
+    @Test
+    fun verifyThatContactsAreDerivedLocally() = runBlockingTest {
+        // given
+        val testEmail = "testemail@asd.com"
+        val testContactId = "contactId"
+        val testContactEmail = mockk<ContactEmail> {
+            every { contactId } returns testContactId
+        }
+        every { contactsDao.findContactEmailByEmail(testEmail) } returns testContactEmail
+        every { contactsDao.insertFullContactDetails(any()) } returns Unit
+        val fullContactDetailsResponse = mockk<FullContactDetailsResponse> {
+            every { contact } returns mockk {
+                every { contactId } returns "contactId"
+                every { name } returns "name"
+                every { uid } returns "uid"
+                every { createTime } returns 0
+                every { modifyTime } returns 0
+                every { size } returns 1
+                every { defaults } returns 1
+                every { encryptedData } returns mutableListOf()
+                every { emails } returns listOf(testContactEmail)
+                every { getPublicKeys(any(), any()) } returns listOf("testKey")
+            }
+        }
+        coEvery { api.fetchContactDetails(testContactId) } returns fullContactDetailsResponse
+        val publicKeyResponse = mockk<PublicKeyResponse> {
+            every { recipientType } returns PublicKeyResponse.RecipientType.INTERNAL
+            every { mimeType } returns "testMimeType"
+            every { keys } returns arrayOf(PublicKeyBody(0, "pubKey"))
+            every { code } returns Constants.RESPONSE_CODE_OK
+            every { hasError() } returns false
+        }
+        coEvery { api.getPublicKeys(testEmail) } returns publicKeyResponse
+        val expected =
+            listOf(
+                KeyInformation(
+                    null,
+                    null,
+                    false,
+                    null,
+                    true
+                )
+            )
+
+        // when
+        val result = useCase.invoke(testEmail)
+
+        // then
+        assertNotNull(result)
+        assertEquals(expected, result)
+    }
+}

@@ -52,11 +52,11 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
-import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -85,6 +85,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     messageRendererFactory: MessageRenderer.Factory,
     private val deleteMessageUseCase: DeleteMessage,
+    private val fetchVerificationKeys: FetchVerificationKeys,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -553,15 +554,17 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             val message = message.value
             message?.let {
                 fetchingPubKeys = true
-                messageDetailsRepository.fetchVerificationKeys(message.senderEmail)
+                viewModelScope.launch {
+                    val result = fetchVerificationKeys(message.senderEmail)
+                    onFetchVerificationKeysEvent(result)
+                }
             }
         }
     }
 
-    @Subscribe
-    fun onFetchVerificationKeysEvent(event: FetchVerificationKeysEvent) {
+    private fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
+        Timber.v("FetchVerificationKeys received $pubKeys")
         val message = message.value
-        val pubKeys = event.keys
         publicKeys.value = pubKeys
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)
