@@ -130,27 +130,7 @@ class LogoutWorkerTest {
         }
 
     @Test
-    fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursRetryWillBeReturned() =
-        runBlockingTest {
-            // given
-            val testUserName = "testUserName"
-            val registrationId = "Id1234"
-            val testException = Exception("TestException")
-            every { parameters.inputData } returns workDataOf()
-            every { userManager.username } returns testUserName
-            every { accountManager.getLoggedInUsers() } returns listOf(testUserName)
-            val expected = ListenableWorker.Result.retry()
-            coEvery { api.unregisterDevice(registrationId) } throws testException
-
-            // when
-            val result = worker.doWork()
-
-            // then
-            assertEquals(expected, result)
-        }
-
-    @Test
-    fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursMoreThanThreeTimesAndFailureIsReturned() =
+    fun verifyThatWhenUserNameIsNotEmptyButAnExceptionOccursFailureWillBeReturned() =
         runBlockingTest {
             // given
             val testUserName = "testUserName"
@@ -166,9 +146,6 @@ class LogoutWorkerTest {
             coEvery { api.unregisterDevice(registrationId) } throws testException
 
             // when
-            worker.doWork()
-            worker.doWork()
-            worker.doWork()
             val result = worker.doWork()
 
             // then
