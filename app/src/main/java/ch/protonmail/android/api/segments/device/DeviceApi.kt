@@ -19,16 +19,13 @@
 package ch.protonmail.android.api.segments.device
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
-import ch.protonmail.android.api.models.RegisterDeviceBody
+import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.segments.BaseApi
-import java.io.IOException
 
 class DeviceApi(private val service: DeviceService) : BaseApi(), DeviceApiSpec {
 
-    @Throws(IOException::class)
-    override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) {
-        service.registerDevice(registerDeviceBody, RetrofitTag(username)).execute()
-    }
+    override suspend fun registerDevice(registerDeviceRequestBody: RegisterDeviceRequestBody, username: String) =
+        service.registerDevice(registerDeviceRequestBody, RetrofitTag(username))
 
     override suspend fun unregisterDevice(deviceToken: String) =
         service.unregisterDevice(deviceToken)

@@ -127,6 +127,7 @@ import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
 import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
@@ -670,6 +671,14 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 }
                 if (previousVersion < FCM_MIGRATION_VERSION) {
                     FcmUtil.setTokenSent(false);
+                }
+                if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
+                    for (String user : loggedInUsers) {
+                        SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
+                        secureSharedPreferencesForUser.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
+                                defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
+                    }
                 }
             }
         } else {
