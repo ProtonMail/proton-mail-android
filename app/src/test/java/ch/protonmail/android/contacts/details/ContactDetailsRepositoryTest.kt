@@ -96,4 +96,13 @@ class ContactDetailsRepositoryTest {
         verify { contactsDao.deleteAllContactsEmails(localContactEmails) }
         verify { contactsDao.saveAllContactsEmails(serverEmails) }
     }
+
+    @Test
+    fun deleteContactDataDeletesContactDataFromDb() {
+        val contactData = ContactData("contactDataId", "name").apply { dbId = 2345L }
+
+        repository.deleteContactData(contactData)
+
+        verify { contactsDao.deleteContactData(contactData) }
+    }
 }

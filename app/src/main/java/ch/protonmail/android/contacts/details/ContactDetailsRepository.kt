@@ -164,4 +164,8 @@ open class ContactDetailsRepository @Inject constructor(
             contactsDao.saveAllContactsEmails(contactServerEmails)
         }
     }
+
+    fun deleteContactData(contactData: ContactData) {
+        contactsDao.deleteContactData(contactData)
+    }
 }

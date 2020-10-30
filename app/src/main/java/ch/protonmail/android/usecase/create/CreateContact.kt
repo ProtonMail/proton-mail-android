@@ -27,8 +27,10 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.utils.extensions.filter
-import ch.protonmail.android.worker.CreateContactWorker
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
+import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -40,7 +42,7 @@ import javax.inject.Inject
 class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val contactsRepository: ContactDetailsRepository,
-    private val createContactScheduler: CreateContactWorker.Enqueuer,
+    private val createContactScheduler: Enqueuer,
     private val gson: Gson
 ) {
 
@@ -70,7 +72,27 @@ class CreateContact @Inject constructor(
             return CreateContactResult.Success
         }
 
-        return CreateContactResult.Error
+        val createContactError = workerErrorToCreateContactResult(workInfo)
+        if (createContactError != CreateContactResult.GenericError) {
+            contactsRepository.deleteContactData(contactData)
+        }
+        return createContactError
+    }
+
+    private fun workerErrorToCreateContactResult(workInfo: WorkInfo) =
+        when (workerErrorEnum(workInfo)) {
+            CreateContactWorkerErrors.ContactAlreadyExistsError -> CreateContactResult.ContactAlreadyExistsError
+            CreateContactWorkerErrors.InvalidEmailError -> CreateContactResult.InvalidEmailError
+            CreateContactWorkerErrors.DuplicatedEmailError -> CreateContactResult.DuplicatedEmailError
+            else -> CreateContactResult.GenericError
+        }
+
+    private fun workerErrorEnum(workInfo: WorkInfo): CreateContactWorkerErrors {
+        val errorString = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM)
+        errorString?.let {
+            return CreateContactWorkerErrors.valueOf(errorString)
+        }
+        return CreateContactWorkerErrors.ServerError
     }
 
     private fun updateLocalContactData(outputData: Data, contactData: ContactData) {
@@ -87,6 +109,9 @@ class CreateContact @Inject constructor(
 
     sealed class CreateContactResult {
         object Success : CreateContactResult()
-        object Error : CreateContactResult()
+        object GenericError : CreateContactResult()
+        object ContactAlreadyExistsError : CreateContactResult()
+        object InvalidEmailError : CreateContactResult()
+        object DuplicatedEmailError : CreateContactResult()
     }
 }

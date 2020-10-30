@@ -29,6 +29,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.worker.CreateContactWorker
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -108,7 +109,7 @@ class CreateContactTest {
             val result = createContact(contactData, contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            assertEquals(CreateContact.CreateContactResult.Error, result.value)
+            assertEquals(CreateContact.CreateContactResult.GenericError, result.value)
         }
     }
 
@@ -173,6 +174,74 @@ class CreateContactTest {
 
             verify { gson.fromJson(serverEmailsJson, emailListType) }
             verify { contactsRepository.updateAllContactEmails(contactData.contactId, contactServerEmails) }
+        }
+    }
+
+    @Test
+    fun createContactMapsWorkerErrorToCreateContactResultWhenWorkerFailsWithAnError() {
+        runBlockingTest {
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to "ContactAlreadyExistsError"
+            )
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            verify { contactsRepository.deleteContactData(contactData) }
+            assertEquals(CreateContact.CreateContactResult.ContactAlreadyExistsError, result.value)
+        }
+    }
+
+    @Test
+    fun createContactMapsInvalidEmailWorkerErrorToCreateContactResultWhenWorkerFailsWithInvalidEmailError() {
+        runBlockingTest {
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to "InvalidEmailError"
+            )
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            verify { contactsRepository.deleteContactData(contactData) }
+            assertEquals(CreateContact.CreateContactResult.InvalidEmailError, result.value)
+        }
+    }
+
+    @Test
+    fun createContactMapsDuplicatedEmailWorkerErrorToCreateContactResultWhenWorkerFailsWithDuplicatedEmailError() {
+        runBlockingTest {
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to "DuplicatedEmailError"
+            )
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            verify { contactsRepository.deleteContactData(contactData) }
+            assertEquals(CreateContact.CreateContactResult.DuplicatedEmailError, result.value)
+        }
+    }
+
+    @Test
+    fun createContactDoesNotDeleteLocalContactDataWhenApiRequestFailsWithServerError() {
+        runBlockingTest {
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to "ServerError"
+            )
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+
+            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            verify(exactly = 0) { contactsRepository.deleteContactData(contactData) }
+            assertEquals(CreateContact.CreateContactResult.GenericError, result.value)
         }
     }
 

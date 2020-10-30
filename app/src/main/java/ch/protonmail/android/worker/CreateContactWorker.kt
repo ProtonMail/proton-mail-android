@@ -41,16 +41,16 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.ContactAlreadyExistsError
-import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.DuplicatedEmailError
-import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.InvalidEmailError
-import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult.ServerError
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ContactAlreadyExistsError
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.DuplicatedEmailError
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.InvalidEmailError
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ServerError
 import com.google.gson.Gson
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA = "keyCreateContactInputDataEncryptedData"
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA = "keyCreateContactInputDataSignedData"
-internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME = "keyCreateContactWorkerResultError"
+internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM = "keyCreateContactWorkerResultError"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID = "keyCreateContactWorkerResultServerId"
 internal const val KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON = "keyCreateContactWorkerResultEmailsSerialised"
 
@@ -115,8 +115,8 @@ class CreateContactWorker @WorkerInject constructor(
         )
     }
 
-    private fun failureWithError(error: CreateContactWorkerResult): Result {
-        val errorData = workDataOf(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME to error.name)
+    private fun failureWithError(error: CreateContactWorkerErrors): Result {
+        val errorData = workDataOf(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }
 
@@ -142,7 +142,7 @@ class CreateContactWorker @WorkerInject constructor(
 
     private fun getInputEncryptedData() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA) ?: ""
 
-    enum class CreateContactWorkerResult {
+    enum class CreateContactWorkerErrors {
         ServerError,
         ContactAlreadyExistsError,
         InvalidEmailError,

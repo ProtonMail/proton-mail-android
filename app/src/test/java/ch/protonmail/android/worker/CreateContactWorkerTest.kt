@@ -35,7 +35,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerResult
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
 import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -135,9 +135,9 @@ class CreateContactWorkerTest {
 
             val result = worker.doWork()
 
-            val error = CreateContactWorkerResult.ServerError
+            val error = CreateContactWorkerErrors.ServerError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -190,9 +190,9 @@ class CreateContactWorkerTest {
 
             val result = worker.doWork()
 
-            val error = CreateContactWorkerResult.ContactAlreadyExistsError
+            val error = CreateContactWorkerErrors.ContactAlreadyExistsError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -208,9 +208,9 @@ class CreateContactWorkerTest {
 
             val result = worker.doWork()
 
-            val error = CreateContactWorkerResult.InvalidEmailError
+            val error = CreateContactWorkerErrors.InvalidEmailError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -226,9 +226,9 @@ class CreateContactWorkerTest {
 
             val result = worker.doWork()
 
-            val error = CreateContactWorkerResult.DuplicatedEmailError
+            val error = CreateContactWorkerErrors.DuplicatedEmailError
             val expectedFailure = Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_NAME, error.name).build()
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
