@@ -168,4 +168,8 @@ open class ContactDetailsRepository @Inject constructor(
     fun deleteContactData(contactData: ContactData) {
         contactsDao.deleteContactData(contactData)
     }
+
+    fun saveContactData(contactData: ContactData): Long {
+        return contactsDao.saveContactData(contactData)
+    }
 }

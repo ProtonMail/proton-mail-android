@@ -26,6 +26,7 @@ import androidx.work.WorkInfo
 import androidx.work.workDataOf
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.worker.CreateContactWorker
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
@@ -37,6 +38,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.slot
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
@@ -61,6 +63,9 @@ class CreateContactTest {
     @RelaxedMockK
     private lateinit var gson: Gson
 
+    @RelaxedMockK
+    private lateinit var contactIdGenerator: ContactIdGenerator
+
     @InjectMockKs
     private lateinit var createContact: CreateContact
 
@@ -68,7 +73,6 @@ class CreateContactTest {
 
     private val encryptedData = "encryptedContactData"
     private val signedData = "signedContactData"
-    private val contactData = ContactData("contactDataId", "name")
     private val contactEmails = listOf(
         ContactEmail("ID1", "email@proton.com", "Tom"),
         ContactEmail("ID2", "secondary@proton.com", "Mike")
@@ -82,7 +86,9 @@ class CreateContactTest {
     @Test
     fun createContactSavesContactEmailsWithContactIdToRepository() {
         runBlockingTest {
-            createContact(contactData, contactEmails, encryptedData, signedData)
+            every { contactIdGenerator.generateRandomId() } returns "contactDataId"
+
+            createContact("Mike", contactEmails, encryptedData, signedData)
 
             val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
             val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
@@ -94,7 +100,7 @@ class CreateContactTest {
     @Test
     fun createContactScheduleWorkerToCreateContactsThroughNetwork() {
         runBlockingTest {
-            createContact(contactData, contactEmails, encryptedData, signedData)
+            createContact("Mark", contactEmails, encryptedData, signedData)
 
             verify { createContactScheduler.enqueue(encryptedData, signedData) }
         }
@@ -106,7 +112,7 @@ class CreateContactTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("Name", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(CreateContact.CreateContactResult.GenericError, result.value)
@@ -119,7 +125,7 @@ class CreateContactTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.ENQUEUED)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("Alex", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(null, result.value)
@@ -137,12 +143,14 @@ class CreateContactTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
             every { gson.fromJson<List<ContactEmail>>(any<String>(), any<Type>()) } answers { emptyList() }
+            every { contactIdGenerator.generateRandomId() } returns "723"
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("FooName", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
+            val expectedContactData = ContactData("723", "FooName")
             assertEquals(CreateContact.CreateContactResult.Success, result.value)
-            verify { contactsRepository.updateContactDataWithServerId(contactData, contactServerId) }
+            verify { contactsRepository.updateContactDataWithServerId(expectedContactData, contactServerId) }
         }
     }
 
@@ -166,14 +174,15 @@ class CreateContactTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
             every { gson.fromJson<List<ContactEmail>>(serverEmailsJson, emailListType) } returns contactServerEmails
+            every { contactIdGenerator.generateRandomId() } returns "8234823"
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("Bogdan", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(CreateContact.CreateContactResult.Success, result.value)
 
             verify { gson.fromJson(serverEmailsJson, emailListType) }
-            verify { contactsRepository.updateAllContactEmails(contactData.contactId, contactServerEmails) }
+            verify { contactsRepository.updateAllContactEmails("8234823", contactServerEmails) }
         }
     }
 
@@ -185,11 +194,13 @@ class CreateContactTest {
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+            every { contactIdGenerator.generateRandomId() } returns "92394823"
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("Mino", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            verify { contactsRepository.deleteContactData(contactData) }
+            val expectedContactData = ContactData("92394823", "Mino")
+            verify { contactsRepository.deleteContactData(expectedContactData) }
             assertEquals(CreateContact.CreateContactResult.ContactAlreadyExistsError, result.value)
         }
     }
@@ -202,11 +213,13 @@ class CreateContactTest {
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+            every { contactIdGenerator.generateRandomId() } returns "92394823"
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("Dan", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            verify { contactsRepository.deleteContactData(contactData) }
+            val expectedContactData = ContactData("92394823", "Dan")
+            verify { contactsRepository.deleteContactData(expectedContactData) }
             assertEquals(CreateContact.CreateContactResult.InvalidEmailError, result.value)
         }
     }
@@ -219,11 +232,13 @@ class CreateContactTest {
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+            every { contactIdGenerator.generateRandomId() } returns "2398238"
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("Test Name", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            verify { contactsRepository.deleteContactData(contactData) }
+            val expectedContactData = ContactData("2398238", "Test Name")
+            verify { contactsRepository.deleteContactData(expectedContactData) }
             assertEquals(CreateContact.CreateContactResult.DuplicatedEmailError, result.value)
         }
     }
@@ -237,11 +252,49 @@ class CreateContactTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
 
-            val result = createContact(contactData, contactEmails, encryptedData, signedData)
+            val result = createContact("Bar", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            verify(exactly = 0) { contactsRepository.deleteContactData(contactData) }
+            verify(exactly = 0) { contactsRepository.deleteContactData(any()) }
             assertEquals(CreateContact.CreateContactResult.GenericError, result.value)
+        }
+    }
+
+    @Test
+    fun createContactSavesContactDataWithGivenContactNameToRepository() {
+        runBlockingTest {
+            val contactName = "Contact Name"
+            every { contactIdGenerator.generateRandomId() } returns "1233"
+
+            createContact(contactName, contactEmails, encryptedData, signedData)
+
+            val expected = ContactData("1233", contactName)
+            verify { contactsRepository.saveContactData(expected) }
+        }
+    }
+
+    @Test
+    fun createContactSetDbIdToCreatedContactAfterSavingItToRepository() {
+        // In this test, we need to mock the worker to fail and verify the call to `deleteContactData` as
+        // that was the first usage of `contactData` where we could verify that dbId had the right value
+        runBlockingTest {
+            val contactName = "Contact Name"
+            val contactData = ContactData("8238", contactName)
+            val dbId = 7347L
+            every { contactIdGenerator.generateRandomId() } returns "8238"
+            every { contactsRepository.saveContactData(contactData) } returns dbId
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to "InvalidEmailError"
+            )
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+
+            val result = createContact(contactName, contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            val contactDataSlot = slot<ContactData>()
+            verify { contactsRepository.deleteContactData(capture(contactDataSlot)) }
+            assertEquals(dbId, contactDataSlot.captured.dbId)
         }
     }
 

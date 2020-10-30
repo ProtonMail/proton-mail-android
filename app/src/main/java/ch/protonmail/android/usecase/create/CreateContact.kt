@@ -25,6 +25,7 @@ import androidx.work.Data
 import androidx.work.WorkInfo
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
@@ -43,17 +44,22 @@ class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val contactsRepository: ContactDetailsRepository,
     private val createContactScheduler: Enqueuer,
-    private val gson: Gson
+    private val gson: Gson,
+    private val contactIdGenerator: ContactIdGenerator
 ) {
 
     suspend operator fun invoke(
-        contactData: ContactData,
+        contactName: String,
         contactEmails: List<ContactEmail>,
         encryptedContactData: String,
         signedContactData: String
     ): LiveData<CreateContactResult> {
 
         return withContext(dispatcherProvider.Io) {
+            val contactData = ContactData(contactIdGenerator.generateRandomId(), contactName)
+            val contactDataDbId = contactsRepository.saveContactData(contactData)
+            contactData.dbId = contactDataDbId
+
             contactEmails.forEach { it.contactId = contactData.contactId }
             contactsRepository.saveContactEmails(contactEmails)
 

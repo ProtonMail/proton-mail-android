@@ -30,6 +30,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
+import junit.framework.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -104,5 +105,17 @@ class ContactDetailsRepositoryTest {
         repository.deleteContactData(contactData)
 
         verify { contactsDao.deleteContactData(contactData) }
+    }
+
+    @Test
+    fun saveContactDataSavesDataToDbReturningTheSavedContactDbId() {
+        val contactData = ContactData("1243", "Tyler")
+        val expectedDbId = 8945L
+        every { contactsDao.saveContactData(contactData) } returns expectedDbId
+
+        val actualDbId = repository.saveContactData(contactData)
+
+        verify { contactsDao.saveContactData(contactData) }
+        assertEquals(expectedDbId, actualDbId)
     }
 }
