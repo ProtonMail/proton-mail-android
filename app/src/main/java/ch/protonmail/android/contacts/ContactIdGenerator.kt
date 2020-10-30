@@ -20,13 +20,14 @@
 package ch.protonmail.android.contacts
 
 import java.util.Random
+import javax.inject.Inject
 
-class ContactIdGenerator {
+class ContactIdGenerator @Inject constructor() {
 
     fun generateRandomId(): String {
-        val random= Random(System.nanoTime())
-        val randomOneSec=random.nextInt()
-        return "${-(System.currentTimeMillis()+randomOneSec)}"
+        val random = Random(System.nanoTime())
+        val randomOneSec = random.nextInt()
+        return "${-(System.currentTimeMillis() + randomOneSec)}"
     }
 
 }

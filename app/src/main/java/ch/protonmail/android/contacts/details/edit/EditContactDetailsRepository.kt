@@ -20,20 +20,13 @@ package ch.protonmail.android.contacts.details.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
-import ch.protonmail.android.jobs.CreateContactJob
 import ch.protonmail.android.jobs.UpdateContactJob
 import com.birbit.android.jobqueue.JobManager
 import ezvcard.VCard
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class EditContactDetailsRepository @Inject constructor(
@@ -52,30 +45,4 @@ class EditContactDetailsRepository @Inject constructor(
             vCardSigned.write(), mapEmailGroupsIds))
     }
 
-    fun createContact(contactName: String, emails: List<ContactEmail>, vCardEncrypted: VCard, vCardSigned: VCard) {
-        GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-            withContext(Dispatchers.Default) {
-                val contactData = ContactData(ContactData.generateRandomContactId(), contactName)
-                val contactDataDbId = contactsDao.saveContactData(contactData)
-                contactData.dbId = contactDataDbId
-                jobManager.addJobInBackground(CreateContactJob(contactData, emails, vCardEncrypted.write(), vCardSigned.write()))
-            }
-        }
-    }
-
-    fun convertContact(contactName: String, emails: List<ContactEmail>, vCardEncrypted: VCard, vCardSigned: VCard) {
-        GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-            withContext(Dispatchers.Default) {
-                val contactData = ContactData(ContactData.generateRandomContactId(), contactName)
-                val contactDataDbId = contactsDao.saveContactData(contactData)
-                contactData.dbId = contactDataDbId
-                jobManager.addJobInBackground(
-                    CreateContactJob(
-                        contactData, emails,
-                        vCardEncrypted.write(), vCardSigned.write()
-                    )
-                )
-            }
-        }
-    }
 }

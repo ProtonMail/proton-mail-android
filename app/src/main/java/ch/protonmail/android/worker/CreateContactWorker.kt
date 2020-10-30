@@ -88,7 +88,7 @@ class CreateContactWorker @WorkerInject constructor(
             return failureWithError(DuplicatedEmailError)
         }
 
-        return Result.success()
+        return Result.failure()
     }
 
 

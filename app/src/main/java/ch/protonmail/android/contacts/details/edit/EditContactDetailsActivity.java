@@ -48,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -547,6 +548,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             }
         }
         TextExtensions.showToast(EditContactDetailsActivity.this, R.string.saving);
+
+        editContactDetailsViewModel.getCreateContactResult().observe(
+                this, resultStringId -> {
+                    String message = getString(resultStringId);
+                    Toast.makeText(EditContactDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
+                });
         editContactDetailsViewModel.save(emailsToBeRemoved, contactName, emails);
         saveAndFinish();
     }
