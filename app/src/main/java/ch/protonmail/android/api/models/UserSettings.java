@@ -133,7 +133,6 @@ public class UserSettings {
                 .putString(PREF_EMAIL, FileUtils.toString(email))
                 .putString(PREF_NOTIFICATION_EMAIL, notificationEmail)
                 .apply();
-        // TODO handle email
     }
 
     @Deprecated
