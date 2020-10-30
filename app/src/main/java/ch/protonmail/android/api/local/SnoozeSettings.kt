@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,7 +23,10 @@ import android.content.SharedPreferences
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import java.util.*
+import me.proton.core.util.android.sharedpreferences.minusAssign
+import me.proton.core.util.android.sharedpreferences.set
+import me.proton.core.util.kotlin.unsupported
+import java.util.Calendar
 
 // region constants
 private const val DEFAULT_TIME = 0
@@ -37,137 +40,225 @@ private const val PREF_SNOOZE_QUICK_END_TIME = "snooze_quick_end_time"
 // endregion
 
 class SnoozeSettings(
-        var snoozeScheduled: Boolean = false,
-        var snoozeQuick: Boolean = false,
-        var snoozeQuickEndTime: Long = 0L,
-        var snoozeScheduledStartTimeHour: Int,
-        var snoozeScheduledStartTimeMinute: Int,
-        var snoozeScheduledEndTimeHour: Int,
-        var snoozeScheduledEndTimeMinute: Int,
-        var snoozeScheduledRepeatingDays: String?
+    var snoozeScheduled: Boolean = false,
+    var snoozeQuick: Boolean = false,
+    var snoozeQuickEndTime: Long = 0L,
+    var snoozeScheduledStartTimeHour: Int,
+    var snoozeScheduledStartTimeMinute: Int,
+    var snoozeScheduledEndTimeHour: Int,
+    var snoozeScheduledEndTimeMinute: Int,
+    var snoozeScheduledRepeatingDays: String?
 ) {
-
 
     companion object {
 
-        fun load(username: String): SnoozeSettings {
-            val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-            val defaultStartTimeString = ProtonMailApplication.getApplication().resources.getString(R.string.repeating_snooze_default_start_time)
-            val defaultEndTimeString = ProtonMailApplication.getApplication().resources.getString(R.string.repeating_snooze_default_end_time)
+        @Suppress("RedundantSuspendModifier") // Can't inject dispatcher for use `withContext`,
+        //                                                  but still better than a blocking call
+        suspend fun load(userPreferences: SharedPreferences): SnoozeSettings {
+            val defaultStartTimeString =
+                ProtonMailApplication.getApplication().getString(R.string.repeating_snooze_default_start_time)
+            val defaultEndTimeString =
+                ProtonMailApplication.getApplication().getString(R.string.repeating_snooze_default_end_time)
 
-            copySnoozeEntriesTo(pref, defaultStartTimeString, defaultEndTimeString)
+            copySnoozeEntriesTo(userPreferences, defaultStartTimeString, defaultEndTimeString)
 
-            val scheduledStartTime = pref.getString(PREF_SNOOZE_SCHEDULED_START_TIME, defaultStartTimeString)
+            val scheduledStartTime = userPreferences.getString(PREF_SNOOZE_SCHEDULED_START_TIME, defaultStartTimeString)
             var snoozeScheduledStartTimeHour = DEFAULT_TIME
             var snoozeScheduledStartTimeMinute = DEFAULT_TIME
             if (!scheduledStartTime.isNullOrBlank()) {
-                val hour = Integer.valueOf(scheduledStartTime.split(":")[0])
-                val minute = Integer.valueOf(scheduledStartTime.split(":")[1])
-                snoozeScheduledStartTimeHour = hour
-                snoozeScheduledStartTimeMinute = minute
+                val (hour, minute) = scheduledStartTime.split(":")
+                snoozeScheduledStartTimeHour = hour.toInt()
+                snoozeScheduledStartTimeMinute = minute.toInt()
             }
 
-            val scheduledEndTime = pref.getString(PREF_SNOOZE_SCHEDULED_END_TIME, defaultEndTimeString)
+            val scheduledEndTime = userPreferences.getString(PREF_SNOOZE_SCHEDULED_END_TIME, defaultEndTimeString)
             var snoozeScheduledEndTimeHour = DEFAULT_TIME
             var snoozeScheduledEndTimeMinute = DEFAULT_TIME
             if (!scheduledEndTime.isNullOrEmpty()) {
-                val hour = Integer.valueOf(scheduledEndTime.split(":")[0])
-                val minute = Integer.valueOf(scheduledEndTime.split(":")[1])
-                snoozeScheduledEndTimeHour = hour
-                snoozeScheduledEndTimeMinute = minute
+                val (hour, minute) = scheduledEndTime.split(":")
+                snoozeScheduledEndTimeHour = hour.toInt()
+                snoozeScheduledEndTimeMinute = minute.toInt()
             }
-            val snoozeScheduledRepeatingDays = pref.getString(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS, null)
+            val snoozeScheduledRepeatingDays =
+                userPreferences.getString(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS, null)
 
-            return SnoozeSettings(snoozeScheduled = pref.getBoolean(PREF_SNOOZE_SCHEDULED, false),
-                    snoozeQuick = pref.getBoolean(PREF_SNOOZE_QUICK, false),
-                    snoozeQuickEndTime = pref.getLong(PREF_SNOOZE_QUICK_END_TIME, 0L),
-                    snoozeScheduledStartTimeHour = snoozeScheduledStartTimeHour,
-                    snoozeScheduledStartTimeMinute = snoozeScheduledStartTimeMinute,
-                    snoozeScheduledEndTimeHour = snoozeScheduledEndTimeHour,
-                    snoozeScheduledEndTimeMinute = snoozeScheduledEndTimeMinute,
-                    snoozeScheduledRepeatingDays = snoozeScheduledRepeatingDays)
+            return SnoozeSettings(
+                snoozeScheduled = userPreferences.getBoolean(PREF_SNOOZE_SCHEDULED, false),
+                snoozeQuick = userPreferences.getBoolean(PREF_SNOOZE_QUICK, false),
+                snoozeQuickEndTime = userPreferences.getLong(PREF_SNOOZE_QUICK_END_TIME, 0L),
+                snoozeScheduledStartTimeHour = snoozeScheduledStartTimeHour,
+                snoozeScheduledStartTimeMinute = snoozeScheduledStartTimeMinute,
+                snoozeScheduledEndTimeHour = snoozeScheduledEndTimeHour,
+                snoozeScheduledEndTimeMinute = snoozeScheduledEndTimeMinute,
+                snoozeScheduledRepeatingDays = snoozeScheduledRepeatingDays
+            )
+        }
+
+        @Deprecated(
+            "Load using Preferences directly",
+            ReplaceWith("load(preferences)"),
+            DeprecationLevel.ERROR
+        )
+        fun load(username: String): SnoozeSettings {
+            unsupported
         }
 
         /**
          * Migration for snooze setting from different file from SharedPreferences.
          */
-        private fun copySnoozeEntriesTo(sharedPreferences: SharedPreferences, defaultStartTimeString: String, defaultEndTimeString: String) {
-            val pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE)
-            if (pref.contains(PREF_SNOOZE_SCHEDULED_START_TIME)) {
-                sharedPreferences.edit().putString(PREF_SNOOZE_SCHEDULED_START_TIME, pref.getString(PREF_SNOOZE_SCHEDULED_START_TIME, defaultStartTimeString)).apply()
-                pref.edit().remove(PREF_SNOOZE_SCHEDULED_START_TIME).apply()
+        private fun copySnoozeEntriesTo(
+            sharedPreferences: SharedPreferences,
+            defaultStartTimeString: String,
+            defaultEndTimeString: String
+        ) {
+            val pref = ProtonMailApplication.getApplication()
+                .getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE)
+
+            if (PREF_SNOOZE_SCHEDULED_START_TIME in pref) {
+                sharedPreferences[PREF_SNOOZE_SCHEDULED_START_TIME] =
+                    pref.getString(PREF_SNOOZE_SCHEDULED_START_TIME, defaultStartTimeString)
+                pref -= PREF_SNOOZE_SCHEDULED_START_TIME
             }
 
-            if (pref.contains(PREF_SNOOZE_SCHEDULED_END_TIME)) {
-                sharedPreferences.edit().putString(PREF_SNOOZE_SCHEDULED_END_TIME, pref.getString(PREF_SNOOZE_SCHEDULED_END_TIME, defaultEndTimeString)).apply()
-                pref.edit().remove(PREF_SNOOZE_SCHEDULED_END_TIME).apply()
+            if (PREF_SNOOZE_SCHEDULED_END_TIME in pref) {
+                sharedPreferences[PREF_SNOOZE_SCHEDULED_END_TIME] =
+                    pref.getString(PREF_SNOOZE_SCHEDULED_END_TIME, defaultEndTimeString)
+                pref -= PREF_SNOOZE_SCHEDULED_END_TIME
             }
 
-            if (pref.contains(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS)) {
-                sharedPreferences.edit().putString(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS, pref.getString(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS, null)).apply()
-                pref.edit().remove(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS).apply()
+            if (PREF_SNOOZE_SCHEDULED_REPEAT_DAYS in pref) {
+                sharedPreferences[PREF_SNOOZE_SCHEDULED_REPEAT_DAYS] =
+                    pref.getString(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS, null)
+                pref -= PREF_SNOOZE_SCHEDULED_REPEAT_DAYS
             }
 
-            if (pref.contains(PREF_SNOOZE_SCHEDULED)) {
-                sharedPreferences.edit().putBoolean(PREF_SNOOZE_SCHEDULED, pref.getBoolean(PREF_SNOOZE_SCHEDULED, false)).apply()
-                pref.edit().remove(PREF_SNOOZE_SCHEDULED).apply()
+            if (PREF_SNOOZE_SCHEDULED in pref) {
+                sharedPreferences[PREF_SNOOZE_SCHEDULED] =
+                    pref.getBoolean(PREF_SNOOZE_SCHEDULED, false)
+                pref -= PREF_SNOOZE_SCHEDULED
             }
 
-            if (pref.contains(PREF_SNOOZE_QUICK)) {
-                sharedPreferences.edit().putBoolean(PREF_SNOOZE_QUICK, pref.getBoolean(PREF_SNOOZE_QUICK, false)).apply()
-                pref.edit().remove(PREF_SNOOZE_QUICK).apply()
+            if (PREF_SNOOZE_QUICK in pref) {
+                sharedPreferences[PREF_SNOOZE_QUICK] =
+                    pref.getBoolean(PREF_SNOOZE_QUICK, false)
+                pref -= PREF_SNOOZE_QUICK
             }
 
-            if (pref.contains(PREF_SNOOZE_QUICK_END_TIME)) {
-                sharedPreferences.edit().putLong(PREF_SNOOZE_QUICK_END_TIME, pref.getLong(PREF_SNOOZE_QUICK_END_TIME, 0L)).apply()
-                pref.edit().remove(PREF_SNOOZE_QUICK_END_TIME).apply()
+            if (PREF_SNOOZE_QUICK_END_TIME in pref) {
+                sharedPreferences[PREF_SNOOZE_QUICK_END_TIME] =
+                    pref.getLong(PREF_SNOOZE_QUICK_END_TIME, 0L)
+                pref -= PREF_SNOOZE_QUICK_END_TIME
             }
-
         }
-
-
     }
 
+    @Suppress("RedundantSuspendModifier") // Can't inject dispatcher for use `withContext`,
+    //                                                  but still better than a blocking call
+    suspend fun save(userPreferences: SharedPreferences) {
+        saveScheduledBackup(userPreferences)
+        saveScheduledSnoozeStartTimeBackup(userPreferences)
+        saveScheduledSnoozeEndTimeBackup(userPreferences)
+        saveScheduledSnoozeRepeatingDaysBackup(userPreferences)
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("save(preferences)"),
+        DeprecationLevel.ERROR
+    )
     fun save(username: String) {
-        saveScheduledBackup(username)
-        saveScheduledSnoozeStartTimeBackup(username)
-        saveScheduledSnoozeEndTimeBackup(username)
-        saveScheduledSnoozeRepeatingDaysBackup(username)
+        unsupported
     }
 
+    fun getScheduledSnooze(userPreferences: SharedPreferences): Boolean =
+        userPreferences.getBoolean(PREF_SNOOZE_SCHEDULED, false)
+
+    @Deprecated(
+        "Get using Preferences directly",
+        ReplaceWith("getScheduledSnooze(preferences)"),
+        DeprecationLevel.ERROR
+    )
     fun getScheduledSnooze(username: String): Boolean {
-        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-        return pref.getBoolean(PREF_SNOOZE_SCHEDULED, false)
+        unsupported
     }
 
+    private fun saveScheduledBackup(userPreferences: SharedPreferences) {
+        userPreferences[PREF_SNOOZE_SCHEDULED] = snoozeScheduled
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("saveScheduledBackup(preferences)"),
+        DeprecationLevel.ERROR
+    )
     private fun saveScheduledBackup(username: String) {
-        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-        pref.edit().putBoolean(PREF_SNOOZE_SCHEDULED, snoozeScheduled).apply()
+        unsupported
     }
 
+    fun saveQuickSnoozeBackup(userPreferences: SharedPreferences) {
+        userPreferences[PREF_SNOOZE_QUICK] = snoozeQuick
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("saveQuickSnoozeBackup(preferences)"),
+        DeprecationLevel.ERROR
+    )
     fun saveQuickSnoozeBackup(username: String) {
-        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-        pref.edit().putBoolean(PREF_SNOOZE_QUICK, snoozeQuick).apply()
+        unsupported
     }
 
+    fun saveQuickSnoozeEndTimeBackup(userPreferences: SharedPreferences) {
+        userPreferences[PREF_SNOOZE_QUICK_END_TIME] = snoozeQuickEndTime
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("saveQuickSnoozeEndTimeBackup(preferences)"),
+        DeprecationLevel.ERROR
+    )
     fun saveQuickSnoozeEndTimeBackup(username: String) {
-        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-        pref.edit().putLong(PREF_SNOOZE_QUICK_END_TIME, snoozeQuickEndTime).apply()
+        unsupported
     }
 
+    private fun saveScheduledSnoozeStartTimeBackup(userPreferences: SharedPreferences) {
+        userPreferences[PREF_SNOOZE_SCHEDULED_START_TIME] =
+            "$snoozeScheduledStartTimeHour:$snoozeScheduledStartTimeMinute"
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("saveScheduledSnoozeStartTimeBackup(preferences)"),
+        DeprecationLevel.ERROR
+    )
     private fun saveScheduledSnoozeStartTimeBackup(username: String) {
-        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-        pref.edit().putString(PREF_SNOOZE_SCHEDULED_START_TIME, "$snoozeScheduledStartTimeHour:$snoozeScheduledStartTimeMinute").apply()
+        unsupported
     }
 
+    private fun saveScheduledSnoozeEndTimeBackup(userPreferences: SharedPreferences) {
+        userPreferences[PREF_SNOOZE_SCHEDULED_END_TIME] = "$snoozeScheduledEndTimeHour:$snoozeScheduledEndTimeMinute"
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("saveScheduledSnoozeEndTimeBackup(preferences)"),
+        DeprecationLevel.ERROR
+    )
     private fun saveScheduledSnoozeEndTimeBackup(username: String) {
-        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-        pref.edit().putString(PREF_SNOOZE_SCHEDULED_END_TIME, "$snoozeScheduledEndTimeHour:$snoozeScheduledEndTimeMinute").apply()
+        unsupported
     }
 
+    private fun saveScheduledSnoozeRepeatingDaysBackup(userPreferences: SharedPreferences) {
+        userPreferences[PREF_SNOOZE_SCHEDULED_REPEAT_DAYS] = snoozeScheduledRepeatingDays
+    }
+
+    @Deprecated(
+        "Save using Preferences directly",
+        ReplaceWith("saveScheduledSnoozeRepeatingDaysBackup(preferences)"),
+        DeprecationLevel.ERROR
+    )
     private fun saveScheduledSnoozeRepeatingDaysBackup(username: String) {
-        val pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(username)
-        pref.edit().putString(PREF_SNOOZE_SCHEDULED_REPEAT_DAYS, snoozeScheduledRepeatingDays).apply()
+        unsupported
     }
 
     /**
@@ -175,13 +266,15 @@ class SnoozeSettings(
      */
     fun shouldSuppressNotification(time: Calendar): Boolean {
 
-        val days = mapOf<Int, CharSequence>(Calendar.MONDAY to "mo",
-                Calendar.TUESDAY to "tu",
-                Calendar.WEDNESDAY to "we",
-                Calendar.THURSDAY to "th",
-                Calendar.FRIDAY to "fr",
-                Calendar.SATURDAY to "sa",
-                Calendar.SUNDAY to "su")
+        val days = mapOf<Int, CharSequence>(
+            Calendar.MONDAY to "mo",
+            Calendar.TUESDAY to "tu",
+            Calendar.WEDNESDAY to "we",
+            Calendar.THURSDAY to "th",
+            Calendar.FRIDAY to "fr",
+            Calendar.SATURDAY to "sa",
+            Calendar.SUNDAY to "su"
+        )
 
         val currentTimestamp = time.get(Calendar.HOUR_OF_DAY) * 60 + time.get(Calendar.MINUTE)
         val startTimestamp = snoozeScheduledStartTimeHour * 60 + snoozeScheduledStartTimeMinute
@@ -191,19 +284,21 @@ class SnoozeSettings(
         var isOnCorrectDay = false
 
         if (startTimestamp < endTimestamp) { // snooze happens during the day
-            isWithinSnoozeWindow = (currentTimestamp >= startTimestamp) && (currentTimestamp < endTimestamp)
-            isOnCorrectDay = snoozeScheduledRepeatingDays?.contains(days[time.get(Calendar.DAY_OF_WEEK)]
-                    ?: "xx") ?: false
+            isWithinSnoozeWindow = currentTimestamp in startTimestamp until endTimestamp
+            isOnCorrectDay = snoozeScheduledRepeatingDays
+                ?.contains(days[time.get(Calendar.DAY_OF_WEEK)] ?: "xx") ?: false
+
         } else { // snooze happens over the midnight
             if (currentTimestamp >= startTimestamp) {
                 isWithinSnoozeWindow = true
-                isOnCorrectDay = snoozeScheduledRepeatingDays?.contains(days[time.get(Calendar.DAY_OF_WEEK)]
-                        ?: "xx") ?: false
+                isOnCorrectDay = snoozeScheduledRepeatingDays
+                    ?.contains(days[time.get(Calendar.DAY_OF_WEEK)] ?: "xx") ?: false
+
             } else if (currentTimestamp < endTimestamp) {
                 isWithinSnoozeWindow = true
                 time.add(Calendar.DAY_OF_WEEK, -1)
-                isOnCorrectDay = snoozeScheduledRepeatingDays?.contains(days[time.get(Calendar.DAY_OF_WEEK)]
-                        ?: "xx") ?: false
+                isOnCorrectDay = snoozeScheduledRepeatingDays
+                    ?.contains(days[time.get(Calendar.DAY_OF_WEEK)] ?: "xx") ?: false
             }
         }
 
