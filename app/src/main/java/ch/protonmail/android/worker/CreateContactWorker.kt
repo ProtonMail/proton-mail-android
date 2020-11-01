@@ -46,6 +46,8 @@ import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.InvalidEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ServerError
 import com.google.gson.Gson
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA = "keyCreateContactInputDataEncryptedData"
@@ -59,13 +61,14 @@ class CreateContactWorker @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
     private val gson: Gson,
-    private val crypto: UserCrypto
+    private val crypto: UserCrypto,
+    private val dispatcherProvider: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
 
     override suspend fun doWork(): Result {
         val request = buildCreateContactRequestBody()
-        val response = apiManager.createContact(request)
+        val response = withContext(dispatcherProvider.Io) { apiManager.createContact(request) }
 
         if (response?.code != Constants.RESPONSE_CODE_MULTIPLE_OK) {
             return failureWithError(ServerError)

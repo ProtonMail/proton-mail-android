@@ -27,13 +27,15 @@ import ch.protonmail.android.contacts.details.ContactDetailsRepository
 import ch.protonmail.android.jobs.UpdateContactJob
 import com.birbit.android.jobqueue.JobManager
 import ezvcard.VCard
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class EditContactDetailsRepository @Inject constructor(
     workManager: WorkManager,
     jobManager: JobManager,
     api: ProtonMailApiManager,
-    contactsDao: ContactsDao) : ContactDetailsRepository(workManager, jobManager, api, contactsDao) {
+    dispatcherProvider: DispatcherProvider,
+    contactsDao: ContactsDao) : ContactDetailsRepository(workManager, jobManager, api, contactsDao, dispatcherProvider) {
 
     fun clearEmail(email: String) {
         contactsDao.clearByEmail(email)
