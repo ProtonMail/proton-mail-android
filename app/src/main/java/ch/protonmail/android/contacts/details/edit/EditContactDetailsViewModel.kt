@@ -337,6 +337,7 @@ class EditContactDetailsViewModel(
             CreateContact.CreateContactResult.ContactAlreadyExistsError -> R.string.contact_exist
             CreateContact.CreateContactResult.InvalidEmailError -> R.string.invalid_email_some_contacts
             CreateContact.CreateContactResult.DuplicatedEmailError -> R.string.duplicate_email
+            CreateContact.CreateContactResult.OnlineContactCreationPending -> R.string.contact_saved_offline
         }
     }
 

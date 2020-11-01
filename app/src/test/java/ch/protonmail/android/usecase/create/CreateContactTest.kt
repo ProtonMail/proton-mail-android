@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.usecase.create.CreateContact.CreateContactResult
 import ch.protonmail.android.worker.CreateContactWorker
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
@@ -115,12 +116,12 @@ class CreateContactTest {
             val result = createContact("Name", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            assertEquals(CreateContact.CreateContactResult.GenericError, result.value)
+            assertEquals(CreateContactResult.GenericError, result.value)
         }
     }
 
     @Test
-    fun createContactDoesNotEmitAnyValuesWhenContactCreationThroughNetworkIsPending() {
+    fun createContactReturnsOnlineContactCreationPendingWhenContactCreationThroughNetworkIsPending() {
         runBlockingTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.ENQUEUED)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
@@ -128,7 +129,7 @@ class CreateContactTest {
             val result = createContact("Alex", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            assertEquals(null, result.value)
+            assertEquals(CreateContactResult.OnlineContactCreationPending, result.value)
         }
     }
 
@@ -149,7 +150,7 @@ class CreateContactTest {
             result.observeForever { }
 
             val expectedContactData = ContactData("723", "FooName")
-            assertEquals(CreateContact.CreateContactResult.Success, result.value)
+            assertEquals(CreateContactResult.Success, result.value)
             verify { contactsRepository.updateContactDataWithServerId(expectedContactData, contactServerId) }
         }
     }
@@ -179,7 +180,7 @@ class CreateContactTest {
             val result = createContact("Bogdan", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            assertEquals(CreateContact.CreateContactResult.Success, result.value)
+            assertEquals(CreateContactResult.Success, result.value)
 
             verify { gson.fromJson(serverEmailsJson, emailListType) }
             verify { contactsRepository.updateAllContactEmails("8234823", contactServerEmails) }
@@ -201,7 +202,7 @@ class CreateContactTest {
 
             val expectedContactData = ContactData("92394823", "Mino")
             verify { contactsRepository.deleteContactData(expectedContactData) }
-            assertEquals(CreateContact.CreateContactResult.ContactAlreadyExistsError, result.value)
+            assertEquals(CreateContactResult.ContactAlreadyExistsError, result.value)
         }
     }
 
@@ -220,7 +221,7 @@ class CreateContactTest {
 
             val expectedContactData = ContactData("92394823", "Dan")
             verify { contactsRepository.deleteContactData(expectedContactData) }
-            assertEquals(CreateContact.CreateContactResult.InvalidEmailError, result.value)
+            assertEquals(CreateContactResult.InvalidEmailError, result.value)
         }
     }
 
@@ -239,7 +240,7 @@ class CreateContactTest {
 
             val expectedContactData = ContactData("2398238", "Test Name")
             verify { contactsRepository.deleteContactData(expectedContactData) }
-            assertEquals(CreateContact.CreateContactResult.DuplicatedEmailError, result.value)
+            assertEquals(CreateContactResult.DuplicatedEmailError, result.value)
         }
     }
 
@@ -256,7 +257,7 @@ class CreateContactTest {
             result.observeForever { }
 
             verify(exactly = 0) { contactsRepository.deleteContactData(any()) }
-            assertEquals(CreateContact.CreateContactResult.GenericError, result.value)
+            assertEquals(CreateContactResult.GenericError, result.value)
         }
     }
 

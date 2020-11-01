@@ -64,8 +64,14 @@ class CreateContact @Inject constructor(
             contactsRepository.saveContactEmails(contactEmails)
 
             createContactScheduler.enqueue(encryptedContactData, signedContactData)
-                .filter { it?.state?.isFinished == true }
-                .map { handleWorkResult(it, contactData) }
+                .filter { it?.state?.isFinished == true || it?.state == WorkInfo.State.ENQUEUED }
+                .map {
+                    if (it.state == WorkInfo.State.ENQUEUED) {
+                        return@map CreateContactResult.OnlineContactCreationPending
+                    }
+
+                    handleWorkResult(it, contactData)
+                }
         }
 
     }
@@ -119,5 +125,6 @@ class CreateContact @Inject constructor(
         object ContactAlreadyExistsError : CreateContactResult()
         object InvalidEmailError : CreateContactResult()
         object DuplicatedEmailError : CreateContactResult()
+        object OnlineContactCreationPending : CreateContactResult()
     }
 }
