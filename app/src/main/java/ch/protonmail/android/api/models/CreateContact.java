@@ -16,12 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models
+package ch.protonmail.android.api.models;
 
-import ch.protonmail.android.api.utils.Fields
-import com.google.gson.annotations.SerializedName
-import java.io.Serializable
+import com.google.gson.annotations.SerializedName;
 
-data class CreateContact(
-    @field:SerializedName(Fields.Contact.CARDS) private val cards: List<ContactEncryptedData>
-) : Serializable
+import java.io.Serializable;
+import java.util.List;
+
+import ch.protonmail.android.api.utils.Fields;
+
+public class CreateContact implements Serializable {
+
+    @SerializedName(Fields.Contact.CARDS)
+    private List<ContactEncryptedData> cards;
+
+    public CreateContact(List<ContactEncryptedData> cards) {
+        this.cards = cards;
+    }
+}
