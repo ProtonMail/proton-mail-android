@@ -22,6 +22,7 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.Data
 import androidx.work.ListenableWorker.Result
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -96,11 +97,13 @@ class CreateContactWorkerTest {
 
         CreateContactWorker.Enqueuer(workManager).enqueue(encryptedData, signedData)
 
+        val constraints = requestSlot.captured.workSpec.constraints
         val inputData = requestSlot.captured.workSpec.input
         val actualEncryptedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA)
         val actualSignedData = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA)
         assertEquals(encryptedData, actualEncryptedData)
         assertEquals(signedData, actualSignedData)
+        assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
         verify { workManager.getWorkInfoByIdLiveData(any()) }
     }
 

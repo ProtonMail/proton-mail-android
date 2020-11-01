@@ -23,8 +23,10 @@ import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.lifecycle.LiveData
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -155,7 +157,11 @@ class CreateContactWorker @WorkerInject constructor(
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
         fun enqueue(encryptedContactData: String, signedContactData: String): LiveData<WorkInfo> {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
             val createContactRequest = OneTimeWorkRequestBuilder<CreateContactWorker>()
+                .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
                         KEY_INPUT_DATA_CREATE_CONTACT_ENCRYPTED_DATA to encryptedContactData,
