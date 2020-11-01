@@ -553,9 +553,9 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 this, resultStringId -> {
                     String message = getString(resultStringId);
                     Toast.makeText(EditContactDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
+                    saveAndFinish();
                 });
         editContactDetailsViewModel.save(emailsToBeRemoved, contactName, emails);
-        saveAndFinish();
     }
 
     @Override
