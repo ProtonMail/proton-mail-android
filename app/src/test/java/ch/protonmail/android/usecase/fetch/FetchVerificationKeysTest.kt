@@ -29,6 +29,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
@@ -39,6 +40,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -46,7 +48,6 @@ import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -57,6 +58,9 @@ class FetchVerificationKeysTest : CoroutinesTest {
 
     @MockK
     private lateinit var userManager: UserManager
+
+    @RelaxedMockK
+    private lateinit var userCrypto: UserCrypto
 
     @MockK
     private lateinit var contactsDao: ContactsDao
@@ -72,7 +76,8 @@ class FetchVerificationKeysTest : CoroutinesTest {
             every { toNewUser().addresses } returns mockk()
             val testAddresses = listOf(mockk<Address>())
             val primaryKey = mockk<AddressKey> {
-                every {privateKey} returns PgpField.PrivateKey(NotBlankString("privateKey"))
+                every { privateKey } returns PgpField.PrivateKey(NotBlankString("privateKey"))
+                every { buildBackEndFlags() } returns 0
             }
             val addressKeys = AddressKeys(
                 primaryKey = primaryKey,
@@ -89,7 +94,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
         every { userManager.user } returns testUser
         every { userManager.username } returns "testUserName"
         every { userManager.openPgp } returns mockk()
-        useCase = FetchVerificationKeys(api, userManager, contactsDao, TestDispatcherProvider)
+        useCase = FetchVerificationKeys(api, userManager, userCrypto, contactsDao, TestDispatcherProvider)
     }
 
     @Test
@@ -132,7 +137,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
                     null,
                     false,
                     null,
-                    true
+                    false
                 )
             )
 
@@ -144,7 +149,6 @@ class FetchVerificationKeysTest : CoroutinesTest {
         assertEquals(expected, result)
     }
 
-    @Ignore
     @Test
     fun verifyThatContactsAreDerivedLocally() = runBlockingTest {
         // given
@@ -178,16 +182,15 @@ class FetchVerificationKeysTest : CoroutinesTest {
             every { hasError() } returns false
         }
         coEvery { api.getPublicKeys(testEmail) } returns publicKeyResponse
-        val expected =
-            listOf(
-                KeyInformation(
-                    null,
-                    null,
-                    false,
-                    null,
-                    true
-                )
-            )
+        val keyInformation = KeyInformation(
+            null,
+            null,
+            false,
+            null,
+            true
+        )
+        val expected = listOf(keyInformation)
+        every { userCrypto.deriveKeyInfo(any()) } returns keyInformation
 
         // when
         val result = useCase.invoke(testEmail)

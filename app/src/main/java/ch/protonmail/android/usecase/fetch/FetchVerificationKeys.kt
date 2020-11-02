@@ -25,7 +25,6 @@ import ch.protonmail.android.api.models.enumerations.KeyFlag
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.crypto.KeyInformation
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -36,18 +35,19 @@ import javax.inject.Inject
 class FetchVerificationKeys @Inject constructor(
     private val api: ProtonMailApiManager,
     private val userManager: UserManager,
+    private val userCrypto: UserCrypto,
     private val contactsDao: ContactsDao,
     private val dispatchers: DispatcherProvider
 ) {
 
     suspend operator fun invoke(email: String): List<KeyInformation> = withContext(dispatchers.Io) {
-        val crypto = UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
         val sortedAddresses = userManager.user.toNewUser().addresses.sorted()
         for (address in sortedAddresses) {
             if (address.email.s == email) {
                 val publicKeys = mutableListOf<KeyInformation>()
                 for (key in address.keys.keys) {
-                    val keyInfo = crypto.deriveKeyInfo(crypto.buildArmoredPublicKey(key.privateKey))
+                    val armouredKey = userCrypto.buildArmoredPublicKey(key.privateKey)
+                    val keyInfo = userCrypto.deriveKeyInfo(armouredKey)
                     if (!KeyFlag.fromInteger(key.buildBackEndFlags()).contains(KeyFlag.VERIFICATION_ENABLED)) {
                         keyInfo.flagAsCompromised()
                     }
@@ -70,8 +70,8 @@ class FetchVerificationKeys @Inject constructor(
                     Timber.w("FetchVerificationKeys Error ${response.error}")
                     emptyList()
                 } else {
-                    val trustedKeys = fullContactDetails.getPublicKeys(crypto, email)
-                    val verificationKeys = filterVerificationKeys(crypto, response.keys, trustedKeys)
+                    val trustedKeys = fullContactDetails.getPublicKeys(userCrypto, email)
+                    val verificationKeys = filterVerificationKeys(userCrypto, response.keys, trustedKeys)
                     Timber.v("FetchVerificationKeys Success verificationKeys $verificationKeys")
                     verificationKeys
                 }
@@ -84,7 +84,6 @@ class FetchVerificationKeys @Inject constructor(
             )
 
         } ?: emptyList()
-
     }
 
     private fun filterVerificationKeys(
