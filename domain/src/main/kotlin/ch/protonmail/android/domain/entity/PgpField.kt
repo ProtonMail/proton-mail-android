@@ -22,7 +22,7 @@ import me.proton.core.util.kotlin.substring
 
 /**
  * Represent a field encrypted by PGP
- * Format: `` "-----BEGIN PGP [type] [input]-----END PGP [type]----- ``
+ * Format: `` "-----BEGIN PGP [type]-----[content]-----END PGP [type]----- ``
  */
 @Validated
 sealed class PgpField(input: NotBlankString, val type: String) {
@@ -30,15 +30,24 @@ sealed class PgpField(input: NotBlankString, val type: String) {
     val prefix get() = "-----BEGIN PGP $type-----"
     val suffix get() = "-----END PGP $type-----"
 
-    val content = NotBlankString(
-        input.s.substring(
-            prefix,
-            suffix,
-            ignoreCase = true,
-            ignoreMissingStart = true,
-            ignoreMissingEnd = true
+    /**
+     * @return the content of the key, WITHOUT the [prefix] and [suffix]
+     */
+    val content by lazy {
+        NotBlankString(
+            input.s.substring(
+                prefix,
+                suffix,
+                ignoreCase = true,
+                ignoreMissingStart = true,
+                ignoreMissingEnd = true
+            )
         )
-    )
+    }
+
+    /**
+     * @return the full string, INCLUDING [prefix] and [suffix]
+     */
     val string get() = "$prefix${content.s}$suffix"
 
     class Message(input: NotBlankString) : PgpField(input, "MESSAGE")
