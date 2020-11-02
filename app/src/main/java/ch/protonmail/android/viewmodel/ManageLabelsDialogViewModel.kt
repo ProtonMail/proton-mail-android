@@ -21,6 +21,7 @@ package ch.protonmail.android.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
@@ -130,4 +131,16 @@ class ManageLabelsDialogViewModel @Inject constructor(
         class ShowLabelCreatedEvent(val labelName: String) : ViewState()
     }
 
+    class ManageLabelsDialogViewModelFactory @Inject constructor(
+        private val manageLabelsViewModel: ManageLabelsDialogViewModel,
+        @Named("messages") private val messagesDao: MessagesDao
+    ) : ViewModelProvider.NewInstanceFactory() {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(ManageLabelsDialogViewModel::class.java)) {
+                return manageLabelsViewModel as T
+            }
+            throw IllegalArgumentException("Cannot assign ManageLabelsDialogViewModel from given class name")
+        }
+    }
 }

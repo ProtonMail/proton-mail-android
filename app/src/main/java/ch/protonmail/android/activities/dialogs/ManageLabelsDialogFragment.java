@@ -58,7 +58,6 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel;
-import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModelFactory;
 import ch.protonmail.android.views.ThreeStateCheckBox;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -96,7 +95,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     View mListDivider;
 
     @Inject
-    protected ManageLabelsDialogViewModelFactory manageLabelsDialogViewModelFactory;
+    protected ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory manageLabelsDialogViewModelFactory;
 
     private ILabelsChangeListener mLabelStateChangeListener;
     private ILabelCreationListener mLabelCreationListener;

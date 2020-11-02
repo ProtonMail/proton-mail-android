@@ -35,6 +35,7 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -116,7 +117,7 @@ internal class ViewModelModule {
     }
 
     @Provides
-    fun provideManageLabelsDialogViewModelFactory(factory: ManageLabelsDialogViewModelFactory):
+    fun provideManageLabelsDialogViewModelFactory(factory: ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory):
         ViewModelProvider.NewInstanceFactory {
         return factory
     }
