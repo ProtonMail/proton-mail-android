@@ -76,6 +76,7 @@ import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
 import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
+import ch.protonmail.android.usecase.fetch.FetchOnFirstLogin;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel;
@@ -103,6 +104,9 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
 
     @Inject
     ConnectivityBaseViewModel viewModel;
+
+    @Inject
+    protected FetchOnFirstLogin fetchOnFirstLogin;
 
     @BindView(R.id.fragmentContainer)
     View fragmentContainer;
