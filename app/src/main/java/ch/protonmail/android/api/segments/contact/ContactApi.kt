@@ -93,16 +93,12 @@ class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpe
 
     @Throws(IOException::class)
     override fun createContactBlocking(body: CreateContact): ContactResponse? {
-        val contactList = ArrayList<CreateContact>()
-        contactList.add(body)
-        val createContactBody = CreateContactBody(contactList)
+        val createContactBody = CreateContactBody(listOf(body))
         return ParseUtils.parse(service.createContactBlocking(createContactBody).execute())
     }
 
     override suspend fun createContact(body: CreateContact): ContactResponse? {
-        val contactList = ArrayList<CreateContact>()
-        contactList.add(body)
-        val createContactBody = CreateContactBody(contactList)
+        val createContactBody = CreateContactBody(listOf(body))
         return service.createContact(createContactBody)
     }
 
