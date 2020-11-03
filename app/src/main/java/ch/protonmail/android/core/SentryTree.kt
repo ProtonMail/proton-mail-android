@@ -37,10 +37,6 @@ internal class SentryTree : Timber.Tree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
 
-        if (priority >= Log.INFO) {
-            Log.println(priority, tag, message)
-        }
-
         if (priority >= Log.WARN) {
             val event = EventBuilder().apply {
                 withMessage(message)

@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
@@ -199,7 +200,7 @@ public class LoginActivity extends BaseLoginActivity {
             mProgressContainer.setVisibility(View.VISIBLE);
             final String username = mUsernameEditText.getText().toString();
             final String password = mPasswordEditText.getText().toString();
-            new Handler().postDelayed(() -> {
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 mDisableBack = false;
                 mUserManager.info(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/);
             }, 1500);

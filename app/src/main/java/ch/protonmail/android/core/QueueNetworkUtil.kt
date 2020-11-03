@@ -56,7 +56,7 @@ class QueueNetworkUtil @Inject constructor(
                     if (hasConn(false)) {
                         // if we really have connectivity, then we are informing the queue to try to
                         // execute itself
-                        listener!!.onNetworkChange(getNetworkStatus(context))
+                        listener?.onNetworkChange(getNetworkStatus(context))
                         ProtonMailApplication.getApplication().startJobManager()
                     }
                 }

@@ -38,12 +38,7 @@ import javax.inject.Singleton
 
 // region constants
 const val DOH_PROVIDER_TIMEOUT = 20_000L
-private const val TAG = "NetworkConfigurator"
 // endregion
-
-/*
- * Created by dinokadrikj on 3/3/20.
- */
 
 /**
  * NetworkConfigurator - used to retrieve and switch to alternative routing domains
