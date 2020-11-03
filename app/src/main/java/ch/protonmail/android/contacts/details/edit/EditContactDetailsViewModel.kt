@@ -317,7 +317,7 @@ class EditContactDetailsViewModel(
                 editContactDetailsRepository.updateContact(_contactId, contactName, emails, _vCardEncrypted, _vCardSigned, _mapEmailGroupsIds)
             }
             FLOW_CONVERT_CONTACT, FLOW_NEW_CONTACT -> {
-                GlobalScope.launch(dispatcherProvider.Main, CoroutineStart.DEFAULT) {
+                viewModelScope.launch(dispatcherProvider.Main, CoroutineStart.DEFAULT) {
                     withContext(dispatcherProvider.Main) {
                         createContact(contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
                             .observeForever { result: CreateContact.CreateContactResult ->

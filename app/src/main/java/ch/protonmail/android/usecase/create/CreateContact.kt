@@ -20,7 +20,8 @@
 package ch.protonmail.android.usecase.create
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import androidx.work.Data
 import androidx.work.WorkInfo
 import ch.protonmail.android.api.models.room.contacts.ContactData
@@ -65,18 +66,20 @@ class CreateContact @Inject constructor(
 
             createContactScheduler.enqueue(encryptedContactData, signedContactData)
                 .filter { it?.state?.isFinished == true || it?.state == WorkInfo.State.ENQUEUED }
-                .map {
-                    if (it.state == WorkInfo.State.ENQUEUED) {
-                        return@map CreateContactResult.OnlineContactCreationPending
+                .switchMap { workInfo: WorkInfo? ->
+                    liveData(dispatcherProvider.Io) {
+                        if (workInfo?.state == WorkInfo.State.ENQUEUED) {
+                            emit(CreateContactResult.OnlineContactCreationPending)
+                        } else {
+                            workInfo?.let { emit(handleWorkResult(workInfo, contactData)) }
+                        }
                     }
-
-                    handleWorkResult(it, contactData)
                 }
         }
 
     }
 
-    private fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): CreateContactResult {
+    private suspend fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): CreateContactResult {
         val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
 
         if (workSucceeded) {
@@ -107,13 +110,17 @@ class CreateContact @Inject constructor(
         return CreateContactWorkerErrors.ServerError
     }
 
-    private fun updateLocalContactData(outputData: Data, contactData: ContactData) {
-        val contactServerId = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID)!!
-        contactsRepository.updateContactDataWithServerId(contactData, contactServerId)
+    private suspend fun updateLocalContactData(outputData: Data, contactData: ContactData) {
+        val contactServerId = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID)
+        contactServerId?.let {
+            contactsRepository.updateContactDataWithServerId(contactData, it)
+        }
 
-        val emailsJson = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON)!!
-        val serverEmails = gson.fromJson<List<ContactEmail>>(emailsJson, emailsListGsonType())
-        contactsRepository.updateAllContactEmails(contactData.contactId, serverEmails)
+        val emailsJson = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON)
+        emailsJson?.let {
+            val serverEmails = gson.fromJson<List<ContactEmail>>(it, emailsListGsonType())
+            contactsRepository.updateAllContactEmails(contactData.contactId, serverEmails)
+        }
     }
 
     private fun emailsListGsonType(): Type = TypeToken.getParameterized(List::class.java, ContactEmail::class.java).type

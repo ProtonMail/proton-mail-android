@@ -34,9 +34,6 @@ import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.IOException
@@ -153,41 +150,35 @@ open class ContactDetailsRepository @Inject constructor(
             }
     }
 
-    fun saveContactEmails(emails: List<ContactEmail>) {
-        dispatchIo { contactsDao.saveAllContactsEmails(emails) }
+    suspend fun saveContactEmails(emails: List<ContactEmail>) = withContext(dispatcherProvider.Io) {
+        contactsDao.saveAllContactsEmails(emails)
     }
 
-    fun updateContactDataWithServerId(contactDataInDb: ContactData, contactServerId: String) {
-        dispatchIo {
+    suspend fun updateContactDataWithServerId(contactDataInDb: ContactData, contactServerId: String): Unit =
+        withContext(dispatcherProvider.Io) {
             contactsDao.findContactDataByDbId(contactDataInDb.dbId ?: -1)?.let {
                 it.contactId = contactServerId
                 contactsDao.saveContactData(it)
             }
         }
-    }
 
-    fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>) {
-        dispatchIo {
+    suspend fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>): Unit =
+        withContext(dispatcherProvider.Io) {
             contactId?.let {
                 val localContactEmails = contactsDao.findContactEmailsByContactId(it)
                 contactsDao.deleteAllContactsEmails(localContactEmails)
                 contactsDao.saveAllContactsEmails(contactServerEmails)
             }
         }
-    }
 
-    fun deleteContactData(contactData: ContactData) {
-        dispatchIo { contactsDao.deleteContactData(contactData) }
-    }
-
-    fun saveContactData(contactData: ContactData): Long {
-        return contactsDao.saveContactData(contactData)
-    }
-
-    private fun dispatchIo(block: suspend CoroutineScope.() -> Unit) {
-        GlobalScope.launch {
-            withContext(dispatcherProvider.Io, block)
+    suspend fun deleteContactData(contactData: ContactData) =
+        withContext(dispatcherProvider.Io) {
+            contactsDao.deleteContactData(contactData)
         }
-    }
+
+    suspend fun saveContactData(contactData: ContactData): Long =
+        withContext(dispatcherProvider.Io) {
+            return@withContext contactsDao.saveContactData(contactData)
+        }
 
 }

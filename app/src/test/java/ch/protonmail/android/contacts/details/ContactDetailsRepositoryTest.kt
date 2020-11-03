@@ -31,6 +31,8 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -51,71 +53,83 @@ class ContactDetailsRepositoryTest {
 
     @InjectMockKs
     private lateinit var repository: ContactDetailsRepository
+   
+    private val dispatcherProvider = TestDispatcherProvider
 
     @Test
     fun saveContactEmailsSavesAllTheContactEmailsToContactsDb() {
-        val emails = listOf(
-            ContactEmail("ID1", "email@proton.com", "Tom"),
-            ContactEmail("ID2", "secondary@proton.com", "Mike")
-        )
+        runBlockingTest {
+            val emails = listOf(
+                ContactEmail("ID1", "email@proton.com", "Tom"),
+                ContactEmail("ID2", "secondary@proton.com", "Mike")
+            )
 
-        repository.saveContactEmails(emails)
+            repository.saveContactEmails(emails)
 
-        verify { contactsDao.saveAllContactsEmails(emails) }
+            verify { contactsDao.saveAllContactsEmails(emails) }
+        }
     }
 
     @Test
     fun updateContactDataWithServerIdReadsContactFromDbAndSavesItBackWithServerId() {
-        val contactDbId = 782L
-        val contactData = ContactData("contactDataId", "name").apply { dbId = contactDbId }
-        val contactServerId = "serverId"
-        every { contactsDao.findContactDataByDbId(contactDbId) } returns contactData
+        runBlockingTest {
+            val contactDbId = 782L
+            val contactData = ContactData("contactDataId", "name").apply { dbId = contactDbId }
+            val contactServerId = "serverId"
+            every { contactsDao.findContactDataByDbId(contactDbId) } returns contactData
 
-        repository.updateContactDataWithServerId(contactData, contactServerId)
+            repository.updateContactDataWithServerId(contactData, contactServerId)
 
-        verify { contactsDao.findContactDataByDbId(contactDbId) }
-        val expectedContactData = contactData.copy(contactId = contactServerId)
-        verify { contactsDao.saveContactData(expectedContactData) }
+            verify { contactsDao.findContactDataByDbId(contactDbId) }
+            val expectedContactData = contactData.copy(contactId = contactServerId)
+            verify { contactsDao.saveContactData(expectedContactData) }
+        }
     }
 
     @Test
     fun updateAllContactEmailsRemovesAllExistingEmailsFromDbAndSavesServerOnes() {
-        val contactId = "contactId"
-        val localContactEmails = listOf(
-            ContactEmail("ID1", "email@proton.com", "Tom"),
-            ContactEmail("ID2", "secondary@proton.com", "Mike")
-        )
-        val serverEmails = listOf(
-            ContactEmail("ID3", "martin@proton.com", "Martin"),
-            ContactEmail("ID4", "kent@proton.com", "kent")
-        )
-        every { contactsDao.findContactEmailsByContactId(contactId) } returns localContactEmails
+        runBlockingTest {
+            val contactId = "contactId"
+            val localContactEmails = listOf(
+                ContactEmail("ID1", "email@proton.com", "Tom"),
+                ContactEmail("ID2", "secondary@proton.com", "Mike")
+            )
+            val serverEmails = listOf(
+                ContactEmail("ID3", "martin@proton.com", "Martin"),
+                ContactEmail("ID4", "kent@proton.com", "kent")
+            )
+            every { contactsDao.findContactEmailsByContactId(contactId) } returns localContactEmails
 
-        repository.updateAllContactEmails(contactId, serverEmails)
+            repository.updateAllContactEmails(contactId, serverEmails)
 
-        verify { contactsDao.findContactEmailsByContactId(contactId) }
-        verify { contactsDao.deleteAllContactsEmails(localContactEmails) }
-        verify { contactsDao.saveAllContactsEmails(serverEmails) }
+            verify { contactsDao.findContactEmailsByContactId(contactId) }
+            verify { contactsDao.deleteAllContactsEmails(localContactEmails) }
+            verify { contactsDao.saveAllContactsEmails(serverEmails) }
+        }
     }
 
     @Test
     fun deleteContactDataDeletesContactDataFromDb() {
-        val contactData = ContactData("contactDataId", "name").apply { dbId = 2345L }
+        runBlockingTest {
+            val contactData = ContactData("contactDataId", "name").apply { dbId = 2345L }
 
-        repository.deleteContactData(contactData)
+            repository.deleteContactData(contactData)
 
-        verify { contactsDao.deleteContactData(contactData) }
+            verify { contactsDao.deleteContactData(contactData) }
+        }
     }
 
     @Test
     fun saveContactDataSavesDataToDbReturningTheSavedContactDbId() {
-        val contactData = ContactData("1243", "Tyler")
-        val expectedDbId = 8945L
-        every { contactsDao.saveContactData(contactData) } returns expectedDbId
+        runBlockingTest {
+            val contactData = ContactData("1243", "Tyler")
+            val expectedDbId = 8945L
+            every { contactsDao.saveContactData(contactData) } returns expectedDbId
 
-        val actualDbId = repository.saveContactData(contactData)
+            val actualDbId = repository.saveContactData(contactData)
 
-        verify { contactsDao.saveContactData(contactData) }
-        assertEquals(expectedDbId, actualDbId)
+            verify { contactsDao.saveContactData(contactData) }
+            assertEquals(expectedDbId, actualDbId)
+        }
     }
 }

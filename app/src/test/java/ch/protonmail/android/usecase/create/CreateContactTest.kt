@@ -36,6 +36,8 @@ import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
@@ -43,14 +45,14 @@ import io.mockk.slot
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.lang.reflect.Type
 import java.util.UUID
 
-class CreateContactTest {
+class CreateContactTest : CoroutinesTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -70,8 +72,6 @@ class CreateContactTest {
     @InjectMockKs
     private lateinit var createContact: CreateContact
 
-    private val dispatcherProvider = TestDispatcherProvider
-
     private val encryptedData = "encryptedContactData"
     private val signedData = "signedContactData"
     private val contactEmails = listOf(
@@ -82,6 +82,7 @@ class CreateContactTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        coEvery { contactsRepository.saveContactData(any()) } returns 324L
     }
 
     @Test
@@ -94,7 +95,7 @@ class CreateContactTest {
             val emailWithContactId = ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId")
             val secondaryEmailWithContactId = ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
             val expectedContactEmails = listOf(emailWithContactId, secondaryEmailWithContactId)
-            verify { contactsRepository.saveContactEmails(expectedContactEmails) }
+            coVerify { contactsRepository.saveContactEmails(expectedContactEmails) }
         }
     }
 
@@ -111,6 +112,7 @@ class CreateContactTest {
     fun createContactReturnsErrorWhenContactCreationThroughNetworkFails() {
         runBlockingTest {
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.FAILED)
+            coEvery { contactsRepository.saveContactData(any()) } returns 324L
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
 
             val result = createContact("Name", contactEmails, encryptedData, signedData)
@@ -151,7 +153,7 @@ class CreateContactTest {
 
             val expectedContactData = ContactData("723", "FooName")
             assertEquals(CreateContactResult.Success, result.value)
-            verify { contactsRepository.updateContactDataWithServerId(expectedContactData, contactServerId) }
+            coVerify { contactsRepository.updateContactDataWithServerId(expectedContactData, contactServerId) }
         }
     }
 
@@ -183,7 +185,7 @@ class CreateContactTest {
             assertEquals(CreateContactResult.Success, result.value)
 
             verify { gson.fromJson(serverEmailsJson, emailListType) }
-            verify { contactsRepository.updateAllContactEmails("8234823", contactServerEmails) }
+            coVerify { contactsRepository.updateAllContactEmails("8234823", contactServerEmails) }
         }
     }
 
@@ -201,7 +203,7 @@ class CreateContactTest {
             result.observeForever { }
 
             val expectedContactData = ContactData("92394823", "Mino")
-            verify { contactsRepository.deleteContactData(expectedContactData) }
+            coVerify { contactsRepository.deleteContactData(expectedContactData) }
             assertEquals(CreateContactResult.ContactAlreadyExistsError, result.value)
         }
     }
@@ -220,7 +222,7 @@ class CreateContactTest {
             result.observeForever { }
 
             val expectedContactData = ContactData("92394823", "Dan")
-            verify { contactsRepository.deleteContactData(expectedContactData) }
+            coVerify { contactsRepository.deleteContactData(expectedContactData) }
             assertEquals(CreateContactResult.InvalidEmailError, result.value)
         }
     }
@@ -239,7 +241,7 @@ class CreateContactTest {
             result.observeForever { }
 
             val expectedContactData = ContactData("2398238", "Test Name")
-            verify { contactsRepository.deleteContactData(expectedContactData) }
+            coVerify { contactsRepository.deleteContactData(expectedContactData) }
             assertEquals(CreateContactResult.DuplicatedEmailError, result.value)
         }
     }
@@ -256,7 +258,7 @@ class CreateContactTest {
             val result = createContact("Bar", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            verify(exactly = 0) { contactsRepository.deleteContactData(any()) }
+            coVerify(exactly = 0) { contactsRepository.deleteContactData(any()) }
             assertEquals(CreateContactResult.GenericError, result.value)
         }
     }
@@ -270,7 +272,7 @@ class CreateContactTest {
             createContact(contactName, contactEmails, encryptedData, signedData)
 
             val expected = ContactData("1233", contactName)
-            verify { contactsRepository.saveContactData(expected) }
+            coVerify { contactsRepository.saveContactData(expected) }
         }
     }
 
@@ -283,7 +285,7 @@ class CreateContactTest {
             val contactData = ContactData("8238", contactName)
             val dbId = 7347L
             every { contactIdGenerator.generateRandomId() } returns "8238"
-            every { contactsRepository.saveContactData(contactData) } returns dbId
+            coEvery { contactsRepository.saveContactData(contactData) } returns dbId
             val workOutputData = workDataOf(
                 KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM to "InvalidEmailError"
             )
@@ -294,7 +296,7 @@ class CreateContactTest {
             result.observeForever { }
 
             val contactDataSlot = slot<ContactData>()
-            verify { contactsRepository.deleteContactData(capture(contactDataSlot)) }
+            coVerify { contactsRepository.deleteContactData(capture(contactDataSlot)) }
             assertEquals(dbId, contactDataSlot.captured.dbId)
         }
     }
