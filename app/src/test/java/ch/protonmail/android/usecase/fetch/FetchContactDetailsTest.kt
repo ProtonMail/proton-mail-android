@@ -20,13 +20,13 @@
 package ch.protonmail.android.usecase.fetch
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -34,14 +34,13 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.IOException
-import kotlin.test.assertNotNull
+import kotlin.test.assertEquals
 
 class FetchContactDetailsTest : CoroutinesTest {
 
@@ -94,22 +93,19 @@ class FetchContactDetailsTest : CoroutinesTest {
             every { contactsDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
             every { contactsDao.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
-            val observer = mockk<Observer<FetchContactDetailsResult?>>(relaxed = true)
             val expectedDb = FetchContactDetailsResult.Data(
                 decryptedVCardType0 = testDataDb
             )
             val expectedNet = FetchContactDetailsResult.Data(
-                decryptedVCardType0 = testDataDb
+                decryptedVCardType0 = testDataNet
             )
 
             // when
-            val response = useCase.invoke(contactId)
-            response.observeForever(observer)
+            val observer = useCase.invoke(contactId).testObserver()
 
             // then
-            assertNotNull(response.value)
-            verify(exactly = 1) { observer.onChanged(expectedDb) }
-            verify(exactly = 1) { observer.onChanged(expectedNet) }
+            assertEquals(expectedDb, observer.observedValues[0])
+            assertEquals(expectedNet, observer.observedValues[1])
         }
 
     @Test
@@ -132,7 +128,6 @@ class FetchContactDetailsTest : CoroutinesTest {
             every { contactsDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
             val ioException = IOException("Cannot load contacts")
             coEvery { api.fetchContactDetails(contactId) } throws ioException
-            val observer = mockk<Observer<FetchContactDetailsResult?>>(relaxed = true)
             val expected = FetchContactDetailsResult.Data(
                 decryptedVCardType2 = testData,
                 vCardType2Signature = testSignature
@@ -140,13 +135,11 @@ class FetchContactDetailsTest : CoroutinesTest {
             val expectedNetError = FetchContactDetailsResult.Error(ioException)
 
             // when
-            val response = useCase.invoke(contactId)
-            response.observeForever(observer)
+            val observer = useCase.invoke(contactId).testObserver()
 
             // then
-            assertNotNull(response.value)
-            verify(exactly = 1) { observer.onChanged(expected) }
-            verify(exactly = 1) { observer.onChanged(expectedNetError) }
+            assertEquals(expected, observer.observedValues[0])
+            assertEquals(expectedNetError, observer.observedValues[1])
         }
 
     @Test
@@ -176,18 +169,32 @@ class FetchContactDetailsTest : CoroutinesTest {
             every { contactsDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
             every { contactsDao.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
-            val observer = mockk<Observer<FetchContactDetailsResult?>>(relaxed = true)
             val expected = FetchContactDetailsResult.Data(
                 decryptedVCardType2 = testDataNet,
                 vCardType2Signature = testSignature
             )
 
             // when
-            val response = useCase.invoke(contactId)
-            response.observeForever(observer)
+            val observer = useCase.invoke(contactId).testObserver()
 
             // then
-            assertNotNull(response.value)
-            verify(exactly = 1) { observer.onChanged(expected) }
+            assertEquals(expected, observer.observedValues[0])
+        }
+
+    @Test
+    fun verifyThatWhenExceptionIsThrownErrorDataWillBeEmitted() =
+        runBlockingTest {
+            // given
+            val contactId = "testContactId"
+            val exception = Exception("An error!")
+            every { contactsDao.findFullContactDetailsById(contactId) } returns null
+            coEvery { api.fetchContactDetails(contactId) } throws exception
+            val expected = FetchContactDetailsResult.Error(exception)
+
+            // when
+            val observer = useCase.invoke(contactId).testObserver()
+
+            // then
+            assertEquals(expected, observer.observedValues[0])
         }
 }
