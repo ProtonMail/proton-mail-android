@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.utils
+package ch.protonmail.android.testAndroid.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer

@@ -19,37 +19,38 @@
 
 package ch.protonmail.android.usecase
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
-import ch.protonmail.android.utils.captureValues
+import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.testAndroid.lifecycle.testObserver
+import ch.protonmail.android.testAndroid.livedata.captureValues
 import ch.protonmail.android.worker.PingWorker
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
+import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class VerifyConnectionTest : CoroutinesTest {
-
-    @get:Rule
-    val archRule = InstantTaskExecutorRule()
+class VerifyConnectionTest : CoroutinesTest, ArchTest {
 
     @MockK
     private lateinit var workEnqueuer: PingWorker.Enqueuer
 
     @MockK
     private lateinit var connectionManager: NetworkConnectivityManager
+
+    @MockK
+    private lateinit var queueNetworkUtil: QueueNetworkUtil
 
     private lateinit var verifyConnectionUseCase: VerifyConnection
 
@@ -58,7 +59,8 @@ class VerifyConnectionTest : CoroutinesTest {
         MockKAnnotations.init(this)
         verifyConnectionUseCase = VerifyConnection(
             workEnqueuer,
-            connectionManager
+            connectionManager,
+            queueNetworkUtil
         )
     }
 
@@ -72,21 +74,20 @@ class VerifyConnectionTest : CoroutinesTest {
         }
         workInfoLiveData.value = listOf(workInfo)
         val connectionsFlow = flow<Boolean> {}
+        val backendConnectionsFlow = MutableStateFlow(true)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-        val observer = mockk<Observer<Boolean>>(relaxed = true)
+        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
         val expected = true
 
         // when
-        val response = verifyConnectionUseCase()
-        response.observeForever(observer)
+        val observer = verifyConnectionUseCase().testObserver()
 
         // then
-        verify { observer.onChanged(isInternetAvailable) }
-        verify { observer.onChanged(expected) }
-        assertEquals(expected, response.value)
+        assertEquals(isInternetAvailable, observer.observedValues[0])
+        assertEquals(expected, observer.observedValues[1])
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
@@ -100,22 +101,21 @@ class VerifyConnectionTest : CoroutinesTest {
         }
         workInfoLiveData.value = listOf(workInfo)
         val connectionsFlow = flow<Boolean> {}
+        val backendConnectionsFlow = MutableStateFlow(true)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
+        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
 
-        val observer = mockk<Observer<Boolean>>(relaxed = true)
         val expected = false
 
         // when
-        val response = verifyConnectionUseCase()
-        response.observeForever(observer)
+        val observer = verifyConnectionUseCase().testObserver()
 
         // then
-        verify { observer.onChanged(isInternetAvailable) }
-        verify { observer.onChanged(expected) }
-        assertEquals(expected, response.value)
+        assertEquals(isInternetAvailable, observer.observedValues[0])
+        assertEquals(expected, observer.observedValues[1])
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
@@ -129,20 +129,18 @@ class VerifyConnectionTest : CoroutinesTest {
         }
         workInfoLiveData.value = listOf(workInfo)
         val connectionsFlow = flow<Boolean> {}
+        val backendConnectionsFlow = MutableStateFlow(true)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
-
-        val observer = mockk<Observer<Boolean>>(relaxed = true)
+        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
 
         // when
-        val response = verifyConnectionUseCase()
-        response.observeForever(observer)
+        val observer = verifyConnectionUseCase().testObserver()
 
         // then
-        verify(exactly = 1) { observer.onChanged(isInternetAvailable) }
-        assertEquals(isInternetAvailable, response.value)
+        assertEquals(isInternetAvailable, observer.observedValues[0])
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
@@ -151,16 +149,19 @@ class VerifyConnectionTest : CoroutinesTest {
         // given
         val isInternetAvailable = false
         val newConnectionEvent = false
+        val serverConnectionErrorValue = false
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
             every { state } returns WorkInfo.State.SUCCEEDED
         }
         workInfoLiveData.value = listOf(workInfo)
         val connectionsFlow = flowOf(newConnectionEvent).take(1)
+        val backendConnectionsFlow = MutableStateFlow(false)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
+        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
         val expectedWorkerState = true
 
         // when
@@ -168,9 +169,12 @@ class VerifyConnectionTest : CoroutinesTest {
 
         // then
         response.captureValues {
-            assertEquals(listOf(isInternetAvailable, expectedWorkerState, newConnectionEvent), values)
+            assertEquals(
+                listOf(isInternetAvailable, expectedWorkerState, newConnectionEvent, serverConnectionErrorValue),
+                values
+            )
         }
-        verify(exactly = 2) { workEnqueuer.enqueue() }
+        verify(exactly = 3) { workEnqueuer.enqueue() }
     }
 
     @Test
@@ -184,10 +188,12 @@ class VerifyConnectionTest : CoroutinesTest {
         }
         workInfoLiveData.value = listOf(workInfo)
         val connectionsFlow = flowOf(newConnectionEvent).take(1)
+        val backendConnectionsFlow = MutableStateFlow(true)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
         every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
+        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
         val expectedWorkerState = true
 
         // when

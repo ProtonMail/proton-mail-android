@@ -25,6 +25,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.worker.PingWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
@@ -52,13 +53,18 @@ import javax.inject.Inject
  */
 class VerifyConnection @Inject constructor(
     private val pingWorkerEnqueuer: PingWorker.Enqueuer,
-    private val connectivityManager: NetworkConnectivityManager
+    private val connectivityManager: NetworkConnectivityManager,
+    private val queueNetworkUtil: QueueNetworkUtil
 ) {
 
     operator fun invoke(): LiveData<Boolean> {
         Timber.v("VerifyConnection invoked")
 
-        val connectivityManagerFlow = connectivityManager.isConnectionAvailableFlow()
+        val connectivityManagerFlow = flowOf(
+            connectivityManager.isConnectionAvailableFlow(),
+            queueNetworkUtil.isBackendRespondingWithoutErrorFlow
+        )
+            .flattenMerge()
             .filter { !it } // observe only disconnections
             .onEach {
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
@@ -67,7 +73,8 @@ class VerifyConnection @Inject constructor(
         return flowOf(
             getPingStateList(pingWorkerEnqueuer.getWorkInfoState()),
             connectivityManagerFlow
-        ).flattenMerge()
+        )
+            .flattenMerge()
             .onStart {
                 pingWorkerEnqueuer.enqueue()
                 emit(connectivityManager.isInternetConnectionPossible()) // start with current net state

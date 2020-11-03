@@ -26,6 +26,8 @@ import android.net.ConnectivityManager
 import ch.protonmail.android.api.NetworkConfigurator
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,9 +41,19 @@ class QueueNetworkUtil @Inject constructor(
     private var listener: NetworkEventProvider.Listener? = null
     private var isInternetAccessible: Boolean = false
 
+    /**
+     * Flow that emits false when backend replies with an error, or true when
+     * a correct reply is received.
+     */
+    val isBackendRespondingWithoutErrorFlow: StateFlow<Boolean>
+        get() = backendExceptionFlow
+
+    private val backendExceptionFlow = MutableStateFlow(true)
+
     @Synchronized
     private fun updateRealConnectivity(internetAccessible: Boolean) {
         isInternetAccessible = internetAccessible
+        backendExceptionFlow.value = internetAccessible
     }
 
     init {
@@ -67,7 +79,6 @@ class QueueNetworkUtil @Inject constructor(
 
     fun isConnected(): Boolean = hasConn(false)
 
-    @Deprecated("Use [NetworkConnectivityManager] instead")
     fun setCurrentlyHasConnectivity(currentlyHasConnectivity: Boolean) =
         updateRealConnectivity(currentlyHasConnectivity)
 
