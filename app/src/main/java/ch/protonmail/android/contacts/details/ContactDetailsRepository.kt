@@ -154,15 +154,16 @@ open class ContactDetailsRepository @Inject constructor(
         contactsDao.saveAllContactsEmails(emails)
     }
 
-    suspend fun updateContactDataWithServerId(contactDataInDb: ContactData, contactServerId: String): Unit =
+    suspend fun updateContactDataWithServerId(contactDataInDb: ContactData, contactServerId: String) {
         withContext(dispatcherProvider.Io) {
             contactsDao.findContactDataByDbId(contactDataInDb.dbId ?: -1)?.let {
                 it.contactId = contactServerId
                 contactsDao.saveContactData(it)
             }
         }
+    }
 
-    suspend fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>): Unit =
+    suspend fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>) {
         withContext(dispatcherProvider.Io) {
             contactId?.let {
                 val localContactEmails = contactsDao.findContactEmailsByContactId(it)
@@ -170,6 +171,7 @@ open class ContactDetailsRepository @Inject constructor(
                 contactsDao.saveAllContactsEmails(contactServerEmails)
             }
         }
+    }
 
     suspend fun deleteContactData(contactData: ContactData) =
         withContext(dispatcherProvider.Io) {

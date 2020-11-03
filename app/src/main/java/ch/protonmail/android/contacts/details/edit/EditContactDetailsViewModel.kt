@@ -85,7 +85,7 @@ const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
 class EditContactDetailsViewModel(
-    dispatcherProvider: DispatcherProvider,
+    protected val dispatcherProvider: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
     private val userManager: UserManager,

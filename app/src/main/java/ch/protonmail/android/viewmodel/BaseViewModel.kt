@@ -32,5 +32,5 @@ import studio.forface.viewstatestore.ViewStateStoreScope
  * @author Davide Farella
  */
 abstract class BaseViewModel(
-    protected val dispatcherProvider: DispatcherProvider
+    dispatcherProvider: DispatcherProvider
 ) : ViewModel(), ViewStateStoreScope, DispatcherProvider by dispatcherProvider
