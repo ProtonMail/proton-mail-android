@@ -54,7 +54,7 @@ class CreateContact @Inject constructor(
         contactEmails: List<ContactEmail>,
         encryptedContactData: String,
         signedContactData: String
-    ): LiveData<CreateContactResult> {
+    ): LiveData<Result> {
 
         return withContext(dispatcherProvider.Io) {
             val contactData = ContactData(contactIdGenerator.generateRandomId(), contactName)
@@ -69,7 +69,7 @@ class CreateContact @Inject constructor(
                 .switchMap { workInfo: WorkInfo? ->
                     liveData(dispatcherProvider.Io) {
                         if (workInfo?.state == WorkInfo.State.ENQUEUED) {
-                            emit(CreateContactResult.OnlineContactCreationPending)
+                            emit(Result.OnlineContactCreationPending)
                         } else {
                             workInfo?.let { emit(handleWorkResult(workInfo, contactData)) }
                         }
@@ -79,16 +79,16 @@ class CreateContact @Inject constructor(
 
     }
 
-    private suspend fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): CreateContactResult {
+    private suspend fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): Result {
         val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
 
         if (workSucceeded) {
             updateLocalContactData(workInfo.outputData, contactData)
-            return CreateContactResult.Success
+            return Result.Success
         }
 
         val createContactError = workerErrorToCreateContactResult(workInfo)
-        if (createContactError != CreateContactResult.GenericError) {
+        if (createContactError != Result.GenericError) {
             contactsRepository.deleteContactData(contactData)
         }
         return createContactError
@@ -96,10 +96,10 @@ class CreateContact @Inject constructor(
 
     private fun workerErrorToCreateContactResult(workInfo: WorkInfo) =
         when (workerErrorEnum(workInfo)) {
-            CreateContactWorkerErrors.ContactAlreadyExistsError -> CreateContactResult.ContactAlreadyExistsError
-            CreateContactWorkerErrors.InvalidEmailError -> CreateContactResult.InvalidEmailError
-            CreateContactWorkerErrors.DuplicatedEmailError -> CreateContactResult.DuplicatedEmailError
-            else -> CreateContactResult.GenericError
+            CreateContactWorkerErrors.ContactAlreadyExistsError -> Result.ContactAlreadyExistsError
+            CreateContactWorkerErrors.InvalidEmailError -> Result.InvalidEmailError
+            CreateContactWorkerErrors.DuplicatedEmailError -> Result.DuplicatedEmailError
+            else -> Result.GenericError
         }
 
     private fun workerErrorEnum(workInfo: WorkInfo): CreateContactWorkerErrors {
@@ -126,12 +126,12 @@ class CreateContact @Inject constructor(
     private fun emailsListGsonType(): Type = TypeToken.getParameterized(List::class.java, ContactEmail::class.java).type
 
 
-    sealed class CreateContactResult {
-        object Success : CreateContactResult()
-        object GenericError : CreateContactResult()
-        object ContactAlreadyExistsError : CreateContactResult()
-        object InvalidEmailError : CreateContactResult()
-        object DuplicatedEmailError : CreateContactResult()
-        object OnlineContactCreationPending : CreateContactResult()
+    sealed class Result {
+        object Success : Result()
+        object GenericError : Result()
+        object ContactAlreadyExistsError : Result()
+        object InvalidEmailError : Result()
+        object DuplicatedEmailError : Result()
+        object OnlineContactCreationPending : Result()
     }
 }

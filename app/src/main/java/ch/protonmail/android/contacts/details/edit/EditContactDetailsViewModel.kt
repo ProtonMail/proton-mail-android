@@ -85,7 +85,7 @@ const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
 class EditContactDetailsViewModel(
-    val dispatcherProvider: DispatcherProvider,
+    dispatcherProvider: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
     private val userManager: UserManager,
@@ -317,27 +317,25 @@ class EditContactDetailsViewModel(
                 editContactDetailsRepository.updateContact(_contactId, contactName, emails, _vCardEncrypted, _vCardSigned, _mapEmailGroupsIds)
             }
             FLOW_CONVERT_CONTACT, FLOW_NEW_CONTACT -> {
-                viewModelScope.launch(dispatcherProvider.Main, CoroutineStart.DEFAULT) {
-                    withContext(dispatcherProvider.Main) {
-                        createContact(contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
-                            .observeForever { result: CreateContact.CreateContactResult ->
-                                val resultMessage = getMessageForResult(result)
-                                createContactResult.postValue(resultMessage)
-                            }
-                    }
+                viewModelScope.launch(dispatcherProvider.Main) {
+                    createContact(contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
+                        .observeForever { result: CreateContact.Result ->
+                            val resultMessage = getMessageForResult(result)
+                            createContactResult.postValue(resultMessage)
+                        }
                 }
             }
         }
     }
 
-    private fun getMessageForResult(result: CreateContact.CreateContactResult): Int {
+    private fun getMessageForResult(result: CreateContact.Result): Int {
         return when (result) {
-            CreateContact.CreateContactResult.Success -> R.string.contact_saved
-            CreateContact.CreateContactResult.GenericError -> R.string.error
-            CreateContact.CreateContactResult.ContactAlreadyExistsError -> R.string.contact_exist
-            CreateContact.CreateContactResult.InvalidEmailError -> R.string.invalid_email_some_contacts
-            CreateContact.CreateContactResult.DuplicatedEmailError -> R.string.duplicate_email
-            CreateContact.CreateContactResult.OnlineContactCreationPending -> R.string.contact_saved_offline
+            CreateContact.Result.Success -> R.string.contact_saved
+            CreateContact.Result.GenericError -> R.string.error
+            CreateContact.Result.ContactAlreadyExistsError -> R.string.contact_exist
+            CreateContact.Result.InvalidEmailError -> R.string.invalid_email_some_contacts
+            CreateContact.Result.DuplicatedEmailError -> R.string.duplicate_email
+            CreateContact.Result.OnlineContactCreationPending -> R.string.contact_saved_offline
         }
     }
 

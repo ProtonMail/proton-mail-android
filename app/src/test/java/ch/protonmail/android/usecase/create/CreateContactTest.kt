@@ -28,7 +28,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
-import ch.protonmail.android.usecase.create.CreateContact.CreateContactResult
+import ch.protonmail.android.usecase.create.CreateContact.Result
 import ch.protonmail.android.worker.CreateContactWorker
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
@@ -118,7 +118,7 @@ class CreateContactTest : CoroutinesTest {
             val result = createContact("Name", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            assertEquals(CreateContactResult.GenericError, result.value)
+            assertEquals(Result.GenericError, result.value)
         }
     }
 
@@ -131,7 +131,7 @@ class CreateContactTest : CoroutinesTest {
             val result = createContact("Alex", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            assertEquals(CreateContactResult.OnlineContactCreationPending, result.value)
+            assertEquals(Result.OnlineContactCreationPending, result.value)
         }
     }
 
@@ -152,7 +152,7 @@ class CreateContactTest : CoroutinesTest {
             result.observeForever { }
 
             val expectedContactData = ContactData("723", "FooName")
-            assertEquals(CreateContactResult.Success, result.value)
+            assertEquals(Result.Success, result.value)
             coVerify { contactsRepository.updateContactDataWithServerId(expectedContactData, contactServerId) }
         }
     }
@@ -182,7 +182,7 @@ class CreateContactTest : CoroutinesTest {
             val result = createContact("Bogdan", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
-            assertEquals(CreateContactResult.Success, result.value)
+            assertEquals(Result.Success, result.value)
 
             verify { gson.fromJson(serverEmailsJson, emailListType) }
             coVerify { contactsRepository.updateAllContactEmails("8234823", contactServerEmails) }
@@ -204,7 +204,7 @@ class CreateContactTest : CoroutinesTest {
 
             val expectedContactData = ContactData("92394823", "Mino")
             coVerify { contactsRepository.deleteContactData(expectedContactData) }
-            assertEquals(CreateContactResult.ContactAlreadyExistsError, result.value)
+            assertEquals(Result.ContactAlreadyExistsError, result.value)
         }
     }
 
@@ -223,7 +223,7 @@ class CreateContactTest : CoroutinesTest {
 
             val expectedContactData = ContactData("92394823", "Dan")
             coVerify { contactsRepository.deleteContactData(expectedContactData) }
-            assertEquals(CreateContactResult.InvalidEmailError, result.value)
+            assertEquals(Result.InvalidEmailError, result.value)
         }
     }
 
@@ -242,7 +242,7 @@ class CreateContactTest : CoroutinesTest {
 
             val expectedContactData = ContactData("2398238", "Test Name")
             coVerify { contactsRepository.deleteContactData(expectedContactData) }
-            assertEquals(CreateContactResult.DuplicatedEmailError, result.value)
+            assertEquals(Result.DuplicatedEmailError, result.value)
         }
     }
 
@@ -259,7 +259,7 @@ class CreateContactTest : CoroutinesTest {
             result.observeForever { }
 
             coVerify(exactly = 0) { contactsRepository.deleteContactData(any()) }
-            assertEquals(CreateContactResult.GenericError, result.value)
+            assertEquals(Result.GenericError, result.value)
         }
     }
 
