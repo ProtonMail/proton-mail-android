@@ -23,8 +23,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
-import ch.protonmail.android.testAndroid.lifecycle.testObserver
-import ch.protonmail.android.testAndroid.livedata.captureValues
 import ch.protonmail.android.worker.PingWorker
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -35,6 +33,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
@@ -65,7 +65,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatTrueIsReturnedWhenOperationSucceeds() {
+    fun verifyThatTrueIsReturnedWhenOperationSucceeds() = runBlockingTest {
         // given
         val isInternetAvailable = false
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
@@ -83,16 +83,16 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         val expected = true
 
         // when
-        val observer = verifyConnectionUseCase().testObserver()
+        val resultList = verifyConnectionUseCase().take(2).toList()
 
         // then
-        assertEquals(isInternetAvailable, observer.observedValues[0])
-        assertEquals(expected, observer.observedValues[1])
+        assertEquals(isInternetAvailable, resultList[0])
+        assertEquals(expected, resultList[1])
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
-    fun verifyThatFalseIsReturnedWhenOperationFails() {
+    fun verifyThatFalseIsReturnedWhenOperationFails() = runBlockingTest {
         // given
         val isInternetAvailable = true
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
@@ -111,16 +111,16 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         val expected = false
 
         // when
-        val observer = verifyConnectionUseCase().testObserver()
+        val resultList = verifyConnectionUseCase().take(2).toList()
 
         // then
-        assertEquals(isInternetAvailable, observer.observedValues[0])
-        assertEquals(expected, observer.observedValues[1])
+        assertEquals(isInternetAvailable, resultList[0])
+        assertEquals(expected, resultList[1])
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
-    fun verifyThatOnlyInitialNetworkStatusIsReturnedWhenOperationIsOngoingAndNothingLater() {
+    fun verifyThatOnlyInitialNetworkStatusIsReturnedWhenOperationIsOngoingAndNothingLater() = runBlockingTest {
         // given
         val isInternetAvailable = true
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
@@ -137,15 +137,15 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
 
         // when
-        val observer = verifyConnectionUseCase().testObserver()
+        val resultsList = verifyConnectionUseCase().take(1).toList()
 
         // then
-        assertEquals(isInternetAvailable, observer.observedValues[0])
+        assertEquals(isInternetAvailable, resultsList[0])
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
-    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionDrops() {
+    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionDrops() = runBlockingTest {
         // given
         val isInternetAvailable = false
         val newConnectionEvent = false
@@ -165,20 +165,18 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         val expectedWorkerState = true
 
         // when
-        val response = verifyConnectionUseCase()
+        val response = verifyConnectionUseCase().take(4).toList()
 
         // then
-        response.captureValues {
-            assertEquals(
-                listOf(isInternetAvailable, expectedWorkerState, newConnectionEvent, serverConnectionErrorValue),
-                values
-            )
-        }
+        assertEquals(
+            listOf(isInternetAvailable, expectedWorkerState, newConnectionEvent, serverConnectionErrorValue),
+            response
+        )
         verify(exactly = 3) { workEnqueuer.enqueue() }
     }
 
     @Test
-    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionEventIsNotTakenIntoAccount() {
+    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionEventIsNotTakenIntoAccount() = runBlockingTest {
         // given
         val isInternetAvailable = false
         val newConnectionEvent = true
@@ -197,12 +195,13 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
         val expectedWorkerState = true
 
         // when
-        val response = verifyConnectionUseCase()
+        val response = verifyConnectionUseCase().take(2).toList()
 
         // then
-        response.captureValues {
-            assertEquals(listOf(isInternetAvailable, expectedWorkerState), values)
-        }
+        assertEquals(
+            listOf(isInternetAvailable, expectedWorkerState),
+            response
+        )
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 }

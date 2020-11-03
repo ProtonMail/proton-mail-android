@@ -21,7 +21,6 @@ package ch.protonmail.android.usecase
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asFlow
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
@@ -57,7 +56,7 @@ class VerifyConnection @Inject constructor(
     private val queueNetworkUtil: QueueNetworkUtil
 ) {
 
-    operator fun invoke(): LiveData<Boolean> {
+    operator fun invoke(): Flow<Boolean> {
         Timber.v("VerifyConnection invoked")
 
         val connectivityManagerFlow = flowOf(
@@ -79,7 +78,6 @@ class VerifyConnection @Inject constructor(
                 pingWorkerEnqueuer.enqueue()
                 emit(connectivityManager.isInternetConnectionPossible()) // start with current net state
             }
-            .asLiveData()
     }
 
     private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<Boolean> {

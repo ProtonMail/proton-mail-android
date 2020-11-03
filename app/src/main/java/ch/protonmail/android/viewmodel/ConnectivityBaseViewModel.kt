@@ -22,14 +22,18 @@ package ch.protonmail.android.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.seconds
 
 internal const val NETWORK_CHECK_DELAY = 800L
 
@@ -44,7 +48,16 @@ open class ConnectivityBaseViewModel @Inject constructor(
     private val verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
     val hasConnectivity: LiveData<Boolean> =
-        verifyConnectionTrigger.switchMap { verifyConnection() }
+        verifyConnectionTrigger.switchMap {
+            verifyConnection()
+                .distinctUntilChanged()
+                .onEach { isConnected ->
+                    if (!isConnected) {
+                        retryWithDoh()
+                    }
+                }
+                .asLiveData()
+        }
 
     fun checkConnectivity() {
         Timber.v("checkConnectivity launch ping")

@@ -22,6 +22,7 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
@@ -111,7 +112,7 @@ class EditContactDetailsViewModel(
     val freeUserEvent: LiveData<Unit>
         get() = _freeUserEvent
     val hasConnectivity: LiveData<Boolean> =
-        _verifyConnectionTrigger.switchMap { verifyConnection() }
+        _verifyConnectionTrigger.switchMap { verifyConnection().asLiveData() }
     // endregion
 
     // region data
