@@ -47,7 +47,7 @@ import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.DuplicatedEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.InvalidEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ServerError
-import com.google.gson.Gson
+import ch.protonmail.libs.core.utils.serialize
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -62,7 +62,6 @@ class CreateContactWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val apiManager: ProtonMailApiManager,
-    private val gson: Gson,
     private val crypto: UserCrypto,
     private val dispatcherProvider: DispatcherProvider
 ) : CoroutineWorker(context, params) {
@@ -112,11 +111,9 @@ class CreateContactWorker @WorkerInject constructor(
             it.response.contact.emails ?: emptyList()
         }
 
-        val jsonContactEmails = gson.toJson(contactEmails)
-
         return workDataOf(
             KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
-            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to jsonContactEmails
+            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to contactEmails.serialize()
         )
     }
 

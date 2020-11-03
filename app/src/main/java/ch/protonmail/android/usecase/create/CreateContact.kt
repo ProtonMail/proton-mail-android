@@ -34,18 +34,15 @@ import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import ch.protonmail.libs.core.utils.deserializeList
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
-import java.lang.reflect.Type
 import javax.inject.Inject
 
 class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val contactsRepository: ContactDetailsRepository,
     private val createContactScheduler: Enqueuer,
-    private val gson: Gson,
     private val contactIdGenerator: ContactIdGenerator
 ) {
 
@@ -118,12 +115,10 @@ class CreateContact @Inject constructor(
 
         val emailsJson = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON)
         emailsJson?.let {
-            val serverEmails = gson.fromJson<List<ContactEmail>>(it, emailsListGsonType())
+            val serverEmails = emailsJson.deserializeList<ContactEmail>()
             contactsRepository.updateAllContactEmails(contactData.contactId, serverEmails)
         }
     }
-
-    private fun emailsListGsonType(): Type = TypeToken.getParameterized(List::class.java, ContactEmail::class.java).type
 
 
     sealed class Result {

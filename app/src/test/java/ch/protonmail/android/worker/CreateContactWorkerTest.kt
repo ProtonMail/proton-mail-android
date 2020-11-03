@@ -37,7 +37,6 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
-import com.google.gson.Gson
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -66,9 +65,6 @@ class CreateContactWorkerTest {
     private lateinit var apiManager: ProtonMailApiManager
 
     @RelaxedMockK
-    private lateinit var gson: Gson
-
-    @RelaxedMockK
     private lateinit var crypto: UserCrypto
 
     @RelaxedMockK
@@ -82,11 +78,7 @@ class CreateContactWorkerTest {
 
     private var dispatcherProvider = TestDispatcherProvider
 
-    private val contactEmailsOutputJson = """
-        [{"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId","Email":"first@pm.me","Name":"first contact","Defaults":0,"Order":0},
-         {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId1","Email":"second@pm.me","Name":"second contact","Defaults":0,"Order":0},
-         {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"emailId2","Email":"third@pm.me","Name":"third contact","Defaults":0,"Order":0}]
-    """.trimIndent()
+    private val contactEmailsOutputJson = """[{"contactEmailId":"emailId","email":"first@pm.me","name":"first contact","defaults":0,"type":null,"order":0,"contactId":null,"labelIds":null,"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false},{"contactEmailId":"emailId1","email":"second@pm.me","name":"second contact","defaults":0,"type":null,"order":0,"contactId":null,"labelIds":null,"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false},{"contactEmailId":"emailId2","email":"third@pm.me","name":"third contact","defaults":0,"type":null,"order":0,"contactId":null,"labelIds":null,"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false}]""".trimIndent()
 
     @Test
     fun enqueuerSchedulesCreateContactWorkSettingTheInputParamsCorrectly() {
@@ -155,7 +147,6 @@ class CreateContactWorkerTest {
                 ContactEmail("emailId1", "second@pm.me", "second contact"),
                 ContactEmail("emailId2", "third@pm.me", "third contact")
             )
-            val expectedContactEmails = serverContactEmails.union(serverContactEmails1).toList()
             val responses = mockk<ContactResponse.Responses> {
                 every { response.contact.emails } returns serverContactEmails
             }
@@ -168,7 +159,6 @@ class CreateContactWorkerTest {
             every { apiResponse.contactId } returns contactId
             every { apiResponse.responses } returns responsesList
             coEvery { apiManager.createContact(any()) } answers { apiResponse }
-            every { gson.toJson(expectedContactEmails) } returns contactEmailsOutputJson
 
             val result = worker.doWork()
 

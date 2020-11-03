@@ -33,8 +33,6 @@ import ch.protonmail.android.worker.CreateContactWorker
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -49,7 +47,6 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.lang.reflect.Type
 import java.util.UUID
 
 class CreateContactTest : CoroutinesTest {
@@ -62,9 +59,6 @@ class CreateContactTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var contactsRepository: ContactDetailsRepository
-
-    @RelaxedMockK
-    private lateinit var gson: Gson
 
     @RelaxedMockK
     private lateinit var contactIdGenerator: ContactIdGenerator
@@ -141,11 +135,10 @@ class CreateContactTest : CoroutinesTest {
             val contactServerId = "contactServerId"
             val workOutputData = workDataOf(
                 KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to contactServerId,
-                KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to "{}"
+                KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to "[]"
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
-            every { gson.fromJson<List<ContactEmail>>(any<String>(), any<Type>()) } answers { emptyList() }
             every { contactIdGenerator.generateRandomId() } returns "723"
 
             val result = createContact("FooName", contactEmails, encryptedData, signedData)
@@ -160,14 +153,61 @@ class CreateContactTest : CoroutinesTest {
     @Test
     fun createContactReplacesContactEmailsWithServerOnesWhenContactCreationThroughNetworkSucceeds() {
         runBlockingTest {
-            val emailListType = TypeToken.getParameterized(List::class.java, ContactEmail::class.java).type
             val contactServerEmails = listOf(
-                ContactEmail("ID1", "email@proton.com", "Tom", contactId = "contactDataId"),
-                ContactEmail("ID2", "secondary@proton.com", "Mike", contactId = "contactDataId")
+                ContactEmail(
+                    "VyCrmhybZZ8A-I6w==",
+                    "email@proton.com",
+                    "Tom",
+                    contactId = "jB_6lbgFc7QA12w==",
+                    order = 1,
+                    defaults = 1,
+                    type = mutableListOf("email"),
+                    labelIds = emptyList()
+                ),
+                ContactEmail(
+                    "HsdksdkjnZ8A-I6w==",
+                    "secondary@proton.com",
+                    "Mike",
+                    contactId = "jB_6lbgFc7QA12w==",
+                    labelIds = emptyList()
+                )
             )
             val serverEmailsJson = """
-                [{"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID1","Email":"email@proton.com","Name":"Tom","Defaults":0,"Order":0},
-                {"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false,"ID":"ID2","Email":"secondary@proton.com","Name":"Mike","Defaults":0,"Order":0}
+                [
+                    {
+                        "contactEmailId": "VyCrmhybZZ8A-I6w==",
+                        "contactId": "jB_6lbgFc7QA12w==",
+                        "defaults": 1,
+                        "email": "email@proton.com",
+                        "isPGP": false,
+                        "labelIds": [],
+                        "name": "Tom",
+                        "order": 1,
+                        "pgpDescription": 0,
+                        "pgpIcon": 0,
+                        "pgpIconColor": 0,
+                        "selected": false,
+                        "type": [
+                            "email"
+                        ]
+                    },
+                    {
+                        "contactEmailId": "HsdksdkjnZ8A-I6w==",
+                        "contactId": "jB_6lbgFc7QA12w==",
+                        "defaults": 0,
+                        "email": "secondary@proton.com",
+                        "isPGP": false,
+                        "labelIds": [],
+                        "name": "Mike",
+                        "order": 0,
+                        "pgpDescription": 0,
+                        "pgpIcon": 0,
+                        "pgpIconColor": 0,
+                        "selected": false,
+                        "type": null
+                    }
+                ]
+
              """.trimIndent()
 
             val workOutputData = workDataOf(
@@ -176,15 +216,12 @@ class CreateContactTest : CoroutinesTest {
             )
             val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
-            every { gson.fromJson<List<ContactEmail>>(serverEmailsJson, emailListType) } returns contactServerEmails
             every { contactIdGenerator.generateRandomId() } returns "8234823"
 
             val result = createContact("Bogdan", contactEmails, encryptedData, signedData)
             result.observeForever { }
 
             assertEquals(Result.Success, result.value)
-
-            verify { gson.fromJson(serverEmailsJson, emailListType) }
             coVerify { contactsRepository.updateAllContactEmails("8234823", contactServerEmails) }
         }
     }
