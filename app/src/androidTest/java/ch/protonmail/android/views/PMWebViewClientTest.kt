@@ -65,6 +65,7 @@ class PMWebViewClientTest {
     @InjectMockKs
     private lateinit var webViewClient: PMWebViewClient
 
+    // Injected into webViewClient
     private val loadRemote = false
 
     @Before
@@ -91,6 +92,7 @@ class PMWebViewClientTest {
     @Test
     fun shouldOverrideUrlLoadingStartsComposeMessageActivityWhenAMailToLinkWithAllDetailsIsLoaded() {
         val url = """mailto:marino-test@protonmail.com?cc=marino-test-1@protonmail.com&bcc=test12345@gmail.com&subject=The%20subject%20of%20the%20email&body=The%20body%20of%20the%20email"""
+
         webViewClient.shouldOverrideUrlLoading(mockWebView, url)
 
         val expected = Intent(mockContext, ComposeMessageActivity::class.java)
@@ -104,6 +106,7 @@ class PMWebViewClientTest {
         verify { activity.startActivity(capture(actual)) }
         assertIntentsEquals(expected, actual.captured)
     }
+
 
     private fun assertIntentsEquals(expected: Intent, actual: Intent) {
         val expectedExtras = expected.extras!!
