@@ -706,19 +706,8 @@ class MailboxActivity :
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
         }
-        retryConnection()
-    }
-
-    private fun retryConnection() {
-        mailboxViewModel.checkConnectivity()
         syncUUID = UUID.randomUUID().toString()
-        if (mNetworkUtil.isConnected()) {
-            handler.postDelayed(FetchMessagesRetryRunnable(this), 3000)
-            val thirdPartyConnectionsEnabled = mUserManager.user.allowSecureConnectionsViaThirdParties
-            if (thirdPartyConnectionsEnabled) {
-                networkConfigurator.refreshDomainsAsync()
-            }
-        }
+        handler.postDelayed(FetchMessagesRetryRunnable(this), 3.seconds.toLongMilliseconds())
     }
 
     private fun checkRegistration() {
@@ -1050,13 +1039,6 @@ class MailboxActivity :
                 netConfiguratorCallback = this,
                 onRetryClick = { onConnectivityCheckRetry() }
             ).show()
-        }
-
-        if (mUserManager.user.allowSecureConnectionsViaThirdParties && autoRetry && !isDohOngoing && !isFinishing) {
-            handler.postDelayed(
-                { retryConnection() },
-                5.seconds.toLongMilliseconds()
-            )
         }
     }
 

@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.time.seconds
 
 internal const val NETWORK_CHECK_DELAY = 800L
 
