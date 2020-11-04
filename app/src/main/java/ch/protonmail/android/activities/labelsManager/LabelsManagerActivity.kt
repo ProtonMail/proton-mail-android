@@ -147,7 +147,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             adapter = colorsAdapter
         }
 
-        if (createOnly) state = CREATE else UNDEFINED
+        state = if (createOnly) CREATE else UNDEFINED
 
         // Set listeners
         delete_labels.setOnClickListener { showDeleteConfirmation() }
@@ -256,10 +256,9 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun onLabelNameChange(name: CharSequence) {
         save_new_label.isVisible = name.isNotBlank()
 
-        if (name.isEmpty()) {
-            state = UNDEFINED
-
-        } else if (state == UNDEFINED) state = CREATE
+        if(name.isNotEmpty() && state == UNDEFINED){
+            state = CREATE
+        }
 
         viewModel.setLabelName(name)
     }
