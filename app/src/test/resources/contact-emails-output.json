@@ -1,0 +1,47 @@
+[
+  {
+    "contactEmailId":"emailId",
+    "email":"first@pm.me",
+    "name":"first contact",
+    "defaults":0,
+    "type":null,
+    "order":0,
+    "contactId":null,
+    "labelIds":null,
+    "selected":false,
+    "pgpIcon":0,
+    "pgpIconColor":0,
+    "pgpDescription":0,
+    "isPGP":false
+  },
+  {
+    "contactEmailId":"emailId1",
+    "email":"second@pm.me",
+    "name":"second contact",
+    "defaults":0,
+    "type":null,
+    "order":0,
+    "contactId":null,
+    "labelIds":null,
+    "selected":false,
+    "pgpIcon":0,
+    "pgpIconColor":0,
+    "pgpDescription":0,
+    "isPGP":false
+  },
+  {
+    "contactEmailId":"emailId2",
+    "email":"third@pm.me",
+    "name":"third contact",
+    "defaults":0,
+    "type":null,
+    "order":0,
+    "contactId":null,
+    "labelIds":null,
+    "selected":false,
+    "pgpIcon":0,
+    "pgpIconColor":0,
+    "pgpDescription":0,
+    "isPGP":false
+  }
+]

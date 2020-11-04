@@ -78,7 +78,6 @@ class CreateContactWorkerTest {
 
     private var dispatcherProvider = TestDispatcherProvider
 
-    private val contactEmailsOutputJson = """[{"contactEmailId":"emailId","email":"first@pm.me","name":"first contact","defaults":0,"type":null,"order":0,"contactId":null,"labelIds":null,"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false},{"contactEmailId":"emailId1","email":"second@pm.me","name":"second contact","defaults":0,"type":null,"order":0,"contactId":null,"labelIds":null,"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false},{"contactEmailId":"emailId2","email":"third@pm.me","name":"third contact","defaults":0,"type":null,"order":0,"contactId":null,"labelIds":null,"selected":false,"pgpIcon":0,"pgpIconColor":0,"pgpDescription":0,"isPGP":false}]""".trimIndent()
 
     @Test
     fun enqueuerSchedulesCreateContactWorkSettingTheInputParamsCorrectly() {
@@ -142,10 +141,10 @@ class CreateContactWorkerTest {
     fun workerReturnsServerContactIdAndAllResponsesContactEmailsSerialisedWhenApiCallSucceedsRetuningNonEmptyContactId() {
         runBlockingTest {
             val contactId = "serverContactId"
-            val serverContactEmails = listOf(ContactEmail("emailId", "first@pm.me", "first contact"))
+            val serverContactEmails = listOf(ContactEmail("emailId", "first@pm.me", "firstcontact"))
             val serverContactEmails1 = listOf(
-                ContactEmail("emailId1", "second@pm.me", "second contact"),
-                ContactEmail("emailId2", "third@pm.me", "third contact")
+                ContactEmail("emailId1", "second@pm.me", "secondcontact"),
+                ContactEmail("emailId2", "third@pm.me", "thirdcontact")
             )
             val responses = mockk<ContactResponse.Responses> {
                 every { response.contact.emails } returns serverContactEmails
@@ -162,6 +161,7 @@ class CreateContactWorkerTest {
 
             val result = worker.doWork()
 
+            val contactEmailsOutputJson = readTextFileContent("contact-emails-output.json")
             val expectedResult = Result.success(
                 Data.Builder()
                     .putString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID, contactId)
@@ -239,6 +239,11 @@ class CreateContactWorkerTest {
 
     private fun givenSignedContactDataParamsIsValid(signedContactData: String? = "signed-data") {
         every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_SIGNED_DATA) } answers { signedContactData!! }
+    }
+
+    private fun readTextFileContent(fileName: String): String {
+        val inputStream = javaClass.classLoader?.getResourceAsStream(fileName)!!
+        return inputStream.bufferedReader(Charsets.UTF_8).use { it.readText().replace("\\s".toRegex(), "") }
     }
 
 }
