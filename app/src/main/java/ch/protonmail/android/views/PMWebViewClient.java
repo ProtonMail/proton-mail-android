@@ -52,17 +52,14 @@ import static ch.protonmail.android.activities.composeMessage.ComposeMessageActi
 import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_BODY;
 import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_TITLE;
 
-/**
- * Created by kaylukas on 27/06/2018.
- */
 public class PMWebViewClient extends WebViewClient {
 
-    private UserManager mUserManager;
-    private Activity mActivity;
+    private final UserManager mUserManager;
+    private final Activity mActivity;
     private boolean mLoadRemote;
     private int mBlockedImages;
 
-    private List<String> hyperlinkConfirmationWhitelistedHosts = Arrays.asList(
+    private final List<String> hyperlinkConfirmationWhitelistedHosts = Arrays.asList(
             "protonmail.com",
             "protonmail.ch",
             "protonvpn.com",
@@ -72,9 +69,14 @@ public class PMWebViewClient extends WebViewClient {
             "pm.me",
             "mail.protonmail.com",
             "account.protonvpn.com",
-            "protonirockerxow.onion");
+            "protonirockerxow.onion"
+    );
 
-    public PMWebViewClient(UserManager userManager, Activity activity, boolean loadRemote) {
+    public PMWebViewClient(
+            @NonNull UserManager userManager,
+            @NonNull Activity activity,
+            boolean loadRemote
+    ) {
         mUserManager = userManager;
         mActivity = activity;
         mLoadRemote = loadRemote;
