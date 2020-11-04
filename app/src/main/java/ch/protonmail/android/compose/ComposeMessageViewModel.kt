@@ -55,8 +55,8 @@ import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
-import ch.protonmail.android.usecase.model.EmailKeysRequest
-import ch.protonmail.android.usecase.model.EmailKeysResult
+import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -112,7 +112,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
-    private val fetchKeyDetailsTrigger = MutableLiveData<List<EmailKeysRequest>>()
+    private val fetchKeyDetailsTrigger = MutableLiveData<List<FetchPublicKeysRequest>>()
 
     private val _androidContacts = java.util.ArrayList<MessageRecipient>()
     private val _protonMailContacts = java.util.ArrayList<MessageRecipient>()
@@ -181,7 +181,7 @@ class ComposeMessageViewModel @Inject constructor(
         set(value) {
             _androidContactsLoaded = value
         }
-    val fetchKeyDetailsResult: LiveData<List<EmailKeysResult>>
+    val fetchKeyDetailsResult: LiveData<List<FetchPublicKeysResult>>
         get() = fetchKeyDetailsTrigger.switchMap { request ->
             liveData {
                 emit(fetchPublicKeys(request))
@@ -554,7 +554,7 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.startFetchMessageDetail(draftId)
     }
 
-    fun startFetchPublicKeys(request: List<EmailKeysRequest>) {
+    fun startFetchPublicKeys(request: List<FetchPublicKeysRequest>) {
         Timber.v("startFetchPublicKeys $request")
         fetchKeyDetailsTrigger.value = request
     }

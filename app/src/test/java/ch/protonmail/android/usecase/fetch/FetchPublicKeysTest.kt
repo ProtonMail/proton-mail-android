@@ -24,8 +24,8 @@ import ch.protonmail.android.api.models.PublicKeyBody
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.enumerations.KeyFlag
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.usecase.model.EmailKeysRequest
-import ch.protonmail.android.usecase.model.EmailKeysResult
+import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -73,14 +73,14 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(email) } returns publicKeyResponse
         coEvery { api.getPublicKeys(email2) } returns publicKeyResponse2
         val expected = listOf(
-            EmailKeysResult(
+            FetchPublicKeysResult(
                 mapOf(email to publicKey, email2 to publicKey2),
                 location
             )
         )
 
         // when
-        val result = fetchPublicKeys.invoke(listOf(EmailKeysRequest(emailsList, location)))
+        val result = fetchPublicKeys.invoke(listOf(FetchPublicKeysRequest(emailsList, location)))
 
         // then
         assertNotNull(result)
@@ -111,14 +111,33 @@ class FetchPublicKeysTest {
         coEvery { api.getPublicKeys(email) } returns publicKeyResponse
         coEvery { api.getPublicKeys(email2) } returns publicKeyResponse2
         val expected = listOf(
-            EmailKeysResult(
+            FetchPublicKeysResult(
                 mapOf(email to publicKey, email2 to ""),
                 location
             )
         )
 
         // when
-        val result = fetchPublicKeys.invoke(listOf(EmailKeysRequest(emailsList, location)))
+        val result = fetchPublicKeys.invoke(listOf(FetchPublicKeysRequest(emailsList, location)))
+
+        // then
+        assertNotNull(result)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun verifyThatNoEmailKeysAreEmittedWhenConnectionErrorOccurs() = runBlockingTest {
+        // given
+        val location = Constants.RecipientLocationType.TO
+        val email = "email1@proto.com"
+        val email2 = "email2@proto.com"
+        val emailsList = listOf(email, email2)
+        val exception = Exception("An error occurred!")
+        coEvery { api.getPublicKeys(email) } throws exception
+        val expected = emptyList<FetchPublicKeysResult>()
+
+        // when
+        val result = fetchPublicKeys.invoke(listOf(FetchPublicKeysRequest(emailsList, location)))
 
         // then
         assertNotNull(result)

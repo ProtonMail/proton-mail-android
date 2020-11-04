@@ -20,11 +20,14 @@
 package ch.protonmail.android.usecase.fetch
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.usecase.model.EmailKeysRequest
-import ch.protonmail.android.usecase.model.EmailKeysResult
+import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
+
+private const val CODE_KEY = "Code"
 
 class FetchPublicKeys @Inject constructor(
     private val api: ProtonMailApiManager,
@@ -32,34 +35,37 @@ class FetchPublicKeys @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        requests: List<EmailKeysRequest>
-    ): List<EmailKeysResult> =
-        withContext(dispatchers.Io) {
-            val result = mutableListOf<EmailKeysResult>()
-            for (request in requests) {
-                val publicKeys = getPublicKeys(request.emails.toSet())
-                result.add(EmailKeysResult(publicKeys, request.recipientsType))
+        requests: List<FetchPublicKeysRequest>
+    ): List<FetchPublicKeysResult> = withContext(dispatchers.Io) {
+        val result = mutableListOf<FetchPublicKeysResult>()
+        for (request in requests) {
+            val publicKeys = getPublicKeys(request.emails.toSet())
+            if (publicKeys.isNotEmpty()) {
+                result.add(FetchPublicKeysResult(publicKeys, request.recipientsType))
             }
-            result
         }
+        result
+    }
 
     private suspend fun getPublicKeys(emailSet: Set<String>): Map<String, String> {
         val result = mutableMapOf<String, String>()
         for (email in emailSet) {
-            result[email] = ""
-            val publicKey = api.getPublicKeys(email)
-            for (key in publicKey.keys) {
-                if (key.isAllowedForSending) {
-                    result[email] = key.publicKey
-                }
+            runCatching {
+                api.getPublicKeys(email)
             }
+                .fold(
+                    onSuccess = {
+                        result[email] = ""
+                        for (key in it.keys) {
+                            if (key.isAllowedForSending) {
+                                result[email] = key.publicKey
+                            }
+                        }
+                    },
+                    onFailure = { Timber.w(it, "Unable to fetch public keys") }
+                )
         }
         result.remove(CODE_KEY)
         return result
     }
-
-    companion object {
-        private const val CODE_KEY = "Code"
-    }
-
 }

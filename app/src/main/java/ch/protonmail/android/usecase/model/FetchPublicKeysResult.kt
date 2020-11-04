@@ -21,7 +21,7 @@ package ch.protonmail.android.usecase.model
 
 import ch.protonmail.android.core.Constants
 
-data class EmailKeysResult(
+data class FetchPublicKeysResult(
     val keysMap: Map<String, String>,
     val recipientsType: Constants.RecipientLocationType,
     val isSendRetryRequired: Boolean = false

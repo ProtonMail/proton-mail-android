@@ -151,8 +151,8 @@ import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
-import ch.protonmail.android.usecase.model.EmailKeysRequest;
-import ch.protonmail.android.usecase.model.EmailKeysResult;
+import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Event;
@@ -670,11 +670,11 @@ public class ComposeMessageActivity
         return true;
     }
 
-    private void onFetchEmailKeysEvent(List<EmailKeysResult> results) {
+    private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
         mSendingPressed = false;
         mProgressView.setVisibility(View.GONE);
         boolean isRetry = false;
-        for (EmailKeysResult result : results) {
+        for (FetchPublicKeysResult result : results) {
             isRetry = isRetry || result.isSendRetryRequired() ;
             Map<String, String> keys = result.getKeysMap();
             Constants.RecipientLocationType location = result.getRecipientsType();
@@ -1247,7 +1247,7 @@ public class ComposeMessageActivity
                     }
                 }
 
-                EmailKeysRequest emailKeysRequest = new EmailKeysRequest(emailList, location, false);
+                FetchPublicKeysRequest emailKeysRequest = new FetchPublicKeysRequest(emailList, location, false);
                 composeMessageViewModel.startFetchPublicKeys(Collections.singletonList(emailKeysRequest));
                 GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
                 if (recipientsView.equals(mCcRecipientsView)) {
@@ -1382,22 +1382,22 @@ public class ComposeMessageActivity
             List<String> ccMissingKeys = mCcRecipientsView.addressesWithMissingKeys();
             List<String> bccMissingKeys = mBccRecipientsView.addressesWithMissingKeys();
             boolean isValid = true;
-            List<EmailKeysRequest> keysRequests = new ArrayList<>();
+            List<FetchPublicKeysRequest> keysRequests = new ArrayList<>();
             if (!toMissingKeys.isEmpty()) {
                 keysRequests.add(
-                        new EmailKeysRequest(toMissingKeys, Constants.RecipientLocationType.TO, true)
+                        new FetchPublicKeysRequest(toMissingKeys, Constants.RecipientLocationType.TO, true)
                 );
                 isValid = false;
             }
             if (!ccMissingKeys.isEmpty()) {
                 keysRequests.add(
-                        new EmailKeysRequest(ccMissingKeys, Constants.RecipientLocationType.CC, true)
+                        new FetchPublicKeysRequest(ccMissingKeys, Constants.RecipientLocationType.CC, true)
                 );
                 isValid = false;
             }
             if (!bccMissingKeys.isEmpty()) {
                 keysRequests.add(
-                        new EmailKeysRequest(bccMissingKeys, Constants.RecipientLocationType.BCC, true)
+                        new FetchPublicKeysRequest(bccMissingKeys, Constants.RecipientLocationType.BCC, true)
                 );
                 isValid = false;
             }
