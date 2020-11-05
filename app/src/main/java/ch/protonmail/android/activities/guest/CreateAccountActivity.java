@@ -547,7 +547,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
             if (mUserManager.isFirstLogin()) {
                 LoginService.fetchUserDetails();
                 mJobManager.start();
-                fetchOnFirstLogin.invoke(true, false);
+                fetchOnFirstLogin.invoke(true, true);
                 mUserManager.firstLoginDone();
             }
         }

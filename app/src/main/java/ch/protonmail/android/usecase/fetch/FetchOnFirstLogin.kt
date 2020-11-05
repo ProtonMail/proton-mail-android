@@ -40,7 +40,7 @@ class FetchOnFirstLogin @Inject constructor(
 
     operator fun invoke(
         shallRefreshDetails: Boolean = true,
-        shallRefreshContacts: Boolean = false
+        shallRefreshContacts: Boolean = true
     ) {
         Timber.v("FetchOnFirstLogin started")
         MessagesService.startFetchLabels()

@@ -556,7 +556,7 @@ public class LoginService extends ProtonJobIntentService {
                             }
                             if (userManager.isFirstLogin()) {
                                 jobManager.start();
-                                fetchOnFirstLogin.invoke(true, false);
+                                fetchOnFirstLogin.invoke(true, true);
                                 userManager.firstLoginDone();
                             }
                         }
@@ -655,7 +655,7 @@ public class LoginService extends ProtonJobIntentService {
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.SUCCESS));
                         jobManager.start();
-                        fetchOnFirstLogin.invoke(true, false);
+                        fetchOnFirstLogin.invoke(true, true);
                         userManager.firstLoginDone();
                     }
                 }
