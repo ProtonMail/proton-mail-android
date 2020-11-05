@@ -57,7 +57,7 @@ import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.events.user.UserSettingsEvent
-import ch.protonmail.android.usecase.fetch.FetchOnFirstLogin
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.MessageUtils
@@ -104,7 +104,7 @@ class EventHandler @AssistedInject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
-    private val fetchOnFirstLogin: FetchOnFirstLogin,
+    private val launchInitialDataFetch: LaunchInitialDataFetch,
     @Assisted val username: String
 ) {
 
@@ -148,9 +148,9 @@ class EventHandler @AssistedInject constructor(
         countersDao.clearTotalLocationsTable()
         countersDao.clearTotalLabelsTable()
         // todo make this done sequentially, don't fire and forget.
-        fetchOnFirstLogin(
-            shallRefreshDetails = false,
-            shallRefreshContacts = false
+        launchInitialDataFetch(
+            shouldRefreshDetails = false,
+            shouldRefreshContacts = false
         )
     }
 

@@ -30,24 +30,24 @@ import javax.inject.Inject
 private const val FETCH_CONTACT_DELAY_MS: Long = 2000
 
 /**
- * Launches actions which should be executed on the first user login.
+ * Launches fetching of initial data required after the first login
  */
-class FetchOnFirstLogin @Inject constructor(
+class LaunchInitialDataFetch @Inject constructor(
     private val fetchContactsDataWorker: FetchContactsDataWorker.Enqueuer,
     private val fetchContactsEmailsWorker: FetchContactsEmailsWorker.Enqueuer,
     private val fetchMailSettingsWorker: FetchMailSettingsWorker.Enqueuer
 ) {
 
     operator fun invoke(
-        shallRefreshDetails: Boolean = true,
-        shallRefreshContacts: Boolean = true
+        shouldRefreshDetails: Boolean = true,
+        shouldRefreshContacts: Boolean = true
     ) {
-        Timber.v("FetchOnFirstLogin started")
+        Timber.v("LaunchInitialDataFetch started")
         MessagesService.startFetchLabels()
-        MessagesService.startFetchFirstPage(Constants.MessageLocationType.INBOX, shallRefreshDetails, null, false)
+        MessagesService.startFetchFirstPage(Constants.MessageLocationType.INBOX, shouldRefreshDetails, null, false)
         fetchMailSettingsWorker.enqueue()
 
-        if (shallRefreshContacts) {
+        if (shouldRefreshContacts) {
             fetchContactsDataWorker.enqueue()
             fetchContactsEmailsWorker.enqueue(FETCH_CONTACT_DELAY_MS)
         }

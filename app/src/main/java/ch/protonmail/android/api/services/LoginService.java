@@ -89,7 +89,7 @@ import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
-import ch.protonmail.android.usecase.fetch.FetchOnFirstLogin;
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ConstantTime;
 import ch.protonmail.android.utils.Logger;
@@ -161,7 +161,7 @@ public class LoginService extends ProtonJobIntentService {
     @Inject
     QueueNetworkUtil networkUtils;
     @Inject
-    FetchOnFirstLogin fetchOnFirstLogin;
+    LaunchInitialDataFetch launchInitialDataFetch;
 
     private TokenManager tokenManager;
 
@@ -556,7 +556,7 @@ public class LoginService extends ProtonJobIntentService {
                             }
                             if (userManager.isFirstLogin()) {
                                 jobManager.start();
-                                fetchOnFirstLogin.invoke(true, true);
+                                launchInitialDataFetch.invoke(true, true);
                                 userManager.firstLoginDone();
                             }
                         }
@@ -655,7 +655,7 @@ public class LoginService extends ProtonJobIntentService {
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
                         AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.SUCCESS));
                         jobManager.start();
-                        fetchOnFirstLogin.invoke(true, true);
+                        launchInitialDataFetch.invoke(true, true);
                         userManager.firstLoginDone();
                     }
                 }
