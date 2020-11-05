@@ -1688,7 +1688,7 @@ public class ComposeMessageActivity
             TextDecryptionResult tct = crypto.decrypt(new CipherText(messageBody));
             messageBody = tct.getDecryptedData();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "Decryption error");
         }
         composeMessageViewModel.setInitialMessageContent(messageBody);
         if (loadedMessage.isInline()) {

@@ -60,8 +60,8 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
 import dagger.hilt.android.AndroidEntryPoint;
-import io.sentry.Sentry;
 import io.sentry.event.EventBuilder;
+import timber.log.Timber;
 
 @AndroidEntryPoint
 public class FcmIntentService extends IntentService {
@@ -153,8 +153,7 @@ public class FcmIntentService extends IntentService {
                     // can not deliver notification
                     if (!BuildConfig.DEBUG) {
                         EventBuilder eventBuilder = new EventBuilder().withTag("FCM_MU", TextUtils.isEmpty(notificationUsername) ? "EMPTY" : "NOT_EMPTY");
-                        Sentry.capture(eventBuilder);
-                        Sentry.capture(e);
+                        Timber.e(e, eventBuilder.toString());
                     }
                 }
 
