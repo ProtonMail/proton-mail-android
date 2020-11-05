@@ -293,8 +293,6 @@ dependencies {
         `trustKit`,
         `viewStateStore`,
         `viewStateStore-paging`,
-        `mail-android`,
-        `mail-android-activation`,
         `remark`
     )
 

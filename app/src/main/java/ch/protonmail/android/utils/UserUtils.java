@@ -31,12 +31,12 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.UserManager;
 
-/**
- * Created by dino on 10/17/17.
- */
-
 public class UserUtils {
 
+    /**
+     * @deprecated Use @UserManager#didReachLabelsThreshold instead
+     */
+    @Deprecated
     public static int getMaxAllowedLabels(UserManager userManager) {
         List<String> accountTypes = Arrays.asList(ProtonMailApplication.getApplication().getResources().getStringArray(R.array.account_type_names));
         List<Integer> maxLabelsPerPlanArray = Arrays.asList(ArrayUtils.toObject(ProtonMailApplication.getApplication().getResources().getIntArray(R.array.max_labels_per_plan)));

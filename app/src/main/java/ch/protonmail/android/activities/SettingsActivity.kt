@@ -29,15 +29,12 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
+import dagger.hilt.android.AndroidEntryPoint
 
-/**
- *
- */
+@AndroidEntryPoint
 class SettingsActivity : BaseSettingsActivity() {
 
-    override fun getLayoutId(): Int {
-        return R.layout.activity_settings
-    }
+    override fun getLayoutId(): Int = R.layout.activity_settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,8 +94,14 @@ class SettingsActivity : BaseSettingsActivity() {
 
         setValue(SettingsEnum.COMBINED_CONTACTS, if (user.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled))
 
-        setValue(SettingsEnum.APP_VERSION, String.format(getString(R.string.app_version_code),
-            AppUtil.getAppVersionName(this), AppUtil.getAppVersionCode(this)))
+        setValue(
+            SettingsEnum.APP_VERSION,
+            String.format(
+                getString(R.string.app_version_code),
+                AppUtil.getAppVersionName(this),
+                AppUtil.getAppVersionCode(this)
+            )
+        )
     }
 
     @Subscribe

@@ -20,11 +20,8 @@ package ch.protonmail.android.api.segments.connectivity
 
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.api.utils.ParseUtils
 
 class ConnectivityApi(val pingService: PingService) : BaseApi(), ConnectivityApiSpec {
 
-    override fun ping(): ResponseBody = ParseUtils.parse(pingService.ping().execute())
-
-    override suspend fun pingAsync(): ResponseBody = pingService.pingAsync().body()!!
+    override suspend fun pingAsync(): ResponseBody = pingService.ping().body()!!
 }

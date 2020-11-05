@@ -23,7 +23,6 @@ import androidx.fragment.app.FragmentManager
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import java.util.*
 
 /**
@@ -48,7 +47,7 @@ internal class ShowLabelsManagerDialogTask(private val fragmentManager: Fragment
 			attachedLabels.addAll(messageLabelIds)
 		}
 		val manageLabelsDialogFragment=ManageLabelsDialogFragment.newInstance(
-				attachedLabels,numberOfSelectedMessages,ArrayList(messageIds),true)
+            attachedLabels, numberOfSelectedMessages, ArrayList(messageIds))
 		val transaction=fragmentManager.beginTransaction()
 		transaction.add(manageLabelsDialogFragment,manageLabelsDialogFragment.fragmentKey)
 		transaction.commitAllowingStateLoss()

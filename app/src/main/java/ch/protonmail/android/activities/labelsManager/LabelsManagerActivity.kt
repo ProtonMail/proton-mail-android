@@ -147,7 +147,7 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
             adapter = colorsAdapter
         }
 
-        if (createOnly) state = CREATE else UNDEFINED
+        state = if (createOnly) CREATE else UNDEFINED
 
         // Set listeners
         delete_labels.setOnClickListener { showDeleteConfirmation() }
@@ -256,10 +256,9 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
     private fun onLabelNameChange(name: CharSequence) {
         save_new_label.isVisible = name.isNotBlank()
 
-        if (name.isEmpty()) {
-            state = UNDEFINED
-
-        } else if (state == UNDEFINED) state = CREATE
+        if(name.isNotEmpty() && state == UNDEFINED){
+            state = CREATE
+        }
 
         viewModel.setLabelName(name)
     }
@@ -330,17 +329,13 @@ class LabelsManagerActivity : BaseActivity(), ViewStateActivity {
 
     private fun saveCurrentLabel() {
         viewModel.saveLabel().observe(this, {
-            if (isWorkerProcessing(it)) {
-                return@observe
+            if (it.state.isFinished) {
+                displayLabelCreationOutcome(it)
             }
-            displayLabelCreationOutcome(it)
         })
 
         state = UNDEFINED
     }
-
-    private fun isWorkerProcessing(it: WorkInfo) =
-        it.state != WorkInfo.State.SUCCEEDED && it.state != WorkInfo.State.FAILED
 
     private fun displayLabelCreationOutcome(workInfo: WorkInfo) {
         val success = workInfo.state == WorkInfo.State.SUCCEEDED

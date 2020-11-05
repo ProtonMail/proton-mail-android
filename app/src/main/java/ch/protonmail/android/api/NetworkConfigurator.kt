@@ -22,13 +22,14 @@ import android.content.SharedPreferences
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
 import ch.protonmail.android.api.models.doh.ProxyList
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.di.DohProviders
 import ch.protonmail.android.utils.INetworkConfiguratorCallback
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
@@ -37,12 +38,7 @@ import javax.inject.Singleton
 
 // region constants
 const val DOH_PROVIDER_TIMEOUT = 20_000L
-private const val TAG = "NetworkConfigurator"
 // endregion
-
-/*
- * Created by dinokadrikj on 3/3/20.
- */
 
 /**
  * NetworkConfigurator - used to retrieve and switch to alternative routing domains
@@ -51,13 +47,15 @@ private const val TAG = "NetworkConfigurator"
 class NetworkConfigurator @Inject constructor(
     @DohProviders private val dohProviders: Array<DnsOverHttpsProviderRFC8484>,
     @DefaultSharedPreferences private val prefs: SharedPreferences,
-    @AppCoroutineScope private val scope: CoroutineScope
+    @AppCoroutineScope private val scope: CoroutineScope,
+    private val userManager: UserManager,
+    private val connectivityManager: NetworkConnectivityManager
 ) {
 
     lateinit var networkSwitcher: INetworkSwitcher
     private var isRunning = false
 
-    fun refreshDomainsAsync() = scope.async {
+    fun refreshDomainsAsync() = scope.launch {
         if (!isRunning) {
             isRunning = true
             callback?.startDohSignal()
@@ -65,9 +63,19 @@ class NetworkConfigurator @Inject constructor(
         }
     }
 
+    fun tryRetryWithDoh() {
+        if (connectivityManager.isInternetConnectionPossible()) {
+            val isThirdPartyConnectionsEnabled = userManager.user.allowSecureConnectionsViaThirdParties
+            if (isThirdPartyConnectionsEnabled) {
+                Timber.d("Third party connections enabled, attempting DoH...")
+                refreshDomainsAsync()
+            }
+        }
+    }
+
     private suspend fun queryDomains() {
         val freshAlternativeUrls = mutableListOf<String>()
-        val user = ProtonMailApplication.getApplication().userManager.user
+        val user = userManager.user
         if (!user.allowSecureConnectionsViaThirdParties) {
             networkSwitcher.reconfigureProxy(null) // force switch to old proxy
             user.usingDefaultApi = true
@@ -100,12 +108,12 @@ class NetworkConfigurator @Inject constructor(
         }
 
         val proxies =
-        if (alternativeProxyList.isEmpty()) {
-            // if the new list is empty, try with the old list perhaps there will be an api url available there
-            Proxies.getInstance(null, prefs) // or just try the last used proxy
-        } else {
-            Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
-        }
+            if (alternativeProxyList.isEmpty()) {
+                // if the new list is empty, try with the old list perhaps there will be an api url available there
+                Proxies.getInstance(null, prefs) // or just try the last used proxy
+            } else {
+                Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
+            }
 
         // supplying proxy list means that the savings will be invalidated
         // val proxies = Proxies.getInstance(ProxyList(alternativeProxyList), prefs)
@@ -128,10 +136,10 @@ class NetworkConfigurator @Inject constructor(
             val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                 val result = try {
                     networkSwitcher.tryRequest { service ->
-                        service.pingAsync()
+                        service.ping()
                     }
                 } catch (e: Exception) {
-                    Timber.e(e, "Exception while pinging API before using alternative routing")
+                    Timber.i(e, "Exception while pinging API before using alternative routing")
                     null
                 }
                 result != null
@@ -151,10 +159,10 @@ class NetworkConfigurator @Inject constructor(
                 val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
                     val result = try {
                         networkSwitcher.tryRequest { service ->
-                            service.pingAsync()
+                            service.ping()
                         }
                     } catch (e: Exception) {
-                        Timber.e(e, "Exception while pinging alternative routing URL")
+                        Timber.i(e, "Exception while pinging alternative routing URL")
                         null
                     }
                     result != null // && result.code == 1000

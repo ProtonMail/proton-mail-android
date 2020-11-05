@@ -22,6 +22,9 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
@@ -30,7 +33,9 @@ import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
 import ch.protonmail.libs.core.utils.ViewModelFactory
 import ezvcard.Ezvcard
@@ -55,6 +60,7 @@ import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -79,16 +85,13 @@ const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
 // endregion
 
-/**
- * Created by kadrikj on 9/26/18.
- */
-
 class EditContactDetailsViewModel(
     dispatcherProvider: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
     private val userManager: UserManager,
-    workManager: WorkManager
+    workManager: WorkManager,
+    private val verifyConnection: VerifyConnection
 ) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, workManager) {
 
     // region events
@@ -97,6 +100,7 @@ class EditContactDetailsViewModel(
     private val _setupEditContactFlow: MutableLiveData<EditContactCardsHolder> = MutableLiveData()
     private val _setupConvertContactFlow: MutableLiveData<Unit> = MutableLiveData()
     private val _freeUserEvent: MutableLiveData<Unit> = MutableLiveData()
+    private val _verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
     val cleanUpComplete: LiveData<Event<Boolean>>
         get() = _cleanUpComplete
     val setupNewContactFlow: LiveData<String>
@@ -107,6 +111,8 @@ class EditContactDetailsViewModel(
         get() = _setupConvertContactFlow
     val freeUserEvent: LiveData<Unit>
         get() = _freeUserEvent
+    val hasConnectivity: LiveData<Boolean> =
+        _verifyConnectionTrigger.switchMap { verifyConnection().asLiveData() }
     // endregion
 
     // region data
@@ -351,6 +357,20 @@ class EditContactDetailsViewModel(
         return emails.distinctBy { it.email }
     }
 
+    fun checkConnectivity() {
+        _verifyConnectionTrigger.value = Unit
+    }
+
+    /**
+     * Check connectivity with a delay allowing snack bar to be displayed.
+     */
+    fun checkConnectivityDelayed() {
+        viewModelScope.launch {
+            delay(NETWORK_CHECK_DELAY)
+            checkConnectivity()
+        }
+    }
+
     class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
 
     // TODO: remove when the ViewModel can be injected into a Kotlin class
@@ -359,10 +379,17 @@ class EditContactDetailsViewModel(
         private val downloadFile: DownloadFile,
         private val editContactDetailsRepository: EditContactDetailsRepository,
         private val userManager: UserManager,
-        private val workManager: WorkManager
+        private val workManager: WorkManager,
+        private val verifyConnection: VerifyConnection
     ) : ViewModelFactory<EditContactDetailsViewModel>() {
         override fun create() =
-            EditContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, userManager,
-                workManager)
+            EditContactDetailsViewModel(
+                dispatcherProvider,
+                downloadFile,
+                editContactDetailsRepository,
+                userManager,
+                workManager,
+                verifyConnection
+            )
     }
 }

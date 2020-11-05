@@ -18,10 +18,8 @@
  */
 package ch.protonmail.android.api.interceptors
 
-import android.util.Log
 import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProgressResponseBody
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.ProtonMailPublicService
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -36,12 +34,11 @@ import java.io.IOException
 import java.util.concurrent.Semaphore
 
 class ProtonMailAttachmentRequestInterceptor private constructor(
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil
 ) : BaseRequestInterceptor(userManager, jobManager, networkUtil) {
 
-    lateinit var protonMailApi: ProtonMailApiManager
     private var progressListener: ProgressListener? = null
     private var semaphore: Semaphore? = null
 
@@ -49,16 +46,26 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         @Volatile
         private var INSTANCE: ProtonMailAttachmentRequestInterceptor? = null
 
-        fun getInstance(publicService: ProtonMailPublicService, userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil):
-                ProtonMailAttachmentRequestInterceptor =
-                INSTANCE ?: synchronized(this) {
-                    INSTANCE
-                            ?: buildInstance(publicService, userManager, jobManager, networkUtil).also { INSTANCE = it }
-                }
+        fun getInstance(
+            publicService: ProtonMailPublicService,
+            userManager: UserManager,
+            jobManager: JobManager,
+            networkUtil: QueueNetworkUtil
+        ): ProtonMailAttachmentRequestInterceptor =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE
+                    ?: buildInstance(publicService, userManager, jobManager, networkUtil).also { INSTANCE = it }
+            }
 
-        private fun buildInstance(publicService: ProtonMailPublicService, userManager: UserManager,
-                                  jobManager: JobManager, networkUtil: QueueNetworkUtil) =
-                ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil).also { it.publicService = publicService }
+        private fun buildInstance(
+            publicService: ProtonMailPublicService,
+            userManager: UserManager,
+            jobManager: JobManager,
+            networkUtil: QueueNetworkUtil
+        ) =
+            ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil).also {
+                it.publicService = publicService
+            }
 
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
     }

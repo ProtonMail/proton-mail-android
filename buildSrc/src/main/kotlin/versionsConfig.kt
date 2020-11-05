@@ -30,7 +30,7 @@ fun initVersions() {
     // endregion
 
     // region Android
-    `android-gradle-plugin version` =           "4.0.1"         // Released: Jul 14, 2020
+    `android-gradle-plugin version` =           "4.0.2"         // Released: Oct 06, 2020
 
     `android-annotation version` =              "1.1.0"         // Released: Jun 05, 2019
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
@@ -115,4 +115,3 @@ const val `stetho version` =                    "1.5.1"         // Released: Mar
 const val `timber version` =                    "4.7.1"         // Released:
 const val `trustKit version` =                  "1.1.2"         // Released: Jun 09, 2019
 const val `remark version` =                    "1.1.0"         // Released: Dec 08, 2016
-const val `mailAndroid version` =               "1.6.5"         // Released: Mar 12, 2020 https://github.com/eclipse-ee4j/mail/releases/q

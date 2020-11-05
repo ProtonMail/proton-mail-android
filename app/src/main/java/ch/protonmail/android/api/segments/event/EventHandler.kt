@@ -57,7 +57,7 @@ import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.events.user.UserSettingsEvent
-import ch.protonmail.android.jobs.OnFirstLoginJob
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.MessageUtils
@@ -67,7 +67,6 @@ import ch.protonmail.android.utils.extensions.removeFirst
 import ch.protonmail.android.utils.extensions.replaceFirst
 import ch.protonmail.android.worker.FetchContactsDataWorker
 import ch.protonmail.android.worker.FetchContactsEmailsWorker
-import com.birbit.android.jobqueue.JobManager
 import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -102,10 +101,10 @@ class EventHandler @AssistedInject constructor(
     private val protonMailApiManager: ProtonMailApiManager,
     private val databaseProvider: DatabaseProvider,
     private val userManager: UserManager,
-    private val jobManager: JobManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
+    private val launchInitialDataFetch: LaunchInitialDataFetch,
     @Assisted val username: String
 ) {
 
@@ -149,7 +148,10 @@ class EventHandler @AssistedInject constructor(
         countersDao.clearTotalLocationsTable()
         countersDao.clearTotalLabelsTable()
         // todo make this done sequentially, don't fire and forget.
-        jobManager.addJobInBackground(OnFirstLoginJob(false, false))
+        launchInitialDataFetch(
+            shouldRefreshDetails = false,
+            shouldRefreshContacts = false
+        )
     }
 
     private lateinit var response: EventResponse

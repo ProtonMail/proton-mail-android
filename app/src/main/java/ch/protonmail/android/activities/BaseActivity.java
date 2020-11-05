@@ -102,8 +102,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     public static final String EXTRA_IN_APP = "extra_in_app";
     public static final int REQUEST_CODE_VALIDATE_PIN = 998;
 
-    protected static boolean mPingHasConnection;
-
     @Inject
     protected ProtonMailApplication mApp;
     @Inject
@@ -271,7 +269,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void loadMailSettings() {
         mUserManager.setMailSettings(MailSettings.Companion.load(mUserManager.getUsername()));
         if (mUserManager.getMailSettings() == null) {
-            fetchMailSettingsWorkerEnqueuer.invoke();
+            fetchMailSettingsWorkerEnqueuer.enqueue();
         }
     }
 

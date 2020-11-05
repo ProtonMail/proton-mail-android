@@ -18,12 +18,10 @@
  */
 package ch.protonmail.android.activities.dialogs;
 
-import android.app.Activity;
-import android.graphics.Color;
+import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
@@ -48,6 +46,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
@@ -56,17 +56,12 @@ import ch.protonmail.android.adapters.LabelsAdapter;
 import ch.protonmail.android.api.models.room.messages.Label;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
-import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.utils.UiUtil;
-import ch.protonmail.android.utils.UserUtils;
-import ch.protonmail.android.utils.extensions.TextExtensions;
-import ch.protonmail.android.views.ThreeStateButton;
+import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel;
 import ch.protonmail.android.views.ThreeStateCheckBox;
 import dagger.hilt.android.AndroidEntryPoint;
 
-/*
- * Created by dkadrikj on 19.7.15.
- */
+import static ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState;
 
 @AndroidEntryPoint
 public class ManageLabelsDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
@@ -74,7 +69,6 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     public static final String ARGUMENT_CHECKED_LABELS = "ch.protonmail.android.ARG_CHECKED_LABELS";
     public static final String ARGUMENT_NUMBER_SELECTED_MESSAGES = "ch.protonmail.android.ARG_NUMBER_SELECTED_MESSAGES";
     public static final String ARGUMENT_MESSAGE_IDS = "ch.protonmail.android.ARG_MESSAGE_IDS";
-    public static final String ARGUMENT_SHOW_CHECKBOXES = "ch.protonmail.android.ARG_SHOW_CHECKBOXES";
 
     @Nullable
     @BindView(R.id.progress_bar)
@@ -100,6 +94,9 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @BindView(R.id.list_divider)
     View mListDivider;
 
+    @Inject
+    protected ManageLabelsDialogViewModel.ManageLabelsDialogViewModelFactory manageLabelsDialogViewModelFactory;
+
     private ILabelsChangeListener mLabelStateChangeListener;
     private ILabelCreationListener mLabelCreationListener;
     private LabelsAdapter mAdapter;
@@ -110,9 +107,10 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     private List<String> mMessageIds;
     private String mSelectedNewLabelColor;
     private int[] mColorOptions;
-    private boolean mCreationMode = false;
-    private boolean mShowCheckboxes;
     private int mCurrentSelection = -1;
+    private ManageLabelsDialogViewModel viewModel;
+
+    AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
 
     /**
      * Instantiates a new fragment of this class.
@@ -120,14 +118,16 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
      * @param checkedLabels pass null if you do not need labels checked
      * @return new instance of {@link ManageLabelsDialogFragment}
      */
-    public static ManageLabelsDialogFragment newInstance(Set<String> checkedLabels, HashMap<String, Integer> numberOfMessagesSelected,
-                                                         ArrayList<String> messageIds, boolean showCheckboxes) {
+    public static ManageLabelsDialogFragment newInstance(
+            Set<String> checkedLabels,
+            HashMap<String, Integer> numberOfMessagesSelected,
+            ArrayList<String> messageIds
+    ) {
         ManageLabelsDialogFragment fragment = new ManageLabelsDialogFragment();
         Bundle extras = new Bundle();
         extras.putStringArrayList(ARGUMENT_CHECKED_LABELS, new ArrayList<>(checkedLabels));
         extras.putSerializable(ARGUMENT_NUMBER_SELECTED_MESSAGES, numberOfMessagesSelected);
         extras.putStringArrayList(ARGUMENT_MESSAGE_IDS, messageIds);
-        extras.putBoolean(ARGUMENT_SHOW_CHECKBOXES, showCheckboxes);
         fragment.setArguments(extras);
         return fragment;
     }
@@ -138,18 +138,15 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mLabelStateChangeListener = (ILabelsChangeListener) activity;
+            mLabelStateChangeListener = (ILabelsChangeListener) context;
+            mLabelCreationListener = (ILabelCreationListener) context;
         } catch (ClassCastException e) {
-            // not throwing error, since the user of this dialog is not obligated to listen for
-            // labels state change
-        }
-        try {
-            mLabelCreationListener = (ILabelCreationListener) activity;
-        } catch (ClassCastException e) {
-            // not throwing error since the user of this fragment may not want to create new labels
+            // not throwing error since the user of this fragment:
+            // * is not forced to listen for labels state change
+            // * may not want to create new labels
         }
     }
 
@@ -161,7 +158,10 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: check for  Channel is unrecoverably broken and will be disposed
+
+        viewModel = manageLabelsDialogViewModelFactory.create(ManageLabelsDialogViewModel.class);
+        viewModel.getViewState().observe(this, this::viewStateChanged);
+
         Bundle extras = getArguments();
         if (extras != null && extras.containsKey(ARGUMENT_CHECKED_LABELS)) {
             mCheckedLabels = getArguments().getStringArrayList(ARGUMENT_CHECKED_LABELS);
@@ -171,17 +171,11 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
             mCheckedLabels = new ArrayList<>();
             mMessageIds = null;
         }
-        mShowCheckboxes = getArguments().getBoolean(ARGUMENT_SHOW_CHECKBOXES);
     }
-
-    AdapterView.OnItemLongClickListener labelItemLongClick = (parent, view, position, id) -> false;
 
     @Override
     protected void initUi(final View rootView) {
         mList.setOnItemLongClickListener(labelItemLongClick);
-        if (mLabelCreationListener != null) {
-            // TODO:
-        }
         mColorsGrid.setOnItemClickListener(this);
         mArchiveCheckbox.getButton().numberOfStates = 2;
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getContext().getApplicationContext()).getDatabase();
@@ -201,11 +195,8 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         });
 
         mLabelName.addTextChangedListener(newLabelWatcher);
-        setDialogTitle(R.string.labels_title_apply);
-        setDoneTitle(R.string.label_apply);
-        if (!mShowCheckboxes) {
-            mArchiveContainer.setVisibility(View.GONE);
-        }
+        setDialogTitle();
+        setDoneTitle();
     }
 
     @Override
@@ -220,35 +211,14 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
 
     @OnClick(R.id.done)
     public void onDoneClicked() {
-        if (mCreationMode) {
-            if (TextUtils.isEmpty(mSelectedNewLabelColor)) {
-                TextExtensions.showToast(getActivity(), R.string.please_choose_color, Toast.LENGTH_SHORT);
-            } else {
-                mCreationMode = false;
-                onSaveClicked();
-            }
-        } else {
-            List<String> checkedLabelIds = getCheckedLabels();
-            int maxLabelsAllowed = UserUtils.getMaxAllowedLabels(ProtonMailApplication.getApplication().getUserManager());
-            if (checkedLabelIds.size() > maxLabelsAllowed) {
-                if (isAdded()) {
-                    TextExtensions.showToast(getActivity(), String.format(getString(R.string.max_labels_selected), maxLabelsAllowed), Toast.LENGTH_SHORT);
-                }
-                return;
-            }
-            if (mShowCheckboxes && mLabelStateChangeListener != null) {
-                if (mArchiveCheckbox.getState() == ThreeStateButton.STATE_CHECKED ||
-                        mArchiveCheckbox.getState() == ThreeStateButton.STATE_PRESSED) {
-                    // also archive
-                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null : getUnchangedLabels(), mMessageIds, mMessageIds);
-                } else {
-                    mLabelStateChangeListener.onLabelsChecked(getCheckedLabels(), mMessageIds == null ? null :  getUnchangedLabels(), mMessageIds);
-                }
-            } else if (!mShowCheckboxes) {
-                mLabelCreationListener.onLabelsDeleted(getCheckedLabels());
-            }
-            dismissAllowingStateLoss();
-        }
+        viewModel.onDoneClicked(
+                isCreatingNewLabel(),
+                mSelectedNewLabelColor,
+                getCheckedLabels(),
+                mArchiveCheckbox.getState(),
+                mLabelName.getText().toString(),
+                mLabels
+        );
     }
 
     private TextWatcher newLabelWatcher = new TextWatcher() {
@@ -259,25 +229,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (TextUtils.isEmpty(mLabelName.getText())) {
-                mCreationMode = false;
-                mColorsGrid.setVisibility(View.GONE);
-                mList.setVisibility(View.VISIBLE);
-                mLabelName.setVisibility(View.VISIBLE);
-                UiUtil.hideKeyboard(getActivity(), mLabelName);
-                setDoneTitle(R.string.label_apply);
-                setDialogTitle(R.string.labels_title_apply);
-                mCurrentSelection = -1;
-            } else {
-                if (!mCreationMode) {
-                    mCreationMode = true;
-                    inflateColors();
-                    randomCheck();
-                    mAddLabelContainer.setVisibility(View.VISIBLE);
-                    mDone.setText(getString(R.string.label_add));
-                    mTitle.setText(getString(R.string.labels_title_add));
-                }
-            }
+            viewModel.onTextChanged(mLabelName.getText().toString(), isCreatingNewLabel());
         }
 
         @Override
@@ -287,62 +239,128 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         }
     };
 
-    private void setDoneTitle(@StringRes int doneRes) {
-        if (doneRes == R.string.label_apply) {
-            if (mShowCheckboxes) {
-                mDone.setText(getString(doneRes));
-            } else {
-                mDone.setText(getString(R.string.label_delete));
-                mDone.setTextColor(Color.RED);
-            }
-        } else {
-            if (!mShowCheckboxes) {
-                mDone.setText(getString(doneRes));
-            }
+    private boolean isCreatingNewLabel() {
+        return mColorsGrid.getVisibility() == View.VISIBLE;
+    }
+
+    private void setDoneTitle() {
+        mDone.setText(getString(R.string.label_apply));
+    }
+
+    private void setDialogTitle() {
+        mTitle.setText(getString(R.string.labels_title_apply));
+    }
+
+    private void viewStateChanged(ViewState viewState) {
+        if (viewState instanceof ViewState.ShowMissingColorError) {
+            showToast(R.string.please_choose_color);
+        }
+
+        if (viewState instanceof ViewState.ShowMissingNameError) {
+            showToast(R.string.label_name_empty);
+        }
+
+        if (viewState instanceof ViewState.ShowLabelNameDuplicatedError) {
+            showToast(R.string.label_name_duplicate);
+        }
+
+        if (viewState instanceof ViewState.ShowLabelCreatedEvent) {
+            showLabelCreated((ViewState.ShowLabelCreatedEvent) viewState);
+        }
+
+        if (viewState instanceof ViewState.ShowApplicableLabelsThresholdExceededError) {
+            showApplicableLabelsThresholdError(
+                    (ViewState.ShowApplicableLabelsThresholdExceededError) viewState
+            );
+        }
+
+        if (viewState instanceof ViewState.SelectedLabelsChangedEvent) {
+            dispatchLabelsCheckedEvent();
+        }
+
+        if (viewState instanceof ViewState.SelectedLabelsArchiveEvent) {
+            dispatchLabelsCheckedArchiveEvent();
+        }
+
+        if (viewState instanceof ViewState.HideLabelsView) {
+            dismissAllowingStateLoss();
+        }
+
+        if (viewState instanceof ViewState.ShowLabelCreationViews) {
+            showLabelCreationViews();
+        }
+
+        if (viewState instanceof ViewState.HideLabelCreationViews) {
+            hideLabelCreationViews();
         }
     }
 
-    private void setDialogTitle(@StringRes int titleRes) {
-        if (titleRes == R.string.labels_title_apply) {
-            if (mShowCheckboxes) {
-                mTitle.setText(getString(titleRes));
-            } else {
-                mTitle.setText(getString(R.string.labels_title));
-            }
-        } else {
-            if (!mShowCheckboxes) {
-                mTitle.setText(getString(titleRes));
-            }
-        }
+    private void hideLabelCreationViews() {
+        mColorsGrid.setVisibility(View.GONE);
+        mList.setVisibility(View.VISIBLE);
+        mLabelName.setVisibility(View.VISIBLE);
+        UiUtil.hideKeyboard(getActivity(), mLabelName);
+        setDoneTitle();
+        setDialogTitle();
+        mCurrentSelection = -1;
     }
 
-    public void onSaveClicked() {
-        String labelName = mLabelName.getText().toString();
-        if (TextUtils.isEmpty(labelName)) {
-            TextExtensions.showToast(getActivity(), R.string.label_name_empty, Toast.LENGTH_SHORT);
-            return;
-        }
-        for (LabelsAdapter.LabelItem item : mLabels){
-            if (item.name.equals(labelName)){
-                TextExtensions.showToast(getActivity(), R.string.label_name_duplicate, Toast.LENGTH_SHORT);
-                return;
-            }
-        }
+    private void showLabelCreationViews() {
+        showLabelColorsGrid();
+        selectRandomColor();
+        mAddLabelContainer.setVisibility(View.VISIBLE);
+        mDone.setText(getString(R.string.label_add));
+        mTitle.setText(getString(R.string.labels_title_add));
+    }
 
+    private void dispatchLabelsCheckedArchiveEvent() {
+        mLabelStateChangeListener.onLabelsChecked(
+                getCheckedLabels(),
+                mMessageIds == null ? null : getUnchangedLabels(),
+                mMessageIds,
+                mMessageIds
+        );
+    }
+
+    private void dispatchLabelsCheckedEvent() {
+        mLabelStateChangeListener.onLabelsChecked(
+                getCheckedLabels(),
+                mMessageIds == null ? null : getUnchangedLabels(),
+                mMessageIds
+        );
+    }
+
+    private void showApplicableLabelsThresholdError(
+            ViewState.ShowApplicableLabelsThresholdExceededError error
+    ) {
+        Toast.makeText(
+                getContext(),
+                String.format(getString(R.string.max_labels_selected), error.getMaxLabelsAllowed()),
+                Toast.LENGTH_SHORT
+        ).show();
+    }
+
+    private void showToast(@StringRes int messageId) {
+        Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT).show();
+    }
+
+    private void showLabelCreated(ViewState.ShowLabelCreatedEvent labelCreatedEvent) {
+        String labelName = labelCreatedEvent.getLabelName();
         mColorsGrid.setVisibility(View.GONE);
         mLabelName.setText("");
         mList.setVisibility(View.VISIBLE);
         UiUtil.hideKeyboard(getActivity(), mLabelName);
+
         if (mLabelCreationListener != null) {
             mLabelCreationListener.onLabelCreated(labelName, mSelectedNewLabelColor);
         }
-        setDoneTitle(R.string.label_apply);
-        setDialogTitle(R.string.labels_title_apply);
+
+        setDoneTitle();
+        setDialogTitle();
     }
 
 
-    class LabelsObserver implements Observer<List<Label>>{
-
+    class LabelsObserver implements Observer<List<Label>> {
         @Override
         public void onChanged(@Nullable List<Label> labels) {
             mLabels = new ArrayList<>();
@@ -416,7 +434,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         return unchangedLabelIds;
     }
 
-    private void inflateColors() {
+    private void showLabelColorsGrid() {
         mColorOptions = getResources().getIntArray(R.array.label_colors);
         mColorsAdapter = new LabelColorsAdapter(getActivity(), mColorOptions, R.layout.label_color_item);
         mColorsGrid.setAdapter(mColorsAdapter);
@@ -432,7 +450,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         UiUtil.hideKeyboard(getActivity(), mLabelName);
     }
 
-    private void randomCheck() {
+    private void selectRandomColor() {
         if (mCurrentSelection == -1) {
             Random random = new Random();
             mCurrentSelection = random.nextInt(mColorOptions.length);

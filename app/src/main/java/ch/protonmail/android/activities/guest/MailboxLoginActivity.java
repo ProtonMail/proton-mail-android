@@ -30,28 +30,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.squareup.otto.Subscribe;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel;
+import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import timber.log.Timber;
 
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
+@AndroidEntryPoint
 public class MailboxLoginActivity extends BaseLoginActivity {
 
     public static final String EXTRA_KEY_SALT = "key_salt";
+
+    @Inject
+    ConnectivityBaseViewModel viewModel;
 
     @BindView(R.id.mailbox_password)
     EditText mPasswordEditText;
@@ -61,7 +69,6 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     TextView mForgotPasswordView;
     @BindView(R.id.sign_in)
     Button mSignIn;
-    private Snackbar mCheckForConnectivitySnack;
 
     private boolean mDisableBack = false;
     private boolean mIsUnRegistered;
@@ -92,6 +99,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         mUserManager.setLoggedIn(false);
         mPasswordEditText.setFocusable(false);
         mPasswordEditText.setOnTouchListener(mTouchListener);
+        viewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     @Override
@@ -130,6 +138,12 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     protected void onStart() {
         super.onStart();
         ProtonMailApplication.getApplication().getBus().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.checkConnectivity();
     }
 
     @Override
@@ -175,26 +189,26 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         mSignIn.setClickable(true);
     }
 
-    protected class ConnectivityRetryListener extends RetryListener {
-
-        @Override
-        public void onClick(View v) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
-            mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), MailboxLoginActivity.this);
-            mCheckForConnectivitySnack.show();
-            super.onClick(v);
-        }
+    private Function0<Unit> onConnectivityCheckRetry() {
+        return () -> {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            viewModel.checkConnectivityDelayed();
+            return null;
+        };
     }
 
-    private ConnectivityRetryListener connectivityRetryListener = new ConnectivityRetryListener();
-
-    @Subscribe
-    public void onConnectivityEvent(ConnectivityEvent event) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(connectivityRetryListener, this);
+    private void onConnectivityEvent(boolean hasConnectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
+        if (!hasConnectivity) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                    mSnackLayout,
+                    mUserManager.getUser(),
+                    this,
+                    onConnectivityCheckRetry(),
+                    null
+            ).show();
         } else {
-            mPingHasConnection = true;
-            hideNoConnSnack();
+            networkSnackBarUtil.hideAllSnackBars();
         }
     }
 

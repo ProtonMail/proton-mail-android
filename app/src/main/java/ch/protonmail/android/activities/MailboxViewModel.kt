@@ -18,13 +18,12 @@
  */
 package ch.protonmail.android.activities
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.utils.ApplyRemoveLabels
@@ -32,9 +31,11 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.RemoveLabelJob
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -51,12 +52,14 @@ const val FLOW_USED_SPACE_CHANGED = 2
 const val FLOW_TRY_COMPOSE = 3
 // endregion
 
-class MailboxViewModel(
+class MailboxViewModel @ViewModelInject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     val userManager: UserManager,
     private val jobManager: JobManager,
-    private val deleteMessage: DeleteMessage
-) : ViewModel() {
+    private val deleteMessage: DeleteMessage,
+    verifyConnection: VerifyConnection,
+    networkConfigurator: NetworkConfigurator
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
 
     var pendingSendsLiveData = messageDetailsRepository.findAllPendingSendsAsync()
     var pendingUploadsLiveData = messageDetailsRepository.findAllPendingUploadsAsync()
@@ -128,7 +131,8 @@ class MailboxViewModel(
         messageDetailsRepository.findAllLabelsWithIds(labelIds)
 
     fun processLabels(messageIds: List<String>, checkedLabelIds: List<String>, unchangedLabels: List<String>) {
-        // check for case of too many labels being added to a message- will need to edit this if removing labels
+        // check for case of too many labels being added to a message- will need to edit this if
+        // removing labels
         // is introduced to mailbox view
         val iterator = messageIds.iterator()
 
@@ -145,7 +149,11 @@ class MailboxViewModel(
                     if (message != null) {
                         val currentLabelsIds = message.labelIDsNotIncludingLocations
                         val labels = getAllLabelsByIds(currentLabelsIds)
-                        val applyRemoveLabels = resolveMessageLabels(message, ArrayList(checkedLabelIds), ArrayList<String>(unchangedLabels), labels)
+                        val applyRemoveLabels = resolveMessageLabels(
+                            message, ArrayList(checkedLabelIds),
+                            ArrayList<String>(unchangedLabels),
+                            labels
+                        )
                         val apply = applyRemoveLabels?.labelsToApply
                         val remove = applyRemoveLabels?.labelsToRemove
                         apply?.forEach {
@@ -225,38 +233,6 @@ class MailboxViewModel(
             val deleteMessagesResult = deleteMessage(messageIds)
             _hasSuccessfullyDeletedMessages.postValue(deleteMessagesResult.isSuccessfullyDeleted)
         }
-
-    companion object {
-
-        fun create(
-            activity: BaseActivity,
-            messageDetailsRepository: MessageDetailsRepository,
-            userManager: UserManager,
-            jobManager: JobManager,
-            deleteMessage: DeleteMessage
-        ): MailboxViewModel =
-            ViewModelProviders.of(
-                activity,
-                MailboxViewModelFactory(messageDetailsRepository, userManager, jobManager, deleteMessage)
-            )
-                .get(MailboxViewModel::class.java)
-    }
-
-    private class MailboxViewModelFactory(
-        private val messageDetailsRepository: MessageDetailsRepository,
-        private val userManager: UserManager,
-        private val jobManager: JobManager,
-        private val deleteMessage: DeleteMessage
-    ) : ViewModelProvider.NewInstanceFactory() {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MailboxViewModel(
-                messageDetailsRepository,
-                userManager,
-                jobManager,
-                deleteMessage
-            ) as T
-        }
-    }
 
     data class MaxLabelsReached(val subject: String?, val maxAllowedLabels: Int)
 }

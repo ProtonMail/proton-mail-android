@@ -1,6 +1,6 @@
 # Integrity check *
 
-# Default excluded files are `` ['**/test/**', '**/**Test/**', '**/buildSrc/**'] ``
+# Default excluded files are `` ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**'] ``
 build:
   maxIssues: 12480
   excludeCorrectable: false
@@ -43,7 +43,7 @@ console-reports:
 
 comments:
   active: true
-  excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+  excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
   AbsentOrWrongFileLicense:
     active: false
     # licenseTemplateFile: 'license.template'
@@ -125,7 +125,7 @@ complexity:
     threshold: 4
   StringLiteralDuplication:
     active: false
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     threshold: 2
     # do not ignore strings in annotations
     ignoreAnnotation: false
@@ -133,7 +133,7 @@ complexity:
     ignoreStringsRegex: '$^'
   TooManyFunctions:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     thresholdInFiles: 31
     thresholdInClasses: 26
     thresholdInInterfaces: 21
@@ -196,7 +196,7 @@ exceptions:
   # reports catch blocks which check for the type of an exception via is checks or casts
   InstanceOfCheckForException:
     active: false
-    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    # excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
   # reports all exceptions of the type NotImplementedError and `TO\\DO(..)`
   NotImplementedDeclaration:
     active: true
@@ -221,7 +221,7 @@ exceptions:
     active: true
   ThrowingExceptionsWithoutMessageOrCause:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     exceptions:
       - IllegalArgumentException
       - IllegalStateException
@@ -230,7 +230,7 @@ exceptions:
     active: true
   TooGenericExceptionCaught:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     exceptionNames:
       - ArrayIndexOutOfBoundsException
       - Error
@@ -312,7 +312,7 @@ formatting:
   NoMultipleSpaces:
     active: true
     autoCorrect: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
   NoSemicolons:
     active: true
     autoCorrect: true
@@ -379,41 +379,41 @@ naming:
   active: true
   ClassNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     classPattern: '[A-Z$][a-zA-Z0-9$]*'
   ConstructorParameterNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     parameterPattern: '[a-z][A-Za-z0-9]*'
     privateParameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
     ignoreOverridden: true
   EnumNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     enumEntryPattern: '[A-Z][_a-zA-Z0-9]*'
   ForbiddenClassName:
     active: false
-    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    # excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     # forbiddenName: []
   FunctionMaxLength:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     maximumFunctionNameLength: 40
   FunctionMinLength:
     active: false
-    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    # excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     # minimumFunctionNameLength: 3
   FunctionNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     functionPattern: '([a-zA-Z][a-zA-Z0-9]*)|(`.*`)'
     excludeClassPattern: '$^'
     ignoreOverridden: true
     ignoreAnnotated: ['Composable']
   FunctionParameterNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
     ignoreOverridden: true
@@ -428,31 +428,31 @@ naming:
     ignoreOverridden: true
   ObjectPropertyNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     constantPattern: '[A-Za-z][_A-Za-z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '(_)?[A-Za-z][_A-Za-z0-9]*'
   PackageNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
   TopLevelPropertyNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     constantPattern: '[A-Z][_A-Z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
   VariableMaxLength:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     maximumVariableNameLength: 40
   VariableMinLength:
     active: false
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     # minimumVariableNameLength: 1
   VariableNaming:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
@@ -464,10 +464,10 @@ performance:
     active: true
   ForEachOnRange:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
   SpreadOperator:
     active: false
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
   UnnecessaryTemporaryInstantiation:
     active: true
 
@@ -531,7 +531,7 @@ potential-bugs:
     active: true
   LateinitUsage:
     active: false
-    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    # excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     # excludeAnnotatedProperties: []
     # ignoreOnClassesPattern: ''
   MapGetWithNotNullAssertionOperator:
@@ -611,7 +611,7 @@ style:
     maxJumpCount: 2
   MagicNumber:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     ignoreNumbers: ['-1', '0', '1', '2']
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: true
@@ -628,7 +628,7 @@ style:
     active: true
   MaxLineLength:
     active: true
-    excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     maxLineLength: 120
     excludePackageStatements: true
     excludeImportStatements: true
@@ -726,7 +726,7 @@ style:
     active: true
     # We can exclude tests and Gradle files and that would be great, but it will make our Code Style incoherent with IDE setup,
     # since we cannot set different import rules across the project
-    # excludes: ['**/test/**', '**/**Test/**', '**/buildSrc/**']
+    # excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
     #
     # NOTE!
     # Only excluded imports are:

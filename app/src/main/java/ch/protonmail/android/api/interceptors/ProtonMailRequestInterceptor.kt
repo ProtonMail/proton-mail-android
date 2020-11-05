@@ -28,18 +28,11 @@ import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
 import java.io.IOException
-import java.net.ConnectException
 
 /**
  * ProtonMailRequestInterceptor intercepts every request and if HTTP response status is 401
  * It try to refresh token and make original request again with refreshed access token
  */
-
-// region constants
-// private const val FIVE_SECONDS_IN_MILLIS = 5000L
-private const val TAG = "ProtonMailRequestInterceptor"
-
-// endregion
 class ProtonMailRequestInterceptor private constructor(
     userManager: UserManager,
     jobManager: JobManager,
@@ -77,18 +70,13 @@ class ProtonMailRequestInterceptor private constructor(
         var response: Response? = null
         try {
             requestCount++
-            Timber.tag(TAG).d(TAG, "Intercept: advancing request with url: " + request.url())
+            Timber.d("Intercept: advancing request with url: " + request.url())
             response = chain.proceed(request)
 
         } catch (exception: IOException) {
-            // checkForProxy()
-            Timber.tag(TAG).d("Intercept: IOException with url: " + request.url())
+            Timber.d(exception, "Intercept: IOException with url: " + request.url())
             AppUtil.postEventOnUi(ConnectivityEvent(false))
             networkUtils.setCurrentlyHasConnectivity(false)
-        } catch (exception: ConnectException) {
-            exception.printStackTrace()
-        } catch (exception: Exception) {
-            exception.printStackTrace()
         }
 
         requestCount--

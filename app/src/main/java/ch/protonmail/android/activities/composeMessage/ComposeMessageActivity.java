@@ -81,6 +81,7 @@ import com.squareup.otto.Subscribe;
 import com.tokenautocomplete.TokenCompleteTextView;
 
 import org.apache.http.protocol.HTTP;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -132,7 +133,6 @@ import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.events.AttachmentFailedEvent;
-import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.DraftCreatedEvent;
@@ -163,7 +163,6 @@ import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.MailTo;
 import ch.protonmail.android.utils.MailToUtils;
 import ch.protonmail.android.utils.MessageUtils;
-import ch.protonmail.android.utils.NetworkUtil;
 import ch.protonmail.android.utils.ServerTime;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.crypto.TextDecryptionResult;
@@ -179,7 +178,9 @@ import ch.protonmail.android.views.MessageRecipientView;
 import ch.protonmail.android.views.PMWebView;
 import ch.protonmail.android.views.PMWebViewClient;
 import dagger.hilt.android.AndroidEntryPoint;
+import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function0;
 import timber.log.Timber;
 
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
@@ -437,8 +438,6 @@ public class ComposeMessageActivity
 
         mAddressesSpinner.setSelection(mSelectedAddressPosition);
 
-        getPingHandler().postDelayed(getPingRunnable(), 0);
-
         mAddressesSpinner.getViewTreeObserver().addOnGlobalLayoutListener(new AddressSpinnerGlobalLayoutListener());
         askForPermission = true;
         composeMessageViewModel.startGetAvailableDomainsJob();
@@ -497,6 +496,8 @@ public class ComposeMessageActivity
         });
 
         composeMessageViewModel.getBuildingMessageCompleted().observe(this, new BuildObserver());
+
+        composeMessageViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     private void initialiseActivityOnFirstStart(Intent intent, Bundle extras, String type) {
@@ -733,13 +734,6 @@ public class ComposeMessageActivity
         }
     }
 
-    @Override
-    protected void onPause() {
-
-        UiUtil.hideKeyboard(this);
-        super.onPause();
-    }
-
     private int skipInitial;
     private TextWatcher typingListener = new TextWatcher() {
         @Override
@@ -800,24 +794,28 @@ public class ComposeMessageActivity
         addRecipientsToView(recipients, recipient);
     }
 
-    protected class ConnectivityRetryListener extends RetryListener {
-        @Override
-        public void onClick(View v) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
-            Snackbar mCheckForConnectivitySnack = NetworkUtil.setCheckingConnectionSnackLayout(getMSnackLayout(), ComposeMessageActivity.this);
-            mCheckForConnectivitySnack.show();
-            super.onClick(v);
-        }
+    @NotNull
+    private Function0<Unit> onConnectivityCheckRetry() {
+        return () -> {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            composeMessageViewModel.checkConnectivityDelayed();
+            return null;
+        };
     }
 
-    @Subscribe
-    public void onConnectivityEvent(ConnectivityEvent event) {
+    private void onConnectivityEvent(boolean hasConnectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", hasConnectivity, isDohOngoing);
         if (!isDohOngoing) {
-            if (!event.hasConnection()) {
-                showNoConnSnack(new ConnectivityRetryListener(), this);
+            if (!hasConnectivity) {
+                networkSnackBarUtil.getNoConnectionSnackBar(
+                        mSnackLayout,
+                        mUserManager.getUser(),
+                        this,
+                        onConnectivityCheckRetry(),
+                        null
+                ).show();
             } else {
-                mPingHasConnection = true;
-                hideNoConnSnack();
+                networkSnackBarUtil.hideAllSnackBars();
             }
         }
     }
@@ -1027,6 +1025,13 @@ public class ComposeMessageActivity
         checkDelinquency();
         renderViews();
         AppUtil.clearNotifications(this);
+        composeMessageViewModel.checkConnectivity();
+    }
+
+    @Override
+    protected void onPause() {
+        UiUtil.hideKeyboard(this);
+        super.onPause();
     }
 
     @Override
@@ -1683,7 +1688,7 @@ public class ComposeMessageActivity
             TextDecryptionResult tct = crypto.decrypt(new CipherText(messageBody));
             messageBody = tct.getDecryptedData();
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "Decryption error");
         }
         composeMessageViewModel.setInitialMessageContent(messageBody);
         if (loadedMessage.isInline()) {

@@ -41,7 +41,7 @@ class ServerTimeInterceptor(
             response = chain.proceed(request)
             handleResponse(response)
         } catch (exception: IOException) {
-            Timber.d(exception, "IOException")
+            Timber.d(exception, "IOException ${request.url()}")
             queueNetworkUtil.setCurrentlyHasConnectivity(false)
         }
 

@@ -18,9 +18,6 @@
  */
 package ch.protonmail.android.utils
 
-/**
- * Created by dinokadrikj on 3/2/20.
- */
 interface INetworkConfiguratorCallback {
     fun onApiProvidersChanged()
 

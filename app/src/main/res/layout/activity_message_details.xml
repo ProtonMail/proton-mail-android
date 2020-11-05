@@ -76,7 +76,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <FrameLayout
         android:id="@+id/layout_no_connectivity_info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/coordinatorLayout" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"

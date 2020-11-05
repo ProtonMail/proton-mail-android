@@ -19,18 +19,25 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
+import android.content.res.Resources
+import android.print.PrintManager
 import android.util.Pair
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
+import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
+import ch.protonmail.android.activities.messageDetails.MessagePrinter
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -44,18 +51,19 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
+import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
-import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -70,21 +78,28 @@ import java.util.concurrent.atomic.AtomicBoolean
  * TODO reduce [LiveData]s and keep only a single version of the message
  */
 
-internal class MessageDetailsViewModel(
-    val messageDetailsRepository: MessageDetailsRepository,
+internal class MessageDetailsViewModel @ViewModelInject constructor(
+    @Assisted private val savedStateHandle: SavedStateHandle,
+    private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     messageRendererFactory: MessageRenderer.Factory,
-    val messageId: String,
-    private val isTransientMessage: Boolean,
-    private val deleteMessageUseCase: DeleteMessage
-) : ViewModel() {
+    private val deleteMessageUseCase: DeleteMessage,
+    verifyConnection: VerifyConnection,
+    networkConfigurator: NetworkConfigurator
+) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
+
+    private val messageId: String = savedStateHandle.get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID)
+        ?: throw IllegalStateException("messageId in MessageDetails is Empty!")
+    private val isTransientMessage = savedStateHandle.get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE)
+        ?: false
 
     private val messageRenderer
-            by lazy { messageRendererFactory.create(viewModelScope, messageId) }
+    by lazy { messageRendererFactory.create(viewModelScope, messageId) }
 
     lateinit var message: LiveData<Message>
+
     // TODO: this value was a lateinit, but only initialized with an empty `ArrayList`
     val folderIds: MutableList<String> = mutableListOf()
     lateinit var addressId: String
@@ -98,7 +113,6 @@ internal class MessageDetailsViewModel(
 
     // region properties and data
     private val requestPending = AtomicBoolean(false)
-    private var _hasConnection = AtomicBoolean(true)
     var renderedFromCache = AtomicBoolean(false)
 
     var refreshedKeys: Boolean = true
@@ -107,7 +121,6 @@ internal class MessageDetailsViewModel(
     private val _downloadEmbeddedImagesResult: MutableLiveData<Pair<String, String>> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    private val _connectivityEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
@@ -138,9 +151,6 @@ internal class MessageDetailsViewModel(
     val checkStoragePermission: LiveData<Event<Boolean>>
         get() = _checkStoragePermission
 
-    val connectivityEvent: LiveData<Event<Boolean>>
-        get() = _connectivityEvent
-
     val reloadRecipientsEvent: LiveData<Event<Boolean>>
         get() = _reloadRecipientsEvent
 
@@ -150,20 +160,15 @@ internal class MessageDetailsViewModel(
     val downloadEmbeddedImagesResult: LiveData<Pair<String, String>>
         get() = _downloadEmbeddedImagesResult
 
-    val prepareEditMessageIntent : LiveData<Event<IntentExtrasData>>
+    val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
         get() = _prepareEditMessageIntentResult
 
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
-    // region getters and setters
-    var hasConnection: Boolean
-        get() = _hasConnection.get()
-        set(value) = _hasConnection.set(value)
-    // endregion
-
     init {
         tryFindMessage()
+        messageDetailsRepository.reloadDependenciesForUser(userManager.username)
 
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
@@ -211,8 +216,8 @@ internal class MessageDetailsViewModel(
     fun findAllLabelsWithIds(checkedLabelIds: MutableList<String>) {
         viewModelScope.launch(IO) {
             messageDetailsRepository.findAllLabelsWithIds(
-                    decryptedMessageData.value ?: Message(), checkedLabelIds,
-                    labels.value ?: ArrayList(), isTransientMessage
+                decryptedMessageData.value ?: Message(), checkedLabelIds,
+                labels.value ?: ArrayList(), isTransientMessage
             )
         }
         message.value!!.setLabelIDs(decryptedMessageData.value!!.allLabelIDs)
@@ -224,9 +229,9 @@ internal class MessageDetailsViewModel(
         viewModelScope.launch(IO) {
 
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
-            val embeddedImages =_embeddedImagesAttachments.mapNotNull {
+            val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 EmbeddedImage.fromAttachment(
-                        it, decryptedMessageData.value!!.embeddedImagesArray.toList()
+                    it, decryptedMessageData.value!!.embeddedImagesArray.toList()
                 )
             }
 
@@ -254,16 +259,28 @@ internal class MessageDetailsViewModel(
         messageRenderer.images.offer(event.images)
     }
 
-    fun prepareEditMessageIntent(messageAction: Constants.MessageActionType,
-                                 message: Message,
-                                 newMessageTitle: String?,
-                                 content: String,
-                                 mBigContentHolder: BigContentHolder) {
+    fun prepareEditMessageIntent(
+        messageAction: Constants.MessageActionType,
+        message: Message,
+        newMessageTitle: String?,
+        content: String,
+        mBigContentHolder: BigContentHolder
+    ) {
         val user: User = userManager.user
         viewModelScope.launch {
-            val intent = messageDetailsRepository.prepareEditMessageIntent(messageAction, message,
-                    user, newMessageTitle, content, mBigContentHolder, mImagesDisplayed,
-                    remoteContentDisplayed, _embeddedImagesAttachments, IO, isTransientMessage)
+            val intent = messageDetailsRepository.prepareEditMessageIntent(
+                messageAction,
+                message,
+                user,
+                newMessageTitle,
+                content,
+                mBigContentHolder,
+                mImagesDisplayed,
+                remoteContentDisplayed,
+                _embeddedImagesAttachments,
+                IO,
+                isTransientMessage
+            )
             _prepareEditMessageIntentResult.value = Event(intent)
         }
     }
@@ -347,8 +364,8 @@ internal class MessageDetailsViewModel(
                 if (!message.isDownloaded) {
                     return
                 }
-                if(!contact?.name.equals(message.sender!!.emailAddress))
-                message.senderDisplayName = contact?.name
+                if (!contact?.name.equals(message.sender!!.emailAddress))
+                    message.senderDisplayName = contact?.name
                 decrypted = message.tryDecrypt(keys) ?: false
                 postValue(message)
             }
@@ -396,46 +413,46 @@ internal class MessageDetailsViewModel(
             if (!shouldExit) {
                 withContext(IO) {
                     val messageDetailsResult = runCatching {
-                        with (messageDetailsRepository) {
+                        with(messageDetailsRepository) {
                             if (isTransientMessage) fetchSearchMessageDetails(messageId)
                             else fetchMessageDetails(messageId)
                         }
                     }
 
                     messageDetailsResult
-                            .onFailure {
-                                requestPending.set(false)
-                                _messageDetailsError.postValue(Event(""))
-                            }
-                            .onSuccess { messageResponse ->
-                                if (messageResponse.code == RESPONSE_CODE_OK) {
-                                    with(messageDetailsRepository) {
+                        .onFailure {
+                            requestPending.set(false)
+                            _messageDetailsError.postValue(Event(""))
+                        }
+                        .onSuccess { messageResponse ->
+                            if (messageResponse.code == RESPONSE_CODE_OK) {
+                                with(messageDetailsRepository) {
 
-                                        if (isTransientMessage) {
-                                            val savedMessage = findSearchMessageById(messageId, bgDispatcher)
-                                            if (savedMessage != null) {
-                                                messageResponse.message.writeTo(savedMessage)
-                                                saveSearchMessageInDB(savedMessage)
-                                            } else {
-                                                prepareMessage(messageResponse.message)
-                                            }
-
+                                    if (isTransientMessage) {
+                                        val savedMessage = findSearchMessageById(messageId, bgDispatcher)
+                                        if (savedMessage != null) {
+                                            messageResponse.message.writeTo(savedMessage)
+                                            saveSearchMessageInDB(savedMessage)
                                         } else {
-                                            val savedMessage = findMessageById(messageId, bgDispatcher)
-                                            if (savedMessage != null) {
-                                                messageResponse.message.writeTo(savedMessage)
-                                                saveMessageInDB(savedMessage)
-                                            } else {
-                                                prepareMessage(messageResponse.message)
-                                                setFolderLocation(messageResponse.message)
-                                                saveMessageInDB(messageResponse.message, isTransientMessage)
-                                            }
+                                            prepareMessage(messageResponse.message)
+                                        }
+
+                                    } else {
+                                        val savedMessage = findMessageById(messageId, bgDispatcher)
+                                        if (savedMessage != null) {
+                                            messageResponse.message.writeTo(savedMessage)
+                                            saveMessageInDB(savedMessage)
+                                        } else {
+                                            prepareMessage(messageResponse.message)
+                                            setFolderLocation(messageResponse.message)
+                                            saveMessageInDB(messageResponse.message, isTransientMessage)
                                         }
                                     }
-                                } else {
-                                    _messageDetailsError.postValue(Event(messageResponse.error))
                                 }
+                            } else {
+                                _messageDetailsError.postValue(Event(messageResponse.error))
                             }
+                        }
                 }
             }
         }
@@ -485,23 +502,7 @@ internal class MessageDetailsViewModel(
             return
         }
         if (event.success) {
-            _connectivityEvent.postValue(Event(true))
-        } else {
-            _connectivityEvent.postValue(Event(false))
-        }
-    }
-
-    @Subscribe
-    fun onConnectivityEvent(event: ConnectivityEvent) {
-        val hasConnection = event.hasConnection()
-        _hasConnection.set(hasConnection)
-        if (!hasConnection && !renderedFromCache.get()) {
-            _connectivityEvent.postValue(Event(false))
-        } else {
-            _connectivityEvent.postValue(Event(true))
-            if (!requestPending.get()) {
-                fetchMessageDetails(false)
-            }
+            Timber.v("FetchMessage success")
         }
     }
 
@@ -533,7 +534,7 @@ internal class MessageDetailsViewModel(
             val embeddedImagesAttachments = ArrayList<Attachment>()
             for (attachment in attachments) {
                 val embeddedImage = EmbeddedImage
-                        .fromAttachment(attachment, message.embeddedImagesArray.toList()) ?: continue
+                    .fromAttachment(attachment, message.embeddedImagesArray.toList()) ?: continue
                 embeddedImagesToFetch.add(embeddedImage)
                 embeddedImagesAttachments.add(attachment)
             }
@@ -585,32 +586,15 @@ internal class MessageDetailsViewModel(
         }
     }
 
-    /** [ViewModelProvider.Factory] for create a [MessageDetailsViewModel] */
-    class Factory(
-        private val messageDetailsRepository: MessageDetailsRepository,
-        private val userManager: UserManager,
-        private val contactsRepository: ContactsRepository,
-        private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-        private val messageRendererFactory: MessageRenderer.Factory,
-        private val deleteMessage: DeleteMessage
-    ) : ViewModelProvider.Factory {
-
-        /**
-        This 2 values must be set before call `ViewModelProviders.of`.
-        It should be better to use an Assisted Injection but at least now we are sure that the
-        ViewModel will be instantiated with all the required parameters
-         */
-        lateinit var messageId: String
-        var isTransientMessage = false
-
-        /** @return a new instance of [MessageDetailsViewModel] casted as [T] */
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST") // MessageDetailsViewModel is T, since T is ViewModel
-            return MessageDetailsViewModel(
-                    messageDetailsRepository, userManager, contactsRepository,
-                    attachmentMetadataDatabase, messageRendererFactory,
-                    messageId, isTransientMessage, deleteMessage
-            ) as T
+    fun printMessage(context: Context) {
+        val message = message.value
+        message?.let {
+            MessagePrinter(
+                context,
+                context.resources,
+                context.getSystemService(Context.PRINT_SERVICE) as PrintManager,
+                remoteContentDisplayed
+            ).printMessage(it, this.bodyString ?: "")
         }
     }
 }

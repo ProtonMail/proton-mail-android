@@ -32,6 +32,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.UserManager
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -66,7 +67,7 @@ class FetchMailSettingsWorker @WorkerInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        operator fun invoke() {
+        fun enqueue() {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -74,7 +75,7 @@ class FetchMailSettingsWorker @WorkerInject constructor(
             val request = OneTimeWorkRequestBuilder<FetchMailSettingsWorker>()
                 .setConstraints(constraints)
                 .build()
-
+            Timber.v("Scheduling Fetch Mail Settings Worker")
             workManager.enqueue(request)
         }
     }
