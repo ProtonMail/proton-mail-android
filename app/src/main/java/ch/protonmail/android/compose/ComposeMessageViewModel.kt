@@ -249,15 +249,26 @@ class ComposeMessageViewModel @Inject constructor(
         watchForMessageSent()
     }
 
-    fun setupComposingNewMessage(verify: Boolean, actionId: Constants.MessageActionType, parentId: String?, composerGroupCountOf: String) {
+    fun setupComposingNewMessage(
+        verify: Boolean,
+        actionId: Constants.MessageActionType,
+        parentId: String?,
+        composerGroupCountOf: String
+    ) {
         _verify = verify
         _actionId = actionId
         _parentId = parentId
         _composerGroupCountOf = composerGroupCountOf
     }
 
-    fun prepareMessageData(isPGPMime: Boolean, addressId: String, addressEmailAlias: String? = null, isTransient: Boolean) {
-        _messageDataResult = composeMessageRepository.prepareMessageData(isPGPMime, addressId, addressEmailAlias, isTransient)
+    fun prepareMessageData(
+        isPGPMime: Boolean,
+        addressId: String,
+        addressEmailAlias: String? = null,
+        isTransient: Boolean
+    ) {
+        _messageDataResult =
+            composeMessageRepository.prepareMessageData(isPGPMime, addressId, addressEmailAlias, isTransient)
         getSenderEmailAddresses(addressEmailAlias)
     }
 
@@ -320,9 +331,8 @@ class ComposeMessageViewModel @Inject constructor(
             )
     }
 
-    fun getContactGroupRecipients(group: ContactLabel): List<MessageRecipient> {
-        return _groupsRecipientsMap[group] ?: ArrayList()
-    }
+    fun getContactGroupRecipients(group: ContactLabel): List<MessageRecipient> =
+        _groupsRecipientsMap[group] ?: ArrayList()
 
     fun getContactGroupByName(groupName: String): ContactLabel? {
         return _data.find {
@@ -420,9 +430,11 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                postMessageServiceFactory.startUpdateDraftService(_dbId!!, message.decryptedBody
-                    ?: "",
-                    newAttachments, uploadAttachments, _oldSenderAddressId)
+                postMessageServiceFactory.startUpdateDraftService(
+                    _dbId!!,
+                    message.decryptedBody ?: "",
+                    newAttachments, uploadAttachments, _oldSenderAddressId
+                )
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
                         ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
@@ -446,12 +458,18 @@ class ComposeMessageViewModel @Inject constructor(
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message, IO)
                     newAttachments = saveAttachmentsToDatabase(
-                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
+                        composeMessageRepository.createAttachmentList(
+                            _messageDataResult.attachmentList,
+                            IO
+                        ),
                         IO,
                         uploadAttachments
                     )
                 }
-                postMessageServiceFactory.startCreateDraftService(_dbId!!, _draftId.get(), parentId,
+                postMessageServiceFactory.startCreateDraftService(
+                    _dbId!!,
+                    _draftId.get(),
+                    parentId,
                     _actionId, message.decryptedBody ?: "",
                     uploadAttachments,
                     newAttachments,
@@ -516,9 +534,7 @@ class ComposeMessageViewModel @Inject constructor(
         _senderAddresses = senderAddresses
     }
 
-    fun getPositionByAddressId(): Int {
-        return userManager.user.getPositionByAddressId(_messageDataResult.addressId)
-    }
+    fun getPositionByAddressId(): Int = userManager.user.getPositionByAddressId(_messageDataResult.addressId)
 
     fun isPaidUser(): Boolean = userManager.user.isPaidUser
 
