@@ -55,10 +55,10 @@ object MessageUtils {
         messageAction: MessageActionType,
         userAddresses: List<Address>
     ) {
-        if (recipientList.isNullOrEmpty().not()) {
-            val recipients = recipientList?.split(Constants.EMAIL_DELIMITER)
-            val numberOfMatches = recipients?.intersect(userAddresses.map { it.email })?.size
-            val list = recipients?.filter { recipient ->
+        if (!recipientList.isNullOrEmpty()) {
+            val recipients = recipientList.split(Constants.EMAIL_DELIMITER)
+            val numberOfMatches = recipients.intersect(userAddresses.map { it.email }).size
+            val list = recipients.filter { recipient ->
                 userAddresses.none { it.email equalsNoCase recipient } ||
                     messageAction == MessageActionType.REPLY
             } as ArrayList
