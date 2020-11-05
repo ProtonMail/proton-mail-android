@@ -19,6 +19,7 @@
 package ch.protonmail.android.views;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.MailTo;
 import android.net.Uri;
@@ -88,7 +89,7 @@ public class PMWebViewClient extends WebViewClient {
         String url = url1.replaceFirst(Constants.DUMMY_URL_PREFIX, "");
 
         if (url.startsWith("mailto:")) {
-            composeMessageWithMailToData(url);
+            composeMessageWithMailToData(url, view.getContext().getApplicationContext());
             return true;
         }
 
@@ -116,9 +117,9 @@ public class PMWebViewClient extends WebViewClient {
         return true;
     }
 
-    private void composeMessageWithMailToData(String url) {
+    private void composeMessageWithMailToData(String url, Context context) {
         Intent intent = AppUtil.decorInAppIntent(
-                new Intent(mUserManager.getContext(), ComposeMessageActivity.class)
+                new Intent(context, ComposeMessageActivity.class)
         );
         MailTo mt = MailTo.parse(url);
 
