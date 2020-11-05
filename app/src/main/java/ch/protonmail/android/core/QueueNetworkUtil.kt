@@ -24,10 +24,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.events.ConnectivityEvent
-import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,9 +41,19 @@ class QueueNetworkUtil @Inject constructor(
     private var listener: NetworkEventProvider.Listener? = null
     private var isInternetAccessible: Boolean = false
 
+    /**
+     * Flow that emits false when backend replies with an error, or true when
+     * a correct reply is received.
+     */
+    val isBackendRespondingWithoutErrorFlow: StateFlow<Boolean>
+        get() = backendExceptionFlow
+
+    private val backendExceptionFlow = MutableStateFlow(true)
+
     @Synchronized
-    fun updateRealConnectivity(internetAccessible: Boolean) {
+    private fun updateRealConnectivity(internetAccessible: Boolean) {
         isInternetAccessible = internetAccessible
+        backendExceptionFlow.value = internetAccessible
     }
 
     init {
@@ -58,7 +68,7 @@ class QueueNetworkUtil @Inject constructor(
                     if (hasConn(false)) {
                         // if we really have connectivity, then we are informing the queue to try to
                         // execute itself
-                        listener!!.onNetworkChange(getNetworkStatus(context))
+                        listener?.onNetworkChange(getNetworkStatus(context))
                         ProtonMailApplication.getApplication().startJobManager()
                     }
                 }
@@ -68,8 +78,6 @@ class QueueNetworkUtil @Inject constructor(
     }
 
     fun isConnected(): Boolean = hasConn(false)
-
-    fun isConnectedAndHasConnectivity(): Boolean = hasConn(true)
 
     fun setCurrentlyHasConnectivity(currentlyHasConnectivity: Boolean) =
         updateRealConnectivity(currentlyHasConnectivity)
@@ -88,8 +96,7 @@ class QueueNetworkUtil @Inject constructor(
                 hasConnection = hasConnection && isInternetAccessible
             }
             if (checkReal && currentStatus != hasConnection) {
-                Timber.d("Network statuses differs, show connectivity event on UI")
-                AppUtil.postEventOnUi(ConnectivityEvent(hasConnection))
+                Timber.d("Network statuses differs hasConnection $hasConnection currentStatus $currentStatus")
             } else if (checkReal) {
                 if (hasConnection) {
                     networkConfigurator.startAutoRetry()

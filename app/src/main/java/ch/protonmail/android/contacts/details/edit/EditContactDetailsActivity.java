@@ -57,6 +57,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,7 +78,6 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail;
 import ch.protonmail.android.contacts.UnsavedChangesDialog;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.user.MailSettingsEvent;
@@ -119,6 +120,8 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import timber.log.Timber;
 
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.EXTRA_CONTACT_VCARD_TYPE0;
@@ -131,10 +134,6 @@ import static ch.protonmail.android.contacts.details.edit.EditContactDetailsView
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_CONVERT_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_EDIT_CONTACT;
 import static ch.protonmail.android.contacts.details.edit.EditContactDetailsViewModelKt.FLOW_NEW_CONTACT;
-
-/*
- * Created by dkadrikj on 8/26/16.
- */
 
 @AndroidEntryPoint
 public class EditContactDetailsActivity extends BaseConnectivityActivity {
@@ -312,6 +311,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     protected void onStart() {
         super.onStart();
         ProtonMailApplication.getApplication().getBus().register(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        editContactDetailsViewModel.checkConnectivity();
     }
 
     @Override
@@ -772,14 +777,28 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         return new ContactAddressView(this, titleText, optionTitleText, standardOptionUIValues, standardOptionValues, rootView);
     }
 
-    @Subscribe
-    public void onConnectivityEvent(ConnectivityEvent event) {
-        if (!event.hasConnection()) {
-            showNoConnSnack(this);
+    private void onConnectivityEvent(boolean hasConnectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
+        if (!hasConnectivity) {
+            networkSnackBarUtil.getNoConnectionSnackBar(
+                    mSnackLayout,
+                    mUserManager.getUser(),
+                    this,
+                    onConnectivityCheckRetry(),
+                    null
+            ).show();
         } else {
-            mPingHasConnection = true;
-            hideNoConnSnack();
+            networkSnackBarUtil.hideAllSnackBars();
         }
+    }
+
+    @NotNull
+    private Function0<Unit> onConnectivityCheckRetry() {
+        return () -> {
+            networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
+            editContactDetailsViewModel.checkConnectivityDelayed();
+            return null;
+        };
     }
 
     @Subscribe
@@ -921,6 +940,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
             return Unit.INSTANCE;
         });
+        editContactDetailsViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     private Observer setupNewContactObserver = (Observer<String>) email -> {

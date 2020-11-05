@@ -895,9 +895,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             } else if (!vCardPhotos.get(0).getUrl().isEmpty()) {
                 contactAvatar.setName(mDisplayName);
                 contactAvatar.setAvatarType(TYPE_INITIALS);
-                if (mPingHasConnection) {
-                    contactDetailsViewModel.getBitmapFromURL(photo.getUrl());
-                }
+                contactDetailsViewModel.getBitmapFromURL(photo.getUrl());
             }
         } else {
             contactAvatar.setName(mDisplayName);

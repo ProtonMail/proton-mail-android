@@ -434,7 +434,7 @@ public class LoginService extends ProtonJobIntentService {
                 status = AuthStatus.NO_NETWORK;
             }
         } catch (Exception e) {
-            Logger.doLogException(TAG_LOGIN_SERVICE, e);
+            Timber.i(e, "Login failure");
         }
         AppUtil.postEventOnUi(new LoginInfoEvent(status, infoResponse, username, password, fallbackAuthVersion));
     }

@@ -195,8 +195,6 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse = api.twoFactor(twoFABody)
 
-    override fun ping(): ResponseBody = api.ping()
-
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
 
     override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse = api.fetchContacts(page, pageSize)

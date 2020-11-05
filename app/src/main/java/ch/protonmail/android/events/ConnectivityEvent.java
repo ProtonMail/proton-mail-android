@@ -21,6 +21,7 @@ package ch.protonmail.android.events;
 /**
  * Created by dkadrikj on 5.10.15.
  */
+@Deprecated
 public class ConnectivityEvent {
     private final boolean hasConnection;
 

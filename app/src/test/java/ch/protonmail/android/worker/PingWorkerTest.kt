@@ -22,26 +22,25 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.attachments.KEY_INPUT_DATA_ATTACHMENT_ID_STRING
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.QueueNetworkUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 import kotlin.test.assertEquals
 
-class DeleteAttachmentWorkerTest {
+class PingWorkerTest {
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -49,84 +48,91 @@ class DeleteAttachmentWorkerTest {
     @RelaxedMockK
     private lateinit var parameters: WorkerParameters
 
-    @MockK
-    private lateinit var messagesDb: MessagesDao
+    @RelaxedMockK
+    private lateinit var queueNetworkUtil: QueueNetworkUtil
 
     @MockK
     private lateinit var api: ProtonMailApiManager
 
-    private lateinit var worker: DeleteAttachmentWorker
+    private lateinit var worker: PingWorker
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = DeleteAttachmentWorker(context, parameters, api, messagesDb, TestDispatcherProvider)
+        worker = PingWorker(context, parameters, api, queueNetworkUtil, TestDispatcherProvider)
     }
 
     @Test
-    fun verifyWorkerFailsWithNoAttachmentIdProvided() {
+    fun verifySuccessIsReturnedWhenPingRespondedWithOk() {
         runBlockingTest {
             // given
-            val expected = ListenableWorker.Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot delete attachment with an empty id")
-            )
-
-            // when
-            val operationResult = worker.doWork()
-
-            // then
-            assertEquals(operationResult, expected)
-        }
-    }
-
-    @Test
-    fun verifySuccessResultIsGeneratedWithRequiredParameters() {
-        runBlockingTest {
-            // given
-            val attachmentId = "id232"
-            val deleteResponse = mockk<ResponseBody> {
+            val expected = ListenableWorker.Result.success()
+            val pingResponse = mockk<ResponseBody> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
-            val attachment = mockk<Attachment>()
-            val expected = ListenableWorker.Result.success()
-
-            every { messagesDb.findAttachmentById(attachmentId) } returns attachment
-            every { messagesDb.deleteAttachment(attachment) } returns mockk()
-            every { parameters.inputData } returns
-                workDataOf(KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId)
-            coEvery { api.deleteAttachment(any()) } returns deleteResponse
+            coEvery { api.pingAsync() } returns pingResponse
 
             // when
             val operationResult = worker.doWork()
 
             // then
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity(true) }
             assertEquals(operationResult, expected)
         }
     }
 
     @Test
-    fun verifyFailureResultIsGeneratedWithRequiredParametersButWrongBackendResponse() {
+    fun verifySuccessIsReturnedWhenPingRespondedWithApiOfflineResponse() {
         runBlockingTest {
             // given
-            val attachmentId = "id232"
-            val randomErrorCode = 11212
-            val deleteResponse = mockk<ResponseBody> {
-                every { code } returns randomErrorCode
+            val expected = ListenableWorker.Result.success()
+            val pingResponse = mockk<ResponseBody> {
+                every { code } returns Constants.RESPONSE_CODE_API_OFFLINE
             }
-            val expected = ListenableWorker.Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $randomErrorCode")
-            )
-            val attachment = mockk<Attachment>()
-            every { messagesDb.findAttachmentById(attachmentId) } returns attachment
-            every { messagesDb.deleteAttachment(attachment) } returns mockk()
-            every { parameters.inputData } returns
-                workDataOf(KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId)
-            coEvery { api.deleteAttachment(any()) } returns deleteResponse
+            coEvery { api.pingAsync() } returns pingResponse
 
             // when
             val operationResult = worker.doWork()
 
             // then
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity(true) }
+            assertEquals(operationResult, expected)
+        }
+    }
+
+    @Test
+    fun verifyFailureIsReturnedWhenPingRespondedWithUnrecognizedApiResponse() {
+        runBlockingTest {
+            // given
+            val unknownResponseCode = 12313
+            val expected = ListenableWorker.Result.failure()
+            val pingResponse = mockk<ResponseBody> {
+                every { code } returns unknownResponseCode
+            }
+            coEvery { api.pingAsync() } returns pingResponse
+
+            // when
+            val operationResult = worker.doWork()
+
+            // then
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity(false) }
+            assertEquals(operationResult, expected)
+        }
+    }
+
+    @Test
+    fun verifyFailureIsReturnedWhenNetworkConnectionFails() {
+        runBlockingTest {
+            // given
+            val expected = ListenableWorker.Result.failure()
+            val ioException = IOException("NetworkError!")
+            coEvery { api.pingAsync() } throws ioException
+
+            // when
+            val operationResult = worker.doWork()
+
+            // then
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity(false) }
             assertEquals(operationResult, expected)
         }
     }

@@ -18,9 +18,6 @@
  */
 package ch.protonmail.android.activities.messageDetails
 
-//
-//
-//
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -39,19 +36,16 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebView.HitTestResult
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.WorkManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
 import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
@@ -109,7 +103,6 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showDeleteCo
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showInfoDialogWithTwoButtons
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showSignedInSnack
 import ch.protonmail.android.views.PMWebViewClient
-import ch.protonmail.android.worker.DeleteMessageWorker
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
 import com.birbit.android.jobqueue.Job
@@ -123,19 +116,18 @@ import org.jsoup.nodes.Document
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
-import javax.inject.Inject
 
 @AndroidEntryPoint
-internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
-    ILabelCreationListener, ILabelsChangeListener, IMoveMessagesListener {
+internal class MessageDetailsActivity :
+    BaseStoragePermissionActivity(),
+    ILabelCreationListener,
+    ILabelsChangeListener,
+    IMoveMessagesListener {
 
     private lateinit var pmWebViewClient: PMWebViewClient
     private var markAsRead = false
     private var showPhishingReportButton = true
-    private lateinit var viewModel: MessageDetailsViewModel
-
-    @Inject
-    lateinit var factory: MessageDetailsViewModel.Factory
+    private val viewModel: MessageDetailsViewModel by viewModels()
 
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
 
@@ -223,8 +215,6 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
             this,
             OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
         )
-        factory.messageId = messageId
-        factory.isTransientMessage = isTransientMessage
         pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
         messageExpandableAdapter = MessageDetailsAdapter(
             this,
@@ -235,8 +225,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
             pmWebViewClient,
             { onLoadEmbeddedImagesCLick() }
         ) { onDisplayImagesCLick() }
-        viewModel = ViewModelProvider(this, factory).get(MessageDetailsViewModel::class.java)
-        viewModel.messageDetailsRepository.reloadDependenciesForUser(mUserManager.username)
+
         viewModel.tryFindMessage()
         viewModel.message.observe(this, MessageObserver())
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
@@ -255,10 +244,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     override fun onResume() {
         super.onResume()
         checkDelinquency()
-        pingHandler.postDelayed(pingRunnable, 0)
-        if (!mNetworkUtil.isConnected()) {
-            showNoConnSnackExtended()
-        }
+        viewModel.checkConnectivity()
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
@@ -293,7 +279,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                     viewModel.markRead(true)
                     onBackPressed()
                 }
-            })
+            }
+        )
         viewModel.saveMessage()
     }
 
@@ -308,20 +295,16 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     override fun onStart() {
         super.onStart()
         mApp.bus.register(this)
-        if(this::viewModel.isInitialized) {
-            mApp.bus.register(viewModel)
-        }
+        mApp.bus.register(viewModel)
     }
 
     override fun onStop() {
         super.onStop()
-        if(this::viewModel.isInitialized) {
-            if (markAsRead) {
-                viewModel.markRead(true)
-            }
-            mApp.bus.unregister(viewModel)
-            stopEmbeddedImagesTask()
+        if (markAsRead) {
+            viewModel.markRead(true)
         }
+        mApp.bus.unregister(viewModel)
+        stopEmbeddedImagesTask()
         mApp.bus.unregister(this)
     }
 
@@ -345,9 +328,7 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if(!this::viewModel.isInitialized) {
-            return true
-        }
+
         val message = viewModel.decryptedMessageData.value
         if (message != null) {
             val trash = menu.findItem(R.id.move_to_trash)
@@ -379,11 +360,12 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                 onBackPressed()
                 return true
             }
-            R.id.move_to_trash -> if (message != null) {
-                job = PostTrashJobV2(listOf(message.messageId), null)
-            } else {
-                showToast(R.string.message_not_loaded, Toast.LENGTH_SHORT)
-            }
+            R.id.move_to_trash ->
+                if (message != null) {
+                    job = PostTrashJobV2(listOf(message.messageId), null)
+                } else {
+                    showToast(R.string.message_not_loaded, Toast.LENGTH_SHORT)
+                }
             R.id.view_headers -> if (message != null) {
                 startActivity(
                     AppUtil.decorInAppIntent(
@@ -394,14 +376,15 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                     )
                 )
             }
-            R.id.delete_message -> showDeleteConfirmationDialog(
-                this,
-                getString(R.string.delete_message),
-                getString(R.string.confirm_destructive_action)
-            ) {
-                viewModel.deleteMessage(messageId)
-                onBackPressed()
-            }
+            R.id.delete_message ->
+                showDeleteConfirmationDialog(
+                    this,
+                    getString(R.string.delete_message),
+                    getString(R.string.confirm_destructive_action)
+                ) {
+                    viewModel.deleteMessage(messageId)
+                    onBackPressed()
+                }
             R.id.move_to_spam -> job = PostSpamJob(listOf(messageId))
             R.id.mark_unread -> {
                 if (message != null) {
@@ -460,76 +443,42 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
         buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
     }
 
-    private inner class MessageDetailsRetryListener : RetryListener() {
-        override fun onClick(v: View) {
-            viewModel.hasConnection = true
-            mNetworkUtil.setCurrentlyHasConnectivity(true)
-            viewModel.fetchMessageDetails(false)
-            super.onClick(v)
-        }
+    private fun showNoConnSnackExtended() {
+        Timber.v("Show no connection")
+        networkSnackBarUtil.hideAllSnackBars()
+        networkSnackBarUtil.getNoConnectionSnackBar(
+            mSnackLayout,
+            mUserManager.user,
+            this,
+            { onConnectivityCheckRetry() },
+            anchorViewId = R.id.action_buttons
+        ).show()
+        invalidateOptionsMenu()
     }
 
-    private val messageDetailsRetryListener = MessageDetailsRetryListener()
-    private fun showNoConnSnackExtended() {
-        val noConnectivitySnack = mNoConnectivitySnack
-        if (noConnectivitySnack == null || !noConnectivitySnack.isShownOrQueued) {
-            showNoConnSnack(
-                messageDetailsRetryListener,
-                R.string.no_connectivity_detected_troubleshoot,
-                coordinatorLayout,
-                this
-            )
-            calculateAndUpdateActionButtonsPosition()
-        }
-        invalidateOptionsMenu()
+    private fun onConnectivityCheckRetry() {
+        viewModel.fetchMessageDetails(false)
+        networkSnackBarUtil.getCheckingConnectionSnackBar(
+            mSnackLayout,
+            R.id.action_buttons
+        ).show()
+
+        viewModel.checkConnectivityDelayed()
     }
 
     private fun hideNoConnSnackExtended() {
-        val noConnectivitySnackBar = mNoConnectivitySnack
-        if (noConnectivitySnackBar == null || !noConnectivitySnackBar.isShownOrQueued) {
-            return
-        }
-        hideNoConnSnack()
+        networkSnackBarUtil.hideNoConnectionSnackBar()
         invalidateOptionsMenu()
     }
 
-    private var coordinatorHeight = -1
-    private fun calculateAndUpdateActionButtonsPosition() {
-        val snackBar = mNoConnectivitySnack ?: return
-        snackBar.addCallback(noConnectivitySnackBarCallback)
-    }
-
-    private var noConnectivitySnackBarCallback: Snackbar.Callback = object : Snackbar.Callback() {
-        override fun onShown(sb: Snackbar) {
-            super.onShown(sb)
-            val height = sb.view.height
-            val params = coordinatorLayout.layoutParams as RelativeLayout.LayoutParams
-            coordinatorHeight = params.height
-            params.height = 2 * height
-            coordinatorLayout.layoutParams = params
-        }
-
-        override fun onDismissed(transientBottomBar: Snackbar, event: Int) {
-            super.onDismissed(transientBottomBar, event)
-            if (coordinatorHeight > 0) {
-                val params = coordinatorLayout.layoutParams as RelativeLayout.LayoutParams
-                params.height = coordinatorHeight
-                coordinatorLayout.layoutParams = params
-            }
-        }
-    }
-
     private fun listenForConnectivityEvent() {
-        viewModel.connectivityEvent.observe(
+        viewModel.hasConnectivity.observe(
             this,
-            Observer { event: Event<Boolean?>? ->
-                if (event == null) {
-                    return@Observer
-                }
-                val content = event.getContentIfNotHandled() ?: return@Observer
-                if (content) {
+            { isConnectionActive ->
+                Timber.v("isConnectionActive:$isConnectionActive")
+                if (isConnectionActive) {
                     hideNoConnSnackExtended()
-                    BaseActivity.mPingHasConnection = true
+                    viewModel.fetchMessageDetails(false)
                 } else {
                     showNoConnSnackExtended()
                 }
@@ -944,8 +893,11 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
             viewModel.triggerVerificationKeyLoading()
             action_buttons.setOnMessageActionListener { messageAction: MessageActionType? ->
                 try {
-                    val newMessageTitle = MessageUtils.buildNewMessageTitle(this@MessageDetailsActivity,
-                        messageAction, message.subject)
+                    val newMessageTitle = MessageUtils.buildNewMessageTitle(
+                        this@MessageDetailsActivity,
+                        messageAction,
+                        message.subject
+                    )
                     val userUsedSpace = app.getSecureSharedPreferences(mUserManager.username)
                         .getLong(Constants.Prefs.PREF_USED_SPACE, 0)
                     val userMaxSpace = if (mUserManager.user.maxSpace == 0L) {
@@ -962,8 +914,10 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                             getString(R.string.learn_more),
                             getString(R.string.okay),
                             {
-                                val browserIntent = Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(getString(R.string.limit_reached_learn_more)))
+                                val browserIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(getString(R.string.limit_reached_learn_more))
+                                )
                                 startActivity(browserIntent)
                             },
                             { },
@@ -1061,7 +1015,8 @@ internal class MessageDetailsActivity : BaseStoragePermissionActivity(),
                                 if (editIntentExtras.embeddedImagesAttachmentsExist) {
                                     intent.putParcelableArrayListExtra(
                                         ComposeMessageActivity.EXTRA_MESSAGE_EMBEDDED_ATTACHMENTS,
-                                        editIntentExtras.attachments)
+                                        editIntentExtras.attachments
+                                    )
                                 }
                                 val attachments = editIntentExtras.attachments
                                 if (attachments.size > 0) {

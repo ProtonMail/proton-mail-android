@@ -19,13 +19,11 @@
 package ch.protonmail.android.api.segments.connectivity
 
 import ch.protonmail.android.api.models.ResponseBody
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Headers
-
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Headers
 
 /**
  * ProtonMailServices
@@ -35,9 +33,5 @@ interface PingService {
 
     @GET("tests/ping")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun ping(): Call<ResponseBody>
-
-    @GET("tests/ping")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun pingAsync(): Response<ResponseBody>
+    suspend fun ping(): Response<ResponseBody>
 }

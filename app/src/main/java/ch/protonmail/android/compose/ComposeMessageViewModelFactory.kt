@@ -22,10 +22,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 
-/**
- * Created by kadrikj on 9/17/18. */
 class ComposeMessageViewModelFactory @Inject constructor(
-        private val composeMessageViewModel: ComposeMessageViewModel) : ViewModelProvider.NewInstanceFactory() {
+    private val composeMessageViewModel: ComposeMessageViewModel
+) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ComposeMessageViewModel::class.java)) {
