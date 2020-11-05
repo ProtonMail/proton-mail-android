@@ -72,11 +72,11 @@ import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.GetDirectEnabledJob;
-import ch.protonmail.android.jobs.OnFirstLoginJob;
 import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
 import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel;
@@ -104,6 +104,9 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
 
     @Inject
     ConnectivityBaseViewModel viewModel;
+
+    @Inject
+    protected LaunchInitialDataFetch launchInitialDataFetch;
 
     @BindView(R.id.fragmentContainer)
     View fragmentContainer;
@@ -544,7 +547,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
             if (mUserManager.isFirstLogin()) {
                 LoginService.fetchUserDetails();
                 mJobManager.start();
-                mJobManager.addJobInBackground(new OnFirstLoginJob(true));
+                launchInitialDataFetch.invoke(true, true);
                 mUserManager.firstLoginDone();
             }
         }

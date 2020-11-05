@@ -269,7 +269,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void loadMailSettings() {
         mUserManager.setMailSettings(MailSettings.Companion.load(mUserManager.getUsername()));
         if (mUserManager.getMailSettings() == null) {
-            fetchMailSettingsWorkerEnqueuer.invoke();
+            fetchMailSettingsWorkerEnqueuer.enqueue();
         }
     }
 

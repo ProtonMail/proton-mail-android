@@ -96,7 +96,7 @@ public class SplashActivity extends BaseActivity {
     private void checkUserDetailsAndGoHome() {
         if (mUserManager.accessTokenExists() && !mUserManager.getUser().getAddresses().isEmpty()) {
             mUserManager.setLoggedIn(true);
-            fetchMailSettingsWorkerEnqueuer.invoke();
+            fetchMailSettingsWorkerEnqueuer.enqueue();
             goHome();
             finish();
         } else {

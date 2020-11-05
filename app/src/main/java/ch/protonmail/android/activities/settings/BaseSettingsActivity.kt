@@ -74,10 +74,10 @@ import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
-import ch.protonmail.android.jobs.OnFirstLoginJob
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
+import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
@@ -99,6 +99,9 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     @Inject
     lateinit var viewModel: ConnectivityBaseViewModel
+
+    @Inject
+    lateinit var launchInitialDataFetch: LaunchInitialDataFetch
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
@@ -398,7 +401,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                             pendingActionsDatabase,
                             true
                         )
-                        mJobManager.addJobInBackground(OnFirstLoginJob(true))
+                        launchInitialDataFetch()
                         mJobManager.addJobInBackground(FetchByLocationJob(mMailboxLocation, mLabelId, true, null, false))
                     }
                 }
