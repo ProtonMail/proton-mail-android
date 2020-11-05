@@ -797,8 +797,8 @@ internal class MessageDetailsActivity :
     }
 
     private inner class MessageDetailsPmWebViewClient(
-        userManager: UserManager?,
-        activity: MessageDetailsActivity?
+        userManager: UserManager,
+        activity: MessageDetailsActivity
     ) : PMWebViewClient(userManager, activity, false) {
         override fun onPageFinished(view: WebView, url: String) {
             if (amountOfRemoteResourcesBlocked() > 0) {

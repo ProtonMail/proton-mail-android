@@ -32,18 +32,16 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
-import ch.protonmail.android.jobs.PostTrashJobV2
+import ch.protonmail.android.jobs.MoveToFolderJob
+import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
-import ch.protonmail.android.jobs.PostArchiveJob
-import ch.protonmail.android.jobs.MoveToFolderJob
+import ch.protonmail.android.jobs.PostTrashJobV2
 import com.birbit.android.jobqueue.JobManager
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
-import java.util.UUID
 import java.util.Locale
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
+import java.util.UUID
 
 /**
  * A class that contains methods for utility operations with messages
@@ -53,15 +51,15 @@ object MessageUtils {
     fun addRecipientsToIntent(
         intent: Intent,
         extraName: String,
-        recipientList: String,
+        recipientList: String?,
         messageAction: MessageActionType,
         userAddresses: List<Address>
     ) {
-        if (recipientList.isNotEmpty()) {
+        if (!recipientList.isNullOrEmpty()) {
             val recipients = recipientList.split(Constants.EMAIL_DELIMITER)
             val numberOfMatches = recipients.intersect(userAddresses.map { it.email }).size
-            val list = recipients.filter {
-                recipient -> userAddresses.none { it.email equalsNoCase recipient } ||
+            val list = recipients.filter { recipient ->
+                userAddresses.none { it.email equalsNoCase recipient } ||
                     messageAction == MessageActionType.REPLY
             } as ArrayList
 

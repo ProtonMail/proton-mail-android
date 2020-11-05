@@ -19,6 +19,7 @@
 package ch.protonmail.android.views;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.MailTo;
 import android.net.Uri;
@@ -52,17 +53,14 @@ import static ch.protonmail.android.activities.composeMessage.ComposeMessageActi
 import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_BODY;
 import static ch.protonmail.android.activities.composeMessage.ComposeMessageActivity.EXTRA_MESSAGE_TITLE;
 
-/**
- * Created by kaylukas on 27/06/2018.
- */
 public class PMWebViewClient extends WebViewClient {
 
-    private UserManager mUserManager;
-    private Activity mActivity;
+    private final UserManager mUserManager;
+    private final Activity mActivity;
     private boolean mLoadRemote;
     private int mBlockedImages;
 
-    private List<String> hyperlinkConfirmationWhitelistedHosts = Arrays.asList(
+    private final List<String> hyperlinkConfirmationWhitelistedHosts = Arrays.asList(
             "protonmail.com",
             "protonmail.ch",
             "protonvpn.com",
@@ -72,9 +70,14 @@ public class PMWebViewClient extends WebViewClient {
             "pm.me",
             "mail.protonmail.com",
             "account.protonvpn.com",
-            "protonirockerxow.onion");
+            "protonirockerxow.onion"
+    );
 
-    public PMWebViewClient(UserManager userManager, Activity activity, boolean loadRemote) {
+    public PMWebViewClient(
+            @NonNull UserManager userManager,
+            @NonNull Activity activity,
+            boolean loadRemote
+    ) {
         mUserManager = userManager;
         mActivity = activity;
         mLoadRemote = loadRemote;
@@ -83,24 +86,18 @@ public class PMWebViewClient extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url1) {
-        // FIXME: team check if this is OK?!
         String url = url1.replaceFirst(Constants.DUMMY_URL_PREFIX, "");
-        if (url.startsWith("mailto:")) {
-            Intent intent = AppUtil.decorInAppIntent(new Intent(mUserManager.getContext(), ComposeMessageActivity.class));
-            MailTo mt = MailTo.parse(url);
 
-            User user = mUserManager.getUser();
-            MessageUtils.INSTANCE.addRecipientsToIntent(intent, ComposeMessageActivity.EXTRA_TO_RECIPIENTS, mt.getTo(), Constants.MessageActionType.FROM_URL, user.getAddresses());
-            MessageUtils.INSTANCE.addRecipientsToIntent(intent, ComposeMessageActivity.EXTRA_CC_RECIPIENTS, mt.getCc(), Constants.MessageActionType.FROM_URL, user.getAddresses());
-            intent.putExtra(EXTRA_MAIL_TO, true);
-            intent.putExtra(EXTRA_MESSAGE_TITLE, mt.getSubject());
-            intent.putExtra(EXTRA_MESSAGE_BODY, mt.getBody());
-            mActivity.startActivity(intent);
-        } else if (url.startsWith("tel:")) {
+        if (url.startsWith("mailto:")) {
+            composeMessageWithMailToData(url, view.getContext().getApplicationContext());
+            return true;
+        }
+
+        if (url.startsWith("tel:")) {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse(url));
             if (intent.resolveActivity(mActivity.getPackageManager()) != null) {
-                    mActivity.startActivity(intent);
+                mActivity.startActivity(intent);
             } else {
                 TextExtensions.showToast(mActivity, R.string.no_application_found);
             }
@@ -118,6 +115,32 @@ public class PMWebViewClient extends WebViewClient {
             }
         }
         return true;
+    }
+
+    private void composeMessageWithMailToData(String url, Context context) {
+        Intent intent = AppUtil.decorInAppIntent(
+                new Intent(context, ComposeMessageActivity.class)
+        );
+        MailTo mt = MailTo.parse(url);
+
+        User user = mUserManager.getUser();
+        MessageUtils.INSTANCE.addRecipientsToIntent(
+                intent,
+                ComposeMessageActivity.EXTRA_TO_RECIPIENTS,
+                mt.getTo(),
+                Constants.MessageActionType.FROM_URL,
+                user.getAddresses()
+        );
+        MessageUtils.INSTANCE.addRecipientsToIntent(intent,
+                ComposeMessageActivity.EXTRA_CC_RECIPIENTS,
+                mt.getCc(),
+                Constants.MessageActionType.FROM_URL,
+                user.getAddresses()
+        );
+        intent.putExtra(EXTRA_MAIL_TO, true);
+        intent.putExtra(EXTRA_MESSAGE_TITLE, mt.getSubject());
+        intent.putExtra(EXTRA_MESSAGE_BODY, mt.getBody());
+        mActivity.startActivity(intent);
     }
 
     /**
