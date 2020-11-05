@@ -139,7 +139,7 @@ class NetworkConfigurator @Inject constructor(
                         service.ping()
                     }
                 } catch (e: Exception) {
-                    Timber.e(e, "Exception while pinging API before using alternative routing")
+                    Timber.i(e, "Exception while pinging API before using alternative routing")
                     null
                 }
                 result != null
@@ -162,7 +162,7 @@ class NetworkConfigurator @Inject constructor(
                             service.ping()
                         }
                     } catch (e: Exception) {
-                        Timber.e(e, "Exception while pinging alternative routing URL")
+                        Timber.i(e, "Exception while pinging alternative routing URL")
                         null
                     }
                     result != null // && result.code == 1000
