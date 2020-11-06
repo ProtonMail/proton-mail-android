@@ -32,5 +32,5 @@ import studio.forface.viewstatestore.ViewStateStoreScope
  * @author Davide Farella
  */
 abstract class BaseViewModel(
-    dispatcherProvider: DispatcherProvider
-) : ViewModel(), ViewStateStoreScope, DispatcherProvider by dispatcherProvider
+    dispatchers: DispatcherProvider
+) : ViewModel(), ViewStateStoreScope, DispatcherProvider by dispatchers

@@ -71,12 +71,12 @@ import javax.inject.Inject
  *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
  */
 open class ContactDetailsViewModel(
-    dispatcherProvider: DispatcherProvider,
+    dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository,
     private val workManager: WorkManager,
     private val fetchContactDetails: FetchContactDetails
-) : BaseViewModel(dispatcherProvider) {
+) : BaseViewModel(dispatchers) {
 
     protected lateinit var allContactGroups: List<ContactLabel>
     protected lateinit var allContactEmails: List<ContactEmail>

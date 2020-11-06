@@ -44,7 +44,6 @@ import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
-import com.google.gson.Gson
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
 import dagger.Provides
@@ -186,9 +185,6 @@ object ApplicationModule {
 
     @Provides
     fun buildInfo() = BuildInfo(Build.MODEL, Build.VERSION.SDK_INT, BuildConfig.VERSION_NAME)
-
-    @Provides
-    fun gson(): Gson = Gson()
 
     @Provides
     fun provideUserCrypto(userManager: UserManager): UserCrypto =

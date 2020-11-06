@@ -86,7 +86,7 @@ const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
 
 class EditContactDetailsViewModel(
-    private val dispatcherProvider: DispatcherProvider,
+    private val dispatchers: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
     private val userManager: UserManager,
@@ -94,7 +94,7 @@ class EditContactDetailsViewModel(
     private val createContact: CreateContact,
     workManager: WorkManager,
     fetchContactDetails: FetchContactDetails
-) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
+) : ContactDetailsViewModel(dispatchers, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -318,7 +318,7 @@ class EditContactDetailsViewModel(
                 editContactDetailsRepository.updateContact(_contactId, contactName, emails, _vCardEncrypted, _vCardSigned, _mapEmailGroupsIds)
             }
             FLOW_CONVERT_CONTACT, FLOW_NEW_CONTACT -> {
-                viewModelScope.launch(dispatcherProvider.Main) {
+                viewModelScope.launch(dispatchers.Main) {
                     createContact(contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
                         .observeForever { result: CreateContact.Result ->
                             val resultMessage = getMessageForResult(result)
