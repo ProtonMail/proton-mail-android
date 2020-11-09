@@ -1,42 +1,47 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 package ch.protonmail.android.uiModel
 
+import ch.protonmail.android.domain.entity.Id
+import me.proton.core.util.kotlin.EMPTY_STRING
+
 /**
  * Represent a base Navigation Drawer User data class.
  * @see ch.protonmail.android.adapters.AccountsAdapter
  *
- * @author Dino Kadrikj
+ * TODO split to DrawerUserModel and AccountManagerUserModel
  */
 internal sealed class DrawerUserModel {
 
     sealed class BaseUser : DrawerUserModel() {
 
+        abstract val id: Id
+
         /**
          * User's user name. Default is empty
          */
-        open val name: String = ""
+        open val name: String = EMPTY_STRING
 
         /**
          * User's email. Default is empty.
          */
-        open val emailAddress: String = ""
+        open val emailAddress: String = EMPTY_STRING
 
         /**
          * Value of whether this user is currently logged in or it is logged out.
@@ -49,21 +54,52 @@ internal sealed class DrawerUserModel {
         open val notificationsSnoozed: Boolean = false
 
         data class AccountUser @JvmOverloads constructor(
-                override val name: String = "",
-                override val emailAddress: String = "",
-                override val loggedIn: Boolean = false,
-                val primary: Boolean = false,
-                val displayName: String = ""
-        ) : BaseUser()
+            override val id: Id,
+            override val name: String = EMPTY_STRING,
+            override val emailAddress: String = EMPTY_STRING,
+            override val loggedIn: Boolean = false,
+            val primary: Boolean = false,
+            val displayName: String = EMPTY_STRING
+        ) : BaseUser() {
+
+            @Deprecated(
+                "Use constructor with id",
+                ReplaceWith("AccountUser(id, name, emailAddress, loggedIn, primary, displayName"),
+                DeprecationLevel.ERROR
+            )
+            constructor(
+                name: String = EMPTY_STRING,
+                emailAddress: String = EMPTY_STRING,
+                loggedIn: Boolean = false,
+                primary: Boolean = false,
+                displayName: String = EMPTY_STRING
+            ): this(TODO(), name, emailAddress, loggedIn, primary, displayName)
+        }
 
         data class DrawerUser @JvmOverloads constructor(
-                override val name: String = "",
-                override val emailAddress: String = "",
-                override val loggedIn: Boolean = false,
-                val notifications: Int = 0,
-                override val notificationsSnoozed: Boolean = false,
-                val displayName: String = ""
-        ) : BaseUser()
+            override val id: Id,
+            override val name: String = EMPTY_STRING,
+            override val emailAddress: String = EMPTY_STRING,
+            override val loggedIn: Boolean = false,
+            val notifications: Int = 0,
+            override val notificationsSnoozed: Boolean = false,
+            val displayName: String = EMPTY_STRING
+        ) : BaseUser() {
+
+            @Deprecated(
+                "Use constructor with id",
+                ReplaceWith("DrawerUser(id, name, emailAddress, loggedIn, notifications, " +
+                    "notificationsSnoozed, displayName"),
+                DeprecationLevel.ERROR
+            )
+            constructor(
+                name: String = EMPTY_STRING,
+                emailAddress: String = EMPTY_STRING,
+                loggedIn: Boolean = false,
+                notifications: Int,
+                notificationsSnoozed: Boolean,
+                displayName: String = EMPTY_STRING
+            ): this(TODO(), name, emailAddress, loggedIn, notifications, notificationsSnoozed, displayName)}
     }
 
     /** Divider for Drawer Items */
@@ -74,11 +110,4 @@ internal sealed class DrawerUserModel {
 
     /** Footer for Account Manager Items */
     object AccFooter : DrawerUserModel()
-
-
-    /**
-     * How many notifications has this user received.
-     * Default 0
-     */
-//    open val notificationsCount: Int = 0
 }
