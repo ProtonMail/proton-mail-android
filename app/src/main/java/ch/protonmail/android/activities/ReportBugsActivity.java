@@ -45,7 +45,7 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 
-public class ReportBugsActivity extends BaseConnectivityActivity {
+public class ReportBugsActivity extends BaseActivity {
     @BindView(R.id.bug_description_title)
     EditText mBugDescriptionTitle;
 
