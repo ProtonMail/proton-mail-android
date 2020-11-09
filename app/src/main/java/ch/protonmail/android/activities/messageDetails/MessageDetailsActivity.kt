@@ -20,14 +20,13 @@ package ch.protonmail.android.activities.messageDetails
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.print.PrintManager
+import android.os.Looper
 import android.util.Pair
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
@@ -86,7 +85,6 @@ import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.CustomLocale.Companion.apply
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.HTMLTransformer.AbstractTransformer
@@ -124,29 +122,24 @@ internal class MessageDetailsActivity :
     ILabelsChangeListener,
     IMoveMessagesListener {
 
-    private lateinit var pmWebViewClient: PMWebViewClient
-    private var markAsRead = false
-    private var showPhishingReportButton = true
-    private val viewModel: MessageDetailsViewModel by viewModels()
-
-    private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
-
     /**
      * The id of the current message
      */
     private lateinit var messageId: String
+    private lateinit var pmWebViewClient: PMWebViewClient
+    private lateinit var messageExpandableAdapter: MessageDetailsAdapter
+    private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
 
     /**
      * Whether the current message needs to be store in database. If transient if won't be stored
      */
     private var isTransientMessage = false
     private var messageRecipientUsername: String? = null
-    private val buttonsVisibilityHandler = Handler()
-
-    private lateinit var primaryBaseActivity: Context
-
-    private lateinit var messageExpandableAdapter: MessageDetailsAdapter
+    private val buttonsVisibilityHandler = Handler(Looper.getMainLooper())
     private val attachmentToDownloadId = AtomicReference<String?>(null)
+    private var markAsRead = false
+    private var showPhishingReportButton = true
+    private val viewModel: MessageDetailsViewModel by viewModels()
 
     override fun getLayoutId(): Int = R.layout.activity_message_details
 
@@ -161,21 +154,16 @@ internal class MessageDetailsActivity :
 
     override fun checkForPermissionOnStartup(): Boolean = false
 
-    override fun attachBaseContext(base: Context) {
-        primaryBaseActivity = base
-        super.attachBaseContext(apply(base))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (mUserManager.isFirstMessageDetails) {
             mUserManager.firstMessageDetailsDone()
         }
         markAsRead = true
-        messageId = intent.getStringExtra(EXTRA_MESSAGE_ID)!!
+        messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
-        val currentAccountUsername = mUserManager.username
         isTransientMessage = intent.getBooleanExtra(EXTRA_TRANSIENT_MESSAGE, false)
+        val currentAccountUsername = mUserManager.username
         AppUtil.clearNotifications(this)
         if (!mUserManager.isLoggedIn) {
             startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
@@ -185,6 +173,7 @@ internal class MessageDetailsActivity :
             setDisplayHomeAsUpEnabled(true)
             title = null
         }
+        initAdapters()
         if (messageRecipientUsername != null && currentAccountUsername != messageRecipientUsername) {
             showInfoDialogWithTwoButtons(
                 this,
@@ -197,7 +186,6 @@ internal class MessageDetailsActivity :
                     mUserManager.switchToAccount(messageRecipientUsername!!)
                     continueSetup()
                     invalidateOptionsMenu()
-                    mApp.bus.register(viewModel)
                     showSignedInSnack(
                         coordinatorLayout,
                         String.format(getString(R.string.signed_in_with), messageRecipientUsername)
@@ -211,21 +199,6 @@ internal class MessageDetailsActivity :
     }
 
     private fun continueSetup() {
-        attachmentsListAdapter = MessageDetailsAttachmentListAdapter(
-            this,
-            OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
-        )
-        pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
-        messageExpandableAdapter = MessageDetailsAdapter(
-            this,
-            mJobManager,
-            Message(),
-            "",
-            wv_scroll,
-            pmWebViewClient,
-            { onLoadEmbeddedImagesCLick() }
-        ) { onDisplayImagesCLick() }
-
         viewModel.tryFindMessage()
         viewModel.message.observe(this, MessageObserver())
         viewModel.decryptedMessageData.observe(this, DecryptedMessageObserver())
@@ -241,10 +214,21 @@ internal class MessageDetailsActivity :
         listenForConnectivityEvent()
     }
 
-    override fun onResume() {
-        super.onResume()
-        checkDelinquency()
-        viewModel.checkConnectivity()
+    private fun initAdapters() {
+        attachmentsListAdapter = MessageDetailsAttachmentListAdapter(
+            this,
+            OnAttachmentDownloadCallback(storagePermissionHelper, attachmentToDownloadId)
+        )
+        pmWebViewClient = MessageDetailsPmWebViewClient(mUserManager, this)
+        messageExpandableAdapter = MessageDetailsAdapter(
+            this,
+            mJobManager,
+            Message(),
+            "",
+            wv_scroll,
+            pmWebViewClient,
+            { onLoadEmbeddedImagesCLick() }
+        ) { onDisplayImagesCLick() }
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
@@ -294,7 +278,9 @@ internal class MessageDetailsActivity :
 
     override fun onStart() {
         super.onStart()
+        checkDelinquency()
         mApp.bus.register(this)
+        viewModel.checkConnectivity()
         mApp.bus.register(viewModel)
     }
 
@@ -410,7 +396,7 @@ internal class MessageDetailsActivity :
                 }
             }
             R.id.action_report_phishing -> showReportPhishingDialog(message)
-            R.id.action_print -> viewModel.printMessage(primaryBaseActivity)
+            R.id.action_print -> viewModel.printMessage(applicationContext)
         }
         if (job != null) {
             mJobManager.addJobInBackground(job)
