@@ -82,9 +82,8 @@ class MessageDetailsAdapter(
         private val wvScrollView: RecyclerView,
         private var pmWebViewClient: PMWebViewClient,
         private val onLoadEmbeddedImagesCLick: (() -> Unit)?,
-        private val onDisplayImagesCLick: (() -> Unit)?)
-
-    : ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
+        private val onDisplayImagesCLick: (() -> Unit)?
+): ExpandableRecyclerAdapter<MessageDetailsAdapter.MessageDetailsListItem>(context) {
 
     /** Lazy instance of [ClipboardManager] that will be used for copy content into the Clipboard */
     private val clipboardManager by lazy { context.getSystemService<ClipboardManager>() }

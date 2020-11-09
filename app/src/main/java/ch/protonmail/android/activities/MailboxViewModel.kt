@@ -37,9 +37,7 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.UserUtils
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.birbit.android.jobqueue.JobManager
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.ArrayList
@@ -140,7 +138,7 @@ class MailboxViewModel @ViewModelInject constructor(
         val labelsToRemoveMap = HashMap<String, MutableList<String>>()
         var result: Pair<Map<String, List<String>>, Map<String, List<String>>>? = null
 
-        GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
+        viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 while (iterator.hasNext()) {
                     val messageId = iterator.next()
