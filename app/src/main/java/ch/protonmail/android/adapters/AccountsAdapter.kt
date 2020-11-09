@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,7 +24,6 @@ import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat.startActivity
@@ -35,6 +34,7 @@ import ch.protonmail.android.activities.REQUEST_CODE_SWITCHED_USER
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
 import ch.protonmail.android.activities.multiuser.ConnectAccountActivity
 import ch.protonmail.android.activities.multiuser.EXTRA_USERNAME
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.uiModel.DrawerUserModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.inflate
@@ -47,6 +47,7 @@ import kotlinx.android.synthetic.main.drawer_user_list_item.view.*
 import kotlinx.android.synthetic.main.drawer_user_list_item_footer.view.*
 import kotlinx.android.synthetic.main.user_list_item.view.*
 import kotlinx.android.synthetic.main.user_list_item_footer.view.*
+import me.proton.android.core.presentation.ui.adapter.ProtonAdapter
 
 // region constants
 private const val VIEW_TYPE_NAV_USER = 0 // for user list item in nav drawer list
@@ -59,18 +60,22 @@ private const val VIEW_TYPE_ACC_FOOTER = 4 // for footer list item in accounts m
 /**
  * Adapter for Drawer Users drop-down (Spinner)
  *
- * Inherits from [ArrayAdapter]
+ * Inherits from [BaseAdapter]
+ * TODO Inherit from [ProtonAdapter]
+ *
+ * TODO split to DrawerAccountsAdapter and AccountManagerAccountAdapter
  */
+internal class AccountsAdapter :
+    BaseAdapter<DrawerUserModel, AccountsAdapter.ViewHolder<DrawerUserModel>>(ModelsComparator) {
 
-internal class AccountsAdapter : BaseAdapter<DrawerUserModel, AccountsAdapter.ViewHolder<DrawerUserModel>>(ModelsComparator) {
+    var onLogoutAccount: (Id) -> Unit = { }
+    var onRemoveAccount: (Id) -> Unit = { }
 
-    var onLogoutAccount: (String) -> Unit = {  }
-    var onRemoveAccount: (String) -> Unit = {  }
+    private val onLogoutAccountInvoker: (Id) -> Unit get() = { onLogoutAccount(it) }
+    private val onRemoveAccountInvoker: (Id) -> Unit get() = { onRemoveAccount(it) }
 
-    private val onLogoutAccountInvoker: (String) -> Unit get() = { onLogoutAccount(it) }
-    private val onRemoveAccountInvoker: (String) -> Unit get() = { onRemoveAccount(it) }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<DrawerUserModel> = parent.viewHolderForViewType(viewType)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<DrawerUserModel> =
+        parent.viewHolderForViewType(viewType)
 
     override fun onBindViewHolder(holder: ViewHolder<DrawerUserModel>, position: Int) {
         super.onBindViewHolder(holder, position)
@@ -82,33 +87,32 @@ internal class AccountsAdapter : BaseAdapter<DrawerUserModel, AccountsAdapter.Vi
     override fun getItemViewType(position: Int) = items[position].viewType
 
     abstract class ViewHolder<DUM : DrawerUserModel>(itemView: View) : ClickableAdapter.ViewHolder<DUM>(itemView) {
-        internal var onLogoutAccountInvoker: (String) -> Unit = { }
-        internal var onRemoveAccountInvoker: (String) -> Unit = { }
+        internal var onLogoutAccountInvoker: (Id) -> Unit = { }
+        internal var onRemoveAccountInvoker: (Id) -> Unit = { }
     }
 
     /** A [BaseAdapter.ItemsComparator] for the Adapter */
     private object ModelsComparator : BaseAdapter.ItemsComparator<DrawerUserModel>() {
-        override fun areItemsTheSame(oldItem: DrawerUserModel, newItem: DrawerUserModel): Boolean {
-            return false
-        }
+        override fun areItemsTheSame(oldItem: DrawerUserModel, newItem: DrawerUserModel): Boolean =
+            false
     }
 
     /** @return [LayoutRes] for the given [viewType] */
-    private fun layoutForViewType( viewType: Int ) = when ( viewType ) {
+    private fun layoutForViewType(viewType: Int) = when (viewType) {
         VIEW_TYPE_DIVIDER -> R.layout.drawer_list_item_divider
         VIEW_TYPE_NAV_FOOTER -> R.layout.drawer_user_list_item_footer
         VIEW_TYPE_ACC_FOOTER -> R.layout.user_list_item_footer
         VIEW_TYPE_NAV_USER -> R.layout.drawer_user_list_item
         VIEW_TYPE_ACC_USER -> R.layout.user_list_item
-        else -> throw IllegalArgumentException( "View type not found: '$viewType'" )
+        else -> throw IllegalArgumentException("View type not found: '$viewType'")
     }
 
     // region extension functions
 
-    private fun <DUM: DrawerUserModel> ViewGroup.viewHolderForViewType(viewType: Int) : ViewHolder<DUM> {
+    private fun <DUM : DrawerUserModel> ViewGroup.viewHolderForViewType(viewType: Int): ViewHolder<DUM> {
         val view = inflate(layoutForViewType(viewType))
         @Suppress("UNCHECKED_CAST") // Type cannot be checked since is in invariant position
-        return when ( viewType ) {
+        return when (viewType) {
             VIEW_TYPE_DIVIDER -> DividerViewHolder(view)
             VIEW_TYPE_NAV_FOOTER -> FooterViewHolder(view)
             VIEW_TYPE_NAV_USER -> NavUserViewHolder(view)
@@ -139,14 +143,17 @@ internal class AccountsAdapter : BaseAdapter<DrawerUserModel, AccountsAdapter.Vi
         override fun onBind(item: DrawerUserModel.AccFooter) = with(itemView) {
             super.onBind(item)
             addNewUserAccount.setOnClickListener {
+                val activity = context as Activity
                 val intent = Intent(context, ConnectAccountActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent.putExtra(EXTRA_SWITCHED_USER, true)
-                startActivityForResult(context as Activity, AppUtil.decorInAppIntent(intent), REQUEST_CODE_SWITCHED_USER, null)
-                val ctx = context
-                if (ctx is Activity) {
-                    ctx.finish()
-                }
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .putExtra(EXTRA_SWITCHED_USER, true)
+                startActivityForResult(
+                    activity,
+                    AppUtil.decorInAppIntent(intent),
+                    REQUEST_CODE_SWITCHED_USER,
+                    null
+                )
+                activity.finish()
             }
         }
     }
@@ -155,15 +162,21 @@ internal class AccountsAdapter : BaseAdapter<DrawerUserModel, AccountsAdapter.Vi
         override fun onBind(item: DrawerUserModel.Footer) = with(itemView) {
             super.onBind(item)
             manageAccounts.setOnClickListener {
-                startActivityForResult(context as Activity, AppUtil.decorInAppIntent(Intent(context, AccountManagerActivity::class.java)), REQUEST_CODE_ACCOUNT_MANAGER, null)
-                (context as Activity).overridePendingTransition( R.anim.slide_up, R.anim.slide_up_close)
+                val activity = context as Activity
+                startActivityForResult(
+                    activity,
+                    AppUtil.decorInAppIntent(Intent(context, AccountManagerActivity::class.java)),
+                    REQUEST_CODE_ACCOUNT_MANAGER,
+                    null
+                )
+                activity.overridePendingTransition(R.anim.slide_up, R.anim.slide_up_close)
             }
         }
     }
 
     private class AccUserViewHolder(itemView: View) : ViewHolder<DrawerUserModel.BaseUser.AccountUser>(itemView) {
 
-        override fun onBind(item: DrawerUserModel.BaseUser.AccountUser) = with (itemView) {
+        override fun onBind(item: DrawerUserModel.BaseUser.AccountUser) = with(itemView) {
             super.onBind(item)
             accUserName.text = item.displayName
             accUserEmailAddress.text = item.emailAddress
@@ -181,16 +194,19 @@ internal class AccountsAdapter : BaseAdapter<DrawerUserModel, AccountsAdapter.Vi
             accUserMoreMenu.setOnClickListener {
                 val popupMenu = PopupMenu(itemView.context, accUserMoreMenu)
                 popupMenu.let {
-                    it.menuInflater.inflate(if (item.loggedIn) R.menu.account_item_menu else R.menu.account_item_loggedout_menu, it.menu)
+                    it.menuInflater.inflate(
+                        if (item.loggedIn) R.menu.account_item_menu
+                        else R.menu.account_item_loggedout_menu, it.menu
+                    )
                     it.gravity = Gravity.END
                 }
                 popupMenu.setOnMenuItemClickListener {
-                    when(it.itemId) {
+                    when (it.itemId) {
                         R.id.action_remove_account -> {
-                            onRemoveAccountInvoker(item.name)
+                            onRemoveAccountInvoker(item.id)
                         }
                         R.id.action_logout_account -> {
-                            onLogoutAccountInvoker(item.name)
+                            onLogoutAccountInvoker(item.id)
                         }
                         R.id.action_login -> {
                             val intent = Intent(context, ConnectAccountActivity::class.java)
@@ -207,14 +223,14 @@ internal class AccountsAdapter : BaseAdapter<DrawerUserModel, AccountsAdapter.Vi
     }
 
     private class NavUserViewHolder(itemView: View) : ViewHolder<DrawerUserModel.BaseUser.DrawerUser>(itemView) {
-        override fun onBind(item: DrawerUserModel.BaseUser.DrawerUser) = with (itemView) {
+        override fun onBind(item: DrawerUserModel.BaseUser.DrawerUser) = with(itemView) {
             super.onBind(item)
             userName.text = item.displayName
             userEmailAddress.text = item.emailAddress
             userEmailAddress.visibility =
-            if (item.emailAddress.isEmpty()) View.GONE else View.VISIBLE
+                if (item.emailAddress.isEmpty()) View.GONE else View.VISIBLE
             userAvatar.setAccountLetters(item.displayName)
-            if(item.notificationsSnoozed){
+            if (item.notificationsSnoozed) {
                 buttonUserQuickSnooze.setImageResource(R.drawable.ic_notifications_off)
             } else {
                 buttonUserQuickSnooze.setImageResource(R.drawable.ic_notifications_active)
