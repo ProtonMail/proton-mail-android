@@ -26,11 +26,13 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.usecase.FindUserIdForUsername
 import kotlinx.coroutines.launch
 
 class AccountManagerViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
-    private val accountManager: AccountManager
+    private val accountManager: AccountManager,
+    private val findUserIdForUsername: FindUserIdForUsername
 ) : ViewModel() {
 
     private val _removedAccountResult: MutableLiveData<Boolean> = MutableLiveData()
