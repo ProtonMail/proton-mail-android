@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.core
 
-// TODO import as `OldUser`
-// TODO import as `User`
 import android.content.Context
 import android.content.SharedPreferences
 import android.text.TextUtils
