@@ -89,7 +89,7 @@ abstract class ConnectAccountBaseActivity : BaseConnectivityActivity() {
             AuthStatus.SUCCESS -> {
                 eventsUnregistered = true
                 ProtonMailApplication.getApplication().bus.unregister(this)
-                FcmUtil.setTokenSent(false) // force FCM to register new user
+                FcmUtil.setTokenSent(mUserManager.username, false) // force FCM to register new user
                 mUserManager.loginState = LOGIN_STATE_TO_INBOX
                 moveToMailbox()
                 saveLastInteraction()

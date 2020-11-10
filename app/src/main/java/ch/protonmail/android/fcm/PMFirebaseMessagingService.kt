@@ -27,20 +27,25 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ch.protonmail.android.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * An extension of FirebaseMessagingService, handling token refreshing and receiving messages.
- *
- * @author Stefanija Boshkovska
  */
 
+@AndroidEntryPoint
 public class PMFirebaseMessagingService : FirebaseMessagingService() {
+
+    @Inject
+    lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
         FcmUtil.setTokenSent(false)
-        PMRegistrationIntentService.startRegistration(baseContext, token)
+        FcmUtil.setFirebaseToken(token)
+        pmRegistrationWorkerEnqueuer()
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

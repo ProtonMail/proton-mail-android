@@ -21,8 +21,10 @@ package ch.protonmail.android.api
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.utils.getStringList
 import ch.protonmail.android.utils.putStringList
+import javax.inject.Inject
 
 // region constants
 private const val PREF_USERNAMES_LOGGED_IN = "PREF_USERNAMES_LOGGED_IN"
@@ -33,18 +35,24 @@ private const val PREF_USERNAMES_LOGGED_OUT = "PREF_USERNAMES_LOGGED_OUT" // log
  * AccountManager stores information about all local users currently logged in or logged out, but saved.
  */
 
-class AccountManager private constructor(private val sharedPreferences: SharedPreferences) {
+class AccountManager @Inject constructor(
+    @DefaultSharedPreferences private val sharedPreferences: SharedPreferences
+) {
 
     fun onSuccessfulLogin(username: String) {
         if (username.isBlank()) {
             return
         }
         sharedPreferences.edit()
-                .putStringList(PREF_USERNAMES_LOGGED_IN, sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())
-                        ?.plus(username)?.distinct()).apply()
+            .putStringList(
+                PREF_USERNAMES_LOGGED_IN,
+                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())?.plus(username)?.distinct()
+            ).apply()
         sharedPreferences.edit()
-                .putStringList(PREF_USERNAMES_LOGGED_OUT, sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, emptyList())
-                        ?.minus(username)).apply()
+            .putStringList(
+                PREF_USERNAMES_LOGGED_OUT,
+                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, emptyList())?.minus(username)
+            ).apply()
     }
 
     fun onSuccessfulLogout(username: String) {
@@ -52,11 +60,15 @@ class AccountManager private constructor(private val sharedPreferences: SharedPr
             return
         }
         sharedPreferences.edit()
-                .putStringList(PREF_USERNAMES_LOGGED_IN, sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())
-                        ?.minus(username)).apply()
+            .putStringList(
+                PREF_USERNAMES_LOGGED_IN,
+                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())?.minus(username)
+            ).apply()
         sharedPreferences.edit()
-                .putStringList(PREF_USERNAMES_LOGGED_OUT, sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, emptyList())
-                        ?.plus(username)?.distinct()).apply()
+            .putStringList(
+                PREF_USERNAMES_LOGGED_OUT,
+                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, emptyList())?.plus(username)?.distinct()
+            ).apply()
     }
 
     /**
@@ -64,25 +76,26 @@ class AccountManager private constructor(private val sharedPreferences: SharedPr
      */
     fun removeFromSaved(username: String) {
         sharedPreferences.edit()
-                .putStringList(PREF_USERNAMES_LOGGED_OUT, sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null)
-                        ?.minus(username)).apply()
+            .putStringList(
+                PREF_USERNAMES_LOGGED_OUT,
+                sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null)?.minus(username)
+            ).apply()
     }
 
-    fun getLoggedInUsers(): List<String> {
-        return sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null) ?: emptyList()
-    }
+    fun getLoggedInUsers(): List<String> =
+        sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null) ?: emptyList()
 
-    fun getNextLoggedInAccountOtherThan(username: String, currentPrimary: String) : String? {
-        val otherLoggedInAccounts = sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null)?.minus(username) ?: emptyList()
+    fun getNextLoggedInAccountOtherThan(username: String, currentPrimary: String): String? {
+        val otherLoggedInAccounts = sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_IN, null)?.minus(username)
+            ?: emptyList()
         if (otherLoggedInAccounts.isNotEmpty()) {
             return otherLoggedInAccounts.find { it == currentPrimary } ?: otherLoggedInAccounts[0]
         }
         return null
     }
 
-    fun getSavedUsers(): List<String> {
-        return sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null) ?: emptyList()
-    }
+    fun getSavedUsers(): List<String> =
+        sharedPreferences.getStringList(PREF_USERNAMES_LOGGED_OUT, null) ?: emptyList()
 
     /**
      * Removes all known lists of usernames.
@@ -93,8 +106,8 @@ class AccountManager private constructor(private val sharedPreferences: SharedPr
 
     companion object {
 
-        fun getInstance(context: Context): AccountManager {
-            return AccountManager(PreferenceManager.getDefaultSharedPreferences(context))
-        }
+        @Deprecated(message = "Use AccountManager as a dependency in a constructor")
+        fun getInstance(context: Context): AccountManager =
+            AccountManager(PreferenceManager.getDefaultSharedPreferences(context))
     }
 }

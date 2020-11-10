@@ -448,7 +448,7 @@ class UserManager @Inject constructor(
         AppUtil.deleteDatabases(app.applicationContext, username, clearDoneListener)
         saveBackupSettings()
         // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
-        LogoutService.startLogout(true, username = username, fcmRegistrationId = FcmUtil.getRegistrationId())
+        LogoutService.startLogout(true, username = username, fcmRegistrationId = FcmUtil.getFirebaseToken())
         setRememberMailboxLogin(false)
         firstLoginRemove()
         reset()

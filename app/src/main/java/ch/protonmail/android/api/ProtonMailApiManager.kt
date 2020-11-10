@@ -60,7 +60,7 @@ import ch.protonmail.android.api.models.PaymentsStatusResponse
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.RefreshResponse
-import ch.protonmail.android.api.models.RegisterDeviceBody
+import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResetTokenResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.SinglePasswordChange
@@ -223,7 +223,10 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) = api.unlabelContactEmails(labelContactsBody)
 
-    override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
+    override suspend fun registerDevice(
+        registerDeviceRequestBody: RegisterDeviceRequestBody,
+        username: String
+    ) = api.registerDevice(registerDeviceRequestBody, username)
 
     override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
 

@@ -144,7 +144,7 @@ import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.fcm.FcmUtil
-import ch.protonmail.android.fcm.PMRegistrationIntentService.Companion.startRegistration
+import ch.protonmail.android.fcm.PMRegistrationWorker
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
@@ -218,12 +218,12 @@ class MailboxActivity :
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
-
     @Inject
     lateinit var contactsRepository: ContactsRepository
-
     @Inject
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
+    @Inject
+    lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
 
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
@@ -719,7 +719,8 @@ class MailboxActivity :
                     FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             task.result?.let { result ->
-                                startRegistration(this, result.token)
+                                FcmUtil.setFirebaseToken(result.token)
+                                pmRegistrationWorkerEnqueuer()
                             }
                         } else {
                             Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
