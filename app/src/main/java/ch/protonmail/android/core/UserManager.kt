@@ -23,6 +23,7 @@ import android.content.SharedPreferences
 import androidx.annotation.IntDef
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.TokenManager
@@ -38,12 +39,14 @@ import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.api.services.LogoutService
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.ForceSwitchedAccountEvent
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.usecase.FindUserIdForUsername
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
@@ -86,9 +89,12 @@ private const val PREF_ENGAGEMENT_SHOWN = "engagement_shown"
  */
 @Singleton
 class UserManager @Inject constructor(
-    val context: Context,
+    private val context: Context,
+    private val accountManager: AccountManager,
+    private val findUserIdForUsername: FindUserIdForUsername,
     @DefaultSharedPreferences private val prefs: SharedPreferences,
-    @BackupSharedPreferences private val backupPrefs: SharedPreferences
+    @BackupSharedPreferences private val backupPrefs: SharedPreferences,
+    val openPgp: OpenPGP
 ) {
 
     private val userReferences = HashMap<String, User>()
@@ -149,9 +155,6 @@ class UserManager @Inject constructor(
 
     var snoozeSettings: SnoozeSettings? = null
 
-    @Inject
-    lateinit var openPgp: OpenPGP
-
     private var mNewUserUsername: String? = null
     private var mNewUserPassword: ByteArray? = null
     private var mNewUserUpdateMe: Boolean = false
@@ -169,7 +172,6 @@ class UserManager @Inject constructor(
     val nextLoggedInAccountOtherThanCurrent: String?
         get() {
             val currentActiveAccount = username
-            val accountManager = AccountManager.getInstance(context)
             return accountManager.getNextLoggedInAccountOtherThan(currentActiveAccount, currentActiveAccount)
         }
 
@@ -179,7 +181,7 @@ class UserManager @Inject constructor(
 
     val isFirstLogin: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_LOGIN, true) &&
-            prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != AppUtil.getAppVersionCode(context)
+            prefs.getInt(PREF_APP_VERSION, Integer.MIN_VALUE) != BuildConfig.VERSION_CODE
 
     val isFirstMailboxLoad: Boolean
         get() = prefs.getBoolean(PREF_IS_FIRST_MAILBOX_LOAD_AFTER_LOGIN, true)
@@ -243,7 +245,7 @@ class UserManager @Inject constructor(
 
     @Nullable
     fun getUsernameBySessionId(@NonNull sessionId: String): String? {
-        for (username in AccountManager.getInstance(context).getLoggedInUsers()) {
+        for (username in accountManager.getLoggedInUsers()) {
             if (sessionId == getTokenManager(username)?.uid) {
                 return username
             }
@@ -411,7 +413,6 @@ class UserManager @Inject constructor(
 
     fun removeAccount(username: String, clearDoneListener: (() -> Unit)? = null) {
         logoutAccount(username, clearDoneListener)
-        val accountManager = AccountManager.getInstance(context)
         accountManager.removeFromSaved(username)
     }
 
@@ -428,7 +429,6 @@ class UserManager @Inject constructor(
      * @param username the username of the account to be logged out.
      */
     fun logoutAccount(username: String, clearDoneListener: (() -> Unit)?) {
-        val accountManager = AccountManager.getInstance(context)
         val currentPrimary = this.username
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
             ?: // fallback to "last user logout"
@@ -467,7 +467,6 @@ class UserManager @Inject constructor(
             return
         }
         val nextLoggedInAccount = nextLoggedInAccountOtherThanCurrent
-        val accountManager = AccountManager.getInstance(context)
         if (!accountManager.getLoggedInUsers().contains(username)) {
             return
         }
@@ -554,7 +553,7 @@ class UserManager @Inject constructor(
         backupPrefs.edit().putString(PREF_USERNAME, username).apply()
         engagementDone() // we set this to done since it is the same person that has switched account
 
-        AccountManager.getInstance(context).onSuccessfulLogin(username)
+        accountManager.setLoggedInBlocking(findUserIdForUsername.blocking(Name(username)))
         mMailboxPassword = null
     }
 
@@ -642,7 +641,6 @@ class UserManager @Inject constructor(
     }
 
     fun canConnectAccount(): Boolean {
-        val accountManager = AccountManager.getInstance(context)
         val freeLoggedInUsersList = accountManager.getLoggedInUsers().map {
             userReferences[it]
         }.filter {

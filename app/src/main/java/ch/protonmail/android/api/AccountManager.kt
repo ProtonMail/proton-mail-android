@@ -27,6 +27,7 @@ import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.getStringList
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
@@ -54,6 +55,12 @@ class AccountManager(
     suspend fun setLoggedIn(userId: Id) {
         setLoggedIn(setOf(userId))
     }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("setLoggedIn(userId)")
+    )
+    fun setLoggedInBlocking(userId: Id) = runBlocking { setLoggedIn(userId) }
 
     suspend fun setLoggedIn(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
@@ -87,15 +94,6 @@ class AccountManager(
     private suspend fun setSaved(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_SAVED] =
             sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
-    }
-
-    @Deprecated(
-        "Use 'setLoggedIn' with User Id",
-        ReplaceWith("setLoggedIn(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun onSuccessfulLogin(username: String) {
-        unsupported
     }
 
     @Deprecated(
@@ -208,7 +206,7 @@ class AccountManager(
 
     companion object {
 
-        @Deprecated("Inject the constructor directly")
+        @Deprecated("Inject the constructor directly", ReplaceWith("accountManager"))
         fun getInstance(context: Context): AccountManager =
             AccountManager(
                 PreferenceManager.getDefaultSharedPreferences(context),

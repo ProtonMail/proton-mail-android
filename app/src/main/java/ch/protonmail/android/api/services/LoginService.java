@@ -77,6 +77,7 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.domain.entity.Name;
 import ch.protonmail.android.events.AddressSetupEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.ConnectAccountLoginEvent;
@@ -90,6 +91,7 @@ import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
+import ch.protonmail.android.usecase.FindUserIdForUsername;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ConstantTime;
 import ch.protonmail.android.utils.Logger;
@@ -151,6 +153,8 @@ public class LoginService extends ProtonJobIntentService {
     private static final String EXTRA_ADDRESS_ID = "address_id";
 
     @Inject
+    AccountManager accountManager;
+    @Inject
     UserManager userManager;
     @Inject
     OpenPGP openPGP;
@@ -160,6 +164,8 @@ public class LoginService extends ProtonJobIntentService {
     JobManager jobManager;
     @Inject
     QueueNetworkUtil networkUtils;
+    @Inject
+    FindUserIdForUsername findUserIdForUsername;
     @Inject
     LaunchInitialDataFetch launchInitialDataFetch;
 
@@ -652,7 +658,7 @@ public class LoginService extends ProtonJobIntentService {
                     String message = userInfo.getError();
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(userInfo.getCode(), message);
                     if (!foundErrorCode) {
-                        AccountManager.Companion.getInstance(this).onSuccessfulLogin(username);
+                        accountManager.setLoggedInBlocking(findUserIdForUsername.blocking(new Name(username)));
                         userManager.saveMailboxPassword(generatedMailboxPassword, username);
                         userManager.setUserInfo(userInfo, mailSettings.getMailSettings(), userSettings.getUserSettings(), addresses.getAddresses());
                         AddressKeyActivationWorker.Companion.activateAddressKeysIfNeeded(getApplicationContext(), addresses.getAddresses(), username);
