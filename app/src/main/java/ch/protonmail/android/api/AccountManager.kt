@@ -44,7 +44,13 @@ const val PREF_USERNAMES_LOGGED_OUT = "PREF_USERNAMES_LOGGED_OUT" // logged out 
 // endregion
 
 /**
- * AccountManager stores information about all local users currently logged in or logged out, but saved.
+ * AccountManager manages states of all the saved users.
+ *
+ * An user is considered:
+ * * SAVED: persisted in the storage, basically every known user
+ * * REMOVED: not persisted in the storage, it doesn't exist anymore after the removal
+ * * LOGGED IN: user is currently logged in and so also SAVED
+ * * LOGGED OUT: user is not logged in, but still SAVED
  */
 class AccountManager(
     @DefaultSharedPreferences
@@ -108,14 +114,23 @@ class AccountManager(
             sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
     }
 
+    /**
+     * @return all the logged in users
+     */
     suspend fun allLoggedIn(): Set<Id> = withContext(dispatchers.Io) {
         sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet())
     }
 
+    /**
+     * @return all the users that are saved, EXCLUDING the logged in ones
+     */
     suspend fun allLoggedOut(): Set<Id> = withContext(dispatchers.Io) {
         allSaved() - allLoggedIn()
     }
 
+    /**
+     * @return all the saved users, both logged in and logged out
+     */
     suspend fun allSaved(): Set<Id> = withContext(dispatchers.Io) {
         sharedPreferences.get(PREF_ALL_SAVED, emptySet())
     }
