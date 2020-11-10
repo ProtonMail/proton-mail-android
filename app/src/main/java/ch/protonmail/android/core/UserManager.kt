@@ -413,7 +413,7 @@ class UserManager @Inject constructor(
 
     fun removeAccount(username: String, clearDoneListener: (() -> Unit)? = null) {
         logoutAccount(username, clearDoneListener)
-        accountManager.removeFromSaved(username)
+        accountManager.removeBlocking(findUserIdForUsername.blocking(Name(username)))
     }
 
     /**

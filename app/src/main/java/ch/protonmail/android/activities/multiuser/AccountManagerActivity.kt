@@ -23,8 +23,8 @@ import android.os.Handler
 import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
@@ -44,21 +44,13 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_account_manager.*
 import kotlinx.android.synthetic.main.toolbar_white.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountManagerActivity : BaseActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: AccountManagerViewModel.Factory
-
     private var movingToMailbox = false
 
-    /** A Lazy instance of [AccountManagerViewModel] */
-    private val viewModel by lazy {
-        ViewModelProviders.of(this, viewModelFactory)
-                .get(AccountManagerViewModel::class.java)
-    }
+    private val viewModel by viewModels<AccountManagerViewModel>()
 
     /**
      * [AccountsAdapter] for the Accounts RecyclerView. It is used to the default [accountsRecyclerView]

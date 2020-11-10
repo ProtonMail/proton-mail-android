@@ -21,7 +21,9 @@
 package ch.protonmail.android.di
 
 import androidx.lifecycle.ViewModelProvider
-import ch.protonmail.android.activities.multiuser.viewModel.AccountManagerViewModel
+import ch.protonmail.android.activities.messageDetails.MessageRenderer
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.activities.messageDetails.viewmodel.MessageDetailsViewModel
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountMailboxLoginViewModel
 import ch.protonmail.android.activities.multiuser.viewModel.ConnectAccountViewModel
 import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
@@ -89,13 +91,6 @@ internal class ViewModelModule {
 
     @Provides
     internal fun provideAccountManager(application: ProtonMailApplication) = AccountManager.getInstance(application)
-
-    @Provides
-    internal fun provideAccountManagerViewModelFactory(
-        application: ProtonMailApplication,
-        userManager: UserManager,
-        accountManager: AccountManager
-    ) = AccountManagerViewModel.Factory(application, userManager, accountManager)
 
     @Provides
     fun providePinFragmentViewModelFactory(pinFragmentViewModelFactory: PinFragmentViewModelFactory):

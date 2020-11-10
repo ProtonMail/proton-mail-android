@@ -97,18 +97,15 @@ class AccountManager(
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userId.s
     }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("remove(userId)")
+    )
+    fun removeBlocking(userId: Id) = runBlocking { remove(userId) }
+
     private suspend fun setSaved(userIds: Collection<Id>) = withContext(dispatchers.Io) {
         sharedPreferences[PREF_ALL_SAVED] =
             sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
-    }
-
-    @Deprecated(
-        "Use 'remove' with User Id",
-        ReplaceWith("remove(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun removeFromSaved(username: String) {
-        unsupported
     }
 
     suspend fun allLoggedIn(): Set<Id> = withContext(dispatchers.Io) {
