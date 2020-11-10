@@ -45,7 +45,6 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_account_manager.*
 import kotlinx.android.synthetic.main.toolbar_white.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class AccountManagerActivity : BaseActivity() {
