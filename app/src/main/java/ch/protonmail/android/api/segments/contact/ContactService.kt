@@ -58,7 +58,10 @@ interface ContactService {
     fun contactsEmailsByLabelId(@Query("Page") page: Int, @Query("LabelID") labelId: String): Observable<ContactEmailsResponseV2>
 
     @GET("contacts/{contact_id}")
-    fun contactById(@Path("contact_id") contactId: String): Call<FullContactDetailsResponse>
+    fun contactByIdBlocking(@Path("contact_id") contactId: String): Call<FullContactDetailsResponse>
+
+    @GET("contacts/{contact_id}")
+    suspend fun contactById(@Path("contact_id") contactId: String): FullContactDetailsResponse
 
     @POST("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

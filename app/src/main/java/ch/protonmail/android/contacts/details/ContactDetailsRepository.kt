@@ -29,8 +29,8 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
-import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import ch.protonmail.android.worker.PostLabelWorker
+import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -44,7 +44,8 @@ open class ContactDetailsRepository @Inject constructor(
     private val workManager: WorkManager,
     protected val jobManager: JobManager,
     protected val api: ProtonMailApiManager,
-    protected val databaseProvider: DatabaseProvider) {
+    protected val databaseProvider: DatabaseProvider
+) {
 
     protected val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactDetailsRepository"); databaseProvider.provideContactsDao() }
 
@@ -129,7 +130,8 @@ open class ContactDetailsRepository @Inject constructor(
 
     fun removeMembersForContactGroup(
         contactGroupId: String, contactGroupName: String,
-        membersList: List<String>): Completable {
+        membersList: List<String>
+    ): Completable {
         if (membersList.isEmpty()) {
             return Completable.complete()
         }

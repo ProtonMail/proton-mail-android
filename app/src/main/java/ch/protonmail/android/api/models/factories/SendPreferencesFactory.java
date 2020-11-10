@@ -145,7 +145,7 @@ public class SendPreferencesFactory {
         }
         Map<String, FullContactDetailsResponse> contactDetails = null;
         try {
-            contactDetails = mApi.fetchContactDetails(contactIDs.values());
+            contactDetails = mApi.fetchContactDetailsBlocking(contactIDs.values());
         } catch (Exception e) {
             //noop
         }

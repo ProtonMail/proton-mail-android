@@ -75,7 +75,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -99,11 +98,9 @@ import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
-import ch.protonmail.android.events.ContactDetailsFetchedEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.Status;
-import ch.protonmail.android.jobs.FetchContactDetailsJob;
+import ch.protonmail.android.usecase.model.FetchContactDetailsResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Logger;
@@ -138,6 +135,7 @@ import ezvcard.property.Title;
 import ezvcard.property.Url;
 import ezvcard.util.PartialDate;
 import kotlin.Unit;
+import timber.log.Timber;
 
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
@@ -197,7 +195,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     @BindView(R.id.fabWeb)
     ImageButton fabWeb;
 
-    private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
     private ContactsDatabase contactsDatabase;
     private User mUser;
     private LayoutInflater inflater;
@@ -294,6 +291,11 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             return Unit.INSTANCE;
         });
 
+        contactDetailsViewModel.getContatDetailsFetchResult().observe(
+                this,
+                this::onContactDetailsLoadedEvent
+        );
+
         contactDetailsViewModel.fetchContactGroupsAndContactEmails(mContactId);
         appBarLayout.addOnOffsetChangedListener(this);
         startAlphaAnimation(contactCollapsedTitle, 0, View.INVISIBLE);
@@ -302,7 +304,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     void onInitialiseContact(FullContactDetails fullContactDetails) {
 
         if (fullContactDetails == null || fullContactDetails.getEncryptedData() == null || fullContactDetails.getEncryptedData().size() == 0) {
-            mJobManager.addJobInBackground(new FetchContactDetailsJob(mContactId));
+            contactDetailsViewModel.fetchDetails(mContactId);
         } else {
             decryptAndFillVCard(fullContactDetails);
         }
@@ -345,7 +347,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
         String contactId = mContactId;
         if (fullContactDetails == null && !TextUtils.isEmpty(contactId)) {
-            mJobManager.addJobInBackground(new FetchContactDetailsJob(contactId));
+            contactDetailsViewModel.fetchDetails(contactId);
         } else if (fullContactDetails == null && TextUtils.isEmpty(contactId)) {
             onBackPressed();
         } else if (fullContactDetails != null) {
@@ -608,20 +610,23 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         }
     }
 
-    @Subscribe
-    public void onContactDetailsLoadedEvent(ContactDetailsFetchedEvent event) {
 
-        if (event.getStatus() == Status.SUCCESS) {
+    public void onContactDetailsLoadedEvent(FetchContactDetailsResult result) {
+        Timber.v("FetchContactDetailsResult %s", result);
+        if (result instanceof FetchContactDetailsResult.Data) {
             if (mErrorEncryptedView != null) {
                 mErrorEncryptedView.setVisibility(View.GONE);
             }
-            mVCardType0 = event.getRawVCardType0();
-            mVCardType2 = event.getRawVCardType2();
-            mVCardType3 = event.getRawVCardType3();
-            mVCardType2Signature = event.getVCardType2Signature();
-            mVCardType3Signature = event.getVCardType3Signature();
+            FetchContactDetailsResult.Data data = (FetchContactDetailsResult.Data) result;
+            mVCardType0 = data.getDecryptedVCardType0();
+            mVCardType2 = data.getDecryptedVCardType2();
+            mVCardType3 = data.getDecryptedVCardType3();
+            mVCardType2Signature = data.getVCardType2Signature();
+            mVCardType3Signature = data.getVCardType3Signature();
             fillVCard(false);
-        } else {
+        } else if (result instanceof FetchContactDetailsResult.Error) {
+            FetchContactDetailsResult.Error error = (FetchContactDetailsResult.Error) result;
+            Timber.w(error.getException(), "Fetch contact details error");
             hideProgress();
             if (mErrorEncryptedView != null) {
                 mErrorEncryptedView.setVisibility(View.VISIBLE);
@@ -630,7 +635,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             mErrorEncryptedView = mErrorEncryptedStub.inflate();
             mErrorEncryptedView.findViewById(R.id.retry).setOnClickListener(v -> {
                 progressBar.setVisibility(View.VISIBLE);
-                mJobManager.addJobInBackground(new FetchContactDetailsJob(mContactId));
+                contactDetailsViewModel.fetchDetails(mContactId);
             });
         }
     }

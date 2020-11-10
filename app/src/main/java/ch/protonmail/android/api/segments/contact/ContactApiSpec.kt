@@ -43,10 +43,12 @@ interface ContactApiSpec {
     fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>
 
     @Throws(IOException::class)
-    fun fetchContactDetails(contactId: String): FullContactDetailsResponse?
+    fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse?
+
+    suspend fun fetchContactDetails(contactId: String): FullContactDetailsResponse
 
     @Throws(Exception::class)
-    fun fetchContactDetails(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?>
+    fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?>
 
     @Throws(IOException::class)
     fun createContact(body: CreateContact): ContactResponse?

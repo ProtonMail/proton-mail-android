@@ -34,6 +34,7 @@ import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.fetch.FetchContactDetails
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
@@ -90,9 +91,10 @@ class EditContactDetailsViewModel(
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
     private val userManager: UserManager,
+    private val verifyConnection: VerifyConnection,
     workManager: WorkManager,
-    private val verifyConnection: VerifyConnection
-) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, workManager) {
+    fetchContactDetails: FetchContactDetails
+) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -379,8 +381,9 @@ class EditContactDetailsViewModel(
         private val downloadFile: DownloadFile,
         private val editContactDetailsRepository: EditContactDetailsRepository,
         private val userManager: UserManager,
+        private val verifyConnection: VerifyConnection,
         private val workManager: WorkManager,
-        private val verifyConnection: VerifyConnection
+        private val fetchContactDetails: FetchContactDetails
     ) : ViewModelFactory<EditContactDetailsViewModel>() {
         override fun create() =
             EditContactDetailsViewModel(
@@ -388,8 +391,9 @@ class EditContactDetailsViewModel(
                 downloadFile,
                 editContactDetailsRepository,
                 userManager,
+                verifyConnection,
                 workManager,
-                verifyConnection
+                fetchContactDetails
             )
     }
 }

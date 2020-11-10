@@ -83,7 +83,7 @@ public class FetchVerificationKeysJob extends ProtonMailBaseJob {
             AppUtil.postEventOnUi(new FetchVerificationKeysEvent(Status.SUCCESS, Collections.emptyList(), mRetry));
             return;
         }
-        FullContactDetailsResponse contRespons = getApi().fetchContactDetails(contactEmail.getContactId());
+        FullContactDetailsResponse contRespons = getApi().fetchContactDetailsBlocking(contactEmail.getContactId());
         FullContactDetails fullContactDetails = contRespons.getContact();
         contactsDatabase.insertFullContactDetails(fullContactDetails);
         List<String> trustedKeys = fullContactDetails.getPublicKeys(crypto, email);

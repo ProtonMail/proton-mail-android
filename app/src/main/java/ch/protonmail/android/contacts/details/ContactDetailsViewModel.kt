@@ -25,6 +25,8 @@ import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -39,6 +41,8 @@ import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
+import ch.protonmail.android.usecase.fetch.FetchContactDetails
+import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import ch.protonmail.android.worker.DeleteContactWorker
@@ -70,7 +74,8 @@ open class ContactDetailsViewModel(
     dispatcherProvider: DispatcherProvider,
     private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository,
-    private val workManager: WorkManager
+    private val workManager: WorkManager,
+    private val fetchContactDetails: FetchContactDetails
 ) : BaseViewModel(dispatcherProvider) {
 
     //region data
@@ -119,6 +124,14 @@ open class ContactDetailsViewModel(
         get() = _emailGroupsError
 
     val profilePicture = ViewStateStore<Bitmap>().lock
+
+    private var fetchContactDetailsId = MutableLiveData<String>()
+    val contatDetailsFetchResult: LiveData<FetchContactDetailsResult>
+        get() = fetchContactDetailsId.switchMap {
+            liveData {
+                emitSource(fetchContactDetails(it))
+            }
+        }
 
     @SuppressLint("CheckResult")
     fun mergeContactEmailGroups(email: String) {
@@ -323,18 +336,24 @@ open class ContactDetailsViewModel(
         DeleteContactWorker.Enqueuer(workManager).enqueue(listOf(contactId))
     }
 
+    fun fetchDetails(contactId: String) {
+        fetchContactDetailsId.value = contactId
+    }
+
     // TODO: remove when the ViewModel can be injected into a Kotlin class
     class Factory @Inject constructor(
         private val dispatcherProvider: DispatcherProvider,
         private val downloadFile: DownloadFile,
         private val contactDetailsRepository: ContactDetailsRepository,
-        private val workManager: WorkManager
+        private val workManager: WorkManager,
+        private val fetchContactDetails: FetchContactDetails
     ) : ViewModelFactory<ContactDetailsViewModel>() {
         override fun create() = ContactDetailsViewModel(
             dispatcherProvider,
             downloadFile,
             contactDetailsRepository,
-            workManager
+            workManager,
+            fetchContactDetails
         )
     }
 }
