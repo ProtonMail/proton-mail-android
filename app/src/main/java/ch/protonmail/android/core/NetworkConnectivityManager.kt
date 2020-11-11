@@ -23,6 +23,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
+import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.channels.awaitClose
@@ -88,7 +89,11 @@ class NetworkConnectivityManager @Inject constructor(
             }
         }
 
-        connectivityManager.registerDefaultNetworkCallback(callback)
+        val networkRequestBuilder = NetworkRequest.Builder()
+            .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            .build()
+        connectivityManager.registerNetworkCallback(networkRequestBuilder, callback)
         awaitClose { connectivityManager.unregisterNetworkCallback(callback) }
     }
 }
