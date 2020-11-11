@@ -25,14 +25,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.usecase.FindUserIdForUsername
+import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.launch
+import me.proton.core.util.kotlin.unsupported
 
 class AccountManagerViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
-    private val accountManager: AccountManager,
-    private val findUserIdForUsername: FindUserIdForUsername
+    private val accountManager: AccountManager
 ) : ViewModel() {
 
     private val _removedAccountResult: MutableLiveData<Boolean> = MutableLiveData()
@@ -46,38 +45,50 @@ class AccountManagerViewModel @ViewModelInject constructor(
     val logoutAccountResult: LiveData<Boolean>
         get() = _logoutAccountResult
 
-    fun logoutAccount(username: String) {
-        userManager.logoutAccount(username) {
-            // notify the activity
+    fun logout(userId: Id) {
+        viewModelScope.launch {
+            userManager.logout(userId)
             _logoutAccountResult.value = true
         }
     }
 
-    fun removeAccount(username: String, notify: Boolean = true) {
+    @Deprecated("Use with user id", ReplaceWith("logout(userId)"), DeprecationLevel.ERROR)
+    fun logoutAccount(username: String) {
+        unsupported
+    }
+
+    fun remove(userId: Id, notify: Boolean = true) {
         viewModelScope.launch {
-            if (accountManager.getLoggedInUsers().contains(username)) {
-                userManager.removeAccount(username) {
-                    if (notify) {
-                        // notify the activity
-                        _removedAccountResult.value = true
-                    }
-                }
-            } else {
-                accountManager.remove(findUserIdForUsername(Name(username)))
-                if (notify) {
-                    _removedAccountResult.value = true
-                }
+
+            if (userId in accountManager.allLoggedIn())
+                userManager.logoutAndRemove(userId)
+            else
+                accountManager.remove(userId)
+
+            if (notify) _removedAccountResult.value = true
+        }
+    }
+
+    @Deprecated("Use with user id", ReplaceWith("remove(userId, notify)"), DeprecationLevel.ERROR)
+    fun removeAccount(username: String, notify: Boolean = true) {
+        unsupported
+    }
+
+    fun removeAll(usersIds: Collection<Id>) {
+        viewModelScope.launch {
+            val otherUsersIds = (usersIds - userManager.currentUserId).filterNotNull()
+            for (userId in otherUsersIds) {
+                remove(userId, notify = false)
+            }
+
+            userManager.logoutLastActiveAccount {
+                _removedAllAccountsResult.value = true
             }
         }
     }
 
+    @Deprecated("Use with user id", ReplaceWith("removeAll(usersIds)"), DeprecationLevel.ERROR)
     fun removeAllAccounts(listUsername: List<String>) {
-        val currentActiveAccount = userManager.username
-        listUsername.minus(currentActiveAccount).forEach {
-            removeAccount(it, false)
-        }
-        userManager.logoutLastActiveAccount {
-            _removedAllAccountsResult.value = true
-        }
+        unsupported
     }
 }
