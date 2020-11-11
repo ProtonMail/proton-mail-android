@@ -74,7 +74,6 @@ import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.GetDirectEnabledJob;
 import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
@@ -389,12 +388,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     @Override
     public void createVerificationPaymentForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
         VerifyPaymentJob job = new VerifyPaymentJob(amount, currency, paymentToken);
-        mJobManager.addJobInBackground(job);
-    }
-
-    @Override
-    public void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle) {
-        CreateSubscriptionJob job = new CreateSubscriptionJob(amount, currency, couponCode, planIds, cycle, paymentToken);
         mJobManager.addJobInBackground(job);
     }
 

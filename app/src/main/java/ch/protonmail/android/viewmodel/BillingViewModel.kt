@@ -30,6 +30,7 @@ import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
 import ch.protonmail.android.api.models.PaymentType
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.worker.CreateSubscriptionWorker
 import ch.protonmail.libs.core.utils.ViewModelFactory
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -39,7 +40,8 @@ import retrofit2.Response
 import timber.log.Timber
 
 class BillingViewModel(
-    private val protonMailApiManager: ProtonMailApiManager
+    private val protonMailApiManager: ProtonMailApiManager,
+    private val createSubscriptionWorker: CreateSubscriptionWorker.Enqueuer
 ) : ViewModel() {
 
     private val _createPaymentToken = MutableLiveData<CreatePaymentTokenResponse>()
@@ -121,9 +123,26 @@ class BillingViewModel(
         }
     }
 
-    class Factory (
-        private val protonMailApiManager: ProtonMailApiManager
+    fun createSubscriptionForPaymentToken(token: String,
+                                          amount: Int,
+                                          currency: Constants.CurrencyType,
+                                          couponCode: String,
+                                          planIds: List<String>,
+                                          cycle: Int) {
+        createSubscriptionWorker.enqueue(
+            amount,
+            currency.name,
+            cycle,
+            planIds.toTypedArray(),
+            couponCode,
+            token
+        )
+    }
+
+    class Factory(
+        private val protonMailApiManager: ProtonMailApiManager,
+        private val createSubscriptionWorker: CreateSubscriptionWorker.Enqueuer
     ) : ViewModelFactory<BillingViewModel>() {
-        override fun create() = BillingViewModel(protonMailApiManager)
+        override fun create() = BillingViewModel(protonMailApiManager, createSubscriptionWorker)
     }
 }

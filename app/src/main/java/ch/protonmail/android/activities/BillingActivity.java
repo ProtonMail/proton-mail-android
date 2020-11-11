@@ -46,7 +46,6 @@ import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.jobs.CheckUsernameAvailableJob;
 import ch.protonmail.android.jobs.DonateJob;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 
@@ -256,12 +255,6 @@ public class BillingActivity extends BaseActivity implements
     @Override
     public void createVerificationPaymentForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
 
-    }
-
-    @Override
-    public void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle) {
-        CreateSubscriptionJob job = new CreateSubscriptionJob(amount, currency, couponCode, planIds, cycle, paymentToken);
-        mJobManager.addJobInBackground(job);
     }
 
     @Override

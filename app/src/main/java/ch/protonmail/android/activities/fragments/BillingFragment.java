@@ -54,6 +54,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
@@ -92,6 +94,8 @@ import ch.protonmail.android.utils.extensions.CollectionExtensions;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.BillingViewModel;
 import ch.protonmail.android.views.PMWebView;
+import ch.protonmail.android.worker.CreateSubscriptionWorker;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_PAYMENT_TOKEN_STRING;
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_STATUS_STRING;
@@ -101,9 +105,7 @@ import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_
 import static ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponseKt.FIELD_HUMAN_VERIFICATION_TOKEN;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
 
-/**
- * Created by dkadrikj on 7/1/16.
- */
+@AndroidEntryPoint
 public class BillingFragment extends CreateAccountBaseFragment {
 
     private static final String ARGUMENT_AMOUNT = "ch.protonmail.android.ARG_AMOUNT";
@@ -113,6 +115,9 @@ public class BillingFragment extends CreateAccountBaseFragment {
     private static final String ARGUMENT_CYCLE = "ch.protonmail.android.ARG_CYCLE";
 
     private static final int REQUEST_CODE_PAYMENT_APPROVAL = 2421;
+
+    @Inject
+    CreateSubscriptionWorker.Enqueuer createSubscriptionWorker;
 
     @BindView(R.id.credit_card_name)
     EditText creditCardNameEditText;
@@ -221,7 +226,10 @@ public class BillingFragment extends CreateAccountBaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        BillingViewModel.Factory billingViewModelFactory = new BillingViewModel.Factory(billingListener.getProtonMailApiManager());
+        BillingViewModel.Factory billingViewModelFactory = new BillingViewModel.Factory(
+                billingListener.getProtonMailApiManager(),
+                createSubscriptionWorker
+                );
         billingViewModel = new ViewModelProvider(this, billingViewModelFactory).get(BillingViewModel.class);
     }
 
@@ -535,7 +543,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
                         paymentTokenForSubscription = token;
                         break;
                     case UPGRADE:
-                        mListener.createSubscriptionForPaymentToken(token, amount, currency, couponCode, planIds, cycle);
+                        billingViewModel.createSubscriptionForPaymentToken(token, amount, currency, couponCode, planIds, cycle);
                         break;
                     case DONATE:
                         mListener.donateForPaymentToken(amount, currency, token);
@@ -632,7 +640,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         mProgressBar.setVisibility(View.GONE);
         switch (event.status) {
             case SUCCESS: {
-                mListener.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, couponCode, planIds, cycle);
+                billingViewModel.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, couponCode, planIds, cycle);
             }
             break;
             default:
