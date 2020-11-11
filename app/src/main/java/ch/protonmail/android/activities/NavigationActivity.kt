@@ -47,7 +47,6 @@ import ch.protonmail.android.adapters.setUnreadLocations
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob
@@ -55,6 +54,7 @@ import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
@@ -81,7 +81,7 @@ import me.proton.core.util.kotlin.unsupported
 import java.util.ArrayList
 import java.util.Calendar
 import javax.inject.Inject
-import ch.protonmail.android.domain.entity.user.User as NewUser
+import ch.protonmail.android.api.models.User as OldUser
 
 // region constants
 const val EXTRA_FIRST_LOGIN = "EXTRA_FIRST_LOGIN"
@@ -372,7 +372,7 @@ abstract class NavigationActivity :
         })
     }
 
-    private fun NewUser.toDrawerUser(loggedIn: Boolean, notificationsCount: Int): DrawerUserModel.BaseUser.DrawerUser {
+    private fun User.toDrawerUser(loggedIn: Boolean, notificationsCount: Int): DrawerUserModel.BaseUser.DrawerUser {
         val primaryAddress = addresses.primary
         val username = name.s
         val displayName = primaryAddress?.displayName?.s
@@ -395,11 +395,6 @@ abstract class NavigationActivity :
             val isScheduledSnoozeEnabled = getScheduledSnooze(userPreferences)
             return isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
         }
-    }
-
-    @Deprecated("User with user Id", ReplaceWith("areNotificationSnoozed(userId)"), DeprecationLevel.ERROR)
-    private fun areNotificationSnoozed(username: String): Boolean {
-        unsupported
     }
 
     private fun setUpInitialDrawerItems(isPinEnabled: Boolean) {
@@ -425,7 +420,7 @@ abstract class NavigationActivity :
         )
     }
 
-    protected fun refreshDrawerHeader(currentUser: NewUser) {
+    protected fun refreshDrawerHeader(currentUser: User) {
         val addresses = currentUser.addresses
 
         if (addresses.hasAddresses) {
@@ -441,8 +436,12 @@ abstract class NavigationActivity :
         }
     }
 
-    @Deprecated("User with NewUser", ReplaceWith("refreshDrawerHeader(currentUser)"), DeprecationLevel.ERROR)
-    protected fun refreshDrawerHeader(user: User) {
+    @Deprecated(
+        "User with \"new\" User",
+        ReplaceWith("refreshDrawerHeader(currentUser)"),
+        DeprecationLevel.ERROR
+    )
+    protected fun refreshDrawerHeader(user: OldUser) {
         unsupported
     }
 
