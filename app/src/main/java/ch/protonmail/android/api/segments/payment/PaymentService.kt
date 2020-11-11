@@ -18,21 +18,34 @@
  */
 package ch.protonmail.android.api.segments.payment
 
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.CheckSubscriptionBody
+import ch.protonmail.android.api.models.CheckSubscriptionResponse
+import ch.protonmail.android.api.models.CreateSubscriptionBody
+import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
+import ch.protonmail.android.api.models.DonateBody
+import ch.protonmail.android.api.models.GetSubscriptionResponse
+import ch.protonmail.android.api.models.PaymentMethodResponse
+import ch.protonmail.android.api.models.PaymentMethodsResponse
+import ch.protonmail.android.api.models.PaymentsStatusResponse
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.TokenPaymentBody
+import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
+import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
-import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
-import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-
 interface PaymentService {
 
     @GET("payments/subscription")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchSubscription(): Call<GetSubscriptionResponse>
+    fun fetchSubscriptionBlocking(): Call<GetSubscriptionResponse>
+
+    @GET("payments/subscription")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun fetchSubscription(): GetSubscriptionResponse
 
     @GET("payments/methods")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -44,11 +57,19 @@ interface PaymentService {
 
     @POST("payments/methods")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createUpdatePaymentMethod(@Body body: TokenPaymentBody): Call<PaymentMethodResponse>
+    fun createUpdatePaymentMethodBlocking(@Body body: TokenPaymentBody): Call<PaymentMethodResponse>
+
+    @POST("payments/methods")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun createUpdatePaymentMethod(@Body body: TokenPaymentBody): PaymentMethodResponse
 
     @POST("payments/subscription")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createUpdateSubscription(@Body body: CreateSubscriptionBody): Call<CreateUpdateSubscriptionResponse>
+    fun createUpdateSubscriptionBlocking(@Body body: CreateSubscriptionBody): Call<CreateUpdateSubscriptionResponse>
+
+    @POST("payments/subscription")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun createUpdateSubscription(@Body body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
 
     @POST("payments/donate")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

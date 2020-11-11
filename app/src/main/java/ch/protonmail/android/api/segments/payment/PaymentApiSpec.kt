@@ -43,7 +43,9 @@ import java.io.IOException
 interface PaymentApiSpec {
 
     @Throws(IOException::class)
-    fun fetchSubscription(): GetSubscriptionResponse
+    fun fetchSubscriptionBlocking(): GetSubscriptionResponse
+
+    suspend fun fetchSubscription(): GetSubscriptionResponse
 
     @Throws(IOException::class)
     fun fetchPaymentMethods(): PaymentMethodsResponse
@@ -59,10 +61,14 @@ interface PaymentApiSpec {
 
     @WorkerThread
     @Throws(IOException::class)
-    fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
+    fun createUpdateSubscriptionBlocking(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
+
+    suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
 
     @Throws(IOException::class)
-    fun createUpdatePaymentMethod(body: TokenPaymentBody): Call<PaymentMethodResponse>
+    fun createUpdatePaymentMethodBlocking(body: TokenPaymentBody): Call<PaymentMethodResponse>
+
+    suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse
 
     @Throws(IOException::class)
     fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse

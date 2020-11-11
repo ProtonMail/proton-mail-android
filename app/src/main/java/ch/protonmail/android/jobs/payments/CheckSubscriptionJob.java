@@ -56,7 +56,7 @@ public class CheckSubscriptionJob extends ProtonMailBaseJob {
     public void onRun() throws Throwable {
         GetSubscriptionResponse currentSubscriptions = null;
         try {
-            currentSubscriptions = getApi().fetchSubscription();
+            currentSubscriptions = getApi().fetchSubscriptionBlocking();
         } catch (Exception error) {
             // noop
         }

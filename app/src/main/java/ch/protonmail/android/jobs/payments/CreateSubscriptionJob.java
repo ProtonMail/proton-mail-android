@@ -42,6 +42,7 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.extensions.CollectionExtensions;
 
+@Deprecated
 public class CreateSubscriptionJob extends ProtonMailBaseJob {
 
     private PaymentBody paymentMethodBody;
@@ -66,7 +67,7 @@ public class CreateSubscriptionJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        GetSubscriptionResponse currentSubscriptions = getApi().fetchSubscription();
+        GetSubscriptionResponse currentSubscriptions = getApi().fetchSubscriptionBlocking();
 
         Subscription subscription = currentSubscriptions.getSubscription();
         if (subscription != null) {
@@ -89,7 +90,7 @@ public class CreateSubscriptionJob extends ProtonMailBaseJob {
             subscriptionBody = new CreateSubscriptionBody(amount, currency, paymentMethodBody, couponCode, planIds, cycle);
         }
 
-        CreateUpdateSubscriptionResponse subscriptionResponse = getApi().createUpdateSubscription(subscriptionBody);
+        CreateUpdateSubscriptionResponse subscriptionResponse = getApi().createUpdateSubscriptionBlocking(subscriptionBody);
 
         if (subscriptionResponse.getCode() != Constants.RESPONSE_CODE_OK) {
             Map<String, String> details = CollectionExtensions.filterValues(subscriptionResponse.getDetails(), String.class);
@@ -100,7 +101,7 @@ public class CreateSubscriptionJob extends ProtonMailBaseJob {
         // store payment method if this was first payment using credits from "verification payment"
         if (amount == 0 && paymentToken != null) {
             try {
-                getApi().createUpdatePaymentMethod(new TokenPaymentBody(paymentToken)).execute();
+                getApi().createUpdatePaymentMethodBlocking(new TokenPaymentBody(paymentToken)).execute();
             } catch (IOException e) {
                 Logger.doLogException(e);
             }

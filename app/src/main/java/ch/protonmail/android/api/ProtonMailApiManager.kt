@@ -315,7 +315,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun createOrganization(body: CreateOrganizationBody): OrganizationResponse? = api.createOrganization(body)
 
-    override fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
+    override fun fetchSubscriptionBlocking(): GetSubscriptionResponse = api.fetchSubscriptionBlocking()
+
+    override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 
     override fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
 
@@ -325,9 +327,17 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
 
-    override fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse = api.createUpdateSubscription(body)
+    override fun createUpdateSubscriptionBlocking(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
+        api.createUpdateSubscriptionBlocking(body)
 
-    override fun createUpdatePaymentMethod(body: TokenPaymentBody): Call<PaymentMethodResponse> = api.createUpdatePaymentMethod(body)
+    override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
+        api.createUpdateSubscription(body)
+
+    override fun createUpdatePaymentMethodBlocking(body: TokenPaymentBody): Call<PaymentMethodResponse> =
+        api.createUpdatePaymentMethodBlocking(body)
+
+    override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
+        api.createUpdatePaymentMethod(body)
 
     override fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse = api.fetchAvailablePlans(currency, cycle)
 
