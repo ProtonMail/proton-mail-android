@@ -20,6 +20,7 @@ package ch.protonmail.android.activities.messageDetails
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -85,6 +86,7 @@ import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.HTMLTransformer.AbstractTransformer
@@ -129,6 +131,7 @@ internal class MessageDetailsActivity :
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
     private lateinit var attachmentsListAdapter: MessageDetailsAttachmentListAdapter
+    private lateinit var primaryBaseActivity: Context
 
     /**
      * Whether the current message needs to be store in database. If transient if won't be stored
@@ -154,11 +157,17 @@ internal class MessageDetailsActivity :
 
     override fun checkForPermissionOnStartup(): Boolean = false
 
+    override fun attachBaseContext(base: Context) {
+        primaryBaseActivity = base
+        super.attachBaseContext(CustomLocale.apply(base))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (mUserManager.isFirstMessageDetails) {
             mUserManager.firstMessageDetailsDone()
         }
+
         markAsRead = true
         messageId = requireNotNull(intent.getStringExtra(EXTRA_MESSAGE_ID))
         messageRecipientUsername = intent.getStringExtra(EXTRA_MESSAGE_RECIPIENT_USERNAME)
@@ -396,7 +405,7 @@ internal class MessageDetailsActivity :
                 }
             }
             R.id.action_report_phishing -> showReportPhishingDialog(message)
-            R.id.action_print -> viewModel.printMessage(applicationContext)
+            R.id.action_print -> viewModel.printMessage(primaryBaseActivity) // do not change context type
         }
         if (job != null) {
             mJobManager.addJobInBackground(job)

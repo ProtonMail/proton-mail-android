@@ -29,16 +29,12 @@ import android.webkit.WebViewClient
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.utils.DateUtil
-import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.extensions.showToast
+import timber.log.Timber
 
-/**
- * Created by Kamil Rajtar on 09.08.18.
- */
 internal class MessagePrinter(
     private val context: Context,
     private val resources: Resources,
@@ -110,7 +106,7 @@ internal class MessagePrinter(
                 try {
                     printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
                 } catch (e: Exception) {
-                    Logger.doLogException(e)
+                    Timber.e(e)
                     context.showToast(R.string.print_error)
                 }
             }

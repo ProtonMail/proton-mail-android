@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
-import android.content.res.Resources
 import android.print.PrintManager
 import android.util.Pair
 import androidx.hilt.Assisted
@@ -56,8 +55,8 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
@@ -586,13 +585,13 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    fun printMessage(context: Context) {
+    fun printMessage(activityContext: Context) {
         val message = message.value
         message?.let {
             MessagePrinter(
-                context,
-                context.resources,
-                context.getSystemService(Context.PRINT_SERVICE) as PrintManager,
+                activityContext,
+                activityContext.resources,
+                activityContext.getSystemService(Context.PRINT_SERVICE) as PrintManager,
                 remoteContentDisplayed
             ).printMessage(it, this.bodyString ?: "")
         }
