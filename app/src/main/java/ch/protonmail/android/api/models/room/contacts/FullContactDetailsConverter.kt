@@ -18,19 +18,15 @@
  */
 package ch.protonmail.android.api.models.room.contacts
 
-import androidx.room.TypeConverter
 import android.util.Base64
+import androidx.room.TypeConverter
 import ch.protonmail.android.api.models.ContactEncryptedData
-import ch.protonmail.android.utils.Logger
-import java.io.*
-
-// region constants
-private const val TAG_FULL_CONTACT_DETAILS_CONVERTER = "FullContactDetailsConverter"
-// endregion
-
-/**
- * Created by Kamil Rajtar on 21.08.18.
- */
+import timber.log.Timber
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 
 class FullContactDetailsConverter{
 	@TypeConverter
@@ -40,9 +36,7 @@ class FullContactDetailsConverter{
 			val encryptedDataArray=contactEncryptedDataList?.toTypedArray()?: arrayOf()
 			ObjectOutputStream(out).writeObject(encryptedDataArray)
 		} catch(e:IOException) {
-			Logger.doLogException(TAG_FULL_CONTACT_DETAILS_CONVERTER,
-					"Serialization of encrypted data failed ",
-					e)
+			Timber.e("Serialization of encrypted data failed ", e)
 		}
 
 		return Base64.encodeToString(out.toByteArray(),Base64.DEFAULT)
@@ -50,12 +44,12 @@ class FullContactDetailsConverter{
 
 	@TypeConverter
 	fun stringToContactEncryptedDataList(contactEncryptedDataString:String?):List<ContactEncryptedData>? {
-		val inputStream=ByteArrayInputStream(Base64.decode(contactEncryptedDataString,Base64.DEFAULT))
 		return try {
-			val resultArray=ObjectInputStream(inputStream).readObject() as Array<ContactEncryptedData>
+			val inputStream = ByteArrayInputStream(Base64.decode(contactEncryptedDataString, Base64.DEFAULT))
+			val resultArray = ObjectInputStream(inputStream).readObject() as Array<ContactEncryptedData>
 			resultArray.toList()
 		} catch(e:Exception) {
-			Logger.doLogException(TAG_FULL_CONTACT_DETAILS_CONVERTER,"DeSerialization of recipients failed",e)
+			Timber.e("DeSerialization of recipients failed", e)
 			null
 		}
 	}
