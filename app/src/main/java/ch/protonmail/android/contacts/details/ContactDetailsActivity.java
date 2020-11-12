@@ -140,9 +140,6 @@ import timber.log.Timber;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_INITIALS;
 import static ch.protonmail.android.views.contactDetails.ContactAvatarViewKt.TYPE_PHOTO;
 
-/*
- * Created by dkadrikj on 8/26/16.
- */
 @AndroidEntryPoint
 public class ContactDetailsActivity extends BaseActivity implements AppBarLayout.OnOffsetChangedListener {
 
