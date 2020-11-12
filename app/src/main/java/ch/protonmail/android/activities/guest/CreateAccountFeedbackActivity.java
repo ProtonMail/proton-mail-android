@@ -30,7 +30,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import ch.protonmail.android.R;
-import ch.protonmail.android.activities.BaseConnectivityActivity;
+import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.activities.fragments.CreateAccountFeedbackFragment;
 import ch.protonmail.android.activities.fragments.CreateAccountFragment;
 import ch.protonmail.android.activities.mailbox.MailboxActivity;
@@ -45,7 +45,7 @@ import ch.protonmail.android.utils.AppUtil;
 /**
  * Created by dkadrikj on 1/22/16.
  */
-public class CreateAccountFeedbackActivity extends BaseConnectivityActivity implements
+public class CreateAccountFeedbackActivity extends BaseActivity implements
         CreateAccountFragment.ICreateAccountListener {
 
     public static final String EXTRA_WINDOW_SIZE = "window_size";
