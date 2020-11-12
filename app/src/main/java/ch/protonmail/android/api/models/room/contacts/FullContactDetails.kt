@@ -90,7 +90,7 @@ data class FullContactDetails @Ignore constructor(
         modifyTime: Long,
         size: Int,
         defaults: Int,
-        encryptedData: MutableList<ContactEncryptedData>
+        encryptedData: MutableList<ContactEncryptedData>?
     ) : this(
         contactId,
         name,
