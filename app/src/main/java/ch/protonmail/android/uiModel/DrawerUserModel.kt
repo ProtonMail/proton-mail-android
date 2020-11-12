@@ -53,30 +53,16 @@ internal sealed class DrawerUserModel {
          */
         open val notificationsSnoozed: Boolean = false
 
-        data class AccountUser @JvmOverloads constructor(
+        data class AccountUser(
             override val id: Id,
-            override val name: String = EMPTY_STRING,
-            override val emailAddress: String = EMPTY_STRING,
-            override val loggedIn: Boolean = false,
-            val primary: Boolean = false,
-            val displayName: String = EMPTY_STRING
-        ) : BaseUser() {
+            override val name: String,
+            override val emailAddress: String,
+            override val loggedIn: Boolean,
+            val primary: Boolean,
+            val displayName: String
+        ) : BaseUser()
 
-            @Deprecated(
-                "Use constructor with id",
-                ReplaceWith("AccountUser(id, name, emailAddress, loggedIn, primary, displayName"),
-                DeprecationLevel.ERROR
-            )
-            constructor(
-                name: String = EMPTY_STRING,
-                emailAddress: String = EMPTY_STRING,
-                loggedIn: Boolean = false,
-                primary: Boolean = false,
-                displayName: String = EMPTY_STRING
-            ): this(TODO(), name, emailAddress, loggedIn, primary, displayName)
-        }
-
-        data class DrawerUser @JvmOverloads constructor(
+        data class DrawerUser(
             override val id: Id,
             override val name: String,
             override val emailAddress: String,

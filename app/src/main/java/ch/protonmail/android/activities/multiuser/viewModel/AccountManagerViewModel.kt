@@ -27,7 +27,6 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.launch
-import me.proton.core.util.kotlin.unsupported
 
 class AccountManagerViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
@@ -52,11 +51,6 @@ class AccountManagerViewModel @ViewModelInject constructor(
         }
     }
 
-    @Deprecated("Use with user id", ReplaceWith("logout(userId)"), DeprecationLevel.ERROR)
-    fun logoutAccount(username: String) {
-        unsupported
-    }
-
     fun remove(userId: Id, notify: Boolean = true) {
         viewModelScope.launch {
 
@@ -69,14 +63,9 @@ class AccountManagerViewModel @ViewModelInject constructor(
         }
     }
 
-    @Deprecated("Use with user id", ReplaceWith("remove(userId, notify)"), DeprecationLevel.ERROR)
-    fun removeAccount(username: String, notify: Boolean = true) {
-        unsupported
-    }
-
-    fun removeAll(usersIds: Collection<Id>) {
+    fun removeAllLoggedIn() {
         viewModelScope.launch {
-            val otherUsersIds = (usersIds - userManager.currentUserId).filterNotNull()
+            val otherUsersIds = (accountManager.allLoggedIn() - userManager.currentUserId).filterNotNull()
             for (userId in otherUsersIds) {
                 remove(userId, notify = false)
             }
@@ -85,10 +74,5 @@ class AccountManagerViewModel @ViewModelInject constructor(
                 _removedAllAccountsResult.value = true
             }
         }
-    }
-
-    @Deprecated("Use with user id", ReplaceWith("removeAll(usersIds)"), DeprecationLevel.ERROR)
-    fun removeAllAccounts(listUsername: List<String>) {
-        unsupported
     }
 }

@@ -96,6 +96,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Inject
     protected NetworkConfigurator networkConfigurator;
     @Inject
+    @Deprecated // TODO this should not be used by sub-classes, they should get it injected
+    //              directly, as are aiming to remove this base class
     protected UserManager mUserManager;
     @Inject
     protected JobManager mJobManager;

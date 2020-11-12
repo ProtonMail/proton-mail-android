@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -32,6 +32,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.ToggleButton
+import androidx.annotation.StringRes
 import ch.protonmail.android.R
 import ch.protonmail.android.views.CustomFontButton
 import com.google.android.material.snackbar.Snackbar
@@ -107,6 +108,44 @@ class DialogUtils {
             return dialog
         }
 
+        inline fun showTwoButtonInfoDialog(
+            context: Context,
+            title: CharSequence,
+            message: CharSequence,
+            @StringRes positiveStringId: Int = R.string.okay,
+            @StringRes negativeStringId: Int = R.string.cancel,
+            cancelable: Boolean = false,
+            crossinline onPositive: () -> Unit
+        ) {
+            AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setNegativeButton(negativeStringId) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(positiveStringId) { dialog, _ ->
+                    run {
+                        onPositive()
+                        dialog.dismiss()
+                    }
+                }
+                .setCancelable(cancelable)
+                .create()
+                .show()
+        }
+
+        @Deprecated(
+            "Use 'showTwoButtonInfoDialog'",
+            ReplaceWith(
+                "showTwoButtonInfoDialog(\n" +
+                    "   context,\n" +
+                    "   title,\n" +
+                    "   message,\n" +
+                    "   positiveStringId,\n" +
+                    "   negativeStringId,\n" +
+                    "   cancelable,\n" +
+                    "   okListener\n" +
+                    ")"
+            )
+        )
         fun showInfoDialogWithTwoButtons(context: Context, title: String, message: String,
                                          negativeBtnText: String, positiveBtnText: String,
                                          okListener: ((Unit) -> Unit)?, cancelable: Boolean) {
