@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
@@ -65,15 +66,12 @@ import ch.protonmail.android.events.payment.CheckSubscriptionEvent;
 import ch.protonmail.android.events.payment.PaymentsStatusEvent;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.payments.CheckSubscriptionJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.jobs.payments.GetPaymentsStatusJob;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.viewmodel.UpsellingViewModel;
 
-/**
- * Created by dkadrikj on 6/28/16.
- */
 public class UpsellingActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_UPGRADE_CONTAINER = "EXTRA_OPEN_UPGRADE";
@@ -116,6 +114,9 @@ public class UpsellingActivity extends BaseActivity {
     TextView mPaymentOptions;
     @BindView(R.id.progress)
     View mProgress;
+
+    private UpsellingViewModel viewModel;
+
     private State upgradeContainerState;
     private State donateContainerState;
 
@@ -152,6 +153,7 @@ public class UpsellingActivity extends BaseActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        viewModel = new ViewModelProvider(this).get(UpsellingViewModel.class);
         boolean openUpgrade = getIntent().getBooleanExtra(EXTRA_OPEN_UPGRADE_CONTAINER, false);
         checkPaymentStatus();
         fetchPlan(Constants.CurrencyType.EUR);
@@ -449,8 +451,14 @@ public class UpsellingActivity extends BaseActivity {
         if (event.getStatus() == Status.SUCCESS) {
             if (event.getResponse().getAmountDue() == 0) {
                 // prevent user from making illegal payment of value 0
-                CreateSubscriptionJob job = new CreateSubscriptionJob(0, Constants.CurrencyType.valueOf(event.getResponse().getCurrency()), null, Collections.singletonList(mSelectedPlanId), mCycle, null);
-                mJobManager.addJobInBackground(job);
+                viewModel.createSubscription(
+                        0,
+                        event.getResponse().getCurrency(),
+                        mCycle,
+                        Collections.singletonList(mSelectedPlanId),
+                        null,
+                        null
+                );
             } else {
                 Intent billingIntent = new Intent(this, BillingActivity.class);
                 billingIntent.putExtra(BillingActivity.EXTRA_WINDOW_SIZE, getWindow().getDecorView().getHeight());
@@ -648,13 +656,13 @@ public class UpsellingActivity extends BaseActivity {
         mJobManager.addJobInBackground(job);
     }
 
-    private enum State {
-        CLOSED, OPENED
-    }
-
     @Subscribe
     public void onLogoutEvent(LogoutEvent event) {
         startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         finish();
+    }
+
+    private enum State {
+        CLOSED, OPENED
     }
 }
