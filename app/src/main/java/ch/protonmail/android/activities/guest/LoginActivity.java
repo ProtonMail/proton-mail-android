@@ -36,13 +36,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.lifecycle.ViewModelProvider;
+
 import com.squareup.otto.Subscribe;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -88,8 +88,7 @@ public class LoginActivity extends BaseLoginActivity {
     private boolean mDisableBack = false;
     private AlertDialog m2faAlertDialog;
 
-    @Inject
-    ConnectivityBaseViewModel viewModel;
+    private ConnectivityBaseViewModel viewModel;
 
     @Override
     protected int getLayoutId() {
@@ -124,6 +123,7 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(ConnectivityBaseViewModel.class);
         // clickable sign up link
         AppUtil.clearNotifications(this, 3); // TODO: check which notification Id is this one
 

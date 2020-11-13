@@ -32,6 +32,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
@@ -101,8 +102,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     private static final String STATE_DOMAIN = "domain";
     private static final String STATE_ADDRESS = "address";
 
-    @Inject
-    ConnectivityBaseViewModel viewModel;
+    private ConnectivityBaseViewModel viewModel;
 
     @Inject
     protected LaunchInitialDataFetch launchInitialDataFetch;
@@ -163,6 +163,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(ConnectivityBaseViewModel.class);
         if (fragmentContainer != null) {
             if (savedInstanceState != null) {
                 addressChosen = savedInstanceState.getParcelable(STATE_ADDRESS);
