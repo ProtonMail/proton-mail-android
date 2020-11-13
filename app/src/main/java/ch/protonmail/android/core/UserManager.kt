@@ -155,11 +155,15 @@ class UserManager @Inject constructor(
     var mailSettings: MailSettings? = null
         set(value) {
             field = value
-            if (value != null) withCurrentUserPreferences(value::save)
+            if (value != null) withCurrentUserPreferences(value::saveBlocking)
         }
 
-    fun getMailSettings(userId: Id): MailSettings =
+    suspend fun getMailSettings(userId: Id): MailSettings =
         MailSettings.load(SecureSharedPreferences.getPrefsForUser(context, userId))
+
+    @Deprecated("Use suspend function", ReplaceWith("getMailSettings(userId)"))
+    fun getMailSettingsBlocking(userId: Id): MailSettings =
+        runBlocking { getMailSettings(userId) }
 
     @Deprecated("User user Id", ReplaceWith("getMailSettings(userId)"), DeprecationLevel.ERROR)
     fun getMailSettings(username: String): MailSettings? {
@@ -357,12 +361,18 @@ class UserManager @Inject constructor(
 
     // Very important: don't setSnoozeQuick to false if it already is false otherwise it will
     // keep saving, saving can be super slow on users with a lot of accounts!
-    fun isSnoozeQuickEnabled(): Boolean {
+    suspend fun isSnoozeQuickEnabled(): Boolean {
         if (snoozeSettings!!.snoozeQuick && snoozeSettings!!.snoozeQuickEndTime - System.currentTimeMillis() <= 0) {
             setSnoozeQuick(false, 0)
         }
         return snoozeSettings!!.snoozeQuick
     }
+
+    // Very important: don't setSnoozeQuick to false if it already is false otherwise it will
+    // keep saving, saving can be super slow on users with a lot of accounts!
+    @Deprecated("Use suspend function", ReplaceWith("isSnoozeQuickEnabled"))
+    fun isSnoozeQuickEnabledBlocking(): Boolean =
+        runBlocking { isSnoozeQuickEnabled() }
 
     @IntDef(LOGIN_STATE_NOT_INITIALIZED, LOGIN_STATE_LOGIN_FINISHED, LOGIN_STATE_TO_INBOX)
     internal annotation class LoginState
@@ -592,7 +602,7 @@ class UserManager @Inject constructor(
         if (nextUser == null) {
             isLoggedIn = false
             currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
-            saveBackupSettings()
+            saveCurrentUserBackupSettings()
             LogoutService.startLogout(false)
             setRememberMailboxLogin(false)
             AppUtil.deleteSecurePrefs(preferencesFor(userId), true)
@@ -926,7 +936,7 @@ class UserManager @Inject constructor(
     /**
      * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
      */
-    fun setSnoozeScheduled(
+    suspend fun setSnoozeScheduled(
         isOn: Boolean,
         startTimeHour: Int,
         startTimeMinute: Int,
@@ -949,7 +959,29 @@ class UserManager @Inject constructor(
     /**
      * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
      */
-    fun setSnoozeQuick(isOn: Boolean, minutesFromNow: Int) {
+    @Deprecated(
+        "Use suspend function",
+        ReplaceWith(
+            "setSnoozeScheduled(isOn, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, repeatingDays)"
+        )
+    )
+    fun setSnoozeScheduledBlocking(
+        isOn: Boolean,
+        startTimeHour: Int,
+        startTimeMinute: Int,
+        endTimeHour: Int,
+        endTimeMinute: Int,
+        repeatingDays: String
+    ) {
+        runBlocking {
+            setSnoozeScheduled(isOn, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute, repeatingDays)
+        }
+    }
+
+    /**
+     * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
+     */
+    suspend fun setSnoozeQuick(isOn: Boolean, minutesFromNow: Int) {
         val preferences = preferencesFor(checkNotNull(currentUserId))
         checkNotNull(snoozeSettings).apply {
             snoozeQuick = isOn
@@ -958,6 +990,14 @@ class UserManager @Inject constructor(
             saveQuickSnoozeEndTimeBackup(preferences)
             save(preferences)
         }
+    }
+
+    /**
+     * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
+     */
+    @Deprecated("Use suspend function", ReplaceWith("setSnoozeQuick(isOn, minutesFromNow)"))
+    fun setSnoozeQuickBlocking(isOn: Boolean, minutesFromNow: Int) {
+        runBlocking { setSnoozeQuick(isOn, minutesFromNow) }
     }
 
     private suspend fun loadSettings(userId: Id) = withContext(dispatchers.Io) {

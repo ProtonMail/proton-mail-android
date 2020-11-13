@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.view.View
@@ -77,6 +76,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.drawer_header.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.unsupported
 import java.util.ArrayList
 import java.util.Calendar
@@ -98,7 +98,7 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
  * Base activity that offers methods for the navigation drawer. Extend from this if your activity
  * needs support for the navigation drawer.
  */
-
+@AndroidEntryPoint
 abstract class NavigationActivity :
     BaseActivity(),
     DrawerHeaderView.IDrawerHeaderListener,
@@ -382,20 +382,24 @@ abstract class NavigationActivity :
             emailAddress = primaryAddress?.email?.s ?: username,
             loggedIn = loggedIn,
             notifications = notificationsCount,
-            notificationsSnoozed = areNotificationSnoozed(id),
+            notificationsSnoozed = areNotificationSnoozedBlocking(id),
             displayName = displayName ?: username
         )
     }
 
-    private fun areNotificationSnoozed(userId: Id): Boolean {
+    private suspend fun areNotificationsSnoozed(userId: Id): Boolean {
         val userPreferences = SecureSharedPreferences.getPrefsForUser(this, userId)
-        with(SnoozeSettings.loadBlocking(userPreferences)) {
+        with(SnoozeSettings.load(userPreferences)) {
             val shouldShowNotification = !shouldSuppressNotification(Calendar.getInstance())
             val isQuickSnoozeEnabled = snoozeQuick
             val isScheduledSnoozeEnabled = getScheduledSnooze(userPreferences)
             return isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
         }
     }
+
+    @Deprecated("Use suspend function", ReplaceWith("areNotificationsSnoozed(userId)"))
+    private fun areNotificationSnoozedBlocking(userId: Id): Boolean =
+        runBlocking { areNotificationsSnoozed(userId) }
 
     private fun setUpInitialDrawerItems(isPinEnabled: Boolean) {
         val hasPin = isPinEnabled && userManager.getMailboxPin() != null
@@ -426,7 +430,7 @@ abstract class NavigationActivity :
         if (addresses.hasAddresses) {
             val address = checkNotNull(addresses.primary)
 
-            val isSnoozeOn = areNotificationSnoozed(currentUser.id)
+            val isSnoozeOn = areNotificationSnoozedBlocking(currentUser.id)
             val name = address.displayName?.s ?: address.email.s
 
             drawerHeader = DrawerItemUiModel.Header(name, address.email.s, isSnoozeOn)
@@ -508,21 +512,18 @@ abstract class NavigationActivity :
                     getString(R.string.log_out, current.name.s) to getString(R.string.logout_question)
                 }
 
-                AlertDialog.Builder(this@NavigationActivity)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setNegativeButton(R.string.no) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .setPositiveButton(R.string.yes) { dialog, _ ->
-                        onLogoutConfirmed(
-                            currentUserId = checkNotNull(userManager.currentUserId),
-                            hasNextLoggedInUser = nextLoggedInUserId != null
-                        )
-                        dialog.dismiss()
-                    }
-                    .create()
-                    .show()
+                DialogUtils.showTwoButtonInfoDialog(
+                    context = this@NavigationActivity,
+                    title = title,
+                    message = message,
+                    positiveStringId = R.string.yes,
+                    negativeStringId = R.string.no
+                ) {
+                    onLogoutConfirmed(
+                        currentUserId = checkNotNull(userManager.currentUserId),
+                        hasNextLoggedInUser = nextLoggedInUserId != null
+                    )
+                }
             }
         }
 

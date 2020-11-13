@@ -22,6 +22,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import ch.protonmail.android.api.models.enumerations.PackageType
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.unsupported
 import java.io.Serializable
 
@@ -175,6 +176,11 @@ class MailSettings : Serializable {
             putString(PREF_RECEIVE_MIME_TYPE, receiveMIMEType)
             putString(PREF_SHOW_MIME_TYPE, showMIMEType)
         }
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("save(userPreferences)"))
+    fun saveBlocking(userPreferences: SharedPreferences) {
+        runBlocking { save(userPreferences) }
     }
 
     @Deprecated(
