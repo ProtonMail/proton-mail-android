@@ -23,7 +23,6 @@ import android.content.SharedPreferences
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import kotlinx.coroutines.runBlocking
 import me.proton.core.util.android.sharedpreferences.minusAssign
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.unsupported
@@ -94,10 +93,6 @@ class SnoozeSettings(
                 snoozeScheduledRepeatingDays = snoozeScheduledRepeatingDays
             )
         }
-
-        @Deprecated("Use suspend function", ReplaceWith("load(userId)"))
-        fun loadBlocking(userPreferences: SharedPreferences): SnoozeSettings =
-            runBlocking { load(userPreferences) }
 
         @Deprecated(
             "Load using Preferences directly",
