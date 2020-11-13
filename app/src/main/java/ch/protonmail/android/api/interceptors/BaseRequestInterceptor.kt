@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.interceptors
 
-import androidx.annotation.VisibleForTesting
 import ch.protonmail.android.api.ProtonMailPublicService
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.Proxies
@@ -125,7 +124,6 @@ abstract class BaseRequestInterceptor(
     /**
      * @return if returned null, no need to re-authorize or HTTP 504/429 happened (there's nothing we can do)
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     fun checkIfTokenExpired(chain: Interceptor.Chain, request: Request, response: Response?): Response? {
         if (response == null) {
             return null
