@@ -57,15 +57,7 @@ interface PaymentService {
 
     @POST("payments/methods")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createUpdatePaymentMethodBlocking(@Body body: TokenPaymentBody): Call<PaymentMethodResponse>
-
-    @POST("payments/methods")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun createUpdatePaymentMethod(@Body body: TokenPaymentBody): PaymentMethodResponse
-
-    @POST("payments/subscription")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createUpdateSubscriptionBlocking(@Body body: CreateSubscriptionBody): Call<CreateUpdateSubscriptionResponse>
 
     @POST("payments/subscription")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

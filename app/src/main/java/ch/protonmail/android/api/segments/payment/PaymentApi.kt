@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.segments.payment
 
-import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.models.AvailablePlansResponse
 import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.api.models.CheckSubscriptionResponse
@@ -59,17 +58,8 @@ class PaymentApi(
     override fun fetchPaymentsStatus(): PaymentsStatusResponse =
         ParseUtils.parse(service.fetchPaymentsStatus().execute())
 
-    @Throws(IOException::class)
-    override fun createUpdatePaymentMethodBlocking(body: TokenPaymentBody): Call<PaymentMethodResponse> =
-        service.createUpdatePaymentMethodBlocking(body)
-
     override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
         service.createUpdatePaymentMethod(body)
-
-    @WorkerThread
-    @Throws(IOException::class)
-    override fun createUpdateSubscriptionBlocking(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
-        ParseUtils.parse(service.createUpdateSubscriptionBlocking(body).execute())
 
     override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
         service.createUpdateSubscription(body)

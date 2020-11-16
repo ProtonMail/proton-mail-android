@@ -59,14 +59,7 @@ interface PaymentApiSpec {
     @Throws(IOException::class)
     fun donate(body: DonateBody): ResponseBody?
 
-    @WorkerThread
-    @Throws(IOException::class)
-    fun createUpdateSubscriptionBlocking(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
-
     suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
-
-    @Throws(IOException::class)
-    fun createUpdatePaymentMethodBlocking(body: TokenPaymentBody): Call<PaymentMethodResponse>
 
     suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse
 

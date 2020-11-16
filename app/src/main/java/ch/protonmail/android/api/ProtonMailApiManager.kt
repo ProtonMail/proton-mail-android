@@ -327,14 +327,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
 
-    override fun createUpdateSubscriptionBlocking(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
-        api.createUpdateSubscriptionBlocking(body)
-
     override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
         api.createUpdateSubscription(body)
-
-    override fun createUpdatePaymentMethodBlocking(body: TokenPaymentBody): Call<PaymentMethodResponse> =
-        api.createUpdatePaymentMethodBlocking(body)
 
     override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
         api.createUpdatePaymentMethod(body)
