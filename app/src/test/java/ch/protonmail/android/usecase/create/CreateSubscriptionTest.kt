@@ -17,18 +17,15 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.usecase.create
 
-import android.content.Context
-import androidx.work.ListenableWorker
-import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.Plan
 import ch.protonmail.android.api.models.Subscription
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -40,17 +37,11 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
-class CreateSubscriptionWorkerTest {
-
-    @RelaxedMockK
-    private lateinit var context: Context
-
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
+class CreateSubscriptionTest {
 
     @MockK
     private lateinit var api: ProtonMailApiManager
@@ -61,8 +52,7 @@ class CreateSubscriptionWorkerTest {
     private var dispatcherProvider = TestDispatcherProvider
 
     @InjectMockKs
-    private lateinit var worker: CreateSubscriptionWorker
-
+    private lateinit var useCase: CreateSubscription
 
     @Before
     fun setUp() {
@@ -70,15 +60,16 @@ class CreateSubscriptionWorkerTest {
     }
 
     @Test
-    fun verifyWorkerFailsWithNoInputDataProvided() {
+    fun verifyRequestFailsWithNoInputDataProvided() {
         runBlockingTest {
             // given
-            val expected = ListenableWorker.Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Incorrect input parameters currency:, ids:[]")
-            )
+            val amount = 1
+            val currency = ""
+            val cycle = 0
+            val expected = CreateSubscriptionResult.Error("Incorrect input currency: is incorrect")
 
             // when
-            val actualResult = worker.doWork()
+            val actualResult = useCase.invoke(amount, currency, cycle)
 
             // then
             assertEquals(expected, actualResult)
@@ -86,22 +77,55 @@ class CreateSubscriptionWorkerTest {
     }
 
     @Test
-    fun verifyWorkerFailsWhenFetchingSubscriptions() {
+    fun verifyRequestFailsWhenFetchingSubscriptions() {
         runBlockingTest {
             // given
+            val amount = 1
             val currency = "EUR"
-            every { parameters.inputData } returns
-                workDataOf(
-                    KEY_INPUT_CREATE_SUBSCRIPT_CURRENCY to currency,
-                    KEY_INPUT_CREATE_SUBSCRIPT_PLAN_IDS to arrayOf<String>()
-                )
+            val cycle = 0
             val exceptionMessage = "Network failure!"
             val exception = Exception(exceptionMessage)
             coEvery { api.fetchSubscription() } throws exception
-            val expected = worker.failure(exception)
+            val expected = CreateSubscriptionResult.Error("Error", throwable = exception)
 
             // when
-            val actualResult = worker.doWork()
+            val actualResult = useCase.invoke(amount, currency, cycle)
+
+            // then
+            assertEquals(expected, actualResult)
+        }
+    }
+
+    @Test
+    fun verifyRequestFailsWhenCreateUpdateSubscriptionRetrunsFailure() {
+        runBlockingTest {
+            // given
+            val amount = 1
+            val currency = "EUR"
+            val cycle = 0
+            val testPlan = mockk<Plan>(relaxed = true)
+            val testSubscription = mockk<Subscription> {
+                every { plans } returns listOf(testPlan)
+            }
+            val getSubscriptionResponse = mockk<GetSubscriptionResponse> {
+                every { subscription } returns testSubscription
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
+            coEvery { api.fetchSubscription() } returns getSubscriptionResponse
+
+            val testError = "Test API Error"
+            val testDetails = mapOf("Error1" to "Error1StringObject")
+            val createSubscriptionResponse = mockk<CreateUpdateSubscriptionResponse> {
+                every { subscription } returns testSubscription
+                every { code } returns 123
+                every { error } returns testError
+                every { details } returns testDetails
+            }
+            coEvery { api.createUpdateSubscription(any()) } returns createSubscriptionResponse
+            val expected = CreateSubscriptionResult.Error(testError, errorDescription = "Error1 : Error1StringObject\n")
+
+            // when
+            val actualResult = useCase.invoke(amount, currency, cycle)
 
             // then
             assertEquals(expected, actualResult)
@@ -110,16 +134,12 @@ class CreateSubscriptionWorkerTest {
 
     @Ignore("Ignore until FetchUserSettingsJob & GetPaymentMethodsJob are also converted")
     @Test
-    fun verifyWorkerWorksProperlyWhenAmountIsZeroAndThereIsNoPaymentToken() {
+    fun verifyRequestWorksProperlyWhenAmountIsZeroAndThereIsNoPaymentToken() {
         runBlockingTest {
             // given
+            val amount = 1
             val currency = "EUR"
-            every { parameters.inputData } returns
-                workDataOf(
-                    KEY_INPUT_CREATE_SUBSCRIPT_CURRENCY to currency,
-                    KEY_INPUT_CREATE_SUBSCRIPT_AMOUNT to 0,
-                    KEY_INPUT_CREATE_SUBSCRIPT_PLAN_IDS to arrayOf<String>()
-                )
+            val cycle = 0
             val testPlan = mockk<Plan>(relaxed = true)
             val testSubscription = mockk<Subscription> {
                 every { plans } returns listOf(testPlan)
@@ -135,10 +155,10 @@ class CreateSubscriptionWorkerTest {
             }
             coEvery { api.createUpdateSubscription(any()) } returns createSubscriptionResponse
             every { jobManager.addJobInBackground(any()) } returns Unit
-            val expected = ListenableWorker.Result.success()
+            val expected = CreateSubscriptionResult.Success
 
             // when
-            val actualResult = worker.doWork()
+            val actualResult = useCase.invoke(amount, currency, cycle)
 
             // then
             assertEquals(expected, actualResult)

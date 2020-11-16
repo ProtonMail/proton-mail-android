@@ -18,27 +18,20 @@
  */
 package ch.protonmail.android.events;
 
-import ch.protonmail.android.api.models.Subscription;
-
-/**
- * Created by dkadrikj on 7/8/16.
- */
+@Deprecated
 public class PaymentMethodEvent {
     private final Status status;
     private final String error;
     private final String errorDescription;
-    private final Subscription subscription;
 
     public PaymentMethodEvent(Status status, String error, String errorDescription) {
         this.status = status;
         this.error = error;
         this.errorDescription = errorDescription;
-        this.subscription = null;
     }
 
-    public PaymentMethodEvent(Status status, Subscription subscription) {
+    public PaymentMethodEvent(Status status) {
         this.status = status;
-        this.subscription = subscription;
         this.error = null;
         this.errorDescription = null;
     }
@@ -53,9 +46,5 @@ public class PaymentMethodEvent {
 
     public String getErrorDescription() {
         return errorDescription;
-    }
-
-    public Subscription getSubscription() {
-        return subscription;
     }
 }

@@ -94,7 +94,7 @@ public class CreateSubscriptionJob extends ProtonMailBaseJob {
 
         if (subscriptionResponse.getCode() != Constants.RESPONSE_CODE_OK) {
             Map<String, String> details = CollectionExtensions.filterValues(subscriptionResponse.getDetails(), String.class);
-            AppUtil.postEventOnUi(new PaymentMethodEvent(Status.FAILED, subscriptionResponse.getError(), ParseUtils.Companion.compileSingleErrorMessage(details)));
+            AppUtil.postEventOnUi(new PaymentMethodEvent(Status.FAILED, subscriptionResponse.getError(), ParseUtils.INSTANCE.compileSingleErrorMessage(details)));
             return;
         }
 
@@ -107,7 +107,7 @@ public class CreateSubscriptionJob extends ProtonMailBaseJob {
             }
         }
 
-        AppUtil.postEventOnUi(new PaymentMethodEvent(Status.SUCCESS, subscriptionResponse.getSubscription()));
+        AppUtil.postEventOnUi(new PaymentMethodEvent(Status.SUCCESS));
 
         getJobManager().addJobInBackground(new FetchUserSettingsJob());
 

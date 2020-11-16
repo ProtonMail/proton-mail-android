@@ -88,13 +88,13 @@ import ch.protonmail.android.events.PaymentMethodEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.events.payment.VerifyPaymentEvent;
+import ch.protonmail.android.usecase.create.CreateSubscription;
 import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.CollectionExtensions;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.BillingViewModel;
 import ch.protonmail.android.views.PMWebView;
-import ch.protonmail.android.worker.CreateSubscriptionWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_PAYMENT_TOKEN_STRING;
@@ -117,7 +117,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
     private static final int REQUEST_CODE_PAYMENT_APPROVAL = 2421;
 
     @Inject
-    CreateSubscriptionWorker.Enqueuer createSubscriptionWorker;
+    CreateSubscription createSubscription;
 
     @BindView(R.id.credit_card_name)
     EditText creditCardNameEditText;
@@ -228,7 +228,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         super.onActivityCreated(savedInstanceState);
         BillingViewModel.Factory billingViewModelFactory = new BillingViewModel.Factory(
                 billingListener.getProtonMailApiManager(),
-                createSubscriptionWorker
+                createSubscription
                 );
         billingViewModel = new ViewModelProvider(this, billingViewModelFactory).get(BillingViewModel.class);
     }
@@ -598,7 +598,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
             Map<String, Object> detailsObjMap = event.getResponse().getDetails();
             Map<String, String> errorDetails =
                     CollectionExtensions.filterValues(detailsObjMap, String.class);
-            mListener.onBillingError(error, ParseUtils.Companion.compileSingleErrorMessage(errorDetails));
+            mListener.onBillingError(error, ParseUtils.INSTANCE.compileSingleErrorMessage(errorDetails));
 
         } else if (event.getStatus() == Status.SUCCESS) {
             mListener.onBillingCompleted();

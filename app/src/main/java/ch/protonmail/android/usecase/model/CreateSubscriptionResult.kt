@@ -17,31 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.viewmodel
+package ch.protonmail.android.usecase.model
 
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.ViewModel
-import ch.protonmail.android.usecase.create.CreateSubscription
-
-class UpsellingViewModel @ViewModelInject constructor(
-    private val createSubscription: CreateSubscription
-) : ViewModel() {
-
-    fun createSubscription(
-        amount: Int,
-        currency: String,
-        cycle: Int,
-        planIds: MutableList<String>,
-        couponCode: String?,
-        token: String?
-    ) {
-        createSubscription(
-            amount,
-            currency,
-            cycle,
-            planIds,
-            couponCode,
-            token
-        )
-    }
+sealed class CreateSubscriptionResult {
+    object Success : CreateSubscriptionResult()
+    data class Error(
+        val error: String,
+        val errorDescription: String? = null,
+        val throwable: Throwable? = null
+    ) : CreateSubscriptionResult()
 }
