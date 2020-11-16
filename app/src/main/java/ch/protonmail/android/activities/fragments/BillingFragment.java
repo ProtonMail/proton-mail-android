@@ -226,11 +226,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        BillingViewModel.Factory billingViewModelFactory = new BillingViewModel.Factory(
-                billingListener.getProtonMailApiManager(),
-                createSubscription
-                );
-        billingViewModel = new ViewModelProvider(this, billingViewModelFactory).get(BillingViewModel.class);
+        billingViewModel = new ViewModelProvider(this).get(BillingViewModel.class);
     }
 
     @Nullable

@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.viewmodel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -32,7 +33,6 @@ import ch.protonmail.android.api.models.PaymentType
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.create.CreateSubscription
-import ch.protonmail.libs.core.utils.ViewModelFactory
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
@@ -41,7 +41,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 
-class BillingViewModel(
+class BillingViewModel @ViewModelInject constructor(
     private val protonMailApiManager: ProtonMailApiManager,
     private val createSubscription: CreateSubscription
 ) : ViewModel() {
@@ -120,8 +120,10 @@ class BillingViewModel(
                 if (paymentMethodId == null) {
                     createPaymentToken(amount, Constants.CurrencyType.valueOf(currency), payment!!, token, tokenType)
                 } else {
-                    createPaymentTokenFromPaymentMethodId(amount, Constants.CurrencyType.valueOf(currency),
-                        paymentMethodId!!, token, tokenType)
+                    createPaymentTokenFromPaymentMethodId(
+                        amount, Constants.CurrencyType.valueOf(currency),
+                        paymentMethodId!!, token, tokenType
+                    )
                 }
             }
         } else {
@@ -147,15 +149,5 @@ class BillingViewModel(
                 token
             )
         }
-    }
-
-    class Factory(
-        private val protonMailApiManager: ProtonMailApiManager,
-        private val createSubscription: CreateSubscription
-    ) : ViewModelFactory<BillingViewModel>() {
-        override fun create() = BillingViewModel(
-            protonMailApiManager,
-            createSubscription
-        )
     }
 }
