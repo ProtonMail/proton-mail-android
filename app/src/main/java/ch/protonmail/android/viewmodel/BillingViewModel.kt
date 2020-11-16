@@ -33,6 +33,7 @@ import ch.protonmail.android.api.models.PaymentType
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.create.CreateSubscription
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
@@ -48,11 +49,14 @@ class BillingViewModel @ViewModelInject constructor(
 
     private val _createPaymentToken = MutableLiveData<CreatePaymentTokenResponse>()
     private val _createPaymentTokenFromPaymentMethodId = MutableLiveData<CreatePaymentTokenResponse>()
+    private val _createSubscriptionData = MutableLiveData<CreateSubscriptionResult>()
 
     private val gson = Gson()
     private val responseBodyType = object : TypeToken<ResponseBody>() {}.type
 
     private lateinit var lastCreatePaymentTokenBody: CreatePaymentTokenBody
+    val createSubscriptionResult: LiveData<CreateSubscriptionResult>
+        get() = _createSubscriptionData
 
     @JvmOverloads
     fun createPaymentToken(
@@ -140,7 +144,8 @@ class BillingViewModel @ViewModelInject constructor(
         cycle: Int
     ) {
         viewModelScope.launch {
-            createSubscription(
+
+            val result = createSubscription(
                 amount,
                 currency.name,
                 cycle,
@@ -148,6 +153,8 @@ class BillingViewModel @ViewModelInject constructor(
                 couponCode,
                 token
             )
+            Timber.v("Create subscription result $result")
+            _createSubscriptionData.value = result
         }
     }
 }

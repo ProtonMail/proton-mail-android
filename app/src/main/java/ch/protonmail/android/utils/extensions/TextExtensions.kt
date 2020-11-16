@@ -44,9 +44,9 @@ private const val DEFAULT_TOAST_GRAVITY = Gravity.BOTTOM
  */
 @JvmOverloads
 fun Context.showToast(
-        @StringRes messageRes: Int,
-        length: Int = DEFAULT_TOAST_LENGTH,
-        gravity: Int = DEFAULT_TOAST_GRAVITY
+    @StringRes messageRes: Int,
+    length: Int = DEFAULT_TOAST_LENGTH,
+    gravity: Int = DEFAULT_TOAST_GRAVITY
 ) {
     @Suppress("SENSELESS_COMPARISON") // It could be `null` if called from Java
     if (this != null) {
@@ -66,9 +66,9 @@ fun Context.showToast(
  */
 @JvmOverloads
 fun Context.showToast(
-        message: CharSequence,
-        length: Int = DEFAULT_TOAST_LENGTH,
-        gravity: Int = DEFAULT_TOAST_GRAVITY
+    message: CharSequence,
+    length: Int = DEFAULT_TOAST_LENGTH,
+    gravity: Int = DEFAULT_TOAST_GRAVITY
 ) {
     @Suppress("SENSELESS_COMPARISON") // It could be `null` if called from Java
     if (this != null) {
@@ -88,9 +88,9 @@ fun Context.showToast(
  */
 @JvmOverloads
 fun Context.showToast(
-        error: ViewState.Error,
-        length: Int = DEFAULT_TOAST_LENGTH,
-        gravity: Int = DEFAULT_TOAST_GRAVITY
+    error: ViewState.Error,
+    length: Int = DEFAULT_TOAST_LENGTH,
+    gravity: Int = DEFAULT_TOAST_GRAVITY
 ) {
     showToast(error.getMessage(this), length = length, gravity = gravity)
 }

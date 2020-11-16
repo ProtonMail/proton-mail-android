@@ -60,7 +60,6 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AvailablePlansEvent;
 import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.PaymentMethodEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.payment.CheckSubscriptionEvent;
 import ch.protonmail.android.events.payment.PaymentsStatusEvent;
@@ -68,9 +67,11 @@ import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.payments.CheckSubscriptionJob;
 import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.jobs.payments.GetPaymentsStatusJob;
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.UpsellingViewModel;
+import timber.log.Timber;
 
 public class UpsellingActivity extends BaseActivity {
 
@@ -186,6 +187,11 @@ public class UpsellingActivity extends BaseActivity {
 
         GetPaymentMethodsJob paymentMethodsJob = new GetPaymentMethodsJob();
         mJobManager.addJobInBackground(paymentMethodsJob);
+
+        viewModel.getCreateSubscriptionResult().observe(
+                this,
+                this::onCreateSubscriptionResult
+        );
     }
 
     private void checkPaymentStatus() {
@@ -448,6 +454,7 @@ public class UpsellingActivity extends BaseActivity {
 
     @Subscribe
     public void onCheckSubscriptionEvent(CheckSubscriptionEvent event) {
+        Timber.v("CheckSubscriptionEvent status%s", event.getStatus());
         if (event.getStatus() == Status.SUCCESS) {
             if (event.getResponse().getAmountDue() == 0) {
                 // prevent user from making illegal payment of value 0
@@ -477,21 +484,17 @@ public class UpsellingActivity extends BaseActivity {
         }
     }
 
-    @Subscribe
-    public void onPaymentMethodEvent(PaymentMethodEvent event) {
-
+    private void onCreateSubscriptionResult(CreateSubscriptionResult result) {
+        Timber.v("onPaymentMethodEvent %s", result);
         if (mProgressView != null) {
             mProgressView.setVisibility(View.GONE);
         }
 
-        switch (event.getStatus()) {
-            case SUCCESS: {
-                TextExtensions.showToast(this, R.string.upgrade_paid_user);
-                finish();
-                break;
-            }
-            default:
-                TextExtensions.showToast(this, event.getError());
+        if (result instanceof CreateSubscriptionResult.Success) {
+            TextExtensions.showToast(this, R.string.upgrade_paid_user);
+            finish();
+        } else if (result instanceof CreateSubscriptionResult.Error) {
+            TextExtensions.showToast(this, ((CreateSubscriptionResult.Error) result).getError());
         }
     }
 

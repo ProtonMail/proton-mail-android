@@ -29,6 +29,7 @@ import ch.protonmail.android.jobs.user.FetchUserSettingsJob
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult
 import ch.protonmail.android.utils.extensions.filterValues
 import com.birbit.android.jobqueue.JobManager
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -55,6 +56,9 @@ class CreateSubscription @Inject constructor(
         couponCode: String? = null,
         paymentToken: String? = null
     ): CreateSubscriptionResult = runCatching {
+
+        Timber.v("Create Subscription amount:$amount ${Thread.currentThread().name}")
+
         if (currency.isEmpty()) {
             return CreateSubscriptionResult.Error(
                 "Incorrect input currency:$currency is incorrect"

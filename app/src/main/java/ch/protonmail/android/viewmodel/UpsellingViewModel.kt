@@ -20,12 +20,23 @@
 package ch.protonmail.android.viewmodel
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.usecase.create.CreateSubscription
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class UpsellingViewModel @ViewModelInject constructor(
-    private val createSubscription: CreateSubscription
+    private val createSubscriptionUseCase: CreateSubscription
 ) : ViewModel() {
+
+    private val createSubscriptionData = MutableLiveData<CreateSubscriptionResult>()
+
+    val createSubscriptionResult: LiveData<CreateSubscriptionResult>
+        get() = createSubscriptionData
 
     fun createSubscription(
         amount: Int,
@@ -35,13 +46,17 @@ class UpsellingViewModel @ViewModelInject constructor(
         couponCode: String?,
         token: String?
     ) {
-        createSubscription(
-            amount,
-            currency,
-            cycle,
-            planIds,
-            couponCode,
-            token
-        )
+        viewModelScope.launch {
+            val result = createSubscriptionUseCase(
+                amount,
+                currency,
+                cycle,
+                planIds,
+                couponCode,
+                token
+            )
+            Timber.v("createSubscription result $result")
+            createSubscriptionData.value = result
+        }
     }
 }
