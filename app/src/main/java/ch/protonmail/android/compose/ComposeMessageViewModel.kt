@@ -77,11 +77,10 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.collections.set
 
-// region constants
 const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
 const val GREATER_THAN = "&gt;"
-// endregion
+
 
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
