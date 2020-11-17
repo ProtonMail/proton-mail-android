@@ -54,8 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnItemSelected;
@@ -87,7 +85,6 @@ import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.events.payment.VerifyPaymentEvent;
-import ch.protonmail.android.usecase.create.CreateSubscription;
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
@@ -116,9 +113,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
     private static final String ARGUMENT_CYCLE = "ch.protonmail.android.ARG_CYCLE";
 
     private static final int REQUEST_CODE_PAYMENT_APPROVAL = 2421;
-
-    @Inject
-    CreateSubscription createSubscription;
 
     @BindView(R.id.credit_card_name)
     EditText creditCardNameEditText;
