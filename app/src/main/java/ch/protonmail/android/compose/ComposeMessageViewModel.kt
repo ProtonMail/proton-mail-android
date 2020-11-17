@@ -339,9 +339,8 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveAttachmentsToDatabase(
+    private fun saveAttachmentsToDatabase(
         localAttachments: List<Attachment>,
-        dispatcher: CoroutineDispatcher,
         uploadAttachments: Boolean
     ): List<String> {
         val result = ArrayList<String>()
@@ -447,11 +446,7 @@ class ComposeMessageViewModel @Inject constructor(
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message, IO)
                     newAttachments = saveAttachmentsToDatabase(
-                        composeMessageRepository.createAttachmentList(
-                            _messageDataResult.attachmentList,
-                            IO
-                        ),
-                        IO,
+                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
                         uploadAttachments
                     )
                 }
@@ -481,7 +476,7 @@ class ComposeMessageViewModel @Inject constructor(
         // we need to compare them and find out which are new attachments
         if (uploadAttachments && localAttachmentsList.isNotEmpty()) {
             newAttachments = saveAttachmentsToDatabase(
-                composeMessageRepository.createAttachmentList(localAttachmentsList, IO), IO, uploadAttachments
+                composeMessageRepository.createAttachmentList(localAttachmentsList, IO), uploadAttachments
             )
         }
         val currentAttachmentsList = messageDataResult.attachmentList

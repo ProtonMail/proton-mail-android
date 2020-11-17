@@ -125,9 +125,6 @@ internal class MessageDetailsActivity :
     ILabelsChangeListener,
     IMoveMessagesListener {
 
-    /**
-     * The id of the current message
-     */
     private lateinit var messageId: String
     private lateinit var pmWebViewClient: PMWebViewClient
     private lateinit var messageExpandableAdapter: MessageDetailsAdapter
