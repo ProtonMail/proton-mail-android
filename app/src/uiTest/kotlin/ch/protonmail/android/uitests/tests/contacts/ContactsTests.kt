@@ -27,8 +27,8 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkGroupDoesNotExist
-import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category
