@@ -53,20 +53,21 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.AvailablePlansResponse;
+import ch.protonmail.android.api.models.CheckSubscriptionResponse;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.Plan;
+import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AvailablePlansEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.payment.CheckSubscriptionEvent;
 import ch.protonmail.android.events.payment.PaymentsStatusEvent;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
-import ch.protonmail.android.jobs.payments.CheckSubscriptionJob;
 import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.jobs.payments.GetPaymentsStatusJob;
+import ch.protonmail.android.usecase.model.CheckSubscriptionResult;
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
@@ -191,6 +192,10 @@ public class UpsellingActivity extends BaseActivity {
         viewModel.getCreateSubscriptionResult().observe(
                 this,
                 this::onCreateSubscriptionResult
+        );
+        viewModel.getCheckSubscriptionResult().observe(
+                this,
+                this::onCheckSubscriptionEvent
         );
     }
 
@@ -452,15 +457,16 @@ public class UpsellingActivity extends BaseActivity {
         }
     }
 
-    @Subscribe
-    public void onCheckSubscriptionEvent(CheckSubscriptionEvent event) {
-        Timber.v("CheckSubscriptionEvent status%s", event.getStatus());
-        if (event.getStatus() == Status.SUCCESS) {
-            if (event.getResponse().getAmountDue() == 0) {
+    private void onCheckSubscriptionEvent(CheckSubscriptionResult result) {
+        Timber.v("CheckSubscriptionEvent result:%s", result);
+        if (result instanceof CheckSubscriptionResult.Success) {
+        CheckSubscriptionResponse response = ((CheckSubscriptionResult.Success)result).getResponse();
+
+            if (response.getAmountDue() == 0) {
                 // prevent user from making illegal payment of value 0
                 viewModel.createSubscription(
                         0,
-                        event.getResponse().getCurrency(),
+                        response.getCurrency(),
                         mCycle,
                         Collections.singletonList(mSelectedPlanId),
                         null,
@@ -469,15 +475,19 @@ public class UpsellingActivity extends BaseActivity {
             } else {
                 Intent billingIntent = new Intent(this, BillingActivity.class);
                 billingIntent.putExtra(BillingActivity.EXTRA_WINDOW_SIZE, getWindow().getDecorView().getHeight());
-                billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, event.getResponse().getAmountDue());
-                billingIntent.putExtra(BillingActivity.EXTRA_CURRENCY, event.getResponse().getCurrency());
+                billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, response.getAmountDue());
+                billingIntent.putExtra(BillingActivity.EXTRA_CURRENCY, response.getCurrency());
                 billingIntent.putExtra(BillingActivity.EXTRA_BILLING_TYPE, Constants.BillingType.UPGRADE);
                 billingIntent.putExtra(BillingActivity.EXTRA_SELECTED_PLAN_ID, mSelectedPlanId);
                 billingIntent.putExtra(BillingActivity.EXTRA_SELECTED_CYCLE, mCycle);
                 startActivityForResult(AppUtil.decorInAppIntent(billingIntent), REQUEST_CODE_UPGRADE);
             }
         } else {
-            TextExtensions.showToast(this, event.getResponse().getError());
+            ResponseBody response = ((CheckSubscriptionResult.Error) result).getResponse();
+            Timber.v("CheckSubscription Error %s", response);
+            if (response != null) {
+                TextExtensions.showToast(this, response.getError());
+            }
             if (upsellingProgress != null) {
                 upsellingProgress.setVisibility(View.GONE);
             }
@@ -655,8 +665,7 @@ public class UpsellingActivity extends BaseActivity {
         }
         List<String> planIds = new ArrayList<>();
         planIds.add(mSelectedPlanId);
-        CheckSubscriptionJob job = new CheckSubscriptionJob(null, planIds, mCurrency, mCycle);
-        mJobManager.addJobInBackground(job);
+        viewModel.checkSubscription(null, planIds, mCurrency, mCycle);
     }
 
     @Subscribe

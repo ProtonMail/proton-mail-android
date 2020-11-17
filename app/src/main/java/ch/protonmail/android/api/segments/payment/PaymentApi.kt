@@ -45,9 +45,6 @@ class PaymentApi(
     private val pubService: PaymentPubService
 ) : BaseApi(), PaymentApiSpec {
 
-    @Throws(IOException::class)
-    override fun fetchSubscriptionBlocking(): GetSubscriptionResponse = ParseUtils.parse(service.fetchSubscriptionBlocking().execute())
-
     override suspend fun fetchSubscription(): GetSubscriptionResponse =
         service.fetchSubscription()
 
@@ -67,9 +64,8 @@ class PaymentApi(
     @Throws(IOException::class)
     override fun donate(body: DonateBody): ResponseBody = ParseUtils.parse(service.donate(body).execute())
 
-    @Throws(IOException::class)
-    override fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
-        ParseUtils.parse(service.checkSubscription(body).execute())
+    override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
+        service.checkSubscription(body)
 
     @Throws(IOException::class)
     override fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse =

@@ -69,6 +69,6 @@ interface PaymentService {
 
     @POST("payments/subscription/check")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun checkSubscription(@Body body: CheckSubscriptionBody): Call<CheckSubscriptionResponse>
+    suspend fun checkSubscription(@Body body: CheckSubscriptionBody): CheckSubscriptionResponse
 
 }
