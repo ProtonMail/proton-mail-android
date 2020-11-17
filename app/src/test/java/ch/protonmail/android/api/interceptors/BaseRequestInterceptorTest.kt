@@ -19,7 +19,6 @@
 package ch.protonmail.android.api.interceptors
 
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.User
@@ -33,14 +32,16 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import org.junit.AfterClass
-import org.junit.BeforeClass
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class BaseRequestInterceptorTest {
 
@@ -62,7 +63,7 @@ class BaseRequestInterceptorTest {
     }
 
     private val userManagerMock = mockk<UserManager> {
-        every { username } answers {"testuser"}
+        every { username } answers { "testuser" }
         every { getTokenManager("testuser") } returns tokenManagerMock
         every { getMailboxPassword("testuser") } returns "mailbox password".toByteArray()
         every { user } returns userMock
@@ -70,30 +71,58 @@ class BaseRequestInterceptorTest {
 
     private val interceptor = ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
 
-    @Test
-    fun gateway_timeout() {
 
+    @Before
+    fun setup() {
+        mockkStatic(AppUtil::class)
+        mockkStatic(ProtonMailApplication::class)
+        every { AppUtil.postEventOnUi(any()) } answers { mockk<Void>() }
+        every { AppUtil.getAppVersionName(any()) } answers { "app version name" }
+        every { AppUtil.buildUserAgent() } answers { "user agent" }
+
+        every { ProtonMailApplication.getApplication().currentLocale } returns "current locale"
+        every {
+            ProtonMailApplication.getApplication().defaultSharedPreferences
+        } returns prefsMock
+    }
+
+    @After
+    fun teardown() {
+        unmockkStatic(AppUtil::class)
+        unmockkStatic(ProtonMailApplication::class)
+    }
+
+    @Test
+    fun verifyThatGatewayTimeoutResponseReturnsNullOutput() {
+        // given
         val responseMock = mockk<Response> {
             every { code() } returns RESPONSE_CODE_GATEWAY_TIMEOUT
         }
 
-        assertNull(interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock))
+        // when
+        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock)
+
+        // then
+        assertNull(checkIfTokenExpiredResponse)
     }
 
     @Test
-    fun too_many_requests() {
-
+    fun verifyThatTooManyRequestsResponseReturnsNullOutput() {
+        // given
         val responseMock = mockk<Response> {
             every { code() } returns RESPONSE_CODE_TOO_MANY_REQUESTS
         }
 
-        assertNull(interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock))
+        // when
+        val checkIfTokenExpired = interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock)
+
+        // then
+        assertNull(checkIfTokenExpired)
     }
 
     @Test
-    fun ok_response() {
-        mockkStatic(ProtonMailApplication::class)
-
+    fun verifyThatOkResponseReturnsNullOutput() {
+        // given
         every {
             ProtonMailApplication.getApplication().defaultSharedPreferences
         } returns prefsMock
@@ -102,12 +131,16 @@ class BaseRequestInterceptorTest {
             every { code() } returns 200
         }
 
-        assertNull(interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock))
+        // when
+        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock)
+
+        // then
+        assertNull(checkIfTokenExpiredResponse)
     }
 
     @Test
-    fun unauthorized_then_too_many_requests() {
-
+    fun verifyThatUnauthorisedFollowedByTooManyRequestsErrorResponseReturnsNullResponse() {
+        // given
         val chainMock = mockk<Interceptor.Chain> {
             every { request() } returns mockk {
                 every { tag(RetrofitTag::class.java) } returns null
@@ -131,26 +164,23 @@ class BaseRequestInterceptorTest {
             }
         }
 
-        assertNull(interceptor.checkIfTokenExpired(chainMock, requestMock, responseMock))
+        // when
+        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(chainMock, requestMock, responseMock)
+
+        // then
+        assertNull(checkIfTokenExpiredResponse)
     }
 
     @Test
-    fun unauthorized_then_auth_okay_and_retry() {
+    fun verifyThatAfterReceivingUnauthorisedTokenRetryReturnsNewResponse() {
 
-        mockkStatic(ProtonMailApplication::class)
-
-        every {
-            ProtonMailApplication.getApplication().currentLocale
-        } returns "en"
-        every {
-            ProtonMailApplication.getApplication().defaultSharedPreferences
-        } returns prefsMock
-
+        // given
+        val newResponse = mockk<Response>()
         val chainMock = mockk<Interceptor.Chain> {
             every { request() } returns mockk {
                 every { tag(RetrofitTag::class.java) } returns null
             }
-            every { proceed(any()) } answers { mockk() }
+            every { proceed(any()) } answers { newResponse }
         }
         val requestMock = mockk<Request> {
             every { url() } returns mockk {
@@ -160,6 +190,7 @@ class BaseRequestInterceptorTest {
         }
         val responseMock = mockk<Response> {
             every { code() } answers { 401 }
+            every { close() } returns Unit
         }
 
         interceptor.publicService = mockk {
@@ -174,28 +205,12 @@ class BaseRequestInterceptorTest {
             }
         }
 
-        assertNotNull(interceptor.checkIfTokenExpired(chainMock, requestMock, responseMock))
-    }
+        // when
+        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(chainMock, requestMock, responseMock)
 
-    companion object {
-
-        @BeforeClass
-        @JvmStatic
-        fun setup() {
-            mockkStatic(AppUtil::class)
-            every { AppUtil.postEventOnUi(any()) } answers { mockk<Void>() }
-            every { AppUtil.getAppVersionName(any()) } answers { "app version name" }
-            every { AppUtil.buildUserAgent() } answers { "user agent" }
-
-            mockkStatic(ProtonMailApplication::class)
-            every { ProtonMailApplication.getApplication().currentLocale } returns "current locale"
-        }
-
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            unmockkStatic(AppUtil::class)
-            unmockkStatic(ProtonMailApplication::class)
-        }
+        // then
+        verify { responseMock.close() }
+        assertNotNull(checkIfTokenExpiredResponse)
+        assertEquals(newResponse, checkIfTokenExpiredResponse)
     }
 }
