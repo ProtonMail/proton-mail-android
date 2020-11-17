@@ -39,7 +39,7 @@ class ContactsListViewModel @Inject constructor(
     private val workManager: WorkManager,
     private val androidContactsRepository: IAndroidContactsRepository<ContactItem>,
     private val androidContactsDetailsRepository: AndroidContactDetailsRepository
-    ) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
+) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
 
     private val progressMax = MutableLiveData<Int?>()
     private val progress = MutableLiveData<Int?>()

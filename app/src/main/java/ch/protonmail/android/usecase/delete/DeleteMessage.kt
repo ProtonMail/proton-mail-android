@@ -24,6 +24,7 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext

@@ -57,7 +57,6 @@ import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
@@ -216,7 +215,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private fun startObserving() {
         viewModel.contactItems.observe(
-            this,
+            viewLifecycleOwner,
             { contactItems ->
                 if (contactItems.isEmpty()) {
                     noResults.visibility = VISIBLE
@@ -233,11 +232,11 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         )
         val progressDialogFactory = ProgressDialogFactory(requireContext())
         viewModel.uploadProgress.observe(
-            this,
+            viewLifecycleOwner,
             UploadProgressObserver(progressDialogFactory::create)
         )
         viewModel.contactToConvert.observe(
-            this,
+            viewLifecycleOwner,
             Observer {
                 val localContact = it?.getContentIfNotHandled() ?: return@Observer
                 val intent = EditContactDetailsActivity.startConvertContactActivity(

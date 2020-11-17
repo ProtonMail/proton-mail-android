@@ -25,6 +25,8 @@ import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
@@ -49,13 +51,15 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.DraftCreatedEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.jobs.FetchPublicKeysJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.fetch.FetchPublicKeys
+import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
@@ -65,6 +69,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.HashMap
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -84,6 +89,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val postMessageServiceFactory: PostMessageServiceFactory,
     private val deleteMessage: DeleteMessage,
+    private val fetchPublicKeys: FetchPublicKeys,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -106,6 +112,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
+    private val fetchKeyDetailsTrigger = MutableLiveData<List<FetchPublicKeysRequest>>()
 
     private val _androidContacts = java.util.ArrayList<MessageRecipient>()
     private val _protonMailContacts = java.util.ArrayList<MessageRecipient>()
@@ -174,6 +181,12 @@ class ComposeMessageViewModel @Inject constructor(
         set(value) {
             _androidContactsLoaded = value
         }
+    val fetchKeyDetailsResult: LiveData<List<FetchPublicKeysResult>>
+        get() = fetchKeyDetailsTrigger.switchMap { request ->
+            liveData {
+                emit(fetchPublicKeys(request))
+            }
+        }
 
     // endregion
     // region getters
@@ -236,15 +249,26 @@ class ComposeMessageViewModel @Inject constructor(
         watchForMessageSent()
     }
 
-    fun setupComposingNewMessage(verify: Boolean, actionId: Constants.MessageActionType, parentId: String?, composerGroupCountOf: String) {
+    fun setupComposingNewMessage(
+        verify: Boolean,
+        actionId: Constants.MessageActionType,
+        parentId: String?,
+        composerGroupCountOf: String
+    ) {
         _verify = verify
         _actionId = actionId
         _parentId = parentId
         _composerGroupCountOf = composerGroupCountOf
     }
 
-    fun prepareMessageData(isPGPMime: Boolean, addressId: String, addressEmailAlias: String? = null, isTransient: Boolean) {
-        _messageDataResult = composeMessageRepository.prepareMessageData(isPGPMime, addressId, addressEmailAlias, isTransient)
+    fun prepareMessageData(
+        isPGPMime: Boolean,
+        addressId: String,
+        addressEmailAlias: String? = null,
+        isTransient: Boolean
+    ) {
+        _messageDataResult =
+            composeMessageRepository.prepareMessageData(isPGPMime, addressId, addressEmailAlias, isTransient)
         getSenderEmailAddresses(addressEmailAlias)
     }
 
@@ -307,9 +331,8 @@ class ComposeMessageViewModel @Inject constructor(
             )
     }
 
-    fun getContactGroupRecipients(group: ContactLabel): List<MessageRecipient> {
-        return _groupsRecipientsMap[group] ?: ArrayList()
-    }
+    fun getContactGroupRecipients(group: ContactLabel): List<MessageRecipient> =
+        _groupsRecipientsMap[group] ?: ArrayList()
 
     fun getContactGroupByName(groupName: String): ContactLabel? {
         return _data.find {
@@ -410,9 +433,7 @@ class ComposeMessageViewModel @Inject constructor(
                 postMessageServiceFactory.startUpdateDraftService(
                     _dbId!!,
                     message.decryptedBody ?: "",
-                    newAttachments,
-                    uploadAttachments,
-                    _oldSenderAddressId
+                    newAttachments, uploadAttachments, _oldSenderAddressId
                 )
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
@@ -437,7 +458,10 @@ class ComposeMessageViewModel @Inject constructor(
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message, IO)
                     newAttachments = saveAttachmentsToDatabase(
-                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
+                        composeMessageRepository.createAttachmentList(
+                            _messageDataResult.attachmentList,
+                            IO
+                        ),
                         IO,
                         uploadAttachments
                     )
@@ -446,8 +470,7 @@ class ComposeMessageViewModel @Inject constructor(
                     _dbId!!,
                     _draftId.get(),
                     parentId,
-                    _actionId,
-                    message.decryptedBody ?: "",
+                    _actionId, message.decryptedBody ?: "",
                     uploadAttachments,
                     newAttachments,
                     _oldSenderAddressId,
@@ -511,9 +534,7 @@ class ComposeMessageViewModel @Inject constructor(
         _senderAddresses = senderAddresses
     }
 
-    fun getPositionByAddressId(): Int {
-        return userManager.user.getPositionByAddressId(_messageDataResult.addressId)
-    }
+    fun getPositionByAddressId(): Int = userManager.user.getPositionByAddressId(_messageDataResult.addressId)
 
     fun isPaidUser(): Boolean = userManager.user.isPaidUser
 
@@ -549,8 +570,9 @@ class ComposeMessageViewModel @Inject constructor(
         composeMessageRepository.startFetchMessageDetail(draftId)
     }
 
-    fun startFetchPublicKeysJob(jobs: List<FetchPublicKeysJob.PublicKeysBatchJob>, retry: Boolean) {
-        composeMessageRepository.fetchPublicKeys(jobs, retry)
+    fun startFetchPublicKeys(request: List<FetchPublicKeysRequest>) {
+        Timber.v("startFetchPublicKeys $request")
+        fetchKeyDetailsTrigger.value = request
     }
 
     fun startSendPreferenceJob(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {

@@ -77,7 +77,7 @@ public class FetchVerificationKeysJob extends ProtonMailBaseJob {
                 return;
             }
         }
-		ContactEmail contactEmail = contactsDatabase.findContactEmailByEmail(email);
+        ContactEmail contactEmail = contactsDatabase.findContactEmailByEmail(email);
         if (contactEmail == null) {
             // turned off
             AppUtil.postEventOnUi(new FetchVerificationKeysEvent(Status.SUCCESS, Collections.emptyList(), mRetry));
@@ -87,7 +87,7 @@ public class FetchVerificationKeysJob extends ProtonMailBaseJob {
         FullContactDetails fullContactDetails = contRespons.getContact();
         contactsDatabase.insertFullContactDetails(fullContactDetails);
         List<String> trustedKeys = fullContactDetails.getPublicKeys(crypto, email);
-        PublicKeyResponse response = getApi().getPublicKeys(email);
+        PublicKeyResponse response = getApi().getPublicKeysBlocking(email);
         if (response.hasError()) {
             throw new Exception(response.getError());
         }
@@ -106,7 +106,7 @@ public class FetchVerificationKeysJob extends ProtonMailBaseJob {
         }
 
         List<KeyInformation> keys = new ArrayList<>();
-        for(String pubKey : trustedKeys) {
+        for (String pubKey : trustedKeys) {
             KeyInformation keyInfo = crypto.deriveKeyInfo(pubKey);
             if (bannedFingerprints.contains(keyInfo.getFingerprint())) {
                 keyInfo.flagAsCompromised();

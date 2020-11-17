@@ -36,7 +36,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
-import ch.protonmail.android.jobs.FetchPublicKeysJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
@@ -245,10 +244,6 @@ class ComposeMessageRepository @Inject constructor(
                 }
             }
         }
-    }
-
-    fun fetchPublicKeys(jobs: List<FetchPublicKeysJob.PublicKeysBatchJob>, retry: Boolean) {
-        jobManager.addJobInBackground(FetchPublicKeysJob(jobs, retry))
     }
 
     fun getSendPreference(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {

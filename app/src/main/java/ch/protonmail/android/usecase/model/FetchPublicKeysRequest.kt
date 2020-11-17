@@ -17,11 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.delete
+package ch.protonmail.android.usecase.model
 
-import androidx.work.Operation
+import ch.protonmail.android.core.Constants
 
-data class DeleteMessageResult(
-    val isSuccessfullyDeleted: Boolean,
-    val workerResultOperation: Operation
+data class FetchPublicKeysRequest(
+    val emails: List<String>,
+    val recipientsType: Constants.RecipientLocationType,
+    val isSendRetryRequired: Boolean = false
 )
+
