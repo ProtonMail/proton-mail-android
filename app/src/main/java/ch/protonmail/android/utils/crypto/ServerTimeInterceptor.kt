@@ -54,20 +54,15 @@ class ServerTimeInterceptor(
     private fun handleResponse(response: Response) {
         val dateString = response.header("date", null) ?: return
         try {
-            val date = RFC_1123_FORMAT.parse(dateString)
-            openPgp.updateTime(date.time / 1000)
-            ServerTime.updateServerTime(date.time)
+            val rfc1123Format = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US)
+            rfc1123Format.timeZone = TimeZone.getTimeZone("GMT")
+            val date = rfc1123Format.parse(dateString)
+            date?.let {
+                openPgp.updateTime(date.time / 1000)
+                ServerTime.updateServerTime(date.time)
+            }
         } catch (exception: ParseException) {
             Timber.w(exception, "Date parse exception")
-        }
-
-    }
-
-    companion object {
-        private val RFC_1123_FORMAT: SimpleDateFormat = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US)
-
-        init {
-            RFC_1123_FORMAT.timeZone = TimeZone.getTimeZone("GMT")
         }
     }
 }
