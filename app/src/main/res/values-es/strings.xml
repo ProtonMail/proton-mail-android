@@ -318,7 +318,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_title_help">Ayuda y Soporte</string>
     <string name="engagement_title_support_protonmail">Apoye a ProtonMail</string>
     <string name="engagement_subtitle_welcome">Tu nueva cuenta de correo electrónico cifrado ha sido configurada y está lista para enviar y recibir mensajes cifrados.</string>
-    <string name="engagement_subtitle_swipe">Puede personalizar gestos de deslizamiento en los ajustes de la aplicación de ProtonMail.</string>
+    <string name="engagement_subtitle_swipe">Puedes personalizar gestos de deslizamiento en los ajustes de la aplicación de ProtonMail.</string>
     <string name="engagement_subtitle_labels">Crea y añade etiquetas para organizar tu bandeja de entrada. Mantén pulsado un mensaje para ver todas las opciones.</string>
     <string name="engagement_subtitle_encryption">Su buzón ahora está protegido con cifrado de extremo a extremo. Para enviar automáticamente correos electrónicos seguros a sus contactos, ¡invítelos a usar ProtonMail! También puede cifrar los mensajes manualmente si no utilizan ProtonMail.</string>
     <string name="engagement_subtitle_expire">Los mensajes que envíe se pueden establecer con borrado automático después de un cierto período de tiempo.</string>
@@ -615,7 +615,7 @@ cumplir con los\n <a href="https://protonmail.com/terms-and-conditions">término
     <string name="error_message_select_country">Seleccione un país</string>
     <string name="error_message_exp_date_invalid">Error: Fecha de vencimiento inválida</string>
     <string name="error_message_exp_date_past">Error: fecha de vencimiento inválida</string>
-    <string name="error_message_card_number_invalid">Error: Número de tarjeta inválido</string>
+    <string name="error_message_card_number_invalid">Error: Número de tarjeta no válido</string>
     <string name="print_error">Error de impresión</string>
     <string name="download_complete">Descarga completada</string>
     <string name="download_in_progress">Descarga en proceso</string>
@@ -992,7 +992,7 @@ el acceso al almacenamiento.</string>
 </string>
     <!-- endregion -->
     <!-- region errors -->
-    <string name="error_image_not_found">No se ha encontrado la imagen</string>
+    <string name="error_image_not_found">Imagen no encontrada</string>
     <string name="error_image_bad_url">URL de la imagen mal formada</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
@@ -1002,4 +1002,5 @@ el acceso al almacenamiento.</string>
     <string name="swipe_gestures_changed_message">Después de la última actualización, se han cambiado los gestos de deslizamiento. Si lo desea, puede restablecerlos en la configuración.</string>
     <string name="go_to_settings">Ir a los ajustes</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
 </resources>

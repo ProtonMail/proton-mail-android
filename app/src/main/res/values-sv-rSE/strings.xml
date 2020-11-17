@@ -771,8 +771,8 @@ av nya meddelanden i bakgrunden</string>
     <string name="account_manager_remove_all">Ta bort alla konton</string>
     <string name="account_manager_logout">Logga ut</string>
     <string name="account_manager_login">Logga in</string>
-    <string name="manage_accounts_user_loggedout">%s(utloggad)</string>
-    <string name="manage_accounts_user_primary">%s(primär)</string>
+    <string name="manage_accounts_user_loggedout">%s (utloggad)</string>
+    <string name="manage_accounts_user_primary">%s (primär)</string>
     <string name="account_manager_remove">Ta bort</string>
     <string name="connect_account_login_title">Logga in till ditt Protonmail konto</string>
     <string name="default_error_message">Ett fel uppstod</string>
@@ -854,7 +854,7 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <string name="default_address">Standardadress</string>
     <string name="display_name_n_signature">Visningsnamn &amp; signatur</string>
     <string name="display_name">Visningsnamn</string>
-    <string name="edit_display_name">Redigera namnet som visas</string>
+    <string name="edit_display_name">Redigera visningsnamn</string>
     <string name="signature">Signatur</string>
     <string name="mobile_signature">Mobilsignatur</string>
     <string name="edit_mobile_signature">Aktivera mobil signatur</string>
@@ -993,4 +993,5 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <string name="swipe_gestures_changed_message">Efter senaste uppdateringen har svepgester ändrats. Om du vill kan du återställa dem i inställningarna.</string>
     <string name="go_to_settings">Gå till inställningar</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
 </resources>

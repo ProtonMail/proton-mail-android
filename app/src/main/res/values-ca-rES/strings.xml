@@ -999,4 +999,5 @@ l\'accés a l\'emmagatzemament.</string>
     <string name="swipe_gestures_changed_message">Després de la darrera actualització s’han canviat els gestos de lliscament. Si vols, pots restablir-los a la configuració.</string>
     <string name="go_to_settings">Anar a configuració</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">La clau de l\'API de Firebase no és vàlida. Les notificacions Push no funcionaran.</string>
 </resources>

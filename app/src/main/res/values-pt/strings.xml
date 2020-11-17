@@ -708,11 +708,11 @@ cumprir os \n<a href="https://protonmail.com/terms-and-conditions">Termos e cond
     <string name="resign_contact_message">A verificação de %s falhou: o contacto não está assinado correctamente. Tem de re-assinar o contacto para enviar uma mensagem para este endereço ou editar o contacto. Também pode acontecer que tenha recuperado a sua senha e reposto as suas chaves.</string>
     <!-- Sender locks -->
     <string name="sender_lock_unencrypted">Mensagem não encriptada</string>
-    <string name="sender_lock_zero_access">Armazenado com encriptação acesso zero</string>
+    <string name="sender_lock_zero_access">Armazenado com encriptação Zero-Access</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Enviado por si com encriptação ponta-a-ponta</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Enviado pelo ProtonMail com encriptação acesso zero</string>
+    <string name="sender_lock_sent_autoresponder">Enviado pelo ProtonMail com encriptação Zero-Access</string>
     <string name="sender_lock_verification_failed">Falha ao verificar o remetente</string>
     <string name="sender_lock_pgp_encrypted">Mensagem encriptada com PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Mensagem de endereço verificado encriptada com PGP</string>
@@ -1000,4 +1000,5 @@ acesso ao armazenamento.</string>
     <string name="swipe_gestures_changed_message">Após a última actualização, os gestos de deslize foram alterados. Se desejar, pode repô-los nas definições.</string>
     <string name="go_to_settings">Ir para as definições</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Chave API do Firebase inválida. As notificações push não funcionarão.</string>
 </resources>

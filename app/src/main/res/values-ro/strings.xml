@@ -1015,4 +1015,5 @@ accesul la spațiul de stocare al telefonului.</string>
     <string name="swipe_gestures_changed_message">După ultima actualizare gesturile de glisare au fost schimbate. Dacă doriți, le puteți reseta în setări.</string>
     <string name="go_to_settings">Accesați setările</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Cheie API Firebase nevalidă. Notificările push nu vor funcționa.</string>
 </resources>

@@ -315,7 +315,7 @@ apparaît dans le champ expéditeur.</string>
     <string name="engagement_title_labels">Gestion des labels</string>
     <string name="engagement_title_encryption">Chiffrement de bout en bout</string>
     <string name="engagement_title_expire">Expiration des messages</string>
-    <string name="engagement_title_help">Aide &amp; Support</string>
+    <string name="engagement_title_help">Aide &amp; Assistance</string>
     <string name="engagement_title_support_protonmail">Soutenir ProtonMail</string>
     <string name="engagement_subtitle_welcome">Votre nouveau compte de messagerie chiffrée a été mis en place et est prêt à envoyer et recevoir des messages chiffrés.</string>
     <string name="engagement_subtitle_swipe">Vous pouvez personnaliser les gestes de défilement dans les paramètres de l\'application ProtonMail.</string>
@@ -405,7 +405,7 @@ du monde entier.</string>
     <string name="upgrade_line2">5 Go d\'espace de stockage</string>
     <string name="upgrade_line3">Utilisez votre propre nom de domaine</string>
     <string name="upgrade_line4">Jusqu\'à 5 alias</string>
-    <string name="upgrade_line5">Support client prioritaire</string>
+    <string name="upgrade_line5">Assistance client prioritaire</string>
     <string name="upgrade">Changer d\'offre</string>
     <string name="payment_options">Option de paiement</string>
     <string name="other_plans">Pour davantage de stockage, ajustez votre offre depuis
@@ -425,13 +425,13 @@ dans l\'intérêt général. Vous pouvez contribuer à protéger la vie privée 
     <string name="plan_plus_line2">Envoyez jusqu\'à 1000 messages par jour</string>
     <string name="plan_plus_line3">Labels et filtres personnalisés</string>
     <string name="plan_plus_line4">Envoyez des messages chiffrés à des destinataires extérieurs</string>
-    <string name="plan_plus_line7">Support client prioritaire</string>
+    <string name="plan_plus_line7">Assistance client prioritaire</string>
     <string name="plan_free_line1">500 Mo de stockage</string>
     <string name="plan_free_line2">150 messages par jour</string>
     <string name="plan_free_line3">20 labels</string>
     <string name="plan_free_line4">Domaines personnels : non pris en charge</string>
     <string name="plan_free_line5">1 addresse</string>
-    <string name="plan_free_line6">Support client : limité</string>
+    <string name="plan_free_line6">Assistance client : limitée</string>
     <string name="plan_visio_line2">Aucune limite d\'envoi</string>
     <string name="plan_visio_line3">Accès anticipé aux nouvelles fonctionnalités</string>
     <string name="plan_visio_line6">Contribuez au choix de nouvelles fonctionnalités à l\'aide de sondages dédiés aux seuls titulaires de l\'offre Visionary</string>
@@ -475,7 +475,7 @@ de respecter\n les<a href="https://protonmail.com/terms-and-conditions">conditio
     <string name="max_addresses">Jusqu\'à %d alias d’adresse email</string>
     <string name="inline_prefix">[Inline]</string>
     <string name="inline_header">%d images incorporées</string>
-    <string name="select">Selectionner</string>
+    <string name="select">Sélectionner</string>
     <string name="change_currency">Changer de devise</string>
     <string name="switch_billing_monthly">Passer à une facturation mensuelle</string>
     <string name="switch_billing_yearly">Passer à une facturation annuelle</string>
@@ -1001,4 +1001,5 @@ l\'accès au stockage.</string>
     <string name="swipe_gestures_changed_message">Après la dernière mise à jour, les gestes de balayage ont été changés. Si vous le souhaitez, vous pouvez les réinitialiser dans les paramètres.</string>
     <string name="go_to_settings">Accéder aux paramètres</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Clé API pour Firebase invalide. Les notifications push ne fonctionneront pas.</string>
 </resources>
