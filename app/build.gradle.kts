@@ -30,7 +30,6 @@ plugins {
     `kotlin-kapt`
     `hilt`
     `kotlin-serialization`
-    `hugo`
     `sentry-android`
     `browserstack`
 }
@@ -283,7 +282,6 @@ dependencies {
         `fasterxml-jackson-databind`,
         `firebase-messaging`,
         `gson`,
-        `hugo-annotations`,
         `jsoup`,
         `minidns`,
         `safetyNet`,
