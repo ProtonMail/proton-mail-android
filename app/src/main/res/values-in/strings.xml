@@ -986,4 +986,5 @@ akses menuju penyimpanan.</string>
     <string name="swipe_gestures_changed_message">Setelah pembaruan terakhir gestur geser telah dipindah. Jika berminat, Anda dapat mengatur ulang di bagian pengaturan.</string>
     <string name="go_to_settings">Ke pengaturan</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Kunci API Firebase tidak valid. Notifikasi dorong tidak akan bekerja.</string>
 </resources>

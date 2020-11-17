@@ -1030,4 +1030,5 @@ k úložišti.</string>
     <string name="swipe_gestures_changed_message">Po poslední aktualizaci byla gesta pro přejetí prstem přepnuta. Pokud chcete, v nastavení je můžete obnovit.</string>
     <string name="go_to_settings">Přejít do nastavení</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Klíč Firebase API není platný. Oznámení nebudou fungovat.</string>
 </resources>

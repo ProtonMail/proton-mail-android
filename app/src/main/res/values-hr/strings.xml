@@ -167,7 +167,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="problem_selecting_file">Došlo je do pogreške prilikom dodavanja odabrane datoteke</string>
     <string name="add_contact">Dodaj kontakt</string>
     <string name="delete_contact">Ukloni %s iz kontakata?</string>
-    <string name="confirm">Potvrda</string>
+    <string name="confirm">Potvrdi</string>
     <string name="confirm_destructive_action">Jeste li sigurni? Ova radnja se ne može poništiti.</string>
     <string name="create">Stvori</string>
     <string name="email">E-pošta</string>
@@ -229,7 +229,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="pin_lock_option_settings">Opcije zaključavanja aplikacije</string>
     <string name="pin_lock_after">Zaključaj aplikaciju nakon</string>
     <string name="lock_the_app">Zaključaj aplikaciju</string>
-    <string name="display_name_banned_chars">Nevažeće zaslonsko ime. \'&gt;\' i \'&lt;\' nisu dozvoljeni</string>
+    <string name="display_name_banned_chars">Nevažeći zaslonski naziv. \'&gt;\' i \'&lt;\' nisu dozvoljeni</string>
     <string name="cont">Nastavi</string>
     <string name="email_verification_code">Poslati ćemo kôd za potvrdu na gore navedenu adresu e-pošte.</string>
     <string name="sms_verification_code">Poslati ćemo kôd za potvrdu na gore navedeni telefonski broj.</string>
@@ -765,7 +765,7 @@ sadržaj poruke u cijelosti.</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
     <!-- Contact Groups Strings -->
     <string name="add_photo">Dodaj fotografiju</string>
-    <string name="contact_display_name">\ue91c Zaslonsko ime</string>
+    <string name="contact_display_name">\ue91c Zaslonski naziv</string>
     <string name="add_new_email">\ue914 Dodaj adresu e-pošte</string>
     <string name="no_groups">Nema grupe</string>
     <string name="contact_vcard_note">Bilješka</string>
@@ -773,7 +773,7 @@ sadržaj poruke u cijelosti.</string>
     <string name="create_contact_group">Stvaranje grupe kontakta</string>
     <string name="edit_contact_group">Uredi grupu kontakata</string>
     <string name="contact_groups_manage_addresses">Upravljanje adresama</string>
-    <string name="contact_group_display_name">\ue91a Zaslonsko ime</string>
+    <string name="contact_group_display_name">\ue91a Zaslonski naziv</string>
     <string name="contact_group_groups_icon">\ue91a </string>
     <string name="contact_add_addr_to_group">Dodajte adresu u grupu</string>
     <string name="title_activity_address_chooser">Upravljanje adresama</string>
@@ -872,7 +872,7 @@ pristup pohrani.</string>
     <string name="addresses">Adrese</string>
     <string name="default_mail_address">Zadana adresa e-pošte</string>
     <string name="default_address">Zadana adresa</string>
-    <string name="display_name_n_signature">Zaslonsko ime i potpis</string>
+    <string name="display_name_n_signature">Zaslonski naziv i potpis</string>
     <string name="display_name">Zaslonski naziv</string>
     <string name="edit_display_name">Uredi zaslonski naziv</string>
     <string name="signature">Potpis</string>
@@ -1017,4 +1017,5 @@ pristup pohrani.</string>
     <string name="swipe_gestures_changed_message">Nakon zadnjeg ažuriranja, radnje povlačenja prstom su promijenjene. Ako želite, možete ih ponovno postaviti u postavkama.</string>
     <string name="go_to_settings">Idi na postavke</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Nevažeći API ključ za Firebase. Push obavijesti neće raditi.</string>
 </resources>

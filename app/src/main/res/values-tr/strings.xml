@@ -989,4 +989,5 @@ Kapasiteniz tükenmeden önce bir miktar alan boşaltmayı veya daha fazla depol
     <string name="swipe_gestures_changed_message">Son güncellemeden sonra, kaydırma hareketleri değiştirildi. İsterseniz, bunları ayarlardan sıfırlayabilirsiniz.</string>
     <string name="go_to_settings">Ayarlara git</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Geçersiz Firebase API anahtarı. Anlık bildirimler çalışmayacaktır.</string>
 </resources>

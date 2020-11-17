@@ -198,7 +198,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="share">分享</string>
     <string name="settings_not_saved_password">登录密码错误，设置未保存</string>
     <string name="settings_not_saved_email">通知邮箱无效，设置未保存</string>
-    <string name="enter">输入</string>
+    <string name="enter">确认</string>
     <string name="cancel">取消</string>
     <string name="close">关闭</string>
     <string name="change_password">更改密码</string>
@@ -968,4 +968,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_gestures_changed_message">程序升级导致滑动手势发生变化。您可以在设置中将其重置。</string>
     <string name="go_to_settings">前往设置</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">无效的 Firebase API 密钥。推送通知将无法使用。</string>
 </resources>

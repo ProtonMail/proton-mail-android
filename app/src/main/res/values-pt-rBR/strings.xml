@@ -1001,4 +1001,5 @@ acesso ao armazenamento.</string>
     <string name="swipe_gestures_changed_message">Após a última atualização, os gestos ao deslizar foram alterados. Se você quiser, você pode redefini-los nas configurações.</string>
     <string name="go_to_settings">Ir para configurações</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Chave API do Firebase inválida. Notificações push não funcionarão.</string>
 </resources>

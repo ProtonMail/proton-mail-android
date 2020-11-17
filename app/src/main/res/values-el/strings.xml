@@ -1001,4 +1001,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_gestures_changed_message">Μετά την τελευταία ενημέρωση έχουν αλλάξει οι κινήσεις σάρωσης. Εάν θέλετε, μπορείτε να τις επαναφέρετε στις ρυθμίσεις.</string>
     <string name="go_to_settings">Μετάβαση στις ρυθμίσεις</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Μη έγκυρο κλειδί API Firebase. Οι ειδοποιήσεις push δεν θα λειτουργήσουν.</string>
 </resources>
