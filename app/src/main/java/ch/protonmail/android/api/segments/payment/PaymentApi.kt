@@ -51,9 +51,7 @@ class PaymentApi(
     @Throws(IOException::class)
     override fun fetchPaymentMethods(): PaymentMethodsResponse = ParseUtils.parse(service.fetchPaymentMethods().execute())
 
-    @Throws(IOException::class)
-    override fun fetchPaymentsStatus(): PaymentsStatusResponse =
-        ParseUtils.parse(service.fetchPaymentsStatus().execute())
+    override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = service.fetchPaymentsStatus()
 
     override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
         service.createUpdatePaymentMethod(body)

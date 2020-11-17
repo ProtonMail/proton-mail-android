@@ -53,7 +53,7 @@ interface PaymentService {
 
     @GET("payments/status")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchPaymentsStatus(): Call<PaymentsStatusResponse>
+    suspend fun fetchPaymentsStatus(): PaymentsStatusResponse
 
     @POST("payments/methods")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

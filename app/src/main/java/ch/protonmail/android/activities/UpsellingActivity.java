@@ -62,11 +62,8 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AvailablePlansEvent;
 import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.payment.PaymentsStatusEvent;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
-import ch.protonmail.android.jobs.payments.GetPaymentsStatusJob;
 import ch.protonmail.android.usecase.model.CheckSubscriptionResult;
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.AppUtil;
@@ -157,7 +154,6 @@ public class UpsellingActivity extends BaseActivity {
         }
         viewModel = new ViewModelProvider(this).get(UpsellingViewModel.class);
         boolean openUpgrade = getIntent().getBooleanExtra(EXTRA_OPEN_UPGRADE_CONTAINER, false);
-        checkPaymentStatus();
         fetchPlan(Constants.CurrencyType.EUR);
         donateContainerState = State.CLOSED;
         btnAmount5.setOnTouchListener(pressListener);
@@ -197,11 +193,6 @@ public class UpsellingActivity extends BaseActivity {
                 this,
                 this::onCheckSubscriptionEvent
         );
-    }
-
-    private void checkPaymentStatus() {
-        GetPaymentsStatusJob job = new GetPaymentsStatusJob();
-        mJobManager.addJobInBackground(job);
     }
 
     private void fetchPlan(Constants.CurrencyType currency) {
@@ -444,17 +435,6 @@ public class UpsellingActivity extends BaseActivity {
         mainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 6f));
         donateExpand.setVisibility(View.VISIBLE);
         donateContract.setVisibility(View.GONE);
-    }
-
-    @Subscribe
-    public void onPaymentsStatusEvent(PaymentsStatusEvent event) {
-        if (event.getStatus() == Status.FAILED) {
-            // TODO: show failed
-        } else {
-            if (!event.isStripeActive()) {
-                // TODO: show stripe not active
-            }
-        }
     }
 
     private void onCheckSubscriptionEvent(CheckSubscriptionResult result) {
