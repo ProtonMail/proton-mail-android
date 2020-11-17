@@ -193,15 +193,6 @@ class ComposeMessageRepository @Inject constructor(
             messagesDatabase.findAttachmentsByMessageId(messageId)
         }
 
-    suspend fun findAttachmentByMessageIdFileNameAndPath(messageId: String, fileName: String, filePath: String, isTransient: Boolean, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
-            if (!isTransient) {
-                messagesDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
-            } else {
-                searchDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
-            }
-        }
-
     suspend fun createAttachmentList(attachmentList: List<LocalAttachment>, dispatcher: CoroutineDispatcher) =
         withContext(dispatcher) {
             Attachment.createAttachmentList(messagesDatabase, attachmentList, false)

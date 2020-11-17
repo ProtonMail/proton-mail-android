@@ -357,16 +357,6 @@ class ComposeMessageViewModel @Inject constructor(
             attachmentId?.let {
                 result.add(attachmentId)
             }
-            val savedAttachment = composeMessageRepository.findAttachmentByMessageIdFileNameAndPath(
-                attachment.messageId,
-                attachment.fileName ?: "",
-                attachment.filePath ?: "",
-                messageDataResult.isTransient,
-                dispatcher
-            )
-            if (savedAttachment == null) {
-                saveAttachment(attachment, dispatcher)
-            }
         }
         return result
     }
@@ -512,11 +502,6 @@ class ComposeMessageViewModel @Inject constructor(
     private suspend fun saveMessage(message: Message, dispatcher: CoroutineDispatcher): Long =
         withContext(dispatcher) {
             messageDetailsRepository.saveMessageInDB(message)
-        }
-
-    private suspend fun saveAttachment(attachment: Attachment, dispatcher: CoroutineDispatcher): Long =
-        withContext(dispatcher) {
-            composeMessageRepository.saveAttachment(attachment)
         }
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {
