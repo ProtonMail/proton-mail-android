@@ -33,9 +33,6 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
 
-/**
- * Created by dkadrikj on 17.7.15.
- */
 public class RemoveLabelJob extends ProtonMailBaseJob {
 
     private List<String> messageIds;
