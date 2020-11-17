@@ -23,17 +23,11 @@ import androidx.annotation.NonNull;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 
-import ch.protonmail.android.api.models.PaymentMethodsResponse;
 import ch.protonmail.android.core.Constants;
-import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.payment.GetPaymentMethodsEvent;
 import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
-import ch.protonmail.android.utils.AppUtil;
 
-/**
- * Created by dkadrikj on 7/10/16.
- */
+@Deprecated
 public class GetPaymentMethodsJob extends ProtonMailBaseJob {
 
     public GetPaymentMethodsJob() {
@@ -42,16 +36,16 @@ public class GetPaymentMethodsJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        try {
-            PaymentMethodsResponse paymentMethodsResponse = getApi().fetchPaymentMethods();
-            if (paymentMethodsResponse.getCode() == Constants.RESPONSE_CODE_OK) {
-                AppUtil.postEventOnUi(new GetPaymentMethodsEvent(Status.SUCCESS, paymentMethodsResponse.getPaymentMethods()));
-            } else {
-                AppUtil.postEventOnUi(new GetPaymentMethodsEvent(Status.FAILED));
-            }
-        } catch (Exception e) {
-            AppUtil.postEventOnUi(new GetPaymentMethodsEvent(Status.FAILED));
-        }
+//        try {
+//            PaymentMethodsResponse paymentMethodsResponse = getApi().fetchPaymentMethods();
+//            if (paymentMethodsResponse.getCode() == Constants.RESPONSE_CODE_OK) {
+//                AppUtil.postEventOnUi(new GetPaymentMethodsEvent(Status.SUCCESS, paymentMethodsResponse.getPaymentMethods()));
+//            } else {
+//                AppUtil.postEventOnUi(new GetPaymentMethodsEvent(Status.FAILED));
+//            }
+//        } catch (Exception e) {
+//            AppUtil.postEventOnUi(new GetPaymentMethodsEvent(Status.FAILED));
+//        }
     }
 
     @Override

@@ -45,11 +45,9 @@ class PaymentApi(
     private val pubService: PaymentPubService
 ) : BaseApi(), PaymentApiSpec {
 
-    override suspend fun fetchSubscription(): GetSubscriptionResponse =
-        service.fetchSubscription()
+    override suspend fun fetchSubscription(): GetSubscriptionResponse = service.fetchSubscription()
 
-    @Throws(IOException::class)
-    override fun fetchPaymentMethods(): PaymentMethodsResponse = ParseUtils.parse(service.fetchPaymentMethods().execute())
+    override suspend fun fetchPaymentMethods(): PaymentMethodsResponse = service.fetchPaymentMethods()
 
     override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = service.fetchPaymentsStatus()
 
