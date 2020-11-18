@@ -824,11 +824,15 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         switch (event.status) {
             case ContactEvent.SUCCESS:
             case ContactEvent.SAVED:
+                TextExtensions.showToast(this, R.string.contact_saved, Toast.LENGTH_SHORT);
                 new Handler().postDelayed(this::saveAndFinish, 500);
                 break;
             case ContactEvent.ERROR:
                 TextExtensions.showToast(this, R.string.error);
                 break;
+            case ContactEvent.NO_NETWORK:
+                TextExtensions.showToast(this, R.string.contact_saved_offline);
+                new Handler().postDelayed(this::saveAndFinish, 500);
             default:
                 break;
         }
