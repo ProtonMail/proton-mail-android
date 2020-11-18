@@ -37,10 +37,6 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
-/**
- * Created by dino on 12/27/16.
- */
-
 public abstract class HumanVerificationDialogFragment extends DialogFragment {
 
     protected static final String ARGUMENT_TOKEN = "token";

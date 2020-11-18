@@ -190,7 +190,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.time.seconds
 
-// region constants
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
 private const val ACTION_MESSAGE_DRAFTED = "ch.protonmail.MESSAGE_DRAFTED"
 private const val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
@@ -201,7 +200,7 @@ const val LOADER_ID = 0
 const val LOADER_ID_LABELS_OFFLINE = 32
 private const val REQUEST_CODE_TRASH_MESSAGE_DETAILS = 1
 private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
-// endregion
+
 
 @AndroidEntryPoint
 class MailboxActivity :
@@ -873,7 +872,6 @@ class MailboxActivity :
         super.onSaveInstanceState(outState)
     }
 
-    // TODO refactor with onPrepareOptionsMenu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.mailbox_options_menu, menu)
         val mailboxLocation = mailboxLocationMain.value

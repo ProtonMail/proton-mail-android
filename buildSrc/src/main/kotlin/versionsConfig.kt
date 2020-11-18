@@ -100,7 +100,6 @@ const val `apache-commons-lang version` =       "3.4"           // Released: Apr
 const val `butterKnife version` =               "10.1.0"        // Released: Feb 14, 201
 const val `firebase-messaging version` =        "20.2.4"        // Released: Jul 30, 2020
 const val `gson version` =                      "2.8.5"         // Released: May 22, 201
-const val `hugo version` =                      "1.2.1"         // Released: Feb 18, 201
 const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020
 const val `jsoup version` =                     "1.8.3"         // Released: Aug 02, 2015
 const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018

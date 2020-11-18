@@ -64,13 +64,8 @@ import java.util.HashSet
 import javax.inject.Inject
 import javax.inject.Named
 
-// region constants
 private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
-// endregion
 
-/*
- * Created by kadrikj on 11/13/18.
- */
 
 class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
@@ -470,10 +465,6 @@ class MessageDetailsRepository @Inject constructor(
     fun markRead(messageId: String) {
         jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
     }
-
-    fun findPendingDraftById(messageDbId: Long) = pendingActionsDatabase.findPendingDraftByDbId(messageDbId)
-
-    fun findPendingUploadById(messageId: String) = pendingActionsDatabase.findPendingUploadByMessageId(messageId)
 
     suspend fun insertPendingDraft(messageDbId: Long, dispatcher: CoroutineDispatcher) =
             withContext(dispatcher) {

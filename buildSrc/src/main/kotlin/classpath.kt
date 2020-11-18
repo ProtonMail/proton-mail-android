@@ -30,7 +30,6 @@ val ScriptHandlerScope.classpathDependencies: DependencyHandlerScope.() -> Unit 
     classpath(`browserstack-gradle-plugin`)
     classpath(`google-services`)
     classpath(`hilt-android-gradle-plugin`)
-    classpath(`hugo-plugin`)
     classpath(`kotlin-gradle-plugin`)
     classpath(`serialization-gradle-plugin`)
     classpath(`sentry-android-plugin`)

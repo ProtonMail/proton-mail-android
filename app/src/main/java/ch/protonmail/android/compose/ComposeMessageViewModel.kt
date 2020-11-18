@@ -77,11 +77,10 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.collections.set
 
-// region constants
 const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
 const val GREATER_THAN = "&gt;"
-// endregion
+
 
 class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
@@ -340,9 +339,8 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveAttachmentsToDatabase(
+    private fun saveAttachmentsToDatabase(
         localAttachments: List<Attachment>,
-        dispatcher: CoroutineDispatcher,
         uploadAttachments: Boolean
     ): List<String> {
         val result = ArrayList<String>()
@@ -357,16 +355,6 @@ class ComposeMessageViewModel @Inject constructor(
             val attachmentId: String? = attachment.attachmentId
             attachmentId?.let {
                 result.add(attachmentId)
-            }
-            val savedAttachment = composeMessageRepository.findAttachmentByMessageIdFileNameAndPath(
-                attachment.messageId,
-                attachment.fileName ?: "",
-                attachment.filePath ?: "",
-                messageDataResult.isTransient,
-                dispatcher
-            )
-            if (savedAttachment == null) {
-                saveAttachment(attachment, dispatcher)
             }
         }
         return result
@@ -458,11 +446,7 @@ class ComposeMessageViewModel @Inject constructor(
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message, IO)
                     newAttachments = saveAttachmentsToDatabase(
-                        composeMessageRepository.createAttachmentList(
-                            _messageDataResult.attachmentList,
-                            IO
-                        ),
-                        IO,
+                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
                         uploadAttachments
                     )
                 }
@@ -492,7 +476,7 @@ class ComposeMessageViewModel @Inject constructor(
         // we need to compare them and find out which are new attachments
         if (uploadAttachments && localAttachmentsList.isNotEmpty()) {
             newAttachments = saveAttachmentsToDatabase(
-                composeMessageRepository.createAttachmentList(localAttachmentsList, IO), IO, uploadAttachments
+                composeMessageRepository.createAttachmentList(localAttachmentsList, IO), uploadAttachments
             )
         }
         val currentAttachmentsList = messageDataResult.attachmentList
@@ -513,11 +497,6 @@ class ComposeMessageViewModel @Inject constructor(
     private suspend fun saveMessage(message: Message, dispatcher: CoroutineDispatcher): Long =
         withContext(dispatcher) {
             messageDetailsRepository.saveMessageInDB(message)
-        }
-
-    private suspend fun saveAttachment(attachment: Attachment, dispatcher: CoroutineDispatcher): Long =
-        withContext(dispatcher) {
-            composeMessageRepository.saveAttachment(attachment)
         }
 
     private fun getSenderEmailAddresses(userEmailAlias: String? = null) {

@@ -18,16 +18,12 @@
  */
 package ch.protonmail.android.adapters.swipe
 
-import com.birbit.android.jobqueue.Job
-
 import ch.protonmail.android.api.models.SimpleMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.PostUnreadJob
+import com.birbit.android.jobqueue.Job
 
-/**
- * Created by dkadrikj on 9.7.15.
- */
 class MarkReadSwipeHandler : ISwipeHandler {
 
     override fun handleSwipe(message: SimpleMessage, currentLocation: String?): Job {
