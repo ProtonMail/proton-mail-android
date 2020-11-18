@@ -20,33 +20,22 @@ package ch.protonmail.android.contacts.details.edit
 
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
-import ch.protonmail.android.jobs.CreateContactJob
 import ch.protonmail.android.jobs.UpdateContactJob
 import com.birbit.android.jobqueue.JobManager
 import ezvcard.VCard
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
-import javax.inject.Singleton
 
-/*
- * Created by kadrikj on 9/26/18.
- */
-
-@Singleton
 class EditContactDetailsRepository @Inject constructor(
     workManager: WorkManager,
     jobManager: JobManager,
     api: ProtonMailApiManager,
-    databaseProvider: DatabaseProvider): ContactDetailsRepository(workManager, jobManager, api, databaseProvider) {
+    dispatcherProvider: DispatcherProvider,
+    contactsDao: ContactsDao) : ContactDetailsRepository(workManager, jobManager, api, contactsDao, dispatcherProvider) {
 
     fun clearEmail(email: String) {
         contactsDao.clearByEmail(email)
@@ -55,33 +44,7 @@ class EditContactDetailsRepository @Inject constructor(
     fun updateContact(contactId: String, contactName: String, emails: List<ContactEmail>,
                       vCardEncrypted: VCard, vCardSigned: VCard, mapEmailGroupsIds: HashMap<ContactEmail, List<ContactLabel>>) {
         jobManager.addJobInBackground(UpdateContactJob(contactId, contactName, emails, vCardEncrypted.write(),
-                vCardSigned.write(), mapEmailGroupsIds))
+            vCardSigned.write(), mapEmailGroupsIds))
     }
 
-    fun createContact(contactName: String, emails: List<ContactEmail>, vCardEncrypted: VCard, vCardSigned: VCard) {
-        GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-            withContext(Dispatchers.Default) {
-                val contactData = ContactData(ContactData.generateRandomContactId(), contactName)
-                val contactDataDbId = contactsDao.saveContactData(contactData)
-                contactData.dbId = contactDataDbId
-                jobManager.addJobInBackground(CreateContactJob(contactData, emails, vCardEncrypted.write(), vCardSigned.write()))
-            }
-        }
-    }
-
-    fun convertContact(contactName: String, emails: List<ContactEmail>, vCardEncrypted: VCard, vCardSigned: VCard) {
-        GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-            withContext(Dispatchers.Default) {
-                val contactData = ContactData(ContactData.generateRandomContactId(), contactName)
-                val contactDataDbId = contactsDao.saveContactData(contactData)
-                contactData.dbId = contactDataDbId
-                jobManager.addJobInBackground(
-                    CreateContactJob(
-                        contactData, emails,
-                        vCardEncrypted.write(), vCardSigned.write()
-                    )
-                )
-            }
-        }
-    }
 }

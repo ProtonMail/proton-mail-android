@@ -398,6 +398,9 @@ object UIActions {
         fun forViewWithTextAndParentId(@StringRes text: Int, @IdRes parentId: Int): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
 
+        fun forViewOfInstanceWithParentId(@IdRes id: Int, clazz: Class<*>, timeout: Long = 5000): ViewInteraction =
+            waitUntilViewAppears(onView(allOf(instanceOf(clazz), withParent(withId(id)))), timeout)
+
         fun forViewWithTextAndParentId(text: String, @IdRes parentId: Int): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
 

@@ -21,6 +21,7 @@ package ch.protonmail.android.api.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import ch.protonmail.android.api.models.enumerations.ContactEncryption;
 import ch.protonmail.android.api.utils.Fields;
@@ -67,5 +68,20 @@ public class ContactEncryptedData implements Serializable {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ContactEncryptedData that = (ContactEncryptedData) o;
+        return type == that.type &&
+                Objects.equals(data, that.data) &&
+                Objects.equals(signature, that.signature);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, data, signature);
     }
 }

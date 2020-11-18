@@ -582,7 +582,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 new ExtractFullContactDetailsTask(contactsDatabase, mContactId, fullContactDetails -> {
                     decryptAndFillVCard(fullContactDetails);
                     onEditContact(fullContactDetails);
-                    TextExtensions.showToast(this, R.string.contact_saved, Toast.LENGTH_SHORT);
                     return Unit.INSTANCE;
                 }).execute();
                 break;

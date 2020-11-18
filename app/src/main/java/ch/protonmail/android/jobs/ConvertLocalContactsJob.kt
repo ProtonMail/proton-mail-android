@@ -157,7 +157,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 contactEncryptedDataList.add(contactEncryptedDataType3)
 
                 val body = CreateContact(contactEncryptedDataList)
-                val response = getApi().createContact(body)
+                val response = getApi().createContactBlocking(body)
 
                 @ContactEvent.Status val status = handleResponse(contactsDatabase, response!!, dbId, contactGroupIds)
                 if (status != ContactEvent.SUCCESS) {

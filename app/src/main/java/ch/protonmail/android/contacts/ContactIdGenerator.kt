@@ -16,21 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.viewmodel
 
-import androidx.lifecycle.ViewModel
-import me.proton.core.util.kotlin.DispatcherProvider
-import studio.forface.viewstatestore.ViewStateStoreScope
+package ch.protonmail.android.contacts
 
-/**
- * Base [ViewModel] for the App
- * EVERY [ViewModel] must inherit from this
- *
- * Implements [ViewStateStoreScope] for publish to `LockedViewStateStore`
- * Implements [DispatcherProvider] for provide `CoroutineDispatcher`s
- *
- * @author Davide Farella
- */
-abstract class BaseViewModel(
-    dispatchers: DispatcherProvider
-) : ViewModel(), ViewStateStoreScope, DispatcherProvider by dispatchers
+import java.util.Random
+import javax.inject.Inject
+
+class ContactIdGenerator @Inject constructor() {
+
+    fun generateRandomId(): String {
+        val random = Random(System.nanoTime())
+        val randomOneSec = random.nextInt()
+        return "${-(System.currentTimeMillis() + randomOneSec)}"
+    }
+
+}

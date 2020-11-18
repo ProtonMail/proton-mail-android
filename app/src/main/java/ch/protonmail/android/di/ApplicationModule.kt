@@ -38,6 +38,8 @@ import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.extensions.app
@@ -183,6 +185,11 @@ object ApplicationModule {
 
     @Provides
     fun buildInfo() = BuildInfo(Build.MODEL, Build.VERSION.SDK_INT, BuildConfig.VERSION_NAME)
+
+    @Provides
+    fun provideUserCrypto(userManager: UserManager): UserCrypto =
+        UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
+
 }
 
 @Module

@@ -65,7 +65,11 @@ interface ContactService {
 
     @POST("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createContact(@Body contactsBody: CreateContactBody): Call<ContactResponse>
+    fun createContactBlocking(@Body contactsBody: CreateContactBody): Call<ContactResponse>
+
+    @POST("contacts")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun createContact(@Body contactsBody: CreateContactBody): ContactResponse
 
     @PUT("contacts/{contact_id}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

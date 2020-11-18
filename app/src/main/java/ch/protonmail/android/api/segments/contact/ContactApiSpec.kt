@@ -51,7 +51,9 @@ interface ContactApiSpec {
     fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?>
 
     @Throws(IOException::class)
-    fun createContact(body: CreateContact): ContactResponse?
+    fun createContactBlocking(body: CreateContact): ContactResponse?
+
+    suspend fun createContact(body: CreateContact): ContactResponse?
 
     @Throws(IOException::class)
     fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse?

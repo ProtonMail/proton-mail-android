@@ -22,12 +22,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import ch.protonmail.android.api.utils.Fields;
-
-/**
- * Created by dino on 9/17/17.
- */
 
 public class CreateContact implements Serializable {
 
@@ -36,5 +33,18 @@ public class CreateContact implements Serializable {
 
     public CreateContact(List<ContactEncryptedData> cards) {
         this.cards = cards;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CreateContact that = (CreateContact) o;
+        return Objects.equals(cards, that.cards);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cards);
     }
 }
