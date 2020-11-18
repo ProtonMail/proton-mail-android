@@ -75,6 +75,7 @@ import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.api.utils.ParseUtils;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.CreateUserEvent;
 import ch.protonmail.android.events.DonateEvent;
@@ -86,6 +87,7 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.events.payment.VerifyPaymentEvent;
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
+import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult;
 import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.CollectionExtensions;
@@ -177,19 +179,11 @@ public class BillingFragment extends CreateAccountBaseFragment {
     private Constants.CurrencyType currency;
     private String couponCode;
     private List<String> planIds;
-    private String cardNumber;
-    private String cardName;
-    private String cardCvc;
-    private String zip;
-    private String month;
-    private String year;
-    private String countryCode;
-    private String mFingerprint;
     private int cycle;
+    private String mFingerprint;
     private List<PaymentMethod> mPaymentMethods;
-
-    private BillingViewModel billingViewModel = null;
     private String paymentTokenForSubscription = null;
+    private BillingViewModel viewModel;
 
     private final int PAYMENT_SUCCESS_PAGE_TIMEOUT = 5000;
 
@@ -218,7 +212,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         planIds = new ArrayList<>();
         planIds.add(selectedPlanId);
         cycle = getArguments().getInt(ARGUMENT_CYCLE);
-        billingViewModel = new ViewModelProvider(this).get(BillingViewModel.class);
+        viewModel = new ViewModelProvider(this).get(BillingViewModel.class);
     }
 
     @Nullable
@@ -275,8 +269,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
                 snackBarView.findViewById(com.google.android.material.R.id.snackbar_text);
         snackBarTextView.setTextColor(Color.WHITE);
 
-        showPaymentMethods();
-
         rootView.findViewById(R.id.submit_picker_paypal).setVisibility(Constants.FeatureFlags.PAYPAL_PAYMENT ? View.VISIBLE : View.GONE);
 
         return rootView;
@@ -285,16 +277,27 @@ public class BillingFragment extends CreateAccountBaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        billingViewModel.getCreateSubscriptionResult().observe(
+        viewModel.getCreateSubscriptionResult().observe(
                 getViewLifecycleOwner(),
                 this::onCreateSubscriptionResult
         );
+
+        viewModel.getFetchPaymentMethodsResult().observe(
+                getViewLifecycleOwner(),
+                this::onPaymentMethodsFetched
+        );
+        viewModel.fetchPaymentMethodTypes();
+    }
+
+    private void onPaymentMethodsFetched(FetchPaymentMethodsResult result) {
+        Timber.v("Payment methods result:%s", result);
+        if (result instanceof FetchPaymentMethodsResult.Success) {
+            mPaymentMethods = ((FetchPaymentMethodsResult.Success) result).getPaymentMethods();
+            showPaymentMethods();
+        }
     }
 
     private void showPaymentMethods() {
-
-        mPaymentMethods = ProtonMailApplication.getApplication().getPaymentMethods();
-
         if (mPaymentMethods != null && mPaymentMethods.size() > 0) {
             List<String> paymentMethodsStrings = new ArrayList<>();
             boolean payPalMethodExists = false;
@@ -313,21 +316,17 @@ public class BillingFragment extends CreateAccountBaseFragment {
             }
             ArrayAdapter<String> paymentMethodsAdapter = new ArrayAdapter<>(getContext(), R.layout.month_spinner_item, paymentMethodsStrings);
             mPaymentMethodsSpinner.setAdapter(paymentMethodsAdapter);
+
+            mPaymentMethodsLayout.setVisibility(View.VISIBLE);
+            mPickerLayout.setVisibility(View.GONE);
+        } else {
+            mPaymentMethodsLayout.setVisibility(View.GONE);
+            mPickerLayout.setVisibility(View.VISIBLE);
         }
 
-        if (mPaymentMethods != null && mPaymentMethods.size() > 0) {
-            mInputFormLayout.setVisibility(View.GONE);
-            mPaymentMethodsLayout.setVisibility(View.VISIBLE);
-            mPaypalLayout.setVisibility(View.GONE);
-            mPickerLayout.setVisibility(View.GONE);
-            mSuccessPageLayout.setVisibility(View.GONE);
-        } else {
-            mInputFormLayout.setVisibility(View.GONE);
-            mPaymentMethodsLayout.setVisibility(View.GONE);
-            mPaypalLayout.setVisibility(View.GONE);
-            mPickerLayout.setVisibility(View.VISIBLE);
-            mSuccessPageLayout.setVisibility(View.GONE);
-        }
+        mInputFormLayout.setVisibility(View.GONE);
+        mPaypalLayout.setVisibility(View.GONE);
+        mSuccessPageLayout.setVisibility(View.GONE);
 
     }
 
@@ -373,7 +372,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
     public void retryPaymentAfterCaptchaValidation(String token, String tokenType) {
         mProgressContainer.setVisibility(View.VISIBLE);
-        billingViewModel.retryCreatePaymentToken(token, tokenType);
+        viewModel.retryCreatePaymentToken(token, tokenType);
     }
 
     @OnClick(R.id.submit_picker_card)
@@ -431,7 +430,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         PaymentMethod paymentMethod = mPaymentMethods.get(selectedPosition);
         if (billingType == Constants.BillingType.UPGRADE || billingType == Constants.BillingType.DONATE) {
             mProgressContainer.setVisibility(View.VISIBLE);
-            billingViewModel.createPaymentTokenFromPaymentMethodId(amount, currency, paymentMethod.getId()).observe(this, createPaymentTokenResponse -> {
+            viewModel.createPaymentTokenFromPaymentMethodId(amount, currency, paymentMethod.getId()).observe(this, createPaymentTokenResponse -> {
                 handleCreatePaymentTokenResponse(createPaymentTokenResponse, paymentMethod.getCardDetails().getPayer() == null ? PAYMENT_TYPE_CARD : PAYMENT_TYPE_PAYPAL);
             });
         }
@@ -439,21 +438,24 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
     @OnClick(R.id.submit)
     public void onSubmitClicked() { // on screen with Credit Card details
-        cardNumber = creditCardNumberEditText.getText().toString();
-        cardName = creditCardNameEditText.getText().toString();
+        String cardNumber = creditCardNumberEditText.getText().toString();
+        String cardName = creditCardNameEditText.getText().toString();
         int selectedCountryPosition = mCountriesSpinner.getSelectedItemPosition();
-        month = (String) mMonthsSpinner.getSelectedItem();
-        year = (String) mYearsSpinner.getSelectedItem();
+        String month = (String) mMonthsSpinner.getSelectedItem();
+        String year = (String) mYearsSpinner.getSelectedItem();
         int monthInt;
         int yearInt;
         try {
-            monthInt = Integer.valueOf(month);
-            yearInt = Integer.valueOf(year);
+            monthInt = Integer.parseInt(month);
+            yearInt = Integer.parseInt(year);
         } catch (java.lang.NumberFormatException e) {
             monthInt = 0;
             yearInt = 0;
         }
         boolean inputValid = validateInput(cardNumber, cardName, selectedCountryPosition, monthInt, yearInt);
+        String cardCvc;
+        String zip;
+        String countryCode;
         if (inputValid) {
             mProgressContainer.setVisibility(View.VISIBLE);
             cardCvc = cvcNumberEditText.getText().toString();
@@ -461,10 +463,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
             countryCode = mAdapter.getItem(selectedCountryPosition).getCountryCode();
         } else {
             return;
-        }
-        String fingerprint = mFingerprint;
-        if ("0".equals(mFingerprint)) {
-            fingerprint = "";
         }
 
         // we need to create PaymentToken first
@@ -480,7 +478,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         paymentDetails.put(Fields.Payment.ZIP, zip);
         PaymentType cardPaymentType = new PaymentType.Card(paymentDetails);
 
-        billingViewModel.createPaymentToken(amount, currency, cardPaymentType).observe(this, createPaymentTokenResponse -> {
+        viewModel.createPaymentToken(amount, currency, cardPaymentType).observe(this, createPaymentTokenResponse -> {
             handleCreatePaymentTokenResponse(createPaymentTokenResponse, PAYMENT_TYPE_CARD);
         });
     }
@@ -519,7 +517,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
         mProgressContainer.setVisibility(View.VISIBLE);
 
-        billingViewModel.createPaymentToken(amount, currency, PaymentType.PayPal.INSTANCE).observe(this, createPaymentTokenResponse -> {
+        viewModel.createPaymentToken(amount, currency, PaymentType.PayPal.INSTANCE).observe(this, createPaymentTokenResponse -> {
             handleCreatePaymentTokenResponse(createPaymentTokenResponse, PAYMENT_TYPE_PAYPAL);
         });
     }
@@ -540,7 +538,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
                         paymentTokenForSubscription = token;
                         break;
                     case UPGRADE:
-                        billingViewModel.createSubscriptionForPaymentToken(token, amount, currency, planIds, cycle, couponCode);
+                        viewModel.createSubscriptionForPaymentToken(token, amount, currency, planIds, cycle, couponCode);
                         break;
                     case DONATE:
                         mListener.donateForPaymentToken(amount, currency, token);
@@ -550,11 +548,11 @@ public class BillingFragment extends CreateAccountBaseFragment {
                 break;
             case FAILED:
             case NOT_SUPPORTED:
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_unknown_error_description));
                 break;
             case CONSUMED:
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_consumed_error_description));
                 break;
         }
@@ -564,10 +562,10 @@ public class BillingFragment extends CreateAccountBaseFragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_CODE_PAYMENT_APPROVAL) {
             if (resultCode == Activity.RESULT_CANCELED) {
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_cancel_error_description));
             } else if (resultCode == RESULT_CODE_ERROR) {
-                showPaymentMethods();
+                viewModel.fetchPaymentMethodTypes();
                 showPaymentError(null, getString(R.string.payment_approval_unknown_error_description));
             } else if (resultCode == Activity.RESULT_OK) {
                 String tokenStatus = data.getStringExtra(EXTRA_RESULT_STATUS_STRING);
@@ -635,14 +633,10 @@ public class BillingFragment extends CreateAccountBaseFragment {
         }
         ProtonMailApplication.getApplication().resetMailboxLoginEvent();
         mProgressBar.setVisibility(View.GONE);
-        switch (event.status) {
-            case SUCCESS: {
-                billingViewModel.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, planIds, cycle, couponCode);
-            }
-            break;
-            default:
-                handleLoginStatus(event.status);
-                break;
+        if (event.status == AuthStatus.SUCCESS) {
+            viewModel.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, planIds, cycle, couponCode);
+        } else {
+            handleLoginStatus(event.status);
         }
     }
 
@@ -734,7 +728,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         btnAnotherCard.setOnClickListener(v -> {
             alert.cancel();
             clearFields();
-            showPaymentMethods();
+            viewModel.fetchPaymentMethodTypes();
         });
 
         if (btnFreeAccount != null) {
