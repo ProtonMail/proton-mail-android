@@ -75,7 +75,6 @@ import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MessageSentEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
-import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
@@ -448,8 +447,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void fetchOrganizationData() {
-        GetPaymentMethodsJob paymentMethodsJob = new GetPaymentMethodsJob();
-        mJobManager.addJobInBackground(paymentMethodsJob);
         if (mUserManager.getUser().isPaidUser()) {
             GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
             mJobManager.addJobInBackground(getOrganizationJob);

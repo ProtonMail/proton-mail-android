@@ -49,7 +49,7 @@ class FetchPaymentMethodsTest {
     }
 
     @Test
-    fun verifyRequestFailsWhenFetchingPayments() = runBlockingTest {
+    fun verifyRequestFailsWhenFetchingPaymentsThrowsAnError() = runBlockingTest {
         // given
         val exceptionMessage = "Network failure!"
         val exception = Exception(exceptionMessage)
@@ -82,7 +82,7 @@ class FetchPaymentMethodsTest {
     }
 
     @Test
-    fun verifyRequestFailsWhenFetchPaymentsApiReturnsError() = runBlockingTest {
+    fun verifyRequestFailsWhenFetchPaymentsApiReturnsErrorCode() = runBlockingTest {
         // given
         val paymentMethod1 = mockk<PaymentMethod>()
         val paymentMethodsResponse = mockk<PaymentMethodsResponse> {

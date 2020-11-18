@@ -252,7 +252,6 @@ abstract class NavigationActivity : BaseActivity(),
     }
 
     protected fun switchAccountProcedure(accountName: String) {
-        ProtonMailApplication.getApplication().clearPaymentMethods()
         userManager.switchToAccount(accountName)
         onSwitchedAccounts()
         DialogUtils.showSignedInSnack(drawerLayout, String.format(getString(R.string.signed_in_with), accountName))

@@ -63,7 +63,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AvailablePlansEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
-import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
 import ch.protonmail.android.usecase.model.CheckSubscriptionResult;
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.AppUtil;
@@ -181,9 +180,6 @@ public class UpsellingActivity extends BaseActivity {
             }
             upgradeHeader.setOnClickListener(v -> onUpgradeHeaderClick());
         }
-
-        GetPaymentMethodsJob paymentMethodsJob = new GetPaymentMethodsJob();
-        mJobManager.addJobInBackground(paymentMethodsJob);
 
         viewModel.getCreateSubscriptionResult().observe(
                 this,
