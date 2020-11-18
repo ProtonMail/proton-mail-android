@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.usecase.create.CreateContact.Result
 import ch.protonmail.android.worker.CreateContactWorker
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
@@ -62,6 +63,9 @@ class CreateContactTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var contactIdGenerator: ContactIdGenerator
+
+    @RelaxedMockK
+    private lateinit var networkConnectivityManager: NetworkConnectivityManager
 
     @InjectMockKs
     private lateinit var createContact: CreateContact
@@ -126,6 +130,20 @@ class CreateContactTest : CoroutinesTest {
             result.observeForever { }
 
             assertEquals(Result.OnlineContactCreationPending, result.value)
+        }
+    }
+
+    @Test
+    fun createContactDoesNothingWhenContactCreationThroughNetworkIsPendingButConnectivityIsAvailable() {
+        runBlockingTest {
+            val workerStatusLiveData = buildCreateContactWorkerResponse(WorkInfo.State.ENQUEUED)
+            every { createContactScheduler.enqueue(encryptedData, signedData) } returns workerStatusLiveData
+            every { networkConnectivityManager.isInternetConnectionPossible() } returns true
+
+            val result = createContact("Alex", contactEmails, encryptedData, signedData)
+            result.observeForever { }
+
+            assertEquals(null, result.value)
         }
     }
 

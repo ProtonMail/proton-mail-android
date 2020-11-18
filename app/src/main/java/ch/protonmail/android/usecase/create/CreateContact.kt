@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.contacts.ContactIdGenerator
 import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
 import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
@@ -43,7 +44,8 @@ class CreateContact @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val contactsRepository: ContactDetailsRepository,
     private val createContactScheduler: Enqueuer,
-    private val contactIdGenerator: ContactIdGenerator
+    private val contactIdGenerator: ContactIdGenerator,
+    private val connectivityManager: NetworkConnectivityManager
 ) {
 
     suspend operator fun invoke(
@@ -66,7 +68,9 @@ class CreateContact @Inject constructor(
                 .switchMap { workInfo: WorkInfo? ->
                     liveData(dispatcherProvider.Io) {
                         if (workInfo?.state == WorkInfo.State.ENQUEUED) {
-                            emit(Result.OnlineContactCreationPending)
+                            if (!connectivityManager.isInternetConnectionPossible()) {
+                                emit(Result.OnlineContactCreationPending)
+                            }
                         } else {
                             workInfo?.let { emit(handleWorkResult(workInfo, contactData)) }
                         }
