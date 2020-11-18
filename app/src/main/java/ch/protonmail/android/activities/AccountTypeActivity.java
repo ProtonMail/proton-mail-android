@@ -20,7 +20,6 @@ package ch.protonmail.android.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -32,6 +31,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
@@ -48,17 +50,14 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
-import ch.protonmail.android.events.payment.GetPaymentMethodsEvent;
+import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
-import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
+import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult;
 import ch.protonmail.android.utils.AppUtil;
-
-/**
- * Created by dkadrikj on 10/23/16.
- */
+import ch.protonmail.android.viewmodel.AccountTypeViewModel;
+import timber.log.Timber;
 
 public class AccountTypeActivity extends BaseActivity {
 
@@ -78,6 +77,8 @@ public class AccountTypeActivity extends BaseActivity {
     TextView noPaymentMethodsView;
     @BindView(R.id.edit_payment_methods)
     TextView editPaymentMethods;
+
+    private AccountTypeViewModel viewModel;
 
     @Override
     protected int getLayoutId() {
@@ -101,8 +102,12 @@ public class AccountTypeActivity extends BaseActivity {
             }
         }
 
-        GetPaymentMethodsJob paymentMethodsJob = new GetPaymentMethodsJob();
-        mJobManager.addJobInBackground(paymentMethodsJob);
+        viewModel = new ViewModelProvider(this).get(AccountTypeViewModel.class);
+        viewModel.getFetchPaymentMethodsResult().observe(
+                this,
+                this::onPaymentMethods
+        );
+        viewModel.fetchPaymentMethods();
     }
 
     @Override
@@ -149,10 +154,12 @@ public class AccountTypeActivity extends BaseActivity {
         }
     }
 
-    @Subscribe
-    public void onPaymentMethods(GetPaymentMethodsEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            showCardDetails();
+    private void onPaymentMethods(FetchPaymentMethodsResult result) {
+        Timber.v("Payment methods result:%s", result);
+        if (result instanceof FetchPaymentMethodsResult.Success) {
+            List<PaymentMethod> paymentMethods =
+                    ((FetchPaymentMethodsResult.Success) result).getPaymentMethods();
+            showCardDetails(paymentMethods);
         }
     }
 
@@ -178,13 +185,7 @@ public class AccountTypeActivity extends BaseActivity {
             styleEditPaymentMethod();
         } else {
             upgrade.setVisibility(View.GONE);
-            List<PaymentMethod> paymentMethods = ProtonMailApplication.getApplication().getPaymentMethods();
-            if (paymentMethods == null) {
-                GetPaymentMethodsJob paymentMethodsJob = new GetPaymentMethodsJob();
-                mJobManager.addJobInBackground(paymentMethodsJob);
-            } else {
-                showCardDetails();
-            }
+            viewModel.fetchPaymentMethods();
         }
         int accountTypeColor = getResources().getIntArray(R.array.account_type_colors)[type];
         String accountName = getResources().getStringArray(R.array.account_type_names)[type];
@@ -194,15 +195,14 @@ public class AccountTypeActivity extends BaseActivity {
         accountTypeTitle.setTextColor(accountTypeColor);
     }
 
-    private void showCardDetails() {
-        List<PaymentMethod> paymentMethods = ProtonMailApplication.getApplication().getPaymentMethods();
+    private void showCardDetails(List<PaymentMethod> paymentMethods) {
         if (paymentMethods != null) {
             accountTypeProgress.setVisibility(View.GONE);
-            LayoutInflater inflater = LayoutInflater.from(this);
             if (paymentMethods.size() == 0) {
                 styleEditPaymentMethod();
                 noPaymentMethodsView.setVisibility(View.VISIBLE);
             } else {
+                LayoutInflater inflater = LayoutInflater.from(this);
                 paymentMethodsParent.removeAllViews();
                 for (PaymentMethod paymentMethod : paymentMethods) {
                     CardDetails cardDetails = paymentMethod.getCardDetails();

@@ -732,6 +732,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         this.appInBackground = appInBackground;
     }
 
+    @Deprecated
     public List<PaymentMethod> getPaymentMethods() {
         return mPaymentMethods;
     }
