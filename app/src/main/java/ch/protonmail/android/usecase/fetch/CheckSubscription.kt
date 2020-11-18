@@ -27,6 +27,7 @@ import ch.protonmail.android.core.Constants.VpnPlanType.Companion.fromString
 import ch.protonmail.android.usecase.model.CheckSubscriptionResult
 import ch.protonmail.android.utils.extensions.toPMResponseBody
 import retrofit2.HttpException
+import timber.log.Timber
 import javax.inject.Inject
 
 class CheckSubscription @Inject constructor(
@@ -38,37 +39,44 @@ class CheckSubscription @Inject constructor(
         planIds: MutableList<String>,
         currency: Constants.CurrencyType,
         cycle: Int
-    ): CheckSubscriptionResult = runCatching {
-        val currentSubscriptions = api.fetchSubscription()
+    ): CheckSubscriptionResult {
 
-        currentSubscriptions.subscription?.plans?.let { subscriptionPlans ->
-            if (subscriptionPlans.size > 0) {
-                for (plan in subscriptionPlans) {
-                    val vpnPlanType = fromString(plan.name)
-                    if (vpnPlanType === VpnPlanType.BASIC || vpnPlanType === VpnPlanType.PLUS) {
-                        planIds.add(plan.id)
+        runCatching {
+            val currentSubscriptions = api.fetchSubscription()
+
+            currentSubscriptions.subscription?.plans?.let { subscriptionPlans ->
+                if (subscriptionPlans.size > 0) {
+                    for (plan in subscriptionPlans) {
+                        val vpnPlanType = fromString(plan.name)
+                        if (vpnPlanType === VpnPlanType.BASIC || vpnPlanType === VpnPlanType.PLUS) {
+                            planIds.add(plan.id)
+                        }
                     }
                 }
             }
+        }.onFailure {
+            Timber.i(it, "Ignoring fetchSubscription error ${(it as? HttpException)?.toPMResponseBody()}")
         }
 
-        val body = CheckSubscriptionBody(coupon, planIds, currency, cycle)
-        val response = api.checkSubscription(body)
+        return runCatching {
+            val body = CheckSubscriptionBody(coupon, planIds, currency, cycle)
+            val response = api.checkSubscription(body)
 
-        if (response.code == Constants.RESPONSE_CODE_OK) {
-            CheckSubscriptionResult.Success(response)
-        } else {
-            CheckSubscriptionResult.Error(response = response)
-        }
-    }
-        .fold(
-            onSuccess = { it },
-            onFailure = { throwable ->
-                val httpErrorBody = (throwable as? HttpException)?.toPMResponseBody()
-                CheckSubscriptionResult.Error(
-                    response = httpErrorBody,
-                    throwable = throwable
-                )
+            if (response.code == Constants.RESPONSE_CODE_OK) {
+                CheckSubscriptionResult.Success(response)
+            } else {
+                CheckSubscriptionResult.Error(response = response)
             }
-        )
+        }
+            .fold(
+                onSuccess = { it },
+                onFailure = { throwable ->
+                    val httpErrorBody = (throwable as? HttpException)?.toPMResponseBody()
+                    CheckSubscriptionResult.Error(
+                        response = httpErrorBody,
+                        throwable = throwable
+                    )
+                }
+            )
+    }
 }

@@ -51,6 +51,30 @@ class CheckSubscriptionTest {
     }
 
     @Test
+    fun verifyThatFetchSubscriptionErrorsAreIgnoredAndOnlyCheckSubscriptionFailuresAreTakenIntoAccount() {
+        runBlockingTest {
+            // given
+            val coupon = "cupon1"
+            val currency = Constants.CurrencyType.EUR
+            val cycle = 0
+            val planIds = mutableListOf<String>()
+            val fetchExceptionMessage = "Fetch Subscription Network failure!"
+            val checkExceptionMessage = "Check Subscription Network failure!"
+            val fetchException = Exception(fetchExceptionMessage)
+            val checkException = Exception(checkExceptionMessage)
+            coEvery { api.fetchSubscription() } throws fetchException
+            coEvery { api.checkSubscription(any()) } throws checkException
+            val expected = CheckSubscriptionResult.Error(null, throwable = checkException)
+
+            // when
+            val actualResult = useCase.invoke(coupon, planIds, currency, cycle)
+
+            // then
+            assertEquals(expected, actualResult)
+        }
+    }
+
+    @Test
     fun verifyRequestFailsWhenCheckingSubscriptions() {
         runBlockingTest {
             // given
@@ -60,7 +84,16 @@ class CheckSubscriptionTest {
             val planIds = mutableListOf<String>()
             val exceptionMessage = "Network failure!"
             val exception = Exception(exceptionMessage)
-            coEvery { api.fetchSubscription() } throws exception
+            val testPlan = mockk<Plan>(relaxed = true)
+            val testSubscription = mockk<Subscription> {
+                every { plans } returns listOf(testPlan)
+            }
+            val getSubscriptionResponse = mockk<GetSubscriptionResponse> {
+                every { subscription } returns testSubscription
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
+            coEvery { api.fetchSubscription() } returns getSubscriptionResponse
+            coEvery { api.checkSubscription(any()) } throws exception
             val expected = CheckSubscriptionResult.Error(null, throwable = exception)
 
             // when
@@ -88,6 +121,31 @@ class CheckSubscriptionTest {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
             coEvery { api.fetchSubscription() } returns getSubscriptionResponse
+            val checkSubscriptionResponse = mockk<CheckSubscriptionResponse> {
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
+            coEvery { api.checkSubscription(any()) } returns checkSubscriptionResponse
+            val expected = CheckSubscriptionResult.Success(checkSubscriptionResponse)
+
+            // when
+            val actualResult = useCase.invoke(coupon, planIds, currency, cycle)
+
+            // then
+            assertEquals(expected, actualResult)
+        }
+    }
+
+    @Test
+    fun verifyRequestSucceedsWhenCheckSubscriptionsTerminatesNormallyEvenWhenFetchSubscriptionFails() {
+        runBlockingTest {
+            // given
+            val coupon = "cupon1"
+            val currency = Constants.CurrencyType.EUR
+            val cycle = 0
+            val planIds = mutableListOf<String>()
+            val fetchExceptionMessage = "Fetch Subscription Network failure!"
+            val fetchException = Exception(fetchExceptionMessage)
+            coEvery { api.fetchSubscription() } throws fetchException
             val checkSubscriptionResponse = mockk<CheckSubscriptionResponse> {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
