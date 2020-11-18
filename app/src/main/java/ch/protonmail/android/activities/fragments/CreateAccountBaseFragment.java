@@ -366,6 +366,11 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
                 enableSubmitButton();
             }
             break;
+            case INCORRECT_KEY_PARAMETERS: {
+                TextExtensions.showToast(getContext(), R.string.incorrect_key_parameters);
+                enableSubmitButton();
+            }
+            break;
             case INVALID_SERVER_PROOF: {
                 TextExtensions.showToast(getContext(), R.string.invalid_server_proof);
                 enableSubmitButton();

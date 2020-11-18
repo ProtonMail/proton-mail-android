@@ -195,6 +195,10 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
                 hideProgress()
                 showToast(R.string.invalid_credentials)
             }
+            AuthStatus.INCORRECT_KEY_PARAMETERS -> {
+                hideProgress()
+                showToast(R.string.incorrect_key_parameters)
+            }
             AuthStatus.INVALID_SERVER_PROOF -> {
                 hideProgress()
                 showToast(R.string.invalid_server_proof)
