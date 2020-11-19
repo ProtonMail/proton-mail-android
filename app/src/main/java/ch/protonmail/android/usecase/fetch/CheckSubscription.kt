@@ -22,8 +22,6 @@ package ch.protonmail.android.usecase.fetch
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.VpnPlanType
-import ch.protonmail.android.core.Constants.VpnPlanType.Companion.fromString
 import ch.protonmail.android.usecase.model.CheckSubscriptionResult
 import ch.protonmail.android.utils.extensions.toPMResponseBody
 import retrofit2.HttpException
@@ -42,18 +40,10 @@ class CheckSubscription @Inject constructor(
     ): CheckSubscriptionResult {
 
         runCatching {
-            val currentSubscriptions = api.fetchSubscription()
-
-            currentSubscriptions.subscription?.plans?.let { subscriptionPlans ->
-                if (subscriptionPlans.size > 0) {
-                    for (plan in subscriptionPlans) {
-                        val vpnPlanType = fromString(plan.name)
-                        if (vpnPlanType === VpnPlanType.BASIC || vpnPlanType === VpnPlanType.PLUS) {
-                            planIds.add(plan.id)
-                        }
-                    }
+            api.fetchSubscription().subscription?.plans
+                ?.onEach {
+                    planIds.add(it.id)
                 }
-            }
         }.onFailure {
             Timber.i(it, "Ignoring fetchSubscription error ${(it as? HttpException)?.toPMResponseBody()}")
         }

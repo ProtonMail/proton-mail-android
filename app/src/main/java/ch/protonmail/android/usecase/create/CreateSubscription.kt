@@ -65,17 +65,10 @@ class CreateSubscription @Inject constructor(
             )
         }
 
-        val currentSubscriptions = api.fetchSubscription()
-        currentSubscriptions.subscription?.plans?.let { subscriptionPlans ->
-            if (subscriptionPlans.size > 0) {
-                for (plan in subscriptionPlans) {
-                    val vpnPlanType = Constants.VpnPlanType.fromString(plan.name)
-                    if (vpnPlanType === Constants.VpnPlanType.BASIC || vpnPlanType === Constants.VpnPlanType.PLUS) {
-                        planIds.add(plan.id)
-                    }
-                }
+        api.fetchSubscription().subscription?.plans
+            ?.onEach {
+                planIds.add(it.id)
             }
-        }
 
         val subscriptionBody = if (amount == 0) {
             // don't provide payment method and put "amount" as 0, because we are using stored credits

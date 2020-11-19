@@ -105,16 +105,57 @@ class CheckSubscriptionTest {
     }
 
     @Test
-    fun verifyRequestSucceedsWhenCheckSubscriptionsTerminatesNormally() {
+    fun verifyRequestSucceedsWhenCheckSubscriptionsTerminatesNormallyWithVpnPlusPlan() {
         runBlockingTest {
             // given
             val coupon = "cupon1"
             val currency = Constants.CurrencyType.EUR
             val cycle = 0
-            val planIds = mutableListOf<String>()
-            val testPlan = mockk<Plan>(relaxed = true)
+            val planId1 = "ID11"
+            val planName1 = "vpnplus"
+            val planIds = mutableListOf(planId1)
+            val testPlanVpnPlus = mockk<Plan> {
+                every { id }   returns planId1
+                every { name }   returns planName1
+            }
             val testSubscription = mockk<Subscription> {
-                every { plans } returns listOf(testPlan)
+                every { plans } returns listOf(testPlanVpnPlus)
+            }
+            val getSubscriptionResponse = mockk<GetSubscriptionResponse> {
+                every { subscription } returns testSubscription
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
+            coEvery { api.fetchSubscription() } returns getSubscriptionResponse
+            val checkSubscriptionResponse = mockk<CheckSubscriptionResponse> {
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
+            coEvery { api.checkSubscription(any()) } returns checkSubscriptionResponse
+            val expected = CheckSubscriptionResult.Success(checkSubscriptionResponse)
+
+            // when
+            val actualResult = useCase.invoke(coupon, planIds, currency, cycle)
+
+            // then
+            assertEquals(expected, actualResult)
+        }
+    }
+
+    @Test
+    fun verifyRequestSucceedsWhenCheckSubscriptionsTerminatesNormallyWithUnknownPlan() {
+        runBlockingTest {
+            // given
+            val coupon = "cupon1"
+            val currency = Constants.CurrencyType.EUR
+            val cycle = 0
+            val planId1 = "ID11"
+            val planName1 = "unknownPlan"
+            val planIds = mutableListOf(planId1)
+            val testPlanUnknown = mockk<Plan> {
+                every { id }   returns planId1
+                every { name }   returns planName1
+            }
+            val testSubscription = mockk<Subscription> {
+                every { plans } returns listOf(testPlanUnknown)
             }
             val getSubscriptionResponse = mockk<GetSubscriptionResponse> {
                 every { subscription } returns testSubscription

@@ -282,19 +282,6 @@ object Constants {
         BUSINESS
     }
 
-    enum class VpnPlanType(val vpnPlanTypeValue: String) {
-        BASIC("vpnbasic"),
-        PLUS("vpnplus");
-
-        companion object {
-            fun fromString(vpnPlanTypeValue: String): VpnPlanType {
-                return values().find {
-                    vpnPlanTypeValue == it.vpnPlanTypeValue
-                } ?: BASIC
-            }
-        }
-    }
-
     enum class PlanType(val planTypeValue: String) {
         FREE("free"),
         PLUS("plus"),
