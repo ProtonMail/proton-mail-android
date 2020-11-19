@@ -440,7 +440,7 @@ public class UpsellingActivity extends BaseActivity {
     private void onCheckSubscriptionEvent(CheckSubscriptionResult result) {
         Timber.v("CheckSubscriptionEvent result:%s", result);
         if (result instanceof CheckSubscriptionResult.Success) {
-        CheckSubscriptionResponse response = ((CheckSubscriptionResult.Success)result).getResponse();
+            CheckSubscriptionResponse response = ((CheckSubscriptionResult.Success) result).getResponse();
 
             if (response.getAmountDue() == 0) {
                 // prevent user from making illegal payment of value 0

@@ -139,9 +139,9 @@ class BillingViewModel @ViewModelInject constructor(
         token: String,
         amount: Int,
         currency: Constants.CurrencyType,
-        couponCode: String,
         planIds: MutableList<String>,
-        cycle: Int
+        cycle: Int,
+        couponCode: String? = null
     ) {
         viewModelScope.launch {
 

@@ -540,7 +540,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
                         paymentTokenForSubscription = token;
                         break;
                     case UPGRADE:
-                        billingViewModel.createSubscriptionForPaymentToken(token, amount, currency, couponCode, planIds, cycle);
+                        billingViewModel.createSubscriptionForPaymentToken(token, amount, currency, planIds, cycle, couponCode);
                         break;
                     case DONATE:
                         mListener.donateForPaymentToken(amount, currency, token);
@@ -637,7 +637,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         mProgressBar.setVisibility(View.GONE);
         switch (event.status) {
             case SUCCESS: {
-                billingViewModel.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, couponCode, planIds, cycle);
+                billingViewModel.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, planIds, cycle, couponCode);
             }
             break;
             default:
