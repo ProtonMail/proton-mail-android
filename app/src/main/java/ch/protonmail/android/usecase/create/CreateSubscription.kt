@@ -28,7 +28,9 @@ import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult
 import ch.protonmail.android.utils.extensions.filterValues
+import ch.protonmail.android.utils.extensions.toPMResponseBody
 import com.birbit.android.jobqueue.JobManager
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -55,9 +57,9 @@ class CreateSubscription @Inject constructor(
         planIds: MutableList<String> = mutableListOf(),
         couponCode: String? = null,
         paymentToken: String? = null
-    ): CreateSubscriptionResult = runCatching {
+    ): CreateSubscriptionResult {
 
-        Timber.v("Create Subscription amount:$amount ${Thread.currentThread().name}")
+        Timber.v("Create Subscription amount:$amount")
 
         if (currency.isEmpty()) {
             return CreateSubscriptionResult.Error(
@@ -65,39 +67,48 @@ class CreateSubscription @Inject constructor(
             )
         }
 
-        api.fetchSubscription().subscription?.plans
-            ?.onEach {
-                planIds.add(it.id)
+        runCatching {
+            api.fetchSubscription().subscription?.plans
+                ?.onEach {
+                    planIds.add(it.id)
+                }
+        }.onFailure {
+            Timber.i(it, "Ignoring fetchSubscription error ${(it as? HttpException)?.toPMResponseBody()}")
+        }
+
+        return runCatching {
+            val subscriptionBody = if (amount == 0) {
+                // don't provide payment method and put "amount" as 0, because we are using stored credits
+                CreateSubscriptionBody(0, currency, null, couponCode, planIds, cycle)
+            } else {
+                // provide new payment method in body
+                CreateSubscriptionBody(amount, currency, TokenPaymentBody(paymentToken), couponCode, planIds, cycle)
             }
 
-        val subscriptionBody = if (amount == 0) {
-            // don't provide payment method and put "amount" as 0, because we are using stored credits
-            CreateSubscriptionBody(0, currency, null, couponCode, planIds, cycle)
-        } else {
-            // provide new payment method in body
-            CreateSubscriptionBody(amount, currency, TokenPaymentBody(paymentToken), couponCode, planIds, cycle)
-        }
-
-        val subscriptionResponse = api.createUpdateSubscription(subscriptionBody)
-        if (subscriptionResponse.code != Constants.RESPONSE_CODE_OK) {
-            return CreateSubscriptionResult.Error(
-                error = subscriptionResponse.error,
-                errorDescription = ParseUtils.compileSingleErrorMessage(
-                    subscriptionResponse.details.filterValues(String::class.java)
+            val subscriptionResponse = api.createUpdateSubscription(subscriptionBody)
+            if (subscriptionResponse.code != Constants.RESPONSE_CODE_OK) {
+                return CreateSubscriptionResult.Error(
+                    error = subscriptionResponse.error,
+                    errorDescription = ParseUtils.compileSingleErrorMessage(
+                        subscriptionResponse.details.filterValues(String::class.java)
+                    )
                 )
+            }
+
+            // store payment method if this was first payment using credits from "verification payment"
+            if (amount == 0 && paymentToken != null) {
+                api.createUpdatePaymentMethod(TokenPaymentBody(paymentToken))
+            }
+
+            jobManager.addJobInBackground(FetchUserSettingsJob())
+            jobManager.addJobInBackground(GetPaymentMethodsJob())
+        }
+            .fold(
+                onSuccess = { CreateSubscriptionResult.Success },
+                onFailure = { throwable ->
+                    val httpErrorBody = (throwable as? HttpException)?.toPMResponseBody()
+                    CreateSubscriptionResult.Error("Error", httpErrorBody?.error, throwable = throwable)
+                }
             )
-        }
-
-        // store payment method if this was first payment using credits from "verification payment"
-        if (amount == 0 && paymentToken != null) {
-            api.createUpdatePaymentMethod(TokenPaymentBody(paymentToken))
-        }
-
-        jobManager.addJobInBackground(FetchUserSettingsJob())
-        jobManager.addJobInBackground(GetPaymentMethodsJob())
     }
-        .fold(
-            onSuccess = { CreateSubscriptionResult.Success },
-            onFailure = { CreateSubscriptionResult.Error("Error", throwable = it) }
-        )
 }

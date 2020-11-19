@@ -35,7 +35,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -48,8 +47,6 @@ class CreateSubscriptionTest {
 
     @RelaxedMockK
     private lateinit var jobManager: JobManager
-
-    private var dispatcherProvider = TestDispatcherProvider
 
     @InjectMockKs
     private lateinit var useCase: CreateSubscription
@@ -77,7 +74,7 @@ class CreateSubscriptionTest {
     }
 
     @Test
-    fun verifyRequestFailsWhenFetchingSubscriptions() {
+    fun verifyRequestFailsWhenCreatingSubscriptions() {
         runBlockingTest {
             // given
             val amount = 1
@@ -86,6 +83,7 @@ class CreateSubscriptionTest {
             val exceptionMessage = "Network failure!"
             val exception = Exception(exceptionMessage)
             coEvery { api.fetchSubscription() } throws exception
+            coEvery { api.createUpdateSubscription(any()) } throws exception
             val expected = CreateSubscriptionResult.Error("Error", throwable = exception)
 
             // when
@@ -97,7 +95,7 @@ class CreateSubscriptionTest {
     }
 
     @Test
-    fun verifyRequestFailsWhenCreateUpdateSubscriptionRetrunsFailure() {
+    fun verifyRequestFailsWhenCreateUpdateSubscriptionReturnsFailure() {
         runBlockingTest {
             // given
             val amount = 1
@@ -112,6 +110,40 @@ class CreateSubscriptionTest {
                 every { code } returns Constants.RESPONSE_CODE_OK
             }
             coEvery { api.fetchSubscription() } returns getSubscriptionResponse
+
+            val testError = "Test API Error"
+            val testDetails = mapOf("Error1" to "Error1StringObject")
+            val createSubscriptionResponse = mockk<CreateUpdateSubscriptionResponse> {
+                every { subscription } returns testSubscription
+                every { code } returns 123
+                every { error } returns testError
+                every { details } returns testDetails
+            }
+            coEvery { api.createUpdateSubscription(any()) } returns createSubscriptionResponse
+            val expected = CreateSubscriptionResult.Error(testError, errorDescription = "Error1 : Error1StringObject\n")
+
+            // when
+            val actualResult = useCase.invoke(amount, currency, cycle)
+
+            // then
+            assertEquals(expected, actualResult)
+        }
+    }
+
+    @Test
+    fun verifyRequestFailsWhenCreateUpdateSubscriptionReturnsFailureAndInitialFetchSubscriptionErrorIsIgnored() {
+        runBlockingTest {
+            // given
+            val amount = 1
+            val currency = "EUR"
+            val cycle = 0
+            val testPlan = mockk<Plan>(relaxed = true)
+            val testSubscription = mockk<Subscription> {
+                every { plans } returns listOf(testPlan)
+            }
+            val fetchExceptionMessage = "Fetch Subscription Network failure!"
+            val fetchException = Exception(fetchExceptionMessage)
+            coEvery { api.fetchSubscription() } throws fetchException
 
             val testError = "Test API Error"
             val testDetails = mapOf("Error1" to "Error1StringObject")
