@@ -48,6 +48,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -547,8 +548,14 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             }
         }
         TextExtensions.showToast(EditContactDetailsActivity.this, R.string.saving);
+
+        editContactDetailsViewModel.getCreateContactResult().observe(
+                this, resultStringId -> {
+                    String message = getString(resultStringId);
+                    Toast.makeText(EditContactDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
+                    saveAndFinish();
+                });
         editContactDetailsViewModel.save(emailsToBeRemoved, contactName, emails);
-        saveAndFinish();
     }
 
     @Override
@@ -817,11 +824,15 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         switch (event.status) {
             case ContactEvent.SUCCESS:
             case ContactEvent.SAVED:
+                TextExtensions.showToast(this, R.string.contact_saved, Toast.LENGTH_SHORT);
                 new Handler().postDelayed(this::saveAndFinish, 500);
                 break;
             case ContactEvent.ERROR:
                 TextExtensions.showToast(this, R.string.error);
                 break;
+            case ContactEvent.NO_NETWORK:
+                TextExtensions.showToast(this, R.string.contact_saved_offline);
+                new Handler().postDelayed(this::saveAndFinish, 500);
             default:
                 break;
         }

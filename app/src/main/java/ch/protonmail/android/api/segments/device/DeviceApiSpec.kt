@@ -18,14 +18,12 @@
  */
 package ch.protonmail.android.api.segments.device
 
-import ch.protonmail.android.api.models.RegisterDeviceBody
+import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResponseBody
-import java.io.IOException
 
 interface DeviceApiSpec {
 
-    @Throws(IOException::class)
-    fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String)
+    suspend fun registerDevice(registerDeviceRequestBody: RegisterDeviceRequestBody, username: String): ResponseBody
 
     suspend fun unregisterDevice(deviceToken: String): ResponseBody
 }

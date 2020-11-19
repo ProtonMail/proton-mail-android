@@ -25,6 +25,8 @@ import androidx.core.util.PatternsCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
@@ -39,6 +41,8 @@ import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.exceptions.BadImageUrlException
 import ch.protonmail.android.exceptions.ImageNotFoundException
+import ch.protonmail.android.usecase.fetch.FetchContactDetails
+import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import ch.protonmail.android.worker.DeleteContactWorker
@@ -67,38 +71,27 @@ import javax.inject.Inject
  *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
  */
 open class ContactDetailsViewModel(
-    dispatcherProvider: DispatcherProvider,
+    dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository,
-    private val workManager: WorkManager
-) : BaseViewModel(dispatcherProvider) {
+    private val workManager: WorkManager,
+    private val fetchContactDetails: FetchContactDetails
+) : BaseViewModel(dispatchers) {
 
-    //region data
     protected lateinit var allContactGroups: List<ContactLabel>
     protected lateinit var allContactEmails: List<ContactEmail>
 
-    private val _mapEmailGroups: HashMap<String, List<ContactLabel>> = HashMap()
-
-    //endregion
     private var _setupCompleteValue: Boolean = false
     private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _setupError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
 
-    //region email groups result and error below
     private var _emailGroupsResult: MutableLiveData<ContactEmailsGroups> = MutableLiveData()
     private val _emailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
+    private val _mapEmailGroups: HashMap<String, List<ContactLabel>> = HashMap()
 
-    //endregion
-    //region contact groups result and error
     private val _contactEmailGroupsResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
-
-    //endregion
-    //region merged result and errors
-    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabel>> =
-        MutableLiveData()
-    private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> =
-        MutableLiveData()
-    //endregion
+    private val _mergedContactEmailGroupsResult: MutableLiveData<List<ContactLabel>> = MutableLiveData()
+    private val _mergedContactEmailGroupsError: MutableLiveData<Event<ErrorResponse>> = MutableLiveData()
 
     val setupComplete: LiveData<Event<Boolean>>
         get() = _setupComplete
@@ -120,6 +113,14 @@ open class ContactDetailsViewModel(
 
     val profilePicture = ViewStateStore<Bitmap>().lock
 
+    private var fetchContactDetailsId = MutableLiveData<String>()
+    val contatDetailsFetchResult: LiveData<FetchContactDetailsResult>
+        get() = fetchContactDetailsId.switchMap {
+            liveData {
+                emitSource(fetchContactDetails(it))
+            }
+        }
+
     @SuppressLint("CheckResult")
     fun mergeContactEmailGroups(email: String) {
         Observable.just(allContactEmails)
@@ -127,7 +128,7 @@ open class ContactDetailsViewModel(
                 val contactEmail =
                     emailList.find { contactEmail -> contactEmail.email == email }!!
                 val list1 = allContactGroups
-                val list2 = _mapEmailGroups[contactEmail.contactEmailId!!]
+                val list2 = _mapEmailGroups[contactEmail.contactEmailId]
                 list2?.let { _ ->
                     list1.forEach {
                         val selectedState =
@@ -232,9 +233,8 @@ open class ContactDetailsViewModel(
                         )
                     }
                 },
-            {
-                groups: List<ContactLabel>,
-                emails: List<ContactEmail> ->
+            { groups: List<ContactLabel>,
+              emails: List<ContactEmail> ->
                 allContactGroups = groups
                 allContactEmails = emails
             }
@@ -323,18 +323,24 @@ open class ContactDetailsViewModel(
         DeleteContactWorker.Enqueuer(workManager).enqueue(listOf(contactId))
     }
 
+    fun fetchDetails(contactId: String) {
+        fetchContactDetailsId.value = contactId
+    }
+
     // TODO: remove when the ViewModel can be injected into a Kotlin class
     class Factory @Inject constructor(
         private val dispatcherProvider: DispatcherProvider,
         private val downloadFile: DownloadFile,
         private val contactDetailsRepository: ContactDetailsRepository,
-        private val workManager: WorkManager
+        private val workManager: WorkManager,
+        private val fetchContactDetails: FetchContactDetails
     ) : ViewModelFactory<ContactDetailsViewModel>() {
         override fun create() = ContactDetailsViewModel(
             dispatcherProvider,
             downloadFile,
             contactDetailsRepository,
-            workManager
+            workManager,
+            fetchContactDetails
         )
     }
 }

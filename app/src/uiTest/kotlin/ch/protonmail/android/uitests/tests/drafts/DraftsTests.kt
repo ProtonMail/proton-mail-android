@@ -24,8 +24,8 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -56,6 +56,7 @@ class DraftsTests : BaseTest() {
             .confirmDraftSaving()
             .menuDrawer()
             .drafts()
+            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -66,27 +67,13 @@ class DraftsTests : BaseTest() {
         loginRobot
             .loginUser(onePassUser)
             .compose()
-            .draftSubjectBody(subject, body)
+            .draftSubjectBodyAttachment(to, subject, body)
             .clickUpButton()
             .confirmDraftSaving()
             .menuDrawer()
             .drafts()
+            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
-    }
-
-    // Ignore test until https://jira.protontech.ch/browse/MAILAND-982 is fixed.
-    @TestId("1382")
-    fun openDraftFromSearch() {
-        loginRobot
-            .loginUser(onePassUser)
-            .compose()
-            .draftSubjectBody(subject, body)
-            .clickUpButton()
-            .confirmDraftSaving()
-            .searchBar()
-            .searchMessageText(subject)
-            .clickSearchedDraftBySubject(subject)
-            .verify { messageWithSubjectOpened(subject) }
     }
 
     @TestId("1383")
@@ -100,11 +87,35 @@ class DraftsTests : BaseTest() {
             .confirmDraftSaving()
             .menuDrawer()
             .drafts()
+            .refreshMessageList()
             .clickDraftBySubject(subject)
             .send()
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("4278")
+    @Test
+    fun changeDraftSender() {
+        val onePassUserSecondEmail = "2${onePassUser.email}"
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .draftToSubjectBody(to, subject, body)
+            .clickUpButton()
+            .confirmDraftSaving()
+            .menuDrawer()
+            .drafts()
+            .clickDraftBySubject(subject)
+            .recipients(to)
+            .changeSenderTo(onePassUserSecondEmail)
+            .clickUpButton()
+            .confirmDraftSavingFromDrafts()
+            .clickDraftBySubject(subject)
+            .verify { fromEmailIs(onePassUserSecondEmail) }
     }
 
     @TestId("1384")
@@ -119,6 +130,7 @@ class DraftsTests : BaseTest() {
             .confirmDraftSaving()
             .menuDrawer()
             .drafts()
+            .refreshMessageList()
             .clickDraftBySubject(subject)
             .recipients(to)
             .clickUpButton()
@@ -126,25 +138,18 @@ class DraftsTests : BaseTest() {
             .verify { messageWithSubjectAndRecipientExists(subject, to) }
     }
 
-    @TestId("4278")
-    @Test
-    fun changeDraftSender() {
-        val onePassUserSecondEmail = "2${onePassUser.email}"
-        val to = internalEmailTrustedKeys.email
+    // Ignore test until MAILAND-982 is fixed.
+    // @RailId("1382")
+    fun openDraftFromSearch() {
         loginRobot
             .loginUser(onePassUser)
             .compose()
-            .draftSubjectBody(subject, body)
+            .draftToSubjectBody(to, subject, body)
             .clickUpButton()
             .confirmDraftSaving()
-            .menuDrawer()
-            .drafts()
-            .clickDraftBySubject(subject)
-            .recipients(to)
-            .changeSenderTo(onePassUserSecondEmail)
-            .clickUpButton()
-            .confirmDraftSavingFromDrafts()
-            .clickDraftBySubject(subject)
-            .verify { fromEmailIs(onePassUserSecondEmail) }
+            .searchBar()
+            .searchMessageText(subject)
+            .clickSearchedDraftBySubject(subject)
+            .verify { messageWithSubjectOpened(subject) }
     }
 }

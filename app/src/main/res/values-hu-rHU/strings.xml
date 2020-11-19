@@ -999,4 +999,5 @@ a tárhely elérését.</string>
     <string name="swipe_gestures_changed_message">A legutóbbi frissítés után a csúsztatás műveletek megváltoztak. Ha szeretné, visszaállíthatja a beállításoknál.</string>
     <string name="go_to_settings">Beállítások megnyitása</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
 </resources>

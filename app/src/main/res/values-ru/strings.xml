@@ -1033,4 +1033,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_gestures_changed_message">В результате последнего обновления настройки жестов были изменены. Если хотите, их можно сбросить в настройках.</string>
     <string name="go_to_settings">Перейти в настройки</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Неверный ключ API Firebase. Push-уведомления не будут работать.</string>
 </resources>

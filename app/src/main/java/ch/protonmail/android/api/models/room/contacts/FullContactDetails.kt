@@ -31,7 +31,6 @@ import ezvcard.Ezvcard
 import ezvcard.VCard
 import me.proton.core.util.kotlin.equalsNoCase
 
-// region constants
 const val TABLE_FULL_CONTACT_DETAILS = "fullContactsDetails"
 const val COLUMN_CONTACT_ID = "ID"
 const val COLUMN_CONTACT_NAME = "Name"
@@ -41,11 +40,6 @@ const val COLUMN_CONTACT_MODIFY_TIME = "ModifyTIme"
 const val COLUMN_CONTACT_SIZE = "Size"
 const val COLUMN_CONTACT_DEFAULTS = "Defaults"
 const val COLUMN_CONTACT_ENCRYPTED_DATA = "EncryptedData"
-// endregion
-
-/**
- * Created by dkadrikj on 8/22/16.
- */
 
 @Entity(tableName = TABLE_FULL_CONTACT_DETAILS)
 data class FullContactDetails @Ignore constructor(
@@ -90,7 +84,7 @@ data class FullContactDetails @Ignore constructor(
         modifyTime: Long,
         size: Int,
         defaults: Int,
-        encryptedData: MutableList<ContactEncryptedData>
+        encryptedData: MutableList<ContactEncryptedData>?
     ) : this(
         contactId,
         name,

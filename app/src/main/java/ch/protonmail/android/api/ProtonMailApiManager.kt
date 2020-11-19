@@ -60,7 +60,7 @@ import ch.protonmail.android.api.models.PaymentsStatusResponse
 import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.RefreshBody
 import ch.protonmail.android.api.models.RefreshResponse
-import ch.protonmail.android.api.models.RegisterDeviceBody
+import ch.protonmail.android.api.models.RegisterDeviceRequestBody
 import ch.protonmail.android.api.models.ResetTokenResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.SinglePasswordChange
@@ -203,11 +203,15 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> = api.fetchContactsEmailsByLabelId(page, labelId)
 
-    override fun fetchContactDetails(contactId: String): FullContactDetailsResponse? = api.fetchContactDetails(contactId)
+    override fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse? = api.fetchContactDetailsBlocking(contactId)
 
-    override fun fetchContactDetails(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> = api.fetchContactDetails(contactIDs)
+    override suspend fun fetchContactDetails(contactId: String): FullContactDetailsResponse = api.fetchContactDetails(contactId)
 
-    override fun createContact(body: CreateContact): ContactResponse? = api.createContact(body)
+    override fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> = api.fetchContactDetailsBlocking(contactIDs)
+
+    override fun createContactBlocking(body: CreateContact): ContactResponse? = api.createContactBlocking(body)
+
+    override suspend fun createContact(body: CreateContact): ContactResponse? = api.createContact(body)
 
     override fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse? = api.updateContact(contactId, body)
 
@@ -221,11 +225,16 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) = api.unlabelContactEmails(labelContactsBody)
 
-    override fun registerDevice(registerDeviceBody: RegisterDeviceBody, username: String) = api.registerDevice(registerDeviceBody, username)
+    override suspend fun registerDevice(
+        registerDeviceRequestBody: RegisterDeviceRequestBody,
+        username: String
+    ) = api.registerDevice(registerDeviceRequestBody, username)
 
     override suspend fun unregisterDevice(deviceToken: String) = api.unregisterDevice(deviceToken)
 
-    override fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
+    override fun getPublicKeysBlocking(email: String): PublicKeyResponse = api.getPublicKeysBlocking(email)
+
+    override suspend fun getPublicKeys(email: String): PublicKeyResponse = api.getPublicKeys(email)
 
     override fun getPublicKeys(emails: Collection<String>): Map<String, PublicKeyResponse?> = api.getPublicKeys(emails)
 

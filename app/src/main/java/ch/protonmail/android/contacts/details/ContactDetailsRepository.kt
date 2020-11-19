@@ -18,35 +18,35 @@
  */
 package ch.protonmail.android.contacts.details
 
-import android.util.Log
 import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.makeInt
+import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.jobs.SetMembersForContactGroupJob
-import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import ch.protonmail.android.worker.PostLabelWorker
+import ch.protonmail.android.worker.RemoveMembersFromContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Completable
 import io.reactivex.Observable
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 open class ContactDetailsRepository @Inject constructor(
     private val workManager: WorkManager,
     protected val jobManager: JobManager,
     protected val api: ProtonMailApiManager,
-    protected val databaseProvider: DatabaseProvider) {
-
-    protected val contactsDao by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactDetailsRepository"); databaseProvider.provideContactsDao() }
+    protected val contactsDao: ContactsDao,
+    private val dispatcherProvider: DispatcherProvider
+) {
 
     fun getContactGroups(id: String): Observable<List<ContactLabel>> {
         return contactsDao.findAllContactGroupsByContactEmailAsyncObservable(id)
@@ -129,7 +129,8 @@ open class ContactDetailsRepository @Inject constructor(
 
     fun removeMembersForContactGroup(
         contactGroupId: String, contactGroupName: String,
-        membersList: List<String>): Completable {
+        membersList: List<String>
+    ): Completable {
         if (membersList.isEmpty()) {
             return Completable.complete()
         }
@@ -148,4 +149,38 @@ open class ContactDetailsRepository @Inject constructor(
                 }
             }
     }
+
+    suspend fun saveContactEmails(emails: List<ContactEmail>) = withContext(dispatcherProvider.Io) {
+        contactsDao.saveAllContactsEmails(emails)
+    }
+
+    suspend fun updateContactDataWithServerId(contactDataInDb: ContactData, contactServerId: String) {
+        withContext(dispatcherProvider.Io) {
+            contactsDao.findContactDataByDbId(contactDataInDb.dbId ?: -1)?.let {
+                it.contactId = contactServerId
+                contactsDao.saveContactData(it)
+            }
+        }
+    }
+
+    suspend fun updateAllContactEmails(contactId: String?, contactServerEmails: List<ContactEmail>) {
+        withContext(dispatcherProvider.Io) {
+            contactId?.let {
+                val localContactEmails = contactsDao.findContactEmailsByContactId(it)
+                contactsDao.deleteAllContactsEmails(localContactEmails)
+                contactsDao.saveAllContactsEmails(contactServerEmails)
+            }
+        }
+    }
+
+    suspend fun deleteContactData(contactData: ContactData) =
+        withContext(dispatcherProvider.Io) {
+            contactsDao.deleteContactData(contactData)
+        }
+
+    suspend fun saveContactData(contactData: ContactData): Long =
+        withContext(dispatcherProvider.Io) {
+            return@withContext contactsDao.saveContactData(contactData)
+        }
+
 }

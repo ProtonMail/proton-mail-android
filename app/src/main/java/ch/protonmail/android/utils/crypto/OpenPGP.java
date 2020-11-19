@@ -257,7 +257,16 @@ public class OpenPGP {
             Crypto.newKeyFromArmored(armoredKey).unlock(passphrase);
             return true;
         } catch (Exception e) {
-            Logger.doLogException(e);
+            Timber.e(e);
+        }
+        return false;
+    }
+
+    public boolean checkKeyIsCorrect(@NonNull String armoredKey, @NonNull byte[] passphrase) {
+        try {
+            return Crypto.newKeyFromArmored(armoredKey).unlock(passphrase).check();
+        } catch (Exception e) {
+            Timber.e(e);
         }
         return false;
     }

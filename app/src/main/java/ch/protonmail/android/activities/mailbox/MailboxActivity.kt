@@ -144,7 +144,7 @@ import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.fcm.FcmUtil
-import ch.protonmail.android.fcm.PMRegistrationIntentService.Companion.startRegistration
+import ch.protonmail.android.fcm.PMRegistrationWorker
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
@@ -190,7 +190,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.time.seconds
 
-// region constants
 private const val TAG_MAILBOX_ACTIVITY = "MailboxActivity"
 private const val ACTION_MESSAGE_DRAFTED = "ch.protonmail.MESSAGE_DRAFTED"
 private const val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
@@ -201,7 +200,7 @@ const val LOADER_ID = 0
 const val LOADER_ID_LABELS_OFFLINE = 32
 private const val REQUEST_CODE_TRASH_MESSAGE_DETAILS = 1
 private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
-// endregion
+
 
 @AndroidEntryPoint
 class MailboxActivity :
@@ -218,12 +217,12 @@ class MailboxActivity :
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
-
     @Inject
     lateinit var contactsRepository: ContactsRepository
-
     @Inject
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
+    @Inject
+    lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
 
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
@@ -719,7 +718,8 @@ class MailboxActivity :
                     FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             task.result?.let { result ->
-                                startRegistration(this, result.token)
+                                FcmUtil.setFirebaseToken(result.token)
+                                pmRegistrationWorkerEnqueuer()
                             }
                         } else {
                             Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
@@ -872,7 +872,6 @@ class MailboxActivity :
         super.onSaveInstanceState(outState)
     }
 
-    // TODO refactor with onPrepareOptionsMenu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.mailbox_options_menu, menu)
         val mailboxLocation = mailboxLocationMain.value
@@ -1062,12 +1061,20 @@ class MailboxActivity :
             return
         }
         app.resetMailboxLoginEvent()
-        if (event.status == AuthStatus.INVALID_CREDENTIAL) {
-            showToast(R.string.invalid_mailbox_password, Toast.LENGTH_SHORT)
-            startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
-            finish()
-        } else {
-            mUserManager.isLoggedIn = true
+        when (event.status) {
+            AuthStatus.INVALID_CREDENTIAL -> {
+                showToast(R.string.invalid_mailbox_password, Toast.LENGTH_SHORT)
+                startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
+                finish()
+            }
+            AuthStatus.INCORRECT_KEY_PARAMETERS -> {
+                showToast(R.string.incorrect_key_parameters, Toast.LENGTH_SHORT)
+                startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
+                finish()
+            }
+            else -> {
+                mUserManager.isLoggedIn = true
+            }
         }
     }
 

@@ -1,0 +1,136 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ *
+ * This file is part of ProtonMail.
+ *
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+
+package ch.protonmail.android.usecase.create
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
+import androidx.work.Data
+import androidx.work.WorkInfo
+import ch.protonmail.android.api.models.room.contacts.ContactData
+import ch.protonmail.android.api.models.room.contacts.ContactEmail
+import ch.protonmail.android.contacts.ContactIdGenerator
+import ch.protonmail.android.contacts.details.ContactDetailsRepository
+import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.utils.extensions.filter
+import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors
+import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
+import ch.protonmail.libs.core.utils.deserializeList
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
+import javax.inject.Inject
+
+class CreateContact @Inject constructor(
+    private val dispatcherProvider: DispatcherProvider,
+    private val contactsRepository: ContactDetailsRepository,
+    private val createContactScheduler: Enqueuer,
+    private val contactIdGenerator: ContactIdGenerator,
+    private val connectivityManager: NetworkConnectivityManager
+) {
+
+    suspend operator fun invoke(
+        contactName: String,
+        contactEmails: List<ContactEmail>,
+        encryptedContactData: String,
+        signedContactData: String
+    ): LiveData<Result> {
+
+        return withContext(dispatcherProvider.Io) {
+            val contactData = ContactData(contactIdGenerator.generateRandomId(), contactName)
+            val contactDataDbId = contactsRepository.saveContactData(contactData)
+            contactData.dbId = contactDataDbId
+
+            contactEmails.forEach { it.contactId = contactData.contactId }
+            contactsRepository.saveContactEmails(contactEmails)
+
+            createContactScheduler.enqueue(encryptedContactData, signedContactData)
+                .filter { it?.state?.isFinished == true || it?.state == WorkInfo.State.ENQUEUED }
+                .switchMap { workInfo: WorkInfo? ->
+                    liveData(dispatcherProvider.Io) {
+                        if (workInfo?.state == WorkInfo.State.ENQUEUED) {
+                            if (!connectivityManager.isInternetConnectionPossible()) {
+                                emit(Result.OnlineContactCreationPending)
+                            }
+                        } else {
+                            workInfo?.let { emit(handleWorkResult(workInfo, contactData)) }
+                        }
+                    }
+                }
+        }
+
+    }
+
+    private suspend fun handleWorkResult(workInfo: WorkInfo, contactData: ContactData): Result {
+        val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
+
+        if (workSucceeded) {
+            updateLocalContactData(workInfo.outputData, contactData)
+            return Result.Success
+        }
+
+        val createContactError = workerErrorToCreateContactResult(workInfo)
+        if (createContactError != Result.GenericError) {
+            contactsRepository.deleteContactData(contactData)
+        }
+        return createContactError
+    }
+
+    private fun workerErrorToCreateContactResult(workInfo: WorkInfo) =
+        when (workerErrorEnum(workInfo)) {
+            CreateContactWorkerErrors.ContactAlreadyExistsError -> Result.ContactAlreadyExistsError
+            CreateContactWorkerErrors.InvalidEmailError -> Result.InvalidEmailError
+            CreateContactWorkerErrors.DuplicatedEmailError -> Result.DuplicatedEmailError
+            else -> Result.GenericError
+        }
+
+    private fun workerErrorEnum(workInfo: WorkInfo): CreateContactWorkerErrors {
+        val errorString = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM)
+        errorString?.let {
+            return CreateContactWorkerErrors.valueOf(errorString)
+        }
+        return CreateContactWorkerErrors.ServerError
+    }
+
+    private suspend fun updateLocalContactData(outputData: Data, contactData: ContactData) {
+        val contactServerId = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID)
+        contactServerId?.let {
+            contactsRepository.updateContactDataWithServerId(contactData, it)
+        }
+
+        val emailsJson = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON)
+        emailsJson?.let {
+            val serverEmails = emailsJson.deserializeList<ContactEmail>()
+            contactsRepository.updateAllContactEmails(contactData.contactId, serverEmails)
+        }
+    }
+
+
+    sealed class Result {
+        object Success : Result()
+        object GenericError : Result()
+        object ContactAlreadyExistsError : Result()
+        object InvalidEmailError : Result()
+        object DuplicatedEmailError : Result()
+        object OnlineContactCreationPending : Result()
+    }
+}

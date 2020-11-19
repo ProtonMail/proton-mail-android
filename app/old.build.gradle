@@ -39,7 +39,6 @@ dependencies {
     implementation 'com.birbit:android-priority-jobqueue:3.0.0'
     implementation 'com.atlassian.commonmark:commonmark:0.13.0'
     implementation 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
-    //    implementation 'com.commonsware.cwac:wakeful:1.1.0'
     implementation 'com.badoo.mobile:android-weak-handler:1.0'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation 'com.wdullaer:materialdatetimepicker:3.2.2'
@@ -55,23 +54,3 @@ dependencies {
 
     implementation 'com.github.clans:fab:1.6.4'
 }
-
-// TODO: remove if not needed
-//android {
-//
-//    packagingOptions {
-//        exclude 'META-INF/DEPENDENCIES.txt'
-//        exclude 'META-INF/LICENSE.txt'
-//        exclude 'META-INF/NOTICE.txt'
-//        exclude 'META-INF/NOTICE'
-//        exclude 'META-INF/LICENSE'
-//        exclude 'META-INF/LICENSE.md'
-//        exclude 'META-INF/LICENSE-notice.md'
-//        exclude 'META-INF/DEPENDENCIES'
-//        exclude 'META-INF/notice.txt'
-//        exclude 'META-INF/license.txt'
-//        exclude 'META-INF/dependencies.txt'
-//        exclude 'META-INF/LGPL2.1'
-//        exclude 'META-INF/rxjava.properties'
-//    }
-//}

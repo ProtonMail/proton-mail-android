@@ -6,6 +6,7 @@ import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withPrimaryAccountInAccountManager
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.click
 
 /**
  * [AccountManagerRobot] class contains actions and verifications for Account Manager functionality.
@@ -55,7 +56,7 @@ open class AccountManagerRobot {
     }
 
     private fun logout(): AccountManagerRobot {
-        UIActions.text.clickViewWithText(R.string.logout)
+        UIActions.wait.forViewWithText(R.string.logout).click()
         return AccountManagerRobot()
     }
 
@@ -75,7 +76,7 @@ open class AccountManagerRobot {
     }
 
     private fun confirmLastAccountLogout(): LoginRobot {
-        UIActions.system.clickPositiveButtonInDialogRoot()
+        UIActions.wait.forViewWithId(android.R.id.button1).click()
         return LoginRobot()
     }
 

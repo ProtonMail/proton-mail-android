@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.uitests.robots.contacts
 
+import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.click
@@ -39,7 +40,7 @@ open class ContactDetailsRobot {
     }
 
     fun navigateUp(): ContactsRobot {
-        UIActions.system.clickHamburgerOrUpButtonInAnimatedToolbar()
+        UIActions.wait.forViewOfInstanceWithParentId(R.id.animToolbar, AppCompatImageButton::class.java).click()
         return ContactsRobot()
     }
 

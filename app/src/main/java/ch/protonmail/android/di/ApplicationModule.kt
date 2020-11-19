@@ -22,7 +22,9 @@ package ch.protonmail.android.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.os.Build
 import androidx.work.WorkManager
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
@@ -36,7 +38,10 @@ import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.dagger2.AssistedModule
@@ -177,6 +182,14 @@ object ApplicationModule {
 
     @Provides
     fun contactLabelFactory(): IConverterFactory<ServerLabel, ContactLabel> = ContactLabelFactory()
+
+    @Provides
+    fun buildInfo() = BuildInfo(Build.MODEL, Build.VERSION.SDK_INT, BuildConfig.VERSION_NAME)
+
+    @Provides
+    fun provideUserCrypto(userManager: UserManager): UserCrypto =
+        UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
+
 }
 
 @Module

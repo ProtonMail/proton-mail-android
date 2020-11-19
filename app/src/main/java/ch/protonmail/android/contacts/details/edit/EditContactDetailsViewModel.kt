@@ -26,6 +26,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
+import ch.protonmail.android.R
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
@@ -34,6 +35,8 @@ import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.fetch.FetchContactDetails
+import ch.protonmail.android.usecase.create.CreateContact
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
@@ -68,11 +71,9 @@ import java.util.ArrayList
 import java.util.UUID
 import javax.inject.Inject
 
-// region constants
 const val FLOW_NEW_CONTACT = 1
 const val FLOW_EDIT_CONTACT = 2
 const val FLOW_CONVERT_CONTACT = 3
-
 const val EXTRA_CONTACT = "extra_contact"
 const val EXTRA_FLOW = "extra_flow"
 const val EXTRA_NAME = "extra_name"
@@ -83,16 +84,17 @@ const val EXTRA_CONTACT_VCARD_TYPE3 = "extra_vcard_type3"
 const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
-// endregion
 
 class EditContactDetailsViewModel(
-    dispatcherProvider: DispatcherProvider,
+    private val dispatchers: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
     private val userManager: UserManager,
+    private val verifyConnection: VerifyConnection,
+    private val createContact: CreateContact,
     workManager: WorkManager,
-    private val verifyConnection: VerifyConnection
-) : ContactDetailsViewModel(dispatcherProvider, downloadFile, editContactDetailsRepository, workManager) {
+    fetchContactDetails: FetchContactDetails
+) : ContactDetailsViewModel(dispatchers, downloadFile, editContactDetailsRepository, workManager, fetchContactDetails) {
 
     // region events
     private val _cleanUpComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
@@ -113,6 +115,7 @@ class EditContactDetailsViewModel(
         get() = _freeUserEvent
     val hasConnectivity: LiveData<Boolean> =
         _verifyConnectionTrigger.switchMap { verifyConnection().asLiveData() }
+    val createContactResult: MutableLiveData<Int> = MutableLiveData()
     // endregion
 
     // region data
@@ -314,8 +317,26 @@ class EditContactDetailsViewModel(
             FLOW_EDIT_CONTACT -> {
                 editContactDetailsRepository.updateContact(_contactId, contactName, emails, _vCardEncrypted, _vCardSigned, _mapEmailGroupsIds)
             }
-            FLOW_NEW_CONTACT -> editContactDetailsRepository.createContact(contactName, emails, _vCardEncrypted, _vCardSigned)
-            FLOW_CONVERT_CONTACT -> editContactDetailsRepository.convertContact(contactName, emails, _vCardEncrypted, _vCardSigned)
+            FLOW_CONVERT_CONTACT, FLOW_NEW_CONTACT -> {
+                viewModelScope.launch(dispatchers.Main) {
+                    createContact(contactName, emails, _vCardEncrypted.write(), _vCardSigned.write())
+                        .observeForever { result: CreateContact.Result ->
+                            val resultMessage = getMessageForResult(result)
+                            createContactResult.postValue(resultMessage)
+                        }
+                }
+            }
+        }
+    }
+
+    private fun getMessageForResult(result: CreateContact.Result): Int {
+        return when (result) {
+            CreateContact.Result.Success -> R.string.contact_saved
+            CreateContact.Result.GenericError -> R.string.error
+            CreateContact.Result.ContactAlreadyExistsError -> R.string.contact_exist
+            CreateContact.Result.InvalidEmailError -> R.string.invalid_email_some_contacts
+            CreateContact.Result.DuplicatedEmailError -> R.string.duplicate_email
+            CreateContact.Result.OnlineContactCreationPending -> R.string.contact_saved_offline
         }
     }
 
@@ -380,7 +401,9 @@ class EditContactDetailsViewModel(
         private val editContactDetailsRepository: EditContactDetailsRepository,
         private val userManager: UserManager,
         private val workManager: WorkManager,
-        private val verifyConnection: VerifyConnection
+        private val fetchContactDetails: FetchContactDetails,
+        private val verifyConnection: VerifyConnection,
+        private val createContact: CreateContact
     ) : ViewModelFactory<EditContactDetailsViewModel>() {
         override fun create() =
             EditContactDetailsViewModel(
@@ -388,8 +411,10 @@ class EditContactDetailsViewModel(
                 downloadFile,
                 editContactDetailsRepository,
                 userManager,
+                verifyConnection,
+                createContact,
                 workManager,
-                verifyConnection
+                fetchContactDetails
             )
     }
 }

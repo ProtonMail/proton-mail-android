@@ -34,6 +34,7 @@ import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.action.ViewActions.typeText
@@ -49,6 +50,7 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
@@ -67,8 +69,10 @@ import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkContactDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkMessageDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.clickOnChildWithId
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.performActionWithRetry
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitForAdapterItemWithIdAndText
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilMatcherFulfilled
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilRecyclerViewPopulated
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilViewAppears
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilViewIsGone
@@ -87,6 +91,9 @@ fun ViewInteraction.insert(text: String): ViewInteraction =
 
 fun ViewInteraction.type(text: String): ViewInteraction =
     this.perform(typeText(text), closeSoftKeyboard())
+
+fun ViewInteraction.swipeViewDown(): ViewInteraction =
+    this.perform(swipeDown())
 
 object UIActions {
 
@@ -219,6 +226,8 @@ object UIActions {
 
         fun swipeLeftViewWithId(@IdRes id: Int): ViewInteraction = onView(withId(id)).perform(swipeLeft())
 
+        fun swipeDownViewWithId(@IdRes id: Int): ViewInteraction = onView(withId(id)).perform(swipeDown())
+
         fun typeTextIntoFieldWithIdAndPressImeAction(@IdRes id: Int, text: String): ViewInteraction =
             onView(withId(id)).perform(click(), typeText(text), pressImeActionButton())
 
@@ -236,8 +245,16 @@ object UIActions {
         ): ViewInteraction =
             onView(withId(recyclerViewId)).perform(actionOnHolderItem(withMatcher, click()))
 
+        fun clickOnRecyclerViewMatchedItemWithRetry(
+            @IdRes recyclerViewId: Int,
+            withMatcher: Matcher<RecyclerView.ViewHolder>
+        ): ViewInteraction = performActionWithRetry(onView(withId(recyclerViewId)), actionOnHolderItem(withMatcher, click()))
+
         fun clickContactItem(@IdRes recyclerViewId: Int, withEmail: String): ViewInteraction =
             onView(withId(recyclerViewId)).perform(actionOnHolderItem(withContactEmail(withEmail), click()))
+
+        fun clickContactItemWithRetry(@IdRes recyclerViewId: Int, withEmail: String): ViewInteraction =
+            performActionWithRetry(onView(withId(recyclerViewId)), actionOnHolderItem(withContactEmail(withEmail), click()))
 
         fun clickContactItemView(
             @IdRes recyclerViewId: Int,
@@ -296,6 +313,10 @@ object UIActions {
             onView(withId(recyclerViewId))
                 .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeRight()))
 
+        fun swipeDownToRightOnPosition(@IdRes recyclerViewId: Int, childPosition: Int): ViewInteraction =
+            onView(withId(recyclerViewId))
+                .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeDown()))
+
         fun swipeRightToLeftObjectWithIdAtPosition(@IdRes recyclerViewId: Int, childPosition: Int): ViewInteraction =
             onView(withId(recyclerViewId))
                 .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(childPosition, swipeLeft()))
@@ -319,6 +340,12 @@ object UIActions {
 
         fun clickHamburgerOrUpButtonInAnimatedToolbar(): ViewInteraction =
             allOf.clickViewWithParentIdAndClass(R.id.animToolbar, AppCompatImageButton::class.java)
+
+        fun waitForMoreOptionsButton(): ViewInteraction =
+            wait.forViewByViewInteraction(onView(allOf(
+                instanceOf(AppCompatImageView::class.java),
+                withParent(instanceOf(ActionMenuView::class.java))))
+            )
 
         fun clickMoreOptionsButton(): ViewInteraction =
             allOf.clickViewByClassAndParentClass(AppCompatImageView::class.java, ActionMenuView::class.java)
@@ -362,21 +389,29 @@ object UIActions {
         fun forViewWithText(@StringRes textId: Int): ViewInteraction =
             waitUntilViewAppears(onView(withText(stringFromResource(textId))))
 
-
         fun forViewWithText(text: String): ViewInteraction =
             waitUntilViewAppears(onView(withText(text)))
 
-        fun forViewWithId(@IdRes id: Int): ViewInteraction =
-            waitUntilViewAppears(onView(withId(id)))
+        fun forViewWithId(@IdRes id: Int, timeout: Long = 10_000L): ViewInteraction =
+            waitUntilViewAppears(onView(withId(id)), timeout)
 
         fun forViewWithTextAndParentId(@StringRes text: Int, @IdRes parentId: Int): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
+
+        fun forViewOfInstanceWithParentId(@IdRes id: Int, clazz: Class<*>, timeout: Long = 5000): ViewInteraction =
+            waitUntilViewAppears(onView(allOf(instanceOf(clazz), withParent(withId(id)))), timeout)
 
         fun forViewWithTextAndParentId(text: String, @IdRes parentId: Int): ViewInteraction =
             waitUntilViewAppears(onView(allOf(withText(text), withParent(withId(parentId)))))
 
         fun forViewByViewInteraction(interaction: ViewInteraction): ViewInteraction =
             waitUntilViewAppears(interaction)
+
+        fun untilViewWithIdEnabled(@IdRes id: Int): ViewInteraction =
+            waitUntilMatcherFulfilled(onView(withId(id)), matches(isEnabled()))
+
+        fun untilViewWithIdDisabled(@IdRes id: Int): ViewInteraction =
+            waitUntilMatcherFulfilled(onView(withId(id)), matches(isEnabled()))
 
         fun untilViewWithIdIsGone(@IdRes id: Int): ViewInteraction =
             waitUntilViewIsGone(onView(withId(id)))

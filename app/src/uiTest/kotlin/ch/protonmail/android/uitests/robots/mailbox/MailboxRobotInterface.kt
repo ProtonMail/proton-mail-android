@@ -35,6 +35,7 @@ import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.swipeViewDown
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.instanceOf
 
@@ -75,7 +76,7 @@ interface MailboxRobotInterface {
     }
 
     fun menuDrawer(): MenuRobot {
-        UIActions.wait.forViewWithId(drawerLayoutId)
+        UIActions.wait.forViewWithId(drawerLayoutId, 15_000L)
         UIActions.id.openMenuDrawerWithId(drawerLayoutId)
         return MenuRobot()
     }
@@ -89,13 +90,6 @@ interface MailboxRobotInterface {
 
     fun clickMessageBySubject(subject: String): MessageRobot {
         UIActions.wait
-            .forViewByViewInteraction(onView(
-                allOf(
-                    instanceOf(ImageView::class.java),
-                    withParent(withId(R.id.messages_list_view))
-                )
-            ))
-        UIActions.wait
             .untilViewByViewInteractionIsGone(onView(
                 allOf(
                     instanceOf(ImageView::class.java), withParent(withId(R.id.messages_list_view))
@@ -106,6 +100,11 @@ interface MailboxRobotInterface {
             .waitForBeingPopulated(messagesRecyclerViewId)
             .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
         return MessageRobot()
+    }
+
+    fun refreshMessageList(): Any {
+        UIActions.wait.forViewWithId(messagesRecyclerViewId).swipeViewDown()
+        return Any()
     }
 
     /**

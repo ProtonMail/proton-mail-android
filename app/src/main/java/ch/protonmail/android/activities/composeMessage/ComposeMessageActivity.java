@@ -89,6 +89,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -137,7 +138,6 @@ import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
-import ch.protonmail.android.events.FetchEmailKeysEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.events.HumanVerifyOptionsEvent;
 import ch.protonmail.android.events.LogoutEvent;
@@ -149,9 +149,10 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
 import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
-import ch.protonmail.android.jobs.FetchPublicKeysJob;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
+import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
+import ch.protonmail.android.usecase.model.FetchPublicKeysResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Event;
@@ -495,6 +496,11 @@ public class ComposeMessageActivity
             }
         });
 
+        composeMessageViewModel.getFetchKeyDetailsResult().observe(
+                this,
+                this::onFetchEmailKeysEvent
+        );
+
         composeMessageViewModel.getBuildingMessageCompleted().observe(this, new BuildObserver());
 
         composeMessageViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
@@ -664,27 +670,26 @@ public class ComposeMessageActivity
         return true;
     }
 
-    @Subscribe
-    public void onFetchAddressesKeysEvent(FetchEmailKeysEvent event) {
-        Status status = event.getStatus();
+    private void onFetchEmailKeysEvent(List<FetchPublicKeysResult> results) {
         mSendingPressed = false;
         mProgressView.setVisibility(View.GONE);
-        if (status == Status.SUCCESS) {
-            List<FetchEmailKeysEvent.EmailKeyResponse> responses = event.getResponse();
-            for (FetchEmailKeysEvent.EmailKeyResponse response : responses) {
-                Map<String, String> keys = response.getKeys();
-                Constants.RecipientLocationType location = response.getLocation();
-                if (location == Constants.RecipientLocationType.TO) {
-                    mToRecipientsView.setEmailPublicKey(keys);
-                } else if (location == Constants.RecipientLocationType.CC) {
-                    mCcRecipientsView.setEmailPublicKey(keys);
-                } else if (location == Constants.RecipientLocationType.BCC) {
-                    mBccRecipientsView.setEmailPublicKey(keys);
-                }
+        boolean isRetry = false;
+        for (FetchPublicKeysResult result : results) {
+            isRetry = isRetry || result.isSendRetryRequired() ;
+            Map<String, String> keys = result.getKeysMap();
+            Constants.RecipientLocationType location = result.getRecipientsType();
+            if (location == Constants.RecipientLocationType.TO) {
+                mToRecipientsView.setEmailPublicKey(keys);
+            } else if (location == Constants.RecipientLocationType.CC) {
+                mCcRecipientsView.setEmailPublicKey(keys);
+            } else if (location == Constants.RecipientLocationType.BCC) {
+                mBccRecipientsView.setEmailPublicKey(keys);
             }
-            if (event.isRetry()) {
-                sendMessage(false);
-            }
+        }
+
+        Timber.v("onFetchEmailKeysEvent size:%d isRetry:%s", results.size(), isRetry);
+        if (isRetry) {
+            sendMessage(false);
         }
     }
 
@@ -699,10 +704,8 @@ public class ComposeMessageActivity
                     .commitAllowingStateLoss();
         } else {
             Constants.TokenType method = Constants.TokenType.Companion.fromString(verificationMethods.get(0));
-            switch (method) {
-                case CAPTCHA:
-                    verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
-                    break;
+            if (method == Constants.TokenType.CAPTCHA) {
+                verificationOptionChose(Constants.TokenType.CAPTCHA, event.getToken());
             }
         }
     }
@@ -1243,7 +1246,9 @@ public class ComposeMessageActivity
                         emailList.add(recipient.getEmailAddress());
                     }
                 }
-                composeMessageViewModel.startFetchPublicKeysJob(Arrays.asList(new FetchPublicKeysJob.PublicKeysBatchJob(emailList, location)), false);
+
+                FetchPublicKeysRequest emailKeysRequest = new FetchPublicKeysRequest(emailList, location, false);
+                composeMessageViewModel.startFetchPublicKeys(Collections.singletonList(emailKeysRequest));
                 GetSendPreferenceJob.Destination destination = GetSendPreferenceJob.Destination.TO;
                 if (recipientsView.equals(mCcRecipientsView)) {
                     destination = GetSendPreferenceJob.Destination.CC;
@@ -1377,22 +1382,28 @@ public class ComposeMessageActivity
             List<String> ccMissingKeys = mCcRecipientsView.addressesWithMissingKeys();
             List<String> bccMissingKeys = mBccRecipientsView.addressesWithMissingKeys();
             boolean isValid = true;
-            List<FetchPublicKeysJob.PublicKeysBatchJob> jobs = new ArrayList<>();
+            List<FetchPublicKeysRequest> keysRequests = new ArrayList<>();
             if (!toMissingKeys.isEmpty()) {
-                jobs.add(new FetchPublicKeysJob.PublicKeysBatchJob(toMissingKeys, Constants.RecipientLocationType.TO));
+                keysRequests.add(
+                        new FetchPublicKeysRequest(toMissingKeys, Constants.RecipientLocationType.TO, true)
+                );
                 isValid = false;
             }
             if (!ccMissingKeys.isEmpty()) {
-                jobs.add(new FetchPublicKeysJob.PublicKeysBatchJob(ccMissingKeys, Constants.RecipientLocationType.CC));
+                keysRequests.add(
+                        new FetchPublicKeysRequest(ccMissingKeys, Constants.RecipientLocationType.CC, true)
+                );
                 isValid = false;
             }
             if (!bccMissingKeys.isEmpty()) {
-                jobs.add(new FetchPublicKeysJob.PublicKeysBatchJob(bccMissingKeys, Constants.RecipientLocationType.BCC));
+                keysRequests.add(
+                        new FetchPublicKeysRequest(bccMissingKeys, Constants.RecipientLocationType.BCC, true)
+                );
                 isValid = false;
             }
             if (!isValid) {
                 if (mNetworkUtil.isConnected()) {
-                    composeMessageViewModel.startFetchPublicKeysJob(jobs, true);
+                    composeMessageViewModel.startFetchPublicKeys(keysRequests);
                     mProgressView.setVisibility(View.VISIBLE);
                     mProgressSpinner.setVisibility(View.VISIBLE);
                     mSendingPressed = true;

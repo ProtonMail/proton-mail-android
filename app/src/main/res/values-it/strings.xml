@@ -604,7 +604,7 @@ di rispettare i\n<a href="https://protonmail.com/terms-and-conditions">termini e
         <item>@string/vcard_other_option_url</item>
     </string-array>
     <string name="logged_out">Disconnesso</string>
-    <string name="logged_out_description">È stato disconnesso. Effettui nuovamente l\'accesso.</string>
+    <string name="logged_out_description">Sei stato disconnesso. Effettua nuovamente l\'accesso.</string>
     <string name="verification_needed">Verifica richiesta</string>
     <string name="verification_needed_description">Per motivi di sicurezza, si prega di verificare di non essere un robot.</string>
     <string name="verification_needed_description_notification">Per favore, verifichi di essere un umano prima di inviare questo messaggio: %s</string>
@@ -1001,4 +1001,5 @@ l\'accesso all\'archiviazione.</string>
     <string name="swipe_gestures_changed_message">Dopo l\'ultimo aggiornamento i gesti di scorrimento sono stati invertiti, puoi ripristinarli nelle opzioni.</string>
     <string name="go_to_settings">Vai alle impostazioni</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Chiave API Firebase non valida. Le notifiche push non funzioneranno.</string>
 </resources>

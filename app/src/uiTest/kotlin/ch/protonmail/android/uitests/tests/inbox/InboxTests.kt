@@ -30,10 +30,9 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.externalGmailPGPEncrypted
 import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
-import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.mailer.Mail
 import org.junit.Before
 import org.junit.Test
@@ -61,8 +60,9 @@ class InboxTests : BaseTest() {
         val to = onePassUser
         Mail.gmail.from(from).to(to).withSubject(subject).withBody(body).send()
         inboxRobot
+            .refreshMessageList()
             .clickMessageBySubject(subject)
-            .verify { pgpIconShown() }
+            .verify { messageWebViewContainerShown() }
     }
 
     @TestId("29747")
@@ -72,22 +72,24 @@ class InboxTests : BaseTest() {
         val to = onePassUser
         Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).send()
         inboxRobot
+            .refreshMessageList()
             .clickMessageBySubject(subject)
-            .verify { pgpIconShown() }
+            .verify { messageWebViewContainerShown() }
     }
 
-    @TestId("C1486")
+    @TestId("1486")
     @Test
     fun receiveMessageOnPmMe() {
         val from = externalOutlookPGPSigned
         val to = onePassUser
         Mail.outlook.from(from).to(to).withSubject(subject).withBody(body).sendToPmMe()
         inboxRobot
+            .refreshMessageList()
             .clickMessageBySubject(subject)
-            .verify { pgpIconShown() }
+            .verify { messageWebViewContainerShown() }
     }
 
-    @TestId("C1487")
+    @TestId("1487")
     @Test
     fun receiveMessageWithAttachmentOnPmMe() {
         loginRobot
@@ -123,19 +125,6 @@ class InboxTests : BaseTest() {
             .switchToAccount(onePassUser.email)
             .inbox()
             .verify { messageWithSubjectExists(subject) }
-    }
-
-    @TestId("29722")
-    @Test
-    fun deleteMessageLongClick() {
-        inboxRobot
-            .menuDrawer()
-            .sent()
-            .longClickMessageOnPosition(0)
-            .moveToTrash()
-            .verify {
-                messageDeleted(longClickedMessageSubject, longClickedMessageDate)
-            }
     }
 
     @TestId("29723")
@@ -191,17 +180,6 @@ class InboxTests : BaseTest() {
             .verify { messageMoved(longClickedMessageSubject) }
     }
 
-    //TODO create a bug - app hangs in loading state after trying to empty the trash folder
-    fun emptyTrash() {
-        inboxRobot
-            .menuDrawer()
-            .trash()
-            .moreOptions()
-            .emptyFolder()
-            .confirm()
-            .verify { folderEmpty() }
-    }
-
     @Test
     fun messageDetailsViewHeaders() {
         inboxRobot
@@ -213,32 +191,16 @@ class InboxTests : BaseTest() {
             .verify { messageHeadersDisplayed() }
     }
 
+    @TestId("29722")
     @Test
-    fun saveDraft() {
-        val draftSubject = "Draft ${TestData.messageSubject}"
-        val body = "Draft ${TestData.messageBody}"
+    fun deleteMessageLongClick() {
         inboxRobot
-            .compose()
-            .draftToSubjectBody(internalEmailTrustedKeys.email, draftSubject, body)
-            .clickUpButton()
-            .confirmDraftSaving()
             .menuDrawer()
-            .drafts()
-            .verify { draftMessageSaved(draftSubject) }
-    }
-
-    @Category(SmokeTest::class)
-    @Test
-    fun saveDraftWithAttachment() {
-        val draftSubject = "Draft ${TestData.messageSubject}"
-        val body = "Draft ${TestData.messageBody}"
-        inboxRobot
-            .compose()
-            .draftSubjectBodyAttachment(internalEmailTrustedKeys.email, draftSubject, body)
-            .clickUpButton()
-            .confirmDraftSaving()
-            .menuDrawer()
-            .drafts()
-            .verify { draftWithAttachmentSaved(draftSubject) }
+            .sent()
+            .longClickMessageOnPosition(0)
+            .moveToTrash()
+            .verify {
+                messageDeleted(longClickedMessageSubject, longClickedMessageDate)
+            }
     }
 }

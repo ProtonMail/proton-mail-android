@@ -21,8 +21,6 @@ package ch.protonmail.android.testAndroid.lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 
-/**
- * Created by kadrikj on 8/26/18. */
 class TestObserver<T> : Observer<T> {
 
     val observedValues = mutableListOf<T?>()
@@ -33,4 +31,4 @@ class TestObserver<T> : Observer<T> {
 }
 
 fun <T> LiveData<T>.testObserver() = TestObserver<T>()
-        .also { observeForever(it) }
+    .also { observeForever(it) }

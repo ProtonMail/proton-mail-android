@@ -123,8 +123,12 @@ object ContactsMatchers {
         return object : BoundedMatcher<RecyclerView.ViewHolder,
             RecyclerView.ViewHolder>(RecyclerView.ViewHolder::class.java) {
 
+            val contactGroupsList = ArrayList<String>()
+
             override fun describeTo(description: Description) {
                 description.appendText("With contact group name: \"$name\"")
+                description.appendText("Here is the actual list of groups:\n")
+                contactGroupsList.forEach { description.appendText(" - \"$it\"\n") }
             }
 
             override fun matchesSafely(item: RecyclerView.ViewHolder): Boolean {
@@ -135,6 +139,7 @@ object ContactsMatchers {
                     .findViewById<TextView>(R.id.contact_name).text.toString()
                 val groupMembersCount = contactDataParent
                     .findViewById<TextView>(R.id.contact_email).text.toString()
+                contactGroupsList.add(groupName)
                 return groupName == name && groupMembersCount == membersCount
             }
         }

@@ -1001,4 +1001,5 @@ lagerpladsadgang.</string>
     <string name="swipe_gestures_changed_message">After last update swipe gestures have been switched. If you want, you can reset them in the settings.</string>
     <string name="go_to_settings">Go to settings</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Ugyldig Firebase API-nøgle. Push-meddelelser vil ikke fungere.</string>
 </resources>

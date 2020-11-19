@@ -72,28 +72,34 @@ class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpe
     }
 
     @Throws(IOException::class)
-    override fun fetchContactDetails(contactId: String): FullContactDetailsResponse? {
-        return ParseUtils.parse(service.contactById(contactId).execute())
+    override fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse? {
+        return ParseUtils.parse(service.contactByIdBlocking(contactId).execute())
     }
+
+    override suspend fun fetchContactDetails(contactId: String): FullContactDetailsResponse =
+        service.contactById(contactId)
 
     @WorkerThread
     @Throws(Exception::class)
-    override fun fetchContactDetails(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> {
+    override fun fetchContactDetailsBlocking(contactIDs: Collection<String>): Map<String, FullContactDetailsResponse?> {
         if (contactIDs.isEmpty()) {
             return emptyMap()
         }
         val service = service
         val list = ArrayList(contactIDs)
-        return executeAll(list.map { contactId -> service.contactById(contactId) })
+        return executeAll(list.map { contactId -> service.contactByIdBlocking(contactId) })
             .mapIndexed { i, resp -> list[i] to resp }.toMap()
     }
 
     @Throws(IOException::class)
-    override fun createContact(body: CreateContact): ContactResponse? {
-        val contactList = ArrayList<CreateContact>()
-        contactList.add(body)
-        val createContactBody = CreateContactBody(contactList)
-        return ParseUtils.parse(service.createContact(createContactBody).execute())
+    override fun createContactBlocking(body: CreateContact): ContactResponse? {
+        val createContactBody = CreateContactBody(listOf(body))
+        return ParseUtils.parse(service.createContactBlocking(createContactBody).execute())
+    }
+
+    override suspend fun createContact(body: CreateContact): ContactResponse? {
+        val createContactBody = CreateContactBody(listOf(body))
+        return service.createContact(createContactBody)
     }
 
     @Throws(IOException::class)

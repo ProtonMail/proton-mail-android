@@ -58,11 +58,18 @@ interface ContactService {
     fun contactsEmailsByLabelId(@Query("Page") page: Int, @Query("LabelID") labelId: String): Observable<ContactEmailsResponseV2>
 
     @GET("contacts/{contact_id}")
-    fun contactById(@Path("contact_id") contactId: String): Call<FullContactDetailsResponse>
+    fun contactByIdBlocking(@Path("contact_id") contactId: String): Call<FullContactDetailsResponse>
+
+    @GET("contacts/{contact_id}")
+    suspend fun contactById(@Path("contact_id") contactId: String): FullContactDetailsResponse
 
     @POST("contacts")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createContact(@Body contactsBody: CreateContactBody): Call<ContactResponse>
+    fun createContactBlocking(@Body contactsBody: CreateContactBody): Call<ContactResponse>
+
+    @POST("contacts")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun createContact(@Body contactsBody: CreateContactBody): ContactResponse
 
     @PUT("contacts/{contact_id}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

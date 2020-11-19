@@ -29,10 +29,6 @@ import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
 
-/**
- * Created by dino on 12/26/16.
- */
-
 public class PostHumanVerificationJob extends ProtonMailBaseJob {
 
     private final Constants.TokenType mTokenType;

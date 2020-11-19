@@ -706,7 +706,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Von Ihnen mit Ende-zu-Ende-Verschlüsselung gesendet</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Gesendet von ProtonMail mit Zero-Access-Verschlüsselung</string>
+    <string name="sender_lock_sent_autoresponder">Gesendet mit ProtonMail mit Null-Zugriff-Verschlüsselung</string>
     <string name="sender_lock_verification_failed">Überprüfung des Absenders fehlgeschlagen</string>
     <string name="sender_lock_pgp_encrypted">PGP-verschlüsselte Nachricht</string>
     <string name="sender_lock_pgp_encrypted_verified">PGP-verschlüsselte Nachricht von bestätigter Adresse</string>
@@ -985,4 +985,5 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="swipe_gestures_changed_message">Nach der letzten Aktualisierung wurden Wischgesten ausgetauscht. Wenn Sie möchten, können Sie diese in den Einstellungen zurücksetzen.</string>
     <string name="go_to_settings">Einstellungen öffnen</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Ungültiger Firebase API-Schlüssel. Push-Benachrichtigungen werden nicht funktionieren.</string>
 </resources>

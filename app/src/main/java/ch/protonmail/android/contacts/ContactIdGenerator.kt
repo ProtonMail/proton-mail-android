@@ -17,11 +17,17 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.usecase.delete
+package ch.protonmail.android.contacts
 
-import androidx.work.Operation
+import java.util.Random
+import javax.inject.Inject
 
-data class DeleteMessageResult(
-    val isSuccessfullyDeleted: Boolean,
-    val workerResultOperation: Operation
-)
+class ContactIdGenerator @Inject constructor() {
+
+    fun generateRandomId(): String {
+        val random = Random(System.nanoTime())
+        val randomOneSec = random.nextInt()
+        return "${-(System.currentTimeMillis() + randomOneSec)}"
+    }
+
+}

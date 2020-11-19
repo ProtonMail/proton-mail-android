@@ -18,18 +18,15 @@
  */
 package ch.protonmail.android.uitests.tests.settings
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.actions.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
-import ch.protonmail.android.uitests.testsHelper.StringUtils.getAlphaNumericStringWithSpecialCharacters
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category
 
-@LargeTest
 class AccountSettingsTests : BaseTest() {
 
     private val accountSettingsRobot: AccountSettingsRobot = AccountSettingsRobot()
@@ -50,25 +47,6 @@ class AccountSettingsTests : BaseTest() {
         accountSettingsRobot
             .subscription()
             .verify { subscriptionViewShown() }
-    }
-
-    @Test
-    fun changeLoginPassword() {
-        accountSettingsRobot
-            .passwordManagement()
-            .changePassword(TestData.twoPassUser)
-            .verify {
-                accountSettingsOpened()
-                passwordChanged()
-            }
-    }
-
-    //TODO enable when multiple user login per test class will be supported
-    fun changeMailboxPassword() {
-        accountSettingsRobot
-            .passwordManagement()
-            .changeMailboxPassword(TestData.twoPassUser)
-            .verify { mailboxPasswordChanged() }
     }
 
     @Category(SmokeTest::class)
@@ -120,25 +98,21 @@ class AccountSettingsTests : BaseTest() {
             .verify { mobileSignatureToggleCheckedStateIs(true) }
     }
 
-    @Test
-    fun createLabel() {
-        val labelName = getAlphaNumericStringWithSpecialCharacters()
+    fun changeLoginPassword() {
         accountSettingsRobot
-            .foldersAndLabels()
-        // TODO enable after MAILAND-750 will be fixed.
-//                .labelsManager()
-//                .addLabel(labelName)
-//                .verify { labelWithNameShown(labelName) }
+            .passwordManagement()
+            .changePassword(TestData.twoPassUser)
+            .verify {
+                accountSettingsOpened()
+                passwordChanged()
+            }
     }
 
-    @Test
-    fun createFolder() {
-        val folderName = getAlphaNumericStringWithSpecialCharacters()
-        accountSettingsRobot
-            .foldersAndLabels()
-        // TODO enable after MAILAND-750 will be fixed.
-//                .foldersManager()
-//                .addFolder(folderName)
-//                .verify { folderWithNameShown(folderName) }
-    }
+//    //TODO enable when multiple user login per test class will be supported
+//    fun changeMailboxPassword() {
+//        accountSettingsRobot
+//            .passwordManagement()
+//            .changeMailboxPassword(TestData.twoPassUser)
+//            .verify { mailboxPasswordChanged() }
+//    }
 }

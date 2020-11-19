@@ -50,7 +50,7 @@ open class GroupDetailsRobot {
     }
 
     private fun confirmDeletion(): ContactsRobot {
-        UIActions.system.clickPositiveDialogButton()
+        UIActions.wait.forViewWithId(android.R.id.button1).click()
         return ContactsRobot()
     }
 

@@ -33,6 +33,7 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.insert
 import ch.protonmail.android.uitests.testsHelper.type
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
@@ -54,15 +55,21 @@ class ComposerRobot {
             .body(body)
             .sendToContact()
 
+    fun sendMessageToGroup(subject: String, body: String): ContactsRobot.ContactsGroupView {
+        subject(subject)
+            .body(body)
+            .sendToContact()
+        return ContactsRobot.ContactsGroupView()
+    }
+
     fun forwardMessage(to: String, body: String): MessageRobot =
         recipients(to)
             .body(body)
             .forward()
 
-    fun changeSubjectAndForwardMessage(to: String, subject: String, body: String): MessageRobot =
+    fun changeSubjectAndForwardMessage(to: String, subject: String): MessageRobot =
         recipients(to)
-            .subject(subject)
-            .body(body)
+            .updateSubject(subject)
             .forward()
 
     fun sendMessageTOandCC(to: String, cc: String, subject: String, body: String): InboxRobot =
@@ -135,6 +142,25 @@ class ComposerRobot {
             .addImageCaptureAttachment(logoDrawable)
             .send()
 
+    fun sendMessageEOAndExpiryTimeWithAttachmentAndConfirmation(
+        to: String,
+        subject: String,
+        body: String,
+        days: Int,
+        password: String,
+        hint: String
+    ): InboxRobot =
+        composeMessage(to, subject, body)
+            .setMessagePassword()
+            .definePasswordWithHint(password, hint)
+            .messageExpiration()
+            .setExpirationInDays(days)
+            .hideExpirationView()
+            .attachments()
+            .addImageCaptureAttachment(logoDrawable)
+            .sendWithNotSupportedExpiryConfirmation()
+            .sendAnyway()
+
     fun sendMessageCameraCaptureAttachment(to: String, subject: String, body: String): InboxRobot =
         composeMessage(to, subject, body)
             .attachments()
@@ -168,7 +194,8 @@ class ComposerRobot {
             .addImageCaptureAttachment(logoDrawable)
     }
 
-    fun editBodyAndReply(messageBody: String): MessageRobot = body(messageBody).reply()
+    fun editBodyAndReply(currentBody: String, newBody: String): MessageRobot =
+        body(newBody).reply()
 
     fun clickUpButton(): ComposerRobot {
         UIActions.system.clickHamburgerOrUpButton()
@@ -191,6 +218,7 @@ class ComposerRobot {
             .body(body)
 
     fun recipients(email: String): ComposerRobot {
+        UIActions.wait.forViewWithId(R.id.to_recipients)
         UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, email)
         return this
     }
@@ -222,13 +250,18 @@ class ComposerRobot {
         return this
     }
 
+    fun updateSubject(text: String): ComposerRobot {
+        UIActions.wait.forViewWithId(R.id.message_title).insert(text)
+        return this
+    }
+
     private fun body(text: String): ComposerRobot {
-        UIActions.id.insertTextIntoFieldWithId(R.id.message_body, text)
+        UIActions.wait.forViewWithId(R.id.message_body).insert(text)
         return this
     }
 
     private fun showAdditionalRows(): ComposerRobot {
-        UIActions.id.clickViewWithId(R.id.show_additional_rows)
+        UIActions.wait.forViewWithId(R.id.show_additional_rows).click()
         return this
     }
 
@@ -278,10 +311,9 @@ class ComposerRobot {
     }
 
     private fun waitForConditionAndSend() {
-        UIActions.wait.forViewWithId(R.id.tokenPgpText)
+        UIActions.wait.untilViewWithIdIsGone(R.id.text1)
+        UIActions.wait.untilViewWithIdEnabled(sendMessageId)
         UIActions.id.clickViewWithId(sendMessageId)
-        UIActions.wait.forViewWithText(R.string.message_sent)
-        UIActions.wait.untilViewWithTextIsGone(R.string.message_sent)
     }
 
     /**

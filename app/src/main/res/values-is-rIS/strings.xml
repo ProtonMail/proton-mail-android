@@ -998,4 +998,5 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <string name="swipe_gestures_changed_message">Eftir síðustu uppfærslu var strokuhreyfingum víxlað. Ef þú vilt geturðu endurstillt þetta í stillingunum.</string>
     <string name="go_to_settings">Fara í stillingar</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Ógildur API-kerfisviðmótslykill fyrir Firebase. Ýtitilkynningar munu ekki virka.</string>
 </resources>

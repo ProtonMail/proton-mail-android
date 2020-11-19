@@ -23,6 +23,7 @@ import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.lifecycle.LiveData
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -32,10 +33,12 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants.CONTACTS_PAGE_SIZE
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 private const val MAX_RETRY_COUNT = 3
@@ -107,6 +110,7 @@ class FetchContactsDataWorker @WorkerInject constructor(
                 .build()
             val workRequest = OneTimeWorkRequestBuilder<FetchContactsDataWorker>()
                 .setConstraints(networkConstraints)
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
             workManager.enqueue(workRequest)

@@ -36,7 +36,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
-import ch.protonmail.android.jobs.FetchPublicKeysJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.ResignContactJob
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
@@ -119,10 +118,6 @@ class ComposeMessageRepository @Inject constructor(
         return contactsDao.findAllContactsEmailsByContactGroup(groupId)
     }
 
-    fun saveAttachment(attachment: Attachment): Long {
-        return messagesDatabase.saveAttachment(attachment)
-    }
-
     suspend fun getAttachments(message: Message, isTransient: Boolean, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {
             if (!isTransient) {
@@ -184,25 +179,6 @@ class ComposeMessageRepository @Inject constructor(
         jobManager.addJobInBackground(PostHumanVerificationJob(tokenType, token))
     }
 
-    suspend fun saveMessage(message: Message, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
-            messageDetailsRepository.saveMessageInDB(message)
-        }
-
-    suspend fun findAttachmentsByMessageId(messageId: String, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
-            messagesDatabase.findAttachmentsByMessageId(messageId)
-        }
-
-    suspend fun findAttachmentByMessageIdFileNameAndPath(messageId: String, fileName: String, filePath: String, isTransient: Boolean, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
-            if (!isTransient) {
-                messagesDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
-            } else {
-                searchDatabase.findAttachmentsByMessageIdFileNameAndPath(messageId, fileName, filePath)
-            }
-        }
-
     suspend fun createAttachmentList(attachmentList: List<LocalAttachment>, dispatcher: CoroutineDispatcher) =
         withContext(dispatcher) {
             Attachment.createAttachmentList(messagesDatabase, attachmentList, false)
@@ -245,10 +221,6 @@ class ComposeMessageRepository @Inject constructor(
                 }
             }
         }
-    }
-
-    fun fetchPublicKeys(jobs: List<FetchPublicKeysJob.PublicKeysBatchJob>, retry: Boolean) {
-        jobManager.addJobInBackground(FetchPublicKeysJob(jobs, retry))
     }
 
     fun getSendPreference(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {

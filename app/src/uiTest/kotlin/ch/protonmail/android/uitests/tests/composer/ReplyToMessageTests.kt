@@ -22,8 +22,8 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -52,9 +52,10 @@ class ReplyToMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .clickMessageBySubject(subject)
             .reply()
-            .editBodyAndReply("Robot Reply")
+            .editBodyAndReply(body, "Robot Reply")
             .navigateUpToSent()
             .verify {
                 messageWithSubjectExists(TestData.reSubject(subject))
@@ -71,9 +72,10 @@ class ReplyToMessageTests : BaseTest() {
             .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .clickMessageBySubject(subject)
             .reply()
-            .editBodyAndReply("Robot Reply With Attachment ")
+            .editBodyAndReply(body, "Robot Reply With Attachment ")
             .navigateUpToSent()
             .verify { messageWithSubjectExists(TestData.reSubject(subject)) }
     }
@@ -88,9 +90,10 @@ class ReplyToMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .clickMessageBySubject(subject)
             .replyAll()
-            .editBodyAndReply("Robot ReplyAll ")
+            .editBodyAndReply(body, "Robot ReplyAll ")
             .navigateUpToSent()
             .verify { messageWithSubjectExists(TestData.reSubject(subject)) }
     }

@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.uitests.tests.menu
 
-import androidx.test.filters.LargeTest
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.tests.BaseTest
@@ -26,7 +25,6 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import org.junit.Before
 import org.junit.Test
 
-@LargeTest
 class MenuTests : BaseTest() {
 
     private lateinit var menuRobot: MenuRobot

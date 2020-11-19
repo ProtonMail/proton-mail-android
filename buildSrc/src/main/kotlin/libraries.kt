@@ -96,8 +96,6 @@ val DependencyHandler.`butterknife-runtime` get() =         jakeWharton(module =
 val DependencyHandler.`butterknife-compiler` get() =        jakeWharton(module = "butterknife", moduleSuffix = "compiler") version `butterKnife version`
 val DependencyHandler.`firebase-messaging` get() =          google("firebase", moduleSuffix = "messaging") version `firebase-messaging version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
-val DependencyHandler.`hugo-annotations` get() =            jakeWharton("hugo", moduleSuffix = "annotations") version `hugo version`
-val DependencyHandler.`hugo-plugin` get() =                 jakeWharton("hugo", moduleSuffix = "plugin") version `hugo version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`
 val DependencyHandler.`sentry-android` get() =              dependency("io.sentry", module = "sentry-android") version `sentry version`
 val DependencyHandler.`sentry-android-plugin` get() =       dependency("io.sentry", module = "sentry-android-gradle-plugin") version `sentry-plugin version`

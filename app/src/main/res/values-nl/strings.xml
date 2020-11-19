@@ -996,4 +996,5 @@ toegang tot opslag toestaan.</string>
     <string name="swipe_gestures_changed_message">Na de laatste update zijn de veegbewegingen omgeschakeld. Als u wilt, kunt u ze in de instellingen resetten.</string>
     <string name="go_to_settings">Ga naar instellingen</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Ongeldige Firebase API-sleutel. Push-meldingen werken niet.</string>
 </resources>

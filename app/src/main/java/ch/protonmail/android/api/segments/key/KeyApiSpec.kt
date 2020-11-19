@@ -19,7 +19,11 @@
 package ch.protonmail.android.api.segments.key
 
 import androidx.annotation.WorkerThread
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.KeysSetupBody
+import ch.protonmail.android.api.models.PublicKeyResponse
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.SinglePasswordChange
+import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import java.io.IOException
 
@@ -27,7 +31,9 @@ import java.io.IOException
 interface KeyApiSpec {
 
     @Throws(IOException::class)
-    fun getPublicKeys(email: String): PublicKeyResponse
+    fun getPublicKeysBlocking(email: String): PublicKeyResponse
+
+    suspend fun getPublicKeys(email: String): PublicKeyResponse
 
     @WorkerThread
     @Throws(Exception::class)

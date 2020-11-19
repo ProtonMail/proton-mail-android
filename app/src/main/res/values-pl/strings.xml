@@ -307,7 +307,7 @@ Nie strać tego hasła - nie możemy go odzyskać. Jeśli je zgubisz, nie będzi
     <string name="new_message_arrived">Nowa wiadomość!</string>
     <string name="please_choose_color">Wybierz kolor</string>
     <string name="display_images">Pokaż zawartość zdalną</string>
-    <string name="retry">Ponów próbę</string>
+    <string name="retry">Spróbuj ponownie</string>
     <string name="saving_failed_no_conn">Zapisywanie nie powiodło się. Brak połączenia z Internetem</string>
     <string name="username_is_available">Nazwa użytkownika jest dostępna!</string>
     <string name="username_is_not_available">Nazwa użytkownika jest już zajęta!</string>
@@ -485,7 +485,7 @@ ludziom na całym świecie.</string>
     <string name="storage_mb">%d MB przestrzeni dyskowej</string>
     <string name="max_addresses">Do %d aliasów e-mail</string>
     <string name="inline_prefix">[Inline]</string>
-    <string name="inline_header">%d obrazów osadzonych w wiadomości</string>
+    <string name="inline_header">Osadzone obrazy w wiadomości: %d</string>
     <string name="select">Zaznacz</string>
     <string name="change_currency">Zmień walutę</string>
     <string name="switch_billing_monthly">Zmień na plan miesięczny</string>
@@ -1028,4 +1028,5 @@ na dostęp do pamięci wewnętrznej.</string>
     <string name="swipe_gestures_changed_message">Gesty przesunięcia palcem zostały zmienione po ostatniej aktualizacji aplikacji. Możesz je zresetować w ustawieniach aplikacji.</string>
     <string name="go_to_settings">Przejdź do ustawień</string>
     <!-- endregion -->
+    <string name="invalid_firebase_api_key_message">Klucz interfejsu API Firebase jest nieprawidłowy. Powiadomienia nie będą działać.</string>
 </resources>

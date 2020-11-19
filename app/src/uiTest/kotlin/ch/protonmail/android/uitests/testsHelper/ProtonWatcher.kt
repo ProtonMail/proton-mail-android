@@ -38,6 +38,8 @@ class ProtonWatcher {
         private val instance = ProtonWatcher()
 
         fun waitForCondition(condition: Condition) {
+            // reset to initial state
+            status = 0
             var timeInterval = 0L
             while (status != CONDITION_MET) {
                 if (condition.checkCondition()) {
@@ -49,12 +51,9 @@ class ProtonWatcher {
                         Thread.sleep(instance.watchInterval)
                     } else {
                         status = TIMEOUT
-                        break
                     }
                 }
             }
-            // reset to initial state
-            status = 0
         }
 
         fun setTimeout(ms: Long) {

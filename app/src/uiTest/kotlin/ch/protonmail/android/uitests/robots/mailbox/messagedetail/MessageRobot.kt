@@ -57,18 +57,20 @@ class MessageRobot {
     }
 
     fun reply(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.reply).click()
+        UIActions.wait.forViewWithId(R.id.reply)
+        UIActions.wait.untilViewWithIdEnabled(R.id.reply).click()
         return ComposerRobot()
     }
 
     fun replyAll(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.reply_all).click()
+        UIActions.wait.forViewWithId(R.id.reply_all)
+        UIActions.wait.untilViewWithIdEnabled(R.id.reply_all).click()
         return ComposerRobot()
     }
 
     fun forward(): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.message_body)
-        UIActions.wait.forViewWithId(R.id.forward).click()
+        UIActions.wait.forViewWithId(R.id.forward)
+        UIActions.wait.untilViewWithIdEnabled(R.id.forward).click()
         return ComposerRobot()
     }
 
@@ -78,11 +80,13 @@ class MessageRobot {
     }
 
     fun navigateUpToSearch(): SearchRobot {
+        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
         UIActions.system.clickHamburgerOrUpButton()
         return SearchRobot()
     }
 
     fun navigateUpToSent(): SentRobot {
+        UIActions.wait.forViewWithId(R.id.reply_all)
         UIActions.system.clickHamburgerOrUpButton()
         return SentRobot()
     }
@@ -120,6 +124,10 @@ class MessageRobot {
 
         fun pgpIconShown() {
             UIActions.wait.forViewWithId(R.id.pgp_icon)
+        }
+
+        fun messageWebViewContainerShown() {
+            UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
         }
     }
 

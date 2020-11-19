@@ -58,7 +58,6 @@ class LoginTests : BaseTest() {
             .verify { mailboxLayoutShown() }
     }
 
-    @Test
     fun loginWithTwoPassAnd2Fa() {
         loginRobot
             .loginUserWithTwoFa(twoPassUserWith2FA)

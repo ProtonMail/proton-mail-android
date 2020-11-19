@@ -402,13 +402,5 @@ object Constants {
         UNSIGNED(0),
         SIGNED(2),
         SIGNED_ENCRYPTED(3);
-
-        companion object {
-            fun fromInt(vCardTypeValue: Int): VCardType {
-                return values().find {
-                    vCardTypeValue == it.vCardTypeValue
-                } ?: UNSIGNED
-            }
-        }
     }
 }

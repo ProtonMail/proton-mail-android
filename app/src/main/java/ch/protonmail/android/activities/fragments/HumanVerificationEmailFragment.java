@@ -44,9 +44,6 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.utils.extensions.CommonExtensionsKt;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
-/**
- * Created by dkadrikj on 1/20/16.
- */
 public class HumanVerificationEmailFragment extends HumanVerificationBaseFragment {
 
     @BindView(R.id.email_address)

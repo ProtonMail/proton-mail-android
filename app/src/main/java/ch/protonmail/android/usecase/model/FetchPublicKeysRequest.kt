@@ -1,43 +1,29 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
 
-import android.os.Build;
+package ch.protonmail.android.usecase.model
 
-import androidx.annotation.NonNull;
+import ch.protonmail.android.core.Constants
 
-import ch.protonmail.android.BuildConfig;
+data class FetchPublicKeysRequest(
+    val emails: List<String>,
+    val recipientsType: Constants.RecipientLocationType,
+    val isSendRetryRequired: Boolean = false
+)
 
-public class RegisterDeviceBody {
-    private String DeviceToken;
-    private String DeviceName;
-    private String DeviceModel;
-    private String DeviceVersion;
-    private String AppVersion;
-    private int Environment;
-
-    public RegisterDeviceBody(@NonNull String fcmToken) {
-        DeviceToken = fcmToken;
-        DeviceName = "Android";
-        DeviceModel = Build.MODEL;
-        DeviceVersion = "" + Build.VERSION.SDK_INT;
-        AppVersion = "Android_" + BuildConfig.VERSION_NAME;
-        Environment = 4;
-    }
-}

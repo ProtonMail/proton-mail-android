@@ -632,10 +632,6 @@ public class BillingFragment extends CreateAccountBaseFragment {
         mProgressBar.setVisibility(View.GONE);
         switch (event.status) {
             case SUCCESS: {
-                String fingerprint = mFingerprint;
-                if ("0".equals(mFingerprint)) {
-                    fingerprint = "";
-                }
                 mListener.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, couponCode, planIds, cycle);
             }
             break;

@@ -34,7 +34,7 @@ import org.hamcrest.CoreMatchers.instanceOf
 /**
  * [ContactsRobot] class contains actions and verifications for Contacts functionality.
  */
-open class ContactsRobot {
+class ContactsRobot {
 
     fun addContact(): AddContactRobot {
         UIActions.allOf.clickMatchedView(
@@ -60,7 +60,7 @@ open class ContactsRobot {
 
 
     fun openOptionsMenu(): ContactsMoreOptions {
-        UIActions.system.clickMoreOptionsButton()
+        UIActions.system.waitForMoreOptionsButton().click()
         return ContactsMoreOptions()
     }
 
@@ -81,10 +81,10 @@ open class ContactsRobot {
     }
 
     fun clickContactByEmail(email: String): ContactDetailsRobot {
+        UIActions.wait.forViewWithId(contactsRecyclerView)
         UIActions.recyclerView
             .waitForBeingPopulated(contactsRecyclerView)
-            .waitForItemWithIdAndText(contactsRecyclerView, R.id.contact_email, email)
-            .clickContactItem(contactsRecyclerView, email)
+            .clickContactItemWithRetry(contactsRecyclerView, email)
         return ContactDetailsRobot()
     }
 
@@ -93,6 +93,12 @@ open class ContactsRobot {
         fun clickContact(withEmail: String): ContactDetailsRobot {
             UIActions.recyclerView.clickContactItem(contactsRecyclerView, withEmail)
             return ContactDetailsRobot()
+        }
+
+        fun navigateUpToInbox(): InboxRobot {
+            UIActions.wait.forViewWithId(contactsRecyclerView)
+            UIActions.system.clickHamburgerOrUpButton()
+            return InboxRobot()
         }
 
         fun clickSendMessageToContact(contactName: String): ComposerRobot {
@@ -109,6 +115,12 @@ open class ContactsRobot {
 
     class ContactsGroupView {
 
+        fun navigateUpToInbox(): InboxRobot {
+            UIActions.wait.forViewWithId(contactGroupsRecyclerView)
+            UIActions.system.clickHamburgerOrUpButton()
+            return InboxRobot()
+        }
+
         fun clickGroup(withName: String): GroupDetailsRobot {
             UIActions.recyclerView
                 .waitForBeingPopulated(R.id.contactGroupsRecyclerView)
@@ -117,10 +129,10 @@ open class ContactsRobot {
         }
 
         fun clickGroupWithMembersCount(name: String, membersCount: String): GroupDetailsRobot {
+            UIActions.wait.forViewWithId(contactGroupsRecyclerView)
             UIActions.recyclerView
                 .waitForBeingPopulated(contactGroupsRecyclerView)
-                .waitForItemWithIdAndText(contactGroupsRecyclerView, R.id.contact_name, name)
-                .clickOnRecyclerViewMatchedItem(
+                .clickOnRecyclerViewMatchedItemWithRetry(
                     contactGroupsRecyclerView,
                     withContactGroupNameAndMembersCount(name, membersCount)
                 )
@@ -177,19 +189,17 @@ open class ContactsRobot {
 
         fun contactExists(name: String, email: String) {
             UIActions.recyclerView
-                .waitForBeingPopulated(contactsRecyclerView)
                 .scrollToRecyclerViewMatchedItem(contactsRecyclerView, withContactNameAndEmail(name, email))
         }
 
         fun contactDoesNotExists(name: String, email: String) {
+            UIActions.wait.forViewWithId(contactsRecyclerView)
             UIActions.recyclerView
-                .waitForBeingPopulated(contactsRecyclerView)
                 .checkDoesNotContainContact(contactsRecyclerView, name, email)
         }
 
         fun contactsRefreshed() {
-            UIActions.wait.forViewWithText(R.string.fetching_contacts)
-            UIActions.wait.untilViewWithIdIsGone(R.id.progress_bar)
+            UIActions.wait.untilViewWithIdDisabled(R.id.progress_bar)
         }
     }
 
