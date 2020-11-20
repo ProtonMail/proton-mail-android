@@ -158,37 +158,39 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
 
         val filenameInCache = attachment.fileName!!.replace(" ", "_").replace("/", ":")
         val attachmentFile = File(attachmentsDirectoryFile, filenameInCache)
-        val uniqueFilenameInDownloads = createUniqueFilename(
-            attachment.fileName ?: ATTACHMENT_UNKNOWN_FILE_NAME,
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        )
 
-        try {
-
-            initializeNotificationBuilder(uniqueFilenameInDownloads)
-
-            val decryptedByteArray = getAttachmentData(crypto, attachment.mimeData, attachment.attachmentId!!, attachment.keyPackets, attachment.fileSize)
-            FileOutputStream(attachmentFile).use {
-                it.write(decryptedByteArray)
-            }
-
-            val attachmentMetadata = AttachmentMetadata(attachment.attachmentId!!, attachment.fileName!!, attachment.fileSize, attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache, attachment.messageId, System.currentTimeMillis())
-            attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
-
-            attachmentFile.copyTo(
-                File(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                    uniqueFilenameInDownloads
-                )
+        applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.let { externalDirectory ->
+            val uniqueFilenameInDownloads = createUniqueFilename(
+                attachment.fileName ?: ATTACHMENT_UNKNOWN_FILE_NAME,
+                externalDirectory
             )
 
-        } catch (e: Exception) {
-            Timber.e(e, "handleSingleAttachment exception")
-            AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.FAILED, filenameInCache, attachment.attachmentId, messageId, false))
-            return Result.failure()
+            try {
+                initializeNotificationBuilder(uniqueFilenameInDownloads)
+
+                val decryptedByteArray = getAttachmentData(crypto, attachment.mimeData, attachment.attachmentId!!, attachment.keyPackets, attachment.fileSize)
+                FileOutputStream(attachmentFile).use {
+                    it.write(decryptedByteArray)
+                }
+
+                val attachmentMetadata = AttachmentMetadata(attachment.attachmentId!!, attachment.fileName!!, attachment.fileSize, attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache, attachment.messageId, System.currentTimeMillis())
+                attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
+
+                attachmentFile.copyTo(
+                    File(
+                        externalDirectory,
+                        uniqueFilenameInDownloads
+                    )
+                )
+
+            } catch (e: Exception) {
+                Timber.e(e, "handleSingleAttachment exception")
+                AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.FAILED, filenameInCache, attachment.attachmentId, messageId, false))
+                return Result.failure()
+            }
+            AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.SUCCESS, uniqueFilenameInDownloads, attachment.attachmentId, messageId, false))
         }
 
-        AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.SUCCESS, uniqueFilenameInDownloads, attachment.attachmentId, messageId, false))
         AttachmentClearingService.startRegularClearUpService() // TODO don't call it every time we download attachments
         return Result.success()
     }
