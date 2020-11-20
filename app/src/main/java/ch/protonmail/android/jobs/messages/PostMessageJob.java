@@ -238,7 +238,10 @@ public class PostMessageJob extends ProtonMailBaseJob {
             uploadAttachments(message, crypto, mailSettings);
             fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e("Failed uploading attachments for message " + message + "\n Exception --> " + e);
+            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
+            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, "Failed uploading attachments", getUserManager().getUser());
+            return;
         }
 
         onRunPostMessage(pendingActionsDatabase, message, crypto);

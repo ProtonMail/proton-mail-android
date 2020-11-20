@@ -190,7 +190,10 @@ data class Attachment @JvmOverloads constructor(
 			this.signature = response.attachment.signature
 			isUploaded = true
 			messageDetailsRepository.saveAttachment(this)
+		} else {
+			throw IOException("Attachment upload failed")
 		}
+
 		return attachmentId
 	}
 
