@@ -299,7 +299,6 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     }
 
     void onInitialiseContact(FullContactDetails fullContactDetails) {
-
         if (fullContactDetails == null || fullContactDetails.getEncryptedData() == null || fullContactDetails.getEncryptedData().size() == 0) {
             contactDetailsViewModel.fetchDetails(mContactId);
         } else {
@@ -309,21 +308,18 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     @Override
     protected void onStart() {
-
         super.onStart();
         mApp.getBus().register(this);
     }
 
     @Override
     protected void onStop() {
-
         super.onStop();
         mApp.getBus().unregister(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.contact_details_menu, menu);
         collapsedMenu = menu;
         return true;
@@ -331,30 +327,19 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
         return super.onPrepareOptionsMenu(collapsedMenu);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void onEditContact(FullContactDetails fullContactDetails) {
-
-        String contactId = mContactId;
-        if (fullContactDetails == null && !TextUtils.isEmpty(contactId)) {
-            contactDetailsViewModel.fetchDetails(contactId);
-        } else if (fullContactDetails == null && TextUtils.isEmpty(contactId)) {
-            onBackPressed();
-        } else if (fullContactDetails != null) {
-            refresh();
+        if (requestCode == REQUEST_CODE_EDIT_CONTACT && resultCode == RESULT_OK) {
+            updateDisplayedContact();
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
             onBackPressed();
@@ -393,6 +378,24 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     protected int getLayoutId() {
         return R.layout.activity_contact_details;
         // TODO change to activity_contact_details_new. Some adjustments are needed
+    }
+
+    private void updateDisplayedContact() {
+        new ExtractFullContactDetailsTask(contactsDatabase, mContactId, fullContactDetails -> {
+            decryptAndFillVCard(fullContactDetails);
+            onEditContact(fullContactDetails, mContactId);
+            return Unit.INSTANCE;
+        }).execute();
+    }
+
+    private void onEditContact(FullContactDetails fullContactDetails, String contactId) {
+        if (fullContactDetails == null && !TextUtils.isEmpty(contactId)) {
+            contactDetailsViewModel.fetchDetails(contactId);
+        } else if (fullContactDetails == null && TextUtils.isEmpty(contactId)) {
+            onBackPressed();
+        } else if (fullContactDetails != null) {
+            refresh();
+        }
     }
 
     private void decryptAndFillVCard(@Nullable FullContactDetails contact) {
@@ -579,11 +582,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         switch (event.status) {
             case ContactEvent.SUCCESS:
             case ContactEvent.SAVED:
-                new ExtractFullContactDetailsTask(contactsDatabase, mContactId, fullContactDetails -> {
-                    decryptAndFillVCard(fullContactDetails);
-                    onEditContact(fullContactDetails);
-                    return Unit.INSTANCE;
-                }).execute();
+                updateDisplayedContact();
                 break;
             case ContactEvent.ALREADY_EXIST:
                 TextExtensions.showToast(this, R.string.contact_exist);
