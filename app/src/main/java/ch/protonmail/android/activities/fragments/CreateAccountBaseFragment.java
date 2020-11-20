@@ -425,8 +425,6 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
 
         void createVerificationPaymentForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken);
 
-        void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle);
-
         void onPaymentOptionChosen(Constants.CurrencyType currency, int amount, String planId, int cycle);
 
         void donateForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken);

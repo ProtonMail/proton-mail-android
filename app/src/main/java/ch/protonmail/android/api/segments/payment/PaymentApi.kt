@@ -18,8 +18,23 @@
  */
 package ch.protonmail.android.api.segments.payment
 
-import androidx.annotation.WorkerThread
-import ch.protonmail.android.api.models.*
+import ch.protonmail.android.api.models.AvailablePlansResponse
+import ch.protonmail.android.api.models.CheckSubscriptionBody
+import ch.protonmail.android.api.models.CheckSubscriptionResponse
+import ch.protonmail.android.api.models.CreatePaymentTokenBody
+import ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponse
+import ch.protonmail.android.api.models.CreateSubscriptionBody
+import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
+import ch.protonmail.android.api.models.DonateBody
+import ch.protonmail.android.api.models.GetPaymentTokenResponse
+import ch.protonmail.android.api.models.GetSubscriptionResponse
+import ch.protonmail.android.api.models.PaymentMethodResponse
+import ch.protonmail.android.api.models.PaymentMethodsResponse
+import ch.protonmail.android.api.models.PaymentsStatusResponse
+import ch.protonmail.android.api.models.ResponseBody
+import ch.protonmail.android.api.models.TokenPaymentBody
+import ch.protonmail.android.api.models.VerifyBody
+import ch.protonmail.android.api.models.VerifyResponse
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import retrofit2.Call
@@ -30,34 +45,29 @@ class PaymentApi(
     private val pubService: PaymentPubService
 ) : BaseApi(), PaymentApiSpec {
 
-    @Throws(IOException::class)
-    override fun fetchSubscription(): GetSubscriptionResponse = ParseUtils.parse(service.fetchSubscription().execute())
+    override suspend fun fetchSubscription(): GetSubscriptionResponse =
+        service.fetchSubscription()
 
     @Throws(IOException::class)
     override fun fetchPaymentMethods(): PaymentMethodsResponse = ParseUtils.parse(service.fetchPaymentMethods().execute())
 
-    @Throws(IOException::class)
-    override fun fetchPaymentsStatus(): PaymentsStatusResponse =
-            ParseUtils.parse(service.fetchPaymentsStatus().execute())
+    override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = service.fetchPaymentsStatus()
 
-    @Throws(IOException::class)
-    override fun createUpdatePaymentMethod(body: TokenPaymentBody): Call<PaymentMethodResponse> = service.createUpdatePaymentMethod(body)
+    override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
+        service.createUpdatePaymentMethod(body)
 
-    @WorkerThread
-    @Throws(IOException::class)
-    override fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
-            = ParseUtils.parse(service.createUpdateSubscription(body).execute())
+    override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
+        service.createUpdateSubscription(body)
 
     @Throws(IOException::class)
     override fun donate(body: DonateBody): ResponseBody = ParseUtils.parse(service.donate(body).execute())
 
-    @Throws(IOException::class)
-    override fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
-            ParseUtils.parse(service.checkSubscription(body).execute())
+    override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
+        service.checkSubscription(body)
 
     @Throws(IOException::class)
     override fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse =
-            ParseUtils.parse(pubService.fetchAvailablePlans(currency, cycle).execute())
+        ParseUtils.parse(pubService.fetchAvailablePlans(currency, cycle).execute())
 
     @Throws(Exception::class)
     override fun verifyPayment(body: VerifyBody): VerifyResponse = ParseUtils.parse(pubService.verifyPayment(body).execute())

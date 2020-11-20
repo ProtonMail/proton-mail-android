@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -82,16 +82,18 @@ import ch.protonmail.android.events.KeysSetupEvent;
 import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
-import ch.protonmail.android.events.PaymentMethodEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.events.payment.VerifyPaymentEvent;
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.FileUtils;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.CollectionExtensions;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.viewmodel.BillingViewModel;
 import ch.protonmail.android.views.PMWebView;
+import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_PAYMENT_TOKEN_STRING;
 import static ch.protonmail.android.activities.PaymentTokenApprovalActivityKt.EXTRA_RESULT_STATUS_STRING;
@@ -101,9 +103,7 @@ import static ch.protonmail.android.api.models.CreatePaymentTokenBodyKt.PAYMENT_
 import static ch.protonmail.android.api.models.CreatePaymentTokenSuccessResponseKt.FIELD_HUMAN_VERIFICATION_TOKEN;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED;
 
-/**
- * Created by dkadrikj on 7/1/16.
- */
+@AndroidEntryPoint
 public class BillingFragment extends CreateAccountBaseFragment {
 
     private static final String ARGUMENT_AMOUNT = "ch.protonmail.android.ARG_AMOUNT";
@@ -163,7 +163,9 @@ public class BillingFragment extends CreateAccountBaseFragment {
      */
     private boolean hadConnection = false;
 
-    /** A {@link Snackbar} that shows when connectivity is not available */
+    /**
+     * A {@link Snackbar} that shows when connectivity is not available
+     */
     private Snackbar noConnectivitySnackBar;
 
     private SimpleCountriesAdapter mAdapter;
@@ -216,13 +218,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         planIds = new ArrayList<>();
         planIds.add(selectedPlanId);
         cycle = getArguments().getInt(ARGUMENT_CYCLE);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        BillingViewModel.Factory billingViewModelFactory = new BillingViewModel.Factory(billingListener.getProtonMailApiManager());
-        billingViewModel = new ViewModelProvider(this, billingViewModelFactory).get(BillingViewModel.class);
+        billingViewModel = new ViewModelProvider(this).get(BillingViewModel.class);
     }
 
     @Nullable
@@ -284,6 +280,15 @@ public class BillingFragment extends CreateAccountBaseFragment {
         rootView.findViewById(R.id.submit_picker_paypal).setVisibility(Constants.FeatureFlags.PAYPAL_PAYMENT ? View.VISIBLE : View.GONE);
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        billingViewModel.getCreateSubscriptionResult().observe(
+                getViewLifecycleOwner(),
+                this::onCreateSubscriptionResult
+        );
     }
 
     private void showPaymentMethods() {
@@ -535,7 +540,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
                         paymentTokenForSubscription = token;
                         break;
                     case UPGRADE:
-                        mListener.createSubscriptionForPaymentToken(token, amount, currency, couponCode, planIds, cycle);
+                        billingViewModel.createSubscriptionForPaymentToken(token, amount, currency, planIds, cycle, couponCode);
                         break;
                     case DONATE:
                         mListener.donateForPaymentToken(amount, currency, token);
@@ -590,7 +595,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
             Map<String, Object> detailsObjMap = event.getResponse().getDetails();
             Map<String, String> errorDetails =
                     CollectionExtensions.filterValues(detailsObjMap, String.class);
-            mListener.onBillingError(error, ParseUtils.Companion.compileSingleErrorMessage(errorDetails));
+            mListener.onBillingError(error, ParseUtils.INSTANCE.compileSingleErrorMessage(errorDetails));
 
         } else if (event.getStatus() == Status.SUCCESS) {
             mListener.onBillingCompleted();
@@ -632,7 +637,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
         mProgressBar.setVisibility(View.GONE);
         switch (event.status) {
             case SUCCESS: {
-                mListener.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, couponCode, planIds, cycle);
+                billingViewModel.createSubscriptionForPaymentToken(paymentTokenForSubscription, 0, currency, planIds, cycle, couponCode);
             }
             break;
             default:
@@ -646,32 +651,29 @@ public class BillingFragment extends CreateAccountBaseFragment {
         super.onKeysSetupEvent(event);
     }
 
-    @Subscribe
-    public void onPaymentMethodEvent(PaymentMethodEvent event) {
-        switch (event.getStatus()) {
-            case SUCCESS: {
+    private void onCreateSubscriptionResult(CreateSubscriptionResult result) {
+        Timber.v("CreateSubscriptionResult %s", result);
+        if (result instanceof CreateSubscriptionResult.Success) {
+            showSuccessPage();
 
-                showSuccessPage();
+            new Handler().postDelayed(() -> {
 
-                new Handler().postDelayed(() -> {
+                if (billingType == Constants.BillingType.CREATE) {
+                    // inform user creation completed
+                    mListener.fetchOrganization();
+                    mListener.startAddressSetup();
+                } else if (billingType == Constants.BillingType.UPGRADE) {
+                    // create organization
+                    mListener.fetchOrganization();
+                }
 
-                    if (billingType == Constants.BillingType.CREATE) {
-                        // inform user creation completed
-                        mListener.fetchOrganization();
-                        mListener.startAddressSetup();
-                    } else if (billingType == Constants.BillingType.UPGRADE) {
-                        // create organization
-                        mListener.fetchOrganization();
-                    }
-
-                }, PAYMENT_SUCCESS_PAGE_TIMEOUT);
-
-                break;
-            }
-            default:
-                mProgressContainer.setVisibility(View.GONE);
-                showPaymentError(event.getError(), event.getErrorDescription());
-                break;
+            }, PAYMENT_SUCCESS_PAGE_TIMEOUT);
+        } else if (result instanceof CreateSubscriptionResult.Error) {
+            mProgressContainer.setVisibility(View.GONE);
+            showPaymentError(
+                    ((CreateSubscriptionResult.Error) result).getError(),
+                    ((CreateSubscriptionResult.Error) result).getErrorDescription()
+            );
         }
     }
 
@@ -842,6 +844,7 @@ public class BillingFragment extends CreateAccountBaseFragment {
 
     public interface IBillingListener {
         ProtonMailApiManager getProtonMailApiManager();
+
         void onRequestCaptchaVerification(String token);
     }
 }

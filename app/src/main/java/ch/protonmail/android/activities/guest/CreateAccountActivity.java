@@ -32,6 +32,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
@@ -74,7 +75,6 @@ import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
 import ch.protonmail.android.jobs.GetDirectEnabledJob;
 import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
@@ -102,8 +102,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     private static final String STATE_DOMAIN = "domain";
     private static final String STATE_ADDRESS = "address";
 
-    @Inject
-    ConnectivityBaseViewModel viewModel;
+    private ConnectivityBaseViewModel viewModel;
 
     @Inject
     protected LaunchInitialDataFetch launchInitialDataFetch;
@@ -164,6 +163,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(ConnectivityBaseViewModel.class);
         if (fragmentContainer != null) {
             if (savedInstanceState != null) {
                 addressChosen = savedInstanceState.getParcelable(STATE_ADDRESS);
@@ -389,12 +389,6 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
     @Override
     public void createVerificationPaymentForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken) {
         VerifyPaymentJob job = new VerifyPaymentJob(amount, currency, paymentToken);
-        mJobManager.addJobInBackground(job);
-    }
-
-    @Override
-    public void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle) {
-        CreateSubscriptionJob job = new CreateSubscriptionJob(amount, currency, couponCode, planIds, cycle, paymentToken);
         mJobManager.addJobInBackground(job);
     }
 

@@ -315,19 +315,22 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun createOrganization(body: CreateOrganizationBody): OrganizationResponse? = api.createOrganization(body)
 
-    override fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
+    override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 
     override fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
 
-    override fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
+    override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
 
-    override fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse = api.checkSubscription(body)
+    override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
+        api.checkSubscription(body)
 
     override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
 
-    override fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse = api.createUpdateSubscription(body)
+    override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
+        api.createUpdateSubscription(body)
 
-    override fun createUpdatePaymentMethod(body: TokenPaymentBody): Call<PaymentMethodResponse> = api.createUpdatePaymentMethod(body)
+    override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
+        api.createUpdatePaymentMethod(body)
 
     override fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse = api.fetchAvailablePlans(currency, cycle)
 

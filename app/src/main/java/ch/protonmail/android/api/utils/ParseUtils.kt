@@ -26,47 +26,44 @@ import com.google.gson.Gson
 import retrofit2.HttpException
 import retrofit2.Response
 
-/**
- * Created by kadrikj on 10/9/18. */
-class ParseUtils {
-    companion object {
-        inline fun <reified T : ResponseBody> parse(response: Response<T>): T {
-            val obj = if (!response.isSuccessful) {
-                Gson().fromJson(response.errorBody()?.string(), T::class.java)
-            } else {
-                response.body() as T
-            }
-            AppUtil.checkForErrorCodes(obj.code, obj.error)
-            return obj
-        }
+object ParseUtils {
 
-        inline fun <reified T : MultipleResponseBody> parse(response: Response<T>): T {
-            val obj = if (!response.isSuccessful) {
-                Gson().fromJson(response.errorBody()?.string(), T::class.java)
-            } else {
-                response.body() as T
-            }
-            AppUtil.checkForErrorCodes(obj.code, obj.error)
-            return obj
+    inline fun <reified T : ResponseBody> parse(response: Response<T>): T {
+        val obj = if (!response.isSuccessful) {
+            Gson().fromJson(response.errorBody()?.string(), T::class.java)
+        } else {
+            response.body() as T
         }
+        AppUtil.checkForErrorCodes(obj.code, obj.error)
+        return obj
+    }
 
-        fun doOnError(it: Throwable) {
-            if (it is HttpException) {
-                val obj = it.toPMResponseBody()
-                obj?.let {
-                    AppUtil.checkForErrorCodes(obj.code, obj.error)
-                }
-            }
+    inline fun <reified T : MultipleResponseBody> parse(response: Response<T>): T {
+        val obj = if (!response.isSuccessful) {
+            Gson().fromJson(response.errorBody()?.string(), T::class.java)
+        } else {
+            response.body() as T
         }
+        AppUtil.checkForErrorCodes(obj.code, obj.error)
+        return obj
+    }
 
-        fun compileSingleErrorMessage(errorMap: Map<String, String>): String {
-            val errorBuilder = StringBuilder()
-            val newLine = "\n"
-            for (entry in errorMap.entries) {
-                errorBuilder.append(entry.key + " : " + entry.value)
-                errorBuilder.append(newLine)
+    fun doOnError(it: Throwable) {
+        if (it is HttpException) {
+            val obj = it.toPMResponseBody()
+            obj?.let {
+                AppUtil.checkForErrorCodes(obj.code, obj.error)
             }
-            return errorBuilder.toString()
         }
+    }
+
+    fun compileSingleErrorMessage(errorMap: Map<String, String>): String {
+        val errorBuilder = StringBuilder()
+        val newLine = "\n"
+        for (entry in errorMap.entries) {
+            errorBuilder.append(entry.key + " : " + entry.value)
+            errorBuilder.append(newLine)
+        }
+        return errorBuilder.toString()
     }
 }
