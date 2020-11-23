@@ -38,6 +38,7 @@ import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.attachments.Armorer
 import ch.protonmail.android.attachments.OpenPgpArmorer
 import ch.protonmail.android.core.Constants
@@ -84,6 +85,9 @@ object ApplicationModule {
     @Provides
     fun protonMailApplication(context: Context): ProtonMailApplication =
         context.app
+
+    @Provides
+    fun alarmReceiver() = AlarmReceiver()
 
     @Provides
     @AlternativeApiPins
