@@ -189,6 +189,8 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
                 return Result.failure()
             }
             AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.SUCCESS, uniqueFilenameInDownloads, attachment.attachmentId, messageId, false))
+        } ?: run {
+            Timber.w("Unable to access DIRECTORY_DOWNLOADS to save attachments")
         }
 
         AttachmentClearingService.startRegularClearUpService() // TODO don't call it every time we download attachments
