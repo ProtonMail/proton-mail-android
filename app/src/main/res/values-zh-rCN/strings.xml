@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">登录失败</string>
     <string name="invalid_server_proof">无效的服务器信息</string>
     <string name="invalid_credentials">账号或密码错误</string>
+    <string name="incorrect_key_parameters">密钥参数错误</string>
     <string name="invalid_mailbox_password">无效的邮箱密码</string>
     <string name="not_signed_up">您没有注册ProtonMail安卓测试版</string>
     <string name="no_network">无网络连接</string>

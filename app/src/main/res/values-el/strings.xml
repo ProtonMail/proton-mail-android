@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Η σύνδεση απέτυχε</string>
     <string name="invalid_server_proof">Μη έγκυρη ταυτότητα διακομιστή</string>
     <string name="invalid_credentials">Μη έγκυρα διαπιστευτήρια</string>
+    <string name="incorrect_key_parameters">Εσφαλμένες παράμετροι κλειδιού</string>
     <string name="invalid_mailbox_password">Μη έγκυρος κωδικός θυρίδας</string>
     <string name="not_signed_up">Δεν έχετε εγγραφεί για το ProtonMail Android Beta</string>
     <string name="no_network">Δεν υπάρχει δίκτυο</string>

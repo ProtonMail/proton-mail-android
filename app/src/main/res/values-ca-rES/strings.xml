@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Error en l\'inici de sessió</string>
     <string name="invalid_server_proof">El servidor no ha passat la prova</string>
     <string name="invalid_credentials">Credencials no vàlides</string>
+    <string name="incorrect_key_parameters">Clau de paràmetre incorrecte</string>
     <string name="invalid_mailbox_password">Contrasenya de bústia de correu no vàlida</string>
     <string name="not_signed_up">No estàs inscrit a la Beta per Android de ProtonMail</string>
     <string name="no_network">No hi ha connexió</string>

@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Не удалось войти</string>
     <string name="invalid_server_proof">Недопустимое подтверждение сервера</string>
     <string name="invalid_credentials">Неверные учётные данные</string>
+    <string name="incorrect_key_parameters">Неправильные параметры ключа</string>
     <string name="invalid_mailbox_password">Неверный пароль почтового ящика</string>
     <string name="not_signed_up">Вы не зарегистрированы в программе ProtonMail Android Beta</string>
     <string name="no_network">Нет подключения к сети</string>
