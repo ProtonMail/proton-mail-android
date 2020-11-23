@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">ログインに失敗しました。</string>
     <string name="invalid_server_proof">無効なサーバー証明です。</string>
     <string name="invalid_credentials">無効な認証情報です。</string>
+    <string name="incorrect_key_parameters">Incorrect key parameters</string>
     <string name="invalid_mailbox_password">無効なメールボックスのパスワードです。</string>
     <string name="not_signed_up">ProtonMail Android ベータ版にサインアップしていません。</string>
     <string name="no_network">ネットワーク接続がありません。</string>

@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Inloggningen misslyckades</string>
     <string name="invalid_server_proof">Ogiltigt server autentisering</string>
     <string name="invalid_credentials">Ogiltiga inloggningsuppgifter</string>
+    <string name="incorrect_key_parameters">Incorrect key parameters</string>
     <string name="invalid_mailbox_password">Ogiltigt lösenord</string>
     <string name="not_signed_up">ProtonMail Android Beta ingår inte i ditt konto</string>
     <string name="no_network">Inget nätverk</string>

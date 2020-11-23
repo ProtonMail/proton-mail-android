@@ -47,6 +47,7 @@ Svájci székhellyel</string>
     <string name="login_failure">Sikertelen bejelentkezés</string>
     <string name="invalid_server_proof">Érvénytelen szerver tanúsítvány</string>
     <string name="invalid_credentials">Érvénytelen hitelesítés</string>
+    <string name="incorrect_key_parameters">Incorrect key parameters</string>
     <string name="invalid_mailbox_password">Érvénytelen e-mail jelszó</string>
     <string name="not_signed_up">Ön nem regisztrált a ProtonMail Android Béta verziójára</string>
     <string name="no_network">Nincs hálózat</string>

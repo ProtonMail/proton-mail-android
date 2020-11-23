@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Gagal masuk</string>
     <string name="invalid_server_proof">Bukti server tidak valid</string>
     <string name="invalid_credentials">Kredensial tidak valid</string>
+    <string name="incorrect_key_parameters">Parameter kunci salah</string>
     <string name="invalid_mailbox_password">Kata sandi kotak surat tidak valid</string>
     <string name="not_signed_up">Anda tidak terdaftar untuk ProtonMail Android Beta</string>
     <string name="no_network">Tidak ada jaringan</string>
