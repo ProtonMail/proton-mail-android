@@ -153,6 +153,10 @@ data class Attachment @JvmOverloads constructor(
     }
 
 	@Throws(Exception::class)
+	@Deprecated(
+		"To be deleted to avoid logic on Model",
+		ReplaceWith("Use AttachmentRepository passing the attachment instead")
+	)
 	fun uploadAndSave(
 		messageDetailsRepository: MessageDetailsRepository,
 		api: ProtonMailApiManager,
@@ -181,6 +185,10 @@ data class Attachment @JvmOverloads constructor(
 		}
 
 	@Throws(Exception::class)
+	@Deprecated(
+		"To be deleted to avoid logic on Model",
+		ReplaceWith("Use AttachmentRepository passing the attachment instead")
+	)
 	fun uploadAndSave(
 		messageDetailsRepository: MessageDetailsRepository,
 		fileContent: ByteArray,
