@@ -20,6 +20,7 @@ package ch.protonmail.android.api.models.room.messages
 
 import android.provider.BaseColumns
 import android.text.TextUtils
+import android.util.Base64
 import android.webkit.URLUtil
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -152,11 +153,15 @@ data class Attachment @JvmOverloads constructor(
     }
 
 	@Throws(Exception::class)
-	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, api: ProtonMailApiManager, crypto: AddressCrypto) : String? {
+	fun uploadAndSave(
+		messageDetailsRepository: MessageDetailsRepository,
+		api: ProtonMailApiManager,
+		crypto: AddressCrypto
+	): String? {
 		val filePath = filePath
 		val fileContent = if (URLUtil.isDataUrl(filePath)) {
-			android.util.Base64.decode(filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
-					android.util.Base64.DEFAULT)
+			Base64.decode(filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
+				Base64.DEFAULT)
 		} else {
 			val file = File(filePath!!)
 			AppUtil.getByteArray(file)
@@ -164,25 +169,41 @@ data class Attachment @JvmOverloads constructor(
 		return uploadAndSave(messageDetailsRepository, fileContent, api, crypto)
 	}
 
+	fun getFileContent(): ByteArray =
+		if (URLUtil.isDataUrl(filePath)) {
+			Base64.decode(
+				filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
+				Base64.DEFAULT
+			)
+		} else {
+			val file = File(filePath!!)
+			AppUtil.getByteArray(file)
+		}
+
 	@Throws(Exception::class)
-	fun uploadAndSave(messageDetailsRepository: MessageDetailsRepository, fileContent:ByteArray, api: ProtonMailApiManager, crypto: AddressCrypto) : String? {
+	fun uploadAndSave(
+		messageDetailsRepository: MessageDetailsRepository,
+		fileContent: ByteArray,
+		api: ProtonMailApiManager,
+		crypto: AddressCrypto
+	): String? {
 		val headers = headers
 		val bct = crypto.encrypt(fileContent, fileName!!)
 		val keyPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.keyPacket)
 		val dataPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.dataPacket)
 		val signature = RequestBody.create(MediaType.parse("application/octet-stream"), Armor.unarmor(crypto.sign(fileContent)))
 		val response =
-				if (headers != null && headers.contentDisposition.contains("inline") && headers.contentId != null) {
-					var contentID = headers.contentId
-					val parts = contentID.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
-					if (parts.size > 1) {
-						contentID = parts[1].replace(">", "")
-					}
-					api.uploadAttachmentInline(this, messageId, contentID, keyPackage,
-							dataPackage, signature)
-				} else {
-					api.uploadAttachment(this, messageId, keyPackage, dataPackage, signature)
+			if (headers != null && headers.contentDisposition.contains("inline") && headers.contentId != null) {
+				var contentID = headers.contentId
+				val parts = contentID.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
+				if (parts.size > 1) {
+					contentID = parts[1].replace(">", "")
 				}
+				api.uploadAttachmentInline(this, messageId, contentID, keyPackage,
+					dataPackage, signature)
+			} else {
+				api.uploadAttachment(this, messageId, keyPackage, dataPackage, signature)
+			}
 
 		if (response.code == Constants.RESPONSE_CODE_OK) {
 			attachmentId = response.attachmentID
@@ -195,6 +216,53 @@ data class Attachment @JvmOverloads constructor(
 		}
 
 		return attachmentId
+	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as Attachment
+
+		if (attachmentId != other.attachmentId) return false
+		if (fileName != other.fileName) return false
+		if (mimeType != other.mimeType) return false
+		if (fileSize != other.fileSize) return false
+		if (keyPackets != other.keyPackets) return false
+		if (messageId != other.messageId) return false
+		if (isUploaded != other.isUploaded) return false
+		if (isUploading != other.isUploading) return false
+		if (signature != other.signature) return false
+		if (headers != other.headers) return false
+		if (isNew != other.isNew) return false
+		if (inline != other.inline) return false
+		if (filePath != other.filePath) return false
+		if (mimeData != null) {
+			if (other.mimeData == null) return false
+			if (!mimeData!!.contentEquals(other.mimeData!!)) return false
+		} else if (other.mimeData != null) return false
+		if (dbId != other.dbId) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = attachmentId?.hashCode() ?: 0
+		result = 31 * result + (fileName?.hashCode() ?: 0)
+		result = 31 * result + (mimeType?.hashCode() ?: 0)
+		result = 31 * result + fileSize.hashCode()
+		result = 31 * result + (keyPackets?.hashCode() ?: 0)
+		result = 31 * result + messageId.hashCode()
+		result = 31 * result + isUploaded.hashCode()
+		result = 31 * result + isUploading.hashCode()
+		result = 31 * result + (signature?.hashCode() ?: 0)
+		result = 31 * result + (headers?.hashCode() ?: 0)
+		result = 31 * result + isNew.hashCode()
+		result = 31 * result + inline.hashCode()
+		result = 31 * result + (filePath?.hashCode() ?: 0)
+		result = 31 * result + (mimeData?.contentHashCode() ?: 0)
+		result = 31 * result + (dbId?.hashCode() ?: 0)
+		return result
 	}
 
 	companion object {
