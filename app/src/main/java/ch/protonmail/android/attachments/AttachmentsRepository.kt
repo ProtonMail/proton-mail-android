@@ -56,11 +56,10 @@ class AttachmentsRepository @Inject constructor(
                 dataPackage,
                 signature
             )
+        } else {
+            apiManager.uploadAttachment(attachment, attachment.messageId, keyPackage, dataPackage, signature)
         }
-//            else {
-//                api.uploadAttachment(this, messageId, keyPackage, dataPackage, signature)
-//            }
-//
+
 //        if (response.code == Constants.RESPONSE_CODE_OK) {
 //            attachmentId = response.attachmentID
 //            keyPackets = response.attachment.keyPackets

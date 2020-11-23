@@ -31,6 +31,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.slot
 import io.mockk.verify
+import io.mockk.verifySequence
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.junit.jupiter.api.Test
@@ -60,7 +61,7 @@ class AttachmentsRepositoryTest {
 
 
     @Test
-    fun saveUploadsAttachmentToApiInlineWhenAttachmentIsInlined() {
+    fun uploadCallsUploadAttachmentInlineApiWhenAttachmentIsInline() {
         val messageId = "messageId"
         val contentId = "contentId"
         val mimeType = "image/jpeg"
@@ -90,7 +91,7 @@ class AttachmentsRepositoryTest {
         val keyPackageSlot = slot<RequestBody>()
         val dataPackageSlot = slot<RequestBody>()
         val signatureSlot = slot<RequestBody>()
-        verify {
+        verifySequence {
             apiManager.uploadAttachmentInline(
                 attachment,
                 messageId,
@@ -106,7 +107,7 @@ class AttachmentsRepositoryTest {
     }
 
     @Test
-    fun saveUploadsAttachmentToApiInlinePassesContentIdFormatted() {
+    fun uploadCallsUploadAttachmentInlineApiPassingContentIdFormatted() {
         val messageId = "messageId"
         val contentId = "ignoreFirst<content>Id<split<last< "
         val mimeType = "image/jpeg"
@@ -145,4 +146,41 @@ class AttachmentsRepositoryTest {
             )
         }
     }
+
+    @Test
+    fun uploadCallsUploadAttachmentApiWhenAttachmentIsNotInline() {
+        val messageId = "messageId"
+        val mimeType = "image/jpeg"
+        val fileContent = "attachment content".toByteArray()
+        val fileName = "picture.jpg"
+        val signedFileContent = "signedFileContent"
+        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+        every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+        every { crypto.sign(fileContent) } returns signedFileContent
+        every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
+        every { attachment.headers } returns null
+        every { attachment.fileName } returns fileName
+        every { attachment.messageId } returns messageId
+        every { attachment.mimeType } returns mimeType
+        every { attachment.getFileContent() } returns fileContent
+
+        repository.upload(attachment)
+
+        val keyPackageSlot = slot<RequestBody>()
+        val dataPackageSlot = slot<RequestBody>()
+        val signatureSlot = slot<RequestBody>()
+        verifySequence {
+            apiManager.uploadAttachment(
+                attachment,
+                messageId,
+                capture(keyPackageSlot),
+                capture(dataPackageSlot),
+                capture(signatureSlot)
+            )
+        }
+        assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
+        assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
+        assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+    }
+
 }
