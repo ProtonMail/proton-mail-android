@@ -26,9 +26,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
-import androidx.core.content.FileProvider;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
+
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 
@@ -45,7 +46,7 @@ public class DownloadUtils {
     public static void viewAttachment(Context context, String filename) {
         String ext = filename.substring(filename.lastIndexOf(".") + 1);
         filename = filename.replace(filename.substring(filename.lastIndexOf(".") + 1), ext.toLowerCase());
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + Constants.DIR_ATTACHMENT_DOWNLOADS, filename);
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + Constants.DIR_ATTACHMENT_DOWNLOADS, filename);
         Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
         String mimeType = "";
         final ContentResolver resolver = context.getContentResolver();
@@ -79,7 +80,7 @@ public class DownloadUtils {
     public static void viewAttachment(Context context, String filename, boolean showNotification) {
         String ext = filename.substring(filename.lastIndexOf(".") + 1);
         filename = filename.replace(filename.substring(filename.lastIndexOf(".") + 1), ext.toLowerCase());
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + Constants.DIR_ATTACHMENT_DOWNLOADS, filename);
+        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + Constants.DIR_ATTACHMENT_DOWNLOADS, filename);
         Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
         String mimeType = "";
         final ContentResolver resolver = context.getContentResolver();
