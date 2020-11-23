@@ -81,7 +81,7 @@ class AttachmentsRepository @Inject constructor(
             return Result.Success
         }
 
-        return Result.Success
+        return Result.Failure(response.error)
     }
 
     private fun contentIdFormatted(headers: AttachmentHeaders): String {
@@ -101,6 +101,7 @@ class AttachmentsRepository @Inject constructor(
 
     sealed class Result {
         object Success : Result()
+        data class Failure(val error: String) : Result()
     }
 
 }

@@ -221,4 +221,22 @@ class AttachmentsRepositoryTest {
         assertEquals(AttachmentsRepository.Result.Success, result)
     }
 
+    @Test
+    fun uploadReturnsFailureWhenUploadAttachmentToApiFails() {
+        val errorMessage = "Attachment Upload Failed"
+        val failureResponse = mockk<AttachmentUploadResponse> {
+            every { code } returns 400
+            every { error } returns errorMessage
+        }
+        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+        val attachment = mockk<Attachment>(relaxed = true)
+        every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+        every { apiManager.uploadAttachment(any(), any(), any(), any(), any()) } returns failureResponse
+
+        val result = repository.upload(attachment)
+
+        verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+        val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
+        assertEquals(expectedResult, result)
+    }
 }
