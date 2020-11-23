@@ -27,7 +27,6 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.DeafProgressListener
 import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import okhttp3.RequestBody
 import java.io.IOException
@@ -62,15 +61,24 @@ class AttachmentApi (private val basicService : AttachmentService,
     }
 
     @Throws(IOException::class)
-    override fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse {
+    override fun uploadAttachment(
+        attachment: Attachment,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse {
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
-		return ParseUtils.parse(uploadService.uploadAttachment(filename,
-				MessageID,
-				mimeType,
-				KeyPackage,
-				DataPackage,
-				Signature).execute())
+        val messageId = attachment.messageId
+        return ParseUtils.parse(
+            uploadService.uploadAttachment(
+                filename,
+                messageId,
+                mimeType,
+                keyPackage,
+                dataPackage,
+                signature
+            ).execute())
     }
 
     override fun getAttachmentUrl(attachmentId: String): String {

@@ -35,6 +35,8 @@ import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.segments.event.AlarmReceiver
+import ch.protonmail.android.attachments.Armorer
+import ch.protonmail.android.attachments.OpenPgpArmorer
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.core.ProtonMailApplication
@@ -200,6 +202,8 @@ object ApplicationModule {
     fun provideUserCrypto(userManager: UserManager): UserCrypto =
         UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
 
+    @Provides
+    fun providesArmorer(): Armorer = OpenPgpArmorer()
 }
 
 @Module

@@ -30,13 +30,12 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 class AttachmentsRepository @Inject constructor(
-    private val crypto: AddressCrypto,
     private val apiManager: ProtonMailApiManager,
     private val armorer: Armorer,
     private val messageDetailsRepository: MessageDetailsRepository
 ) {
 
-    fun upload(attachment: Attachment): Result {
+    fun upload(attachment: Attachment, crypto: AddressCrypto): Result {
         val headers = attachment.headers
         val fileContent = attachment.getFileContent()
         val mimeType = requireNotNull(attachment.mimeType)
@@ -65,7 +64,6 @@ class AttachmentsRepository @Inject constructor(
         } else {
             apiManager.uploadAttachment(
                 attachment,
-                attachment.messageId,
                 keyPackage,
                 dataPackage,
                 signature

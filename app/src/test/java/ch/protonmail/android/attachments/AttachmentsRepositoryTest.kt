@@ -92,7 +92,7 @@ class AttachmentsRepositoryTest {
         every { crypto.sign(fileContent) } returns signedFileContent
         every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
 
-        repository.upload(attachment)
+        repository.upload(attachment, crypto)
 
         val keyPackageSlot = slot<RequestBody>()
         val dataPackageSlot = slot<RequestBody>()
@@ -140,7 +140,7 @@ class AttachmentsRepositoryTest {
         every { crypto.sign(fileContent) } returns signedFileContent
         every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
 
-        repository.upload(attachment)
+        repository.upload(attachment, crypto)
 
         val expectedContentId = "contentId"
         verify {
@@ -174,7 +174,7 @@ class AttachmentsRepositoryTest {
         every { crypto.sign(fileContent) } returns signedFileContent
         every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
 
-        repository.upload(attachment)
+        repository.upload(attachment, crypto)
 
         val keyPackageSlot = slot<RequestBody>()
         val dataPackageSlot = slot<RequestBody>()
@@ -182,7 +182,6 @@ class AttachmentsRepositoryTest {
         verifySequence {
             apiManager.uploadAttachment(
                 attachment,
-                messageId,
                 capture(keyPackageSlot),
                 capture(dataPackageSlot),
                 capture(signatureSlot)
@@ -207,9 +206,9 @@ class AttachmentsRepositoryTest {
         val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
         val attachment = mockk<Attachment>(relaxed = true)
         every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-        every { apiManager.uploadAttachment(any(), any(), any(), any(), any()) } returns successResponse
+        every { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
 
-        val result = repository.upload(attachment)
+        val result = repository.upload(attachment, crypto)
 
         verify {
             attachment.attachmentId = apiAttachmentId
@@ -231,9 +230,9 @@ class AttachmentsRepositoryTest {
         val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
         val attachment = mockk<Attachment>(relaxed = true)
         every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-        every { apiManager.uploadAttachment(any(), any(), any(), any(), any()) } returns failureResponse
+        every { apiManager.uploadAttachment(any(), any(), any(), any()) } returns failureResponse
 
-        val result = repository.upload(attachment)
+        val result = repository.upload(attachment, crypto)
 
         verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
         val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)

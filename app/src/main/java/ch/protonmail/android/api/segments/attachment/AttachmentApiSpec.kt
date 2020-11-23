@@ -48,10 +48,9 @@ interface AttachmentApiSpec {
     @Throws(IOException::class)
     fun uploadAttachment(
         attachment: Attachment,
-        MessageID: String,
-        KeyPackage: RequestBody,
-        DataPackage: RequestBody,
-        Signature: RequestBody
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
     ): AttachmentUploadResponse
 
     fun getAttachmentUrl(attachmentId: String): String

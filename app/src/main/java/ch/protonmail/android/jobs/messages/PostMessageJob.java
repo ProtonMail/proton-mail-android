@@ -31,6 +31,7 @@ import com.birbit.android.jobqueue.RetryConstraint;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -68,6 +69,8 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingSend;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabase;
 import ch.protonmail.android.api.utils.Fields;
+import ch.protonmail.android.attachments.AttachmentsRepository;
+import ch.protonmail.android.attachments.OpenPgpArmorer;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
@@ -274,7 +277,17 @@ public class PostMessageJob extends ProtonMailBaseJob {
             attachmentTempFiles.add(file);
             attachment.setMessage(message);
 
-            attachment.uploadAndSave(getMessageDetailsRepository(), getApi(), crypto);
+            // This needs to be created here as it's not serializable and injecting it would cause
+            // the job to crash. Move to injection when migrating this job to a Worker
+            AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
+                    getApi(),
+                    new OpenPgpArmorer(),
+                    getMessageDetailsRepository()
+            );
+            AttachmentsRepository.Result result = attachmentsRepository.upload(attachment, crypto);
+            if (result instanceof AttachmentsRepository.Result.Failure) {
+                throw new IOException(((AttachmentsRepository.Result.Failure) result).getError());
+            }
         }
         // upload public key
         if (mailSettings.getAttachPublicKey()) {

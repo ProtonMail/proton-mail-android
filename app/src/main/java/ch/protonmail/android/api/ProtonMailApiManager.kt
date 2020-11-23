@@ -172,7 +172,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun uploadAttachmentInline(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
 
-    override fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, MessageID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachment(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 

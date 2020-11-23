@@ -210,7 +210,7 @@ data class Attachment @JvmOverloads constructor(
 				api.uploadAttachmentInline(this, messageId, contentID, keyPackage,
 					dataPackage, signature)
 			} else {
-				api.uploadAttachment(this, messageId, keyPackage, dataPackage, signature)
+				api.uploadAttachment(this, keyPackage, dataPackage, signature)
 			}
 
 		if (response.code == Constants.RESPONSE_CODE_OK) {
