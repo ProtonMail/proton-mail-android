@@ -48,13 +48,14 @@ class AttachmentsRepository @Inject constructor(
         if (isAttachmentInline(headers)) {
             requireNotNull(headers)
 
-            var contentID = headers.contentId
-            val parts = contentID.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
-            if (parts.size > 1) {
-                contentID = parts[1].replace(">", "")
-            }
-            apiManager.uploadAttachmentInline(attachment, attachment.messageId, contentID, keyPackage,
-                dataPackage, signature)
+            apiManager.uploadAttachmentInline(
+                attachment,
+                attachment.messageId,
+                contentIdFormatted(headers),
+                keyPackage,
+                dataPackage,
+                signature
+            )
         }
 //            else {
 //                api.uploadAttachment(this, messageId, keyPackage, dataPackage, signature)
@@ -68,6 +69,15 @@ class AttachmentsRepository @Inject constructor(
 //            messageDetailsRepository.saveAttachment(this)
 //        }
 //        return attachmentId
+    }
+
+    private fun contentIdFormatted(headers: AttachmentHeaders): String {
+        val contentId = headers.contentId
+        val parts = contentId.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
+        if (parts.size > 1) {
+            return parts[1].replace(">", "")
+        }
+        return contentId
     }
 
     private fun isAttachmentInline(headers: AttachmentHeaders?) =

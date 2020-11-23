@@ -104,4 +104,45 @@ class AttachmentsRepositoryTest {
         assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
         assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
     }
+
+    @Test
+    fun saveUploadsAttachmentToApiInlinePassesContentIdFormatted() {
+        val messageId = "messageId"
+        val contentId = "ignoreFirst<content>Id<split<last< "
+        val mimeType = "image/jpeg"
+        val fileContent = "attachment content".toByteArray()
+        val fileName = "picture.jpg"
+        val signedFileContent = "signedFileContent"
+        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+        val headers = AttachmentHeaders(
+            mimeType,
+            "contentTransferEncoding",
+            listOf("inline"),
+            listOf(contentId),
+            "contentLocation",
+            "contentEncryption"
+        )
+        every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+        every { crypto.sign(fileContent) } returns signedFileContent
+        every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
+        every { attachment.headers } returns headers
+        every { attachment.fileName } returns fileName
+        every { attachment.messageId } returns messageId
+        every { attachment.mimeType } returns mimeType
+        every { attachment.getFileContent() } returns fileContent
+
+        repository.upload(attachment)
+
+        val expectedContentId = "contentId"
+        verify {
+            apiManager.uploadAttachmentInline(
+                attachment,
+                messageId,
+                expectedContentId,
+                any(),
+                any(),
+                any()
+            )
+        }
+    }
 }
