@@ -19,9 +19,11 @@
 
 package ch.protonmail.android.attachments
 
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.AddressCrypto
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -30,22 +32,26 @@ import javax.inject.Inject
 class AttachmentsRepository @Inject constructor(
     private val crypto: AddressCrypto,
     private val apiManager: ProtonMailApiManager,
-    private val armorer: Armorer
+    private val armorer: Armorer,
+    private val messageDetailsRepository: MessageDetailsRepository
 ) {
 
-    fun upload(attachment: Attachment) {
+    fun upload(attachment: Attachment): Result {
         val headers = attachment.headers
-        val mimeType = requireNotNull(attachment.mimeType)
         val fileContent = attachment.getFileContent()
+        val mimeType = requireNotNull(attachment.mimeType)
         val filename = requireNotNull(attachment.fileName)
 
         val encryptedAttachment = crypto.encrypt(fileContent, filename)
-        val keyPackage = RequestBody.create(MediaType.parse(mimeType), encryptedAttachment.keyPacket)
-        val dataPackage = RequestBody.create(MediaType.parse(mimeType), encryptedAttachment.dataPacket)
         val signedFileContent = armorer.unarmor(crypto.sign(fileContent))
-        val signature = RequestBody.create(MediaType.parse("application/octet-stream"), signedFileContent)
 
-        if (isAttachmentInline(headers)) {
+        val attachmentMimeType = MediaType.parse(mimeType)
+        val octetStreamMimeType = MediaType.parse("application/octet-stream")
+        val keyPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.keyPacket)
+        val dataPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.dataPacket)
+        val signature = RequestBody.create(octetStreamMimeType, signedFileContent)
+
+        val response = if (isAttachmentInline(headers)) {
             requireNotNull(headers)
 
             apiManager.uploadAttachmentInline(
@@ -57,17 +63,25 @@ class AttachmentsRepository @Inject constructor(
                 signature
             )
         } else {
-            apiManager.uploadAttachment(attachment, attachment.messageId, keyPackage, dataPackage, signature)
+            apiManager.uploadAttachment(
+                attachment,
+                attachment.messageId,
+                keyPackage,
+                dataPackage,
+                signature
+            )
         }
 
-//        if (response.code == Constants.RESPONSE_CODE_OK) {
-//            attachmentId = response.attachmentID
-//            keyPackets = response.attachment.keyPackets
-//            this.signature = response.attachment.signature
-//            isUploaded = true
-//            messageDetailsRepository.saveAttachment(this)
-//        }
-//        return attachmentId
+        if (response.code == Constants.RESPONSE_CODE_OK) {
+            attachment.attachmentId = response.attachmentID
+            attachment.keyPackets = response.attachment.keyPackets
+            attachment.signature = response.attachment.signature
+            attachment.isUploaded = true
+            messageDetailsRepository.saveAttachment(attachment)
+            return Result.Success
+        }
+
+        return Result.Success
     }
 
     private fun contentIdFormatted(headers: AttachmentHeaders): String {
@@ -83,4 +97,10 @@ class AttachmentsRepository @Inject constructor(
         headers != null &&
             headers.contentDisposition.contains("inline") &&
             headers.contentId != null
+
+
+    sealed class Result {
+        object Success : Result()
+    }
+
 }

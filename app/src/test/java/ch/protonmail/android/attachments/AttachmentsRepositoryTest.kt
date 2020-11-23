@@ -19,9 +19,12 @@
 
 package ch.protonmail.android.attachments
 
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
+import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import io.mockk.every
@@ -29,6 +32,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifySequence
@@ -42,10 +46,10 @@ import kotlin.test.assertEquals
 class AttachmentsRepositoryTest {
 
     @MockK
-    private lateinit var attachment: Attachment
-
-    @MockK
     private lateinit var armorer: Armorer
+
+    @RelaxedMockK
+    private lateinit var messageDetailsRepository: MessageDetailsRepository
 
     @RelaxedMockK
     private lateinit var mockCipherText: CipherText
@@ -77,14 +81,16 @@ class AttachmentsRepositoryTest {
             "contentLocation",
             "contentEncryption"
         )
+        val attachment = mockk<Attachment> {
+            every { this@mockk.headers } returns headers
+            every { this@mockk.fileName } returns fileName
+            every { this@mockk.messageId } returns messageId
+            every { this@mockk.mimeType } returns mimeType
+            every { this@mockk.getFileContent() } returns fileContent
+        }
         every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
         every { crypto.sign(fileContent) } returns signedFileContent
         every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
-        every { attachment.headers } returns headers
-        every { attachment.fileName } returns fileName
-        every { attachment.messageId } returns messageId
-        every { attachment.mimeType } returns mimeType
-        every { attachment.getFileContent() } returns fileContent
 
         repository.upload(attachment)
 
@@ -123,14 +129,16 @@ class AttachmentsRepositoryTest {
             "contentLocation",
             "contentEncryption"
         )
+        val attachment = mockk<Attachment> {
+            every { this@mockk.headers } returns headers
+            every { this@mockk.fileName } returns fileName
+            every { this@mockk.messageId } returns messageId
+            every { this@mockk.mimeType } returns mimeType
+            every { this@mockk.getFileContent() } returns fileContent
+        }
         every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
         every { crypto.sign(fileContent) } returns signedFileContent
         every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
-        every { attachment.headers } returns headers
-        every { attachment.fileName } returns fileName
-        every { attachment.messageId } returns messageId
-        every { attachment.mimeType } returns mimeType
-        every { attachment.getFileContent() } returns fileContent
 
         repository.upload(attachment)
 
@@ -155,14 +163,16 @@ class AttachmentsRepositoryTest {
         val fileName = "picture.jpg"
         val signedFileContent = "signedFileContent"
         val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+        val attachment = mockk<Attachment> {
+            every { this@mockk.headers } returns null
+            every { this@mockk.fileName } returns fileName
+            every { this@mockk.messageId } returns messageId
+            every { this@mockk.mimeType } returns mimeType
+            every { this@mockk.getFileContent() } returns fileContent
+        }
         every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
         every { crypto.sign(fileContent) } returns signedFileContent
         every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
-        every { attachment.headers } returns null
-        every { attachment.fileName } returns fileName
-        every { attachment.messageId } returns messageId
-        every { attachment.mimeType } returns mimeType
-        every { attachment.getFileContent() } returns fileContent
 
         repository.upload(attachment)
 
@@ -181,6 +191,34 @@ class AttachmentsRepositoryTest {
         assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
         assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
         assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+    }
+
+    @Test
+    fun uploadSavesUpdatedAttachmentToMessageRepositoryAndReturnSuccessWhenRequestSucceeds() {
+        val apiAttachmentId = "456"
+        val apiKeyPackets = "apiKeyPackets"
+        val apiSignature = "apiSignature"
+        val successResponse = mockk<AttachmentUploadResponse> {
+            every { code } returns Constants.RESPONSE_CODE_OK
+            every { attachmentID } returns apiAttachmentId
+            every { attachment.keyPackets } returns apiKeyPackets
+            every { attachment.signature } returns apiSignature
+        }
+        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+        val attachment = mockk<Attachment>(relaxed = true)
+        every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+        every { apiManager.uploadAttachment(any(), any(), any(), any(), any()) } returns successResponse
+
+        val result = repository.upload(attachment)
+
+        verify {
+            attachment.attachmentId = apiAttachmentId
+            attachment.keyPackets = apiKeyPackets
+            attachment.signature = apiSignature
+            attachment.isUploaded = true
+            messageDetailsRepository.saveAttachment(attachment)
+        }
+        assertEquals(AttachmentsRepository.Result.Success, result)
     }
 
 }
