@@ -24,7 +24,6 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Context
-import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import android.widget.Toast
@@ -43,6 +42,11 @@ import ch.protonmail.android.uitests.testsHelper.ProtonFailureHandler
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.User
+import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.clearLogcat
+import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.copyAssetFileToInternalFilesStorage
+import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.deleteDownloadArtifactsFolder
+import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.prepareArtifactsDir
+import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.setupDevice
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import org.hamcrest.CoreMatchers.not
 import org.junit.After
@@ -52,7 +56,6 @@ import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 open class BaseTest {
@@ -97,30 +100,30 @@ open class BaseTest {
 
     companion object {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext!!
+        val testContext = InstrumentationRegistry.getInstrumentation().context!!
         var shouldReportToTestRail = false
         val automation = InstrumentationRegistry.getInstrumentation().uiAutomation!!
         val testName = TestName()
         val artifactsPath = "${targetContext.filesDir.path}/artifacts"
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         const val testApp = "testApp"
         const val testRailRunId = "testRailRunId"
         const val testTag = "PROTON_UI_TEST"
-        private lateinit var args: Bundle
+        const val downloadArtifactsPath = "/sdcard/Download/artifacts"
         private val testExecutionWatcher = TestExecutionWatcher()
         private const val reportToTestRail = "reportToTestRail"
         private const val oneTimeRunFlag = "oneTimeRunFlag"
-        private const val downloadArtifactsPath = "/sdcard/Download/artifacts"
         private const val email = 0
         private const val password = 1
         private const val mailboxPassword = 2
         private const val twoFaKey = 3
         private const val tenSeconds = 10000
-        val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
         @JvmStatic
         @BeforeClass
         fun setUpBeforeClass() {
-            getArguments()
             populateUsers()
+            automation.executeShellCommand("mkdir /data/data/ch.protonmail.android.beta/files/")
 
             val sharedPrefs = targetContext.getSharedPreferences(testApp, Context.MODE_PRIVATE)
 
@@ -131,6 +134,7 @@ open class BaseTest {
                 prepareArtifactsDir(artifactsPath)
                 prepareArtifactsDir(downloadArtifactsPath)
                 deleteDownloadArtifactsFolder()
+                copyAssetsToDownload()
                 if (shouldReportToTestRail) {
                     sharedPrefs
                         .edit()
@@ -141,15 +145,6 @@ open class BaseTest {
                     .edit()
                     .putBoolean(oneTimeRunFlag, false)
                     .commit()
-            }
-        }
-
-        private fun getArguments() {
-            val arguments = InstrumentationRegistry.getArguments()
-            if (arguments != null) {
-                args = arguments
-            } else {
-                throw NullPointerException("Test instrumentation 'arguments' must not be null")
             }
         }
 
@@ -174,33 +169,12 @@ open class BaseTest {
             READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, READ_CONTACTS
         )
 
-        private fun prepareArtifactsDir(path: String) {
-            val dir = File(path)
-            if (!dir.exists()) {
-                dir.mkdirs()
-            } else {
-                if (dir.list() != null) {
-                    dir.list().forEach { File(it).delete() }
-                }
-            }
-        }
-
-        private fun setupDevice() {
-            automation.executeShellCommand("settings put secure long_press_timeout 2000")
-            automation.executeShellCommand("settings put secure show_ime_with_hard_keyboard 0")
-            // Disable floating notification pop-ups
-            automation.executeShellCommand("settings put global heads_up_notifications_enabled 0")
-            automation.executeShellCommand("settings put global animator_duration_scale 0.0")
-            automation.executeShellCommand("settings put global transition_animation_scale 0.0")
-            automation.executeShellCommand("settings put global window_animation_scale 0.0")
-        }
-
-        private fun clearLogcat() {
-            automation.executeShellCommand("logcat -c")
-        }
-
-        private fun deleteDownloadArtifactsFolder() {
-            automation.executeShellCommand("rm -rf $downloadArtifactsPath")
+        private fun copyAssetsToDownload() {
+            copyAssetFileToInternalFilesStorage("lorem_ipsum.docx")
+            copyAssetFileToInternalFilesStorage("lorem_ipsum.zip")
+            copyAssetFileToInternalFilesStorage("lorem_ipsum.png")
+            copyAssetFileToInternalFilesStorage("lorem_ipsum.jpeg")
+            copyAssetFileToInternalFilesStorage("lorem_ipsum.pdf")
         }
     }
 }

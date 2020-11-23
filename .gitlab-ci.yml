@@ -28,8 +28,6 @@ stages:
 #####################
 .detekt-analysis-common:
   stage: analyze
-  except:
-    - schedules
   tags:
     - medium
   script:
@@ -54,22 +52,23 @@ detekt analysis:
     refs:
       - merge_requests
       - branches
+      - schedules
   except:
     - release
     - prerelease
     - tags
-    - schedules
 
 .build-debug-common:
   stage: build
   only:
     - merge_requests
     - branches
+    - schedules
   tags:
     - large
   script:
     - ./gradlew assembleBetaDebug
-    - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
+    - ./gradlew assembleBetaDebugAndroidTest
   artifacts:
     expire_in: 1 week
     paths:
@@ -86,7 +85,6 @@ build debug:
     - release
     - prerelease
     - tags
-    - schedules
 
 build debug develop:
   extends: .build-debug-common
@@ -185,7 +183,7 @@ unit tests release:
   except:
     - schedules
   tags:
-    - large
+    - medium
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
@@ -215,6 +213,7 @@ firebase tests:
     - release
     - prerelease
     - tags
+    - schedules
 
 firebase tests develop:
   extends: .firebase-tests-common
@@ -230,40 +229,18 @@ firebase tests release:
     - prerelease
     - tags
 
-firebase regression tests:
-  stage: test
-  rules:
-    - if: '$TEST_TYPE == "regression"'
-  tags:
-    - large
-  script:
-    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
-    - mkdir -p /opt
-    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
-    - /opt/google-cloud-sdk/install.sh --quiet
-    - source /opt/google-cloud-sdk/path.bash.inc
-    - gcloud components update
-    - echo $CLOUD_PROJECT_ID_MAIL
-    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
-    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
-    - gcloud auth activate-service-account --key-file /tmp/service-account.json
-    - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
-    - gcloud beta --quiet firebase test android run
-      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
-      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
-      --device model=Pixel2,version=$API_LEVEL
-      --test-targets "class ch.protonmail.android.uitests.tests.suites.RegressionSuite"
-      --use-orchestrator
-      --num-uniform-shards=20
-      --timeout 1h
-
 firebase feature tests:
   stage: test
+  needs:
+    - job: build debug
   rules:
-    - if: '$TEST_TYPE == "feature"'
+    - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
   tags:
     - large
+  variables:
+    MODEL: ""
   script:
+    - if [ -z ${DEVICE_MODEL+x} ]; then MODEL="Pixel2"; else MODEL=$DEVICE_MODEL; fi
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
@@ -278,11 +255,11 @@ firebase feature tests:
     - gcloud --quiet firebase test android run
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
       --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
-      --device model=Pixel2,version=$API_LEVEL
+      --device model=$MODEL,version=$API_LEVEL
       --test-targets "class ch.protonmail.android.uitests.tests.$TEST_CLASS"
       --use-orchestrator
       --num-flaky-test-attempts=1
-      --timeout 1h
+      --timeout 45m
 
 include:
   - project: 'translations/generator'

@@ -1,0 +1,355 @@
+/*
+ * Copyright (c) 2020 Proton Technologies AG
+ * 
+ * This file is part of ProtonMail.
+ * 
+ * ProtonMail is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ProtonMail is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+ */
+package ch.protonmail.android.uitests.tests.composer
+
+import android.app.Activity
+import android.app.Instrumentation
+import androidx.test.espresso.intent.Intents.intending
+import androidx.test.espresso.intent.matcher.IntentMatchers.isInternal
+import ch.protonmail.android.uitests.robots.device.DeviceRobot
+import ch.protonmail.android.uitests.robots.login.LoginRobot
+import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
+import ch.protonmail.android.uitests.robots.settings.autolock.PinRobot
+import ch.protonmail.android.uitests.tests.BaseTest
+import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.docxFile
+import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
+import ch.protonmail.android.uitests.testsHelper.TestData.editedPasswordHint
+import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
+import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailNotTrustedKeys
+import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
+import ch.protonmail.android.uitests.testsHelper.TestData.jpegFile
+import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
+import ch.protonmail.android.uitests.testsHelper.TestData.pdfFile
+import ch.protonmail.android.uitests.testsHelper.TestData.pngFile
+import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
+import ch.protonmail.android.uitests.testsHelper.TestData.zipFile
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
+import ch.protonmail.android.uitests.testsHelper.intentutils.MimeTypes
+import org.hamcrest.CoreMatchers.not
+import org.junit.Before
+import org.junit.Test
+
+class AttachmentsTests : BaseTest() {
+
+    private val loginRobot = LoginRobot()
+    private val composeRobot = ComposerRobot()
+    private val deviceRobot = DeviceRobot()
+    private val pinRobot = PinRobot()
+    private lateinit var subject: String
+    private lateinit var body: String
+
+    @Before
+    override fun setUp() {
+        super.setUp()
+        subject = TestData.messageSubject
+        body = TestData.messageBody
+        intending(not(isInternal()))
+            .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, null))
+    }
+
+    @Test
+    fun loadInlinePngImage() {
+        val messageSubject = "Fw: One inline image and one attachment"
+        loginRobot
+            .loginUser(onePassUser)
+            .searchBar()
+            .searchMessageText(messageSubject)
+            .clickSearchedMessageBySubject(messageSubject)
+            .clickLoadEmbeddedImagesButton()
+            .verify { loadEmbeddedImagesButtonIsGone() }
+    }
+
+    @Test
+    fun sharePngFile() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+
+        deviceRobot
+            .clickHomeButton()
+            .sendShareIntent(MimeTypes.image.png, pngFile)
+            .clickShareDialogJustOnceButton()
+
+        composeRobot
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .clickAttachment(pngFile)
+            .clickAttachment(pngFile)
+            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+    }
+
+    @Test
+    fun shareJpegFile() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+
+        deviceRobot
+            .clickHomeButton()
+            .sendShareIntent(MimeTypes.image.jpeg, jpegFile)
+            .clickShareDialogJustOnceButton()
+
+        composeRobot
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .clickAttachment(jpegFile)
+            .clickAttachment(jpegFile)
+            .verify { intentWithActionFileNameAndMimeTypeSent(jpegFile, MimeTypes.image.jpeg) }
+    }
+
+    @Test
+    fun shareDocxFile() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+
+        deviceRobot
+            .clickHomeButton()
+            .sendShareIntent(MimeTypes.application.docx, docxFile)
+            .clickShareDialogJustOnceButton()
+
+        composeRobot
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .clickAttachment(docxFile)
+            .clickAttachment(docxFile)
+            .verify { intentWithActionFileNameAndMimeTypeSent(docxFile, MimeTypes.application.docx) }
+    }
+
+    @Test
+    fun shareZipFile() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+
+        deviceRobot
+            .clickHomeButton()
+            .sendShareIntent(MimeTypes.application.zip, zipFile)
+            .clickShareDialogJustOnceButton()
+
+        composeRobot
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .clickAttachment(zipFile)
+            .clickAttachment(zipFile)
+            .verify { intentWithActionFileNameAndMimeTypeSent(zipFile, MimeTypes.application.zip) }
+    }
+
+    @Test
+    fun sharePdfFile() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+
+        deviceRobot
+            .clickHomeButton()
+            .sendShareIntent(MimeTypes.application.pdf, pdfFile)
+            .clickShareDialogJustOnceButton()
+
+        composeRobot
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .clickAttachment(pdfFile)
+            .clickAttachment(pdfFile)
+            .verify { intentWithActionFileNameAndMimeTypeSent(pdfFile, MimeTypes.application.pdf) }
+    }
+
+    @Test
+    fun sharePngFileWithPinUnlocked() {
+        val to = internalEmailTrustedKeys.email
+        val pin = "1234"
+        loginRobot
+            .loginUser(onePassUser)
+            .menuDrawer()
+            .settings()
+            .selectAutoLock()
+            .enableAutoLock()
+            .setPin(pin)
+            .changeAutoLockTimer()
+            .selectFiveMinutesAutoLockTimeout()
+
+        deviceRobot
+            .clickHomeButton()
+            .sendShareIntent(MimeTypes.image.png, pngFile)
+            .clickShareDialogJustOnceButton()
+
+        composeRobot
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .clickAttachment(pngFile)
+            .clickAttachment(pngFile)
+            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+    }
+
+    @Test
+    fun sharePngFileWithPinLocked() {
+        val to = internalEmailTrustedKeys.email
+        val pin = "1234"
+        loginRobot
+            .loginUser(onePassUser)
+            .menuDrawer()
+            .settings()
+            .selectAutoLock()
+            .enableAutoLock()
+            .setPin(pin)
+            .changeAutoLockTimer()
+            .selectImmediateAutoLockTimeout()
+
+        deviceRobot
+            .clickHomeButton()
+            .sendShareIntent(MimeTypes.image.png, pngFile)
+            .clickShareDialogJustOnceButton()
+
+        pinRobot
+            .providePin(pin)
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .clickAttachment(pngFile)
+            .clickAttachment(pngFile)
+            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+    }
+
+    @Test
+    fun sendMessageToInternalTrustedContactWithCameraCaptureAttachment() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageCameraCaptureAttachment(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @Test
+    fun sendMessageToInternalNotTrustedContactWithAttachment() {
+        val to = internalEmailNotTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageWithFileAttachment(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @Test
+    fun sendMessageToInternalContactWithTwoAttachments() {
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageTwoImageCaptureAttachments(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1485")
+    @Test
+    fun sendMessageWithAttachmentFromPmMe() {
+        val onePassUserPmMeAddress = onePassUser.pmMe
+        val to = internalEmailTrustedKeys.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .changeSenderTo(onePassUserPmMeAddress)
+            .sendMessageWithFileAttachment(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("21091")
+    fun sendExternalMessageWithPasswordExpiryTimeAndAttachment() {
+        val to = externalOutlookPGPSigned.email
+        val password = editedPassword
+        val hint = editedPasswordHint
+        loginRobot
+            .loginTwoPasswordUser(twoPassUser)
+            .decryptMailbox(password)
+            .compose()
+            .sendMessageEOAndExpiryTimeWithAttachment(to, subject, body, 1, password, hint)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("15539")
+    @Test
+    fun sendExternalMessageWithOneAttachment() {
+        val to = externalOutlookPGPSigned.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageCameraCaptureAttachment(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("15540")
+    @Test
+    fun sendExternalMessageWithTwoAttachments() {
+        val to = externalOutlookPGPSigned.email
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .sendMessageTwoImageCaptureAttachments(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .verify { messageWithSubjectExists(subject) }
+    }
+}

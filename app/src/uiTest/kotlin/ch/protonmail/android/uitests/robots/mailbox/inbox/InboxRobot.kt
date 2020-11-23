@@ -22,7 +22,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MoveToFolderRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.SelectionStateRobotInterface
-import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
@@ -31,8 +30,8 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 class InboxRobot : MailboxRobotInterface {
 
-    override fun swipeLeftMessageAtPosition(messagePosition: Int): InboxRobot {
-        super.swipeLeftMessageAtPosition(messagePosition)
+    override fun swipeLeftMessageAtPosition(position: Int): InboxRobot {
+        super.swipeLeftMessageAtPosition(position)
         return this
     }
 
@@ -46,9 +45,9 @@ class InboxRobot : MailboxRobotInterface {
         return this
     }
 
-    override fun refreshMessageList(): SentRobot {
+    override fun refreshMessageList(): InboxRobot {
         super.refreshMessageList()
-        return SentRobot()
+        return InboxRobot()
     }
 
     /**

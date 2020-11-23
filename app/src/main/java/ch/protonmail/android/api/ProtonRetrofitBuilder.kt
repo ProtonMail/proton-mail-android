@@ -184,7 +184,7 @@ class ProtonRetrofitPublic(
                 endpointUri,
                 TEN_SECONDS,
                 interceptor,
-                HttpLoggingInterceptor.Level.BODY,
+                HttpLoggingInterceptor.Level.BASIC,
                 spec,
                 serverTimeInterceptor
         )
@@ -207,7 +207,7 @@ class ProtonRetrofitPing(
                 endpointUri,
                 TEN_SECONDS,
                 interceptor,
-                HttpLoggingInterceptor.Level.BODY,
+                HttpLoggingInterceptor.Level.BASIC,
                 spec,
                 serverTimeInterceptor
         )
@@ -230,7 +230,7 @@ class ProtonRetrofitExtended(
                 endpointUri,
                 TEN_SECONDS, // it was 2 minutes
                 interceptor,
-                HttpLoggingInterceptor.Level.BODY,
+                HttpLoggingInterceptor.Level.BASIC,
                 spec,
                 serverTimeInterceptor
         )

@@ -20,7 +20,10 @@ package ch.protonmail.android.uitests.robots.settings
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
+import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsValue
+import ch.protonmail.android.uitests.robots.settings.autolock.AutoLockRobot
+import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
 /**
@@ -38,8 +41,19 @@ class SettingsRobot {
         return this
     }
 
+    fun selectAutoLock(): AutoLockRobot {
+        selectItemByHeader(autoLockText)
+        return AutoLockRobot()
+    }
+
     fun selectItemByValue(value: String) {
+        UIActions.wait.forViewWithId(R.id.settingsRecyclerView)
         UIActions.recyclerView.clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsValue(value))
+    }
+
+    fun selectItemByHeader(header: String) {
+        UIActions.wait.forViewWithId(R.id.settingsRecyclerView)
+        UIActions.recyclerView.clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsHeader(header))
     }
 
     /**
@@ -53,4 +67,8 @@ class SettingsRobot {
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+
+    companion object {
+        val autoLockText = StringUtils.stringFromResource(R.string.auto_lock)
+    }
 }
