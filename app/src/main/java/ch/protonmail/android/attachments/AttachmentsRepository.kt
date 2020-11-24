@@ -38,21 +38,26 @@ class AttachmentsRepository @Inject constructor(
     private val userManager: UserManager
 ) {
 
-    fun uploadPublicKey(username: String, message: Message, crypto: AddressCrypto) {
-        val address = userManager.getUser(username).getAddressById(message.addressID).toNewAddress()
-        val keys = address.keys
-        val publicKey: String = crypto.buildArmoredPublicKey(keys.primaryKey!!.privateKey)
-
-        val attachment = Attachment()
-        attachment.fileName = "publickey - " + address.email + " - 0x" + crypto.getFingerprint(publicKey).substring(0, 8).toUpperCase() + ".asc"
-        attachment.mimeType = "application/pgp-keys"
-        attachment.setMessage(message)
-        uploadAttachment(attachment, crypto, publicKey.toByteArray())
-    }
-
     fun upload(attachment: Attachment, crypto: AddressCrypto): Result {
         val fileContent = attachment.getFileContent()
         return uploadAttachment(attachment, crypto, fileContent)
+    }
+
+    fun uploadPublicKey(username: String, message: Message, crypto: AddressCrypto): Result {
+        val address = userManager.getUser(username).getAddressById(message.addressID).toNewAddress()
+        val primaryKey = address.keys.primaryKey
+        requireNotNull(primaryKey)
+
+        val publicKey = crypto.buildArmoredPublicKey(primaryKey.privateKey)
+        val publicKeyFingerprint = crypto.getFingerprint(publicKey)
+        val fingerprintCharsUppercase = publicKeyFingerprint.substring(0, 8).toUpperCase()
+
+        val attachment = Attachment().apply {
+            fileName = "publickey - " + address.email + " - 0x" + fingerprintCharsUppercase + ".asc"
+            mimeType = "application/pgp-keys"
+            setMessage(message)
+        }
+        return uploadAttachment(attachment, crypto, publicKey.toByteArray())
     }
 
     private fun uploadAttachment(attachment: Attachment, crypto: AddressCrypto, fileContent: ByteArray): Result {

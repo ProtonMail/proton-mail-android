@@ -189,7 +189,7 @@ data class Attachment @JvmOverloads constructor(
 		"To be deleted to avoid logic on Model",
 		ReplaceWith("Use AttachmentRepository passing the attachment instead")
 	)
-	fun uploadAndSave(
+	private fun uploadAndSave(
 		messageDetailsRepository: MessageDetailsRepository,
 		fileContent: ByteArray,
 		api: ProtonMailApiManager,

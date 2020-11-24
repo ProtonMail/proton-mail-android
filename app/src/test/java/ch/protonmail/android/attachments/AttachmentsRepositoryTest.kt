@@ -257,12 +257,19 @@ class AttachmentsRepositoryTest {
             every { keys.primaryKey?.privateKey } returns privateKey
             every { email } returns EmailAddress("message@email.com")
         }
+        val successResponse = mockk<AttachmentUploadResponse> {
+            every { code } returns Constants.RESPONSE_CODE_OK
+            every { attachmentID } returns ""
+            every { attachment.keyPackets } returns null
+            every { attachment.signature } returns null
+        }
+        every { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
         every { userManager.getUser(username).getAddressById(message.addressID).toNewAddress() } returns address
         every { crypto.buildArmoredPublicKey(any()) } returns "PublicKeyString"
         every { crypto.getFingerprint("PublicKeyString") } returns "PublicKeyStringFingerprint"
         every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
 
-        repository.uploadPublicKey(username, message, crypto)
+        val result = repository.uploadPublicKey(username, message, crypto)
 
         val keyPackageSlot = slot<RequestBody>()
         val dataPackageSlot = slot<RequestBody>()
@@ -270,7 +277,9 @@ class AttachmentsRepositoryTest {
         val expectedAttachment = Attachment(
             fileName = "publickey - EmailAddress(s=message@email.com) - 0xPUBLICKE.asc",
             mimeType = "application/pgp-keys",
-            messageId = message.messageId!!
+            messageId = message.messageId!!,
+            attachmentId = "",
+            isUploaded = true
 
         )
         verifySequence {
@@ -284,5 +293,6 @@ class AttachmentsRepositoryTest {
         assertEquals(MediaType.parse("application/pgp-keys"), keyPackageSlot.captured.contentType())
         assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
         assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+        assertEquals(AttachmentsRepository.Result.Success, result)
     }
 }

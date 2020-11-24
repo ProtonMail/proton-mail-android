@@ -259,6 +259,14 @@ public class PostMessageJob extends ProtonMailBaseJob {
      */
     private void uploadAttachments(Message message, AddressCrypto crypto, MailSettings mailSettings) throws Exception {
         List<File> attachmentTempFiles = new ArrayList<>();
+        // This needs to be created here as it's not serializable and injecting it would cause
+        // the job to crash. Move to injection when migrating this job to a Worker
+        AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
+                getApi(),
+                new OpenPgpArmorer(),
+                getMessageDetailsRepository(),
+                getUserManager()
+        );
         for (String attachmentId : mNewAttachments) {
             Attachment attachment = getMessageDetailsRepository().findAttachmentById(attachmentId);
             if (attachment == null) {
@@ -277,14 +285,6 @@ public class PostMessageJob extends ProtonMailBaseJob {
             attachmentTempFiles.add(file);
             attachment.setMessage(message);
 
-            // This needs to be created here as it's not serializable and injecting it would cause
-            // the job to crash. Move to injection when migrating this job to a Worker
-            AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
-                    getApi(),
-                    new OpenPgpArmorer(),
-                    getMessageDetailsRepository(),
-                    getUserManager()
-            );
             AttachmentsRepository.Result result = attachmentsRepository.upload(attachment, crypto);
             if (result instanceof AttachmentsRepository.Result.Failure) {
                 throw new IOException(((AttachmentsRepository.Result.Failure) result).getError());
@@ -292,7 +292,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         }
         // upload public key
         if (mailSettings.getAttachPublicKey()) {
-            attachPublicKey(message, crypto);
+            attachmentsRepository.uploadPublicKey(mUsername, message, crypto);
         }
 
         for (File file : attachmentTempFiles) {
@@ -300,19 +300,6 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 file.delete();
             }
         }
-    }
-
-    private void attachPublicKey(Message message, AddressCrypto crypto) throws Exception {
-        Address address =
-                getUserManager().getUser(mUsername).getAddressById(message.getAddressID()).toNewAddress();
-        AddressKeys keys = address.getKeys();
-        String publicKey = crypto.buildArmoredPublicKey(keys.getPrimaryKey().getPrivateKey());
-
-        Attachment attachment = new Attachment();
-        attachment.setFileName("publickey - " + address.getEmail() + " - 0x" + crypto.getFingerprint(publicKey).substring(0, 8).toUpperCase() + ".asc");
-        attachment.setMimeType("application/pgp-keys");
-        attachment.setMessage(message);
-        attachment.uploadAndSave(getMessageDetailsRepository(),publicKey.getBytes(), getApi(), crypto);
     }
 
     private void onRunPostMessage(PendingActionsDatabase pendingActionsDatabase, @NonNull Message message,
