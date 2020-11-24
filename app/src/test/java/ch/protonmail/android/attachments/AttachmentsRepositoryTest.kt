@@ -24,9 +24,14 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.api.models.AttachmentUploadResponse
 import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
+import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.domain.entity.PgpField
+import ch.protonmail.android.domain.entity.user.Address
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -44,6 +49,9 @@ import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
 class AttachmentsRepositoryTest {
+
+    @MockK
+    private lateinit var userManager: UserManager
 
     @MockK
     private lateinit var armorer: Armorer
@@ -237,5 +245,44 @@ class AttachmentsRepositoryTest {
         verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
         val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
         assertEquals(expectedResult, result)
+    }
+
+    @Test
+    fun uploadPublicKeyCallsUploadAttachmentApiWithPublicKeyAttachment() {
+        val username = "username"
+        val message = Message(messageId = "messageId")
+        val privateKey = mockk<PgpField.PrivateKey>()
+        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+        val address = mockk<Address> {
+            every { keys.primaryKey?.privateKey } returns privateKey
+            every { email } returns EmailAddress("message@email.com")
+        }
+        every { userManager.getUser(username).getAddressById(message.addressID).toNewAddress() } returns address
+        every { crypto.buildArmoredPublicKey(any()) } returns "PublicKeyString"
+        every { crypto.getFingerprint("PublicKeyString") } returns "PublicKeyStringFingerprint"
+        every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+
+        repository.uploadPublicKey(username, message, crypto)
+
+        val keyPackageSlot = slot<RequestBody>()
+        val dataPackageSlot = slot<RequestBody>()
+        val signatureSlot = slot<RequestBody>()
+        val expectedAttachment = Attachment(
+            fileName = "publickey - EmailAddress(s=message@email.com) - 0xPUBLICKE.asc",
+            mimeType = "application/pgp-keys",
+            messageId = message.messageId!!
+
+        )
+        verifySequence {
+            apiManager.uploadAttachment(
+                expectedAttachment,
+                capture(keyPackageSlot),
+                capture(dataPackageSlot),
+                capture(signatureSlot)
+            )
+        }
+        assertEquals(MediaType.parse("application/pgp-keys"), keyPackageSlot.captured.contentType())
+        assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
+        assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
     }
 }

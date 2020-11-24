@@ -23,7 +23,9 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -32,12 +34,29 @@ import javax.inject.Inject
 class AttachmentsRepository @Inject constructor(
     private val apiManager: ProtonMailApiManager,
     private val armorer: Armorer,
-    private val messageDetailsRepository: MessageDetailsRepository
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val userManager: UserManager
 ) {
 
+    fun uploadPublicKey(username: String, message: Message, crypto: AddressCrypto) {
+        val address = userManager.getUser(username).getAddressById(message.addressID).toNewAddress()
+        val keys = address.keys
+        val publicKey: String = crypto.buildArmoredPublicKey(keys.primaryKey!!.privateKey)
+
+        val attachment = Attachment()
+        attachment.fileName = "publickey - " + address.email + " - 0x" + crypto.getFingerprint(publicKey).substring(0, 8).toUpperCase() + ".asc"
+        attachment.mimeType = "application/pgp-keys"
+        attachment.setMessage(message)
+        uploadAttachment(attachment, crypto, publicKey.toByteArray())
+    }
+
     fun upload(attachment: Attachment, crypto: AddressCrypto): Result {
-        val headers = attachment.headers
         val fileContent = attachment.getFileContent()
+        return uploadAttachment(attachment, crypto, fileContent)
+    }
+
+    private fun uploadAttachment(attachment: Attachment, crypto: AddressCrypto, fileContent: ByteArray): Result {
+        val headers = attachment.headers
         val mimeType = requireNotNull(attachment.mimeType)
         val filename = requireNotNull(attachment.fileName)
 

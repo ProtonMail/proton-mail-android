@@ -282,7 +282,8 @@ public class PostMessageJob extends ProtonMailBaseJob {
             AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
                     getApi(),
                     new OpenPgpArmorer(),
-                    getMessageDetailsRepository()
+                    getMessageDetailsRepository(),
+                    getUserManager()
             );
             AttachmentsRepository.Result result = attachmentsRepository.upload(attachment, crypto);
             if (result instanceof AttachmentsRepository.Result.Failure) {
