@@ -117,6 +117,9 @@ data class Attachment @JvmOverloads constructor(
 	val isPGPAttachment: Boolean
 		get() = attachmentId!!.startsWith("PGPAttachment")
 
+	val isFileExisting: Boolean
+		get() = File(filePath).exists()
+
 	/**
 	 * In case there are more values delimited with semicolon, returns only the first one.
 	 */

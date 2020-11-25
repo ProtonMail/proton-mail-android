@@ -36,20 +36,19 @@ class UploadAttachments @Inject constructor(
             val attachmentTempFiles: MutableList<File> = ArrayList()
 
             for (attachmentId in attachmentIds) {
-                val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
-                    ?: continue
+                val attachment = messageDetailsRepository.findAttachmentById(attachmentId) ?: continue
                 if (attachment.filePath == null) {
                     continue
                 }
                 if (attachment.isUploaded) {
                     continue
                 }
-                val file = File(attachment.filePath)
-//            if (!file.exists()) {
-//                continue
-//            }
-                attachmentTempFiles.add(file)
-                attachment.setMessage(message)
+                if (attachment.isFileExisting.not()) {
+                    continue
+                }
+
+//                attachmentTempFiles.add(file)
+                attachment.setMessage(message) // TODO test set message!
                 val result = attachmentsRepository.upload(attachment, crypto)
                 if (result is AttachmentsRepository.Result.Failure) {
                     return@withContext Result.Failure(result.error)
