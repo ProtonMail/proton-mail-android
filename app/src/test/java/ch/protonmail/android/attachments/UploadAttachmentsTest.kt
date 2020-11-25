@@ -23,6 +23,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -53,6 +54,9 @@ class UploadAttachmentsTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var crypto: AddressCrypto
+
+    @RelaxedMockK
+    private lateinit var userManager: UserManager
 
     @InjectMockKs
     private lateinit var uploadAttachments: UploadAttachments
@@ -216,6 +220,20 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             verify { attachmentsRepository.upload(attachmentMock1, crypto) }
             verify(exactly = 0) { attachmentsRepository.upload(attachmentMock2, crypto) }
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsCallRepositoryUploadPublicLeyWhenMailSettingsGetAttachPublicKeyIsTrue() {
+        runBlockingTest {
+            val username = "username"
+            val message = Message()
+            every { userManager.username } returns username
+            every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
+
+            uploadAttachments.invoke(emptyList(), message, crypto)
+
+            verify { attachmentsRepository.uploadPublicKey(username, message, crypto) }
         }
     }
 }

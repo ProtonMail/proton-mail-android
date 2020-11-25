@@ -20,6 +20,7 @@ package ch.protonmail.android.attachments
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -29,9 +30,10 @@ import javax.inject.Inject
 class UploadAttachments @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
-    val messageDetailsRepository: MessageDetailsRepository) {
+    val messageDetailsRepository: MessageDetailsRepository,
+    val userManager: UserManager) {
 
-    suspend operator fun invoke(attachmentIds: List<String>, message: Message?, crypto: AddressCrypto) =
+    suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
         withContext(dispatcherProvider.Io) {
             val attachmentTempFiles: MutableList<File> = ArrayList()
 
@@ -54,12 +56,13 @@ class UploadAttachments @Inject constructor(
                     return@withContext Result.Failure(result.error)
                 }
             }
-//        // upload public key
-//        // upload public key
-//        if (mailSettings.getAttachPublicKey()) {
-//            attachmentsRepository.uploadPublicKey(mUsername, message, crypto)
-//        }
-//
+
+            val username = userManager.username
+            val isAttachPublicKey = userManager.getMailSettings(username)?.getAttachPublicKey() ?: false
+            if (isAttachPublicKey) {
+                attachmentsRepository.uploadPublicKey(username, message, crypto)
+            }
+
 //        for (file in attachmentTempFiles) {
 //            if (file.exists()) {
 //                file.delete()
