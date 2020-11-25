@@ -25,18 +25,21 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifyOrder
+import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
-import io.mockk.verifyOrder
-import io.mockk.verifySequence
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -61,6 +64,11 @@ class UploadAttachmentsTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var uploadAttachments: UploadAttachments
 
+    @BeforeEach
+    fun setUp() {
+        coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success
+    }
+
     @Test
     fun uploadAttachmentsCallsRepositoryWhenInputAttachmentsAreValid() {
         runBlockingTest {
@@ -81,9 +89,9 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            val result = uploadAttachments.invoke(attachmentIds, message, crypto)
+            val result = uploadAttachments(attachmentIds, message, crypto)
 
-            verifyOrder {
+            coVerifyOrder {
                 attachment1.setMessage(message)
                 attachmentsRepository.upload(attachment1, crypto)
                 attachment2.setMessage(message)
@@ -112,11 +120,11 @@ class UploadAttachmentsTest : CoroutinesTest {
             val message = Message()
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
-            every { attachmentsRepository.upload(attachment2, crypto) } answers {
+            coEvery { attachmentsRepository.upload(attachment2, crypto) } answers {
                 AttachmentsRepository.Result.Failure("Failed to upload attachment2")
             }
 
-            val result = uploadAttachments.invoke(attachmentIds, message, crypto)
+            val result = uploadAttachments(attachmentIds, message, crypto)
 
             val expected = UploadAttachments.Result.Failure("Failed to upload attachment2")
             assertEquals(expected, result)
@@ -137,9 +145,9 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns null
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            uploadAttachments.invoke(attachmentIds, message, crypto)
+            uploadAttachments(attachmentIds, message, crypto)
 
-            verifySequence { attachmentsRepository.upload(attachment2, crypto) }
+            coVerifySequence { attachmentsRepository.upload(attachment2, crypto) }
         }
     }
 
@@ -163,10 +171,10 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            uploadAttachments.invoke(attachmentIds, message, crypto)
+            uploadAttachments(attachmentIds, message, crypto)
 
-            verify(exactly = 0) { attachmentsRepository.upload(attachment1, crypto) }
-            verify { attachmentsRepository.upload(attachment2, crypto) }
+            coVerify(exactly = 0) { attachmentsRepository.upload(attachment1, crypto) }
+            coVerify { attachmentsRepository.upload(attachment2, crypto) }
         }
     }
 
@@ -190,10 +198,10 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            uploadAttachments.invoke(attachmentIds, message, crypto)
+            uploadAttachments(attachmentIds, message, crypto)
 
-            verify { attachmentsRepository.upload(attachment1, crypto) }
-            verify(exactly = 0) { attachmentsRepository.upload(attachment2, crypto) }
+            coVerify { attachmentsRepository.upload(attachment1, crypto) }
+            coVerify(exactly = 0) { attachmentsRepository.upload(attachment2, crypto) }
         }
     }
 
@@ -217,10 +225,10 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
 
-            uploadAttachments.invoke(attachmentIds, message, crypto)
+            uploadAttachments(attachmentIds, message, crypto)
 
-            verify { attachmentsRepository.upload(attachmentMock1, crypto) }
-            verify(exactly = 0) { attachmentsRepository.upload(attachmentMock2, crypto) }
+            coVerify { attachmentsRepository.upload(attachmentMock1, crypto) }
+            coVerify(exactly = 0) { attachmentsRepository.upload(attachmentMock2, crypto) }
         }
     }
 
@@ -232,9 +240,9 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { userManager.username } returns username
             every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
 
-            uploadAttachments.invoke(emptyList(), message, crypto)
+            uploadAttachments(emptyList(), message, crypto)
 
-            verify { attachmentsRepository.uploadPublicKey(username, message, crypto) }
+            coVerify { attachmentsRepository.uploadPublicKey(username, message, crypto) }
         }
     }
 
@@ -257,14 +265,14 @@ class UploadAttachmentsTest : CoroutinesTest {
             }
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
-            every { attachmentsRepository.upload(attachmentMock1, crypto) } answers {
+            coEvery { attachmentsRepository.upload(attachmentMock1, crypto) } answers {
                 AttachmentsRepository.Result.Success
             }
-            every { attachmentsRepository.upload(attachmentMock2, crypto) } answers {
+            coEvery { attachmentsRepository.upload(attachmentMock2, crypto) } answers {
                 AttachmentsRepository.Result.Failure("failed")
             }
 
-            uploadAttachments.invoke(attachmentIds, message, crypto)
+            uploadAttachments(attachmentIds, message, crypto)
 
             verify { attachmentMock1.deleteLocalFile() }
             verify(exactly = 0) { attachmentMock2.deleteLocalFile() }

@@ -81,7 +81,7 @@ class AttachmentsRepository @Inject constructor(
             val response = if (isAttachmentInline(headers)) {
                 requireNotNull(headers)
 
-                apiManager.uploadAttachmentInlineBlocking(
+                apiManager.uploadAttachmentInline(
                     attachment,
                     attachment.messageId,
                     contentIdFormatted(headers),
@@ -90,7 +90,7 @@ class AttachmentsRepository @Inject constructor(
                     signature
                 )
             } else {
-                apiManager.uploadAttachmentBlocking(
+                apiManager.uploadAttachment(
                     attachment,
                     keyPackage,
                     dataPackage,

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.attachments
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
@@ -32,6 +33,9 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -40,15 +44,21 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import io.mockk.verifySequence
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.CoroutinesTest
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import org.junit.Rule
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
-class AttachmentsRepositoryTest {
+class AttachmentsRepositoryTest : CoroutinesTest {
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @MockK
     private lateinit var userManager: UserManager
@@ -71,228 +81,239 @@ class AttachmentsRepositoryTest {
     @InjectMockKs
     private lateinit var repository: AttachmentsRepository
 
-
-    @Test
-    fun uploadCallsUploadAttachmentInlineApiWhenAttachmentIsInline() {
-        val messageId = "messageId"
-        val contentId = "contentId"
-        val mimeType = "image/jpeg"
-        val fileContent = "attachment content".toByteArray()
-        val fileName = "picture.jpg"
-        val signedFileContent = "signedFileContent"
-        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-        val headers = AttachmentHeaders(
-            mimeType,
-            "contentTransferEncoding",
-            listOf("inline"),
-            listOf(contentId),
-            "contentLocation",
-            "contentEncryption"
-        )
-        val attachment = mockk<Attachment> {
-            every { this@mockk.headers } returns headers
-            every { this@mockk.fileName } returns fileName
-            every { this@mockk.messageId } returns messageId
-            every { this@mockk.mimeType } returns mimeType
-            every { this@mockk.getFileContent() } returns fileContent
-        }
-        every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
-        every { crypto.sign(fileContent) } returns signedFileContent
-        every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
-
-        repository.upload(attachment, crypto)
-
-        val keyPackageSlot = slot<RequestBody>()
-        val dataPackageSlot = slot<RequestBody>()
-        val signatureSlot = slot<RequestBody>()
-        verifySequence {
-            apiManager.uploadAttachmentInlineBlocking(
-                attachment,
-                messageId,
-                contentId,
-                capture(keyPackageSlot),
-                capture(dataPackageSlot),
-                capture(signatureSlot)
-            )
-        }
-        assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
-        assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
-        assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
-    }
-
-    @Test
-    fun uploadCallsUploadAttachmentInlineApiPassingContentIdFormatted() {
-        val messageId = "messageId"
-        val contentId = "ignoreFirst<content>Id<split<last< "
-        val mimeType = "image/jpeg"
-        val fileContent = "attachment content".toByteArray()
-        val fileName = "picture.jpg"
-        val signedFileContent = "signedFileContent"
-        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-        val headers = AttachmentHeaders(
-            mimeType,
-            "contentTransferEncoding",
-            listOf("inline"),
-            listOf(contentId),
-            "contentLocation",
-            "contentEncryption"
-        )
-        val attachment = mockk<Attachment> {
-            every { this@mockk.headers } returns headers
-            every { this@mockk.fileName } returns fileName
-            every { this@mockk.messageId } returns messageId
-            every { this@mockk.mimeType } returns mimeType
-            every { this@mockk.getFileContent() } returns fileContent
-        }
-        every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
-        every { crypto.sign(fileContent) } returns signedFileContent
-        every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
-
-        repository.upload(attachment, crypto)
-
-        val expectedContentId = "contentId"
-        verify {
-            apiManager.uploadAttachmentInlineBlocking(
-                attachment,
-                messageId,
-                expectedContentId,
-                any(),
-                any(),
-                any()
-            )
-        }
-    }
-
-    @Test
-    fun uploadCallsUploadAttachmentApiWhenAttachmentIsNotInline() {
-        val messageId = "messageId"
-        val mimeType = "image/jpeg"
-        val fileContent = "attachment content".toByteArray()
-        val fileName = "picture.jpg"
-        val signedFileContent = "signedFileContent"
-        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-        val attachment = mockk<Attachment> {
-            every { this@mockk.headers } returns null
-            every { this@mockk.fileName } returns fileName
-            every { this@mockk.messageId } returns messageId
-            every { this@mockk.mimeType } returns mimeType
-            every { this@mockk.getFileContent() } returns fileContent
-        }
-        every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
-        every { crypto.sign(fileContent) } returns signedFileContent
-        every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
-
-        repository.upload(attachment, crypto)
-
-        val keyPackageSlot = slot<RequestBody>()
-        val dataPackageSlot = slot<RequestBody>()
-        val signatureSlot = slot<RequestBody>()
-        verifySequence {
-            apiManager.uploadAttachmentBlocking(
-                attachment,
-                capture(keyPackageSlot),
-                capture(dataPackageSlot),
-                capture(signatureSlot)
-            )
-        }
-        assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
-        assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
-        assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
-    }
-
-    @Test
-    fun uploadSavesUpdatedAttachmentToMessageRepositoryAndReturnSuccessWhenRequestSucceeds() {
-        val apiAttachmentId = "456"
-        val apiKeyPackets = "apiKeyPackets"
-        val apiSignature = "apiSignature"
-        val successResponse = mockk<AttachmentUploadResponse> {
-            every { code } returns Constants.RESPONSE_CODE_OK
-            every { attachmentID } returns apiAttachmentId
-            every { attachment.keyPackets } returns apiKeyPackets
-            every { attachment.signature } returns apiSignature
-        }
-        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-        val attachment = mockk<Attachment>(relaxed = true)
-        every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-        every { apiManager.uploadAttachmentBlocking(any(), any(), any(), any()) } returns successResponse
-
-        val result = repository.upload(attachment, crypto)
-
-        verify {
-            attachment.attachmentId = apiAttachmentId
-            attachment.keyPackets = apiKeyPackets
-            attachment.signature = apiSignature
-            attachment.isUploaded = true
-            messageDetailsRepository.saveAttachment(attachment)
-        }
-        assertEquals(AttachmentsRepository.Result.Success, result)
-    }
-
-    @Test
-    fun uploadReturnsFailureWhenUploadAttachmentToApiFails() {
-        val errorMessage = "Attachment Upload Failed"
-        val failureResponse = mockk<AttachmentUploadResponse> {
-            every { code } returns 400
-            every { error } returns errorMessage
-        }
-        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-        val attachment = mockk<Attachment>(relaxed = true)
-        every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-        every { apiManager.uploadAttachmentBlocking(any(), any(), any(), any()) } returns failureResponse
-
-        val result = repository.upload(attachment, crypto)
-
-        verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
-        val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
-        assertEquals(expectedResult, result)
-    }
-
-    @Test
-    fun uploadPublicKeyCallsUploadAttachmentApiWithPublicKeyAttachment() {
-        val username = "username"
-        val message = Message(messageId = "messageId")
-        val privateKey = mockk<PgpField.PrivateKey>()
-        val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
-        val address = mockk<Address> {
-            every { keys.primaryKey?.privateKey } returns privateKey
-            every { email } returns EmailAddress("message@email.com")
-        }
+    @BeforeEach
+    fun setUp() {
         val successResponse = mockk<AttachmentUploadResponse> {
             every { code } returns Constants.RESPONSE_CODE_OK
             every { attachmentID } returns ""
             every { attachment.keyPackets } returns null
             every { attachment.signature } returns null
         }
-        every { apiManager.uploadAttachmentBlocking(any(), any(), any(), any()) } returns successResponse
-        every { userManager.getUser(username).getAddressById(message.addressID).toNewAddress() } returns address
-        every { crypto.buildArmoredPublicKey(any()) } returns "PublicKeyString"
-        every { crypto.getFingerprint("PublicKeyString") } returns "PublicKeyStringFingerprint"
-        every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-
-        val result = repository.uploadPublicKey(username, message, crypto)
-
-        val keyPackageSlot = slot<RequestBody>()
-        val dataPackageSlot = slot<RequestBody>()
-        val signatureSlot = slot<RequestBody>()
-        val expectedAttachment = Attachment(
-            fileName = "publickey - EmailAddress(s=message@email.com) - 0xPUBLICKE.asc",
-            mimeType = "application/pgp-keys",
-            messageId = message.messageId!!,
-            attachmentId = "",
-            isUploaded = true
-
-        )
-        verifySequence {
-            apiManager.uploadAttachmentBlocking(
-                expectedAttachment,
-                capture(keyPackageSlot),
-                capture(dataPackageSlot),
-                capture(signatureSlot)
-            )
-        }
-        assertEquals(MediaType.parse("application/pgp-keys"), keyPackageSlot.captured.contentType())
-        assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
-        assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
-        assertEquals(AttachmentsRepository.Result.Success, result)
+        coEvery { apiManager.uploadAttachmentInline(any(), any(), any(), any(), any(), any()) } returns successResponse
+        coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
     }
+
+    @Test
+    fun uploadCallsUploadAttachmentInlineApiWhenAttachmentIsInline() {
+        runBlockingTest {
+            val messageId = "messageId"
+            val contentId = "contentId"
+            val mimeType = "image/jpeg"
+            val fileContent = "attachment content".toByteArray()
+            val fileName = "picture.jpg"
+            val signedFileContent = "signedFileContent"
+            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val headers = AttachmentHeaders(
+                mimeType,
+                "contentTransferEncoding",
+                listOf("inline"),
+                listOf(contentId),
+                "contentLocation",
+                "contentEncryption"
+            )
+            val attachment = mockk<Attachment>(relaxed = true) {
+                every { this@mockk.headers } returns headers
+                every { this@mockk.fileName } returns fileName
+                every { this@mockk.messageId } returns messageId
+                every { this@mockk.mimeType } returns mimeType
+                every { this@mockk.getFileContent() } returns fileContent
+            }
+            every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+            every { crypto.sign(fileContent) } returns signedFileContent
+            every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
+
+            repository.upload(attachment, crypto)
+
+            val keyPackageSlot = slot<RequestBody>()
+            val dataPackageSlot = slot<RequestBody>()
+            val signatureSlot = slot<RequestBody>()
+            coVerifySequence {
+                apiManager.uploadAttachmentInline(
+                    attachment,
+                    messageId,
+                    contentId,
+                    capture(keyPackageSlot),
+                    capture(dataPackageSlot),
+                    capture(signatureSlot)
+                )
+            }
+            assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
+            assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
+            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+        }
+    }
+
+    @Test
+    fun uploadCallsUploadAttachmentInlineApiPassingContentIdFormatted() {
+        runBlockingTest {
+            val messageId = "messageId"
+            val contentId = "ignoreFirst<content>Id<split<last< "
+            val mimeType = "image/jpeg"
+            val fileContent = "attachment content".toByteArray()
+            val fileName = "picture.jpg"
+            val signedFileContent = "signedFileContent"
+            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val headers = AttachmentHeaders(
+                mimeType,
+                "contentTransferEncoding",
+                listOf("inline"),
+                listOf(contentId),
+                "contentLocation",
+                "contentEncryption"
+            )
+            val attachment = mockk<Attachment>(relaxed = true) {
+                every { this@mockk.headers } returns headers
+                every { this@mockk.fileName } returns fileName
+                every { this@mockk.messageId } returns messageId
+                every { this@mockk.mimeType } returns mimeType
+                every { this@mockk.getFileContent() } returns fileContent
+            }
+            every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+            every { crypto.sign(fileContent) } returns signedFileContent
+            every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
+
+            repository.upload(attachment, crypto)
+
+            val expectedContentId = "contentId"
+            coVerify {
+                apiManager.uploadAttachmentInline(
+                    attachment,
+                    messageId,
+                    expectedContentId,
+                    any(),
+                    any(),
+                    any()
+                )
+            }
+        }
+    }
+
+    @Test
+    fun uploadCallsUploadAttachmentApiWhenAttachmentIsNotInline() {
+        runBlockingTest {
+            val messageId = "messageId"
+            val mimeType = "image/jpeg"
+            val fileContent = "attachment content".toByteArray()
+            val fileName = "picture.jpg"
+            val signedFileContent = "signedFileContent"
+            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val attachment = mockk<Attachment>(relaxed = true) {
+                every { this@mockk.headers } returns null
+                every { this@mockk.fileName } returns fileName
+                every { this@mockk.messageId } returns messageId
+                every { this@mockk.mimeType } returns mimeType
+                every { this@mockk.getFileContent() } returns fileContent
+            }
+            every { crypto.encrypt(fileContent, fileName) } returns mockCipherText
+            every { crypto.sign(fileContent) } returns signedFileContent
+            every { armorer.unarmor(signedFileContent) } returns unarmoredSignedFileContent
+
+            repository.upload(attachment, crypto)
+
+            val keyPackageSlot = slot<RequestBody>()
+            val dataPackageSlot = slot<RequestBody>()
+            val signatureSlot = slot<RequestBody>()
+            coVerifySequence {
+                apiManager.uploadAttachment(
+                    attachment,
+                    capture(keyPackageSlot),
+                    capture(dataPackageSlot),
+                    capture(signatureSlot)
+                )
+            }
+            assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
+            assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
+            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+        }
+    }
+
+    @Test
+    fun uploadSavesUpdatedAttachmentToMessageRepositoryAndReturnSuccessWhenRequestSucceeds() {
+        runBlockingTest {
+            val apiAttachmentId = "456"
+            val apiKeyPackets = "apiKeyPackets"
+            val apiSignature = "apiSignature"
+            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val attachment = mockk<Attachment>(relaxed = true)
+            every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+
+            val result = repository.upload(attachment, crypto)
+
+            verify {
+                attachment.attachmentId = apiAttachmentId
+                attachment.keyPackets = apiKeyPackets
+                attachment.signature = apiSignature
+                attachment.isUploaded = true
+                messageDetailsRepository.saveAttachment(attachment)
+            }
+            assertEquals(AttachmentsRepository.Result.Success, result)
+        }
+    }
+
+    @Test
+    fun uploadReturnsFailureWhenUploadAttachmentToApiFails() {
+        runBlockingTest {
+            val errorMessage = "Attachment Upload Failed"
+            val failureResponse = mockk<AttachmentUploadResponse> {
+                every { code } returns 400
+                every { error } returns errorMessage
+            }
+            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val attachment = mockk<Attachment>(relaxed = true)
+            every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns failureResponse
+
+            val result = repository.upload(attachment, crypto)
+
+            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+            val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
+            assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun uploadPublicKeyCallsUploadAttachmentApiWithPublicKeyAttachment() {
+        runBlockingTest {
+            val username = "username"
+            val message = Message(messageId = "messageId")
+            val privateKey = mockk<PgpField.PrivateKey>()
+            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val address = mockk<Address> {
+                every { keys.primaryKey?.privateKey } returns privateKey
+                every { email } returns EmailAddress("message@email.com")
+            }
+            every { userManager.getUser(username).getAddressById(message.addressID).toNewAddress() } returns address
+            every { crypto.buildArmoredPublicKey(any()) } returns "PublicKeyString"
+            every { crypto.getFingerprint("PublicKeyString") } returns "PublicKeyStringFingerprint"
+            every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+
+            val result = repository.uploadPublicKey(username, message, crypto)
+
+            val keyPackageSlot = slot<RequestBody>()
+            val dataPackageSlot = slot<RequestBody>()
+            val signatureSlot = slot<RequestBody>()
+            val expectedAttachment = Attachment(
+                fileName = "publickey - EmailAddress(s=message@email.com) - 0xPUBLICKE.asc",
+                mimeType = "application/pgp-keys",
+                messageId = message.messageId!!,
+                attachmentId = "",
+                isUploaded = true
+
+            )
+            coVerifySequence {
+                apiManager.uploadAttachment(
+                    expectedAttachment,
+                    capture(keyPackageSlot),
+                    capture(dataPackageSlot),
+                    capture(signatureSlot)
+                )
+            }
+            assertEquals(MediaType.parse("application/pgp-keys"), keyPackageSlot.captured.contentType())
+            assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
+            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+            assertEquals(AttachmentsRepository.Result.Success, result)
+        }
+    }
+
+
 }
