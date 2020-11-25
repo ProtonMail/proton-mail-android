@@ -176,6 +176,12 @@ data class Attachment @JvmOverloads constructor(
 		return uploadAndSave(messageDetailsRepository, fileContent, api, crypto)
 	}
 
+	fun deleteLocalFile() {
+		if (isFileExisting) {
+			File(filePath).delete()
+		}
+	}
+
 	fun getFileContent(): ByteArray =
 		if (URLUtil.isDataUrl(filePath)) {
 			Base64.decode(

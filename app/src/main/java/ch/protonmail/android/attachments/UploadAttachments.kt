@@ -24,37 +24,30 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
-import java.io.File
 import javax.inject.Inject
 
 class UploadAttachments @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
-    val messageDetailsRepository: MessageDetailsRepository,
-    val userManager: UserManager) {
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val userManager: UserManager) {
 
     suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
         withContext(dispatcherProvider.Io) {
-            val attachmentTempFiles: MutableList<File> = ArrayList()
-
             for (attachmentId in attachmentIds) {
                 val attachment = messageDetailsRepository.findAttachmentById(attachmentId) ?: continue
-                if (attachment.filePath == null) {
-                    continue
-                }
-                if (attachment.isUploaded) {
-                    continue
-                }
-                if (attachment.isFileExisting.not()) {
-                    continue
-                }
-
-//                attachmentTempFiles.add(file)
+                if (attachment.filePath == null) continue
+                if (attachment.isUploaded) continue
+                if (attachment.isFileExisting.not()) continue
                 attachment.setMessage(message)
+
                 val result = attachmentsRepository.upload(attachment, crypto)
+
                 if (result is AttachmentsRepository.Result.Failure) {
                     return@withContext Result.Failure(result.error)
                 }
+
+                attachment.deleteLocalFile()
             }
 
             val username = userManager.username
@@ -63,16 +56,11 @@ class UploadAttachments @Inject constructor(
                 attachmentsRepository.uploadPublicKey(username, message, crypto)
             }
 
-//        for (file in attachmentTempFiles) {
-//            if (file.exists()) {
-//                file.delete()
-//            }
-//        }
-
-            return@withContext Result.Failure("TODO")
+            return@withContext Result.Success
         }
 
     sealed class Result {
+        object Success : Result()
         data class Failure(val error: String) : Result()
     }
 }

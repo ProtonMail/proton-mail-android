@@ -81,7 +81,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
-            uploadAttachments.invoke(attachmentIds, message, crypto)
+            val result = uploadAttachments.invoke(attachmentIds, message, crypto)
 
             verifyOrder {
                 attachment1.setMessage(message)
@@ -89,6 +89,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 attachment2.setMessage(message)
                 attachmentsRepository.upload(attachment2, crypto)
             }
+            assertEquals(UploadAttachments.Result.Success, result)
         }
     }
 
@@ -202,16 +203,16 @@ class UploadAttachmentsTest : CoroutinesTest {
             val attachmentIds = listOf("1", "2")
             val message = Message()
             val attachmentMock1 = mockk<Attachment>(relaxed = true) {
-                every { isFileExisting } returns true
-                every { filePath } returns "filePath1"
                 every { attachmentId } returns "1"
+                every { filePath } returns "filePath1"
                 every { isUploaded } returns false
+                every { isFileExisting } returns true
             }
             val attachmentMock2 = mockk<Attachment>(relaxed = true) {
-                every { isFileExisting } returns false
-                every { filePath } returns "filePath2"
                 every { attachmentId } returns "2"
+                every { filePath } returns "filePath2"
                 every { isUploaded } returns false
+                every { isFileExisting } returns false
             }
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
@@ -236,6 +237,40 @@ class UploadAttachmentsTest : CoroutinesTest {
             verify { attachmentsRepository.uploadPublicKey(username, message, crypto) }
         }
     }
+
+    @Test
+    fun uploadAttachmentsDeletesLocalFileAfterSuccessfulUpload() {
+        runBlockingTest {
+            val attachmentIds = listOf("1", "2")
+            val message = Message()
+            val attachmentMock1 = mockk<Attachment>(relaxed = true) {
+                every { attachmentId } returns "1"
+                every { filePath } returns "filePath1"
+                every { isUploaded } returns false
+                every { isFileExisting } returns true
+            }
+            val attachmentMock2 = mockk<Attachment>(relaxed = true) {
+                every { attachmentId } returns "2"
+                every { filePath } returns "filePath2"
+                every { isUploaded } returns false
+                every { isFileExisting } returns true
+            }
+            every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
+            every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
+            every { attachmentsRepository.upload(attachmentMock1, crypto) } answers {
+                AttachmentsRepository.Result.Success
+            }
+            every { attachmentsRepository.upload(attachmentMock2, crypto) } answers {
+                AttachmentsRepository.Result.Failure("failed")
+            }
+
+            uploadAttachments.invoke(attachmentIds, message, crypto)
+
+            verify { attachmentMock1.deleteLocalFile() }
+            verify(exactly = 0) { attachmentMock2.deleteLocalFile() }
+        }
+    }
+
 }
 
 
