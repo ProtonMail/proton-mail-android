@@ -584,7 +584,6 @@ internal class MessageDetailsActivity :
     @Suppress("unused")
     fun onDownloadEmbeddedImagesEvent(event: DownloadEmbeddedImagesEvent) {
         val status = event.status
-        Timber.d("onDownloadEmbeddedImagesEvent, status: $status")
         when (status) {
             Status.SUCCESS -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
@@ -592,6 +591,7 @@ internal class MessageDetailsActivity :
                 viewModel.downloadEmbeddedImagesResult.observe(
                     this,
                     Observer { pair: Pair<String, String> ->
+                        Timber.v("downloadEmbeddedImagesResult pair: $pair")
                         val content = pair.first
                         viewModel.nonBrokenEmail = pair.second
                         messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
@@ -606,7 +606,6 @@ internal class MessageDetailsActivity :
             Status.NO_NETWORK -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.VISIBLE)
                 messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
-                showNoConnSnackExtended()
                 showToast(R.string.load_embedded_images_failed_no_network)
             }
             Status.FAILED -> {
@@ -643,8 +642,8 @@ internal class MessageDetailsActivity :
                     showToast(R.string.downloading)
                 }
             }
-            Status.NO_NETWORK -> showNoConnSnackExtended()
             Status.FAILED -> showToast(R.string.cant_download_attachment)
+            Status.NO_NETWORK,
             Status.UNAUTHORIZED -> {
                 // NOOP, when on enums should be exhaustive
             }
@@ -760,7 +759,6 @@ internal class MessageDetailsActivity :
 
     private inner class MessageObserver : Observer<Message?> {
         override fun onChanged(message: Message?) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true)
             if (message != null) {
                 onMessageFound(message)
                 viewModel.message.removeObserver(this)
@@ -776,12 +774,7 @@ internal class MessageDetailsActivity :
                     viewModel.fetchMessageDetails(true)
                 }
             } else {
-                val hasConnectivity = mNetworkUtil.isConnected()
-                if (hasConnectivity) {
-                    viewModel.fetchMessageDetails(false)
-                } else {
-                    showNoConnSnackExtended()
-                }
+                viewModel.fetchMessageDetails(false)
             }
         }
 

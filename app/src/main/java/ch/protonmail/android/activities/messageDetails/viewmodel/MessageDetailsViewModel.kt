@@ -285,8 +285,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun removeMessageLabels() {
-        val message = message.value
-        message!!.removeLabels(folderIds)
+        val message = requireNotNull(message.value)
+        message.removeLabels(folderIds)
     }
 
     private fun observeDecryption() {

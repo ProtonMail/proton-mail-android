@@ -1165,7 +1165,7 @@ class MailboxActivity :
             } else {
                 hideNoConnSnack()
                 setRefreshing(true)
-                fetchUpdates()
+                fetchUpdates(false)
             }
         } else {
             Timber.d("DoH ongoing, not showing UI")
@@ -1537,11 +1537,16 @@ class MailboxActivity :
     override fun onRefresh() {
         if (!spinner_layout.isRefreshing) {
             setRefreshing(true)
-            fetchUpdates()
+            fetchUpdates(true)
         }
     }
 
-    private fun fetchUpdates() {
+    /**
+     * Request messages reload.
+     *
+     * @param isRefreshMessagesRequired flag set to true refreshes all the messages and deletes mesage content in the DB
+     */
+    private fun fetchUpdates(isRefreshMessagesRequired: Boolean = false) {
         syncUUID = UUID.randomUUID().toString()
         reloadMessageCounts()
         mJobManager.addJobInBackground(
@@ -1550,13 +1555,13 @@ class MailboxActivity :
                 mailboxLabelId,
                 true,
                 syncUUID,
-                true
+                isRefreshMessagesRequired
             )
         )
     }
 
     /* END SwipeRefreshLayout.OnRefreshListener */
-    private val syncingHandler = Handler()
+    private val syncingHandler = Handler(Looper.getMainLooper())
     private fun syncingDone() {
         layout_sync.visibility = View.GONE
     }
