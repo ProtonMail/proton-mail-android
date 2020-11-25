@@ -44,12 +44,16 @@ class InboxTests : BaseTest() {
     private val loginRobot = LoginRobot()
     private lateinit var subject: String
     private lateinit var body: String
+    private lateinit var pgpEncryptedBody: String
+    private lateinit var pgpSignedBody: String
 
     @Before
     override fun setUp() {
         super.setUp()
         subject = TestData.messageSubject
         body = TestData.messageBody
+        pgpEncryptedBody = TestData.pgpEncryptedText
+        pgpSignedBody = TestData.pgpSignedText
         inboxRobot = loginRobot.loginUser(onePassUser)
     }
 
@@ -106,6 +110,30 @@ class InboxTests : BaseTest() {
             .switchToAccount(onePassUser.email)
             .inbox()
             .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1304")
+    @Test
+    fun receiveExternalPGPEncryptedMessage() {
+        val from = externalGmailPGPEncrypted
+        val to = onePassUser
+        Mail.gmail.from(from).to(to).withSubject(subject).withBody(pgpEncryptedBody).send()
+        inboxRobot
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { pgpEncryptedMessageDecrypted() }
+    }
+
+    @TestId("1302")
+    @Test
+    fun receiveExternalPGPSignedMessage() {
+        val from = externalOutlookPGPSigned
+        val to = onePassUser
+        Mail.outlook.from(from).to(to).withSubject(subject).withBody(pgpSignedBody).send()
+        inboxRobot
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { pgpSignedMessageDecrypted() }
     }
 
     @TestId("1307")

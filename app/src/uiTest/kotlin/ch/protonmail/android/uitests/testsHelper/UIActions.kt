@@ -60,6 +60,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactEmail
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactEmailInManageAddressesView
@@ -82,6 +85,7 @@ import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
+import org.junit.Assert
 
 fun ViewInteraction.click(): ViewInteraction =
     this.perform(ViewActions.click())
@@ -98,6 +102,7 @@ fun ViewInteraction.swipeViewDown(): ViewInteraction =
 object UIActions {
 
     private val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     val allOf = AllOf()
 
@@ -391,6 +396,10 @@ object UIActions {
 
         fun forViewWithText(text: String): ViewInteraction =
             waitUntilViewAppears(onView(withText(text)))
+
+        fun forViewWithTextByUiAutomator(text: String) {
+            Assert.assertTrue(device.wait(Until.hasObject(By.text(text)), 5000))
+        }
 
         fun forViewWithId(@IdRes id: Int, timeout: Long = 10_000L): ViewInteraction =
             waitUntilViewAppears(onView(withId(id)), timeout)

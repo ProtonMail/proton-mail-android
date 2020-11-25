@@ -95,7 +95,7 @@ class SendNewMessageTests : BaseTest() {
     @Category(SmokeTest::class)
     @Test
     fun sendExternalMessageToPGPSignedContact() {
-        val to = externalGmailPGPEncrypted.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()

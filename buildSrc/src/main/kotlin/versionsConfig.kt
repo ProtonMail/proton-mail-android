@@ -36,7 +36,7 @@ fun initVersions() {
     `appcompat version` =                       "1.2.0"         // Released: Aug 19, 2020
     `android-arch version` =                    "2.1.0"         // Released: Sep 06, 2019
     `constraint-layout version` =               "2.0.0-rc1"     // Released: Jul 30, 2020
-    `espresso version` =                        "3.2.0"         // Released: May 30, 2019
+    `espresso version` =                        "3.4.0-alpha02" // Released: Oct 20, 2020
     `hilt-android version` =                    "2.29.1-alpha"  // Released: Sep 10, 2020
     `hilt-androidx version` =                   "1.0.0-alpha02" // Released: Jul 26, 2020
     `ktx version` =                             "1.2.0-rc01"    // Released: Nov 23, 2019
@@ -46,7 +46,7 @@ fun initVersions() {
     `android-room version` =                    "2.2.1"         // Released: Oct 23, 2019
     `android-work version` =                    "2.4.0"         // Released: Aug 19, 2020
 
-    `android-test version` =                    "1.3.0-rc03"    // Released: Aug 05, 2020
+    `android-test version` =                    "1.3.1-alpha02" // Released: Oct 20, 2020
     // endregion
 
     // region Others
