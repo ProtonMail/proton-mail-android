@@ -29,6 +29,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verifySequence
+import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Rule
@@ -69,6 +70,26 @@ class UploadAttachmentsTest : CoroutinesTest {
                 attachmentsRepository.upload(attachment1, crypto)
                 attachmentsRepository.upload(attachment2, crypto)
             }
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsReturnsFailureIfAnyAttachmentFailsToBeUploaded() {
+        runBlockingTest {
+            val attachment1 = Attachment(attachmentId = "1", filePath = "filePath1", isUploaded = false)
+            val attachment2 = Attachment(attachmentId = "2", filePath = "filePath2", isUploaded = false)
+            val attachmentIds = listOf("1", "2")
+            val message = Message()
+            every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
+            every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
+            every { attachmentsRepository.upload(attachment2, crypto) } answers {
+                AttachmentsRepository.Result.Failure("Failed to upload attachment2")
+            }
+
+            val result = uploadAttachments.invoke(attachmentIds, message, crypto)
+
+            val expected = UploadAttachments.Result.Failure("Failed to upload attachment2")
+            assertEquals(expected, result)
         }
     }
 }

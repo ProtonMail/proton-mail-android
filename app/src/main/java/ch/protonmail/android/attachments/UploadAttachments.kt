@@ -22,9 +22,9 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.crypto.AddressCrypto
+import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.io.File
-import java.io.IOException
 import javax.inject.Inject
 
 class UploadAttachments @Inject constructor(
@@ -32,29 +32,30 @@ class UploadAttachments @Inject constructor(
     private val attachmentsRepository: AttachmentsRepository,
     val messageDetailsRepository: MessageDetailsRepository) {
 
-    suspend operator fun invoke(attachmentIds: List<String>, message: Message?, crypto: AddressCrypto) {
-        val attachmentTempFiles: MutableList<File> = ArrayList()
+    suspend operator fun invoke(attachmentIds: List<String>, message: Message?, crypto: AddressCrypto) =
+        withContext(dispatcherProvider.Io) {
+            val attachmentTempFiles: MutableList<File> = ArrayList()
 
-        for (attachmentId in attachmentIds) {
-            val attachment: Attachment = messageDetailsRepository.findAttachmentById(attachmentId)
-                ?: continue
-            if (attachment.filePath == null) {
-                continue
-            }
-            if (attachment.isUploaded) {
-                continue
-            }
-            val file = File(attachment.filePath)
+            for (attachmentId in attachmentIds) {
+                val attachment: Attachment = messageDetailsRepository.findAttachmentById(attachmentId)
+                    ?: continue
+                if (attachment.filePath == null) {
+                    continue
+                }
+                if (attachment.isUploaded) {
+                    continue
+                }
+                val file = File(attachment.filePath)
 //            if (!file.exists()) {
 //                continue
 //            }
-            attachmentTempFiles.add(file)
-            attachment.setMessage(message)
-            val result = attachmentsRepository.upload(attachment, crypto)
-            if (result is AttachmentsRepository.Result.Failure) {
-                throw IOException(result.error)
+                attachmentTempFiles.add(file)
+                attachment.setMessage(message)
+                val result = attachmentsRepository.upload(attachment, crypto)
+                if (result is AttachmentsRepository.Result.Failure) {
+                    return@withContext Result.Failure(result.error)
+                }
             }
-        }
 //        // upload public key
 //        // upload public key
 //        if (mailSettings.getAttachPublicKey()) {
@@ -67,5 +68,10 @@ class UploadAttachments @Inject constructor(
 //            }
 //        }
 
+            return@withContext Result.Failure("TODO")
+        }
+
+    sealed class Result {
+        data class Failure(val error: String) : Result()
     }
 }
