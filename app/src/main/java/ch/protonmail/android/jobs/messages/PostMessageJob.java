@@ -30,8 +30,8 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -71,6 +71,7 @@ import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingF
 import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.attachments.AttachmentsRepository;
 import ch.protonmail.android.attachments.OpenPgpArmorer;
+import ch.protonmail.android.attachments.UploadAttachments;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
@@ -88,6 +89,9 @@ import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.ServerTime;
 import io.sentry.Sentry;
 import io.sentry.event.EventBuilder;
+import kotlinx.coroutines.CoroutineDispatcher;
+import kotlinx.coroutines.Dispatchers;
+import me.proton.core.util.kotlin.DispatcherProvider;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -237,28 +241,6 @@ public class PostMessageJob extends ProtonMailBaseJob {
         getMessageDetailsRepository().saveMessageInDB(message);
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
-        try {
-            uploadAttachments(message, crypto, mailSettings);
-            fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
-        } catch (Exception e) {
-            Timber.e("Failed uploading attachments for message " + message + "\n Exception --> " + e);
-            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
-            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, "Failed uploading attachments", getUserManager().getUser());
-            return;
-        }
-
-        onRunPostMessage(pendingActionsDatabase, message, crypto);
-    }
-
-    /**
-     * upload all attachments, if one of the attachments fails to upload, then the message will not be sent
-     * @param message Message
-     * @param crypto AddressCrypto
-     * @return
-     * @throws Exception
-     */
-    private void uploadAttachments(Message message, AddressCrypto crypto, MailSettings mailSettings) throws Exception {
-        List<File> attachmentTempFiles = new ArrayList<>();
         // This needs to be created here as it's not serializable and injecting it would cause
         // the job to crash. Move to injection when migrating this job to a Worker
         AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
@@ -267,39 +249,46 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 getMessageDetailsRepository(),
                 getUserManager()
         );
-        for (String attachmentId : mNewAttachments) {
-            Attachment attachment = getMessageDetailsRepository().findAttachmentById(attachmentId);
-            if (attachment == null) {
-                continue;
-            }
-            if (attachment.getFilePath() == null) {
-                continue;
-            }
-            if (attachment.isUploaded()) {
-                continue;
-            }
-            final File file = new File(attachment.getFilePath());
-            if (!file.exists()) {
-                continue;
-            }
-            attachmentTempFiles.add(file);
-            attachment.setMessage(message);
+        UploadAttachments uploadAttachments = new UploadAttachments(
+                new DispatcherProvider() {
 
-            AttachmentsRepository.Result result = attachmentsRepository.upload(attachment, crypto);
-            if (result instanceof AttachmentsRepository.Result.Failure) {
-                throw new IOException(((AttachmentsRepository.Result.Failure) result).getError());
-            }
-        }
-        // upload public key
-        if (mailSettings.getAttachPublicKey()) {
-            attachmentsRepository.uploadPublicKey(mUsername, message, crypto);
+                    @Override
+                    public @NotNull CoroutineDispatcher getMain() {
+                        return Dispatchers.getMain();
+                    }
+
+                    @Override
+                    public @NotNull CoroutineDispatcher getIo() {
+                        return Dispatchers.getIO();
+                    }
+
+                    @Override
+                    public @NotNull CoroutineDispatcher getComp() {
+                        return Dispatchers.getDefault();
+                    }
+                },
+                attachmentsRepository,
+                getMessageDetailsRepository(),
+                getUserManager()
+        );
+
+
+        UploadAttachments.Result result = uploadAttachments.legacyJavaInvoke(mNewAttachments, message, crypto);
+        if (result instanceof UploadAttachments.Result.Failure) {
+            UploadAttachments.Result.Failure failureResult = (UploadAttachments.Result.Failure) result;
+            Timber.e("Failed uploading attachments for message " + message + "\n Exception --> " + failureResult.getError());
+            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
+            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, "Failed uploading attachments", getUserManager().getUser());
+            return;
         }
 
-        for (File file : attachmentTempFiles) {
-            if (file.exists()) {
-                file.delete();
-            }
+        try {
+            fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
+        } catch (Exception e) {
+            Timber.e("SendMessage: Failed fetching missing send preferences " + e);
         }
+
+        onRunPostMessage(pendingActionsDatabase, message, crypto);
     }
 
     private void onRunPostMessage(PendingActionsDatabase pendingActionsDatabase, @NonNull Message message,

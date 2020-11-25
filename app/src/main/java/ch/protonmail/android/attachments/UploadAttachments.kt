@@ -22,6 +22,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -31,6 +32,12 @@ class UploadAttachments @Inject constructor(
     private val attachmentsRepository: AttachmentsRepository,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager) {
+
+
+    fun legacyJavaInvoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
+        runBlocking {
+            return@runBlocking invoke(attachmentIds, message, crypto)
+        }
 
     suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
         withContext(dispatcherProvider.Io) {
