@@ -19,7 +19,6 @@
 package ch.protonmail.android.attachments
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.crypto.AddressCrypto
 import kotlinx.coroutines.withContext
@@ -37,7 +36,7 @@ class UploadAttachments @Inject constructor(
             val attachmentTempFiles: MutableList<File> = ArrayList()
 
             for (attachmentId in attachmentIds) {
-                val attachment: Attachment = messageDetailsRepository.findAttachmentById(attachmentId)
+                val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
                     ?: continue
                 if (attachment.filePath == null) {
                     continue

@@ -28,6 +28,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import io.mockk.verifySequence
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
@@ -90,6 +91,57 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val expected = UploadAttachments.Result.Failure("Failed to upload attachment2")
             assertEquals(expected, result)
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsSkipsUploadingIfAttachmentIsNotFoundInMessageRepository() {
+        runBlockingTest {
+            val attachment1 = Attachment(attachmentId = "1", filePath = "filePath1", isUploaded = false)
+            val attachment2 = Attachment(attachmentId = "2", filePath = "filePath2", isUploaded = false)
+            val attachmentIds = listOf("1", "2")
+            val message = Message()
+            every { messageDetailsRepository.findAttachmentById("1") } returns null
+            every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
+
+            uploadAttachments.invoke(attachmentIds, message, crypto)
+
+            verify(exactly = 0) { attachmentsRepository.upload(attachment1, crypto) }
+            verify { attachmentsRepository.upload(attachment2, crypto) }
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsSkipsUploadingIfAttachmentFilePathIsNull() {
+        runBlockingTest {
+            val attachment1 = Attachment(attachmentId = "1", filePath = null, isUploaded = false)
+            val attachment2 = Attachment(attachmentId = "2", filePath = "filePath2", isUploaded = false)
+            val attachmentIds = listOf("1", "2")
+            val message = Message()
+            every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
+            every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
+
+            uploadAttachments.invoke(attachmentIds, message, crypto)
+
+            verify(exactly = 0) { attachmentsRepository.upload(attachment1, crypto) }
+            verify { attachmentsRepository.upload(attachment2, crypto) }
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsSkipsUploadingIfAttachmentWasAlreadyUploaded() {
+        runBlockingTest {
+            val attachment1 = Attachment(attachmentId = "1", filePath = "filePath1", isUploaded = false)
+            val attachment2 = Attachment(attachmentId = "2", filePath = "filePath2", isUploaded = true)
+            val attachmentIds = listOf("1", "2")
+            val message = Message()
+            every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
+            every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
+
+            uploadAttachments.invoke(attachmentIds, message, crypto)
+
+            verify { attachmentsRepository.upload(attachment1, crypto) }
+            verify(exactly = 0) { attachmentsRepository.upload(attachment2, crypto) }
         }
     }
 }
