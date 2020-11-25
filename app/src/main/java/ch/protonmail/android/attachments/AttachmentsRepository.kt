@@ -104,10 +104,10 @@ class AttachmentsRepository @Inject constructor(
                 attachment.signature = response.attachment.signature
                 attachment.isUploaded = true
                 messageDetailsRepository.saveAttachment(attachment)
-                return Result.Success
+                return@withContext Result.Success
             }
 
-            return Result.Failure(response.error)
+            return@withContext Result.Failure(response.error)
         }
 
     private fun contentIdFormatted(headers: AttachmentHeaders): String {

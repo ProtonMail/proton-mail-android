@@ -174,6 +174,10 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun uploadAttachmentBlocking(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentBlocking(attachment, keyPackage, dataPackage, signature)
 
+    override suspend fun uploadAttachmentInline(attachment: Attachment, messageID: String, contentID: String, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, messageID, contentID, keyPackage, dataPackage, signature)
+
+    override suspend fun uploadAttachment(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
+
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
     override fun revokeAccessBlocking(username: String): ResponseBody = api.revokeAccessBlocking(username)

@@ -54,4 +54,20 @@ interface AttachmentApiSpec {
     ): AttachmentUploadResponse
 
     fun getAttachmentUrl(attachmentId: String): String
+
+    suspend fun uploadAttachment(
+        attachment: Attachment,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse
+
+    suspend fun uploadAttachmentInline(
+        attachment: Attachment,
+        messageID: String,
+        contentID: String,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse
 }

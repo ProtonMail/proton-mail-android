@@ -268,29 +268,31 @@ public class PostMessageJob extends ProtonMailBaseJob {
      */
     @NotNull
     private UploadAttachments buildUploadAttachmentsUseCase() {
+        DispatcherProvider dispatchers = new DispatcherProvider() {
+            @Override
+            public @NotNull CoroutineDispatcher getMain() {
+                return Dispatchers.getMain();
+            }
+
+            @Override
+            public @NotNull CoroutineDispatcher getIo() {
+                return Dispatchers.getIO();
+            }
+
+            @Override
+            public @NotNull CoroutineDispatcher getComp() {
+                return Dispatchers.getDefault();
+            }
+        };
         AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
+                dispatchers,
                 getApi(),
                 new OpenPgpArmorer(),
                 getMessageDetailsRepository(),
                 getUserManager()
         );
         return new UploadAttachments(
-                new DispatcherProvider() {
-                    @Override
-                    public @NotNull CoroutineDispatcher getMain() {
-                        return Dispatchers.getMain();
-                    }
-
-                    @Override
-                    public @NotNull CoroutineDispatcher getIo() {
-                        return Dispatchers.getIO();
-                    }
-
-                    @Override
-                    public @NotNull CoroutineDispatcher getComp() {
-                        return Dispatchers.getDefault();
-                    }
-                },
+                dispatchers,
                 attachmentsRepository,
                 getMessageDetailsRepository(),
                 getUserManager()

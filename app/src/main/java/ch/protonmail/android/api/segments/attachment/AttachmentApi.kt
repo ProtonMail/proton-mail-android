@@ -81,6 +81,39 @@ class AttachmentApi (private val basicService : AttachmentService,
             ).execute())
     }
 
+    override suspend fun uploadAttachmentInline(
+        attachment: Attachment,
+        messageID: String,
+        contentID: String,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse {
+        val filename = attachment.fileName!!
+        val mimeType = attachment.mimeType!!
+        return ParseUtils.parse(uploadService.uploadAttachment(filename, messageID, contentID, mimeType, keyPackage, dataPackage, signature).execute())
+    }
+
+    override suspend fun uploadAttachment(
+        attachment: Attachment,
+        keyPackage: RequestBody,
+        dataPackage: RequestBody,
+        signature: RequestBody
+    ): AttachmentUploadResponse {
+        val filename = attachment.fileName!!
+        val mimeType = attachment.mimeType!!
+        val messageId = attachment.messageId
+        return ParseUtils.parse(
+            uploadService.uploadAttachment(
+                filename,
+                messageId,
+                mimeType,
+                keyPackage,
+                dataPackage,
+                signature
+            ).execute())
+    }
+
     override fun getAttachmentUrl(attachmentId: String): String {
         // return Constants.ENDPOINT_URI + "/attachments/" + attachmentId
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
