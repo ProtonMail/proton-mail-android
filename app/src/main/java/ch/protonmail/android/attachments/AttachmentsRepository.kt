@@ -78,24 +78,31 @@ class AttachmentsRepository @Inject constructor(
             val dataPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.dataPacket)
             val signature = RequestBody.create(octetStreamMimeType, signedFileContent)
 
-            val response = if (isAttachmentInline(headers)) {
-                requireNotNull(headers)
+            val uploadResult = kotlin.runCatching {
+                if (isAttachmentInline(headers)) {
+                    requireNotNull(headers)
 
-                apiManager.uploadAttachmentInline(
-                    attachment,
-                    attachment.messageId,
-                    contentIdFormatted(headers),
-                    keyPackage,
-                    dataPackage,
-                    signature
-                )
-            } else {
-                apiManager.uploadAttachment(
-                    attachment,
-                    keyPackage,
-                    dataPackage,
-                    signature
-                )
+                    apiManager.uploadAttachmentInline(
+                        attachment,
+                        attachment.messageId,
+                        contentIdFormatted(headers),
+                        keyPackage,
+                        dataPackage,
+                        signature
+                    )
+                } else {
+                    apiManager.uploadAttachment(
+                        attachment,
+                        keyPackage,
+                        dataPackage,
+                        signature
+                    )
+                }
+            }
+
+            val response = uploadResult.getOrNull()
+            if (uploadResult.isFailure || response == null) {
+                return@withContext Result.Failure("Upload attachemt request failed")
             }
 
             if (response.code == Constants.RESPONSE_CODE_OK) {

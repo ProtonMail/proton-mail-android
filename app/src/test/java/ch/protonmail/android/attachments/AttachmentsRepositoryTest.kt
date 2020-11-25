@@ -52,6 +52,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.TimeoutException
 import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
@@ -235,6 +236,13 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val apiSignature = "apiSignature"
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
             val attachment = mockk<Attachment>(relaxed = true)
+            val successResponse = mockk<AttachmentUploadResponse>(relaxed = true) {
+                every { code } returns Constants.RESPONSE_CODE_OK
+                every { attachmentID } returns apiAttachmentId
+                every { this@mockk.attachment.keyPackets } returns apiKeyPackets
+                every { this@mockk.attachment.signature } returns apiSignature
+            }
+            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
 
             val result = repository.upload(attachment, crypto)
@@ -312,6 +320,23 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
             assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
             assertEquals(AttachmentsRepository.Result.Success, result)
+        }
+    }
+
+    @Test
+    fun uploadReturnsFailureWhenApiCallFailsBecauseOfTimeout() {
+        runBlockingTest {
+            val errorMessage = "Upload attachemt request failed"
+            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val attachment = mockk<Attachment>(relaxed = true)
+            every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws TimeoutException("Call timed out")
+
+            val result = repository.upload(attachment, crypto)
+
+            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+            val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
+            assertEquals(expectedResult, result)
         }
     }
 
