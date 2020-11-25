@@ -754,7 +754,7 @@ class UserManager @Inject constructor(
 
         if (organization != null) {
             planName = organization.planName
-            paidUser = user.isPaidUser && organization.planName.isNotEmpty()
+            paidUser = user.isPaidUser && organization.planName.isNullOrEmpty().not()
         }
         if (!paidUser) {
             return maxLabelsAllowed

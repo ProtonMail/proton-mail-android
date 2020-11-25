@@ -722,6 +722,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         this.appInBackground = appInBackground;
     }
 
+    @Nullable
     public Organization getOrganization() {
         return mOrganization;
     }

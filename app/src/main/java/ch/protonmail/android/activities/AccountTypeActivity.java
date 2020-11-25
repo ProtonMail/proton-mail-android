@@ -92,8 +92,9 @@ public class AccountTypeActivity extends BaseActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        final User user = mUserManager.getUser();
+        viewModel = new ViewModelProvider(this).get(AccountTypeViewModel.class);
 
+        final User user = mUserManager.getUser();
         if (user != null) {
             if (!user.isPaidUser()) {
                 setAccountType(0);
@@ -102,7 +103,6 @@ public class AccountTypeActivity extends BaseActivity {
             }
         }
 
-        viewModel = new ViewModelProvider(this).get(AccountTypeViewModel.class);
         viewModel.getFetchPaymentMethodsResult().observe(
                 this,
                 this::onPaymentMethods
