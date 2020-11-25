@@ -38,10 +38,10 @@ class UploadAttachments @Inject constructor(
      * this usecase from Legacy Java Jobs.
      * Use #UploadAttachments.invoke instead
      */
-    @Deprecated("Needed to replace existing logic in legacy java jobs")
-    fun legacyJavaInvoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
+    @Deprecated("Needed to replace existing logic in legacy java jobs", ReplaceWith("invoke()", ""))
+    fun blockingInvoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
         runBlocking {
-            return@runBlocking invoke(attachmentIds, message, crypto)
+            invoke(attachmentIds, message, crypto)
         }
 
     suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
