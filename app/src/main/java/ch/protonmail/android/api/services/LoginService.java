@@ -1087,11 +1087,17 @@ public class LoginService extends ProtonJobIntentService {
 
     private void setAccountMigrationStatus(AddressesResponse addresses, UserInfo userInfo) {
         // check for user account type if it's legacy or migrated and persist the info
-        Keys key = addresses.getAddresses().get(0).getKeys().get(0);
-        if (key.toAddressKey().getSignature() == null && key.toAddressKey().getToken() == null) {
-            userInfo.getUser().setLegacyAccount(true);
-        } else if (key.toAddressKey().getSignature() != null && key.toAddressKey().getToken() != null) {
-            userInfo.getUser().setLegacyAccount(false);
+        List<Address> addressList = addresses.getAddresses();
+        if(!addressList.isEmpty()) {
+            List<Keys> keys = addressList.get(0).getKeys();
+            if (!keys.isEmpty()) {
+                Keys key = keys.get(0);
+                if (key.toAddressKey().getSignature() == null && key.toAddressKey().getToken() == null) {
+                    userInfo.getUser().setLegacyAccount(true);
+                } else if (key.toAddressKey().getSignature() != null && key.toAddressKey().getToken() != null) {
+                    userInfo.getUser().setLegacyAccount(false);
+                }
+            }
         }
     }
 }
