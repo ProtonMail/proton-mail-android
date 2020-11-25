@@ -48,7 +48,7 @@ class UploadAttachments @Inject constructor(
                 }
 
 //                attachmentTempFiles.add(file)
-                attachment.setMessage(message) // TODO test set message!
+                attachment.setMessage(message)
                 val result = attachmentsRepository.upload(attachment, crypto)
                 if (result is AttachmentsRepository.Result.Failure) {
                     return@withContext Result.Failure(result.error)

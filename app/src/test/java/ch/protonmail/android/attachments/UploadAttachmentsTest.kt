@@ -30,6 +30,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import io.mockk.verifySequence
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
@@ -72,14 +73,16 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { isFileExisting } returns true
             }
             val attachmentIds = listOf("1", "2")
-            val message = Message()
+            val message = Message(messageId = "messageId")
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
             uploadAttachments.invoke(attachmentIds, message, crypto)
 
-            verifySequence {
+            verifyOrder {
+                attachment1.setMessage(message)
                 attachmentsRepository.upload(attachment1, crypto)
+                attachment2.setMessage(message)
                 attachmentsRepository.upload(attachment2, crypto)
             }
         }
