@@ -36,7 +36,7 @@ interface AttachmentApiSpec {
     fun downloadAttachment(attachmentId: String): ByteArray
 
     @Throws(IOException::class)
-    fun uploadAttachmentInline(
+    fun uploadAttachmentInlineBlocking(
         attachment: Attachment,
         MessageID: String,
         contentID: String,
@@ -46,7 +46,7 @@ interface AttachmentApiSpec {
     ): AttachmentUploadResponse
 
     @Throws(IOException::class)
-    fun uploadAttachment(
+    fun uploadAttachmentBlocking(
         attachment: Attachment,
         keyPackage: RequestBody,
         dataPackage: RequestBody,

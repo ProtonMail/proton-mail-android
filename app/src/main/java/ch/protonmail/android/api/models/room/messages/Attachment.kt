@@ -216,10 +216,10 @@ data class Attachment @JvmOverloads constructor(
 				if (parts.size > 1) {
 					contentID = parts[1].replace(">", "")
 				}
-				api.uploadAttachmentInline(this, messageId, contentID, keyPackage,
+				api.uploadAttachmentInlineBlocking(this, messageId, contentID, keyPackage,
 					dataPackage, signature)
 			} else {
-				api.uploadAttachment(this, keyPackage, dataPackage, signature)
+				api.uploadAttachmentBlocking(this, keyPackage, dataPackage, signature)
 			}
 
 		if (response.code == Constants.RESPONSE_CODE_OK) {

@@ -52,16 +52,16 @@ class AttachmentApi (private val basicService : AttachmentService,
     }
 
     @Throws(IOException::class)
-    override fun uploadAttachmentInline(attachment: Attachment, MessageID: String,
-                               contentID: String,
-                               KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse {
+    override fun uploadAttachmentInlineBlocking(attachment: Attachment, MessageID: String,
+                                                contentID: String,
+                                                KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse {
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
         return ParseUtils.parse(uploadService.uploadAttachment(filename, MessageID, contentID, mimeType, KeyPackage, DataPackage, Signature).execute())
     }
 
     @Throws(IOException::class)
-    override fun uploadAttachment(
+    override fun uploadAttachmentBlocking(
         attachment: Attachment,
         keyPackage: RequestBody,
         dataPackage: RequestBody,
