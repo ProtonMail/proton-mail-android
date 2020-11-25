@@ -27,23 +27,26 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import javax.inject.Inject
 
 class AttachmentsRepository @Inject constructor(
+    val dispatchers: DispatcherProvider,
     private val apiManager: ProtonMailApiManager,
     private val armorer: Armorer,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager
 ) {
 
-    fun upload(attachment: Attachment, crypto: AddressCrypto): Result {
+    suspend fun upload(attachment: Attachment, crypto: AddressCrypto): Result {
         val fileContent = attachment.getFileContent()
         return uploadAttachment(attachment, crypto, fileContent)
     }
 
-    fun uploadPublicKey(username: String, message: Message, crypto: AddressCrypto): Result {
+    suspend fun uploadPublicKey(username: String, message: Message, crypto: AddressCrypto): Result {
         val address = userManager.getUser(username).getAddressById(message.addressID).toNewAddress()
         val primaryKey = address.keys.primaryKey
         requireNotNull(primaryKey)
@@ -60,51 +63,52 @@ class AttachmentsRepository @Inject constructor(
         return uploadAttachment(attachment, crypto, publicKey.toByteArray())
     }
 
-    private fun uploadAttachment(attachment: Attachment, crypto: AddressCrypto, fileContent: ByteArray): Result {
-        val headers = attachment.headers
-        val mimeType = requireNotNull(attachment.mimeType)
-        val filename = requireNotNull(attachment.fileName)
+    private suspend fun uploadAttachment(attachment: Attachment, crypto: AddressCrypto, fileContent: ByteArray) =
+        withContext(dispatchers.Io) {
+            val headers = attachment.headers
+            val mimeType = requireNotNull(attachment.mimeType)
+            val filename = requireNotNull(attachment.fileName)
 
-        val encryptedAttachment = crypto.encrypt(fileContent, filename)
-        val signedFileContent = armorer.unarmor(crypto.sign(fileContent))
+            val encryptedAttachment = crypto.encrypt(fileContent, filename)
+            val signedFileContent = armorer.unarmor(crypto.sign(fileContent))
 
-        val attachmentMimeType = MediaType.parse(mimeType)
-        val octetStreamMimeType = MediaType.parse("application/octet-stream")
-        val keyPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.keyPacket)
-        val dataPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.dataPacket)
-        val signature = RequestBody.create(octetStreamMimeType, signedFileContent)
+            val attachmentMimeType = MediaType.parse(mimeType)
+            val octetStreamMimeType = MediaType.parse("application/octet-stream")
+            val keyPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.keyPacket)
+            val dataPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.dataPacket)
+            val signature = RequestBody.create(octetStreamMimeType, signedFileContent)
 
-        val response = if (isAttachmentInline(headers)) {
-            requireNotNull(headers)
+            val response = if (isAttachmentInline(headers)) {
+                requireNotNull(headers)
 
-            apiManager.uploadAttachmentInline(
-                attachment,
-                attachment.messageId,
-                contentIdFormatted(headers),
-                keyPackage,
-                dataPackage,
-                signature
-            )
-        } else {
-            apiManager.uploadAttachment(
-                attachment,
-                keyPackage,
-                dataPackage,
-                signature
-            )
+                apiManager.uploadAttachmentInline(
+                    attachment,
+                    attachment.messageId,
+                    contentIdFormatted(headers),
+                    keyPackage,
+                    dataPackage,
+                    signature
+                )
+            } else {
+                apiManager.uploadAttachment(
+                    attachment,
+                    keyPackage,
+                    dataPackage,
+                    signature
+                )
+            }
+
+            if (response.code == Constants.RESPONSE_CODE_OK) {
+                attachment.attachmentId = response.attachmentID
+                attachment.keyPackets = response.attachment.keyPackets
+                attachment.signature = response.attachment.signature
+                attachment.isUploaded = true
+                messageDetailsRepository.saveAttachment(attachment)
+                return Result.Success
+            }
+
+            return Result.Failure(response.error)
         }
-
-        if (response.code == Constants.RESPONSE_CODE_OK) {
-            attachment.attachmentId = response.attachmentID
-            attachment.keyPackets = response.attachment.keyPackets
-            attachment.signature = response.attachment.signature
-            attachment.isUploaded = true
-            messageDetailsRepository.saveAttachment(attachment)
-            return Result.Success
-        }
-
-        return Result.Failure(response.error)
-    }
 
     private fun contentIdFormatted(headers: AttachmentHeaders): String {
         val contentId = headers.contentId
