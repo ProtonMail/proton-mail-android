@@ -241,17 +241,41 @@ public class PostMessageJob extends ProtonMailBaseJob {
         getMessageDetailsRepository().saveMessageInDB(message);
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
-        // This needs to be created here as it's not serializable and injecting it would cause
-        // the job to crash. Move to injection when migrating this job to a Worker
+        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase();
+        UploadAttachments.Result result = uploadAttachments.legacyJavaInvoke(mNewAttachments, message, crypto);
+
+        if (result instanceof UploadAttachments.Result.Failure) {
+            UploadAttachments.Result.Failure failureResult = (UploadAttachments.Result.Failure) result;
+            Timber.e("Failed uploading attachments for message " + message + "\n Exception --> " + failureResult.getError());
+            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
+            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, "Failed uploading attachments", getUserManager().getUser());
+            return;
+        }
+
+        try {
+            fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
+        } catch (Exception e) {
+            Timber.e("SendMessage: Failed fetching missing send preferences " + e);
+        }
+
+        onRunPostMessage(pendingActionsDatabase, message, crypto);
+    }
+
+    /**
+     * The UploadAttachments use case needs to be created manually only as it's not serializable
+     * and injecting it would cause the job to crash.
+     * TODO Drop this and just inject the use case when migrating this Job to a worker
+     */
+    @NotNull
+    private UploadAttachments buildUploadAttachmentsUseCase() {
         AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
                 getApi(),
                 new OpenPgpArmorer(),
                 getMessageDetailsRepository(),
                 getUserManager()
         );
-        UploadAttachments uploadAttachments = new UploadAttachments(
+        return new UploadAttachments(
                 new DispatcherProvider() {
-
                     @Override
                     public @NotNull CoroutineDispatcher getMain() {
                         return Dispatchers.getMain();
@@ -271,24 +295,6 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 getMessageDetailsRepository(),
                 getUserManager()
         );
-
-
-        UploadAttachments.Result result = uploadAttachments.legacyJavaInvoke(mNewAttachments, message, crypto);
-        if (result instanceof UploadAttachments.Result.Failure) {
-            UploadAttachments.Result.Failure failureResult = (UploadAttachments.Result.Failure) result;
-            Timber.e("Failed uploading attachments for message " + message + "\n Exception --> " + failureResult.getError());
-            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
-            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, "Failed uploading attachments", getUserManager().getUser());
-            return;
-        }
-
-        try {
-            fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
-        } catch (Exception e) {
-            Timber.e("SendMessage: Failed fetching missing send preferences " + e);
-        }
-
-        onRunPostMessage(pendingActionsDatabase, message, crypto);
     }
 
     private void onRunPostMessage(PendingActionsDatabase pendingActionsDatabase, @NonNull Message message,

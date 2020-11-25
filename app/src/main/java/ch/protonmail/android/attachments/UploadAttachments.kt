@@ -33,7 +33,12 @@ class UploadAttachments @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager) {
 
-
+    /**
+     * This is only needed to replace existing upload attachments logic with the usage of
+     * this usecase from Legacy Java Jobs.
+     * Use #UploadAttachments.invoke instead
+     */
+    @Deprecated("Needed to replace existing logic in legacy java jobs")
     fun legacyJavaInvoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
         runBlocking {
             return@runBlocking invoke(attachmentIds, message, crypto)
