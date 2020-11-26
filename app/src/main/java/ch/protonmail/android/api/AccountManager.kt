@@ -114,24 +114,6 @@ class AccountManager(
             sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()) + userIds.map { it.s }
     }
 
-    @Deprecated(
-        "Use 'setLoggedOut' with User Id",
-        ReplaceWith("setLoggedOut(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun onSuccessfulLogout(username: String) {
-        unsupported
-    }
-
-    @Deprecated(
-        "Use 'remove' with User Id",
-        ReplaceWith("remove(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun removeFromSaved(username: String) {
-        unsupported
-    }
-
     /**
      * @return all the logged in users
      */
