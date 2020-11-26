@@ -33,8 +33,7 @@ stages:
   except:
     - schedules
   tags:
-    - android
-    - large
+    - medium
   script:
     - ./gradlew multiModuleDetekt
   artifacts:
@@ -260,8 +259,7 @@ release-publish-github:
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-commit-shared
   tags:
-    - android
-    - large
+    - medium
 
 release-publish-github-tags:
   needs:
@@ -274,8 +272,7 @@ release-publish-github-tags:
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-tags-shared
   tags:
-    - android
-    - large
+    - medium
   
 publish-github:
   stage: bot-release
@@ -288,8 +285,7 @@ publish-github:
       RELEASE_GITHUB_BRANCH: 'release'
   extends: .release-make-release
   tags:
-    - android
-    - large
+    - medium
 
 check for fixups:
   stage: analyze
