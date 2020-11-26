@@ -143,12 +143,6 @@ public class UserSettings {
 
     @Deprecated
     @kotlin.Deprecated(message = "This is not needed, was used only for save")
-    public String getUsername() {
-        throw new UnsupportedOperationException("This is not needed, was used only for save");
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = "This is not needed, was used only for save")
     public void setUsername(String username) {
         throw new UnsupportedOperationException("This is not needed, was used only for save");
     }

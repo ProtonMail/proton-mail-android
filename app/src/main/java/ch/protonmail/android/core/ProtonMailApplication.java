@@ -592,7 +592,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     AlarmReceiver alarmReceiver = new AlarmReceiver();
                     alarmReceiver.cancelAlarm(this);
                     startJobManager();
-                    mUserManager.removeEmptyUserReferences();
                     TokenManager.Companion.removeEmptyTokenManagers();
                     List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
                     String currentPrimary = mUserManager.getUsername();

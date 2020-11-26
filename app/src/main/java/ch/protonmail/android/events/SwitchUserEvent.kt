@@ -16,14 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+
 package ch.protonmail.android.events
 
-@Deprecated(
-    "Use 'SwitchUserEvent' with User Ids",
-    ReplaceWith("SwitchUserEvent", "ch.protonmail.android.events.SwitchUserEvent"),
-    DeprecationLevel.ERROR
-)
-data class ForceSwitchedAccountEvent(
-    val toAccount: String,
-    val fromAccount: String
-)
+import ch.protonmail.android.domain.entity.Id
+
+data class SwitchUserEvent(val from: Id, val to: Id)

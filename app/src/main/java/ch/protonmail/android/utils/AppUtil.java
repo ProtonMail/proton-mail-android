@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -66,6 +66,7 @@ import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.storage.AttachmentClearingService;
 import ch.protonmail.android.storage.MessageBodyClearingService;
+import timber.log.Timber;
 
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_FORCE_UPGRADE;
 import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_INVALID_APP_CODE;
@@ -173,7 +174,7 @@ public class AppUtil {
                         CountersDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         AttachmentMetadataDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         PendingActionsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        clearDoneListener, true, username, clearContacts);
+                        clearDoneListener, clearContacts);
             } else {
                 clearStorage(ContactsDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         MessagesDatabaseFactory.Companion.getInstance(context).getDatabase(),
@@ -182,10 +183,12 @@ public class AppUtil {
                         CountersDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         AttachmentMetadataDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         PendingActionsDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        clearDoneListener, false, null, clearContacts);
+                        clearDoneListener, clearContacts);
             }
         } catch (Exception e) {
-            Logger.doLogException(e);
+            Timber.e(e);
+            if (clearDoneListener != null)
+                clearDoneListener.onDatabaseClearingCompleted();
         }
     }
 
@@ -297,29 +300,31 @@ public class AppUtil {
         }.execute();
     }
 
-    public static void clearStorage(final ContactsDatabase contactsDatabase,
-                                    final MessagesDatabase messagesDatabase,
-                                    final MessagesDatabase searchDatabase,
-                                    final NotificationsDatabase notificationsDatabase,
-                                    final CountersDatabase countersDatabase,
-                                    final AttachmentMetadataDatabase attachmentMetadataDatabase,
-                                    final PendingActionsDatabase pendingActionsDatabase,
-                                    final boolean clearContacts) {
+    public static void clearStorage(
+            final ContactsDatabase contactsDatabase,
+            final MessagesDatabase messagesDatabase,
+            final MessagesDatabase searchDatabase,
+            final NotificationsDatabase notificationsDatabase,
+            final CountersDatabase countersDatabase,
+            final AttachmentMetadataDatabase attachmentMetadataDatabase,
+            final PendingActionsDatabase pendingActionsDatabase,
+            final boolean clearContacts
+    ) {
         clearStorage(contactsDatabase, messagesDatabase, searchDatabase, notificationsDatabase, countersDatabase,
-                attachmentMetadataDatabase, pendingActionsDatabase, null, false, null, clearContacts);
+                attachmentMetadataDatabase, pendingActionsDatabase, null, clearContacts);
     }
 
-    private static void clearStorage(final ContactsDatabase contactsDatabase,
-                                     final MessagesDatabase messagesDatabase,
-                                     final MessagesDatabase searchDatabase,
-                                     final NotificationsDatabase notificationsDatabase,
-                                     final CountersDatabase countersDatabase,
-                                     final AttachmentMetadataDatabase attachmentMetadataDatabase,
-                                     final PendingActionsDatabase pendingActionsDatabase,
-                                     final IDBClearDone clearDone,
-                                     final boolean deleteTables,
-                                     final String username,
-                                     final boolean clearContacts) {
+    private static void clearStorage(
+            final ContactsDatabase contactsDatabase,
+            final MessagesDatabase messagesDatabase,
+            final MessagesDatabase searchDatabase,
+            final NotificationsDatabase notificationsDatabase,
+            final CountersDatabase countersDatabase,
+            final AttachmentMetadataDatabase attachmentMetadataDatabase,
+            final PendingActionsDatabase pendingActionsDatabase,
+            final IDBClearDone clearDone,
+            final boolean clearContacts
+    ) {
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -351,12 +356,7 @@ public class AppUtil {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                // TODO: test this in future and uncomment
-//                if (deleteTables) {
-//                    AttachmentClearingService.startClearUpImmediatelyServiceAndDeleteTables(username);
-//                } else {
                 AttachmentClearingService.startClearUpImmediatelyService();
-//                }
                 if (clearDone != null) {
                     clearDone.onDatabaseClearingCompleted();
                 }
@@ -389,16 +389,26 @@ public class AppUtil {
     /**
      * Deletes user's Secure Shared Preferences and preserves some important values.
      */
-    public static void deleteSecurePrefs(@NonNull String username, boolean deletePin) {
-        SharedPreferences secureSharedPrefs = ProtonMailApplication.getApplication().getSecureSharedPreferences(username);
+    public static void deleteSecurePrefs(
+            @NonNull SharedPreferences userPreferences,
+            boolean deletePin
+    ) {
+        String mailboxPinBackup = userPreferences.getString(PREF_PIN, null);
+        SharedPreferences.Editor editor = userPreferences.edit()
+                .clear();
         if (!deletePin) {
-            String mailboxPin = secureSharedPrefs.getString(PREF_PIN, null);
-            secureSharedPrefs.edit().clear().apply();
-            secureSharedPrefs.edit().putString(PREF_PIN, mailboxPin).apply();
-        } else {
-            secureSharedPrefs.edit().clear().apply();
-
+            editor.putString(PREF_PIN, mailboxPinBackup);
         }
+        editor.apply();
+    }
+
+    /**
+     * Deletes user's Secure Shared Preferences and preserves some important values.
+     */
+    @Deprecated
+    @kotlin.Deprecated(message = "Use with SharedPreferences directly")
+    public static void deleteSecurePrefs(@NonNull String username, boolean deletePin) {
+        throw new UnsupportedOperationException("Use with SharedPreferences directly");
     }
 
     // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
