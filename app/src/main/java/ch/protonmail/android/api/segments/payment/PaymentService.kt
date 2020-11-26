@@ -41,15 +41,11 @@ interface PaymentService {
 
     @GET("payments/subscription")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchSubscriptionBlocking(): Call<GetSubscriptionResponse>
-
-    @GET("payments/subscription")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun fetchSubscription(): GetSubscriptionResponse
 
     @GET("payments/methods")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchPaymentMethods(): Call<PaymentMethodsResponse>
+    suspend fun fetchPaymentMethods(): PaymentMethodsResponse
 
     @GET("payments/status")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

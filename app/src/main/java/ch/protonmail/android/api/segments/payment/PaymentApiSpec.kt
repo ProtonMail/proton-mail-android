@@ -43,8 +43,7 @@ interface PaymentApiSpec {
 
     suspend fun fetchSubscription(): GetSubscriptionResponse
 
-    @Throws(IOException::class)
-    fun fetchPaymentMethods(): PaymentMethodsResponse
+    suspend fun fetchPaymentMethods(): PaymentMethodsResponse
 
     suspend fun fetchPaymentsStatus(): PaymentsStatusResponse
 

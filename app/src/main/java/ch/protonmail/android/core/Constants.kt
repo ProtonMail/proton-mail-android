@@ -290,7 +290,7 @@ object Constants {
         PROFESSIONAL("professional");
 
         companion object {
-            fun fromString(planTypeValue: String): PlanType {
+            fun fromString(planTypeValue: String?): PlanType {
                 return values().find {
                     planTypeValue == it.planTypeValue
                 } ?: FREE

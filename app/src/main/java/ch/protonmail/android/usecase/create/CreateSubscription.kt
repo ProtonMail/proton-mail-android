@@ -24,7 +24,6 @@ import ch.protonmail.android.api.models.CreateSubscriptionBody
 import ch.protonmail.android.api.models.TokenPaymentBody
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult
 import ch.protonmail.android.utils.extensions.filterValues
@@ -101,7 +100,6 @@ class CreateSubscription @Inject constructor(
             }
 
             jobManager.addJobInBackground(FetchUserSettingsJob())
-            jobManager.addJobInBackground(GetPaymentMethodsJob())
         }
             .fold(
                 onSuccess = { CreateSubscriptionResult.Success },

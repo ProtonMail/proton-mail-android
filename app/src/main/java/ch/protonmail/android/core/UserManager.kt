@@ -438,7 +438,6 @@ class UserManager @Inject constructor(
         AppUtil.deleteDatabases(context, username, clearDoneListener)
         setUsernameAndReload(nextLoggedInAccount)
         app.eventManager.clearState(username)
-        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -456,7 +455,6 @@ class UserManager @Inject constructor(
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
         AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
-        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -465,7 +463,6 @@ class UserManager @Inject constructor(
         if (username.isEmpty()) {
             return
         }
-        app.clearPaymentMethods()
         val nextLoggedInAccount = nextLoggedInAccountOtherThanCurrent
         val accountManager = AccountManager.getInstance(context)
         if (!accountManager.getLoggedInUsers().contains(username)) {
@@ -757,7 +754,7 @@ class UserManager @Inject constructor(
 
         if (organization != null) {
             planName = organization.planName
-            paidUser = user.isPaidUser && organization.planName.isNotEmpty()
+            paidUser = user.isPaidUser && organization.planName.isNullOrEmpty().not()
         }
         if (!paidUser) {
             return maxLabelsAllowed

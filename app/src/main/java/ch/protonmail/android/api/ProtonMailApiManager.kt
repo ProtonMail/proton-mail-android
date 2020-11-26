@@ -317,7 +317,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 
-    override fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
+    override suspend fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
 
     override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
 

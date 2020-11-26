@@ -73,7 +73,6 @@ import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.Organization;
-import ch.protonmail.android.api.models.PaymentMethod;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
@@ -101,7 +100,6 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
-import ch.protonmail.android.events.payment.GetPaymentMethodsEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.FcmUtil;
 import ch.protonmail.android.jobs.FetchLabelsJob;
@@ -167,7 +165,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private WeakReference<Activity> mCurrentActivity;
     private boolean mUpdateOccurred;
     private AllCurrencyPlans mAllCurrencyPlans;
-    private List<PaymentMethod> mPaymentMethods;
     private Organization mOrganization;
     private List<String> mAvailableDomains;
     private String mCurrentLocale;
@@ -323,13 +320,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void onOrganizationEvent(OrganizationEvent event) {
         if (event.getStatus() == Status.SUCCESS) {
             mOrganization = event.getResponse().getOrganization();
-        }
-    }
-
-    @Subscribe
-    public void onPaymentMethods(GetPaymentMethodsEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            mPaymentMethods = event.getMethods();
         }
     }
 
@@ -732,14 +722,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         this.appInBackground = appInBackground;
     }
 
-    public List<PaymentMethod> getPaymentMethods() {
-        return mPaymentMethods;
-    }
-
-    public void clearPaymentMethods() {
-        mPaymentMethods = null;
-    }
-
+    @Nullable
     public Organization getOrganization() {
         return mOrganization;
     }

@@ -33,7 +33,9 @@ import ch.protonmail.android.api.models.PaymentType
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.create.CreateSubscription
+import ch.protonmail.android.usecase.fetch.FetchPaymentMethods
 import ch.protonmail.android.usecase.model.CreateSubscriptionResult
+import ch.protonmail.android.usecase.model.FetchPaymentMethodsResult
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
@@ -44,12 +46,14 @@ import timber.log.Timber
 
 class BillingViewModel @ViewModelInject constructor(
     private val protonMailApiManager: ProtonMailApiManager,
-    private val createSubscription: CreateSubscription
+    private val createSubscription: CreateSubscription,
+    private val fetchPaymentMethods: FetchPaymentMethods
 ) : ViewModel() {
 
     private val _createPaymentToken = MutableLiveData<CreatePaymentTokenResponse>()
     private val _createPaymentTokenFromPaymentMethodId = MutableLiveData<CreatePaymentTokenResponse>()
     private val _createSubscriptionData = MutableLiveData<CreateSubscriptionResult>()
+    private val fetchPaymentMethodsData = MutableLiveData<FetchPaymentMethodsResult>()
 
     private val gson = Gson()
     private val responseBodyType = object : TypeToken<ResponseBody>() {}.type
@@ -57,6 +61,9 @@ class BillingViewModel @ViewModelInject constructor(
     private lateinit var lastCreatePaymentTokenBody: CreatePaymentTokenBody
     val createSubscriptionResult: LiveData<CreateSubscriptionResult>
         get() = _createSubscriptionData
+
+    val fetchPaymentMethodsResult: LiveData<FetchPaymentMethodsResult>
+        get() = fetchPaymentMethodsData
 
     @JvmOverloads
     fun createPaymentToken(
@@ -155,6 +162,13 @@ class BillingViewModel @ViewModelInject constructor(
             )
             Timber.v("Create subscription result $result")
             _createSubscriptionData.value = result
+        }
+    }
+
+    fun fetchPaymentMethodTypes() {
+        viewModelScope.launch {
+            val result = fetchPaymentMethods()
+            fetchPaymentMethodsData.value = result
         }
     }
 }
