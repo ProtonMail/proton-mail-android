@@ -33,7 +33,7 @@ stages:
   except:
     - schedules
   tags:
-    - android
+    - medium
   script:
     - ./gradlew multiModuleDetekt
   artifacts:
@@ -50,6 +50,10 @@ detekt analysis release:
 
 detekt analysis:
   extends: .detekt-analysis-common
+  only:
+    refs:
+      - merge_requests
+      - branches
   except:
     - release
     - prerelease
@@ -58,9 +62,16 @@ detekt analysis:
 
 build debug:
   stage: build
+  needs:
+    - job: detekt analysis
+  only:
+    - merge_requests
+    - branches
   tags:
     - android
+    - large
   script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - ./gradlew assembleBetaDebug
     - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
   artifacts:
@@ -77,6 +88,7 @@ build prerelease:
     - tags
   tags:
     - android
+    - large
   script:
     - ./gradlew assemblePlaystoreReleasePlayStore
   artifacts:
@@ -92,6 +104,7 @@ build release:
     - releases
   tags:
     - android
+    - large
   script:
     - ./gradlew assemblePlaystoreReleasePlayStore
   artifacts:
@@ -102,19 +115,35 @@ build release:
 
 unit tests:
   stage: test
+  needs:
+    - job: build debug
+  only:
+    - merge_requests
+    - branches
   except:
     - schedules
   tags:
     - android
+    - large
   script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - ./gradlew -Pci --console=plain allTest
 
 
 firebase tests:
   stage: test
+  needs:
+    - job: build debug
+  only:
+    - merge_requests
+    - branches
   except:
     - schedules
+  tags:
+    - android
+    - large
   script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
@@ -138,6 +167,9 @@ firebase regression tests:
   stage: test
   rules:
     - if: '$TEST_TYPE == "regression"'
+  tags:
+    - android
+    - large
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
@@ -163,6 +195,9 @@ firebase feature tests:
   stage: test
   rules:
     - if: '$TEST_TYPE == "feature"'
+  tags:
+    - android
+    - large
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
@@ -223,6 +258,8 @@ release-publish-github:
     RELEASE_SYNC_TO_BRANCH: 'release'
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-commit-shared
+  tags:
+    - medium
 
 release-publish-github-tags:
   needs:
@@ -234,6 +271,8 @@ release-publish-github-tags:
     RELEASE_SYNC_TO_BRANCH: 'release'
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-tags-shared
+  tags:
+    - medium
   
 publish-github:
   stage: bot-release
@@ -245,3 +284,14 @@ publish-github:
       RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
       RELEASE_GITHUB_BRANCH: 'release'
   extends: .release-make-release
+  tags:
+    - medium
+
+check for fixups:
+  stage: analyze
+  only:
+    - merge_requests
+  script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - git fetch origin "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - git log --pretty=%s "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" | awk '$0 ~ /^fixup/ {find = 1}; END { exit find }'
