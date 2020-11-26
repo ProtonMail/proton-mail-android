@@ -174,7 +174,7 @@ public class User {
 
     @NonNull
     @Deprecated
-    @kotlin.Deprecated(message = "Use usecase/LoadOldUser")
+    @kotlin.Deprecated(message = "Use usecase/LoadLegacyUser")
     public static User load(Id userId, Context context) {
         final SharedPreferences securePrefs =
                 SecureSharedPreferences.Companion.getPrefsForUser(context, userId);

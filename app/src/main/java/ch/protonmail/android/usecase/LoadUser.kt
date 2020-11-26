@@ -29,13 +29,13 @@ import javax.inject.Inject
 
 class LoadUser @Inject constructor(
     @Suppress("DEPRECATION")
-    private val loadOldUser: LoadOldUser,
+    private val loadLegacyUser: LoadLegacyUser,
     private val mapper: UserBridgeMapper,
     private val dispatchers: DispatcherProvider
 ) {
 
     suspend operator fun invoke(userId: Id): User = withContext(dispatchers.Io) {
-        val oldUser = loadOldUser(userId)
-        mapper { oldUser.toNewUser() }
+        val legacyUser = loadLegacyUser(userId)
+        mapper { legacyUser.toNewUser() }
     }
 }

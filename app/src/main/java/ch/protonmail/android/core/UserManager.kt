@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.core
 
+// TODO import as `OldUser`
+// TODO import as `User`
 import android.content.Context
 import android.content.SharedPreferences
 import android.text.TextUtils
@@ -48,7 +50,7 @@ import ch.protonmail.android.events.SwitchUserEvent
 import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
-import ch.protonmail.android.usecase.LoadOldUser
+import ch.protonmail.android.usecase.LoadLegacyUser
 import ch.protonmail.android.usecase.LoadUser
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
@@ -107,7 +109,7 @@ class UserManager @Inject constructor(
     private val context: Context,
     private val accountManager: AccountManager,
     private val loadUser: LoadUser,
-    private val loadOldUser: LoadOldUser,
+    private val loadLegacyUser: LoadLegacyUser,
     private val userMapper: UserBridgeMapper,
     @DefaultSharedPreferences private val prefs: SharedPreferences,
     @BackupSharedPreferences private val backupPrefs: SharedPreferences,
@@ -121,7 +123,7 @@ class UserManager @Inject constructor(
     private val cachedUsers = mutableMapOf<Id, NewUser>()
 
     // TODO caching strategy should be in the repository
-    private val cachedOldUsers = mutableMapOf<Id, User>()
+    private val cachedLegacyUsers = mutableMapOf<Id, User>()
 
     private var _checkTimestamp: Float = 0.toFloat()
     private var _mailboxPassword: String? = null
@@ -271,23 +273,23 @@ class UserManager @Inject constructor(
             currentUserLoginState = status
         }
 
-    suspend fun getCurrentOldUser(): User? =
-        currentUserId?.let { getOldUser(it) }
+    suspend fun getCurrentLegacyUser(): User? =
+        currentUserId?.let { getLegacyUser(it) }
 
     @Deprecated(
         "Should not be used, necessary only for old and Java classes",
-        ReplaceWith("getCurrentOldUser()")
+        ReplaceWith("getCurrentLegacyUser()")
     )
-    fun getCurrentOldUserBlocking(): User? =
-        runBlocking { getCurrentOldUser() }
+    fun getCurrentLegacyUserBlocking(): User? =
+        runBlocking { getCurrentLegacyUser() }
 
     /**
      * Use this method to get settings for currently active User.
      */
-    @get:Deprecated("Use ''getCurrentOldUser'", ReplaceWith("getCurrentOldUser()"))
+    @get:Deprecated("Use ''getCurrentLegacyUser'", ReplaceWith("getCurrentLegacyUser()"))
     @set:Deprecated("Use 'setCurrentUser' with User Id", ReplaceWith("setCurrentUser(userId)"))
     var user: User
-        @Synchronized get() = requireNotNull(getCurrentOldUserBlocking())
+        @Synchronized get() = requireNotNull(getCurrentLegacyUserBlocking())
         set(user) {
             setCurrentUserBlocking(Id(user.id))
         }
@@ -326,7 +328,7 @@ class UserManager @Inject constructor(
 
     suspend fun isCurrentUserBackgroundSyncEnabled(): Boolean {
         val userId = requireNotNull(currentUserId)
-        return getOldUser(userId).isBackgroundSync
+        return getLegacyUser(userId).isBackgroundSync
     }
 
     @Deprecated("Use 'currentUser' variant", ReplaceWith("isCurrentUserBackgroundSyncEnabled()"))
@@ -377,7 +379,7 @@ class UserManager @Inject constructor(
 
     private suspend fun resetReferences() = withContext(dispatchers.Io) {
         _checkTimestamp = 0f
-        currentUserId?.let { cachedOldUsers -= it }
+        currentUserId?.let { cachedLegacyUsers -= it }
         _mailboxPassword = null
 //        mMailboxPin = null
         app.eventManager.clearState()
@@ -492,7 +494,7 @@ class UserManager @Inject constructor(
 
     suspend fun switchTo(userId: Id) {
         setCurrentUser(userId)
-        user = loadOldUser(userId)
+        user = loadLegacyUser(userId)
         loadSettings(userId)
     }
 
@@ -609,7 +611,7 @@ class UserManager @Inject constructor(
     }
 
     private suspend fun saveCurrentUserBackupSettings() = withContext(dispatchers.Io) {
-        getCurrentOldUser()?.apply{
+        getCurrentLegacyUser()?.apply{
             saveNotificationSettingsBackup()
             saveAutoLogoutBackup()
             saveAutoLockPINPeriodBackup()
@@ -817,9 +819,9 @@ class UserManager @Inject constructor(
      * Note, returned [User] might have empty values if user was not saved before
      */
     @Synchronized
-    suspend fun getOldUser(userId: Id): User =
-        cachedOldUsers.getOrPut(userId) {
-            loadOldUser(userId)
+    suspend fun getLegacyUser(userId: Id): User =
+        cachedLegacyUsers.getOrPut(userId) {
+            loadLegacyUser(userId)
                 // Also save to cachedUsers
                 .also { cachedUsers[userId] = userMapper { it.toNewModel() } }
         }
@@ -830,7 +832,7 @@ class UserManager @Inject constructor(
      * @return [User] object for given username, might have empty values if user was not saved before
      */
     @Synchronized
-    @Deprecated("Get by user Id", ReplaceWith("getOldUser(userId)"), DeprecationLevel.ERROR)
+    @Deprecated("Get by user Id", ReplaceWith("getLegacyUser(userId)"), DeprecationLevel.ERROR)
     fun getUser(username: String): User {
         unsupported
     }
@@ -956,10 +958,6 @@ class UserManager @Inject constructor(
     @Deprecated("Use with User Id", ReplaceWith("loadSettings(userId)"), DeprecationLevel.ERROR)
     private fun loadSettings(username: String) {
         unsupported
-    }
-
-    fun removeEmptyUserReferences() {
-        userReferences.remove("")
     }
 
     fun didReachLabelsThreshold(numberOfLabels: Int): Boolean = getMaxLabelsAllowed() < numberOfLabels

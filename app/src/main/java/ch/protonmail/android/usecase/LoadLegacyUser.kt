@@ -27,7 +27,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 @Deprecated("Use new User entity", ReplaceWith("LoadUser"))
-class LoadOldUser @Inject constructor(
+class LoadLegacyUser @Inject constructor(
     private val context: Context,
     private val dispatchers: DispatcherProvider
 ) {

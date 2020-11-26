@@ -52,9 +52,9 @@ import me.proton.core.util.kotlin.invoke
 import org.junit.Ignore
 import kotlin.test.Test
 import assert4k.invoke as fix
-import ch.protonmail.android.api.models.Keys as OldKeys
-import ch.protonmail.android.api.models.User as OldUser
-import ch.protonmail.android.api.models.address.Address as OldAddress
+import ch.protonmail.android.api.models.Keys as LegacyKeys
+import ch.protonmail.android.api.models.User as LegacyUser
+import ch.protonmail.android.api.models.address.Address as LegacyAddress
 
 /**
  * Test suite for [UserBridgeMapper]
@@ -62,15 +62,15 @@ import ch.protonmail.android.api.models.address.Address as OldAddress
 internal class UserBridgeMapperTest {
 
     private val mapper = UserBridgeMapper(
-        mockk { every { any<Collection<OldAddress>>().toNewModel() } returns Addresses(emptyMap()) },
-        mockk { every { any<Collection<OldKeys>>().toNewModel() } returns UserKeys.Empty }
+        mockk { every { any<Collection<LegacyAddress>>().toNewModel() } returns Addresses(emptyMap()) },
+        mockk { every { any<Collection<LegacyKeys>>().toNewModel() } returns UserKeys.Empty }
     )
 
     @Test
     fun `transform from api`() {
 
         // GIVEN
-        val oldUser = mockk<OldUser>(relaxed = true) {
+        val legacyUser = mockk<LegacyUser>(relaxed = true) {
             every { id } returns "id"
             every { name } returns "name"
             every { services } returns 4
@@ -87,7 +87,7 @@ internal class UserBridgeMapperTest {
         }
 
         // WHEN
-        val newUser = mapper { oldUser.toNewModel() }
+        val newUser = mapper { legacyUser.toNewModel() }
 
         // THEN
         assert that newUser * {
@@ -148,13 +148,13 @@ internal class UserBridgeMapperTest {
         every { SystemClock.elapsedRealtime() } returns 0
 
         // GIVEN
-        val oldUser = OldUser.load("username")
+        val oldUser = LegacyUser.load("username")
 
         // WHEN
-        val newUser = mapper { oldUser.toNewModel() }
+        val legacyUser = mapper { oldUser.toNewModel() }
 
         // THEN
-        assert that newUser * {
+        assert that legacyUser * {
             +id.s equals "id"
             +name.s equals "username"
             +(plans * {
