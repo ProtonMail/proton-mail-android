@@ -46,8 +46,8 @@ class AttachmentsRepository @Inject constructor(
         return uploadAttachment(attachment, crypto, fileContent)
     }
 
-    suspend fun uploadPublicKey(username: String, message: Message, crypto: AddressCrypto): Result {
-        val address = userManager.getUser(username).getAddressById(message.addressID).toNewAddress()
+    suspend fun uploadPublicKey(message: Message, crypto: AddressCrypto): Result {
+        val address = userManager.getUser(userManager.username).getAddressById(message.addressID).toNewAddress()
         val primaryKey = address.keys.primaryKey
         requireNotNull(primaryKey)
 

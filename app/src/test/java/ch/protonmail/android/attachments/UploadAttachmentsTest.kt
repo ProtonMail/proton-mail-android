@@ -132,6 +132,25 @@ class UploadAttachmentsTest : CoroutinesTest {
     }
 
     @Test
+    fun uploadAttachmentsReturnsFailureIfPublicKeyFailsToBeUploaded() {
+        runBlockingTest {
+            val attachmentIds = listOf("1")
+            val message = Message()
+            val username = "username"
+            every { userManager.username } returns username
+            every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
+            coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
+                AttachmentsRepository.Result.Failure("Failed to upload public key")
+            }
+
+            val result = uploadAttachments(attachmentIds, message, crypto)
+
+            val expected = UploadAttachments.Result.Failure("Failed to upload public key")
+            assertEquals(expected, result)
+        }
+    }
+
+    @Test
     fun uploadAttachmentsSkipsUploadingIfAttachmentIsNotFoundInMessageRepository() {
         runBlockingTest {
             val attachment2 = mockk<Attachment>(relaxed = true) {
@@ -233,16 +252,19 @@ class UploadAttachmentsTest : CoroutinesTest {
     }
 
     @Test
-    fun uploadAttachmentsCallRepositoryUploadPublicLeyWhenMailSettingsGetAttachPublicKeyIsTrue() {
+    fun uploadAttachmentsCallRepositoryUploadPublicKeyWhenMailSettingsGetAttachPublicKeyIsTrue() {
         runBlockingTest {
             val username = "username"
             val message = Message()
             every { userManager.username } returns username
             every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
+            coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
+                AttachmentsRepository.Result.Success
+            }
 
             uploadAttachments(emptyList(), message, crypto)
 
-            coVerify { attachmentsRepository.uploadPublicKey(username, message, crypto) }
+            coVerify { attachmentsRepository.uploadPublicKey(message, crypto) }
         }
     }
 

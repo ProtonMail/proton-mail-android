@@ -62,10 +62,13 @@ class UploadAttachments @Inject constructor(
                 attachment.deleteLocalFile()
             }
 
-            val username = userManager.username
-            val isAttachPublicKey = userManager.getMailSettings(username)?.getAttachPublicKey() ?: false
+            val isAttachPublicKey = userManager.getMailSettings(userManager.username)?.getAttachPublicKey() ?: false
             if (isAttachPublicKey) {
-                attachmentsRepository.uploadPublicKey(username, message, crypto)
+                val result = attachmentsRepository.uploadPublicKey(message, crypto)
+
+                if (result is AttachmentsRepository.Result.Failure) {
+                    return@withContext Result.Failure(result.error)
+                }
             }
 
             return@withContext Result.Success

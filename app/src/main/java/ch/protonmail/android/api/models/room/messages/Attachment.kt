@@ -158,7 +158,10 @@ data class Attachment @JvmOverloads constructor(
 	@Throws(Exception::class)
 	@Deprecated(
 		"To be deleted to avoid logic on Model",
-		ReplaceWith("Use AttachmentRepository passing the attachment instead")
+		ReplaceWith(
+			"attachmentRepository.upload(attachment, crypto)",
+			imports = arrayOf("ch.protonmail.android.attachments.AttachmentRepository")
+		)
 	)
 	fun uploadAndSave(
 		messageDetailsRepository: MessageDetailsRepository,
@@ -194,10 +197,7 @@ data class Attachment @JvmOverloads constructor(
 		}
 
 	@Throws(Exception::class)
-	@Deprecated(
-		"To be deleted to avoid logic on Model",
-		ReplaceWith("Use AttachmentRepository passing the attachment instead")
-	)
+	@Deprecated("To be deleted once last usages of the public `uploadAndSave` were removed")
 	private fun uploadAndSave(
 		messageDetailsRepository: MessageDetailsRepository,
 		fileContent: ByteArray,

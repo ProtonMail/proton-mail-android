@@ -290,12 +290,13 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { keys.primaryKey?.privateKey } returns privateKey
                 every { email } returns EmailAddress("message@email.com")
             }
+            every { userManager.username } returns username
             every { userManager.getUser(username).getAddressById(message.addressID).toNewAddress() } returns address
             every { crypto.buildArmoredPublicKey(any()) } returns "PublicKeyString"
             every { crypto.getFingerprint("PublicKeyString") } returns "PublicKeyStringFingerprint"
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
 
-            val result = repository.uploadPublicKey(username, message, crypto)
+            val result = repository.uploadPublicKey(message, crypto)
 
             val keyPackageSlot = slot<RequestBody>()
             val dataPackageSlot = slot<RequestBody>()
