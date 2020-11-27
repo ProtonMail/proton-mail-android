@@ -63,7 +63,7 @@ class AddressCrypto(
         get() = addressKeys.primaryKey
 
     override val passphrase: ByteArray?
-        get() = passphraseFor(addressKeys.keys.first())
+        get() = passphraseFor(requirePrimaryKey())
 
     protected override fun passphraseFor(key: AddressKey): ByteArray? {
         // This is for smart-cast support

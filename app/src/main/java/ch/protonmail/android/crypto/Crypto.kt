@@ -98,13 +98,13 @@ abstract class Crypto<K>(
 
     fun sign(data: ByteArray): String = openPgp.signBinDetached(
         data,
-        currentKeys.first().privateKey.string,
+        requirePrimaryKey().privateKey.string,
         passphrase
     )
 
     fun sign(data: String): String = openPgp.signTextDetached(
         data,
-        currentKeys.first().privateKey.string,
+        requirePrimaryKey().privateKey.string,
         passphrase
     )
 
@@ -112,10 +112,9 @@ abstract class Crypto<K>(
      * Encrypt for Message or Contact
      */
     fun encrypt(text: String, sign: Boolean): CipherText {
-        val publicKey = buildArmoredPublicKey(currentKeys.first().privateKey)
-        val firstKey = currentKeys.first()
-        val privateKey = firstKey.takeIf { sign }?.privateKey?.string
-        val keyPassphrase = passphraseFor(firstKey)
+        val publicKey = buildArmoredPublicKey(requirePrimaryKey().privateKey)
+        val privateKey = requirePrimaryKey().takeIf { sign }?.privateKey?.string
+        val keyPassphrase = passphraseFor(requirePrimaryKey())
         val armored = openPgp.encryptMessage(
             text,
             publicKey,
