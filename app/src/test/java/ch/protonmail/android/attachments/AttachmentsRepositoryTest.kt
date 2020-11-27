@@ -328,7 +328,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     fun uploadReturnsFailureWhenApiCallFailsBecauseOfTimeout() {
         runBlockingTest {
             val errorMessage = "Upload attachemt request failed"
-            val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
+            val unarmoredSignedFileContent = byteArrayOf()
             val attachment = mockk<Attachment>(relaxed = true)
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
             coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws TimeoutException("Call timed out")

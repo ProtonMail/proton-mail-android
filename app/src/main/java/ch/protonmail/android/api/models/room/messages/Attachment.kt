@@ -186,15 +186,17 @@ data class Attachment @JvmOverloads constructor(
 	}
 
 	fun getFileContent(): ByteArray =
-		if (URLUtil.isDataUrl(filePath)) {
-			Base64.decode(
-				filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
-				Base64.DEFAULT
-			)
-		} else {
-			val file = File(filePath!!)
-			AppUtil.getByteArray(file)
-		}
+		filePath?.let { filePath ->
+			if (URLUtil.isDataUrl(filePath)) {
+				Base64.decode(
+					filePath.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
+					Base64.DEFAULT
+				)
+			} else {
+				val file = File(filePath)
+				AppUtil.getByteArray(file)
+			}
+		} ?: byteArrayOf()
 
 	@Throws(Exception::class)
 	@Deprecated("To be deleted once last usages of the public `uploadAndSave` were removed")
