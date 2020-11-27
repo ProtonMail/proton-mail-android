@@ -75,6 +75,10 @@ abstract class Crypto<K>(
     protected val userKeys
         get() = user.keys
 
+    protected abstract val currentKeys: Collection<K>
+
+    protected abstract val primaryKey: K?
+
     protected val mailboxPassword get() = userManager.getMailboxPassword(username.s)
 
     /**
@@ -82,7 +86,12 @@ abstract class Crypto<K>(
      */
     protected abstract val passphrase: ByteArray?
 
-    protected abstract val currentKeys: Collection<K>
+    /**
+     * @return Non null [K]
+     * @throws IllegalStateException if [primaryKey] is actually `null`
+     */
+    protected fun requirePrimaryKey(): K =
+        checkNotNull(primaryKey) { "No primary key found" }
 
     protected abstract fun passphraseFor(key: K): ByteArray?
 

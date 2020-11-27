@@ -59,6 +59,9 @@ class AddressCrypto(
     override val currentKeys: Collection<AddressKey>
         get() = addressKeys.keys
 
+    override val primaryKey: AddressKey?
+        get() = addressKeys.primaryKey
+
     override val passphrase: ByteArray?
         get() = passphraseFor(addressKeys.keys.first())
 
