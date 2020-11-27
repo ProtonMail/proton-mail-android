@@ -89,7 +89,9 @@ class MailSettings : Serializable {
      * @return 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
      */
     @SerializedName(FIELD_SHOW_IMAGES)
-    var showImages: Int = 0 // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
+    // TODO this field should be changed to 'ShowImagesFrom' enum, once using Kotlinx serialization
+    @Deprecated("Use 'showImagesFrom' field", ReplaceWith("showImagesFrom"))
+    var showImages: Int = 0
     @SerializedName(FIELD_SHOW_MOVED)
     private val showMoved: Int = 0
     @SerializedName(FIELD_SWIPE_RIGHT)
@@ -125,6 +127,14 @@ class MailSettings : Serializable {
     @Deprecated("We should not rely on username. No replacement", level = DeprecationLevel.ERROR)
     var username: String? = null
 
+    @Suppress("DEPRECATION")
+    var showImagesFrom: ShowImageFrom
+        get() = ShowImageFrom.fromFlag(showImages)
+        set(value) {
+            showImages = value.flag
+        }
+
+
     var leftSwipeAction: Int
         get() = if (swipeLeft in 0..4) swipeLeft else 0
         set(swipeAction) {
@@ -159,7 +169,7 @@ class MailSettings : Serializable {
             putString(PREF_THEME, theme)
             putInt(PREF_AUTO_SAVE_CONTACTS, autoSaveContacts)
             putInt(PREF_AUTO_WILDCARD_SEARCH, autoWildcardSearch)
-            putInt(PREF_SHOW_IMAGES, showImages)
+            putInt(PREF_SHOW_IMAGES, showImagesFrom.flag)
             putInt(PREF_SHOW_MOVED, showMoved)
             putInt(PREF_SWIPE_RIGHT, swipeRight)
             putInt(PREF_SWIPE_LEFT, swipeLeft)
@@ -192,6 +202,43 @@ class MailSettings : Serializable {
         unsupported
     }
 
+    @Suppress("TooManyFunctions") // It would be nice to have them as extension functions, but sadly this code
+    //                                          is  also used form Java, so it would make the code even uglier than the
+    //                                          usual  Java code
+    enum class ShowImageFrom(val flag: Int) {
+        None(0),
+        Remote(1),
+        Embedded(2),
+        All(3);
+
+        fun includesRemote() =
+            this == Remote || this == All
+
+        fun includesEmbedded() =
+            this == Embedded || this == All
+
+        fun toggleRemote() =
+            when (this) {
+                None -> Remote
+                Remote -> None
+                Embedded -> All
+                All -> Embedded
+            }
+
+        fun toggleEmbedded() =
+            when (this) {
+                None -> Embedded
+                Remote -> All
+                Embedded -> None
+                All -> Remote
+            }
+
+        companion object {
+            fun fromFlag(flag: Int) =
+                values().first { it.flag == flag }
+        }
+    }
+
     companion object {
 
         @Suppress("RedundantSuspendModifier") // Can't inject dispatcher for use `withContext`,
@@ -199,7 +246,7 @@ class MailSettings : Serializable {
         suspend fun load(userPreferences: SharedPreferences): MailSettings {
             return MailSettings().apply {
                 with(userPreferences) {
-                    showImages = getInt(PREF_SHOW_IMAGES, 0)
+                    showImagesFrom = ShowImageFrom.fromFlag(getInt(PREF_SHOW_IMAGES, 0))
                     autoSaveContacts = getInt(PREF_AUTO_SAVE_CONTACTS, 0)
                     leftSwipeAction = getInt(PREF_SWIPE_LEFT, 0)
                     swipeLeft = leftSwipeAction

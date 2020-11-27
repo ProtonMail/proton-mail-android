@@ -256,7 +256,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected boolean isAutoShowRemoteImages() {
         MailSettings mailSettings = mUserManager.getCurrentUserMailSettingsBlocking();
         if (mailSettings != null)
-            return mailSettings.getShowImages() == 1 || mailSettings.getShowImages() == 3;
+            return mailSettings.getShowImagesFrom().includesRemote();
         else
             return false;
     }
@@ -264,7 +264,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected boolean isAutoShowEmbeddedImages() {
         MailSettings mailSettings = mUserManager.getCurrentUserMailSettingsBlocking();
         if (mailSettings != null)
-            return mailSettings.getShowImages() == 2 || mailSettings.getShowImages() == 3;
+            return mailSettings.getShowImagesFrom().includesEmbedded();
         else
             return false;
     }

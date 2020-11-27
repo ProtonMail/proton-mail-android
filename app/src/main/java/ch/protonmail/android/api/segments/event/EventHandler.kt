@@ -282,7 +282,7 @@ class EventHandler @AssistedInject constructor(
             mailSettings = MailSettings()
         }
         mailSettings.username = username
-        mailSettings.showImages = mSettings.showImages
+        mailSettings.showImagesFrom = mSettings.showImagesFrom
         mailSettings.autoSaveContacts = mSettings.autoSaveContacts
         mailSettings.sign = mSettings.sign
         mailSettings.pgpScheme = mSettings.pgpScheme

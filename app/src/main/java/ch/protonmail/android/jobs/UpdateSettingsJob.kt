@@ -137,7 +137,7 @@ class UpdateSettingsJob(
                 }
                 if (mailSettings != null) {
                     getUserManager().mailSettings = mailSettings
-                    getApi().updateAutoShowImages(mailSettings.showImages)
+                    getApi().updateAutoShowImages(mailSettings.showImagesFrom.flag)
 
                 }
                 AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.SUCCESS, oldEmail, backPressed, null))

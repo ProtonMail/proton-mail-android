@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -298,20 +298,14 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     }
                 }
 
-                setEnabled(SettingsEnum.SHOW_REMOTE_IMAGES, mailSettings.showImages == 1 || mailSettings.showImages == 3)
+                setEnabled(SettingsEnum.SHOW_REMOTE_IMAGES, mailSettings.showImagesFrom.includesRemote())
                 setToggleListener(SettingsEnum.SHOW_REMOTE_IMAGES) { view: View, isChecked: Boolean ->
-                    if (view.isPressed && isChecked != (mailSettings.showImages == 1 || mailSettings.showImages == 3)) {
+                    if (view.isPressed && isChecked != (mailSettings.showImagesFrom.includesRemote())) {
                         initializedRemote = false
                     }
 
                     if (!initializedRemote) {
-                        if (isChecked && mailSettings.showImages == 0) {
-                            mailSettings.showImages = 1
-                        } else if (isChecked && mailSettings.showImages == 2) {
-                            mailSettings.showImages = 3
-                        } else {
-                            mailSettings.showImages = mailSettings.showImages - 1
-                        }
+                        mailSettings.showImagesFrom = mailSettings.showImagesFrom.toggleRemote()
 
                         mailSettings.save()
                         mUserManager.mailSettings = mailSettings
@@ -320,20 +314,14 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     }
                 }
 
-                setEnabled(SettingsEnum.SHOW_EMBEDDED_IMAGES, mailSettings.showImages == 2 || mailSettings.showImages == 3)
+                setEnabled(SettingsEnum.SHOW_EMBEDDED_IMAGES, mailSettings.showImagesFrom.includesEmbedded())
                 setToggleListener(SettingsEnum.SHOW_EMBEDDED_IMAGES) { view: View, isChecked: Boolean ->
-                    if (view.isPressed && isChecked != (mailSettings.showImages == 2 || mailSettings.showImages == 3)) {
+                    if (view.isPressed && isChecked != (mailSettings.showImagesFrom.includesEmbedded())) {
                         initializedEbedded = false
                     }
 
                     if (!initializedEbedded) {
-                        if (isChecked && mailSettings.showImages == 0) {
-                            mailSettings.showImages = 2
-                        } else if (isChecked && mailSettings.showImages == 1) {
-                            mailSettings.showImages = 3
-                        } else {
-                            mailSettings.showImages = mailSettings.showImages - 2
-                        }
+                        mailSettings.showImagesFrom = mailSettings.showImagesFrom.toggleEmbedded()
 
                         mailSettings.save()
                         mUserManager.mailSettings = mailSettings
