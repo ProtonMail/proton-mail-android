@@ -53,7 +53,6 @@ import javax.mail.Part
 import javax.mail.internet.InternetHeaders
 import javax.mail.internet.MimeBodyPart
 
-// region constants
 const val TABLE_ATTACHMENTS = "attachmentv3"
 const val COLUMN_ATTACHMENT_ID = "attachment_id"
 const val COLUMN_ATTACHMENT_MESSAGE_ID = "message_id"
@@ -69,46 +68,45 @@ const val COLUMN_ATTACHMENT_FILE_PATH = "file_path"
 const val COLUMN_ATTACHMENT_MIME_DATA = "mime_data"
 const val COLUMN_ATTACHMENT_IS_INLINE = "is_inline"
 const val FIELD_ATTACHMENT_HEADERS = "Headers"
-// endregion
 
 @Entity(tableName = TABLE_ATTACHMENTS,
-		indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)])
+	indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)])
 data class Attachment @JvmOverloads constructor(
-		@ColumnInfo(name = COLUMN_ATTACHMENT_ID)
-		var attachmentId: String? = null,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_NAME)
-		var fileName: String? = null,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_TYPE)
-		var mimeType: String? = null,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE)
-		var fileSize: Long = 0,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_KEY_PACKETS)
-		var keyPackets: String? = null,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_MESSAGE_ID)
-		var messageId: String = "",
-		@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADED)
-		var isUploaded: Boolean = false,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADING)
-		var isUploading: Boolean = false,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_SIGNATURE)
-		var signature: String? = null,
-		@SerializedName(FIELD_ATTACHMENT_HEADERS)
-		@ColumnInfo(name = COLUMN_ATTACHMENT_HEADERS)
-		var headers: AttachmentHeaders? = null,
-		@Ignore
-		var isNew: Boolean = true,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_IS_INLINE)
-		var inline: Boolean = false,
-		/**
-		 * filePath used to store attached file path for drafts
-		 * at time to upload it will read file and upload
-		 */
-		@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_PATH)
-		@Expose(serialize = false, deserialize = false)
-		var filePath: String? = null,
-		@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_DATA)
-		@Expose(serialize = false, deserialize = false)
-		var mimeData: ByteArray? = null
+	@ColumnInfo(name = COLUMN_ATTACHMENT_ID)
+	var attachmentId: String? = null,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_NAME)
+	var fileName: String? = null,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_TYPE)
+	var mimeType: String? = null,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE)
+	var fileSize: Long = 0,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_KEY_PACKETS)
+	var keyPackets: String? = null,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_MESSAGE_ID)
+	var messageId: String = "",
+	@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADED)
+	var isUploaded: Boolean = false,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADING)
+	var isUploading: Boolean = false,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_SIGNATURE)
+	var signature: String? = null,
+	@SerializedName(FIELD_ATTACHMENT_HEADERS)
+	@ColumnInfo(name = COLUMN_ATTACHMENT_HEADERS)
+	var headers: AttachmentHeaders? = null,
+	@Ignore
+	var isNew: Boolean = true,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_IS_INLINE)
+	var inline: Boolean = false,
+	/**
+	 * filePath used to store attached file path for drafts
+	 * at time to upload it will read file and upload
+	 */
+	@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_PATH)
+	@Expose(serialize = false, deserialize = false)
+	var filePath: String? = null,
+	@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_DATA)
+	@Expose(serialize = false, deserialize = false)
+	var mimeData: ByteArray? = null
 ) : Serializable {
 	@PrimaryKey(autoGenerate = true)
 	@ColumnInfo(name = BaseColumns._ID)
@@ -117,7 +115,7 @@ data class Attachment @JvmOverloads constructor(
 	val isPGPAttachment: Boolean
 		get() = attachmentId!!.startsWith("PGPAttachment")
 
-	val isFileExisting: Boolean
+	val doesFileExist: Boolean
 		get() = File(filePath).exists()
 
 	/**
@@ -134,12 +132,12 @@ data class Attachment @JvmOverloads constructor(
 	}
 
 	private fun isInline(embeddedImagesArray: List<String>): Boolean {
-        val headers = headers ?: return false
+		val headers = headers ?: return false
 		val contentDisposition = headers.contentDisposition
-        var contentId = headers.contentId
-        if (TextUtils.isEmpty(contentId)) {
-            contentId = headers.contentLocation
-        }
+		var contentId = headers.contentId
+		if (TextUtils.isEmpty(contentId)) {
+			contentId = headers.contentLocation
+		}
 		if (!TextUtils.isEmpty(contentId)) {
 			contentId = contentId.removeSurrounding("<", ">")
 		}
@@ -152,8 +150,8 @@ data class Attachment @JvmOverloads constructor(
 			}
 		}
 
-		return contentDisposition != null && (containsInline || embeddedImagesArray.contains(contentId.removeSurrounding("<",">"))) && embeddedMimeTypes.contains(mimeType)
-    }
+		return contentDisposition != null && (containsInline || embeddedImagesArray.contains(contentId.removeSurrounding("<", ">"))) && embeddedMimeTypes.contains(mimeType)
+	}
 
 	@Throws(Exception::class)
 	@Deprecated(
@@ -180,7 +178,7 @@ data class Attachment @JvmOverloads constructor(
 	}
 
 	fun deleteLocalFile() {
-		if (isFileExisting) {
+		if (doesFileExist) {
 			File(filePath).delete()
 		}
 	}
@@ -218,8 +216,7 @@ data class Attachment @JvmOverloads constructor(
 				if (parts.size > 1) {
 					contentID = parts[1].replace(">", "")
 				}
-				api.uploadAttachmentInlineBlocking(this, messageId, contentID, keyPackage,
-					dataPackage, signature)
+				api.uploadAttachmentInlineBlocking(this, messageId, contentID, keyPackage, dataPackage, signature)
 			} else {
 				api.uploadAttachmentBlocking(this, keyPackage, dataPackage, signature)
 			}
@@ -237,53 +234,6 @@ data class Attachment @JvmOverloads constructor(
 		return attachmentId
 	}
 
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (javaClass != other?.javaClass) return false
-
-		other as Attachment
-
-		if (attachmentId != other.attachmentId) return false
-		if (fileName != other.fileName) return false
-		if (mimeType != other.mimeType) return false
-		if (fileSize != other.fileSize) return false
-		if (keyPackets != other.keyPackets) return false
-		if (messageId != other.messageId) return false
-		if (isUploaded != other.isUploaded) return false
-		if (isUploading != other.isUploading) return false
-		if (signature != other.signature) return false
-		if (headers != other.headers) return false
-		if (isNew != other.isNew) return false
-		if (inline != other.inline) return false
-		if (filePath != other.filePath) return false
-		if (mimeData != null) {
-			if (other.mimeData == null) return false
-			if (!mimeData!!.contentEquals(other.mimeData!!)) return false
-		} else if (other.mimeData != null) return false
-		if (dbId != other.dbId) return false
-
-		return true
-	}
-
-	override fun hashCode(): Int {
-		var result = attachmentId?.hashCode() ?: 0
-		result = 31 * result + (fileName?.hashCode() ?: 0)
-		result = 31 * result + (mimeType?.hashCode() ?: 0)
-		result = 31 * result + fileSize.hashCode()
-		result = 31 * result + (keyPackets?.hashCode() ?: 0)
-		result = 31 * result + messageId.hashCode()
-		result = 31 * result + isUploaded.hashCode()
-		result = 31 * result + isUploading.hashCode()
-		result = 31 * result + (signature?.hashCode() ?: 0)
-		result = 31 * result + (headers?.hashCode() ?: 0)
-		result = 31 * result + isNew.hashCode()
-		result = 31 * result + inline.hashCode()
-		result = 31 * result + (filePath?.hashCode() ?: 0)
-		result = 31 * result + (mimeData?.contentHashCode() ?: 0)
-		result = 31 * result + (dbId?.hashCode() ?: 0)
-		return result
-	}
-
 	companion object {
 		private fun fromLocalAttachment(messagesDatabase: MessagesDatabase,
 										localAttachment: LocalAttachment,
@@ -295,11 +245,11 @@ data class Attachment @JvmOverloads constructor(
 					return savedAttachment
 			}
 			val attachmentId = if (useRandomIds || localAttachment.attachmentId.isEmpty()) {
-                getRandomAttachmentId(index)
-            } else {
-                localAttachment.attachmentId
-            }
-            localAttachment.attachmentId = attachmentId
+				getRandomAttachmentId(index)
+			} else {
+				localAttachment.attachmentId
+			}
+			localAttachment.attachmentId = attachmentId
 
 			val uri = localAttachment.uri
 			val uriString = uri.toString()
@@ -309,20 +259,22 @@ data class Attachment @JvmOverloads constructor(
 				uri.path
 			}
 
-			return Attachment(attachmentId = attachmentId,
-					filePath = filePath,
-					fileName = localAttachment.displayName,
-					fileSize = localAttachment.size,
-					mimeType = localAttachment.mimeType,
-					keyPackets = localAttachment.keyPackets,
-					headers = localAttachment.headers)
+			return Attachment(
+				attachmentId = attachmentId,
+				filePath = filePath,
+				fileName = localAttachment.displayName,
+				fileSize = localAttachment.size,
+				mimeType = localAttachment.mimeType,
+				keyPackets = localAttachment.keyPackets,
+				headers = localAttachment.headers
+			)
 
 		}
 
 		@Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
 		fun fromMimeAttachment(part: Part, message_id: String, count: Int): Attachment {
 			val data = getBytesFromInputStream(part.inputStream)
-			return fromMimeAttachment(part, data, message_id, count);
+			return fromMimeAttachment(part, data, message_id, count)
 		}
 
 		@Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
@@ -335,11 +287,13 @@ data class Attachment @JvmOverloads constructor(
 			val contentLocations = part.getHeader("content-location")
 			val contentLocation = contentLocations?.firstOrNull()
 
-			attachment.headers = (AttachmentHeaders(part.contentType,
-					encoding,
-					listOf(part.disposition),
-					listOf(contentId),
-					contentLocation, ""))
+			attachment.headers = AttachmentHeaders(
+				part.contentType,
+				encoding,
+				listOf(part.disposition),
+				listOf(contentId),
+				contentLocation, ""
+			)
 
 			Formatter().use { format ->
 				val md5 = MessageDigest.getInstance("MD5")
@@ -376,11 +330,13 @@ data class Attachment @JvmOverloads constructor(
 		}
 
 		@JvmOverloads
-		fun createAttachmentList(messagesDatabase: MessagesDatabase,
-								 localAttachmentList: List<LocalAttachment>,
-								 useRandomIds: Boolean = true): List<Attachment> {
+		fun createAttachmentList(
+			messagesDatabase: MessagesDatabase,
+			localAttachmentList: List<LocalAttachment>,
+			useRandomIds: Boolean = true
+		): List<Attachment> {
 			return localAttachmentList.map { localAttachment ->
-				Attachment.fromLocalAttachment(messagesDatabase, localAttachment, localAttachmentList.indexOf(localAttachment).toLong(), useRandomIds)
+				fromLocalAttachment(messagesDatabase, localAttachment, localAttachmentList.indexOf(localAttachment).toLong(), useRandomIds)
 			}
 		}
 

@@ -31,10 +31,12 @@ import ch.protonmail.android.core.ProtonMailApplication
 import okhttp3.RequestBody
 import java.io.IOException
 
-class AttachmentApi (private val basicService : AttachmentService,
-                     private val downloadService: AttachmentDownloadService,
-                     private val requestInterceptor: ProtonMailAttachmentRequestInterceptor,
-                     private val uploadService: AttachmentUploadService) : BaseApi(), AttachmentApiSpec {
+class AttachmentApi(
+    private val basicService: AttachmentService,
+    private val downloadService: AttachmentDownloadService,
+    private val requestInterceptor: ProtonMailAttachmentRequestInterceptor,
+    private val uploadService: AttachmentUploadService
+) : BaseApi(), AttachmentApiSpec {
 
     @Throws(IOException::class)
     override fun deleteAttachment(attachmentId: String): ResponseBody =
@@ -52,9 +54,13 @@ class AttachmentApi (private val basicService : AttachmentService,
     }
 
     @Throws(IOException::class)
-    override fun uploadAttachmentInlineBlocking(attachment: Attachment, MessageID: String,
-                                                contentID: String,
-                                                KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse {
+    override fun uploadAttachmentInlineBlocking(
+        attachment: Attachment, MessageID: String,
+        contentID: String,
+        KeyPackage: RequestBody,
+        DataPackage: RequestBody,
+        Signature: RequestBody
+    ): AttachmentUploadResponse {
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
         return ParseUtils.parse(uploadService.uploadAttachment(filename, MessageID, contentID, mimeType, KeyPackage, DataPackage, Signature).execute())

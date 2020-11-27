@@ -28,10 +28,11 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class UploadAttachments @Inject constructor(
-    private val dispatcherProvider: DispatcherProvider,
+    private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val userManager: UserManager) {
+    private val userManager: UserManager
+) {
 
     /**
      * This is only needed to replace existing upload attachments logic with the usage of
@@ -39,18 +40,18 @@ class UploadAttachments @Inject constructor(
      * Use #UploadAttachments.invoke instead
      */
     @Deprecated("Needed to replace existing logic in legacy java jobs", ReplaceWith("invoke()", ""))
-    fun blockingInvoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
+    fun blocking(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
         runBlocking {
             invoke(attachmentIds, message, crypto)
         }
 
-    suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
-        withContext(dispatcherProvider.Io) {
+    suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto): Result =
+        withContext(dispatchers.Io) {
             for (attachmentId in attachmentIds) {
                 val attachment = messageDetailsRepository.findAttachmentById(attachmentId) ?: continue
                 if (attachment.filePath == null) continue
                 if (attachment.isUploaded) continue
-                if (attachment.isFileExisting.not()) continue
+                if (attachment.doesFileExist.not()) continue
                 attachment.setMessage(message)
 
                 val result = attachmentsRepository.upload(attachment, crypto)

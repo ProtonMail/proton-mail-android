@@ -76,13 +76,13 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachment2 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
             val message = Message(messageId = "messageId")
@@ -108,13 +108,13 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachment2 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
             val message = Message()
@@ -157,7 +157,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
             val message = Message()
@@ -177,13 +177,13 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { attachmentId } returns "1"
                 every { filePath } returns null
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachment2 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
             val message = Message()
@@ -204,13 +204,13 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachment2 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
                 every { isUploaded } returns true
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
             val message = Message()
@@ -233,13 +233,13 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachmentMock2 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
                 every { isUploaded } returns false
-                every { isFileExisting } returns false
+                every { doesFileExist } returns false
             }
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
@@ -277,13 +277,13 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             val attachmentMock2 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "2"
                 every { filePath } returns "filePath2"
                 every { isUploaded } returns false
-                every { isFileExisting } returns true
+                every { doesFileExist } returns true
             }
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2

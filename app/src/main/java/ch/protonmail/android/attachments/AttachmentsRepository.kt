@@ -34,7 +34,7 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 class AttachmentsRepository @Inject constructor(
-    val dispatchers: DispatcherProvider,
+    private val dispatchers: DispatcherProvider,
     private val apiManager: ProtonMailApiManager,
     private val armorer: Armorer,
     private val messageDetailsRepository: MessageDetailsRepository,
@@ -56,14 +56,18 @@ class AttachmentsRepository @Inject constructor(
         val fingerprintCharsUppercase = publicKeyFingerprint.substring(0, 8).toUpperCase()
 
         val attachment = Attachment().apply {
-            fileName = "publickey - " + address.email + " - 0x" + fingerprintCharsUppercase + ".asc"
+            fileName = "publickey - ${address.email} - 0x$fingerprintCharsUppercase.asc"
             mimeType = "application/pgp-keys"
             setMessage(message)
         }
         return uploadAttachment(attachment, crypto, publicKey.toByteArray())
     }
 
-    private suspend fun uploadAttachment(attachment: Attachment, crypto: AddressCrypto, fileContent: ByteArray) =
+    private suspend fun uploadAttachment(
+        attachment: Attachment,
+        crypto: AddressCrypto,
+        fileContent: ByteArray
+    ): Result =
         withContext(dispatchers.Io) {
             val headers = attachment.headers
             val mimeType = requireNotNull(attachment.mimeType)
@@ -78,7 +82,7 @@ class AttachmentsRepository @Inject constructor(
             val dataPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.dataPacket)
             val signature = RequestBody.create(octetStreamMimeType, signedFileContent)
 
-            val uploadResult = kotlin.runCatching {
+            val uploadResult = runCatching {
                 if (isAttachmentInline(headers)) {
                     requireNotNull(headers)
 
