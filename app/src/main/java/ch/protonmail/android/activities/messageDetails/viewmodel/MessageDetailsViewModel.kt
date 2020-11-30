@@ -496,16 +496,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    @Subscribe
-    fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent?) {
-        if (event?.messageId == null || event.messageId != messageId) {
-            return
-        }
-        if (event.success) {
-            Timber.v("FetchMessage success")
-        }
-    }
-
     fun remoteContentDisplayed() {
         remoteContentDisplayed = true
     }
