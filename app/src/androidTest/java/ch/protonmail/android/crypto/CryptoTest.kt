@@ -20,6 +20,7 @@ package ch.protonmail.android.crypto
 
 import android.text.TextUtils
 import androidx.test.filters.LargeTest
+import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.messages.Attachment
@@ -27,7 +28,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
 import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
-import ch.protonmail.android.mapper.bridge.AddressesBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.armor.Armor
@@ -39,9 +39,14 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import javax.mail.internet.InternetHeaders
-import ch.protonmail.android.mapper.map
+import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
+import com.proton.gopenpgp.crypto.Crypto.newKeyFromArmored
+import com.proton.gopenpgp.crypto.Crypto.newKeyRing
+import com.proton.gopenpgp.crypto.Crypto.newPGPMessageFromArmored
+import com.proton.gopenpgp.crypto.Crypto.newPGPSignatureFromArmored
 import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.invoke
+import org.junit.jupiter.api.assertDoesNotThrow
 
 @LargeTest
 internal class CryptoTest {
@@ -49,15 +54,16 @@ internal class CryptoTest {
     private val userManagerMock: UserManager = mockk()
     private val openPgp = OpenPGP()
 
+    private val tokenManagerMock: TokenManager = mockk()
+    private val openPgpMock: OpenPGP = mockk()
+
     //region One Address Key Setup
     private val oneAddressKeyUsername = "one_address_key_user"
     private val oneAddressKeyMailboxPassword = "7NgO4d0h72zt4XuFLOUbg352vhrn.tu"
     private val oneAddressKeyAddressId = "MMxTCP7DMErrWkOREQljdviitcZ1mDzjWcnzdg8wqObisClP25ILZ18vUsNgUVi-JD3O2EgmOuiEmx8C5qmofw=="
     private val oneAddressKeyUserKeyFingerprint = "20cf363b58ec99e722e53ec411c31e8e5e07f4d0"
-    private val oneAddressKeyAddressKeys = listOf(
-        Keys(
-            "DvRZxrFRFUnjsL6MCOdGjyMZ9AoECd7kNXX9uKxmV-75K4iArEHijRPvd7Dhw43yBlCDxIsbNSW7cg2Uu5FUFg==",
-            """
+    private val armoredPrivateKey =
+        """
                 -----BEGIN PGP PRIVATE KEY BLOCK-----
                 Version: ProtonMail
 
@@ -121,7 +127,11 @@ internal class CryptoTest {
                 dlEt7f8XNvX3HxQw9w==
                 =FW0u
                 -----END PGP PRIVATE KEY BLOCK-----
-            """.trimIndent(),
+            """.trimIndent()
+    private val oneAddressKeyAddressKeys = listOf(
+        Keys(
+            "DvRZxrFRFUnjsL6MCOdGjyMZ9AoECd7kNXX9uKxmV-75K4iArEHijRPvd7Dhw43yBlCDxIsbNSW7cg2Uu5FUFg==",
+            armoredPrivateKey,
             3,
             1,
             null,
@@ -133,71 +143,7 @@ internal class CryptoTest {
     private val oneAddressKeyUserKeys = listOf(
         Keys(
             "ScOOyl7_x7HXDuIUGUzWaIz83IFQJKWHi85smpaV-QH-4gVnDBwnWBtDixsVMfehF-ZGOjxrbUfUsmm7cO4R5Q==",
-            """
-                -----BEGIN PGP PRIVATE KEY BLOCK-----
-                Version: ProtonMail
-
-                xcMGBF1BfxUBCADUpiiG3AhQK08E2nBmQ50XeztOWArmknINQV41pqGFW5VQ
-                kfbQ3FYsANhLGqbDBQ0XxmocjKL7W7W8Y4xmHCGgkCUy6gAqGbi+sXY9Sl8x
-                qQNHuZDhWVdqT8+Rtv+DRxp/XrGkzC1U8CBYUmmKS92ldy0/zZIvgQXT6t5Q
-                +v+BeUSv4jCsnY3BE0UBOljtrTXlOcXRZHQxORWG+kon0qgcJERdwwzhxY6e
-                T8jEfAfJY0hzQaYg+6bj6ZR0zkMtY2Psq2M05kzEw4On/dezZETAu1e9fSqf
-                k1mp+H6BeLJ9RUyrFK/PqIO48+pU8CmAvTdx5eIihyOM16CFg/3GgV85ABEB
-                AAH+CQMI5Kvy7QRMRchgMAnCbvgFPP9UbdrivX98cJpvyi9za5FsYAE8OH7p
-                UW1pMrySG52X76Wodw723Tq1qSFcZ6dTKYRuPf6ffrmg5pe8IJhvVnMauyJu
-                4be1iCgzaSygMsD193bNelyd4s2fKa1OIdmh5mxVDdEgpUv8+6Xw+URA7V3C
-                HpSdmELEYLtfSaO3m7IK5jO8WMgN5KSn/is9dztF2cuG2lcXY+P5Q4pFvL50
-                FamAIB0wU8mlQPmj3KS3EBl34bLGUe3yYDIdXbfx1zm0REtx2IaVvt6tdj//
-                l74gF11DNh1G61qMoAZEuGCKHlD42pCGtslkZsA9JXuhD+iVNDijHZI0y3gL
-                /T5s0Afcpx5pSLdwigoQ/RnrInRlKb85xYnoknK8UjroW1ZibmUug0WWFDtj
-                z16/AKrMMK3XYL0OTAyTY37jvochop75Yrpfve9R9voXOIWZjBxku50eVcRs
-                mrLteNBmwRRHO5B/bLiaaP20auYlZL6r4fvvpoC77rKCs3pxDKlpQVsi96Kt
-                okPo1xNUcsbYiHSR6NZUntU+Jzfz2Cn1t6e/mP/uQB/HRlYHzZvg9Q60zmM6
-                1e5CF2eWTlQ0dHwPmgRB5gBy/SCUwlT/sZZN9sNupbzo2XMPsagQy6p1jnf9
-                zBePypmjxGa4BX96UMIoL9a7rJFjo2LoBSEt3bVRq3e4mE9ZuBqfPc4SCXmy
-                ss3XWPPwk5k37CAoBoZp241ZUNMSc5qxh6k8Pu1SZJZbWNAuQUjxTxRKLDzR
-                rLZcEKnaimZ6Q90fhCuw1QbwHHL/jjkEsM90tW5MU1Fpr+GZQVSYJtVrSmdq
-                POZ1rQdFtwzxm7uAunJHVL6Q0L8fodpHhcXokE7dqDAJzBXuhVCq/dL7ypHn
-                JZHMFx3dThU74oQmT4z6uyjT8iKKlcvizTFhZGFtdHN0QHByb3Rvbm1haWwu
-                Ymx1ZSA8YWRhbXRzdEBwcm90b25tYWlsLmJsdWU+wsBoBBMBCAAcBQJdQX8V
-                CRARwx6OXgf00AIbAwIZAQILCQIVCAAAx6IIAAg2A2ZMkzGV+vZPbqAMoAEO
-                +dpG+dq9C93Ui4HvoVHpcSTolVM522r81Yc48xdhbnFz9HLDkicoBzXo40ut
-                gQ7bF4iKD4lQztfh6+9l+IBNu+1XmdW+laMybygtPh+H4YPxLZA9O6FYRyUc
-                TjlZYFFxipz9pc9qI58tDHIILzfjZPCC6reiJpbxJOgp07PV3ZnJqLDIkFPl
-                PkxyqymfuWHnPOJM5RxvHnu04ptsp/Z/xbgUra2JEyVLA7gC/yznxfQ58087
-                pCupKqQwepA3zHmECS6vk7uuNp++D9JajjtFsu4piP4cTNVvMqnDXWn0uzwr
-                hhw/fZnnHSllXmBwgmPHwwYEXUF/FQEIAMgCI+srSwdQlIpz+n+mlSpS0jPX
-                vRYoL9QgMOdzR3kAW5sM1OW2Z7ROlBEZ7ycurpe4Sa/SaKfjtf4wOs2hmpxe
-                cL9JxL0x3KGEaSeEIiYIkMb4TnSLR9vfowVdReOMTs5RpxMxQL+xmz3nChwL
-                EIF/amAo/ucnXLbUNvYFkOpzdtxtN0dy2ykUvR9rsNUiGBoIn/BYCqSXpsCY
-                7kom8lYl039yQvGVLWG6vryF6gExRbW61B3yjACpR6NLi2Bqta0SDRkeg5ob
-                umxoWaJ7ltJ2uPuVofOpIPXP2CO40iCLKUUZB/r+/kVx+dYfEW3Nk4r+uKsu
-                3CCSB9AZNJRQGiEAEQEAAf4JAwhfzrMVSONvzmCJ1AyZfwhCe8oX9cPTb4f7
-                4LoafpdkKGgnWzoR1tco42SKtuXKmhhGAIT0EXMMzflphQLxvuNg8bK9sfPo
-                F+XWMJJnPlWbVEZ0J8P0Ql9crsYtvGX7ReP/EEnO/TYMcRaOIZFySkVAOS1x
-                1ISFbuh83ZHpmMXTWLrASzyHQUhxDnMA2H4rJ+Yi8byGbmvAf/dKl9iDIYds
-                xur1kspeFaogiBX2yDXG6u1s1Gz+eJ+zXy/FNbeM6sA0SQSYBzqQk1Ffed2T
-                /0FlWhTFTd0JvIK3QZVrN4nPQg/AW9XsOdCSVXs/4ZmFj7nlTeTK+fk0Hm0X
-                jOLFzRhrkZbQ9/Rr4CpY//fL3k/1AVidWlb0VwKJTd6RwzqHSpego6SEeOPX
-                KMPo6azj5yYzoRwdkRsbBXbxhWi4DSlEbHo4qoad382jNX/Jd5xXyneUHz26
-                Q9WcFMTp3iWgKQnSBzYzaJbylTHFDGxPYwSbOT6K/aszDmOlLxPN470LlNQR
-                Ln6CYg2dim/VWp++xiWoGlEen8eQ41DI10HxJPk9rpEK0adQNubDsnBP2wGx
-                bzBJ5ZTx6lgWfcDHzpArqilLIxAJWUjjy5H7GYRHlqntOPH+Xo9fPt0TOsmI
-                wf93MYc1of+r3/D3qPVQtXtCR3uuSmG7A6PTMI2fwoFSTSB676c4vtGEW1H1
-                GpzknQvTO5b/13+BtarzgPibkg3MTOmq6qIDCGSxz/kemRepA9cz4ietH2j5
-                ZCCpf1NuYlwvb1ZdtUs4zerjgZqdeerOTQVYJuyc167RM1rEOWUoUYfHt8FP
-                WFSOw4KKxg6U1VpMvChuurTjMkd/Cm9F+9Dkky1kG41icRnf6/3nF/MZcHCr
-                BCN5kjYKMqx4CBmBMKBBIBQZvkOFNZUarbjW2Rjt7ByJuS3RXoLCwF8EGAEI
-                ABMFAl1BfxUJEBHDHo5eB/TQAhsMAACC8AgAbItodhOOJcb85EggCB1CEoFg
-                6jOs5LgRw4810xI8HBPo/4Gk1L8YPfenMA1Uoz0x+3z42d49QU5HZ/hAmtDV
-                W9KP2Sjw/axfsgB7v6sbrXgtB/OMblHXoqVJU4wVbQrYvxnG6YN1iX83QGGC
-                1mYHWWDXFjZM8egN63Ocyccbywvq7q/KEaXlrqpxbaDW6uUXRUX8ISqDWXAA
-                qEUcgWI1H5fqMKODQolr0yMBbqggI7GhfSOnX3mZaLHqy5ElJZUrXi6J5Pq4
-                vnJgLm1kzP632uztjEKQfEVFPUflksdQP+v3eWKpb6nNTH5tV3Pmo0xvRmic
-                dlEt7f8XNvX3HxQw9w==
-                =FW0u
-                -----END PGP PRIVATE KEY BLOCK-----
-            """.trimIndent(),
+            armoredPrivateKey,
             0,
             1,
             null,
@@ -730,6 +676,16 @@ internal class CryptoTest {
     )
     //endregion
 
+    //region Token and Signature generation
+    private val tokenAndSignatureUserName = "token_and_sign_name"
+    private val passphrase = "7NgO4d0h72zt4XuFLOUbg352vhrn.tu".toByteArray()
+    private val randomTokenString = "9efb6173a8da137e7ead1a9d2b6ada0f707a19156dee0c84899761fee73e556a"
+    private val randomToken =
+        randomTokenString.chunked(2).map {
+            it.toInt(16).toByte()
+        }.toByteArray()
+    //endregion
+
     private val addressKeyMapper = AddressKeyBridgeMapper()
     private val addressKeysMapper = AddressKeysBridgeMapper(addressKeyMapper)
     private val userKeyMapper = UserKeyBridgeMapper()
@@ -788,6 +744,13 @@ internal class CryptoTest {
         }
         every { userManagerMock.getUser(manyAddressKeysUsername) } returns manyAddressKeysUserMock
         every { userManagerMock.getMailboxPassword(manyAddressKeysUsername) } returns manyAddressKeysMailboxPassword.toByteArray()
+
+        // token and signature generation
+        every { userManagerMock.username } returns tokenAndSignatureUserName
+        every { userManagerMock.getTokenManager(tokenAndSignatureUserName) } returns tokenManagerMock
+        every { userManagerMock.getMailboxPassword(tokenAndSignatureUserName) } returns passphrase
+        every { tokenManagerMock.encPrivateKey } returns armoredPrivateKey
+        every { openPgpMock.randomToken() } returns randomToken
     }
 
     @Test
@@ -1779,4 +1742,25 @@ internal class CryptoTest {
         assertEquals(expected, armoredKey)
     }
 
+    @Test
+    fun generate_token_and_signature_private_user() {
+        val (token, signature) =
+            GenerateTokenAndSignature(userManagerMock, openPgpMock).invoke(null)
+        val testMessage = newPGPMessageFromArmored(token)
+        val testKey = newKeyFromArmored(armoredPrivateKey)
+        val unlocked = testKey.unlock(passphrase)
+        val verificationKeyRing = newKeyRing(unlocked)
+        val decryptedTokenPlainMessage = verificationKeyRing.decrypt(testMessage, null, 0)
+        val decryptedTokenString = decryptedTokenPlainMessage.string
+        assertEquals(randomTokenString, decryptedTokenString)
+        val armoredSignature = newPGPSignatureFromArmored(signature)
+        assertDoesNotThrow {
+            verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
+        }
+    }
+
+    @Test
+    fun generate_token_and_signature_org() {
+        // TODO:
+    }
 }

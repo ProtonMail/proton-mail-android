@@ -240,7 +240,15 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updatePrivateKeys(body: SinglePasswordChange): ResponseBody = api.updatePrivateKeys(body)
 
-    override fun activateKey(keyActivationBody: KeyActivationBody, keyId: String): ResponseBody = api.activateKey(keyActivationBody, keyId)
+    override fun activateKey(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = api.activateKey(keyActivationBody, keyId)
+
+    override suspend fun activateKeyLegacy(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = api.activateKeyLegacy(keyActivationBody, keyId)
 
     override fun setupKeys(keysSetupBody: KeysSetupBody): UserInfo = api.setupKeys(keysSetupBody)
 
