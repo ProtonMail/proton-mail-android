@@ -192,7 +192,7 @@ abstract class NavigationActivity :
                     intent.putExtra(EXTRA_USERNAME, account.name)
                     ContextCompat.startActivity(this, AppUtil.decorInAppIntent(intent), null)
                 } else if (currentUser != account.id) {
-                    switchAccountProcedure(account.id, account.name)
+                    switchAccount(account.id, account.name)
                 }
             }
         }
@@ -242,8 +242,7 @@ abstract class NavigationActivity :
         }
     }
 
-    // TODO: what? find a proper name!
-    protected fun switchAccountProcedure(userId: Id, username: String) {
+    protected fun switchAccount(userId: Id, username: String) {
         app.clearPaymentMethods()
         lifecycleScope.launchWhenCreated {
             userManager.switchTo(userId)
@@ -252,17 +251,16 @@ abstract class NavigationActivity :
         }
     }
 
-    // TODO: what? find a proper name!
-    protected suspend fun switchAccountProcedure(userId: Id) {
-        switchAccountProcedure(userId, userManager.getUser(userId).name.s)
+    protected suspend fun switchAccount(userId: Id) {
+        switchAccount(userId, userManager.getUser(userId).name.s)
     }
 
     @Deprecated(
         "Use with user id",
-        ReplaceWith("switchAccountProcedure(userId, accountName)"),
+        ReplaceWith("switchAccount(userId, accountName)"),
         DeprecationLevel.ERROR
     )
-    protected fun switchAccountProcedure(accountName: String) {
+    protected fun switchAccount(accountName: String) {
         unsupported
     }
 
@@ -337,7 +335,7 @@ abstract class NavigationActivity :
                     userManager.logout(userId)
                     nextLoggedIn?.let {
                         delay(100)
-                        switchAccountProcedure(it)
+                        switchAccount(it)
                     }
                     onSwitchedAccounts()
                 }

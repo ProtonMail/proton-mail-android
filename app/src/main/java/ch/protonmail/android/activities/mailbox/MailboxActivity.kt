@@ -355,7 +355,7 @@ class MailboxActivity :
         checkUserAndFetchNews()
 
         if (extras != null && extras.containsKey(EXTRA_SWITCHED_TO_USER)) {
-            switchAccountProcedure(extras.getString(EXTRA_SWITCHED_TO_USER)!!) // should never be null here
+            switchAccount(extras.getString(EXTRA_SWITCHED_TO_USER)!!) // should never be null here
         }
 
         setUpDrawer()
@@ -429,7 +429,7 @@ class MailboxActivity :
         if (extras != null && extras.getBoolean(EXTRA_SWITCHED_USER, false)) {
             val newUser = extras.getString(EXTRA_SWITCHED_TO_USER)
             if (!newUser.isNullOrEmpty()) {
-                switchAccountProcedure(newUser)
+                switchAccount(newUser)
             } else {
                 onSwitchedAccounts()
             }
@@ -768,14 +768,14 @@ class MailboxActivity :
         super.onNewIntent(intent)
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
         if (intent.extras != null && intent.extras!!.containsKey(EXTRA_SWITCHED_TO_USER)) {
-            switchAccountProcedure(intent.getStringExtra(EXTRA_SWITCHED_TO_USER)!!)
+            switchAccount(intent.getStringExtra(EXTRA_SWITCHED_TO_USER)!!)
         } else if (intent.getBooleanExtra(EXTRA_SWITCHED_USER, false)) {
             onSwitchedAccounts()
         } else if (intent.getBooleanExtra(EXTRA_LOGOUT, false)) {
             onLogout()
         } else if (intent.extras != null && intent.extras!!.containsKey(EXTRA_USERNAME)) {
             if (mUserManager.username != intent.getStringExtra(EXTRA_USERNAME)) {
-                switchAccountProcedure(intent.getStringExtra(EXTRA_USERNAME)!!)
+                switchAccount(intent.getStringExtra(EXTRA_USERNAME)!!)
             }
         } else {
             checkRegistration()

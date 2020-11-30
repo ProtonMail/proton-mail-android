@@ -31,8 +31,4 @@ import androidx.core.content.ContextCompat
  * @return color [Int]
  * @see ContextCompat.getColor
  */
-@Deprecated(
-    "Compat variant is not needed anymore with out minSdk level",
-    ReplaceWith("getColor(colorRes)")
-)
 fun Context.getColorCompat(@ColorRes colorRes: Int) = ContextCompat.getColor(this, colorRes)
