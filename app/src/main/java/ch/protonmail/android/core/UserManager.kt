@@ -189,6 +189,10 @@ class UserManager @Inject constructor(
         else null
     }
 
+    @Deprecated("Use suspend function", ReplaceWith("getNextLoggedInUser()"))
+    fun getNextLoggedInUserBlocking(): Id? =
+        runBlocking { getNextLoggedInUser() }
+
     /**
      * Returns the username of the next available (if any) account other than current. Currently this
      * works randomly hopefully it will get refactored by same factor (maybe how often the account
@@ -269,6 +273,16 @@ class UserManager @Inject constructor(
         set(@LoginState status) {
             currentUserLoginState = status
         }
+
+    suspend fun getCurrentUser(): NewUser? =
+        currentUserId?.let { getUser(it) }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getCurrentUser()")
+    )
+    fun getCurrentUserBlocking(): NewUser? =
+        runBlocking { getCurrentUser() }
 
     suspend fun getCurrentLegacyUser(): User? =
         currentUserId?.let { getLegacyUser(it) }
@@ -511,7 +525,6 @@ class UserManager @Inject constructor(
     }
 
     suspend fun logout(userId: Id) = withContext(dispatchers.Io) {
-        val currentPrimary = currentUserId
         val nextLoggedIn = getNextLoggedInUser()
             ?: // fallback to "last user logout"
             return@withContext logoutLastActiveAccount()
@@ -524,6 +537,11 @@ class UserManager @Inject constructor(
         setCurrentUser(nextLoggedIn)
         app.eventManager.clearState(userId)
         app.clearPaymentMethods()
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("logout(userId)"))
+    fun logoutBlocking(userId: Id) {
+        runBlocking { logout(userId) }
     }
 
     private suspend fun deleteDatabases(context: Context, userId: Id) = suspendCoroutine<Unit> {
