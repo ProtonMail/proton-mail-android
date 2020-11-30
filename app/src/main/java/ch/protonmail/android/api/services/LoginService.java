@@ -90,6 +90,7 @@ import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
+import ch.protonmail.android.usecase.FindUserIdForUsername;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.usecase.FindUserIdForUsername;
 import ch.protonmail.android.utils.AppUtil;
@@ -168,6 +169,8 @@ public class LoginService extends ProtonJobIntentService {
     FindUserIdForUsername findUserIdForUsername;
     @Inject
     LaunchInitialDataFetch launchInitialDataFetch;
+    @Inject
+    FindUserIdForUsername findUserIdForUsername;
 
     private TokenManager tokenManager;
 
