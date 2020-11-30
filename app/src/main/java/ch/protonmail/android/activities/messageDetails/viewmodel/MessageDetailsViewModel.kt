@@ -62,7 +62,6 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -164,6 +163,28 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
+
+    val webViewContentWithoutImages = MutableLiveData<String>()
+    val webViewContentWithImages = MutableLiveData<String>()
+    val webViewContent = object : MediatorLiveData<String>() {
+        var contentWithoutImages: String? = null
+        var contentWithImages: String? = null
+
+        init {
+            addSource(webViewContentWithoutImages) {
+                contentWithoutImages = it
+                emit()
+            }
+            addSource(webViewContentWithImages) {
+                contentWithImages = it
+                emit()
+            }
+        }
+
+        fun emit() {
+            value = contentWithImages ?: contentWithoutImages
+        }
+    }
 
     init {
         tryFindMessage()
@@ -294,7 +315,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             var message: Message? = null
             var keys: List<KeyInformation>? = null
             var contact: ContactEmail? = null
-            var decrypted: Boolean = false
+            var isDecrypted: Boolean = false
 
             init {
                 addSource(this@MessageDetailsViewModel.message) {
@@ -302,59 +323,21 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     message?.senderEmail?.let { senderEmail ->
                         addSource(contactsRepository.findContactEmailByEmailLiveData(senderEmail)) { contactEmail ->
                             contact = contactEmail ?: ContactEmail("", message?.senderEmail ?: "", message?.senderName)
-                            if (!decrypted) {
+                            if (!isDecrypted) {
                                 refreshedKeys = true
-                                viewModelScope.launch {
-                                    withContext(dispatchers.Io) {
-                                        tryEmit()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!decrypted) {
-                        refreshedKeys = true
-                        viewModelScope.launch {
-                            withContext(dispatchers.Io) {
                                 tryEmit()
                             }
                         }
+                    }
+                    if (!isDecrypted) {
+                        refreshedKeys = true
+                        tryEmit()
                     }
                 }
                 addSource(publicKeys) {
                     keys = it
                     refreshedKeys = false
-                    viewModelScope.launch {
-                        withContext(dispatchers.Io) {
-                            tryEmit()
-                        }
-                    }
-                }
-            }
-
-            private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
-                return try {
-                    try {
-                        decrypt(userManager = userManager, username = userManager.username, verKeys = verificationKeys)
-                    } catch (e: Exception) {
-                        // signature verification failed with special case, try to decrypt again without verification
-                        // and hardcode verification error
-                        if (verificationKeys != null && verificationKeys.isNotEmpty() && e.message == "Signature Verification Error: No matching signature") {
-                            Timber.d(e, "Decrypting message again without verkeys")
-                            decrypt(userManager = userManager, username = userManager.username)
-                            this.hasValidSignature = false
-                            this.hasInvalidSignature = true
-                            //refreshedKeys = true
-                            return true
-                        } else {
-                            Timber.d(e, "Cannot decrypt message even without empty verkeys")
-                            return false
-                        }
-                    }
-                    true
-                } catch (e: Throwable) {
-                    Timber.d(e, "Cannot decrypt message")
-                    false
+                    tryEmit()
                 }
             }
 
@@ -363,33 +346,37 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 if (!message.isDownloaded) {
                     return
                 }
-                if (!contact?.name.equals(message.sender!!.emailAddress))
-                    message.senderDisplayName = contact?.name
-                decrypted = message.tryDecrypt(keys) ?: false
-                postValue(message)
-            }
-        }
-    }
+                viewModelScope.launch {
+                    if (contact?.name != message.sender?.emailAddress)
+                        message.senderDisplayName = contact?.name
 
-    val webViewContentWithoutImages = MutableLiveData<String>()
-    val webViewContentWithImages = MutableLiveData<String>()
-    val webViewContent = object : MediatorLiveData<String>() {
-        var contentWithoutImages: String? = null
-        var contentWithImages: String? = null
-
-        init {
-            addSource(webViewContentWithoutImages) {
-                contentWithoutImages = it
-                emit()
+                    isDecrypted = withContext(dispatchers.Comp) {
+                        message.tryDecrypt(keys) ?: false
+                    }
+                    Timber.v("Message isDecrypted:$isDecrypted")
+                    value = message
+                }
             }
-            addSource(webViewContentWithImages) {
-                contentWithImages = it
-                emit()
-            }
-        }
 
-        fun emit() {
-            value = contentWithImages ?: contentWithoutImages
+            private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
+                return try {
+                    decrypt(userManager = userManager, username = userManager.username, verKeys = verificationKeys)
+                    true
+                } catch (exception: Exception) {
+                    // signature verification failed with special case, try to decrypt again without verification
+                    // and hardcode verification error
+                    if (verificationKeys != null && verificationKeys.isNotEmpty() && exception.message == "Signature Verification Error: No matching signature") {
+                        Timber.d(exception, "Decrypting message again without verkeys")
+                        decrypt(userManager = userManager, username = userManager.username)
+                        this.hasValidSignature = false
+                        this.hasInvalidSignature = true
+                        true
+                    } else {
+                        Timber.d(exception, "Cannot decrypt message even without empty verkeys")
+                        false
+                    }
+                }
+            }
         }
     }
 
@@ -398,13 +385,12 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             return
         }
         requestPending.set(true)
-        val bgDispatcher: CoroutineDispatcher = dispatchers.Io
 
         viewModelScope.launch {
             var shouldExit = false
             if (checkForMessageAttachmentHeaders) {
                 val attHeadersPresent = message.value?.let {
-                    messageDetailsRepository.checkIfAttHeadersArePresent(it, bgDispatcher)
+                    messageDetailsRepository.checkIfAttHeadersArePresent(it, dispatchers.Io)
                 } ?: false
                 shouldExit = checkForMessageAttachmentHeaders && !attHeadersPresent
             }
@@ -428,7 +414,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                 with(messageDetailsRepository) {
 
                                     if (isTransientMessage) {
-                                        val savedMessage = findSearchMessageById(messageId, bgDispatcher)
+                                        val savedMessage = findSearchMessageById(messageId, dispatchers.Io)
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveSearchMessageInDB(savedMessage)
@@ -437,7 +423,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                         }
 
                                     } else {
-                                        val savedMessage = findMessageById(messageId, bgDispatcher)
+                                        val savedMessage = findMessageById(messageId, dispatchers.Io)
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveMessageInDB(savedMessage)

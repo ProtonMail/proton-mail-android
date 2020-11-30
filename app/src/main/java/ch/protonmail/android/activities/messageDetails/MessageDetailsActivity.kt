@@ -858,6 +858,7 @@ internal class MessageDetailsActivity :
             if (message == null) {
                 return
             }
+            Timber.v("New decrypted message ${message.messageId}")
             viewModel.messageAttachments.observe(this@MessageDetailsActivity, AttachmentsObserver())
             viewModel.renderedFromCache = AtomicBoolean(true)
             val decryptedBody = getDecryptedBody(message.decryptedHTML)
