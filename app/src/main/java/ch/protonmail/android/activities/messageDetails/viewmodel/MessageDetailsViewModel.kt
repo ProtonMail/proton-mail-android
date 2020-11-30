@@ -51,7 +51,6 @@ import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
-import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.VerifyConnection
@@ -63,11 +62,10 @@ import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import com.squareup.otto.Subscribe
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -86,6 +84,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     messageRendererFactory: MessageRenderer.Factory,
     private val deleteMessageUseCase: DeleteMessage,
     private val fetchVerificationKeys: FetchVerificationKeys,
+    private val dispatchers: DispatcherProvider,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -191,7 +190,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun saveMessage() {
         // Return if message is null
         val message = message.value ?: return
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
             val result = runCatching {
                 messageDetailsRepository.saveMessageInDB(message, isTransientMessage)
             }
@@ -214,7 +213,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     //endregion
     fun findAllLabelsWithIds(checkedLabelIds: MutableList<String>) {
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
             messageDetailsRepository.findAllLabelsWithIds(
                 decryptedMessageData.value ?: Message(), checkedLabelIds,
                 labels.value ?: ArrayList(), isTransientMessage
@@ -226,7 +225,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun startDownloadEmbeddedImagesJob() {
         hasEmbeddedImages = false
 
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
 
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
@@ -278,7 +277,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 mImagesDisplayed,
                 remoteContentDisplayed,
                 _embeddedImagesAttachments,
-                IO,
+                dispatchers.Io,
                 isTransientMessage
             )
             _prepareEditMessageIntentResult.value = Event(intent)
@@ -306,7 +305,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                             if (!decrypted) {
                                 refreshedKeys = true
                                 viewModelScope.launch {
-                                    withContext(IO) {
+                                    withContext(dispatchers.Io) {
                                         tryEmit()
                                     }
                                 }
@@ -316,7 +315,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     if (!decrypted) {
                         refreshedKeys = true
                         viewModelScope.launch {
-                            withContext(IO) {
+                            withContext(dispatchers.Io) {
                                 tryEmit()
                             }
                         }
@@ -326,7 +325,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     keys = it
                     refreshedKeys = false
                     viewModelScope.launch {
-                        withContext(IO) {
+                        withContext(dispatchers.Io) {
                             tryEmit()
                         }
                     }
@@ -399,7 +398,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             return
         }
         requestPending.set(true)
-        val bgDispatcher: CoroutineDispatcher = IO
+        val bgDispatcher: CoroutineDispatcher = dispatchers.Io
 
         viewModelScope.launch {
             var shouldExit = false
@@ -411,7 +410,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             }
 
             if (!shouldExit) {
-                withContext(IO) {
+                withContext(dispatchers.Io) {
                     val messageDetailsResult = runCatching {
                         with(messageDetailsRepository) {
                             if (isTransientMessage) fetchSearchMessageDetails(messageId)
@@ -481,7 +480,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     fun tryDownloadingAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
             val metadata = attachmentMetadataDatabase.getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
             if (metadata != null) {
                 if (metadata.localLocation.endsWith("==")) { // migration for deprecated saving attachments as files with name <attachmentId>
