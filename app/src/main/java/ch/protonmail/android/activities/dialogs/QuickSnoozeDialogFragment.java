@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,17 +20,20 @@ package ch.protonmail.android.activities.dialogs;
 
 import android.content.Context;
 import android.content.Intent;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -39,14 +42,14 @@ import ch.protonmail.android.activities.SnoozeNotificationsActivity;
 import ch.protonmail.android.adapters.QuickSnoozeOptionAdapter;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.views.CustomQuickSnoozeDialog;
+import dagger.hilt.android.AndroidEntryPoint;
 
 import static ch.protonmail.android.activities.NavigationActivityKt.REQUEST_CODE_SNOOZED_NOTIFICATIONS;
 
-/**
- * Created by dino on 6/7/17.
- */
-
-public class QuickSnoozeDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener, CustomQuickSnoozeDialog.CustomQuickSnoozeListener {
+@AndroidEntryPoint
+public class QuickSnoozeDialogFragment
+        extends AbstractDialogFragment
+        implements AdapterView.OnItemClickListener, CustomQuickSnoozeDialog.CustomQuickSnoozeListener {
 
     @BindView(R.id.snooze_options_list_view)
     ListView mSnoozeOptionsListView;
@@ -63,7 +66,9 @@ public class QuickSnoozeDialogFragment extends AbstractDialogFragment implements
     private List<String> mQuickSnoozeValues;
     private QuickSnoozeOptionAdapter mAdapter;
     private int mSelectedSnoozeMinutes = 0;
-    private UserManager mUserManager;
+
+    @Inject
+    UserManager userManager;
 
     private CustomQuickSnoozeDialog mCustomValueDialog;
 
@@ -95,10 +100,9 @@ public class QuickSnoozeDialogFragment extends AbstractDialogFragment implements
     @Override
     protected void initUi(View rootView) {
         getDialog().setCanceledOnTouchOutside(true);
-        mUserManager = mQuickSnoozeListener.getUserManager();
-        boolean isQuickSnoozeEnabled = mUserManager.isSnoozeQuickEnabled();
+        boolean isQuickSnoozeEnabled = userManager.isSnoozeQuickEnabled();
         if (isQuickSnoozeEnabled) {
-            int notificationsResumeInMinutes = (int) ((mUserManager.getSnoozeSettings().getSnoozeQuickEndTime() - System.currentTimeMillis()) / 1000 / 60);
+            int notificationsResumeInMinutes = (int) ((userManager.getSnoozeSettings().getSnoozeQuickEndTime() - System.currentTimeMillis()) / 1000 / 60);
             if (notificationsResumeInMinutes > 60) {
                 mNotificationsResumeIn.setText(String.format(getString(R.string.quick_snooze_resume_hours), notificationsResumeInMinutes / 60, notificationsResumeInMinutes % 60));
             } else {
@@ -149,7 +153,7 @@ public class QuickSnoozeDialogFragment extends AbstractDialogFragment implements
             return;
         }
         mSelectedSnoozeMinutes = getResources().getIntArray(R.array.quick_snooze_values_int)[position];
-        mUserManager.setSnoozeQuick(true, mSelectedSnoozeMinutes);
+        userManager.setSnoozeQuick(true, mSelectedSnoozeMinutes);
         mQuickSnoozeListener.onQuickSnoozeSet(true);
         dismissAllowingStateLoss();
     }
@@ -157,7 +161,7 @@ public class QuickSnoozeDialogFragment extends AbstractDialogFragment implements
     @OnClick({R.id.quick_snooze_turn_off_container, R.id.quick_snooze_turn_off})
     public void onQuickSnoozeTurnOffClicked() {
         mSelectedSnoozeMinutes = 0;
-        mUserManager.setSnoozeQuick(false, 0);
+        userManager.setSnoozeQuick(false, 0);
         mQuickSnoozeListener.onQuickSnoozeSet(false);
         dismissAllowingStateLoss();
     }
@@ -165,7 +169,7 @@ public class QuickSnoozeDialogFragment extends AbstractDialogFragment implements
     @Override
     public void onCustomQuickSnoozeSet(int minutes) {
         mSelectedSnoozeMinutes = minutes;
-        mUserManager.setSnoozeQuick(true, mSelectedSnoozeMinutes);
+        userManager.setSnoozeQuick(true, mSelectedSnoozeMinutes);
         mQuickSnoozeListener.onQuickSnoozeSet(true);
         dismissAllowingStateLoss();
     }
@@ -177,6 +181,5 @@ public class QuickSnoozeDialogFragment extends AbstractDialogFragment implements
 
     public interface IQuickSnoozeListener {
         void onQuickSnoozeSet(boolean enabled);
-        UserManager getUserManager();
     }
 }

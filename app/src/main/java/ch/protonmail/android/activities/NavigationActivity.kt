@@ -147,6 +147,8 @@ abstract class NavigationActivity :
     lateinit var accountManager: AccountManager
     @Inject
     lateinit var databaseProvider: DatabaseProvider
+    @Inject
+    lateinit var userManager: UserManager
 
     private val navigationViewModel by viewModels<NavigationViewModel>()
 
@@ -565,10 +567,6 @@ abstract class NavigationActivity :
     private fun onDrawerLabelSelected(label: LabelUiModel) {
         val exclusive = label.type == LabelUiModel.Type.FOLDERS
         onLabelMailBox(Constants.DrawerOptionType.LABEL, label.labelId, label.name, exclusive)
-    }
-
-    override fun getUserManager(): UserManager {
-        return userManager
     }
 
     private inner class CreateLabelsMenuObserver : Observer<List<LabelWithUnreadCounter>> {
