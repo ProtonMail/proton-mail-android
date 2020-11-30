@@ -62,7 +62,7 @@ public class QuickSnoozeDialogFragment
     @BindView(R.id.quick_snooze_turn_off)
     TextView mQuickSnoozeTurnOff;
 
-    private IQuickSnoozeListener mQuickSnoozeListener;
+    private QuickSnoozeListener mQuickSnoozeListener;
     private List<String> mQuickSnoozeValues;
     private QuickSnoozeOptionAdapter mAdapter;
     private int mSelectedSnoozeMinutes = 0;
@@ -85,7 +85,7 @@ public class QuickSnoozeDialogFragment
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mQuickSnoozeListener = (IQuickSnoozeListener) context;
+            mQuickSnoozeListener = (QuickSnoozeListener) context;
         } catch (ClassCastException e) {
             // not throwing error, since the mUser of this mCustomValueDialog is not obligated to listen for
             // labels state change
@@ -179,7 +179,7 @@ public class QuickSnoozeDialogFragment
         mCustomValueDialog.dismissAllowingStateLoss();
     }
 
-    public interface IQuickSnoozeListener {
+    public interface QuickSnoozeListener {
         void onQuickSnoozeSet(boolean enabled);
     }
 }

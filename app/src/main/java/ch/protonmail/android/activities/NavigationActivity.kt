@@ -102,7 +102,7 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
 abstract class NavigationActivity :
     BaseActivity(),
     DrawerHeaderView.IDrawerHeaderListener,
-    QuickSnoozeDialogFragment.IQuickSnoozeListener {
+    QuickSnoozeDialogFragment.QuickSnoozeListener {
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
