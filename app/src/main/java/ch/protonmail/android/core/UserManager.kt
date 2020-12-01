@@ -433,10 +433,12 @@ class UserManager @Inject constructor(
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
             ?: // fallback to "last user logout"
             return logoutLastActiveAccount()
+        Timber.v("logoutAccount new user:$nextLoggedInAccount")
         LogoutService.startLogout(false, username = username)
         accountManager.onSuccessfulLogout(username)
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
+        switchToAccount(nextLoggedInAccount)
         setUsernameAndReload(nextLoggedInAccount)
         app.eventManager.clearState(username)
     }
