@@ -40,6 +40,9 @@ class UserCrypto(
     override val currentKeys: Collection<UserKey>
         get() = userKeys.keys
 
+    override val primaryKey: UserKey?
+        get() = userKeys.primaryKey
+
     override val passphrase: ByteArray?
         get() = mailboxPassword
 
