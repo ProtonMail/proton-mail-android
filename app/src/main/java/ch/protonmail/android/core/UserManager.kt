@@ -48,6 +48,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Produce
+import timber.log.Timber
 import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Singleton

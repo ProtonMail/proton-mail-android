@@ -19,14 +19,18 @@
 package ch.protonmail.android.activities.multiuser.viewModel
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.core.UserManager
 
 class AccountManagerViewModel(
-        application: Application,
-        private val userManager: UserManager,
-        private val accountManager: AccountManager
+    application: Application,
+    private val userManager: UserManager,
+    private val accountManager: AccountManager
 ) : AndroidViewModel(application) {
 
     private val _removedAccountResult: MutableLiveData<Boolean> = MutableLiveData()
@@ -41,15 +45,15 @@ class AccountManagerViewModel(
         get() = _logoutAccountResult
 
     class Factory(
-            private val application: Application,
-            private val userManager: UserManager,
-            private val accountManager: AccountManager
+        private val application: Application,
+        private val userManager: UserManager,
+        private val accountManager: AccountManager
     ) : ViewModelProvider.NewInstanceFactory() {
 
         /** @return new instance of [ConnectAccountMailboxLoginViewModel] casted as T */
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-                AccountManagerViewModel(application, userManager, accountManager) as T
+            AccountManagerViewModel(application, userManager, accountManager) as T
     }
 
     fun logoutAccount(username: String) {
