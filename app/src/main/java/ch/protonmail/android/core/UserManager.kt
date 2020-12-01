@@ -48,6 +48,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Produce
+import timber.log.Timber
 import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -432,10 +433,12 @@ class UserManager @Inject constructor(
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
             ?: // fallback to "last user logout"
             return logoutLastActiveAccount()
+        Timber.v("logoutAccount new user:$nextLoggedInAccount")
         LogoutService.startLogout(false, username = username)
         accountManager.onSuccessfulLogout(username)
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
+        switchToAccount(nextLoggedInAccount)
         setUsernameAndReload(nextLoggedInAccount)
         app.eventManager.clearState(username)
     }

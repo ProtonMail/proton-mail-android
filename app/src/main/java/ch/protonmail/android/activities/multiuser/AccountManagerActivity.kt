@@ -20,6 +20,7 @@ package ch.protonmail.android.activities.multiuser
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.Observer
@@ -110,7 +111,7 @@ class AccountManagerActivity : BaseActivity() {
     private fun closeAndMoveToLogin(result: Boolean) {
         if (result && !movingToMailbox) {
             movingToMailbox = true
-            Handler().postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 moveToMailboxLogout()
             }, 500)
         }
