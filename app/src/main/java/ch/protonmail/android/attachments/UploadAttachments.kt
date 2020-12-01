@@ -25,6 +25,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 
 class UploadAttachments @Inject constructor(
@@ -47,11 +48,16 @@ class UploadAttachments @Inject constructor(
 
     suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto): Result =
         withContext(dispatchers.Io) {
+            Timber.i("UploadAttachments started for messageId ${message.messageId} - attachmentIds $attachmentIds")
+
             for (attachmentId in attachmentIds) {
-                val attachment = messageDetailsRepository.findAttachmentById(attachmentId) ?: continue
-                if (attachment.filePath == null) continue
-                if (attachment.isUploaded) continue
-                if (attachment.doesFileExist.not()) continue
+                val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
+
+                if (attachment?.filePath == null || attachment.isUploaded || attachment.doesFileExist.not()) {
+                    Timber.e("Skipping attachment: either not found, invalid or" +
+                        " was already uploaded = ${attachment?.isUploaded}")
+                    continue
+                }
                 attachment.setMessage(message)
 
                 val result = attachmentsRepository.upload(attachment, crypto)

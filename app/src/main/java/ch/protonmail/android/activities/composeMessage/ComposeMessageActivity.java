@@ -1469,6 +1469,7 @@ public class ComposeMessageActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_ADD_ATTACHMENTS && resultCode == RESULT_OK) {
+            Timber.d("ComposeMessageAct.onActivityResult Received add attachment response with result OK");
             askForPermission = false;
             addingMoreAttachments = false;
             ArrayList<LocalAttachment> resultAttachmentList = data.getParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST);
@@ -1511,6 +1512,7 @@ public class ComposeMessageActivity
             super.onActivityResult(requestCode, resultCode, data);
             // endregion
         } else {
+            Timber.w("ComposeMessageAct.onActivityResult Received result not handled", requestCode, resultCode);
             super.onActivityResult(requestCode, resultCode, data);
         }
     }

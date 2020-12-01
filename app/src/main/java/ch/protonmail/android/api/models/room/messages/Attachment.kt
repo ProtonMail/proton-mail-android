@@ -45,7 +45,6 @@ import java.io.InputStream
 import java.io.Serializable
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.util.Arrays
 import java.util.Formatter
 import java.util.Random
 import javax.mail.MessagingException
@@ -70,280 +69,284 @@ const val COLUMN_ATTACHMENT_IS_INLINE = "is_inline"
 const val FIELD_ATTACHMENT_HEADERS = "Headers"
 
 @Entity(tableName = TABLE_ATTACHMENTS,
-	indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)])
+    indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)])
 data class Attachment @JvmOverloads constructor(
-	@ColumnInfo(name = COLUMN_ATTACHMENT_ID)
-	var attachmentId: String? = null,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_NAME)
-	var fileName: String? = null,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_TYPE)
-	var mimeType: String? = null,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE)
-	var fileSize: Long = 0,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_KEY_PACKETS)
-	var keyPackets: String? = null,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_MESSAGE_ID)
-	var messageId: String = "",
-	@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADED)
-	var isUploaded: Boolean = false,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADING)
-	var isUploading: Boolean = false,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_SIGNATURE)
-	var signature: String? = null,
-	@SerializedName(FIELD_ATTACHMENT_HEADERS)
-	@ColumnInfo(name = COLUMN_ATTACHMENT_HEADERS)
-	var headers: AttachmentHeaders? = null,
-	@Ignore
-	var isNew: Boolean = true,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_IS_INLINE)
-	var inline: Boolean = false,
-	/**
-	 * filePath used to store attached file path for drafts
-	 * at time to upload it will read file and upload
-	 */
-	@ColumnInfo(name = COLUMN_ATTACHMENT_FILE_PATH)
-	@Expose(serialize = false, deserialize = false)
-	var filePath: String? = null,
-	@ColumnInfo(name = COLUMN_ATTACHMENT_MIME_DATA)
-	@Expose(serialize = false, deserialize = false)
-	var mimeData: ByteArray? = null
+    @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
+    var attachmentId: String? = null,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_NAME)
+    var fileName: String? = null,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_MIME_TYPE)
+    var mimeType: String? = null,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE)
+    var fileSize: Long = 0,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_KEY_PACKETS)
+    var keyPackets: String? = null,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_MESSAGE_ID)
+    var messageId: String = "",
+    @ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADED)
+    var isUploaded: Boolean = false,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADING)
+    var isUploading: Boolean = false,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_SIGNATURE)
+    var signature: String? = null,
+    @SerializedName(FIELD_ATTACHMENT_HEADERS)
+    @ColumnInfo(name = COLUMN_ATTACHMENT_HEADERS)
+    var headers: AttachmentHeaders? = null,
+    @Ignore
+    var isNew: Boolean = true,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_IS_INLINE)
+    var inline: Boolean = false,
+    /**
+     * filePath used to store attached file path for drafts
+     * at time to upload it will read file and upload
+     */
+    @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_PATH)
+    @Expose(serialize = false, deserialize = false)
+    var filePath: String? = null,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_MIME_DATA)
+    @Expose(serialize = false, deserialize = false)
+    var mimeData: ByteArray? = null
 ) : Serializable {
-	@PrimaryKey(autoGenerate = true)
-	@ColumnInfo(name = BaseColumns._ID)
-	var dbId: Long? = null
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = BaseColumns._ID)
+    var dbId: Long? = null
 
-	val isPGPAttachment: Boolean
-		get() = attachmentId!!.startsWith("PGPAttachment")
+    val isPGPAttachment: Boolean
+        get() = attachmentId!!.startsWith("PGPAttachment")
 
-	val doesFileExist: Boolean
-		get() = File(filePath).exists()
+    val doesFileExist: Boolean
+        get() = File(filePath).exists()
 
-	/**
-	 * In case there are more values delimited with semicolon, returns only the first one.
-	 */
-	val mimeTypeFirstValue: String?
-		get() = mimeType?.substringBefore(";")
+    /**
+     * In case there are more values delimited with semicolon, returns only the first one.
+     */
+    val mimeTypeFirstValue: String?
+        get() = mimeType?.substringBefore(";")
 
-	fun setMessage(message: Message?) {
-		if (message != null) {
-			this.messageId = message.messageId ?: ""
-			this.inline = isInline(message.embeddedImagesArray)
-		}
-	}
+    fun setMessage(message: Message?) {
+        if (message != null) {
+            this.messageId = message.messageId ?: ""
+            this.inline = isInline(message.embeddedImagesArray)
+        }
+    }
 
-	private fun isInline(embeddedImagesArray: List<String>): Boolean {
-		val headers = headers ?: return false
-		val contentDisposition = headers.contentDisposition
-		var contentId = headers.contentId
-		if (TextUtils.isEmpty(contentId)) {
-			contentId = headers.contentLocation
-		}
-		if (!TextUtils.isEmpty(contentId)) {
-			contentId = contentId.removeSurrounding("<", ">")
-		}
-		val embeddedMimeTypes = Arrays.asList("image/gif", "image/jpeg", "image/png", "image/bmp")
-		var containsInline = false
-		for (element in contentDisposition) {
-			if (element.contains("inline")) {
-				containsInline = true
-				break
-			}
-		}
+    private fun isInline(embeddedImagesArray: List<String>): Boolean {
+        val headers = headers ?: return false
+        val contentDisposition = headers.contentDisposition
+        var contentId = headers.contentId
+        if (TextUtils.isEmpty(contentId)) {
+            contentId = headers.contentLocation
+        }
+        if (contentId.isNotEmpty()) {
+            contentId = contentId.removeSurrounding("<", ">")
+        }
+        val embeddedMimeTypes = listOf("image/gif", "image/jpeg", "image/png", "image/bmp")
+        var containsInline = false
+        for (element in contentDisposition) {
+            if (element.contains("inline")) {
+                containsInline = true
+                break
+            }
+        }
 
-		return contentDisposition != null && (containsInline || embeddedImagesArray.contains(contentId.removeSurrounding("<", ">"))) && embeddedMimeTypes.contains(mimeType)
-	}
+        return contentDisposition != null &&
+            (containsInline || embeddedImagesArray.contains(contentId.removeSurrounding("<", ">"))) &&
+            embeddedMimeTypes.contains(mimeType)
+    }
 
-	@Throws(Exception::class)
-	@Deprecated(
-		"To be deleted to avoid logic on Model",
-		ReplaceWith(
-			"attachmentRepository.upload(attachment, crypto)",
-			imports = arrayOf("ch.protonmail.android.attachments.AttachmentRepository")
-		)
-	)
-	fun uploadAndSave(
-		messageDetailsRepository: MessageDetailsRepository,
-		api: ProtonMailApiManager,
-		crypto: AddressCrypto
-	): String? {
-		val filePath = filePath
-		val fileContent = if (URLUtil.isDataUrl(filePath)) {
-			Base64.decode(filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
-				Base64.DEFAULT)
-		} else {
-			val file = File(filePath!!)
-			AppUtil.getByteArray(file)
-		}
-		return uploadAndSave(messageDetailsRepository, fileContent, api, crypto)
-	}
+    @Throws(Exception::class)
+    @Deprecated(
+        "To be deleted to avoid logic on Model",
+        ReplaceWith(
+            "attachmentRepository.upload(attachment, crypto)",
+            imports = arrayOf("ch.protonmail.android.attachments.AttachmentRepository")
+        )
+    )
+    fun uploadAndSave(
+        messageDetailsRepository: MessageDetailsRepository,
+        api: ProtonMailApiManager,
+        crypto: AddressCrypto
+    ): String? {
+        val filePath = filePath
+        val fileContent = if (URLUtil.isDataUrl(filePath)) {
+            Base64.decode(filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
+                Base64.DEFAULT)
+        } else {
+            val file = File(filePath!!)
+            AppUtil.getByteArray(file)
+        }
+        return uploadAndSave(messageDetailsRepository, fileContent, api, crypto)
+    }
 
-	fun deleteLocalFile() {
-		if (doesFileExist) {
-			File(filePath).delete()
-		}
-	}
+    fun deleteLocalFile() {
+        if (doesFileExist) {
+            File(filePath).delete()
+        }
+    }
 
-	fun getFileContent(): ByteArray =
-		filePath?.let { filePath ->
-			if (URLUtil.isDataUrl(filePath)) {
-				Base64.decode(
-					filePath.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
-					Base64.DEFAULT
-				)
-			} else {
-				val file = File(filePath)
-				AppUtil.getByteArray(file)
-			}
-		} ?: byteArrayOf()
+    fun getFileContent(): ByteArray =
+        filePath?.let { filePath ->
+            if (URLUtil.isDataUrl(filePath)) {
+                Base64.decode(
+                    filePath.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
+                    Base64.DEFAULT
+                )
+            } else {
+                val file = File(filePath)
+                AppUtil.getByteArray(file)
+            }
+        } ?: byteArrayOf()
 
-	@Throws(Exception::class)
-	@Deprecated("To be deleted once last usages of the public `uploadAndSave` were removed")
-	private fun uploadAndSave(
-		messageDetailsRepository: MessageDetailsRepository,
-		fileContent: ByteArray,
-		api: ProtonMailApiManager,
-		crypto: AddressCrypto
-	): String? {
-		val headers = headers
-		val bct = crypto.encrypt(fileContent, fileName!!)
-		val keyPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.keyPacket)
-		val dataPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.dataPacket)
-		val signature = RequestBody.create(MediaType.parse("application/octet-stream"), Armor.unarmor(crypto.sign(fileContent)))
-		val response =
-			if (headers != null && headers.contentDisposition.contains("inline") && headers.contentId != null) {
-				var contentID = headers.contentId
-				val parts = contentID.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
-				if (parts.size > 1) {
-					contentID = parts[1].replace(">", "")
-				}
-				api.uploadAttachmentInlineBlocking(this, messageId, contentID, keyPackage, dataPackage, signature)
-			} else {
-				api.uploadAttachmentBlocking(this, keyPackage, dataPackage, signature)
-			}
+    @Throws(Exception::class)
+    @Deprecated("To be deleted once last usages of the public `uploadAndSave` were removed")
+    private fun uploadAndSave(
+        messageDetailsRepository: MessageDetailsRepository,
+        fileContent: ByteArray,
+        api: ProtonMailApiManager,
+        crypto: AddressCrypto
+    ): String? {
+        val headers = headers
+        val bct = crypto.encrypt(fileContent, fileName!!)
+        val keyPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.keyPacket)
+        val dataPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.dataPacket)
+        val signature = RequestBody.create(MediaType.parse("application/octet-stream"), Armor.unarmor(crypto.sign(fileContent)))
+        val response =
+            if (headers != null && headers.contentDisposition.contains("inline") && headers.contentId != null) {
+                var contentID = headers.contentId
+                val parts = contentID.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
+                if (parts.size > 1) {
+                    contentID = parts[1].replace(">", "")
+                }
+                api.uploadAttachmentInlineBlocking(this, messageId, contentID, keyPackage, dataPackage, signature)
+            } else {
+                api.uploadAttachmentBlocking(this, keyPackage, dataPackage, signature)
+            }
 
-		if (response.code == Constants.RESPONSE_CODE_OK) {
-			attachmentId = response.attachmentID
-			keyPackets = response.attachment.keyPackets
-			this.signature = response.attachment.signature
-			isUploaded = true
-			messageDetailsRepository.saveAttachment(this)
-		} else {
-			throw IOException("Attachment upload failed")
-		}
+        if (response.code == Constants.RESPONSE_CODE_OK) {
+            attachmentId = response.attachmentID
+            keyPackets = response.attachment.keyPackets
+            this.signature = response.attachment.signature
+            isUploaded = true
+            messageDetailsRepository.saveAttachment(this)
+        } else {
+            throw IOException("Attachment upload failed")
+        }
 
-		return attachmentId
-	}
+        return attachmentId
+    }
 
-	companion object {
-		private fun fromLocalAttachment(messagesDatabase: MessagesDatabase,
-										localAttachment: LocalAttachment,
-										index: Long,
-										useRandomIds: Boolean): Attachment {
-			if (!TextUtils.isEmpty(localAttachment.attachmentId)) {
-				val savedAttachment = messagesDatabase.findAttachmentById(localAttachment.attachmentId)
-				if (savedAttachment != null)
-					return savedAttachment
-			}
-			val attachmentId = if (useRandomIds || localAttachment.attachmentId.isEmpty()) {
-				getRandomAttachmentId(index)
-			} else {
-				localAttachment.attachmentId
-			}
-			localAttachment.attachmentId = attachmentId
+    companion object {
+        private fun fromLocalAttachment(
+            messagesDatabase: MessagesDatabase,
+            localAttachment: LocalAttachment,
+            index: Long,
+            useRandomIds: Boolean
+        ): Attachment {
+            if (!TextUtils.isEmpty(localAttachment.attachmentId)) {
+                val savedAttachment = messagesDatabase.findAttachmentById(localAttachment.attachmentId)
+                if (savedAttachment != null)
+                    return savedAttachment
+            }
+            val attachmentId = if (useRandomIds || localAttachment.attachmentId.isEmpty()) {
+                getRandomAttachmentId(index)
+            } else {
+                localAttachment.attachmentId
+            }
+            localAttachment.attachmentId = attachmentId
 
-			val uri = localAttachment.uri
-			val uriString = uri.toString()
-			val filePath = if (URLUtil.isNetworkUrl(uriString) || URLUtil.isDataUrl(uriString)) {
-				uriString
-			} else {
-				uri.path
-			}
+            val uri = localAttachment.uri
+            val uriString = uri.toString()
+            val filePath = if (URLUtil.isNetworkUrl(uriString) || URLUtil.isDataUrl(uriString)) {
+                uriString
+            } else {
+                uri.path
+            }
 
-			return Attachment(
-				attachmentId = attachmentId,
-				filePath = filePath,
-				fileName = localAttachment.displayName,
-				fileSize = localAttachment.size,
-				mimeType = localAttachment.mimeType,
-				keyPackets = localAttachment.keyPackets,
-				headers = localAttachment.headers
-			)
+            return Attachment(
+                attachmentId = attachmentId,
+                filePath = filePath,
+                fileName = localAttachment.displayName,
+                fileSize = localAttachment.size,
+                mimeType = localAttachment.mimeType,
+                keyPackets = localAttachment.keyPackets,
+                headers = localAttachment.headers
+            )
 
-		}
+        }
 
-		@Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
-		fun fromMimeAttachment(part: Part, message_id: String, count: Int): Attachment {
-			val data = getBytesFromInputStream(part.inputStream)
-			return fromMimeAttachment(part, data, message_id, count)
-		}
+        @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
+        fun fromMimeAttachment(part: Part, message_id: String, count: Int): Attachment {
+            val data = getBytesFromInputStream(part.inputStream)
+            return fromMimeAttachment(part, data, message_id, count)
+        }
 
-		@Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
-		fun fromMimeAttachment(part: Part, data: ByteArray, message_id: String, count: Int): Attachment {
-			val attachment = Attachment()
+        @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
+        fun fromMimeAttachment(part: Part, data: ByteArray, message_id: String, count: Int): Attachment {
+            val attachment = Attachment()
 
-			attachment.fileName = part.fileName ?: "default"
-			val encoding = if (part is MimeBodyPart) part.encoding else "binary"
-			val contentId = (part as? MimeBodyPart)?.contentID
-			val contentLocations = part.getHeader("content-location")
-			val contentLocation = contentLocations?.firstOrNull()
+            attachment.fileName = part.fileName ?: "default"
+            val encoding = if (part is MimeBodyPart) part.encoding else "binary"
+            val contentId = (part as? MimeBodyPart)?.contentID
+            val contentLocations = part.getHeader("content-location")
+            val contentLocation = contentLocations?.firstOrNull()
 
-			attachment.headers = AttachmentHeaders(
-				part.contentType,
-				encoding,
-				listOf(part.disposition),
-				listOf(contentId),
-				contentLocation, ""
-			)
+            attachment.headers = AttachmentHeaders(
+                part.contentType,
+                encoding,
+                listOf(part.disposition),
+                listOf(contentId),
+                contentLocation, ""
+            )
 
-			Formatter().use { format ->
-				val md5 = MessageDigest.getInstance("MD5")
-				md5.update(data)
-				md5.digest().forEach { b ->
-					format.format("%02x", b)
-				}
-				attachment.attachmentId = "PGPAttachment/$message_id/$format/$count"
-			}
-			attachment.fileSize = data.size.toLong()
-			attachment.mimeType = part.contentType.replace("(\\s*)?[\\r\\n]+(\\s*)".toRegex(), "")
-			attachment.mimeData = data
-			attachment.messageId = message_id
-			return attachment
-		}
+            Formatter().use { format ->
+                val md5 = MessageDigest.getInstance("MD5")
+                md5.update(data)
+                md5.digest().forEach { b ->
+                    format.format("%02x", b)
+                }
+                attachment.attachmentId = "PGPAttachment/$message_id/$format/$count"
+            }
+            attachment.fileSize = data.size.toLong()
+            attachment.mimeType = part.contentType.replace("(\\s*)?[\\r\\n]+(\\s*)".toRegex(), "")
+            attachment.mimeData = data
+            attachment.messageId = message_id
+            return attachment
+        }
 
-		@Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
-		fun fromMimeAttachment(data: ByteArray, headers: InternetHeaders, message_id: String, count: Int): Attachment {
-			return fromMimeAttachment(MimeBodyPart(headers, ByteArray(0)), data, message_id, count)
-		}
+        @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
+        fun fromMimeAttachment(data: ByteArray, headers: InternetHeaders, message_id: String, count: Int): Attachment {
+            return fromMimeAttachment(MimeBodyPart(headers, ByteArray(0)), data, message_id, count)
+        }
 
-		@Throws(IOException::class)
-		private fun getBytesFromInputStream(inputStream: InputStream): ByteArray {
-			val outputStream = ByteArrayOutputStream()
+        @Throws(IOException::class)
+        private fun getBytesFromInputStream(inputStream: InputStream): ByteArray {
+            val outputStream = ByteArrayOutputStream()
 
-			val buffer = ByteArray(0xFFFF)
-			var len = inputStream.read(buffer)
-			while (len != -1) {
-				outputStream.write(buffer, 0, len)
-				len = inputStream.read(buffer)
-			}
+            val buffer = ByteArray(0xFFFF)
+            var len = inputStream.read(buffer)
+            while (len != -1) {
+                outputStream.write(buffer, 0, len)
+                len = inputStream.read(buffer)
+            }
 
-			return outputStream.toByteArray()
-		}
+            return outputStream.toByteArray()
+        }
 
-		@JvmOverloads
-		fun createAttachmentList(
-			messagesDatabase: MessagesDatabase,
-			localAttachmentList: List<LocalAttachment>,
-			useRandomIds: Boolean = true
-		): List<Attachment> {
-			return localAttachmentList.map { localAttachment ->
-				fromLocalAttachment(messagesDatabase, localAttachment, localAttachmentList.indexOf(localAttachment).toLong(), useRandomIds)
-			}
-		}
+        @JvmOverloads
+        fun createAttachmentList(
+            messagesDatabase: MessagesDatabase,
+            localAttachmentList: List<LocalAttachment>,
+            useRandomIds: Boolean = true
+        ): List<Attachment> {
+            return localAttachmentList.map { localAttachment ->
+                fromLocalAttachment(messagesDatabase, localAttachment, localAttachmentList.indexOf(localAttachment).toLong(), useRandomIds)
+            }
+        }
 
-		private fun getRandomAttachmentId(index: Long): String {
-			val random = Random(System.nanoTime())
-			val randomOneSec = random.nextInt()
-			return "" + -(System.currentTimeMillis() + randomOneSec.toLong() + index)
-		}
-	}
+        private fun getRandomAttachmentId(index: Long): String {
+            val random = Random(System.nanoTime())
+            val randomOneSec = random.nextInt()
+            return "" + -(System.currentTimeMillis() + randomOneSec.toLong() + index)
+        }
+    }
 }

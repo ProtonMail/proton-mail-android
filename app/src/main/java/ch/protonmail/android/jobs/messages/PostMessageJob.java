@@ -255,7 +255,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         try {
             fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
         } catch (Exception e) {
-            Timber.e("SendMessage: Failed fetching missing send preferences " + e);
+            Timber.e(e, "SendMessage: Failed fetching missing send preferences");
         }
 
         onRunPostMessage(pendingActionsDatabase, message, crypto);

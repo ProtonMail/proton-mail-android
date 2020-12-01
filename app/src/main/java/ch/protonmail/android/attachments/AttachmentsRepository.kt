@@ -32,8 +32,15 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import timber.log.Timber
+import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * Repository that handles uploading attachments
+ *
+ * TODO Replace `userManager` and `messageDetailsRepository`
+ * dependencies for more robust components. tracked in MAILAND-1195
+ */
 class AttachmentsRepository @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val apiManager: ProtonMailApiManager,
@@ -49,12 +56,11 @@ class AttachmentsRepository @Inject constructor(
 
     suspend fun uploadPublicKey(message: Message, crypto: AddressCrypto): Result {
         val address = userManager.getUser(userManager.username).getAddressById(message.addressID).toNewAddress()
-        val primaryKey = address.keys.primaryKey
-        requireNotNull(primaryKey)
+        val primaryKey = requireNotNull(address.keys.primaryKey)
 
         val publicKey = crypto.buildArmoredPublicKey(primaryKey.privateKey)
         val publicKeyFingerprint = crypto.getFingerprint(publicKey)
-        val fingerprintCharsUppercase = publicKeyFingerprint.substring(0, 8).toUpperCase()
+        val fingerprintCharsUppercase = publicKeyFingerprint.substring(0, 8).toUpperCase(Locale.getDefault())
 
         val attachment = Attachment().apply {
             fileName = "publickey - ${address.email} - 0x$fingerprintCharsUppercase.asc"
@@ -74,6 +80,7 @@ class AttachmentsRepository @Inject constructor(
             val mimeType = attachment.mimeType
             val filename = attachment.fileName
             if (mimeType == null || filename == null) {
+                Timber.e("Upload attachment failed: mimeType or filename were null")
                 return@withContext Result.Failure("This attachment name / type is invalid. Please retry")
             }
 
@@ -110,8 +117,8 @@ class AttachmentsRepository @Inject constructor(
 
             val response = uploadResult.getOrNull()
             if (uploadResult.isFailure || response == null) {
-                Timber.e("AttachmentRepository - Upload attachment failed: ${uploadResult.exceptionOrNull()}")
-                return@withContext Result.Failure("Upload attachemt request failed")
+                Timber.e("Upload attachment failed: ${uploadResult.exceptionOrNull()}")
+                return@withContext Result.Failure("Upload attachment request failed")
             }
 
             if (response.code == Constants.RESPONSE_CODE_OK) {
@@ -120,9 +127,11 @@ class AttachmentsRepository @Inject constructor(
                 attachment.signature = response.attachment.signature
                 attachment.isUploaded = true
                 messageDetailsRepository.saveAttachment(attachment)
+                Timber.i("Upload attachment successful. attachmentId: ${response.attachmentID}")
                 return@withContext Result.Success
             }
 
+            Timber.e("Upload attachment failed: ${response.error}")
             return@withContext Result.Failure(response.error)
         }
 
