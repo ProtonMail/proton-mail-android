@@ -341,5 +341,19 @@ class AttachmentsRepositoryTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun uploadReturnsFailureWhenAnyRequiredAttachmentFieldIsNull() {
+        runBlockingTest {
+            val fileContent = "file content".toByteArray()
+            val attachment = mockk<Attachment>(relaxed = true) {
+                every { getFileContent() } returns fileContent
+                every { mimeType } returns null
+            }
 
+            val result = repository.upload(attachment, crypto)
+
+            val expectedResult = AttachmentsRepository.Result.Failure("This attachment name / type is invalid. Please retry")
+            assertEquals(expectedResult, result)
+        }
+    }
 }

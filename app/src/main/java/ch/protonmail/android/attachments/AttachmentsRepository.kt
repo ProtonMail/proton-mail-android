@@ -70,8 +70,11 @@ class AttachmentsRepository @Inject constructor(
     ): Result =
         withContext(dispatchers.Io) {
             val headers = attachment.headers
-            val mimeType = requireNotNull(attachment.mimeType)
-            val filename = requireNotNull(attachment.fileName)
+            val mimeType = attachment.mimeType
+            val filename = attachment.fileName
+            if (mimeType == null || filename == null) {
+                return@withContext Result.Failure("This attachment name / type is invalid. Please retry")
+            }
 
             val encryptedAttachment = crypto.encrypt(fileContent, filename)
             val signedFileContent = armorer.unarmor(crypto.sign(fileContent))

@@ -63,7 +63,7 @@ class AttachmentApi(
     ): AttachmentUploadResponse {
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
-        return ParseUtils.parse(uploadService.uploadAttachment(filename, MessageID, contentID, mimeType, KeyPackage, DataPackage, Signature).execute())
+        return ParseUtils.parse(uploadService.uploadAttachmentBlocking(filename, MessageID, contentID, mimeType, KeyPackage, DataPackage, Signature).execute())
     }
 
     @Throws(IOException::class)
@@ -77,7 +77,7 @@ class AttachmentApi(
         val mimeType = attachment.mimeType!!
         val messageId = attachment.messageId
         return ParseUtils.parse(
-            uploadService.uploadAttachment(
+            uploadService.uploadAttachmentBlocking(
                 filename,
                 messageId,
                 mimeType,
@@ -97,7 +97,7 @@ class AttachmentApi(
     ): AttachmentUploadResponse {
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
-        return ParseUtils.parse(uploadService.uploadAttachment(filename, messageID, contentID, mimeType, keyPackage, dataPackage, signature).execute())
+        return ParseUtils.parse(uploadService.uploadAttachmentBlocking(filename, messageID, contentID, mimeType, keyPackage, dataPackage, signature).execute())
     }
 
     override suspend fun uploadAttachment(
@@ -110,7 +110,7 @@ class AttachmentApi(
         val mimeType = attachment.mimeType!!
         val messageId = attachment.messageId
         return ParseUtils.parse(
-            uploadService.uploadAttachment(
+            uploadService.uploadAttachmentBlocking(
                 filename,
                 messageId,
                 mimeType,
