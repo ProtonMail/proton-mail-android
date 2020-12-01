@@ -88,6 +88,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
                 every { keys } returns addressKeys
             }
             val newTestAddresses = listOf(newAddresses)
+            every { toNewUser().addresses.addresses } returns mapOf(1 to newAddresses)
             every { toNewUser().addresses.sorted() } returns newTestAddresses
             every { getAddresses() } returns CopyOnWriteArrayList(testAddresses)
         }

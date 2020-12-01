@@ -29,7 +29,6 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import java.util.Collections
 import javax.inject.Inject
 
 class FetchVerificationKeys @Inject constructor(
@@ -41,21 +40,20 @@ class FetchVerificationKeys @Inject constructor(
 ) {
 
     suspend operator fun invoke(email: String): List<KeyInformation> = withContext(dispatchers.Io) {
-        val sortedAddresses = userManager.user.toNewUser().addresses.sorted()
-        for (address in sortedAddresses) {
-            if (address.email.s == email) {
-                val publicKeys = mutableListOf<KeyInformation>()
-                for (key in address.keys.keys) {
-                    val armouredKey = userCrypto.buildArmoredPublicKey(key.privateKey)
-                    val keyInfo = userCrypto.deriveKeyInfo(armouredKey)
-                    if (!KeyFlag.fromInteger(key.buildBackEndFlags()).contains(KeyFlag.VERIFICATION_ENABLED)) {
-                        keyInfo.flagAsCompromised()
-                    }
-                    publicKeys.add(keyInfo)
+        val publicKeys = userManager.user.toNewUser().addresses.addresses.values
+            .find { it.email.s == email }?.keys?.keys
+            ?.map { key ->
+                val armouredKey = userCrypto.buildArmoredPublicKey(key.privateKey)
+                val keyInfo = userCrypto.deriveKeyInfo(armouredKey)
+                if (!KeyFlag.fromInteger(key.buildBackEndFlags()).contains(KeyFlag.VERIFICATION_ENABLED)) {
+                    keyInfo.flagAsCompromised()
                 }
-                Timber.v("FetchVerificationKeys Success keys $publicKeys")
-                return@withContext publicKeys
-            }
+                keyInfo
+            }?.toList()
+
+        if (!publicKeys.isNullOrEmpty()) {
+            Timber.v("FetchVerificationKeys Success keys $publicKeys")
+            return@withContext publicKeys
         }
 
         val contactEmail = contactsDao.findContactEmailByEmail(email)
@@ -101,15 +99,14 @@ class FetchVerificationKeys @Inject constructor(
                 }
             }
         }
-        val keys = mutableListOf<KeyInformation>()
-        for (pubKey in trustedKeys) {
+
+        return trustedKeys.map { pubKey ->
             val keyInfo = crypto.deriveKeyInfo(pubKey)
             if (bannedFingerprints.contains(keyInfo.fingerprint)) {
                 keyInfo.flagAsCompromised()
             }
-            keys.add(keyInfo)
-        }
-        return Collections.unmodifiableList(keys)
+            keyInfo
+        }.toList()
     }
 
 }
