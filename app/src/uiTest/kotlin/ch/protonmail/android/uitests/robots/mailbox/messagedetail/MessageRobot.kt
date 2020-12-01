@@ -25,6 +25,7 @@ import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.robots.mailbox.spam.SpamRobot
+import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.click
 
@@ -124,6 +125,15 @@ class MessageRobot {
 
         fun pgpIconShown() {
             UIActions.wait.forViewWithId(R.id.pgp_icon)
+        }
+
+        fun pgpEncryptedMessageDecrypted() {
+            UIActions.wait.forViewWithTextByUiAutomator(TestData.pgpEncryptedTextDecrypted)
+
+        }
+
+        fun pgpSignedMessageDecrypted() {
+            UIActions.wait.forViewWithTextByUiAutomator(TestData.pgpSignedTextDecrypted)
         }
 
         fun messageWebViewContainerShown() {
