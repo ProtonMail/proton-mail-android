@@ -31,6 +31,7 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import timber.log.Timber
 import javax.inject.Inject
 
 class AttachmentsRepository @Inject constructor(
@@ -109,6 +110,7 @@ class AttachmentsRepository @Inject constructor(
 
             val response = uploadResult.getOrNull()
             if (uploadResult.isFailure || response == null) {
+                Timber.e("AttachmentRepository - Upload attachment failed: ${uploadResult.exceptionOrNull()}")
                 return@withContext Result.Failure("Upload attachemt request failed")
             }
 

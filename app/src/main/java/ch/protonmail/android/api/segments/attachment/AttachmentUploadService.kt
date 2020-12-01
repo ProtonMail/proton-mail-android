@@ -49,4 +49,27 @@ interface AttachmentUploadService {
         @Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody,
         @Part("Signature\"; filename=\"temp3") Signature: RequestBody
     ): Call<AttachmentUploadResponse>
+
+    @Multipart
+    @POST("mail/v4/attachments")
+    suspend fun uploadAttachment(
+        @Part("Filename") Filename: String,
+        @Part("MessageID") MessageID: String,
+        @Part("MIMEType") MIMEType: String,
+        @Part("KeyPackets\"; filename=\"temp1") KeyPackets: RequestBody,
+        @Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody,
+        @Part("Signature\"; filename=\"temp3") Signature: RequestBody
+    ): AttachmentUploadResponse
+
+    @Multipart
+    @POST("mail/v4/attachments")
+    suspend fun uploadAttachment(
+        @Part("Filename") Filename: String,
+        @Part("MessageID") MessageID: String,
+        @Part("ContentID") ContentID: String,
+        @Part("MIMEType") MIMEType: String,
+        @Part("KeyPackets\"; filename=\"temp1") KeyPackets: RequestBody,
+        @Part("DataPacket\"; filename=\"temp2") DataPacket: RequestBody,
+        @Part("Signature\"; filename=\"temp3") Signature: RequestBody
+    ): AttachmentUploadResponse
 }

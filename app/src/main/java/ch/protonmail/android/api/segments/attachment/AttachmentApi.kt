@@ -97,7 +97,15 @@ class AttachmentApi(
     ): AttachmentUploadResponse {
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
-        return ParseUtils.parse(uploadService.uploadAttachmentBlocking(filename, messageID, contentID, mimeType, keyPackage, dataPackage, signature).execute())
+        return uploadService.uploadAttachment(
+            filename,
+            messageID,
+            contentID,
+            mimeType,
+            keyPackage,
+            dataPackage,
+            signature
+        )
     }
 
     override suspend fun uploadAttachment(
@@ -109,15 +117,14 @@ class AttachmentApi(
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
         val messageId = attachment.messageId
-        return ParseUtils.parse(
-            uploadService.uploadAttachmentBlocking(
-                filename,
-                messageId,
-                mimeType,
-                keyPackage,
-                dataPackage,
-                signature
-            ).execute())
+        return uploadService.uploadAttachment(
+            filename,
+            messageId,
+            mimeType,
+            keyPackage,
+            dataPackage,
+            signature
+        )
     }
 
     override fun getAttachmentUrl(attachmentId: String): String {
