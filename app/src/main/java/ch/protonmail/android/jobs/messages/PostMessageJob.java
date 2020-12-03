@@ -248,7 +248,8 @@ public class PostMessageJob extends ProtonMailBaseJob {
             UploadAttachments.Result.Failure failureResult = (UploadAttachments.Result.Failure) result;
             Timber.e("Failed uploading attachments - Exception --> " + failureResult.getError());
             pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
-            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, "Failed uploading attachments", getUserManager().getUser());
+            String error = "Failed uploading attachments for message \"" + message.getSubject() + "\"";
+            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, getUserManager().getUser());
             return;
         }
 
