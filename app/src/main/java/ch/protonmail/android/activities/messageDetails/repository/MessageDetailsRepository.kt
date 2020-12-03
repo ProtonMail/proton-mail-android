@@ -52,6 +52,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.equalsNoCase
 import timber.log.Timber
 import java.io.File
@@ -72,7 +73,8 @@ class MessageDetailsRepository @Inject constructor(
     @Named("messages_search") var searchDatabaseDao: MessagesDao,
     private var pendingActionsDatabase: PendingActionsDao,
     private val applicationContext: Context,
-    var databaseProvider: DatabaseProvider
+    var databaseProvider: DatabaseProvider,
+    private val dispatchers: DispatcherProvider
 ) {
 
     private var messagesDao: MessagesDao = databaseProvider.provideMessagesDao()
@@ -218,12 +220,12 @@ class MessageDetailsRepository @Inject constructor(
         return messagesDao.saveMessage(message)
     }
 
-    suspend fun saveMessageInDB(message: Message, dispatcher: CoroutineDispatcher): Long =
-            withContext(dispatcher) {
-                saveMessageInDB(message)
-            }
+    suspend fun saveMessageLocally(message: Message): Long =
+        withContext(dispatchers.Io) {
+            saveMessageInDB(message)
+        }
 
-    fun saveAllMessages(messages:List<Message>) {
+    fun saveAllMessages(messages: List<Message>) {
         messages.map(this::saveMessageInDB)
     }
 

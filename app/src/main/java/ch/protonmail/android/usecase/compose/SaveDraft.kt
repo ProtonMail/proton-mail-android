@@ -19,11 +19,29 @@
 
 package ch.protonmail.android.usecase.compose
 
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.domain.entity.Id
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
+import javax.inject.Inject
 
-class SaveDraft {
+class SaveDraft @Inject constructor(
+    private val addressCryptoFactory: AddressCrypto.Factory,
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val dispatchers: DispatcherProvider
+) {
 
-    suspend operator fun invoke(message: Message) {
+    suspend operator fun invoke(message: Message) =
+        withContext(dispatchers.Io) {
+            val addressId = message.addressID
+            requireNotNull(addressId)
 
-    }
+            val addressCrypto = addressCryptoFactory.create(Id(addressId))
+            val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
+
+            message.messageBody = encryptedBody
+            messageDetailsRepository.saveMessageLocally(message)
+        }
 }

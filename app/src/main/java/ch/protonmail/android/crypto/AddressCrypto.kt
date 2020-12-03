@@ -37,21 +37,29 @@ import com.proton.gopenpgp.constants.Constants
 import com.proton.gopenpgp.crypto.KeyRing
 import com.proton.gopenpgp.crypto.PlainMessage
 import com.proton.gopenpgp.crypto.SessionKey
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
-class AddressCrypto(
+class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
     openPgp: OpenPGP,
     username: Name,
-    private val addressId: Id,
+    @Assisted private val addressId: Id,
     userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
 ) : Crypto<AddressKey>(userManager, openPgp, username, userMapper) {
 
-    private val address get() =
-        // Address here cannot be null
-        user.addresses.findBy(addressId)
-            ?: throw IllegalArgumentException("Cannot find an address with given id")
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(addressId: Id): AddressCrypto
+    }
+
+    private val address
+        get() =
+            // Address here cannot be null
+            user.addresses.findBy(addressId)
+                ?: throw IllegalArgumentException("Cannot find an address with given id")
 
     private val addressKeys: AddressKeys
         get() = address.keys

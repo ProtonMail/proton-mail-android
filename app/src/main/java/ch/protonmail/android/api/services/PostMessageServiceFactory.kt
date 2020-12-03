@@ -104,7 +104,7 @@ class PostMessageServiceFactory @Inject constructor(
             try {
                 val tct = crypto.encrypt(content, true)
                 message.messageBody = tct.armored
-                messageDetailsRepository.saveMessageInDB(message, bgDispatcher)
+                messageDetailsRepository.saveMessageLocally(message)
             } catch (e: Exception) {
                 Timber.e(e, "handleMessage in PostMessageTask failed")
             }
@@ -119,7 +119,7 @@ class PostMessageServiceFactory @Inject constructor(
         }
         val hasAttachment = message.numAttachments >= 1
         message.setLabelIDs(listOf(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString(), Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(), Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()))
-        messageDetailsRepository.saveMessageInDB(message, bgDispatcher)
+        messageDetailsRepository.saveMessageLocally(message)
 
         if (hasAttachment && uploadAttachments && newAttachments.isNotEmpty()) {
             insertPendingUpload(context, message.messageId!!)
@@ -131,7 +131,7 @@ class PostMessageServiceFactory @Inject constructor(
             return
         }
         message.setLabelIDs(listOf(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString(), Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(), Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()))
-        messageDetailsRepository.saveMessageInDB(message, bgDispatcher)
+        messageDetailsRepository.saveMessageLocally(message)
         if (uploadAttachments && newAttachments.isNotEmpty()) {
             insertPendingUpload(context, message.messageId!!)
         }
@@ -149,7 +149,7 @@ class PostMessageServiceFactory @Inject constructor(
         message.sender = message.sender
         message.isInline = message.isInline
         message.parsedHeaders = message.parsedHeaders
-        messageDetailsRepository.saveMessageInDB(message, bgDispatcher)
+        messageDetailsRepository.saveMessageLocally(message)
         insertPendingSend(context, message.messageId, message.dbId)
     }
 
