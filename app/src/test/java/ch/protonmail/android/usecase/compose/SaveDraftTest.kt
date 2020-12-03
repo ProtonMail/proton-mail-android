@@ -23,6 +23,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -67,6 +68,29 @@ class SaveDraftTest : CoroutinesTest {
 
             val expectedMessage = message.copy(messageBody = encryptedArmoredBody)
             coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+        }
+
+    @Test
+    fun saveDraftInsertsPendingDraftInPendingActionsDatabase() =
+        runBlockingTest {
+            val decryptedMessageBody = "Message body in plain text"
+            val addressId = "addressId"
+            val messageDbId = 123L
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = addressId
+                decryptedBody = decryptedMessageBody
+            }
+            val encryptedArmoredBody = "encrypted armored content"
+            val addressCrypto = mockk<AddressCrypto> {
+                every { encrypt(decryptedMessageBody, true).armored } returns encryptedArmoredBody
+            }
+            every { addressCryptoFactory.create(Id(addressId)) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
+
+            saveDraft(message)
+
+            coVerify { messageDetailsRepository.insertPendingDraft(messageDbId) }
         }
 }
 

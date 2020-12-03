@@ -394,7 +394,9 @@ class ComposeMessageViewModel @Inject constructor(
     fun insertPendingDraft() {
         viewModelScope.launch {
             _dbId?.let {
-                insertPendingDraft(it, IO)
+                withContext(IO) {
+                    messageDetailsRepository.insertPendingDraft(it)
+                }
             }
         }
     }
@@ -487,11 +489,6 @@ class ComposeMessageViewModel @Inject constructor(
     private suspend fun removePendingDraft(messageDbId: Long) =
         withContext(IO) {
             messageDetailsRepository.deletePendingDraft(messageDbId)
-        }
-
-    private suspend fun insertPendingDraft(messageDbId: Long, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
-            messageDetailsRepository.insertPendingDraft(messageDbId, dispatcher)
         }
 
     private suspend fun saveMessage(message: Message, dispatcher: CoroutineDispatcher): Long =

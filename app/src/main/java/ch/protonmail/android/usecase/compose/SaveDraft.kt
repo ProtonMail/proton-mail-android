@@ -42,6 +42,7 @@ class SaveDraft @Inject constructor(
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
 
             message.messageBody = encryptedBody
-            messageDetailsRepository.saveMessageLocally(message)
+            val messageId = messageDetailsRepository.saveMessageLocally(message)
+            messageDetailsRepository.insertPendingDraft(messageId)
         }
 }

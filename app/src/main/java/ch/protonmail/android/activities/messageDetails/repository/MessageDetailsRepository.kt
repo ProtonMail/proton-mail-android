@@ -463,10 +463,13 @@ class MessageDetailsRepository @Inject constructor(
         jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
     }
 
-    suspend fun insertPendingDraft(messageDbId: Long, dispatcher: CoroutineDispatcher) =
-            withContext(dispatcher) {
-                pendingActionsDatabase.insertPendingDraft(PendingDraft(messageDbId))
-            }
+    /**
+     * TODO this have nothing to do with MessageDetails, extract to PendingActionsRepository
+     */
+    suspend fun insertPendingDraft(messageDbId: Long) =
+        withContext(dispatchers.Io) {
+            pendingActionsDatabase.insertPendingDraft(PendingDraft(messageDbId))
+        }
 
     fun deletePendingDraft(messageDbId: Long) = pendingActionsDatabase.deletePendingDraftById(messageDbId)
 
