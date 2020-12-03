@@ -21,6 +21,9 @@ package ch.protonmail.android.usecase.compose
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
+import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import kotlinx.coroutines.withContext
@@ -42,6 +45,14 @@ class SaveDraft @Inject constructor(
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
 
             message.messageBody = encryptedBody
+            message.setLabelIDs(
+                listOf(
+                    ALL_DRAFT.messageLocationTypeValue.toString(),
+                    ALL_MAIL.messageLocationTypeValue.toString(),
+                    DRAFT.messageLocationTypeValue.toString()
+                )
+            )
+
             val messageId = messageDetailsRepository.saveMessageLocally(message)
             messageDetailsRepository.insertPendingDraft(messageId)
         }
