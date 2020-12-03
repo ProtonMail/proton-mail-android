@@ -42,6 +42,7 @@ fun org.gradle.api.Project.android(
 ) = (this as ExtensionAware).extensions.configure<TestedExtension> {
 
     compileSdkVersion(targetSdk)
+    buildToolsVersion("30.0.2") // Latest in Doker image
     ndkVersion = "21.3.6528147" // Same as Docker image
     defaultConfig {
 
