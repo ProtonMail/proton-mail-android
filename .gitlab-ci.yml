@@ -71,7 +71,6 @@ build debug:
     - android
     - large
   script:
-    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - ./gradlew assembleBetaDebug
     - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
   artifacts:
@@ -126,7 +125,6 @@ unit tests:
     - android
     - large
   script:
-    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - ./gradlew -Pci --console=plain allTest
 
 
@@ -143,7 +141,6 @@ firebase tests:
     - android
     - large
   script:
-    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
