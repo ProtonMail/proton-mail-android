@@ -13,10 +13,6 @@ cache:
   paths:
     - .gradle/caches
     - app/build/
-variables:
-  ANDROID_COMPILE_SDK: "28"
-  ANDROID_BUILD_TOOLS: "28.0.3"
-  ANDROID_SDK_TOOLS:   "26.1.1"
 
 stages:
   - manual-release
