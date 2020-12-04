@@ -50,24 +50,22 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
-import ch.protonmail.android.events.FetchMessageDetailEvent
-import ch.protonmail.android.events.FetchVerificationKeysEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
-import com.squareup.otto.Subscribe
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -85,6 +83,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     messageRendererFactory: MessageRenderer.Factory,
     private val deleteMessageUseCase: DeleteMessage,
+    private val fetchVerificationKeys: FetchVerificationKeys,
+    private val dispatchers: DispatcherProvider,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -165,6 +165,28 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     val publicKeys = MutableLiveData<List<KeyInformation>>()
     lateinit var decryptedMessageData: MediatorLiveData<Message>
 
+    val webViewContentWithoutImages = MutableLiveData<String>()
+    val webViewContentWithImages = MutableLiveData<String>()
+    val webViewContent = object : MediatorLiveData<String>() {
+        var contentWithoutImages: String? = null
+        var contentWithImages: String? = null
+
+        init {
+            addSource(webViewContentWithoutImages) {
+                contentWithoutImages = it
+                emit()
+            }
+            addSource(webViewContentWithImages) {
+                contentWithImages = it
+                emit()
+            }
+        }
+
+        fun emit() {
+            value = contentWithImages ?: contentWithoutImages
+        }
+    }
+
     init {
         tryFindMessage()
         messageDetailsRepository.reloadDependenciesForUser(userManager.username)
@@ -190,7 +212,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun saveMessage() {
         // Return if message is null
         val message = message.value ?: return
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
             val result = runCatching {
                 messageDetailsRepository.saveMessageInDB(message, isTransientMessage)
             }
@@ -213,7 +235,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     //endregion
     fun findAllLabelsWithIds(checkedLabelIds: MutableList<String>) {
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
             messageDetailsRepository.findAllLabelsWithIds(
                 decryptedMessageData.value ?: Message(), checkedLabelIds,
                 labels.value ?: ArrayList(), isTransientMessage
@@ -225,7 +247,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun startDownloadEmbeddedImagesJob() {
         hasEmbeddedImages = false
 
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
 
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
@@ -277,7 +299,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 mImagesDisplayed,
                 remoteContentDisplayed,
                 _embeddedImagesAttachments,
-                IO,
+                dispatchers.Io,
                 isTransientMessage
             )
             _prepareEditMessageIntentResult.value = Event(intent)
@@ -294,7 +316,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             var message: Message? = null
             var keys: List<KeyInformation>? = null
             var contact: ContactEmail? = null
-            var decrypted: Boolean = false
+            var isDecrypted: Boolean = false
 
             init {
                 addSource(this@MessageDetailsViewModel.message) {
@@ -302,59 +324,21 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     message?.senderEmail?.let { senderEmail ->
                         addSource(contactsRepository.findContactEmailByEmailLiveData(senderEmail)) { contactEmail ->
                             contact = contactEmail ?: ContactEmail("", message?.senderEmail ?: "", message?.senderName)
-                            if (!decrypted) {
+                            if (!isDecrypted) {
                                 refreshedKeys = true
-                                viewModelScope.launch {
-                                    withContext(IO) {
-                                        tryEmit()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!decrypted) {
-                        refreshedKeys = true
-                        viewModelScope.launch {
-                            withContext(IO) {
                                 tryEmit()
                             }
                         }
+                    }
+                    if (!isDecrypted) {
+                        refreshedKeys = true
+                        tryEmit()
                     }
                 }
                 addSource(publicKeys) {
                     keys = it
                     refreshedKeys = false
-                    viewModelScope.launch {
-                        withContext(IO) {
-                            tryEmit()
-                        }
-                    }
-                }
-            }
-
-            private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
-                return try {
-                    try {
-                        decrypt(userManager = userManager, username = userManager.username, verKeys = verificationKeys)
-                    } catch (e: Exception) {
-                        // signature verification failed with special case, try to decrypt again without verification
-                        // and hardcode verification error
-                        if (verificationKeys != null && verificationKeys.isNotEmpty() && e.message == "Signature Verification Error: No matching signature") {
-                            Timber.d(e, "Decrypting message again without verkeys")
-                            decrypt(userManager = userManager, username = userManager.username)
-                            this.hasValidSignature = false
-                            this.hasInvalidSignature = true
-                            //refreshedKeys = true
-                            return true
-                        } else {
-                            Timber.d(e, "Cannot decrypt message even without empty verkeys")
-                            return false
-                        }
-                    }
-                    true
-                } catch (e: Throwable) {
-                    Timber.d(e, "Cannot decrypt message")
-                    false
+                    tryEmit()
                 }
             }
 
@@ -363,33 +347,37 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 if (!message.isDownloaded) {
                     return
                 }
-                if (!contact?.name.equals(message.sender!!.emailAddress))
-                    message.senderDisplayName = contact?.name
-                decrypted = message.tryDecrypt(keys) ?: false
-                postValue(message)
-            }
-        }
-    }
+                viewModelScope.launch {
+                    if (contact?.name != message.sender?.emailAddress)
+                        message.senderDisplayName = contact?.name
 
-    val webViewContentWithoutImages = MutableLiveData<String>()
-    val webViewContentWithImages = MutableLiveData<String>()
-    val webViewContent = object : MediatorLiveData<String>() {
-        var contentWithoutImages: String? = null
-        var contentWithImages: String? = null
-
-        init {
-            addSource(webViewContentWithoutImages) {
-                contentWithoutImages = it
-                emit()
+                    isDecrypted = withContext(dispatchers.Comp) {
+                        message.tryDecrypt(keys) ?: false
+                    }
+                    Timber.v("Message isDecrypted:$isDecrypted")
+                    value = message
+                }
             }
-            addSource(webViewContentWithImages) {
-                contentWithImages = it
-                emit()
-            }
-        }
 
-        fun emit() {
-            value = contentWithImages ?: contentWithoutImages
+            private fun Message.tryDecrypt(verificationKeys: List<KeyInformation>?): Boolean? {
+                return try {
+                    decrypt(userManager = userManager, username = userManager.username, verKeys = verificationKeys)
+                    true
+                } catch (exception: Exception) {
+                    // signature verification failed with special case, try to decrypt again without verification
+                    // and hardcode verification error
+                    if (verificationKeys != null && verificationKeys.isNotEmpty() && exception.message == "Signature Verification Error: No matching signature") {
+                        Timber.d(exception, "Decrypting message again without verkeys")
+                        decrypt(userManager = userManager, username = userManager.username)
+                        this.hasValidSignature = false
+                        this.hasInvalidSignature = true
+                        true
+                    } else {
+                        Timber.d(exception, "Cannot decrypt message even without empty verkeys")
+                        false
+                    }
+                }
+            }
         }
     }
 
@@ -398,19 +386,18 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             return
         }
         requestPending.set(true)
-        val bgDispatcher: CoroutineDispatcher = IO
 
         viewModelScope.launch {
             var shouldExit = false
             if (checkForMessageAttachmentHeaders) {
                 val attHeadersPresent = message.value?.let {
-                    messageDetailsRepository.checkIfAttHeadersArePresent(it, bgDispatcher)
+                    messageDetailsRepository.checkIfAttHeadersArePresent(it, dispatchers.Io)
                 } ?: false
                 shouldExit = checkForMessageAttachmentHeaders && !attHeadersPresent
             }
 
             if (!shouldExit) {
-                withContext(IO) {
+                withContext(dispatchers.Io) {
                     val messageDetailsResult = runCatching {
                         with(messageDetailsRepository) {
                             if (isTransientMessage) fetchSearchMessageDetails(messageId)
@@ -428,7 +415,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                 with(messageDetailsRepository) {
 
                                     if (isTransientMessage) {
-                                        val savedMessage = findSearchMessageById(messageId, bgDispatcher)
+                                        val savedMessage = findSearchMessageById(messageId, dispatchers.Io)
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveSearchMessageInDB(savedMessage)
@@ -437,7 +424,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                         }
 
                                     } else {
-                                        val savedMessage = findMessageById(messageId, bgDispatcher)
+                                        val savedMessage = findMessageById(messageId, dispatchers.Io)
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveMessageInDB(savedMessage)
@@ -480,7 +467,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     fun tryDownloadingAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(dispatchers.Io) {
             val metadata = attachmentMetadataDatabase.getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
             if (metadata != null) {
                 if (metadata.localLocation.endsWith("==")) { // migration for deprecated saving attachments as files with name <attachmentId>
@@ -492,16 +479,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             } else {
                 DownloadEmbeddedAttachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
             }
-        }
-    }
-
-    @Subscribe
-    fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent?) {
-        if (event?.messageId == null || event.messageId != messageId) {
-            return
-        }
-        if (event.success) {
-            Timber.v("FetchMessage success")
         }
     }
 
@@ -553,15 +530,17 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             val message = message.value
             message?.let {
                 fetchingPubKeys = true
-                messageDetailsRepository.fetchVerificationKeys(message.senderEmail)
+                viewModelScope.launch {
+                    val result = fetchVerificationKeys(EmailAddress(message.senderEmail))
+                    onFetchVerificationKeysEvent(result)
+                }
             }
         }
     }
 
-    @Subscribe
-    fun onFetchVerificationKeysEvent(event: FetchVerificationKeysEvent) {
+    private fun onFetchVerificationKeysEvent(pubKeys: List<KeyInformation>) {
+        Timber.v("FetchVerificationKeys received $pubKeys")
         val message = message.value
-        val pubKeys = event.keys
         publicKeys.value = pubKeys
         fetchingPubKeys = false
         renderedFromCache = AtomicBoolean(false)

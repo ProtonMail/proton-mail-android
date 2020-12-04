@@ -52,25 +52,9 @@ abstract class Crypto<K>(
     private val userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
 ) {
 
-    companion object {
-
-        fun forUser(userManager: UserManager, username: Name): UserCrypto =
-            UserCrypto(userManager, userManager.openPgp, username)
-
-        @JvmStatic
-        fun forUser(userManager: UserManager, username: String): UserCrypto =
-            UserCrypto(userManager, userManager.openPgp, Name(username))
-
-        fun forAddress(userManager: UserManager, username: String, addressID: Id): AddressCrypto =
-            AddressCrypto(userManager, userManager.openPgp, Name(username), addressID)
-
-        @JvmStatic
-        fun forAddress(userManager: UserManager, username: String, addressID: String): AddressCrypto =
-            AddressCrypto(userManager, userManager.openPgp, Name(username), Id(addressID))
-    }
-
-    protected val user: User get() =
-        userMapper { userManager.getUser(username.s).toNewUser() }
+    protected val user: User
+        get() =
+            userMapper { userManager.getUser(username.s).toNewUser() }
 
     protected val userKeys
         get() = user.keys
@@ -95,6 +79,7 @@ abstract class Crypto<K>(
 
     protected abstract fun passphraseFor(key: K): ByteArray?
 
+    protected abstract val K.privateKey: PgpField.PrivateKey
 
     fun sign(data: ByteArray): String = openPgp.signBinDetached(
         data,
@@ -107,6 +92,7 @@ abstract class Crypto<K>(
         requirePrimaryKey().privateKey.string,
         passphrase
     )
+
 
     /**
      * Encrypt for Message or Contact
@@ -124,7 +110,6 @@ abstract class Crypto<K>(
         )
         return CipherText(armored)
     }
-
 
     /**
      * Decrypt Message or Contact Data
@@ -161,14 +146,9 @@ abstract class Crypto<K>(
             .also { newKey.clearPrivateParams() }
     }
 
+
     fun getUnarmoredKeys(): List<ByteArray> =
         currentKeys.map { Armor.unarmor(it.privateKey.string) }
-
-
-    protected val UserKey.isPrimary get() =
-        this == userKeys.primaryKey
-
-    protected abstract val K.privateKey: PgpField.PrivateKey
 
     /**
      * Try to run [block] for every [K] in [currentKeys]
@@ -183,5 +163,23 @@ abstract class Crypto<K>(
         }
         val messagePrefix = errorMessage?.let { "$it. " } ?: EMPTY_STRING
         throw IllegalStateException("${messagePrefix}There is no valid decryption key")
+    }
+
+    companion object {
+
+        @JvmStatic
+        @Deprecated(
+            "Please use injected UserCrypto instead",
+            ReplaceWith(
+                "userCrypto",
+                "ch.protonmail.android.crypto.UserCrypto"
+            )
+        )
+        fun forUser(userManager: UserManager, username: String): UserCrypto =
+            UserCrypto(userManager, userManager.openPgp, Name(username))
+
+        @JvmStatic
+        fun forAddress(userManager: UserManager, username: String, addressID: String): AddressCrypto =
+            AddressCrypto(userManager, userManager.openPgp, Name(username), Id(addressID))
     }
 }

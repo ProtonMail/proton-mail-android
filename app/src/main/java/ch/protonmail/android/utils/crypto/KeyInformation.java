@@ -20,6 +20,9 @@ package ch.protonmail.android.utils.crypto;
 
 import androidx.annotation.NonNull;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Created by kaylukas on 18/05/2018.
  */
@@ -79,5 +82,26 @@ public class KeyInformation {
 
     public boolean isCompromised() {
         return compromised;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KeyInformation that = (KeyInformation) o;
+        return isExpired == that.isExpired &&
+                isValid == that.isValid &&
+                compromised == that.compromised &&
+                Objects.equals(fingerprint, that.fingerprint) &&
+                Arrays.equals(publicKey, that.publicKey) &&
+                Arrays.equals(privateKey, that.privateKey);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(fingerprint, isExpired, isValid, compromised);
+        result = 31 * result + Arrays.hashCode(publicKey);
+        result = 31 * result + Arrays.hashCode(privateKey);
+        return result;
     }
 }
