@@ -12,7 +12,9 @@ before_script:
 cache:
   paths:
     - .gradle/caches
-    - app/build/
+    - '**/build'
+    - '**/**/build'
+    - '**/**/**/build'
 
 stages:
   - manual-release
