@@ -29,6 +29,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.worker.CreateDraftWorker
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -37,7 +38,8 @@ class SaveDraft @Inject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
-    private val pendingActionsDao: PendingActionsDao
+    private val pendingActionsDao: PendingActionsDao,
+    private val createDraftWorker: CreateDraftWorker.Enqueuer
 ) {
 
     suspend operator fun invoke(message: Message, newAttachments: List<Attachment>) =
@@ -64,5 +66,6 @@ class SaveDraft @Inject constructor(
                 pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
             }
 
+            createDraftWorker.enqueue()
         }
 }

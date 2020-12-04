@@ -29,6 +29,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.worker.CreateDraftWorker
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -46,6 +47,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 class SaveDraftTest : CoroutinesTest {
 
     @RelaxedMockK
+    private lateinit var createDraftEnqueuer: CreateDraftWorker.Enqueuer
+
+    @RelaxedMockK
     private lateinit var pendingActionsDao: PendingActionsDao
 
     @RelaxedMockK
@@ -61,27 +65,23 @@ class SaveDraftTest : CoroutinesTest {
     fun saveDraftSavesEncryptedDraftMessageToDb() =
         runBlockingTest {
             // Given
-            val decryptedMessageBody = "Message body in plain text"
-            val addressId = "addressId"
-            val messageDbId = 123L
             val message = Message().apply {
-                dbId = messageDbId
+                dbId = 123L
                 this.messageId = "456"
-                addressID = addressId
-                decryptedBody = decryptedMessageBody
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
             }
-            val encryptedArmoredBody = "encrypted armored content"
             val addressCrypto = mockk<AddressCrypto> {
-                every { encrypt(decryptedMessageBody, true).armored } returns encryptedArmoredBody
+                every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id(addressId)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
+            every { addressCryptoFactory.create(Id("addressId")) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
             saveDraft(message, emptyList())
 
             // Then
-            val expectedMessage = message.copy(messageBody = encryptedArmoredBody)
+            val expectedMessage = message.copy(messageBody = "encrypted armored content")
             expectedMessage.setLabelIDs(
                 listOf(
                     ALL_DRAFT.messageLocationTypeValue.toString(),
@@ -96,56 +96,47 @@ class SaveDraftTest : CoroutinesTest {
     fun saveDraftInsertsPendingDraftInPendingActionsDatabase() =
         runBlockingTest {
             // Given
-            val decryptedMessageBody = "Message body in plain text"
-            val addressId = "addressId"
-            val messageDbId = 123L
             val message = Message().apply {
-                dbId = messageDbId
+                dbId = 123L
                 this.messageId = "456"
-                addressID = addressId
-                decryptedBody = decryptedMessageBody
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
             }
-            val encryptedArmoredBody = "encrypted armored content"
             val addressCrypto = mockk<AddressCrypto> {
-                every { encrypt(decryptedMessageBody, true).armored } returns encryptedArmoredBody
+                every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id(addressId)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
+            every { addressCryptoFactory.create(Id("addressId")) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
             saveDraft(message, emptyList())
 
             // Then
-            coVerify { messageDetailsRepository.insertPendingDraft(messageDbId) }
+            coVerify { messageDetailsRepository.insertPendingDraft(123L) }
         }
 
     @Test
     fun saveDraftsInsertsPendingUploadWhenThereAreNewAttachments() =
         runBlockingTest {
             // Given
-            val decryptedMessageBody = "Message body in plain text"
-            val addressId = "addressId"
-            val messageDbId = 123L
-            val messageId = "456"
             val message = Message().apply {
-                dbId = messageDbId
-                this.messageId = messageId
-                addressID = addressId
-                decryptedBody = decryptedMessageBody
+                dbId = 123L
+                this.messageId = "456"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
             }
-            val encryptedArmoredBody = "encrypted armored content"
             val addressCrypto = mockk<AddressCrypto> {
-                every { encrypt(decryptedMessageBody, true).armored } returns encryptedArmoredBody
+                every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id(addressId)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
+            every { addressCryptoFactory.create(Id("addressId")) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
             val newAttachments = listOf(Attachment())
             saveDraft.invoke(message, newAttachments)
 
             // Then
-            verify { pendingActionsDao.insertPendingForUpload(PendingUpload(messageId)) }
+            verify { pendingActionsDao.insertPendingForUpload(PendingUpload("456")) }
         }
 
     @Test
@@ -166,6 +157,25 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
         }
-   
+
+    @Test
+    fun saveDraftsSchedulesCreateDraftWorker() =
+        runBlockingTest {
+            // Given
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "456"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+            }
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+
+            // When
+            saveDraft.invoke(message, emptyList())
+
+            // Then
+            verify { createDraftEnqueuer.enqueue() }
+        }
+
 }
 
