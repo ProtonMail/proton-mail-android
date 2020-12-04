@@ -339,7 +339,7 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    private fun saveAttachmentsToDatabase(
+    private fun filterUploadedAttachments(
         localAttachments: List<Attachment>,
         uploadAttachments: Boolean
     ): List<String> {
@@ -447,7 +447,7 @@ class ComposeMessageViewModel @Inject constructor(
                 if (uploadAttachments && listOfAttachments.isNotEmpty()) {
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message, IO)
-                    newAttachments = saveAttachmentsToDatabase(
+                    newAttachments = filterUploadedAttachments(
                         composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
                         uploadAttachments
                     )
@@ -477,7 +477,7 @@ class ComposeMessageViewModel @Inject constructor(
 
         // we need to compare them and find out which are new attachments
         if (uploadAttachments && localAttachmentsList.isNotEmpty()) {
-            newAttachments = saveAttachmentsToDatabase(
+            newAttachments = filterUploadedAttachments(
                 composeMessageRepository.createAttachmentList(localAttachmentsList, IO), uploadAttachments
             )
         }

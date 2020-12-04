@@ -20,7 +20,10 @@
 package ch.protonmail.android.usecase.compose
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
@@ -30,10 +33,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.jupiter.api.Test
@@ -42,7 +45,10 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 class SaveDraftTest : CoroutinesTest {
 
-    @MockK
+    @RelaxedMockK
+    private lateinit var pendingActionsDao: PendingActionsDao
+
+    @RelaxedMockK
     private lateinit var addressCryptoFactory: AddressCrypto.Factory
 
     @RelaxedMockK
@@ -60,6 +66,7 @@ class SaveDraftTest : CoroutinesTest {
             val messageDbId = 123L
             val message = Message().apply {
                 dbId = messageDbId
+                this.messageId = "456"
                 addressID = addressId
                 decryptedBody = decryptedMessageBody
             }
@@ -71,7 +78,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
 
             // When
-            saveDraft(message)
+            saveDraft(message, emptyList())
 
             // Then
             val expectedMessage = message.copy(messageBody = encryptedArmoredBody)
@@ -94,6 +101,7 @@ class SaveDraftTest : CoroutinesTest {
             val messageDbId = 123L
             val message = Message().apply {
                 dbId = messageDbId
+                this.messageId = "456"
                 addressID = addressId
                 decryptedBody = decryptedMessageBody
             }
@@ -105,11 +113,59 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
 
             // When
-            saveDraft(message)
+            saveDraft(message, emptyList())
 
             // Then
             coVerify { messageDetailsRepository.insertPendingDraft(messageDbId) }
         }
 
+    @Test
+    fun saveDraftsInsertsPendingUploadWhenThereAreNewAttachments() =
+        runBlockingTest {
+            // Given
+            val decryptedMessageBody = "Message body in plain text"
+            val addressId = "addressId"
+            val messageDbId = 123L
+            val messageId = "456"
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = messageId
+                addressID = addressId
+                decryptedBody = decryptedMessageBody
+            }
+            val encryptedArmoredBody = "encrypted armored content"
+            val addressCrypto = mockk<AddressCrypto> {
+                every { encrypt(decryptedMessageBody, true).armored } returns encryptedArmoredBody
+            }
+            every { addressCryptoFactory.create(Id(addressId)) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
+
+            // When
+            val newAttachments = listOf(Attachment())
+            saveDraft.invoke(message, newAttachments)
+
+            // Then
+            verify { pendingActionsDao.insertPendingForUpload(PendingUpload(messageId)) }
+        }
+
+    @Test
+    fun saveDraftsDoesNotInsertsPendingUploadWhenThereAreNoNewAttachments() =
+        runBlockingTest {
+            // Given
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "456"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+            }
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+
+            // When
+            saveDraft.invoke(message, emptyList())
+
+            // Then
+            verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
+        }
+   
 }
 

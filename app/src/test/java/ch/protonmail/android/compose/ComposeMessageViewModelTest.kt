@@ -81,6 +81,6 @@ class ComposeMessageViewModelTest {
 
             viewModel.saveDraft(message, parentId, hasConnectivity = false)
 
-            coVerify { saveDraft(message) }
+            coVerify { saveDraft(message, emptyList()) }
         }
 }

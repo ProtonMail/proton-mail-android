@@ -20,7 +20,10 @@
 package ch.protonmail.android.usecase.compose
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
@@ -33,13 +36,14 @@ import javax.inject.Inject
 class SaveDraft @Inject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val pendingActionsDao: PendingActionsDao
 ) {
 
-    suspend operator fun invoke(message: Message) =
+    suspend operator fun invoke(message: Message, newAttachments: List<Attachment>) =
         withContext(dispatchers.Io) {
-            val addressId = message.addressID
-            requireNotNull(addressId)
+            val messageId = requireNotNull(message.messageId)
+            val addressId = requireNotNull(message.addressID)
 
             val addressCrypto = addressCryptoFactory.create(Id(addressId))
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
@@ -53,7 +57,12 @@ class SaveDraft @Inject constructor(
                 )
             )
 
-            val messageId = messageDetailsRepository.saveMessageLocally(message)
-            messageDetailsRepository.insertPendingDraft(messageId)
+            val messageDbId = messageDetailsRepository.saveMessageLocally(message)
+            messageDetailsRepository.insertPendingDraft(messageDbId)
+
+            if (newAttachments.isNotEmpty()) {
+                pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
+            }
+
         }
 }
