@@ -45,14 +45,14 @@ import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 class AddressCrypto @AssistedInject constructor(
     val userManager: UserManager,
     openPgp: OpenPGP,
-    username: Name,
+    @Assisted username: Name,
     @Assisted private val addressId: Id,
     userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
 ) : Crypto<AddressKey>(userManager, openPgp, username, userMapper) {
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(addressId: Id): AddressCrypto
+        fun create(addressId: Id, username: Name): AddressCrypto
     }
 
     private val address

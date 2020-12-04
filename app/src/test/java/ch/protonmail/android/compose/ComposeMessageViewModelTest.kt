@@ -24,6 +24,7 @@ import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.services.PostMessageServiceFactory
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.delete.DeleteMessage
@@ -34,21 +35,28 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Ignore
+import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-class ComposeMessageViewModelTest {
+class ComposeMessageViewModelTest : CoroutinesTest {
 
-    @MockK
+    @Rule
+    private val trampolineSchedulerRule = TrampolineScheduler()
+
+    @RelaxedMockK
     lateinit var composeMessageRepository: ComposeMessageRepository
 
     @RelaxedMockK
     lateinit var userManager: UserManager
 
-    @MockK
+    @RelaxedMockK
     lateinit var messageDetailsRepository: MessageDetailsRepository
+
+    @RelaxedMockK
+    lateinit var saveDraft: SaveDraft
 
     @MockK
     lateinit var postMessageServiceFactory: PostMessageServiceFactory
@@ -65,21 +73,18 @@ class ComposeMessageViewModelTest {
     @MockK
     lateinit var verifyConnection: VerifyConnection
 
-    @MockK
-    lateinit var saveDraft: SaveDraft
-
     @InjectMockKs
     lateinit var viewModel: ComposeMessageViewModel
 
     @Test
-    @Ignore("Pending to figure out how to deal with all the class fields that needs to be initialised")
     fun saveDraftCallsSaveDraftUseCaseWhenTheDraftIsNew() =
         runBlockingTest {
             val message = Message()
             val parentId = "parentId"
-            viewModel.prepareMessageData("message title", arrayListOf())
+            // Needed to set a value to _messageDataResult field
+            viewModel.prepareMessageData(false, "addressId", "mail-alias", false)
 
-            viewModel.saveDraft(message, parentId, hasConnectivity = false)
+            viewModel.saveDraft(message, hasConnectivity = false)
 
             coVerify { saveDraft(message, emptyList()) }
         }

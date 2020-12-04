@@ -31,12 +31,8 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.Crypto
-import ch.protonmail.android.events.DraftCreatedEvent
-import ch.protonmail.android.events.Status
-import ch.protonmail.android.jobs.CreateAndPostDraftJob
 import ch.protonmail.android.jobs.UpdateAndPostDraftJob
 import ch.protonmail.android.jobs.messages.PostMessageJob
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ServerTime
 import com.birbit.android.jobqueue.JobManager
 import kotlinx.coroutines.CoroutineDispatcher
@@ -56,24 +52,6 @@ class PostMessageServiceFactory @Inject constructor(
 ) {
 
     private val bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-
-    suspend fun startCreateDraftService(
-        messageId: Long,
-        localMessageId: String,
-        parentId: String?,
-        actionType: Constants.MessageActionType,
-        content: String,
-        uploadAttachments: Boolean,
-        newAttachments: List<String>,
-        oldSenderId: String,
-        isTransient: Boolean,
-        username: String = userManager.username
-    ) {
-        val message = handleMessage(messageId, content, username) ?: return
-        insertPendingDraft(ProtonMailApplication.getApplication(), messageId)
-        handleCreateDraft(message, localMessageId, uploadAttachments, newAttachments, ProtonMailApplication.getApplication())
-        jobManager.addJobInBackground(CreateAndPostDraftJob(messageId, localMessageId, parentId, actionType, uploadAttachments, newAttachments, oldSenderId, isTransient, username))
-    }
 
     fun startUpdateDraftService(messageId: Long, content: String, newAttachments: List<String>, uploadAttachments: Boolean, oldSenderId: String, username: String = userManager.username) {
         // this is temp fix
@@ -110,20 +88,6 @@ class PostMessageServiceFactory @Inject constructor(
             }
         }
         return message
-    }
-
-    private suspend fun handleCreateDraft(message: Message, localMessageId: String, uploadAttachments: Boolean, newAttachments: List<String>, context: Context) {
-        if (!networkUtil.isConnected()) {
-            AppUtil.postEventOnUi(DraftCreatedEvent(message.messageId, localMessageId, null, Status.NO_NETWORK))
-            return
-        }
-        val hasAttachment = message.numAttachments >= 1
-        message.setLabelIDs(listOf(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString(), Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(), Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()))
-        messageDetailsRepository.saveMessageLocally(message)
-
-        if (hasAttachment && uploadAttachments && newAttachments.isNotEmpty()) {
-            insertPendingUpload(context, message.messageId!!)
-        }
     }
 
     private suspend fun handleUpdateDraft(message: Message, uploadAttachments: Boolean, newAttachments: List<String>, context: Context) {

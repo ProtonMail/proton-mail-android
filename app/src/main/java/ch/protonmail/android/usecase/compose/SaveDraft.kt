@@ -20,7 +20,6 @@
 package ch.protonmail.android.usecase.compose
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
@@ -28,7 +27,9 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.worker.CreateDraftWorker
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -39,15 +40,16 @@ class SaveDraft @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
     private val pendingActionsDao: PendingActionsDao,
-    private val createDraftWorker: CreateDraftWorker.Enqueuer
+    private val createDraftWorker: CreateDraftWorker.Enqueuer,
+    @CurrentUsername private val username: String
 ) {
 
-    suspend operator fun invoke(message: Message, newAttachments: List<Attachment>) =
+    suspend operator fun invoke(message: Message, newAttachmentIds: List<String>): Unit =
         withContext(dispatchers.Io) {
             val messageId = requireNotNull(message.messageId)
             val addressId = requireNotNull(message.addressID)
 
-            val addressCrypto = addressCryptoFactory.create(Id(addressId))
+            val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(username))
             val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
 
             message.messageBody = encryptedBody
@@ -62,7 +64,7 @@ class SaveDraft @Inject constructor(
             val messageDbId = messageDetailsRepository.saveMessageLocally(message)
             messageDetailsRepository.insertPendingDraft(messageDbId)
 
-            if (newAttachments.isNotEmpty()) {
+            if (newAttachmentIds.isNotEmpty()) {
                 pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
             }
 

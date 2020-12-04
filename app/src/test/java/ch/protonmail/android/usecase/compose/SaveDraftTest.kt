@@ -20,7 +20,6 @@
 package ch.protonmail.android.usecase.compose
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
@@ -29,6 +28,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.worker.CreateDraftWorker
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -47,7 +47,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class SaveDraftTest : CoroutinesTest {
 
     @RelaxedMockK
-    private lateinit var createDraftEnqueuer: CreateDraftWorker.Enqueuer
+    private lateinit var createDraftScheduler: CreateDraftWorker.Enqueuer
 
     @RelaxedMockK
     private lateinit var pendingActionsDao: PendingActionsDao
@@ -60,6 +60,8 @@ class SaveDraftTest : CoroutinesTest {
 
     @InjectMockKs
     lateinit var saveDraft: SaveDraft
+
+    private val currentUsername = "username"
 
     @Test
     fun saveDraftSavesEncryptedDraftMessageToDb() =
@@ -74,7 +76,7 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id("addressId")) } returns addressCrypto
+            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
@@ -105,7 +107,7 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id("addressId")) } returns addressCrypto
+            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
@@ -128,11 +130,11 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id("addressId")) } returns addressCrypto
+            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
-            val newAttachments = listOf(Attachment())
+            val newAttachments = listOf("attachmentId")
             saveDraft.invoke(message, newAttachments)
 
             // Then
@@ -174,7 +176,7 @@ class SaveDraftTest : CoroutinesTest {
             saveDraft.invoke(message, emptyList())
 
             // Then
-            verify { createDraftEnqueuer.enqueue() }
+            verify { createDraftScheduler.enqueue() }
         }
 
 }

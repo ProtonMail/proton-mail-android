@@ -53,6 +53,7 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
@@ -64,11 +65,11 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.HashMap
 import java.util.UUID
@@ -89,6 +90,8 @@ class ComposeMessageViewModel @Inject constructor(
     private val postMessageServiceFactory: PostMessageServiceFactory,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
+    private val saveDraft: SaveDraft,
+    private val dispatchers: DispatcherProvider,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -401,18 +404,18 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    fun saveDraft(message: Message, parentId: String?, hasConnectivity: Boolean) {
+    fun saveDraft(message: Message, hasConnectivity: Boolean) {
         val uploadAttachments = _messageDataResult.uploadAttachments
 
-        GlobalScope.launch {
+        viewModelScope.launch(dispatchers.Main) {
             if (_dbId == null) {
-                _dbId = saveMessage(message, IO)
+                _dbId = saveMessage(message)
                 message.dbId = _dbId
             } else {
                 message.dbId = _dbId
-                saveMessage(message, IO)
+                saveMessage(message)
             }
-            if (!TextUtils.isEmpty(draftId)) {
+            if (draftId.isNotEmpty()) {
                 if (MessageUtils.isLocalMessageId(_draftId.get()) && hasConnectivity) {
                     return@launch
                 }
@@ -435,33 +438,26 @@ class ComposeMessageViewModel @Inject constructor(
                 //region new draft here
                 _savingDraftInProcess.set(true)
                 setOfflineDraftSaved(true)
-                if (TextUtils.isEmpty(draftId) && TextUtils.isEmpty(message.messageId)) {
+                if (draftId.isEmpty() && message.messageId.isNullOrEmpty()) {
                     val newDraftId = UUID.randomUUID().toString()
                     _draftId.set(newDraftId)
                     message.messageId = newDraftId
-                    saveMessage(message, IO)
+                    saveMessage(message)
                     watchForMessageSent()
                 }
-                var newAttachments: List<String> = ArrayList()
+                var newAttachmentIds: List<String> = ArrayList()
                 val listOfAttachments = ArrayList(message.Attachments)
                 if (uploadAttachments && listOfAttachments.isNotEmpty()) {
                     message.numAttachments = listOfAttachments.size
-                    saveMessage(message, IO)
-                    newAttachments = filterUploadedAttachments(
+                    saveMessage(message)
+                    newAttachmentIds = filterUploadedAttachments(
                         composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
                         uploadAttachments
                     )
                 }
-                postMessageServiceFactory.startCreateDraftService(
-                    _dbId!!,
-                    _draftId.get(),
-                    parentId,
-                    _actionId, message.decryptedBody ?: "",
-                    uploadAttachments,
-                    newAttachments,
-                    _oldSenderAddressId,
-                    _messageDataResult.isTransient
-                )
+
+                saveDraft(message, newAttachmentIds)
+
                 _oldSenderAddressId = ""
                 setIsDirty(false)
                 //endregion
@@ -491,8 +487,8 @@ class ComposeMessageViewModel @Inject constructor(
             messageDetailsRepository.deletePendingDraft(messageDbId)
         }
 
-    private suspend fun saveMessage(message: Message, dispatcher: CoroutineDispatcher): Long =
-        withContext(dispatcher) {
+    private suspend fun saveMessage(message: Message): Long =
+        withContext(dispatchers.Io) {
             messageDetailsRepository.saveMessageInDB(message)
         }
 
@@ -745,7 +741,7 @@ class ComposeMessageViewModel @Inject constructor(
                 // if db ID is null this means we do not have local DB row of the message we are about to send
                 // and we are saving it. also draftId should be null
                 message.messageId = UUID.randomUUID().toString()
-                _dbId = saveMessage(message, IO)
+                _dbId = saveMessage(message)
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update
                 // draft job and also that the message has all the latest edits in between draft saving (creation)
@@ -758,7 +754,7 @@ class ComposeMessageViewModel @Inject constructor(
                     } else {
                         message.messageId = _draftId.get()
                     }
-                    saveMessage(message, IO)
+                    saveMessage(message)
                 }
             }
 
@@ -1255,7 +1251,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     fun watchForMessageSent() {
-        if (!TextUtils.isEmpty(_draftId.get())) {
+        if (_draftId.get().isNotEmpty()) {
             composeMessageRepository.findMessageByIdObservable(_draftId.get()).toObservable()
                 .subscribeOn(ThreadSchedulers.io())
                 .observeOn(ThreadSchedulers.main())

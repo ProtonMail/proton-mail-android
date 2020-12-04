@@ -2273,7 +2273,7 @@ public class ComposeMessageActivity
                 // draft
                 fillMessageFromUserInputs(localMessage, true);
                 localMessage.setExpirationTime(0);
-                composeMessageViewModel.saveDraft(localMessage, composeMessageViewModel.getParentId(), mNetworkUtil.isConnected());
+                composeMessageViewModel.saveDraft(localMessage, mNetworkUtil.isConnected());
                 new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
                 if (userAction == UserAction.SAVE_DRAFT_EXIT) {
                     finishActivity();
