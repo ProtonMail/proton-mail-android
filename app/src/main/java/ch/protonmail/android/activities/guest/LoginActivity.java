@@ -138,15 +138,15 @@ public class LoginActivity extends BaseLoginActivity {
         // clickable sign up link
         AppUtil.clearNotifications(this, 3); // TODO: check which notification Id is this one
 
-        final Id userId = userManager.getCurrentUserId();
-        if (userId != null) {
-            mUsernameEditText.setText(userId.getS());
-        }
         mUsernameEditText.setFocusable(false);
         mPasswordEditText.setFocusable(false);
         mUsernameEditText.setOnTouchListener(mTouchListener);
         mPasswordEditText.setOnTouchListener(mTouchListener);
-        mPasswordEditText.requestFocus();
+        final Id userId = userManager.getCurrentUserId();
+        if (userId != null) {
+            mUsernameEditText.setText(userId.getS());
+            mPasswordEditText.requestFocus();
+        }
 
         Intent intent = getIntent();
         if (intent.getBooleanExtra(EXTRA_API_OFFLINE, false)) {
@@ -178,7 +178,7 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     public void onBackPressed() {
         if (!mDisableBack) {
-            if (userManager == null || !userManager.isEngagementShown()) {
+            if (!userManager.isEngagementShown()) {
                 startActivity(AppUtil.decorInAppIntent(new Intent(this, FirstActivity.class)));
             }
             super.onBackPressed();
@@ -285,7 +285,7 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Override
     protected void onMailboxSuccess() {
-        userManager.setLoginState(LOGIN_STATE_TO_INBOX);
+        userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
     }
 
     @Subscribe
@@ -307,8 +307,8 @@ public class LoginActivity extends BaseLoginActivity {
                     return;
                 }
                 hideProgress();
-                userManager.setLoginState(LOGIN_STATE_LOGIN_FINISHED);
-                userManager.saveKeySalt(event.getKeySalt(), event.getUsername());
+                userManager.setCurrentUserLoginState(LOGIN_STATE_LOGIN_FINISHED);
+                userManager.saveKeySalt(event.getUsername(), event.getKeySalt());
                 Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
                 mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, event.getKeySalt());
                 startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));
