@@ -86,6 +86,6 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
             viewModel.saveDraft(message, hasConnectivity = false)
 
-            coVerify { saveDraft(message, emptyList()) }
+            coVerify { saveDraft(message, emptyList(), "parentId") }
         }
 }

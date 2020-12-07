@@ -80,7 +80,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
-            saveDraft(message, emptyList())
+            saveDraft(message, emptyList(), null)
 
             // Then
             val expectedMessage = message.copy(messageBody = "encrypted armored content")
@@ -111,7 +111,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
-            saveDraft(message, emptyList())
+            saveDraft(message, emptyList(), null)
 
             // Then
             coVerify { messageDetailsRepository.insertPendingDraft(123L) }
@@ -135,7 +135,7 @@ class SaveDraftTest : CoroutinesTest {
 
             // When
             val newAttachments = listOf("attachmentId")
-            saveDraft.invoke(message, newAttachments)
+            saveDraft.invoke(message, newAttachments, "parentId")
 
             // Then
             verify { pendingActionsDao.insertPendingForUpload(PendingUpload("456")) }
@@ -154,7 +154,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
 
             // When
-            saveDraft.invoke(message, emptyList())
+            saveDraft.invoke(message, emptyList(), "parentId")
 
             // Then
             verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
@@ -173,10 +173,10 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
 
             // When
-            saveDraft.invoke(message, emptyList())
+            saveDraft.invoke(message, emptyList(), "parentId123")
 
             // Then
-            verify { createDraftScheduler.enqueue() }
+            verify { createDraftScheduler.enqueue(message, "parentId123") }
         }
 
 }

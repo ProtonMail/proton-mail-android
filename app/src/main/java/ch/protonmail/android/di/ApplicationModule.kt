@@ -33,6 +33,10 @@ import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.factories.IConverterFactory
+import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
+import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
+import ch.protonmail.android.api.models.messages.receive.IMessageSenderFactory
+import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.segments.event.AlarmReceiver
@@ -206,6 +210,12 @@ object ApplicationModule {
 
     @Provides
     fun providesArmorer(): Armorer = OpenPgpArmorer()
+
+    @Provides
+    fun messageSenderFactory(): IMessageSenderFactory = MessageSenderFactory()
+
+    @Provides
+    fun attachmentFactory(): IAttachmentFactory = AttachmentFactory()
 }
 
 @Module

@@ -235,6 +235,8 @@ public class PostMessageJob extends ProtonMailBaseJob {
             // create the draft if there was no connectivity previously for execution the create and post draft job
             // this however should not happen, because the jobs with the same ID are executed serial,
             // but just in case that there is no any bug on the JobQueue library
+
+            // TODO verify whether this is actually needed or can be done through saveDtaft use case
             final MessageResponse draftResponse = getApi().createDraft(newMessage);
             message.setMessageId(draftResponse.getMessageId());
         }

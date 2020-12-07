@@ -44,30 +44,33 @@ class SaveDraft @Inject constructor(
     @CurrentUsername private val username: String
 ) {
 
-    suspend operator fun invoke(message: Message, newAttachmentIds: List<String>): Unit =
-        withContext(dispatchers.Io) {
-            val messageId = requireNotNull(message.messageId)
-            val addressId = requireNotNull(message.addressID)
+    suspend operator fun invoke(
+        message: Message,
+        newAttachmentIds: List<String>,
+        parentId: String?
+    ): Unit = withContext(dispatchers.Io) {
+        val messageId = requireNotNull(message.messageId)
+        val addressId = requireNotNull(message.addressID)
 
-            val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(username))
-            val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
+        val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(username))
+        val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
 
-            message.messageBody = encryptedBody
-            message.setLabelIDs(
-                listOf(
-                    ALL_DRAFT.messageLocationTypeValue.toString(),
-                    ALL_MAIL.messageLocationTypeValue.toString(),
-                    DRAFT.messageLocationTypeValue.toString()
-                )
+        message.messageBody = encryptedBody
+        message.setLabelIDs(
+            listOf(
+                ALL_DRAFT.messageLocationTypeValue.toString(),
+                ALL_MAIL.messageLocationTypeValue.toString(),
+                DRAFT.messageLocationTypeValue.toString()
             )
+        )
 
-            val messageDbId = messageDetailsRepository.saveMessageLocally(message)
-            messageDetailsRepository.insertPendingDraft(messageDbId)
+        val messageDbId = messageDetailsRepository.saveMessageLocally(message)
+        messageDetailsRepository.insertPendingDraft(messageDbId)
 
-            if (newAttachmentIds.isNotEmpty()) {
-                pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
-            }
-
-            createDraftWorker.enqueue()
+        if (newAttachmentIds.isNotEmpty()) {
+            pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
         }
+
+        createDraftWorker.enqueue(message, parentId)
+    }
 }
