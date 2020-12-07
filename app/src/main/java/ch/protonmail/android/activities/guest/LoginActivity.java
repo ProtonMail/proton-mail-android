@@ -81,6 +81,9 @@ public class LoginActivity extends BaseLoginActivity {
     @Inject
     UserManager userManager;
 
+    @Inject
+    ProtonMailApplication app;
+
     @BindView(R.id.username)
     EditText mUsernameEditText;
     @BindView(R.id.password)
@@ -91,8 +94,10 @@ public class LoginActivity extends BaseLoginActivity {
     Button mSignIn;
     @BindView(R.id.app_version)
     TextView mAppVersion;
+
     private boolean mDisableBack = false;
     private AlertDialog m2faAlertDialog;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     private ConnectivityBaseViewModel viewModel;
 
@@ -158,21 +163,16 @@ public class LoginActivity extends BaseLoginActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        ProtonMailApplication.getApplication().getBus().register(this);
+        app.getBus().register(this);
         UiUtil.hideKeyboard(LoginActivity.this);
-        ProtonMailApplication.getApplication().resetLoginInfoEvent();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        app.resetLoginInfoEvent();
         viewModel.checkConnectivity();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        ProtonMailApplication.getApplication().getBus().unregister(this);
+        app.getBus().unregister(this);
     }
 
     @Override
@@ -206,7 +206,7 @@ public class LoginActivity extends BaseLoginActivity {
             mProgressContainer.setVisibility(View.VISIBLE);
             final String username = mUsernameEditText.getText().toString();
             final String password = mPasswordEditText.getText().toString();
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            handler.postDelayed(() -> {
                 mDisableBack = false;
                 userManager.info(username, password.getBytes(Charsets.UTF_8) /*TODO passphrase*/);
             }, 1500);
@@ -244,7 +244,7 @@ public class LoginActivity extends BaseLoginActivity {
         if (event == null || event.userId == null) {
             return;
         }
-        ProtonMailApplication.getApplication().resetLogin2FAEvent();
+        app.resetLogin2FAEvent();
         hideProgress();
         enableInput();
         showTwoFactorDialog(event.userId, event.password, event.infoResponse, event.loginResponse, event.fallbackAuthVersion);
@@ -257,7 +257,7 @@ public class LoginActivity extends BaseLoginActivity {
         }
         switch (event.status) {
             case SUCCESS: {
-                ProtonMailApplication.getApplication().resetLoginInfoEvent();
+                app.resetLoginInfoEvent();
                 userManager.login(event.username, event.password, event.response, event.fallbackAuthVersion, false);
             }
             break;
@@ -298,7 +298,7 @@ public class LoginActivity extends BaseLoginActivity {
         if (event == null) {
             return;
         }
-        ProtonMailApplication.getApplication().resetLoginEvent();
+        app.resetLoginEvent();
         switch (event.getStatus()) {
             case SUCCESS: {
                 if (event.isRedirectToSetup()) {
@@ -370,7 +370,7 @@ public class LoginActivity extends BaseLoginActivity {
             }
         }
         showAccountCreation(address, finalUsername, domain);
-        new Handler().postDelayed(() -> hideProgress(), 500);
+        handler.postDelayed(() -> hideProgress(), 500);
         enableInput();
     }
 
@@ -412,12 +412,12 @@ public class LoginActivity extends BaseLoginActivity {
                     UiUtil.hideKeyboard(this);
                     mProgressContainer.setVisibility(View.VISIBLE);
                     twoFA(userId, password, twoFactorString, infoResponse, loginResponse, fallbackAuthVersion);
-                    ProtonMailApplication.getApplication().resetLoginInfoEvent();
+                    app.resetLoginInfoEvent();
                     return null;
                 }, () -> {
                     userManager.logoutLastActiveAccount();
                     UiUtil.hideKeyboard(LoginActivity.this);
-                    ProtonMailApplication.getApplication().resetLoginInfoEvent();
+                    app.resetLoginInfoEvent();
                     return null;
                 });
     }
