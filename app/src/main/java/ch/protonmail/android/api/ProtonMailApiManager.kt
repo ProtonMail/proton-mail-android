@@ -170,9 +170,13 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun downloadAttachment(attachmentId: String): ByteArray = api.downloadAttachment(attachmentId)
 
-    override fun uploadAttachmentInline(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachmentInlineBlocking(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInlineBlocking(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
 
-    override fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, MessageID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachmentBlocking(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentBlocking(attachment, keyPackage, dataPackage, signature)
+
+    override suspend fun uploadAttachmentInline(attachment: Attachment, messageID: String, contentID: String, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, messageID, contentID, keyPackage, dataPackage, signature)
+
+    override suspend fun uploadAttachment(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 

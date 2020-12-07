@@ -30,7 +30,8 @@ import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.google.gson.Gson;
 
-import java.io.File;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -68,6 +69,9 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingSend;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabase;
 import ch.protonmail.android.api.utils.Fields;
+import ch.protonmail.android.attachments.AttachmentsRepository;
+import ch.protonmail.android.attachments.OpenPgpArmorer;
+import ch.protonmail.android.attachments.UploadAttachments;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
@@ -85,6 +89,9 @@ import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.ServerTime;
 import io.sentry.Sentry;
 import io.sentry.event.EventBuilder;
+import kotlinx.coroutines.CoroutineDispatcher;
+import kotlinx.coroutines.Dispatchers;
+import me.proton.core.util.kotlin.DispatcherProvider;
 import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
@@ -234,68 +241,63 @@ public class PostMessageJob extends ProtonMailBaseJob {
         getMessageDetailsRepository().saveMessageInDB(message);
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
+        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase();
+        UploadAttachments.Result result = uploadAttachments.blocking(mNewAttachments, message, crypto);
+
+        if (result instanceof UploadAttachments.Result.Failure) {
+            UploadAttachments.Result.Failure failureResult = (UploadAttachments.Result.Failure) result;
+            Timber.e("Failed uploading attachments - Exception --> " + failureResult.getError());
+            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
+            String error = "Failed uploading attachments for message \"" + message.getSubject() + "\"";
+            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, getUserManager().getUser());
+            return;
+        }
+
         try {
-            uploadAttachments(message, crypto, mailSettings);
             fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "SendMessage: Failed fetching missing send preferences");
         }
 
         onRunPostMessage(pendingActionsDatabase, message, crypto);
     }
 
     /**
-     * upload all attachments, if one of the attachments fails to upload, then the message will not be sent
-     * @param message Message
-     * @param crypto AddressCrypto
-     * @return
-     * @throws Exception
+     * The UploadAttachments use case needs to be created manually only as it's not serializable
+     * and injecting it would cause the job to crash.
+     * TODO Drop this and just inject the use case when migrating this Job to a worker
      */
-    private void uploadAttachments(Message message, AddressCrypto crypto, MailSettings mailSettings) throws Exception {
-        List<File> attachmentTempFiles = new ArrayList<>();
-        for (String attachmentId : mNewAttachments) {
-            Attachment attachment = getMessageDetailsRepository().findAttachmentById(attachmentId);
-            if (attachment == null) {
-                continue;
+    @NotNull
+    private UploadAttachments buildUploadAttachmentsUseCase() {
+        DispatcherProvider dispatchers = new DispatcherProvider() {
+            @Override
+            public @NotNull CoroutineDispatcher getMain() {
+                return Dispatchers.getMain();
             }
-            if (attachment.getFilePath() == null) {
-                continue;
-            }
-            if (attachment.isUploaded()) {
-                continue;
-            }
-            final File file = new File(attachment.getFilePath());
-            if (!file.exists()) {
-                continue;
-            }
-            attachmentTempFiles.add(file);
-            attachment.setMessage(message);
 
-            attachment.uploadAndSave(getMessageDetailsRepository(), getApi(), crypto);
-        }
-        // upload public key
-        if (mailSettings.getAttachPublicKey()) {
-            attachPublicKey(message, crypto);
-        }
-
-        for (File file : attachmentTempFiles) {
-            if (file.exists()) {
-                file.delete();
+            @Override
+            public @NotNull CoroutineDispatcher getIo() {
+                return Dispatchers.getIO();
             }
-        }
-    }
 
-    private void attachPublicKey(Message message, AddressCrypto crypto) throws Exception {
-        Address address =
-                getUserManager().getUser(mUsername).getAddressById(message.getAddressID()).toNewAddress();
-        AddressKeys keys = address.getKeys();
-        String publicKey = crypto.buildArmoredPublicKey(keys.getPrimaryKey().getPrivateKey());
-
-        Attachment attachment = new Attachment();
-        attachment.setFileName("publickey - " + address.getEmail() + " - 0x" + crypto.getFingerprint(publicKey).substring(0, 8).toUpperCase() + ".asc");
-        attachment.setMimeType("application/pgp-keys");
-        attachment.setMessage(message);
-        attachment.uploadAndSave(getMessageDetailsRepository(),publicKey.getBytes(), getApi(), crypto);
+            @Override
+            public @NotNull CoroutineDispatcher getComp() {
+                return Dispatchers.getDefault();
+            }
+        };
+        AttachmentsRepository attachmentsRepository = new AttachmentsRepository(
+                dispatchers,
+                getApi(),
+                new OpenPgpArmorer(),
+                getMessageDetailsRepository(),
+                getUserManager()
+        );
+        return new UploadAttachments(
+                dispatchers,
+                attachmentsRepository,
+                getMessageDetailsRepository(),
+                getUserManager()
+        );
     }
 
     private void onRunPostMessage(PendingActionsDatabase pendingActionsDatabase, @NonNull Message message,
