@@ -34,7 +34,10 @@ import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.messages.MessageSender
+import ch.protonmail.android.api.utils.Fields
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID = "keyCreateDraftMessageDbId"
@@ -49,8 +52,8 @@ class CreateDraftWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val pendingActionsDao: PendingActionsDao,
-    private val messageFactory: MessageFactory
+    private val messageFactory: MessageFactory,
+    private val userManager: UserManager
 ) : CoroutineWorker(context, params) {
 
 
@@ -58,23 +61,14 @@ class CreateDraftWorker @WorkerInject constructor(
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
 
-        val pendingForSending = pendingActionsDao.findPendingSendByDbId(requireNotNull(message.dbId))
-
-        if (pendingForSending != null) {
-            // TODO allow draft to be saved in this case when starting to use SaveDraft use case in PostMessageJob too
-            // sending already pressed and in process, so no need to create draft, it will be created from the post send job
-            return failureWithError(CreateDraftWorkerErrors.SendingInProgressError)
-        }
-
         // not needed as done by the use case already (setLabels) ***************************************************************
 //        message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
 
-
-        val draftApiModel = messageFactory.createDraftApiMessage(message)
+        val createDraftRequest = messageFactory.createDraftApiRequest(message)
         val parentMessage: Message? = null
         val inputParentId = getInputParentId()
         inputParentId?.let {
-            draftApiModel.setParentID(inputParentId);
+            createDraftRequest.setParentID(inputParentId);
 //            draftApiModel.setAction(mActionType.getMessageActionTypeValue());
 //            if(!isTransient) {
 //                parentMessage = getMessageDetailsRepository().findMessageById(mParentId);
@@ -82,6 +76,26 @@ class CreateDraftWorker @WorkerInject constructor(
 //                parentMessage = getMessageDetailsRepository().findSearchMessageById(mParentId);
 //            }
         }
+
+        val addressId = requireNotNull(message.addressID)
+        val encryptedMessage = requireNotNull(message.messageBody)
+
+        // TODO can be deleted as it's duplicated with just reading the message body (access same data)
+//        if (!TextUtils.isEmpty(message.getMessageId())) {
+//            Message savedMessage = getMessageDetailsRepository().findMessageById(message.getMessageId());
+//            if (savedMessage != null) {
+//                encryptedMessage = savedMessage.getMessageBody();
+//            }
+//        }
+
+
+        val username = userManager.username
+        val user = userManager.getUser(username).loadNew(username)
+        user.findAddressById(Id(addressId))?.let {
+            createDraftRequest.setSender(MessageSender(it.displayName?.s, it.email.s));
+            createDraftRequest.addMessageBody(Fields.Message.SELF, encryptedMessage);
+        }
+
 
         return Result.failure()
     }

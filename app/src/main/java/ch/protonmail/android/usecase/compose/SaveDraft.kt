@@ -48,7 +48,7 @@ class SaveDraft @Inject constructor(
         message: Message,
         newAttachmentIds: List<String>,
         parentId: String?
-    ): Unit = withContext(dispatchers.Io) {
+    ): Result = withContext(dispatchers.Io) {
         val messageId = requireNotNull(message.messageId)
         val addressId = requireNotNull(message.addressID)
 
@@ -71,6 +71,18 @@ class SaveDraft @Inject constructor(
             pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
         }
 
+        pendingActionsDao.findPendingSendByDbId(messageDbId)?.let {
+            // TODO allow draft to be saved in this case when starting to use SaveDraft use case in PostMessageJob too
+            return@withContext Result.SendingInProgressError
+        }
+
         createDraftWorker.enqueue(message, parentId)
+
+        return@withContext Result.Success
+    }
+
+    sealed class Result {
+        object SendingInProgressError : Result()
+        object Success : Result()
     }
 }

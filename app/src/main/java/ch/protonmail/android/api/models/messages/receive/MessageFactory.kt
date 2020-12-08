@@ -34,9 +34,8 @@ class MessageFactory @Inject constructor(
     private val messageSenderFactory: IMessageSenderFactory
 ) : IMessageFactory {
 
-    override fun createDraftApiMessage(message: Message): NewMessage {
-        TODO("Not yet implemented")
-    }
+    override fun createDraftApiRequest(message: Message): NewMessage =
+        NewMessage(createServerMessage(message))
 
     override fun createServerMessage(message: Message): ServerMessage {
         return message.let {

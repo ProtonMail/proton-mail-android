@@ -242,6 +242,9 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         }
     }
 
+    /**
+     * @deprecated replace with UploadAttachments use case
+     */
     private static class PostCreateDraftAttachmentsJob extends ProtonMailBaseJob {
         private final String mMessageId;
         private final String mOldMessageId;

@@ -22,6 +22,7 @@ package ch.protonmail.android.usecase.compose
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
@@ -40,6 +41,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -160,6 +162,32 @@ class SaveDraftTest : CoroutinesTest {
             verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
         }
 
+
+    @Test
+    fun sendDraftReturnsSendingInProgressErrorWhenMessageIsAlreadyBeingSent() {
+        runBlockingTest {
+            // Given
+            val messageDbId = 345L
+            val message = Message().apply {
+                dbId = messageDbId
+                this.messageId = "456"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+            }
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
+            every { pendingActionsDao.findPendingSendByDbId(messageDbId) } returns PendingSend("anyMessageId")
+
+            // When
+            val result = saveDraft.invoke(message, emptyList(), "parentId123")
+
+            // Then
+            val expectedError = SaveDraft.Result.SendingInProgressError
+            Assert.assertEquals(expectedError, result)
+            verify(exactly = 0) { createDraftScheduler.enqueue(any(), any()) }
+        }
+    }
+
     @Test
     fun saveDraftsSchedulesCreateDraftWorker() =
         runBlockingTest {
@@ -171,6 +199,7 @@ class SaveDraftTest : CoroutinesTest {
                 decryptedBody = "Message body in plain text"
             }
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
 
             // When
             saveDraft.invoke(message, emptyList(), "parentId123")
