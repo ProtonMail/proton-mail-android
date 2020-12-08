@@ -45,10 +45,9 @@ class SaveDraft @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        message: Message,
-        newAttachmentIds: List<String>,
-        parentId: String?
+        params: SaveDraftParameters
     ): Result = withContext(dispatchers.Io) {
+        val message = params.message
         val messageId = requireNotNull(message.messageId)
         val addressId = requireNotNull(message.addressID)
 
@@ -67,7 +66,7 @@ class SaveDraft @Inject constructor(
         val messageDbId = messageDetailsRepository.saveMessageLocally(message)
         messageDetailsRepository.insertPendingDraft(messageDbId)
 
-        if (newAttachmentIds.isNotEmpty()) {
+        if (params.newAttachmentIds.isNotEmpty()) {
             pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
         }
 
@@ -76,7 +75,7 @@ class SaveDraft @Inject constructor(
             return@withContext Result.SendingInProgressError
         }
 
-        createDraftWorker.enqueue(message, parentId)
+        createDraftWorker.enqueue(message, params.parentId)
 
         return@withContext Result.Success
     }
@@ -85,4 +84,10 @@ class SaveDraft @Inject constructor(
         object SendingInProgressError : Result()
         object Success : Result()
     }
+
+    data class SaveDraftParameters(
+        val message: Message,
+        val newAttachmentIds: List<String>,
+        val parentId: String?
+    )
 }

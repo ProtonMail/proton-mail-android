@@ -676,7 +676,7 @@ public class User {
 
     @Deprecated
     @kotlin.Deprecated(message = GENERIC_DEPRECATION_MESSAGE +
-            "\nfrom:  'addresses.values.find { it.id == addressId }'")
+            "\nfrom:  'newUser.findAddressById(addressId) }'")
     public Address getAddressById(String addressId) {
         tryLoadAddresses();
         String addrId = addressId;

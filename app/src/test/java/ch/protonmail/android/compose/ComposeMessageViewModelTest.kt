@@ -23,6 +23,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.services.PostMessageServiceFactory
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
 import ch.protonmail.android.usecase.VerifyConnection
@@ -44,7 +45,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 class ComposeMessageViewModelTest : CoroutinesTest {
 
     @Rule
-    private val trampolineSchedulerRule = TrampolineScheduler()
+    val trampolineSchedulerRule = TrampolineScheduler()
 
     @RelaxedMockK
     lateinit var composeMessageRepository: ComposeMessageRepository
@@ -80,12 +81,13 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     fun saveDraftCallsSaveDraftUseCaseWhenTheDraftIsNew() =
         runBlockingTest {
             val message = Message()
-            val parentId = "parentId"
-            // Needed to set a value to _messageDataResult field
+            // Needed to set class fields to the right value
             viewModel.prepareMessageData(false, "addressId", "mail-alias", false)
+            viewModel.setupComposingNewMessage(false, Constants.MessageActionType.FORWARD, "parentId823", "")
 
             viewModel.saveDraft(message, hasConnectivity = false)
 
-            coVerify { saveDraft(message, emptyList(), "parentId") }
+            val parameters = SaveDraft.SaveDraftParameters(message, emptyList(), "parentId823")
+            coVerify { saveDraft(parameters) }
         }
 }

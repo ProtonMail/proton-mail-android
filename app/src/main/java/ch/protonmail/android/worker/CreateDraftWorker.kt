@@ -83,15 +83,16 @@ class CreateDraftWorker @WorkerInject constructor(
     }
 
     private fun getMessageSender(message: Message): MessageSender? {
+        if (message.isSenderEmailAlias()) {
+            return MessageSender(message.senderName, message.senderEmail)
+        }
+
         val addressId = requireNotNull(message.addressID)
         val user = userManager.getUser(userManager.username).loadNew(userManager.username)
         user.findAddressById(Id(addressId))?.let {
             return MessageSender(it.displayName?.s, it.email.s)
         }
 
-        if (message.isSenderEmailAlias()) {
-            return MessageSender(message.senderName, message.senderEmail)
-        }
         return null
     }
 
