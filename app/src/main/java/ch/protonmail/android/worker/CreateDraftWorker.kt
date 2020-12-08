@@ -61,9 +61,6 @@ class CreateDraftWorker @WorkerInject constructor(
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
 
-        // not needed as done by the use case already (setLabels) ***************************************************************
-//        message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
-
         val createDraftRequest = messageFactory.createDraftApiRequest(message)
         val parentMessage: Message? = null
         val inputParentId = getInputParentId()
@@ -77,31 +74,25 @@ class CreateDraftWorker @WorkerInject constructor(
 //            }
         }
 
-        val addressId = requireNotNull(message.addressID)
         val encryptedMessage = requireNotNull(message.messageBody)
-
-        // TODO can be deleted as it's duplicated with just reading the message body (access same data)
-//        if (!TextUtils.isEmpty(message.getMessageId())) {
-//            Message savedMessage = getMessageDetailsRepository().findMessageById(message.getMessageId());
-//            if (savedMessage != null) {
-//                encryptedMessage = savedMessage.getMessageBody();
-//            }
-//        }
-
-
-        val username = userManager.username
-        val user = userManager.getUser(username).loadNew(username)
-        user.findAddressById(Id(addressId))?.let {
-            createDraftRequest.setSender(MessageSender(it.displayName?.s, it.email.s));
-            createDraftRequest.addMessageBody(Fields.Message.SELF, encryptedMessage);
-        }
+        createDraftRequest.addMessageBody(Fields.Message.SELF, encryptedMessage);
+        createDraftRequest.setSender(getMessageSender(message))
 
 
         return Result.failure()
     }
 
-    private fun getInputParentId(): String? {
-        return inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
+    private fun getMessageSender(message: Message): MessageSender? {
+        val addressId = requireNotNull(message.addressID)
+        val user = userManager.getUser(userManager.username).loadNew(userManager.username)
+        user.findAddressById(Id(addressId))?.let {
+            return MessageSender(it.displayName?.s, it.email.s)
+        }
+
+        if (message.isSenderEmailAlias()) {
+            return MessageSender(message.senderName, message.senderEmail)
+        }
+        return null
     }
 
     private fun failureWithError(error: CreateDraftWorkerErrors): Result {
@@ -109,11 +100,14 @@ class CreateDraftWorker @WorkerInject constructor(
         return Result.failure(errorData)
     }
 
+    private fun getInputParentId(): String? {
+        return inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
+    }
+
     private fun getInputMessageDbId() =
         inputData.getLong(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
 
     enum class CreateDraftWorkerErrors {
-        SendingInProgressError,
         MessageNotFound
     }
 

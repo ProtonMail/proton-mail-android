@@ -47,7 +47,6 @@ import com.google.gson.annotations.SerializedName
 import org.apache.commons.lang3.StringEscapeUtils
 import java.io.Serializable
 import java.util.ArrayList
-import java.util.Arrays
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import javax.mail.internet.InternetHeaders
@@ -220,11 +219,10 @@ data class Message @JvmOverloads constructor(
     val replyToEmails: List<String>
         get() {
             return replyTos
-                    ?.asSequence()
-                    ?.filterNot { TextUtils.isEmpty(it.address) }
-                    ?.map { it.address }
-                    ?.toList()
-                    ?: Arrays.asList(sender?.emailAddress!!)
+                .asSequence()
+                .filterNot { TextUtils.isEmpty(it.address) }
+                .map { it.address }
+                .toList()
         }
     val toListString
         get() = MessageUtils.toContactString(toList)
@@ -533,6 +531,8 @@ data class Message @JvmOverloads constructor(
             RecipientType.BCC -> bccList
         }
     }
+
+    fun isSenderEmailAlias() = senderEmail.contains("+")
 
     enum class MessageType {
         INBOX, DRAFT, SENT, INBOX_AND_SENT

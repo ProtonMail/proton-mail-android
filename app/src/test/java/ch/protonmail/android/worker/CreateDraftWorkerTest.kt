@@ -191,6 +191,32 @@ class CreateDraftWorkerTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun workerUsesMessageSenderToRequestDraftCreationWhenMessageIsBeingSentByAlias() {
+        runBlockingTest {
+            // Given
+            val messageDbId = 89234L
+            val addressId = "addressId234"
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = addressId
+                messageBody = "messageBody2341"
+                sender = MessageSender("sender by alias", "sender+alias@pm.me")
+            }
+            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            givenMessageIdInput(messageDbId)
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+
+            // When
+            worker.doWork()
+
+            // Then
+            val messageSender = MessageSender("sender by alias", "sender+alias@pm.me")
+            verify { apiDraftMessage.setSender(messageSender) }
+        }
+    }
+
     private fun givenParentIdInput(parentId: String) {
         every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID) } answers { parentId }
     }
