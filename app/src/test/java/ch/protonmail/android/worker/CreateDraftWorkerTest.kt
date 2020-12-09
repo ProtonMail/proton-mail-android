@@ -32,12 +32,17 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.utils.Fields.Message.SELF
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
+import ch.protonmail.android.core.Constants.MessageActionType.NONE
+import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
+import ch.protonmail.android.utils.extensions.serialize
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
@@ -53,7 +58,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
 class CreateDraftWorkerTest : CoroutinesTest {
-
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -83,13 +87,14 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageParentId = "98234"
             val messageLocalId = "2834"
             val messageDbId = 534L
+            val messageActionType = REPLY_ALL
             val message = Message(messageLocalId)
             message.dbId = messageDbId
             val requestSlot = slot<OneTimeWorkRequest>()
             every { workManager.enqueue(capture(requestSlot)) } answers { mockk() }
 
             // When
-            CreateDraftWorker.Enqueuer(workManager).enqueue(message, messageParentId)
+            CreateDraftWorker.Enqueuer(workManager).enqueue(message, messageParentId, messageActionType)
 
             // Then
             val constraints = requestSlot.captured.workSpec.constraints
@@ -97,9 +102,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val actualMessageDbId = inputData.getLong(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID, -1)
             val actualMessageLocalId = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_LOCAL_ID)
             val actualMessageParentId = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
+            val actualMessageActionType = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
             assertEquals(messageParentId, actualMessageParentId)
+            assertEquals(messageActionType.serialize(), actualMessageActionType)
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
@@ -126,10 +133,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerSetsParentIdOnCreateDraftRequestWhenParentIdIsGiven() {
+    fun workerSetsParentIdAndActionTypeOnCreateDraftRequestWhenParentIdIsGiven() {
         runBlockingTest {
             // Given
             val parentId = "89345"
+            val actionType = FORWARD
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
@@ -139,6 +147,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val apiDraftMessage = mockk<NewMessage>(relaxed = true)
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
+            givenActionTypeInput(actionType)
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
 
@@ -147,6 +156,10 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             verify { apiDraftMessage.setParentID(parentId) }
+            verify { apiDraftMessage.action = 2 }
+            // Always get parent message from messageDetailsDB, never from searchDB
+            // ignoring isTransient property as the values in the two DB appears to be the same
+            verify { messageDetailsRepository.findMessageById(parentId) }
         }
     }
 
@@ -163,6 +176,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
             val apiDraftMessage = mockk<NewMessage>(relaxed = true)
             givenMessageIdInput(messageDbId)
+            givenActionTypeInput()
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { userManager.username } returns "username"
@@ -205,6 +219,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
             val apiDraftMessage = mockk<NewMessage>(relaxed = true)
             givenMessageIdInput(messageDbId)
+            givenActionTypeInput()
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
 
@@ -215,6 +230,15 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageSender = MessageSender("sender by alias", "sender+alias@pm.me")
             verify { apiDraftMessage.setSender(messageSender) }
         }
+    }
+
+    private fun givenActionTypeInput(actionType: Constants.MessageActionType = NONE) {
+        every {
+            parameters.inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)
+        } answers {
+            actionType.serialize()
+        }
+
     }
 
     private fun givenParentIdInput(parentId: String) {

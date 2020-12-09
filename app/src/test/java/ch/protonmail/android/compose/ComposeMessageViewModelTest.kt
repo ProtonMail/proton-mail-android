@@ -87,7 +87,12 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
             viewModel.saveDraft(message, hasConnectivity = false)
 
-            val parameters = SaveDraft.SaveDraftParameters(message, emptyList(), "parentId823")
+            val parameters = SaveDraft.SaveDraftParameters(
+                message,
+                emptyList(),
+                "parentId823",
+                Constants.MessageActionType.FORWARD
+            )
             coVerify { saveDraft(parameters) }
         }
 }

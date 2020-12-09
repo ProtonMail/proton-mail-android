@@ -36,13 +36,17 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.utils.Fields
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.utils.extensions.deserialize
+import ch.protonmail.android.utils.extensions.serialize
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID = "keyCreateDraftMessageDbId"
 internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_LOCAL_ID = "keyCreateDraftMessageLocalId"
 internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID = "keyCreateDraftMessageParentId"
+internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED = "keyCreateDraftMessageActionTypeSerialized"
 
 internal const val KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM = "keyCreateDraftErrorResult"
 
@@ -62,16 +66,11 @@ class CreateDraftWorker @WorkerInject constructor(
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
 
         val createDraftRequest = messageFactory.createDraftApiRequest(message)
-        val parentMessage: Message? = null
         val inputParentId = getInputParentId()
         inputParentId?.let {
             createDraftRequest.setParentID(inputParentId);
-//            draftApiModel.setAction(mActionType.getMessageActionTypeValue());
-//            if(!isTransient) {
-//                parentMessage = getMessageDetailsRepository().findMessageById(mParentId);
-//            } else {
-//                parentMessage = getMessageDetailsRepository().findSearchMessageById(mParentId);
-//            }
+            createDraftRequest.action = getInputActionType().messageActionTypeValue
+            val parentMessage = messageDetailsRepository.findMessageById(inputParentId)
         }
 
         val encryptedMessage = requireNotNull(message.messageBody)
@@ -101,9 +100,13 @@ class CreateDraftWorker @WorkerInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun getInputParentId(): String? {
-        return inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
-    }
+    private fun getInputActionType(): Constants.MessageActionType =
+        inputData
+            .getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)?.deserialize()
+            ?: Constants.MessageActionType.NONE
+
+    private fun getInputParentId(): String? =
+        inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
 
     private fun getInputMessageDbId() =
         inputData.getLong(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
@@ -114,7 +117,11 @@ class CreateDraftWorker @WorkerInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        fun enqueue(message: Message, parentId: String?): LiveData<WorkInfo> {
+        fun enqueue(
+            message: Message,
+            parentId: String?,
+            actionType: Constants.MessageActionType
+        ): LiveData<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -124,7 +131,8 @@ class CreateDraftWorker @WorkerInject constructor(
                     workDataOf(
                         KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID to message.dbId,
                         KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_LOCAL_ID to message.messageId,
-                        KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID to parentId
+                        KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID to parentId,
+                        KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED to actionType.serialize()
                     )
                 ).build()
 

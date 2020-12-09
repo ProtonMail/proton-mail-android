@@ -23,6 +23,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
@@ -75,7 +76,7 @@ class SaveDraft @Inject constructor(
             return@withContext Result.SendingInProgressError
         }
 
-        createDraftWorker.enqueue(message, params.parentId)
+        createDraftWorker.enqueue(message, params.parentId, params.actionType)
 
         return@withContext Result.Success
     }
@@ -88,6 +89,7 @@ class SaveDraft @Inject constructor(
     data class SaveDraftParameters(
         val message: Message,
         val newAttachmentIds: List<String>,
-        val parentId: String?
+        val parentId: String?,
+        val actionType: Constants.MessageActionType
     )
 }

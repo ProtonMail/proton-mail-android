@@ -456,7 +456,14 @@ class ComposeMessageViewModel @Inject constructor(
                     )
                 }
 
-                saveDraft(SaveDraft.SaveDraftParameters(message, newAttachmentIds, parentId))
+                saveDraft(
+                    SaveDraft.SaveDraftParameters(
+                        message,
+                        newAttachmentIds,
+                        parentId,
+                        _actionId
+                    )
+                )
 
                 _oldSenderAddressId = ""
                 setIsDirty(false)
