@@ -433,24 +433,23 @@ class MailboxActivity :
                 storageLimitApproachingAlertDialog = null
             }
             if (userManager.canShowStorageLimitReached()) {
-                showInfoDialogWithTwoButtons(
-                    this@MailboxActivity,
-                    getString(R.string.storage_limit_warning_title),
-                    getString(R.string.storage_limit_reached_text),
-                    getString(R.string.learn_more),
-                    getString(R.string.okay),
-                    {
+
+                showTwoButtonInfoDialog(
+                    titleStringId = R.string.storage_limit_warning_title,
+                    messageStringId = R.string.storage_limit_reached_text,
+                    rightStringId = R.string.okay,
+                    leftStringId = R.string.learn_more,
+                    onRight = {
+                        userManager.setShowStorageLimitReached(false)
+                    },
+                    onLeft = {
                         val browserIntent = Intent(
                             Intent.ACTION_VIEW,
                             Uri.parse(getString(R.string.limit_reached_learn_more))
                         )
                         startActivity(browserIntent)
                         userManager.setShowStorageLimitReached(false)
-                    },
-                    {
-                        userManager.setShowStorageLimitReached(false)
-                    },
-                    true
+                    }
                 )
             }
             userManager.setShowStorageLimitWarning(true)
@@ -461,18 +460,15 @@ class MailboxActivity :
     }
 
     private fun showStorageLimitApproachingAlertDialog() {
-        storageLimitApproachingAlertDialog = showInfoDialogWithTwoButtons(
-            this@MailboxActivity,
-            getString(R.string.storage_limit_warning_title),
-            getString(R.string.storage_limit_approaching_text),
-            getString(R.string.dont_remind_again),
-            getString(R.string.okay),
-            {
+        storageLimitApproachingAlertDialog = showTwoButtonInfoDialog(
+            titleStringId = R.string.storage_limit_warning_title,
+            messageStringId = R.string.storage_limit_approaching_text,
+            leftStringId = R.string.dont_remind_again,
+            onRight = { storageLimitApproachingAlertDialog = null },
+            onLeft = {
                 userManager.setShowStorageLimitWarning(false)
                 storageLimitApproachingAlertDialog = null
-            },
-            { storageLimitApproachingAlertDialog = null },
-            true
+            }
         )
     }
 
@@ -502,23 +498,20 @@ class MailboxActivity :
     }
 
     private val setupUpLimitReachedTryComposeObserver = Observer { limitReached: Event<Boolean> ->
-        if (limitReached.getContentIfNotHandled() == true /* _limitReached != null && _limitReached */) {
-            showInfoDialogWithTwoButtons(
-                this@MailboxActivity,
-                getString(R.string.storage_limit_warning_title),
-                getString(R.string.storage_limit_reached_text),
-                getString(R.string.learn_more),
-                getString(R.string.okay),
-                {
+        if (limitReached.getContentIfNotHandled() == true) {
+            showTwoButtonInfoDialog(
+                titleStringId = R.string.storage_limit_warning_title,
+                messageStringId = R.string.storage_limit_reached_text,
+                leftStringId = R.string.learn_more,
+                onLeft = {
                     val browserIntent = Intent(
                         Intent.ACTION_VIEW,
                         Uri.parse(getString(R.string.limit_reached_learn_more))
                     )
                     startActivity(browserIntent)
-                },
-                { },
-                true
+                }
             )
+
         } else {
             val intent = AppUtil.decorInAppIntent(
                 Intent(
@@ -787,13 +780,11 @@ class MailboxActivity :
 
     private fun showSwipeGesturesChangedDialog() {
         val prefs: SharedPreferences = (applicationContext as ProtonMailApplication).defaultSharedPreferences
-        showInfoDialogWithTwoButtons(
-            this,
-            getString(R.string.swipe_gestures_changed),
-            getString(R.string.swipe_gestures_changed_message),
-            getString(R.string.go_to_settings),
-            getString(R.string.okay),
-            {
+        showTwoButtonInfoDialog(
+            titleStringId = R.string.swipe_gestures_changed,
+            messageStringId = R.string.swipe_gestures_changed_message,
+            leftStringId = R.string.go_to_settings,
+            onLeft = {
                 val swipeGestureIntent = Intent(
                     this,
                     EditSettingsItemActivity::class.java
@@ -803,11 +794,7 @@ class MailboxActivity :
                     AppUtil.decorInAppIntent(swipeGestureIntent),
                     SettingsEnum.SWIPING_GESTURE.ordinal
                 )
-            },
-            { },
-            cancelable = true,
-            dismissible = true,
-            outsideClickCancellable = true
+            }
         )
         prefs.edit().putBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, true).apply()
     }
@@ -899,22 +886,16 @@ class MailboxActivity :
                 true
             }
             R.id.empty -> {
-                val clickListener = DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                if (!isFinishing) {
+                    showTwoButtonInfoDialog(
+                        titleStringId = R.string.empty_folder,
+                        messageStringId = R.string.are_you_sure_empty,
+                        leftStringId = R.string.no
+                    ) {
                         setRefreshing(true)
                         mJobManager.addJobInBackground(EmptyFolderJob(mailboxLocationMain.value, this.mailboxLabelId))
                         setLoadingMore(false)
                     }
-                    dialog.dismiss()
-                }
-                if (!isFinishing) {
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle(R.string.empty_folder)
-                        .setMessage(R.string.are_you_sure_empty)
-                        .setNegativeButton(R.string.no, clickListener)
-                        .setPositiveButton(R.string.yes, clickListener)
-                        .create()
-                        .show()
                 }
                 true
             }
@@ -1647,17 +1628,13 @@ class MailboxActivity :
                     )
                 if (setOfConnectionResults.any { it == result }) {
                     val prefs = app.defaultSharedPreferences
-                    val dontShowPlayServices = prefs.getBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, false)
+                    val dontShowPlayServices = prefs[PREF_DONT_SHOW_PLAY_SERVICES] ?: false
                     if (!dontShowPlayServices) {
-                        showInfoDialogWithTwoButtons(
-                            this,
-                            getString(R.string.push_notifications_alert_title),
-                            getString(R.string.push_notifications_alert_subtitle),
-                            getString(R.string.dont_remind_again),
-                            getString(R.string.okay),
-                            { prefs.edit().putBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, true).apply() },
-                            { },
-                            true
+                        showTwoButtonInfoDialog(
+                            titleStringId = R.string.push_notifications_alert_title,
+                            messageStringId = R.string.push_notifications_alert_subtitle,
+                            leftStringId = R.string.dont_remind_again,
+                            onLeft = { prefs[PREF_DONT_SHOW_PLAY_SERVICES] = true }
                         )
                     }
                 } else {

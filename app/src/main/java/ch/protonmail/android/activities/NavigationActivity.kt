@@ -512,12 +512,11 @@ abstract class NavigationActivity :
                     getString(R.string.log_out, current.name.s) to getString(R.string.logout_question)
                 }
 
-                DialogUtils.showTwoButtonInfoDialog(
-                    context = this@NavigationActivity,
+                showTwoButtonInfoDialog(
                     title = title,
                     message = message,
-                    positiveStringId = R.string.yes,
-                    negativeStringId = R.string.no
+                    rightStringId = R.string.yes,
+                    leftStringId = R.string.no
                 ) {
                     onLogoutConfirmed(
                         currentUserId = checkNotNull(userManager.currentUserId),

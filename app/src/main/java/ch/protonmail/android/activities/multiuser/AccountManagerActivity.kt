@@ -90,7 +90,7 @@ class AccountManagerActivity : BaseActivity() {
                         getString(R.string.log_out, current.name.s) to getString(R.string.logout_question)
                     }
 
-                    showTwoButtonInfoDialog(this@AccountManagerActivity, title, message) {
+                    showTwoButtonInfoDialog(title = title, message = message) {
                         viewModel.logoutAccountResult.observe(this@AccountManagerActivity, ::closeActivity)
                         viewModel.logout(userId)
                     }
@@ -102,8 +102,7 @@ class AccountManagerActivity : BaseActivity() {
                 lifecycleScope.launchWhenCreated {
                     val username = checkNotNull(userManager.getUser(userId)).name.s
                     showTwoButtonInfoDialog(
-                        context = this@AccountManagerActivity,
-                        title = getString(R.string.logout),
+                        titleStringId = R.string.logout,
                         message = getString(R.string.remove_account_question, username)
                     ) {
                         viewModel.removedAccountResult.observe(this@AccountManagerActivity, ::closeActivity)

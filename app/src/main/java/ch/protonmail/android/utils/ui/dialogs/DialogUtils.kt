@@ -77,6 +77,22 @@ class DialogUtils {
             )
         }
 
+        @Deprecated(
+            "Use 'showTwoButtonInfoDialog'",
+            ReplaceWith(
+                "context.showTwoButtonInfoDialog(\n" +
+                    "   title = title,\n" +
+                    "   message = message,\n" +
+                    "   rightStringId = positiveBtnText,\n" +
+                    "   leftStringId = negativeBtnText,\n" +
+                    "   dismissOnButtonClick = dismissible,\n" +
+                    "   cancelable = cancelable,\n" +
+                    "   cancelOnTouchOutside = outsideClickCancellable,\n" +
+                    "   onRight = okListener,\n" +
+                    "   onLeft = dismissListener\n" +
+                    ")"
+            )
+        )
         @JvmOverloads
         fun showInfoDialogWithTwoButtons(context: Context, title: String, message: String,
                                          negativeBtnText: String, positiveBtnText: String,
@@ -108,41 +124,88 @@ class DialogUtils {
             return dialog
         }
 
-        inline fun showTwoButtonInfoDialog(
-            context: Context,
-            title: CharSequence,
-            message: CharSequence,
-            @StringRes positiveStringId: Int = R.string.okay,
-            @StringRes negativeStringId: Int = R.string.cancel,
-            cancelable: Boolean = false,
-            crossinline onPositive: () -> Unit
-        ) {
-            AlertDialog.Builder(context)
+        /**
+         * Create and show a [AlertDialog] with 2 buttons
+         * @throws IllegalArgumentException if none of [title] or [title] is defined
+         * @return [AlertDialog]
+         *
+         * @param title [CharSequence] title of the Dialog
+         *  optional if [titleStringId] is defined
+         *
+         * @param titleStringId [StringRes] for the title of the Dialog
+         *  optional if [title] is defined
+         *
+         * @param message [CharSequence] message of the Dialog
+         *  optional
+         *
+         * @param messageStringId [StringRes] for the message of the Dialog
+         *  optional
+         *
+         * @param rightStringId [StringRes] for text of the right button
+         *  default is [R.string.okay]
+         *
+         * @param leftStringId [StringRes] for text of the left button
+         *  default is [R.string.cancel]
+         *
+         * @param dismissOnButtonClick whether the [Dialog] should be dismissed when a button is clicked
+         *  default is `true`
+         *
+         * @param cancelable whether the [Dialog] is cancelable
+         *  default is `true`
+         *
+         * @param cancelOnTouchOutside whether the [Dialog] must be cancelled when a touch happens outside of the
+         *  [Dialog] itself
+         *  default is `true`
+         *
+         * @param onLeft will be executed when the left button is pressed
+         *  default is an empty lambda
+         *
+         * @param onRight will be executed when the right button is pressed
+         *  default is an empty lambda
+         */
+        inline fun Context.showTwoButtonInfoDialog(
+            @StringRes titleStringId: Int? = null,
+            title: CharSequence? = titleStringId?.let(::getText),
+            @StringRes messageStringId: Int? = null,
+            message: CharSequence? = messageStringId?.let(::getText),
+            @StringRes rightStringId: Int = R.string.okay,
+            @StringRes leftStringId: Int = R.string.cancel,
+            dismissOnButtonClick: Boolean = true,
+            cancelable: Boolean = true,
+            cancelOnTouchOutside: Boolean = true,
+            crossinline onLeft: () -> Unit = {},
+            crossinline onRight: () -> Unit = {}
+        ): AlertDialog {
+            requireNotNull(title) {
+                "One parameter of 'title' or 'titleStringId' is required"
+            }
+            return AlertDialog.Builder(this)
                 .setTitle(title)
-                .setMessage(message)
-                .setNegativeButton(negativeStringId) { dialog, _ -> dialog.dismiss() }
-                .setPositiveButton(positiveStringId) { dialog, _ ->
-                    run {
-                        onPositive()
-                        dialog.dismiss()
-                    }
+                .apply { message?.let(::setMessage) }
+                .setNegativeButton(leftStringId) { dialog, _ ->
+                    onLeft()
+                    if (dismissOnButtonClick) dialog.dismiss()
+                }
+                .setPositiveButton(rightStringId) { dialog, _ ->
+                    onRight()
+                    if (dismissOnButtonClick) dialog.dismiss()
                 }
                 .setCancelable(cancelable)
                 .create()
-                .show()
+                .apply { setCanceledOnTouchOutside(cancelOnTouchOutside) }
+                .also { it.show() }
         }
 
         @Deprecated(
             "Use 'showTwoButtonInfoDialog'",
             ReplaceWith(
-                "showTwoButtonInfoDialog(\n" +
-                    "   context,\n" +
-                    "   title,\n" +
-                    "   message,\n" +
-                    "   positiveStringId,\n" +
-                    "   negativeStringId,\n" +
-                    "   cancelable,\n" +
-                    "   okListener\n" +
+                "context.showTwoButtonInfoDialog(\n" +
+                    "   title = title,\n" +
+                    "   message = message,\n" +
+                    "   rightStringId = positiveBtnText,\n" +
+                    "   leftStringId = negativeBtnText,\n" +
+                    "   cancelable = cancelable,\n" +
+                    "   onRight = okListener\n" +
                     ")"
             )
         )
