@@ -28,9 +28,8 @@ import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
 
-/**
- * Created by dkadrikj on 7/13/16.
- */
+@Deprecated
+@kotlin.Deprecated(message = "The result of this operation is currently (Dec 20202) unused")
 public class GetAvailableDomainsJob extends ProtonMailBaseJob {
 
     private boolean retryOnError;

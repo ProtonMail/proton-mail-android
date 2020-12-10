@@ -22,9 +22,8 @@ import java.util.List;
 
 import ch.protonmail.android.events.Status;
 
-/**
- * Created by dkadrikj on 7/13/16.
- */
+@Deprecated
+@kotlin.Deprecated(message = "The result of this operation is currently (Dec 20202) unused")
 public class AvailableDomainsEvent {
     private final Status status;
     private final boolean retryOnError;
