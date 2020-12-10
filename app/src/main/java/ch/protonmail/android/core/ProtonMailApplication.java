@@ -569,7 +569,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     List<String> loggedInUsers = accountManager.getLoggedInUsers();
                     long elapsedTime = SystemClock.elapsedRealtime();
                     for (String userName : loggedInUsers) {
-                        User user = userManager.getUser(userName);
+                        User user = userManager.getLegacyUserBlocking(userName);
                         if (!user.isPaidUser()) {
                             user.setShowMobileSignature(true);
                             user.save();
@@ -581,11 +581,11 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     AlarmReceiver alarmReceiver = new AlarmReceiver();
                     alarmReceiver.cancelAlarm(this);
                     startJobManager();
-                    List<String> loggedInUsers = accountManager.getLoggedInUsers();
-                    String currentPrimary = userManager.getUsername();
-                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentPrimary));
-                    for (String loggedInUser : loggedInUsers) {
-                        if (!loggedInUser.equals(currentPrimary)) {
+                    Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
+                    Id currentPrimaryUserId = userManager.getCurrentUserId();
+                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentPrimaryUserId));
+                    for (Id loggedInUser : loggedInUsers) {
+                        if (!loggedInUser.equals(currentPrimaryUserId)) {
                             jobManager.addJobInBackground(new FetchUserSettingsJob(loggedInUser));
                         }
                     }

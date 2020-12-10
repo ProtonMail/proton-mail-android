@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.address.AddressKeyActivationWorker
 import ch.protonmail.android.api.models.address.AddressesResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.Priority
@@ -35,8 +36,8 @@ import timber.log.Timber
 import kotlin.time.seconds
 
 class FetchUserSettingsJob(
-    username: String? = null
-) : ProtonMailBaseJob(Params(Priority.HIGH).groupBy(Constants.JOB_GROUP_MISC), username) {
+    userId: Id? = null
+) : ProtonMailBaseJob(Params(Priority.HIGH).groupBy(Constants.JOB_GROUP_MISC), userId?.s) {
 
     @Throws(Throwable::class)
     override fun onRun() {

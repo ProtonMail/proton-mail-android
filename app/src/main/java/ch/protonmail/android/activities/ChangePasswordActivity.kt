@@ -135,8 +135,8 @@ class ChangePasswordActivity : BaseActivity() {
     fun onPasswordChangeEvent(event: PasswordChangeEvent) {
         progressContainer.visibility = View.GONE
         if (event.status == AuthStatus.SUCCESS) {
-            val username = mUserManager.username
-            mJobManager.addJobInBackground(FetchUserSettingsJob(username))
+            val userId = mUserManager.currentUserId
+            mJobManager.addJobInBackground(FetchUserSettingsJob(userId))
             saveLastInteraction()
             finish()
         }
