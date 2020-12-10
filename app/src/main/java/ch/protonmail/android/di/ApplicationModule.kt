@@ -51,6 +51,8 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.utils.BuildInfo
+import ch.protonmail.android.utils.base64.AndroidBase64Encoder
+import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.dagger2.AssistedModule
@@ -216,6 +218,9 @@ object ApplicationModule {
 
     @Provides
     fun attachmentFactory(): IAttachmentFactory = AttachmentFactory()
+
+    @Provides
+    fun base64Encoder(): Base64Encoder = AndroidBase64Encoder()
 }
 
 @Module

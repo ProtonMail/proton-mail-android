@@ -29,6 +29,7 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.NewMessage
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.utils.Fields.Message.SELF
@@ -37,14 +38,19 @@ import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.NotBlankString
+import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
+import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.serialize
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -77,6 +83,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var userManager: UserManager
 
+    @RelaxedMockK
+    private lateinit var addressCryptoFactory: AddressCrypto.Factory
+
+    @MockK
+    private lateinit var base64: Base64Encoder
+
     @InjectMockKs
     private lateinit var worker: CreateDraftWorker
 
@@ -90,11 +102,17 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageActionType = REPLY_ALL
             val message = Message(messageLocalId)
             message.dbId = messageDbId
+            val previousSenderAddressId = "previousSenderId82348"
             val requestSlot = slot<OneTimeWorkRequest>()
             every { workManager.enqueue(capture(requestSlot)) } answers { mockk() }
 
             // When
-            CreateDraftWorker.Enqueuer(workManager).enqueue(message, messageParentId, messageActionType)
+            CreateDraftWorker.Enqueuer(workManager).enqueue(
+                message,
+                messageParentId,
+                messageActionType,
+                previousSenderAddressId
+            )
 
             // Then
             val constraints = requestSlot.captured.workSpec.constraints
@@ -103,10 +121,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val actualMessageLocalId = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_LOCAL_ID)
             val actualMessageParentId = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
             val actualMessageActionType = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)
+            val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
             assertEquals(messageParentId, actualMessageParentId)
             assertEquals(messageActionType.serialize(), actualMessageActionType)
+            assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
@@ -175,23 +195,23 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 messageBody = "messageBody"
             }
             val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val address = Address(
+                Id(addressId),
+                null,
+                EmailAddress("sender@email.it"),
+                Name("senderName"),
+                true,
+                Address.Type.ORIGINAL,
+                allowedToSend = true,
+                allowedToReceive = false,
+                keys = AddressKeys(null, emptyList())
+            )
             givenMessageIdInput(messageDbId)
             givenActionTypeInput()
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { userManager.username } returns "username"
             every { userManager.getUser("username").loadNew("username") } returns mockk {
-                val address = Address(
-                    Id(addressId),
-                    null,
-                    EmailAddress("sender@email.it"),
-                    Name("senderName"),
-                    true,
-                    Address.Type.ORIGINAL,
-                    allowedToSend = true,
-                    allowedToReceive = false,
-                    keys = AddressKeys(null, emptyList())
-                )
                 every { findAddressById(Id(addressId)) } returns address
             }
 
@@ -232,13 +252,76 @@ class CreateDraftWorkerTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun workerReEncryptParentAttachmentsWhenSenderAddressChanged() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val actionType = FORWARD
+            val messageDbId = 345L
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = "addressId835"
+                messageBody = "messageBody"
+            }
+            val attachment = Attachment("attachment1", "pic.jpg", "image/jpeg", keyPackets = "somePackets")
+            val previousSenderAddressId = "previousSenderId82348"
+            val privateKey = PgpField.PrivateKey(NotBlankString("current sender private key"))
+            val username = "username934"
+            val senderPublicKey = "new sender public key"
+            val decodedPacketsBytes = "decoded attachment packets".toByteArray()
+            val encryptedKeyPackets = "re-encrypted att key packets".toByteArray()
+
+            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val parentMessage = mockk<Message> {
+                every { attachments(any()) } returns listOf(attachment)
+            }
+            val senderAddress = mockk<Address>(relaxed = true) {
+                every { keys.primaryKey?.privateKey } returns privateKey
+            }
+            val addressCrypto = mockk<AddressCrypto>(relaxed = true) {
+                val sessionKey = "session key".toByteArray()
+                every { buildArmoredPublicKey(privateKey) } returns senderPublicKey
+                every { decryptKeyPacket(decodedPacketsBytes) } returns sessionKey
+                every { encryptKeyPacket(sessionKey, senderPublicKey) } returns encryptedKeyPackets
+            }
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(actionType)
+            givenPreviousSenderAddress(previousSenderAddressId)
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            every { messageDetailsRepository.findMessageById(parentId) } returns parentMessage
+            every { userManager.username } returns username
+            every { userManager.getUser(username).loadNew(username) } returns mockk {
+                every { findAddressById(Id("addressId835")) } returns senderAddress
+            }
+            every { addressCryptoFactory.create(Id(previousSenderAddressId), Name(username)) } returns addressCrypto
+            every { addressCrypto.buildArmoredPublicKey(privateKey) } returns senderPublicKey
+            every { base64.decode(attachment.keyPackets!!) } returns decodedPacketsBytes
+            every { base64.encode(encryptedKeyPackets) } returns "encrypted encoded packets"
+
+            // When
+            worker.doWork()
+
+            // Then
+            val attachmentReEncrypted = attachment.copy(keyPackets = "encrypted encoded packets")
+            verify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            verify { addressCrypto.buildArmoredPublicKey(privateKey) }
+            verify { apiDraftMessage.addAttachmentKeyPacket("attachment1", attachmentReEncrypted.keyPackets) }
+        }
+    }
+
+    private fun givenPreviousSenderAddress(address: String) {
+        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID) } answers { address }
+    }
+
     private fun givenActionTypeInput(actionType: Constants.MessageActionType = NONE) {
         every {
             parameters.inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)
         } answers {
             actionType.serialize()
         }
-
     }
 
     private fun givenParentIdInput(parentId: String) {

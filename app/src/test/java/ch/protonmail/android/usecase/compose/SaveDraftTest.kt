@@ -87,7 +87,9 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
-            saveDraft(SaveDraftParameters(message, emptyList(), null, FORWARD))
+            saveDraft(
+                SaveDraftParameters(message, emptyList(), null, FORWARD, "previousSenderId1273")
+            )
 
             // Then
             val expectedMessage = message.copy(messageBody = "encrypted armored content")
@@ -118,7 +120,9 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
-            saveDraft(SaveDraftParameters(message, emptyList(), null, FORWARD))
+            saveDraft(
+                SaveDraftParameters(message, emptyList(), null, FORWARD, "previousSenderId1273")
+            )
 
             // Then
             coVerify { messageDetailsRepository.insertPendingDraft(123L) }
@@ -142,7 +146,9 @@ class SaveDraftTest : CoroutinesTest {
 
             // When
             val newAttachments = listOf("attachmentId")
-            saveDraft.invoke(SaveDraftParameters(message, newAttachments, "parentId", REPLY))
+            saveDraft.invoke(
+                SaveDraftParameters(message, newAttachments, "parentId", REPLY, "previousSenderId1273")
+            )
 
             // Then
             verify { pendingActionsDao.insertPendingForUpload(PendingUpload("456")) }
@@ -161,7 +167,9 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
 
             // When
-            saveDraft.invoke(SaveDraftParameters(message, emptyList(), "parentId", FORWARD))
+            saveDraft.invoke(
+                SaveDraftParameters(message, emptyList(), "parentId", FORWARD, "previousSenderId1273")
+            )
 
             // Then
             verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
@@ -183,12 +191,14 @@ class SaveDraftTest : CoroutinesTest {
             every { pendingActionsDao.findPendingSendByDbId(messageDbId) } returns PendingSend("anyMessageId")
 
             // When
-            val result = saveDraft.invoke(SaveDraftParameters(message, emptyList(), "parentId123", FORWARD))
+            val result = saveDraft.invoke(
+                SaveDraftParameters(message, emptyList(), "parentId123", FORWARD, "previousSenderId1273")
+            )
 
             // Then
             val expectedError = Result.SendingInProgressError
             Assert.assertEquals(expectedError, result)
-            verify(exactly = 0) { createDraftScheduler.enqueue(any(), any(), any()) }
+            verify(exactly = 0) { createDraftScheduler.enqueue(any(), any(), any(), any()) }
         }
 
     @Test
@@ -205,10 +215,12 @@ class SaveDraftTest : CoroutinesTest {
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
 
             // When
-            saveDraft.invoke(SaveDraftParameters(message, emptyList(), "parentId123", REPLY_ALL))
+            saveDraft.invoke(
+                SaveDraftParameters(message, emptyList(), "parentId123", REPLY_ALL, "previousSenderId1273")
+            )
 
             // Then
-            verify { createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL) }
+            verify { createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273") }
         }
 
 }

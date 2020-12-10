@@ -84,6 +84,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // Needed to set class fields to the right value
             viewModel.prepareMessageData(false, "addressId", "mail-alias", false)
             viewModel.setupComposingNewMessage(false, Constants.MessageActionType.FORWARD, "parentId823", "")
+            viewModel.oldSenderAddressId = "previousSenderAddressId"
 
             viewModel.saveDraft(message, hasConnectivity = false)
 
@@ -91,7 +92,8 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 message,
                 emptyList(),
                 "parentId823",
-                Constants.MessageActionType.FORWARD
+                Constants.MessageActionType.FORWARD,
+                "previousSenderAddressId"
             )
             coVerify { saveDraft(parameters) }
         }

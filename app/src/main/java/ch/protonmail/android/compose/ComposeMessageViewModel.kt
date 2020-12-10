@@ -461,7 +461,8 @@ class ComposeMessageViewModel @Inject constructor(
                         message,
                         newAttachmentIds,
                         parentId,
-                        _actionId
+                        _actionId,
+                        _oldSenderAddressId
                     )
                 )
 

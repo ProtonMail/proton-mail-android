@@ -76,7 +76,7 @@ class SaveDraft @Inject constructor(
             return@withContext Result.SendingInProgressError
         }
 
-        createDraftWorker.enqueue(message, params.parentId, params.actionType)
+        createDraftWorker.enqueue(message, params.parentId, params.actionType, params.previousSenderAddressId)
 
         return@withContext Result.Success
     }
@@ -90,6 +90,7 @@ class SaveDraft @Inject constructor(
         val message: Message,
         val newAttachmentIds: List<String>,
         val parentId: String?,
-        val actionType: Constants.MessageActionType
+        val actionType: Constants.MessageActionType,
+        val previousSenderAddressId: String
     )
 }
