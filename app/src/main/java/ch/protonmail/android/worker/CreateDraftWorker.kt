@@ -33,6 +33,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.utils.Fields
@@ -80,9 +81,18 @@ class CreateDraftWorker @WorkerInject constructor(
             createDraftRequest.setParentID(inputParentId);
             createDraftRequest.action = getInputActionType().messageActionTypeValue
             val parentMessage = messageDetailsRepository.findMessageById(inputParentId)
-            if (isSenderAddressChanged()) {
-                val encryptedAttachments = reEncryptParentAttachments(parentMessage, senderAddress)
-                encryptedAttachments.forEach {
+            val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
+
+            if (shouldAddParentAttachment()) {
+                if (isSenderAddressChanged()) {
+                    reEncryptParentAttachments(attachments, senderAddress)
+                } else {
+                    val requestAttachments = mutableMapOf<String, String>()
+                    attachments?.forEach {
+                        requestAttachments[it.attachmentId!!] = it.keyPackets!!
+                    }
+                    requestAttachments
+                }.forEach {
                     createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
                 }
             }
@@ -90,9 +100,16 @@ class CreateDraftWorker @WorkerInject constructor(
 
         val encryptedMessage = requireNotNull(message.messageBody)
         createDraftRequest.addMessageBody(Fields.Message.SELF, encryptedMessage);
-        createDraftRequest.setSender(getMessageSender(message, senderAddress))
+        createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
         return Result.failure()
+    }
+
+    private fun shouldAddParentAttachment(): Boolean {
+        val actionType = getInputActionType()
+        return actionType == Constants.MessageActionType.FORWARD ||
+            actionType == Constants.MessageActionType.REPLY ||
+            actionType == Constants.MessageActionType.REPLY_ALL
     }
 
     private fun isSenderAddressChanged(): Boolean {
@@ -101,10 +118,9 @@ class CreateDraftWorker @WorkerInject constructor(
     }
 
     private fun reEncryptParentAttachments(
-        parentMessage: Message?,
+        parentAttachments: List<Attachment>?,
         senderAddress: Address
     ): MutableMap<String, String> {
-        val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
         val encryptedAttachments = mutableMapOf<String, String>()
 
@@ -112,22 +128,14 @@ class CreateDraftWorker @WorkerInject constructor(
         val primaryKey = senderAddress.keys
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 
-        attachments?.forEach { attachment ->
-            val actionType = getInputActionType()
-            if (
-                actionType === Constants.MessageActionType.FORWARD ||
-                ((actionType === Constants.MessageActionType.REPLY ||
-                    actionType === Constants.MessageActionType.REPLY_ALL) &&
-                    attachment.inline)
-            ) {
-                val keyPackets = attachment.keyPackets
-                if (!keyPackets.isNullOrEmpty()) {
-                    val keyPackage = base64.decode(keyPackets)
-                    val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
-                    val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
-                    val newKeyPackets = base64.encode(newKeyPackage)
-                    encryptedAttachments[attachment.attachmentId!!] = newKeyPackets
-                }
+        parentAttachments?.forEach { attachment ->
+            val keyPackets = attachment.keyPackets
+            if (!keyPackets.isNullOrEmpty()) {
+                val keyPackage = base64.decode(keyPackets)
+                val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
+                val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
+                val newKeyPackets = base64.encode(newKeyPackage)
+                encryptedAttachments[attachment.attachmentId!!] = newKeyPackets
             }
         }
         return encryptedAttachments
@@ -138,7 +146,7 @@ class CreateDraftWorker @WorkerInject constructor(
         return user.findAddressById(Id(senderAddressId))
     }
 
-    private fun getMessageSender(message: Message, senderAddress: Address): MessageSender {
+    private fun buildMessageSender(message: Message, senderAddress: Address): MessageSender {
         if (message.isSenderEmailAlias()) {
             return MessageSender(message.senderName, message.senderEmail)
         }
@@ -154,7 +162,6 @@ class CreateDraftWorker @WorkerInject constructor(
         inputData
             .getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)?.deserialize()
             ?: Constants.MessageActionType.NONE
-
 
     private fun getInputPreviousSenderAddressId() =
         inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID)
