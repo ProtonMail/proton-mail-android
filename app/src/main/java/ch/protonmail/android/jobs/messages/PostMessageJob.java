@@ -193,7 +193,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         if (mMessageDbId == null) {
             Exception e = new RuntimeException("Message id is null");
-            if (!BuildConfig.DEBUG)  {
+            if (!BuildConfig.DEBUG) {
                 EventBuilder eventBuilder = new EventBuilder()
                         .withMessage(getExceptionStringBuilder(e).toString());
                 Sentry.capture(eventBuilder.build());
@@ -210,8 +210,14 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     .withTag("DBID", String.valueOf(mMessageDbId));
             Sentry.capture(eventBuilder.withMessage("username same with primary: " + (mUsername.equals(getUserManager().getUsername()))).build());
         }
+
+        if (message == null) {
+            Timber.w("Message is null! Cannot continue");
+            return;
+        }
         String messageBody = message.getMessageBody();
         AddressCrypto crypto = Crypto.forAddress(getUserManager(), mUsername, message.getAddressID());
+
         AttachmentFactory attachmentFactory = new AttachmentFactory();
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
         MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
@@ -219,6 +225,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         final NewMessage newMessage = new NewMessage(serverMessage);
 
         newMessage.addMessageBody(Fields.Message.SELF, messageBody);
+
         if (mParentId != null) {
             newMessage.setParentID(mParentId);
             newMessage.setAction(mActionType.getMessageActionTypeValue());
@@ -239,6 +246,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         }
         message.setTime(ServerTime.currentTimeMillis() / 1000);
         getMessageDetailsRepository().saveMessageInDB(message);
+
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
         UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase();
@@ -260,6 +268,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         }
 
         onRunPostMessage(pendingActionsDatabase, message, crypto);
+
     }
 
     /**
@@ -420,7 +429,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 //        15186 code for recipient not found
         MessageSentEvent event = new MessageSentEvent(messageSendResponse.getCode());
         AppUtil.postEventOnUi(event);
-        if (messageSendResponse.getParent() != null){
+        if (messageSendResponse.getParent() != null) {
             AppUtil.postEventOnUi(new ParentEvent(messageSendResponse.getParent().getID(), messageSendResponse.getParent().getIsReplied(), messageSendResponse.getParent().getIsRepliedAll(), messageSendResponse.getParent().getIsForwarded()));
         }
         //endregion
@@ -468,7 +477,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
     }
 
     private void fetchMissingSendPreferences(ContactsDatabase contactsDatabase, Message message, MailSettings mailSettings) {
-       Set<String> emailSet = new HashSet<>();
+        Set<String> emailSet = new HashSet<>();
         if (!TextUtils.isEmpty(message.getToListString())) {
             String[] emails = message.getToListString().split(Constants.EMAIL_DELIMITER);
             emailSet.addAll(Arrays.asList(emails));

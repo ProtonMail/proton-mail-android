@@ -35,6 +35,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
 import ch.protonmail.android.utils.ServerTime;
+import timber.log.Timber;
 
 
 /**
@@ -93,7 +94,11 @@ public class MIMEPart extends MimeMultipart {
 
     @Override
     public synchronized void writeTo(OutputStream os) throws IOException, MessagingException {
-        updateHeaders();
+        try {
+            updateHeaders();
+        } catch (Exception exception) {
+            Timber.e(exception, "Update headers exception");
+        }
         super.writeTo(os);
     }
 
@@ -124,6 +129,7 @@ public class MIMEPart extends MimeMultipart {
                     this.ioe = e;
                 } catch (MessagingException e) {
                     // swallow
+                    Timber.e(e, "MessagingException");
                     this.me = e;
                 } finally {
                     try {
