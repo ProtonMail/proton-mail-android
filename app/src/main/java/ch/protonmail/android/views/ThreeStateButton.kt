@@ -20,9 +20,9 @@ package ch.protonmail.android.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
 import androidx.annotation.DrawableRes
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import ch.protonmail.android.R
 
@@ -30,14 +30,14 @@ class ThreeStateButton @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : AppCompatButton(context, attrs, defStyleAttr) {
+) : View(context, attrs, defStyleAttr) {
 
     var numberOfStates = 3
 
     var state = 0
         set(value) {
-            field = value
-            when (state) {
+            field = value % numberOfStates
+            when (field) {
                 0 -> setButtonBackground(R.drawable.mail_check)
                 1 -> setButtonBackground(R.drawable.mail_check_active)
                 2 -> setButtonBackground(R.drawable.mail_check_neutral)
@@ -45,33 +45,29 @@ class ThreeStateButton @JvmOverloads constructor(
                     throw IllegalStateException("Unsupported view state")
                 }
             }
+            onStateChangedListener?.onClick(this)
         }
 
     private var onStateChangedListener: OnClickListener? = null
 
     init {
+        isClickable = true
+        isFocusable = true
         state = STATE_UNPRESSED
         setButtonBackground(R.drawable.mail_check)
-        setOnClickListener { nextState() }
-    }
-
-    private fun nextState() {
-        state++
-        state %= numberOfStates
-        // forces to redraw the view
-        onStateChangedListener?.onClick(this)
     }
 
     private fun setButtonBackground(@DrawableRes backgroundDrawableId: Int) {
         background = ResourcesCompat.getDrawable(resources, backgroundDrawableId, null)
     }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && event.action == KeyEvent.ACTION_UP) {
-            nextState()
-            this.isPressed = false
-        }
-        return false
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return if (event.action == MotionEvent.ACTION_DOWN) {
+            state++
+            performClick()
+            true
+        } else
+            false
     }
 
     fun setOnStateChangedListener(listener: OnClickListener?) {

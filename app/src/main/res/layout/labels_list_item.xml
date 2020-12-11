@@ -16,41 +16,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/fields_default_space_small"
     android:paddingBottom="@dimen/fields_default_space_small">
 
-    <ch.protonmail.android.views.ThreeStateButton
-        android:id="@+id/label_check"
-        android:layout_width="@dimen/custom_check_box_size"
-        android:layout_height="@dimen/custom_check_box_size"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:gravity="end"
-        android:padding="0dp" />
-
-    <TextView
-        android:id="@+id/label_selected_messages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@id/label_check"
-        android:padding="0dp"
-        android:textColor="@color/icon_purple"
-        android:textSize="@dimen/h2"
-        tools:text="Label name" />
-
     <TextView
         android:id="@+id/label_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="start|center_vertical"
         android:background="@drawable/label_background"
         android:ellipsize="end"
         android:gravity="start|center_vertical"
@@ -59,6 +36,37 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:singleLine="true"
         android:textAllCaps="true"
         android:textColor="@color/white"
-        android:textSize="@dimen/h5" />
+        android:textSize="@dimen/h5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Label name" />
 
-</RelativeLayout>
+
+    <TextView
+        android:id="@+id/label_selected_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@id/label_check"
+        android:paddingEnd="8dp"
+        android:textColor="@color/icon_purple"
+        android:textSize="@dimen/h2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/label_check"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="22" />
+
+
+    <ch.protonmail.android.views.ThreeStateButton
+        android:id="@+id/label_check"
+        android:layout_width="@dimen/custom_check_box_size"
+        android:layout_height="@dimen/custom_check_box_size"
+        android:layout_marginStart="10dp"
+        android:gravity="end"
+        android:padding="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
