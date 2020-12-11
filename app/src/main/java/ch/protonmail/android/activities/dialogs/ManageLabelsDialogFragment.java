@@ -177,7 +177,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     protected void initUi(final View rootView) {
         mList.setOnItemLongClickListener(labelItemLongClick);
         mColorsGrid.setOnItemClickListener(this);
-        mArchiveCheckbox.numberOfStates = 2;
+        mArchiveCheckbox.setNumberOfStates(2);
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getContext().getApplicationContext()).getDatabase();
         messagesDatabase.getAllLabels().observe(this,new LabelsObserver());
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

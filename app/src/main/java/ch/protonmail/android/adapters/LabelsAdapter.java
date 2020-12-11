@@ -75,7 +75,7 @@ public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
         }
         final ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         viewHolder.mLabelCheck.setOnStateChangedListener(null);
-        viewHolder.mLabelCheck.numberOfStates = item.states;
+        viewHolder.mLabelCheck.setNumberOfStates(item.states);
         viewHolder.mLabelCheck.setVisibility(View.VISIBLE);
         viewHolder.mLabelCheck.setState(item.isAttached ? ThreeStateButton.STATE_CHECKED
                 : ThreeStateButton.STATE_UNPRESSED);
