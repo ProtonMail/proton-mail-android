@@ -36,6 +36,7 @@ import ch.protonmail.android.api.utils.Fields.Message.SELF
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
+import ch.protonmail.android.core.Constants.MessageActionType.REPLY
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
@@ -50,7 +51,6 @@ import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.serialize
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -87,11 +87,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var addressCryptoFactory: AddressCrypto.Factory
 
-    @MockK
+    @RelaxedMockK
     private lateinit var base64: Base64Encoder
 
     @InjectMockKs
     private lateinit var worker: CreateDraftWorker
+
 
     @Test
     fun workerEnqueuerCreatesOneTimeRequestWorkerWithParams() {
@@ -254,7 +255,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerReEncryptParentAttachmentsWhenSenderAddressChanged() {
+    fun workerAddsReEncryptedParentAttachmentsToRequestWhenActionIsForwardAndSenderAddressChanged() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -314,6 +315,42 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerSkipsNonInlineParentAttachmentsWhenActionIsReplyAllAndSenderAddressChanged() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val messageDbId = 345L
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = "addressId835"
+                messageBody = "messageBody"
+            }
+            val attachment = Attachment("attachment1", "pic.jpg", "image/jpeg", keyPackets = "somePackets", inline = true)
+            val attachment2 = Attachment("attachment2", "pic2.jpg", keyPackets = "somePackets2", inline = false)
+            val previousSenderAddressId = "previousSenderId82348"
+
+            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val parentMessage = mockk<Message> {
+                every { attachments(any()) } returns listOf(attachment, attachment2)
+            }
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(REPLY_ALL)
+            givenPreviousSenderAddress(previousSenderAddressId)
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            every { messageDetailsRepository.findMessageById(parentId) } returns parentMessage
+            every { userManager.username } returns "username93w"
+
+            // When
+            worker.doWork()
+
+            // Then
+            verify(exactly = 0) { apiDraftMessage.addAttachmentKeyPacket("attachment2", any()) }
+        }
+    }
+
+    @Test
     fun workerAddsExistingParentAttachmentsToRequestWhenSenderAddressWasNotChanged() {
         runBlockingTest {
             // Given
@@ -334,7 +371,47 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
-            givenActionTypeInput(REPLY_ALL)
+            givenActionTypeInput(FORWARD)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            every { messageDetailsRepository.findMessageById(parentId) } returns parentMessage
+
+            // When
+            worker.doWork()
+
+            // Then
+            verify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            verifyOrder {
+                apiDraftMessage.addAttachmentKeyPacket("attachment", "OriginalAttachmentPackets")
+                apiDraftMessage.addAttachmentKeyPacket("attachment1", "Attachment1KeyPackets")
+                apiDraftMessage.addAttachmentKeyPacket("attachment2", "Attachment2KeyPackets")
+            }
+        }
+    }
+
+    @Test
+    fun workerAddsOnlyInlineParentAttachmentsToRequestWhenActionIsReplyAndSenderAddressWasNotChanged() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val messageDbId = 345L
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = "addressId835"
+                messageBody = "messageBody"
+            }
+            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val parentMessage = mockk<Message> {
+                every { attachments(any()) } returns listOf(
+                    Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true),
+                    Attachment("attachment1", keyPackets = "Attachment1KeyPackets", inline = false),
+                    Attachment("attachment2", keyPackets = "Attachment2KeyPackets", inline = true)
+                )
+            }
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(REPLY)
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
@@ -350,8 +427,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 apiDraftMessage.addAttachmentKeyPacket("attachment2", "Attachment2KeyPackets")
             }
 
-            // TODO figure if we actually need this (regarding inline attachments, discussing with the team)
             verify(exactly = 0) { apiDraftMessage.addAttachmentKeyPacket("attachment1", "Attachment1KeyPackets") }
+            verifyOrder {
+                apiDraftMessage.addAttachmentKeyPacket("attachment", "OriginalAttachmentPackets")
+                apiDraftMessage.addAttachmentKeyPacket("attachment2", "Attachment2KeyPackets")
+            }
         }
     }
 

@@ -38,6 +38,10 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
+import ch.protonmail.android.core.Constants.MessageActionType.NONE
+import ch.protonmail.android.core.Constants.MessageActionType.REPLY
+import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
@@ -83,18 +87,8 @@ class CreateDraftWorker @WorkerInject constructor(
             val parentMessage = messageDetailsRepository.findMessageById(inputParentId)
             val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
 
-            if (shouldAddParentAttachment()) {
-                if (isSenderAddressChanged()) {
-                    reEncryptParentAttachments(attachments, senderAddress)
-                } else {
-                    val requestAttachments = mutableMapOf<String, String>()
-                    attachments?.forEach {
-                        requestAttachments[it.attachmentId!!] = it.keyPackets!!
-                    }
-                    requestAttachments
-                }.forEach {
-                    createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
-                }
+            buildDraftRequestParentAttachments(attachments, senderAddress).forEach {
+                createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
             }
         }
 
@@ -105,40 +99,58 @@ class CreateDraftWorker @WorkerInject constructor(
         return Result.failure()
     }
 
-    private fun shouldAddParentAttachment(): Boolean {
+    private fun buildDraftRequestParentAttachments(
+        attachments: List<Attachment>?,
+        senderAddress: Address
+    ): Map<String, String> {
+        if (shouldAddParentAttachments().not()) {
+            return emptyMap()
+        }
+
+        val draftAttachments = mutableMapOf<String, String>()
+        attachments?.forEach { attachment ->
+            if (shouldSkipAttachment(attachment)) {
+                return@forEach
+            }
+            val keyPackets = if (isSenderAddressChanged()) {
+                reEncryptAttachment(senderAddress, attachment)
+            } else {
+                attachment.keyPackets!!
+            }
+            draftAttachments[attachment.attachmentId!!] = keyPackets
+        }
+        return draftAttachments
+    }
+
+    private fun reEncryptAttachment(senderAddress: Address, attachment: Attachment): String {
+        val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
+        val addressCrypto = addressCryptoFactory.create(Id(previousSenderAddressId), Name(userManager.username))
+        val primaryKey = senderAddress.keys
+        val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
+
+        val keyPackage = base64.decode(attachment.keyPackets!!)
+        val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
+        val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
+        return base64.encode(newKeyPackage)
+    }
+
+    private fun shouldSkipAttachment(attachment: Attachment): Boolean {
         val actionType = getInputActionType()
-        return actionType == Constants.MessageActionType.FORWARD ||
-            actionType == Constants.MessageActionType.REPLY ||
-            actionType == Constants.MessageActionType.REPLY_ALL
+        val isReplying = actionType == REPLY || actionType == REPLY_ALL
+
+        return isReplying && attachment.inline.not()
+    }
+
+    private fun shouldAddParentAttachments(): Boolean {
+        val actionType = getInputActionType()
+        return actionType == FORWARD ||
+            actionType == REPLY ||
+            actionType == REPLY_ALL
     }
 
     private fun isSenderAddressChanged(): Boolean {
         val previousSenderAddressId = getInputPreviousSenderAddressId()
         return previousSenderAddressId?.isNotEmpty() == true
-    }
-
-    private fun reEncryptParentAttachments(
-        parentAttachments: List<Attachment>?,
-        senderAddress: Address
-    ): MutableMap<String, String> {
-        val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
-        val encryptedAttachments = mutableMapOf<String, String>()
-
-        val addressCrypto = addressCryptoFactory.create(Id(previousSenderAddressId), Name(userManager.username))
-        val primaryKey = senderAddress.keys
-        val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
-
-        parentAttachments?.forEach { attachment ->
-            val keyPackets = attachment.keyPackets
-            if (!keyPackets.isNullOrEmpty()) {
-                val keyPackage = base64.decode(keyPackets)
-                val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
-                val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
-                val newKeyPackets = base64.encode(newKeyPackage)
-                encryptedAttachments[attachment.attachmentId!!] = newKeyPackets
-            }
-        }
-        return encryptedAttachments
     }
 
     private fun getSenderAddress(senderAddressId: String): Address? {
@@ -161,7 +173,7 @@ class CreateDraftWorker @WorkerInject constructor(
     private fun getInputActionType(): Constants.MessageActionType =
         inputData
             .getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)?.deserialize()
-            ?: Constants.MessageActionType.NONE
+            ?: NONE
 
     private fun getInputPreviousSenderAddressId() =
         inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID)
