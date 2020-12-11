@@ -60,10 +60,8 @@ detekt analysis:
     - tags
     - schedules
 
-build debug:
+.build-debug-common:
   stage: build
-  needs:
-    - job: detekt analysis
   only:
     - merge_requests
     - branches
@@ -77,6 +75,23 @@ build debug:
     expire_in: 1 week
     paths:
       - app/build/outputs/apk
+
+build debug:
+  extends: .build-debug-common
+  needs:
+    - job: detekt analysis
+  except:
+    - release
+    - prerelease
+    - tags
+    - schedules
+
+build debug release:
+  extends: .build-debug-common
+  only:
+    - release
+    - prerelease
+    - tags
 
 build prerelease:
   stage: build
