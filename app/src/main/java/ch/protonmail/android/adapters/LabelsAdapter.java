@@ -37,15 +37,11 @@ import butterknife.ButterKnife;
 import ch.protonmail.android.R;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.views.ThreeStateButton;
-import ch.protonmail.android.views.ThreeStateCheckBox;
 
-/**
- * Created by dkadrikj on 20.7.15.
- */
 public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
 
     private List<LabelItem> items;
-    private int mStrokeWidth = 2;
+    private final int mStrokeWidth;
 
     public LabelsAdapter(Context context, List<LabelItem> items) {
         super(context, R.layout.labels_list_item);
@@ -79,7 +75,7 @@ public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
         }
         final ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         viewHolder.mLabelCheck.setOnStateChangedListener(null);
-        viewHolder.mLabelCheck.getButton().numberOfStates = item.states;
+        viewHolder.mLabelCheck.numberOfStates = item.states;
         viewHolder.mLabelCheck.setVisibility(View.VISIBLE);
         viewHolder.mLabelCheck.setState(item.isAttached ? ThreeStateButton.STATE_CHECKED
                 : ThreeStateButton.STATE_UNPRESSED);
@@ -99,9 +95,9 @@ public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
 
         });
         viewHolder.mLabelName.setOnClickListener(v -> {
-            final ThreeStateCheckBox threeStateCheckBox = (ThreeStateCheckBox) v.getTag();
+            final ThreeStateButton threeStateCheckBox = (ThreeStateButton) v.getTag();
             if (threeStateCheckBox != null) {
-                threeStateCheckBox.post(() -> threeStateCheckBox.getButton().performClick());
+                threeStateCheckBox.post(threeStateCheckBox::performClick);
             }
         });
         viewHolder.mLabelName.setText(labelNameDisplay);
@@ -134,7 +130,7 @@ public class LabelsAdapter extends ArrayAdapter<LabelsAdapter.LabelItem> {
         @BindView(R.id.label_selected_messages)
         TextView mNumberSelectedMessages;
         @BindView(R.id.label_check)
-        ThreeStateCheckBox mLabelCheck;
+        ThreeStateButton mLabelCheck;
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);

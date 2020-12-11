@@ -58,7 +58,7 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel;
-import ch.protonmail.android.views.ThreeStateCheckBox;
+import ch.protonmail.android.views.ThreeStateButton;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import static ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState;
@@ -86,7 +86,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     @BindView(R.id.labels_dialog_title)
     TextView mTitle;
     @BindView(R.id.also_archive)
-    ThreeStateCheckBox mArchiveCheckbox;
+    ThreeStateButton mArchiveCheckbox;
     @BindView(R.id.archive_container)
     View mArchiveContainer;
     @BindView(R.id.no_labels)
@@ -177,7 +177,7 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
     protected void initUi(final View rootView) {
         mList.setOnItemLongClickListener(labelItemLongClick);
         mColorsGrid.setOnItemClickListener(this);
-        mArchiveCheckbox.getButton().numberOfStates = 2;
+        mArchiveCheckbox.numberOfStates = 2;
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getContext().getApplicationContext()).getDatabase();
         messagesDatabase.getAllLabels().observe(this,new LabelsObserver());
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

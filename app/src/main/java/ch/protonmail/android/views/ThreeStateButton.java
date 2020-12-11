@@ -20,19 +20,16 @@ package ch.protonmail.android.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
-
-import androidx.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
+
+import androidx.annotation.DrawableRes;
+import androidx.appcompat.widget.AppCompatButton;
 
 import ch.protonmail.android.R;
 
-/**
- * Created by dkadrikj on 26.8.15.
- */
-public class ThreeStateButton extends Button {
+public class ThreeStateButton extends AppCompatButton {
 
     public static final int STATE_UNPRESSED = 0;
     public static final int STATE_CHECKED = 1;
