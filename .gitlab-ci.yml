@@ -127,10 +127,8 @@ build release:
       - app/build/outputs
 
 
-unit tests:
+.unit-tests-common:
   stage: test
-  needs:
-    - job: build debug
   only:
     - merge_requests
     - branches
@@ -142,11 +140,25 @@ unit tests:
   script:
     - ./gradlew -Pci --console=plain allTest
 
-
-firebase tests:
-  stage: test
+unit tests:
+  extends: .unit-tests-common
   needs:
     - job: build debug
+  except:
+    - release
+    - prerelease
+    - tags
+
+unit tests release:
+  extends: .unit-tests-common
+  only:
+    - release
+    - prerelease
+    - tags
+
+
+.firebase-tests-common:
+  stage: test
   only:
     - merge_requests
     - branches
@@ -174,6 +186,22 @@ firebase tests:
       --use-orchestrator
       --num-flaky-test-attempts=2
       --timeout 30m
+
+firebase tests:
+  extends: .firebase-tests-common
+  needs:
+    - job: build debug
+  except:
+    - release
+    - prerelease
+    - tags
+
+firebase tests release:
+  extends: .firebase-tests-common
+  only:
+    - release
+    - prerelease
+    - tags
 
 firebase regression tests:
   stage: test
