@@ -34,6 +34,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
@@ -316,6 +317,7 @@ class NotificationServer @Inject constructor(
             .setLights(lightColor, 1500, 2000)
             .setAutoCancel(true)
             .setDeleteIntent(deletePendingIntent)
+            .setPriority(PRIORITY_HIGH)
 
         // Set Notification visibility
         if (user.isNotificationVisibilityLockScreen) {
