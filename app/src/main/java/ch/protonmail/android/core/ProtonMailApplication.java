@@ -479,6 +479,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
         return mUpdateOccurred;
     }
 
+    public void updateDone() {
+        mUpdateOccurred = false;
+    }
+
     private static class RefreshMessagesAndAttachments extends AsyncTask<Void, Void, Void> {
 
         private final MessagesDatabase messagesDatabase;

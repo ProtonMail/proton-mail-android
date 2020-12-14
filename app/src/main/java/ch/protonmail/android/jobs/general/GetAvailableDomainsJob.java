@@ -28,8 +28,6 @@ import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.utils.AppUtil;
 
-@Deprecated
-@kotlin.Deprecated(message = "The result of this operation is currently (Dec 20202) unused")
 public class GetAvailableDomainsJob extends ProtonMailBaseJob {
 
     private boolean retryOnError;
