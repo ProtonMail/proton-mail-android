@@ -330,7 +330,7 @@ class ProcessPushNotificationDataWorkerTest {
             every { body } returns "body"
             every { sender } returns mockNotificationSender
         }
-        every { "decryptedData".deserialize<PushNotification>() } returns mockk {
+        every { "decryptedData".deserialize<PushNotification>(any()) } returns mockk {
             every { data } returns mockNotificationEncryptedData
         }
         every { userManager.username } returns "username"

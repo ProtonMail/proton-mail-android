@@ -106,7 +106,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
             val userCrypto = UserCrypto(userManager, userManager.openPgp, Name(notificationUsername))
             val textDecryptionResult = userCrypto.decryptMessage(encryptedMessage)
             val decryptedData = textDecryptionResult.decryptedData
-            pushNotification = decryptedData.deserialize()
+            pushNotification = decryptedData.deserialize(PushNotification.serializer())
             pushNotificationData = pushNotification.data
         } catch (e: Exception) {
             Timber.e(e, "Error with decryption or deserialization of the notification data")
