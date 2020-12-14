@@ -39,7 +39,6 @@ import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 
 import static ch.protonmail.android.activities.NavigationActivityKt.EXTRA_FIRST_LOGIN;
@@ -49,10 +48,7 @@ import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
 public class SplashActivity extends BaseActivity {
 
-    private static final String TAG_SPLASH_ACTIVITY = "SplashActivity";
-
     private static final int DELAY = 2000;
-    private static final int RECHECK_DELAY = 500;
     private final NavigateHandler mNavigateHandler = new NavigateHandler();
     private AlarmReceiver alarmReceiver = new AlarmReceiver();
     private NavigateRunnable mNavigateRunnable;
@@ -197,13 +193,8 @@ public class SplashActivity extends BaseActivity {
         public void run() {
             SplashActivity splashActivity = splashActivityWeakReference.get();
             if (splashActivity != null) {
-                if (!ProtonMailApplication.getApplication().isInitialized()) {
-                    splashActivity.mNavigateHandler.postDelayed(this, RECHECK_DELAY);
-                    Logger.doLog(TAG_SPLASH_ACTIVITY, "app not initialized, delay navigate");
-                } else {
-                    splashActivity.mNavigateHandler.removeCallbacks(this);
-                    splashActivity.navigate();
-                }
+                splashActivity.mNavigateHandler.removeCallbacks(this);
+                splashActivity.navigate();
             }
         }
     }

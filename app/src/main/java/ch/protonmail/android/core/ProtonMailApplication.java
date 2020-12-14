@@ -244,10 +244,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         }
     }
 
-    public boolean isInitialized() {
-        return true;
-    }
-
     @NonNull
     public SharedPreferences getDefaultSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(this);
