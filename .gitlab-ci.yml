@@ -1,23 +1,21 @@
 default:
-  image: gitlab.protontech.ch:4567/android/mail/proton-mail-android:android-mail
+  image: $CI_REGISTRY/protonvpn/android/android-app-new:latest
 
 before_script:
   - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
   - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
   - export GRADLE_USER_HOME=`pwd`/.gradle
-  - chmod +x ./gradlew
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - echo "App version name ${VERSION_NAME}"
   - echo "App version name ${VERSION_CODE}"
 cache:
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - .gradle/caches
-    - app/build/
-variables:
-  ANDROID_COMPILE_SDK: "28"
-  ANDROID_BUILD_TOOLS: "28.0.3"
-  ANDROID_SDK_TOOLS:   "26.1.1"
+    - .gradle
+    - '**/build'
+    - '**/**/build'
+    - '**/**/**/build'
 
 stages:
   - manual-release
@@ -66,7 +64,6 @@ detekt analysis:
     - merge_requests
     - branches
   tags:
-    - android
     - large
   script:
     - ./gradlew assembleBetaDebug
@@ -101,7 +98,6 @@ build prerelease:
     - prerelease
     - tags
   tags:
-    - android
     - large
   script:
     - ./gradlew assemblePlaystoreReleasePlayStore
@@ -117,7 +113,6 @@ build release:
   only:
     - releases
   tags:
-    - android
     - large
   script:
     - ./gradlew assemblePlaystoreReleasePlayStore
@@ -135,7 +130,6 @@ build release:
   except:
     - schedules
   tags:
-    - android
     - large
   script:
     - ./gradlew -Pci --console=plain allTest
@@ -165,7 +159,6 @@ unit tests release:
   except:
     - schedules
   tags:
-    - android
     - large
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
@@ -208,7 +201,6 @@ firebase regression tests:
   rules:
     - if: '$TEST_TYPE == "regression"'
   tags:
-    - android
     - large
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
@@ -236,7 +228,6 @@ firebase feature tests:
   rules:
     - if: '$TEST_TYPE == "feature"'
   tags:
-    - android
     - large
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
@@ -299,7 +290,7 @@ release-publish-github:
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-commit-shared
   tags:
-    - medium
+    - small
 
 release-publish-github-tags:
   needs:
@@ -312,7 +303,7 @@ release-publish-github-tags:
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-tags-shared
   tags:
-    - medium
+    - small
   
 publish-github:
   stage: bot-release
@@ -325,7 +316,7 @@ publish-github:
       RELEASE_GITHUB_BRANCH: 'release'
   extends: .release-make-release
   tags:
-    - medium
+    - small
 
 check for fixups:
   stage: analyze
