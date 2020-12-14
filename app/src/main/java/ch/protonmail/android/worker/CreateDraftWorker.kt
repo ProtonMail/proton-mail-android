@@ -23,6 +23,7 @@ import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.lifecycle.asFlow
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -37,6 +38,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
+import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
@@ -52,6 +54,7 @@ import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
+import java.time.Duration
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID = "keyCreateDraftMessageDbId"
@@ -64,6 +67,7 @@ internal const val KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM = "keyCreateDr
 internal const val KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID = "keyCreateDraftSuccessResultDbId"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
+private const val SAVE_DRAFT_MAX_RETRIES = 10
 
 class CreateDraftWorker @WorkerInject constructor(
     @Assisted context: Context,
@@ -76,6 +80,7 @@ class CreateDraftWorker @WorkerInject constructor(
     val apiManager: ProtonMailApiManager
 ) : CoroutineWorker(context, params) {
 
+    internal var retries: Int = 0
 
     override suspend fun doWork(): Result {
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
@@ -100,26 +105,23 @@ class CreateDraftWorker @WorkerInject constructor(
         createDraftRequest.addMessageBody(Fields.Message.SELF, encryptedMessage);
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
-        val response = apiManager.createDraft(createDraftRequest)
+        return runCatching {
+            apiManager.createDraft(createDraftRequest)
+        }.fold(
+            onSuccess = { response ->
+                if (response.code != Constants.RESPONSE_CODE_OK) {
+                    return handleFailure()
+                }
 
-        val responseDraft = response.message
-        responseDraft.dbId = message.dbId
-        responseDraft.toList = message.toList
-        responseDraft.ccList = message.ccList
-        responseDraft.bccList = message.bccList
-        responseDraft.replyTos = message.replyTos
-        responseDraft.sender = message.sender
-        responseDraft.setLabelIDs(message.getEventLabelIDs())
-        responseDraft.parsedHeaders = message.parsedHeaders
-        responseDraft.isDownloaded = true
-        responseDraft.setIsRead(true)
-        responseDraft.numAttachments = message.numAttachments
-        responseDraft.localId = message.messageId
-
-        messageDetailsRepository.saveMessageInDB(responseDraft)
-
-        return Result.success(
-            workDataOf(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to response.messageId)
+                val responseDraft = response.message
+                updateStoredLocalDraft(responseDraft, message)
+                Result.success(
+                    workDataOf(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to response.messageId)
+                )
+            },
+            onFailure = {
+                handleFailure()
+            }
         )
 
         // TODO test whether this is needed, drop otherwise
@@ -133,6 +135,31 @@ class CreateDraftWorker @WorkerInject constructor(
 //                }
 //            }
 //        }
+    }
+
+    private fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
+        apiDraft.dbId = localDraft.dbId
+        apiDraft.toList = localDraft.toList
+        apiDraft.ccList = localDraft.ccList
+        apiDraft.bccList = localDraft.bccList
+        apiDraft.replyTos = localDraft.replyTos
+        apiDraft.sender = localDraft.sender
+        apiDraft.setLabelIDs(localDraft.getEventLabelIDs())
+        apiDraft.parsedHeaders = localDraft.parsedHeaders
+        apiDraft.isDownloaded = true
+        apiDraft.setIsRead(true)
+        apiDraft.numAttachments = localDraft.numAttachments
+        apiDraft.localId = localDraft.messageId
+
+        messageDetailsRepository.saveMessageInDB(apiDraft)
+    }
+
+    private fun handleFailure(): Result {
+        if (retries <= SAVE_DRAFT_MAX_RETRIES) {
+            retries++
+            return Result.retry()
+        }
+        return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 
     private fun buildDraftRequestParentAttachments(
@@ -221,7 +248,8 @@ class CreateDraftWorker @WorkerInject constructor(
         inputData.getLong(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
 
     enum class CreateDraftWorkerErrors {
-        MessageNotFound
+        MessageNotFound,
+        ServerError
     }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
@@ -245,7 +273,9 @@ class CreateDraftWorker @WorkerInject constructor(
                         KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED to actionType.serialize(),
                         KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID to previousSenderAddressId
                     )
-                ).build()
+                )
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofSeconds(TEN_SECONDS))
+                .build()
 
             workManager.enqueue(createDraftRequest)
             return workManager.getWorkInfoByIdLiveData(createDraftRequest.id).asFlow()
