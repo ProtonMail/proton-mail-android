@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.usecase.compose
 
+import androidx.work.WorkInfo
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
@@ -32,6 +33,11 @@ import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.worker.CreateDraftWorker
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
@@ -47,7 +53,7 @@ class SaveDraft @Inject constructor(
 
     suspend operator fun invoke(
         params: SaveDraftParameters
-    ): Result = withContext(dispatchers.Io) {
+    ): Flow<Result> = withContext(dispatchers.Io) {
         val message = params.message
         val messageId = requireNotNull(message.messageId)
         val addressId = requireNotNull(message.addressID)
@@ -73,12 +79,49 @@ class SaveDraft @Inject constructor(
 
         pendingActionsDao.findPendingSendByDbId(messageDbId)?.let {
             // TODO allow draft to be saved in this case when starting to use SaveDraft use case in PostMessageJob too
-            return@withContext Result.SendingInProgressError
+            return@withContext flowOf(Result.SendingInProgressError)
         }
 
-        createDraftWorker.enqueue(message, params.parentId, params.actionType, params.previousSenderAddressId)
+        return@withContext createDraftWorker.enqueue(
+            message,
+            params.parentId,
+            params.actionType,
+            params.previousSenderAddressId
+        )
+            .filter { it.state.isFinished }
+            .map { workInfo ->
+                return@map handleWorkResult(workInfo, messageId)
+            }
 
-        return@withContext Result.Success
+    }
+
+    private fun handleWorkResult(workInfo: WorkInfo, localDraftId: String): Result {
+        val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
+
+        if (workSucceeded) {
+            val createdDraftId = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
+            updatePendingForSendMessage(createdDraftId, localDraftId)
+            deleteOfflineDraft(localDraftId)
+
+            return Result.Success
+        }
+
+        return Result.Success
+    }
+
+    private fun deleteOfflineDraft(localDraftId: String) {
+        val offlineDraft = messageDetailsRepository.findMessageById(localDraftId)
+        offlineDraft?.let {
+            messageDetailsRepository.deleteMessage(offlineDraft)
+        }
+    }
+
+    private fun updatePendingForSendMessage(createdDraftId: String?, messageId: String) {
+        val pendingForSending = pendingActionsDao.findPendingSendByOfflineMessageId(messageId)
+        pendingForSending?.let {
+            pendingForSending.messageId = createdDraftId
+            pendingActionsDao.insertPendingForSend(pendingForSending)
+        }
     }
 
     sealed class Result {

@@ -22,7 +22,7 @@ package ch.protonmail.android.worker
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.asFlow
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -51,6 +51,7 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID = "keyCreateDraftMessageDbId"
@@ -60,6 +61,7 @@ internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED = 
 internal const val KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID = "keyCreateDraftPreviousSenderAddressId"
 
 internal const val KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM = "keyCreateDraftErrorResult"
+internal const val KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID = "keyCreateDraftSuccessResultDbId"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
 
@@ -116,7 +118,9 @@ class CreateDraftWorker @WorkerInject constructor(
 
         messageDetailsRepository.saveMessageInDB(responseDraft)
 
-        return Result.success()
+        return Result.success(
+            workDataOf(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to response.messageId)
+        )
     }
 
     private fun buildDraftRequestParentAttachments(
@@ -215,7 +219,7 @@ class CreateDraftWorker @WorkerInject constructor(
             parentId: String?,
             actionType: Constants.MessageActionType,
             previousSenderAddressId: String
-        ): LiveData<WorkInfo> {
+        ): Flow<WorkInfo> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -232,7 +236,7 @@ class CreateDraftWorker @WorkerInject constructor(
                 ).build()
 
             workManager.enqueue(createDraftRequest)
-            return workManager.getWorkInfoByIdLiveData(createDraftRequest.id)
+            return workManager.getWorkInfoByIdLiveData(createDraftRequest.id).asFlow()
         }
     }
 

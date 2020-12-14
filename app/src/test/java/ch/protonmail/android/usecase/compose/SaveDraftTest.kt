@@ -19,6 +19,9 @@
 
 package ch.protonmail.android.usecase.compose
 
+import androidx.work.Data
+import androidx.work.WorkInfo
+import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
@@ -36,6 +39,7 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.compose.SaveDraft.Result
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
 import ch.protonmail.android.worker.CreateDraftWorker
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -44,11 +48,15 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
 class SaveDraftTest : CoroutinesTest {
@@ -197,7 +205,7 @@ class SaveDraftTest : CoroutinesTest {
 
             // Then
             val expectedError = Result.SendingInProgressError
-            Assert.assertEquals(expectedError, result)
+            Assert.assertEquals(expectedError, result.first())
             verify(exactly = 0) { createDraftScheduler.enqueue(any(), any(), any(), any()) }
         }
 
@@ -222,6 +230,101 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             verify { createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273") }
         }
+
+    @Test
+    fun saveDraftsUpdatesPendingForSendingMessageIdWithNewApiDraftIdWhenWorkerSucceedsAndMessageIsPendingForSending() =
+        runBlockingTest {
+            // Given
+            val localDraftId = "8345"
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "45623"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
+            every { pendingActionsDao.findPendingSendByOfflineMessageId("45623") } answers {
+                PendingSend(
+                    "234234", localDraftId, "offlineId", false, 834L
+                )
+            }
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "createdDraftMessageId"
+            )
+            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId234",
+                    REPLY_ALL,
+                    "previousSenderId132423"
+                )
+            } answers { workerStatusFlow }
+
+            // When
+            saveDraft.invoke(
+                SaveDraftParameters(message, emptyList(), "parentId234", REPLY_ALL, "previousSenderId132423")
+            ).first()
+
+            // Then
+            val expected = PendingSend("234234", "createdDraftMessageId", "offlineId", false, 834L)
+            verify { pendingActionsDao.insertPendingForSend(expected) }
+        }
+
+    @Test
+    fun saveDraftsDeletesOfflineDraftWhenCreatingRemoteDraftThroughApiSucceds() =
+        runBlockingTest {
+            // Given
+            val localDraftId = "8345"
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "45623"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
+            every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "createdDraftMessageId345"
+            )
+            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId234",
+                    REPLY_ALL,
+                    "previousSenderId132423"
+                )
+            } answers { workerStatusFlow }
+
+            // When
+            saveDraft.invoke(
+                SaveDraftParameters(message, emptyList(), "parentId234", REPLY_ALL, "previousSenderId132423")
+            ).first()
+
+            // Then
+            verify { messageDetailsRepository.deleteMessage(message) }
+        }
+
+    private fun buildCreateDraftWorkerResponse(
+        endState: WorkInfo.State,
+        outputData: Data? = workDataOf()
+    ): Flow<WorkInfo> {
+        val workInfo = WorkInfo(
+            UUID.randomUUID(),
+            endState,
+            outputData!!,
+            emptyList(),
+            outputData,
+            0
+        )
+        return MutableStateFlow(workInfo)
+    }
 
 }
 

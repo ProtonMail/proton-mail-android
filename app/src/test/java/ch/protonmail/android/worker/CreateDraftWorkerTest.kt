@@ -564,7 +564,10 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             verify { messageDetailsRepository.saveMessageInDB(responseMessage) }
-            assertEquals(ListenableWorker.Result.success(), result)
+            val expected = ListenableWorker.Result.success(
+                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID, "response_message_id").build()
+            )
+            assertEquals(expected, result)
         }
     }
 
