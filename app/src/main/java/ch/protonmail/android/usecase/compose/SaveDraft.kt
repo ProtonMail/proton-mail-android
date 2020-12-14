@@ -24,6 +24,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
@@ -48,7 +49,8 @@ class SaveDraft @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val pendingActionsDao: PendingActionsDao,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
-    @CurrentUsername private val username: String
+    @CurrentUsername private val username: String,
+    val uploadAttachments: UploadAttachments
 ) {
 
     suspend operator fun invoke(
@@ -90,23 +92,20 @@ class SaveDraft @Inject constructor(
         )
             .filter { it.state.isFinished }
             .map { workInfo ->
-                return@map handleWorkResult(workInfo, messageId)
+                val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
+
+                if (workSucceeded) {
+                    val createdDraftId = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
+                    updatePendingForSendMessage(createdDraftId, messageId)
+                    deleteOfflineDraft(messageId)
+                    uploadAttachments(params.newAttachmentIds, message, addressCrypto)
+
+                    return@map Result.Success
+                }
+
+                return@map Result.Success
             }
 
-    }
-
-    private fun handleWorkResult(workInfo: WorkInfo, localDraftId: String): Result {
-        val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
-
-        if (workSucceeded) {
-            val createdDraftId = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
-            updatePendingForSendMessage(createdDraftId, localDraftId)
-            deleteOfflineDraft(localDraftId)
-
-            return Result.Success
-        }
-
-        return Result.Success
     }
 
     private fun deleteOfflineDraft(localDraftId: String) {

@@ -27,6 +27,7 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
@@ -60,6 +61,9 @@ import java.util.UUID
 
 @ExtendWith(MockKExtension::class)
 class SaveDraftTest : CoroutinesTest {
+
+    @RelaxedMockK
+    private lateinit var uploadAttachments: UploadAttachments
 
     @RelaxedMockK
     private lateinit var createDraftScheduler: CreateDraftWorker.Enqueuer
@@ -311,6 +315,48 @@ class SaveDraftTest : CoroutinesTest {
             verify { messageDetailsRepository.deleteMessage(message) }
         }
 
+    @Test
+    fun saveDraftsCallsUploadAttachmentsUseCaseToUploadNewAttachments() =
+        runBlockingTest {
+            // Given
+            val localDraftId = "8345"
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "45623"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "createdDraftMessageId345"
+            )
+            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            val newAttachmentIds = listOf("2345", "453")
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
+            every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId234",
+                    REPLY_ALL,
+                    "previousSenderId132423"
+                )
+            } answers { workerStatusFlow }
+            val addressCrypto = mockk<AddressCrypto>(relaxed = true)
+            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+
+            // When
+            saveDraft.invoke(
+                SaveDraftParameters(message, newAttachmentIds, "parentId234", REPLY_ALL, "previousSenderId132423")
+            ).first()
+
+            // Then
+            coVerify { uploadAttachments(newAttachmentIds, message, addressCrypto) }
+        }
+
+   
     private fun buildCreateDraftWorkerResponse(
         endState: WorkInfo.State,
         outputData: Data? = workDataOf()

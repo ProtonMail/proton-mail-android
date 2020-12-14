@@ -121,6 +121,18 @@ class CreateDraftWorker @WorkerInject constructor(
         return Result.success(
             workDataOf(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to response.messageId)
         )
+
+        // TODO test whether this is needed, drop otherwise
+// set inline attachments from parent message that were inline previously
+//        for (Attachment atta : draftMessage.getAttachments()) {
+//            if (parentAttachmentList != null && !parentAttachmentList.isEmpty()) {
+//                for (Attachment parentAtta : parentAttachmentList) {
+//                    if (parentAtta.getKeyPackets().equals(atta.getKeyPackets())) {
+//                        atta.setInline(parentAtta.getInline());
+//                    }
+//                }
+//            }
+//        }
     }
 
     private fun buildDraftRequestParentAttachments(
