@@ -598,7 +598,6 @@ class UserManager @Inject constructor(
         }
         setCurrentUser(nextLoggedIn)
         app.eventManager.clearState(userId)
-        app.clearPaymentMethods()
     }
 
     @Deprecated("Use suspend function", ReplaceWith("logout(userId)"))

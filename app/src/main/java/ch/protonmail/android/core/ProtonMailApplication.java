@@ -635,22 +635,26 @@ public class ProtonMailApplication extends Application implements androidx.work.
         }
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected UserManager instead")
     public UserManager getUserManager() {
         return userManager;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected ProtonMailApiManager instead")
     public ProtonMailApiManager getApi() {
         return mApi;
     }
 
-    public ContactsDatabase getContactsDatabase() {
-        return contactsDatabase;
-    }
-
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected OpenPGP instead")
     public OpenPGP getOpenPGP() {
         return mOpenPGP;
     }
 
+    @Deprecated
+    @kotlin.Deprecated(message = "Please use injected EventManager instead")
     public EventManager getEventManager() {
         return eventManager;
     }
