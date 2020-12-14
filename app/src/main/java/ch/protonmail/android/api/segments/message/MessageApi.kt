@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -118,22 +118,24 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     @Throws(IOException::class)
     override fun searchByLabelAndPage(query: String, page: Int): MessagesResponse =
-            ParseUtils.parse(service.searchByLabel(query, page).execute())
+        ParseUtils.parse(service.searchByLabel(query, page).execute())
 
     @Throws(IOException::class)
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse =
-            ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
+        ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
 
     @Throws(IOException::class)
-    override fun createDraft(draftBody: DraftBody): MessageResponse? =
-            ParseUtils.parse(service.createDraft(draftBody).execute())
+    override fun createDraftBlocking(draftBody: DraftBody): MessageResponse? =
+        ParseUtils.parse(service.createDraftCall(draftBody).execute())
+
+    override suspend fun createDraft(draftBody: DraftBody): MessageResponse = service.createDraft(draftBody)
 
     @Throws(IOException::class)
     override fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? =
-            ParseUtils.parse(service.updateDraft(messageId, draftBody, retrofitTag).execute())
+        ParseUtils.parse(service.updateDraft(messageId, draftBody, retrofitTag).execute())
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> =
-            service.sendMessage(messageId, message, retrofitTag)
+        service.sendMessage(messageId, message, retrofitTag)
 
     @Throws(IOException::class)
     override fun unlabelMessages(idList: IDList) {

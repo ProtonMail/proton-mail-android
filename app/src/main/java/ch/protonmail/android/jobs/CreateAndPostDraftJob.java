@@ -160,7 +160,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         if (message.getSenderEmail().contains("+")) { // it's being sent by alias
             newDraft.getMessage().setSender(new ServerMessageSender(message.getSenderName(), message.getSenderEmail()));
         }
-        final MessageResponse draftResponse = getApi().createDraft(newDraft);
+        final MessageResponse draftResponse = getApi().createDraftBlocking(newDraft);
         // on success update draft with messageId
 
         String newId = draftResponse.getMessageId();

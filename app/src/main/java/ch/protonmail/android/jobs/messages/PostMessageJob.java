@@ -237,7 +237,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             // but just in case that there is no any bug on the JobQueue library
 
             // TODO verify whether this is actually needed or can be done through saveDtaft use case
-            final MessageResponse draftResponse = getApi().createDraft(newMessage);
+            final MessageResponse draftResponse = getApi().createDraftBlocking(newMessage);
             message.setMessageId(draftResponse.getMessageId());
         }
         message.setTime(ServerTime.currentTimeMillis() / 1000);

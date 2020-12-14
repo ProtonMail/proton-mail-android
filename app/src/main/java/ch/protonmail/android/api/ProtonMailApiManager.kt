@@ -314,7 +314,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
-    override fun createDraft(draftBody: DraftBody): MessageResponse? = api.createDraft(draftBody)
+    override fun createDraftBlocking(draftBody: DraftBody): MessageResponse? = api.createDraftBlocking(draftBody)
+
+    override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
 
     override fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, draftBody, retrofitTag)
 

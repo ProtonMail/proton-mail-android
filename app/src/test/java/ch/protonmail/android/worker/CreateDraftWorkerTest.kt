@@ -27,8 +27,11 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
+import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
@@ -49,6 +52,8 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.serialize
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
@@ -57,9 +62,11 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifyOrder
+import io.mockk.verifySequence
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -90,9 +97,16 @@ class CreateDraftWorkerTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var base64: Base64Encoder
 
+    @RelaxedMockK
+    private lateinit var apiManager: ProtonMailApiManager
+
     @InjectMockKs
     private lateinit var worker: CreateDraftWorker
 
+    @BeforeEach
+    fun setUp() {
+        coEvery { apiManager.createDraft(any()) } returns mockk(relaxed = true)
+    }
 
     @Test
     fun workerEnqueuerCreatesOneTimeRequestWorkerWithParams() {
@@ -460,6 +474,97 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             verify(exactly = 0) { apiDraftMessage.addAttachmentKeyPacket(any(), any()) }
+        }
+    }
+
+    @Test
+    fun workerPerformsCreateDraftRequestAndBuildsMessageFromResponseWhenSucceding() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val messageDbId = 345L
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = "addressId835"
+                messageBody = "messageBody"
+                sender = MessageSender("sender2342", "senderEmail@2340.com")
+                setLabelIDs(listOf("label", "label1", "label2"))
+                parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
+                numAttachments = 3
+            }
+
+            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val responseMessage = mockk<Message>(relaxed = true)
+            val apiDraftResponse = mockk<MessageResponse> {
+                every { messageId } returns "response_message_id"
+                every { this@mockk.message } returns responseMessage
+            }
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
+            coEvery { apiManager.createDraft(apiDraftRequest) } returns apiDraftResponse
+
+            // When
+            worker.doWork()
+
+            // Then
+            coVerify { apiManager.createDraft(apiDraftRequest) }
+            verifySequence {
+                responseMessage.dbId = messageDbId
+                responseMessage.toList = listOf()
+                responseMessage.ccList = listOf()
+                responseMessage.bccList = listOf()
+                responseMessage.replyTos = listOf()
+                responseMessage.sender = message.sender
+                responseMessage.setLabelIDs(message.getEventLabelIDs())
+                responseMessage.parsedHeaders = message.parsedHeaders
+                responseMessage.isDownloaded = true
+                responseMessage.setIsRead(true)
+                responseMessage.numAttachments = message.numAttachments
+                responseMessage.localId = message.messageId
+            }
+        }
+    }
+
+    @Test
+    fun workerSavesCreatedDraftToDbAndReturnsSuccessWhenRequestSucceeds() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val messageDbId = 345L
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = "addressId835"
+                messageBody = "messageBody"
+                sender = MessageSender("sender2342", "senderEmail@2340.com")
+                setLabelIDs(listOf("label", "label1", "label2"))
+                parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
+                numAttachments = 3
+            }
+
+            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val responseMessage = mockk<Message>(relaxed = true)
+            val apiDraftResponse = mockk<MessageResponse> {
+                every { messageId } returns "response_message_id"
+                every { this@mockk.message } returns responseMessage
+            }
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
+            coEvery { apiManager.createDraft(apiDraftRequest) } returns apiDraftResponse
+
+            // When
+            val result = worker.doWork()
+
+            // Then
+            verify { messageDetailsRepository.saveMessageInDB(responseMessage) }
+            assertEquals(ListenableWorker.Result.success(), result)
         }
     }
 

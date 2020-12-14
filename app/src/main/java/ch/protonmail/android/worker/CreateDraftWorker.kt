@@ -32,6 +32,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
@@ -69,7 +70,8 @@ class CreateDraftWorker @WorkerInject constructor(
     private val messageFactory: MessageFactory,
     private val userManager: UserManager,
     private val addressCryptoFactory: AddressCrypto.Factory,
-    private val base64: Base64Encoder
+    private val base64: Base64Encoder,
+    val apiManager: ProtonMailApiManager
 ) : CoroutineWorker(context, params) {
 
 
@@ -78,13 +80,13 @@ class CreateDraftWorker @WorkerInject constructor(
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
         val senderAddressId = requireNotNull(message.addressID)
         val senderAddress = requireNotNull(getSenderAddress(senderAddressId))
-        val inputParentId = getInputParentId()
+        val parentId = getInputParentId()
         val createDraftRequest = messageFactory.createDraftApiRequest(message)
 
-        inputParentId?.let {
-            createDraftRequest.setParentID(inputParentId);
+        parentId?.let {
+            createDraftRequest.setParentID(parentId)
             createDraftRequest.action = getInputActionType().messageActionTypeValue
-            val parentMessage = messageDetailsRepository.findMessageById(inputParentId)
+            val parentMessage = messageDetailsRepository.findMessageById(parentId)
             val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
 
             buildDraftRequestParentAttachments(attachments, senderAddress).forEach {
@@ -96,7 +98,25 @@ class CreateDraftWorker @WorkerInject constructor(
         createDraftRequest.addMessageBody(Fields.Message.SELF, encryptedMessage);
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
-        return Result.failure()
+        val response = apiManager.createDraft(createDraftRequest)
+
+        val responseDraft = response.message
+        responseDraft.dbId = message.dbId
+        responseDraft.toList = message.toList
+        responseDraft.ccList = message.ccList
+        responseDraft.bccList = message.bccList
+        responseDraft.replyTos = message.replyTos
+        responseDraft.sender = message.sender
+        responseDraft.setLabelIDs(message.getEventLabelIDs())
+        responseDraft.parsedHeaders = message.parsedHeaders
+        responseDraft.isDownloaded = true
+        responseDraft.setIsRead(true)
+        responseDraft.numAttachments = message.numAttachments
+        responseDraft.localId = message.messageId
+
+        messageDetailsRepository.saveMessageInDB(responseDraft)
+
+        return Result.success()
     }
 
     private fun buildDraftRequestParentAttachments(
@@ -109,7 +129,7 @@ class CreateDraftWorker @WorkerInject constructor(
 
         val draftAttachments = mutableMapOf<String, String>()
         attachments?.forEach { attachment ->
-            if (shouldSkipAttachment(attachment)) {
+            if (isReplyActionAndAttachmentNotInline(attachment)) {
                 return@forEach
             }
             val keyPackets = if (isSenderAddressChanged()) {
@@ -134,7 +154,7 @@ class CreateDraftWorker @WorkerInject constructor(
         return base64.encode(newKeyPackage)
     }
 
-    private fun shouldSkipAttachment(attachment: Attachment): Boolean {
+    private fun isReplyActionAndAttachmentNotInline(attachment: Attachment): Boolean {
         val actionType = getInputActionType()
         val isReplying = actionType == REPLY || actionType == REPLY_ALL
 
