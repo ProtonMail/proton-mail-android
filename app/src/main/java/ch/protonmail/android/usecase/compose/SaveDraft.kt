@@ -84,28 +84,42 @@ class SaveDraft @Inject constructor(
             return@withContext flowOf(Result.SendingInProgressError)
         }
 
-        return@withContext createDraftWorker.enqueue(
-            message,
+        return@withContext saveDraftOnline(message, params, messageId, addressCrypto)
+
+    }
+
+    private fun saveDraftOnline(
+        localDraft: Message,
+        params: SaveDraftParameters,
+        localDraftId: String,
+        addressCrypto: AddressCrypto
+    ): Flow<Result> {
+        return createDraftWorker.enqueue(
+            localDraft,
             params.parentId,
             params.actionType,
             params.previousSenderAddressId
         )
             .filter { it.state.isFinished }
             .map { workInfo ->
-                val workSucceeded = workInfo.state == WorkInfo.State.SUCCEEDED
-
-                if (workSucceeded) {
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
                     val createdDraftId = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
-                    updatePendingForSendMessage(createdDraftId, messageId)
-                    deleteOfflineDraft(messageId)
-                    uploadAttachments(params.newAttachmentIds, message, addressCrypto)
+
+                    updatePendingForSendMessage(createdDraftId, localDraftId)
+                    deleteOfflineDraft(localDraftId)
+
+                    messageDetailsRepository.findMessageById(createdDraftId.orEmpty())?.let {
+                        val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
+                        if (uploadResult is UploadAttachments.Result.Failure) {
+                            return@map Result.UploadDraftAttachmentsFailed
+                        }
+                    }
 
                     return@map Result.Success
                 }
 
-                return@map Result.Success
+                return@map Result.OnlineDraftCreationFailed
             }
-
     }
 
     private fun deleteOfflineDraft(localDraftId: String) {
@@ -124,8 +138,10 @@ class SaveDraft @Inject constructor(
     }
 
     sealed class Result {
-        object SendingInProgressError : Result()
         object Success : Result()
+        object SendingInProgressError : Result()
+        object OnlineDraftCreationFailed : Result()
+        object UploadDraftAttachmentsFailed : Result()
     }
 
     data class SaveDraftParameters(

@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.UploadAttachments
+import ch.protonmail.android.attachments.UploadAttachments.Result.Failure
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
@@ -39,7 +40,9 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.compose.SaveDraft.Result
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
-import ch.protonmail.android.worker.CreateDraftWorker
+import ch.protonmail.android.worker.CreateDraftWorker.CreateDraftWorkerErrors
+import ch.protonmail.android.worker.CreateDraftWorker.Enqueuer
+import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -54,7 +57,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
@@ -66,7 +69,7 @@ class SaveDraftTest : CoroutinesTest {
     private lateinit var uploadAttachments: UploadAttachments
 
     @RelaxedMockK
-    private lateinit var createDraftScheduler: CreateDraftWorker.Enqueuer
+    private lateinit var createDraftScheduler: Enqueuer
 
     @RelaxedMockK
     private lateinit var pendingActionsDao: PendingActionsDao
@@ -209,7 +212,7 @@ class SaveDraftTest : CoroutinesTest {
 
             // Then
             val expectedError = Result.SendingInProgressError
-            Assert.assertEquals(expectedError, result.first())
+            assertEquals(expectedError, result.first())
             verify(exactly = 0) { createDraftScheduler.enqueue(any(), any(), any(), any()) }
         }
 
@@ -254,6 +257,7 @@ class SaveDraftTest : CoroutinesTest {
                     "234234", localDraftId, "offlineId", false, 834L
                 )
             }
+            coEvery { uploadAttachments(any(), any(), any()) } returns UploadAttachments.Result.Success
             val workOutputData = workDataOf(
                 KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "createdDraftMessageId"
             )
@@ -293,6 +297,7 @@ class SaveDraftTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageById("45623") } returns message
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
+            coEvery { uploadAttachments(any(), any(), any()) } returns UploadAttachments.Result.Success
             val workOutputData = workDataOf(
                 KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "createdDraftMessageId345"
             )
@@ -327,6 +332,7 @@ class SaveDraftTest : CoroutinesTest {
                 decryptedBody = "Message body in plain text"
                 localId = localDraftId
             }
+            val apiDraft = message.copy(messageId = "createdDraftMessageId345")
             val workOutputData = workDataOf(
                 KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "createdDraftMessageId345"
             )
@@ -334,8 +340,10 @@ class SaveDraftTest : CoroutinesTest {
             val newAttachmentIds = listOf("2345", "453")
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
+            coEvery { uploadAttachments(any(), apiDraft, any()) } returns UploadAttachments.Result.Success
             every {
                 createDraftScheduler.enqueue(
                     message,
@@ -353,10 +361,86 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            coVerify { uploadAttachments(newAttachmentIds, message, addressCrypto) }
+            coVerify { uploadAttachments(newAttachmentIds, apiDraft, addressCrypto) }
         }
 
-   
+    @Test
+    fun saveDraftsReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() =
+        runBlockingTest {
+            // Given
+            val localDraftId = "8345"
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "45623"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM to CreateDraftWorkerErrors.ServerError.name
+            )
+            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId234",
+                    REPLY_ALL,
+                    "previousSenderId132423"
+                )
+            } answers { workerStatusFlow }
+
+            // When
+            val result = saveDraft.invoke(
+                SaveDraftParameters(message, emptyList(), "parentId234", REPLY_ALL, "previousSenderId132423")
+            ).first()
+
+            // Then
+            assertEquals(Result.OnlineDraftCreationFailed, result)
+        }
+
+    @Test
+    fun saveDraftsReturnsErrorWhenUploadingNewAttachmentsFails() =
+        runBlockingTest {
+            // Given
+            val localDraftId = "8345"
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "45623"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            val newAttachmentIds = listOf("2345", "453")
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "newDraftId"
+            )
+            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
+            coEvery { uploadAttachments(newAttachmentIds, any(), any()) } returns Failure("Can't upload attachments")
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId234",
+                    REPLY,
+                    "previousSenderId132423"
+                )
+            } answers { workerStatusFlow }
+
+            // When
+            val result = saveDraft.invoke(
+                SaveDraftParameters(message, newAttachmentIds, "parentId234", REPLY, "previousSenderId132423")
+            ).first()
+
+            // Then
+            assertEquals(Result.UploadDraftAttachmentsFailed, result)
+        }
+
+
     private fun buildCreateDraftWorkerResponse(
         endState: WorkInfo.State,
         outputData: Data? = workDataOf()
