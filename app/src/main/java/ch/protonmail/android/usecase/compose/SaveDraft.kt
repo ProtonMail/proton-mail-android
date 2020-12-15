@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 
 class SaveDraft @Inject constructor(
@@ -56,6 +57,8 @@ class SaveDraft @Inject constructor(
     suspend operator fun invoke(
         params: SaveDraftParameters
     ): Flow<Result> = withContext(dispatchers.Io) {
+        Timber.i("Saving Draft for messageId ${params.message.messageId}")
+
         val message = params.message
         val messageId = requireNotNull(message.messageId)
         val addressId = requireNotNull(message.addressID)
@@ -73,6 +76,7 @@ class SaveDraft @Inject constructor(
         )
 
         val messageDbId = messageDetailsRepository.saveMessageLocally(message)
+        // TODO this is likely uneeded as we never check pending drafts anywhere
         messageDetailsRepository.insertPendingDraft(messageDbId)
 
         if (params.newAttachmentIds.isNotEmpty()) {
@@ -102,23 +106,29 @@ class SaveDraft @Inject constructor(
         )
             .filter { it.state.isFinished }
             .map { workInfo ->
-                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
-                    val createdDraftId = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
+                withContext(dispatchers.Io) {
+                    if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                        val createdDraftId = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
+                        Timber.d(
+                            "Saving Draft to API for messageId $localDraftId succeeded. Created draftId = $createdDraftId"
+                        )
 
-                    updatePendingForSendMessage(createdDraftId, localDraftId)
-                    deleteOfflineDraft(localDraftId)
+                        updatePendingForSendMessage(createdDraftId, localDraftId)
+                        deleteOfflineDraft(localDraftId)
 
-                    messageDetailsRepository.findMessageById(createdDraftId.orEmpty())?.let {
-                        val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
-                        if (uploadResult is UploadAttachments.Result.Failure) {
-                            return@map Result.UploadDraftAttachmentsFailed
+                        messageDetailsRepository.findMessageById(createdDraftId.orEmpty())?.let {
+                            val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
+                            if (uploadResult is UploadAttachments.Result.Failure) {
+                                return@withContext Result.UploadDraftAttachmentsFailed
+                            }
+                            pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
+                            return@withContext Result.Success
                         }
                     }
 
-                    return@map Result.Success
+                    Timber.e("Saving Draft to API for messageId $localDraftId FAILED.")
+                    return@withContext Result.OnlineDraftCreationFailed
                 }
-
-                return@map Result.OnlineDraftCreationFailed
             }
     }
 

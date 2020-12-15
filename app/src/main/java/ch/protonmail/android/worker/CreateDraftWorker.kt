@@ -54,6 +54,7 @@ import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 import java.time.Duration
 import javax.inject.Inject
 
@@ -110,17 +111,18 @@ class CreateDraftWorker @WorkerInject constructor(
         }.fold(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
-                    return handleFailure()
+                    return handleFailure(response.error)
                 }
 
                 val responseDraft = response.message
                 updateStoredLocalDraft(responseDraft, message)
+                Timber.i("Create Draft Worker API call succeeded")
                 Result.success(
                     workDataOf(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to response.messageId)
                 )
             },
             onFailure = {
-                handleFailure()
+                handleFailure(it.message)
             }
         )
 
@@ -151,14 +153,17 @@ class CreateDraftWorker @WorkerInject constructor(
         apiDraft.numAttachments = localDraft.numAttachments
         apiDraft.localId = localDraft.messageId
 
-        messageDetailsRepository.saveMessageInDB(apiDraft)
+        val id = messageDetailsRepository.saveMessageInDB(apiDraft)
+        Timber.d("Saved API draft in DB with DB id $id")
     }
 
-    private fun handleFailure(): Result {
+    private fun handleFailure(error: String?): Result {
         if (retries <= SAVE_DRAFT_MAX_RETRIES) {
             retries++
+            Timber.w("Create Draft Worker API call FAILED with error = $error. Retrying...")
             return Result.retry()
         }
+        Timber.e("Create Draft Worker API call failed all the retries. error = $error. FAILING")
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 

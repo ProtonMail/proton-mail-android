@@ -67,6 +67,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -464,7 +465,9 @@ class ComposeMessageViewModel @Inject constructor(
                         _actionId,
                         _oldSenderAddressId
                     )
-                )
+                ).collect {
+                    Timber.d("Saving draft result $it")
+                }
 
                 _oldSenderAddressId = ""
                 setIsDirty(false)

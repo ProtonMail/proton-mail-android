@@ -86,7 +86,7 @@ class SaveDraftTest : CoroutinesTest {
     private val currentUsername = "username"
 
     @Test
-    fun saveDraftSavesEncryptedDraftMessageToDb() =
+    fun saveDraftSavesEncryptedDraftMessageToDb() {
         runBlockingTest {
             // Given
             val message = Message().apply {
@@ -117,9 +117,10 @@ class SaveDraftTest : CoroutinesTest {
             )
             coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
         }
+    }
 
     @Test
-    fun saveDraftInsertsPendingDraftInPendingActionsDatabase() =
+    fun saveDraftInsertsPendingDraftInPendingActionsDatabase() {
         runBlockingTest {
             // Given
             val message = Message().apply {
@@ -142,9 +143,10 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             coVerify { messageDetailsRepository.insertPendingDraft(123L) }
         }
+    }
 
     @Test
-    fun saveDraftsInsertsPendingUploadWhenThereAreNewAttachments() =
+    fun saveDraftsInsertsPendingUploadWhenThereAreNewAttachments() {
         runBlockingTest {
             // Given
             val message = Message().apply {
@@ -168,9 +170,10 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             verify { pendingActionsDao.insertPendingForUpload(PendingUpload("456")) }
         }
+    }
 
     @Test
-    fun saveDraftsDoesNotInsertsPendingUploadWhenThereAreNoNewAttachments() =
+    fun saveDraftsDoesNotInsertsPendingUploadWhenThereAreNoNewAttachments() {
         runBlockingTest {
             // Given
             val message = Message().apply {
@@ -189,9 +192,10 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
         }
+    }
 
     @Test
-    fun sendDraftReturnsSendingInProgressErrorWhenMessageIsAlreadyBeingSent() =
+    fun sendDraftReturnsSendingInProgressErrorWhenMessageIsAlreadyBeingSent() {
         runBlockingTest {
             // Given
             val messageDbId = 345L
@@ -215,9 +219,10 @@ class SaveDraftTest : CoroutinesTest {
             assertEquals(expectedError, result.first())
             verify(exactly = 0) { createDraftScheduler.enqueue(any(), any(), any(), any()) }
         }
+    }
 
     @Test
-    fun saveDraftsSchedulesCreateDraftWorker() =
+    fun saveDraftsSchedulesCreateDraftWorker() {
         runBlockingTest {
             // Given
             val message = Message().apply {
@@ -237,9 +242,10 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             verify { createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273") }
         }
+    }
 
     @Test
-    fun saveDraftsUpdatesPendingForSendingMessageIdWithNewApiDraftIdWhenWorkerSucceedsAndMessageIsPendingForSending() =
+    fun saveDraftsUpdatesPendingForSendingMessageIdWithNewApiDraftIdWhenWorkerSucceedsAndMessageIsPendingForSending() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -280,9 +286,10 @@ class SaveDraftTest : CoroutinesTest {
             val expected = PendingSend("234234", "createdDraftMessageId", "offlineId", false, 834L)
             verify { pendingActionsDao.insertPendingForSend(expected) }
         }
+    }
 
     @Test
-    fun saveDraftsDeletesOfflineDraftWhenCreatingRemoteDraftThroughApiSucceds() =
+    fun saveDraftsDeletesOfflineDraftWhenCreatingRemoteDraftThroughApiSucceds() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -319,9 +326,10 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             verify { messageDetailsRepository.deleteMessage(message) }
         }
+    }
 
     @Test
-    fun saveDraftsCallsUploadAttachmentsUseCaseToUploadNewAttachments() =
+    fun saveDraftsCallsUploadAttachmentsUseCaseToUploadNewAttachments() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -363,9 +371,10 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             coVerify { uploadAttachments(newAttachmentIds, apiDraft, addressCrypto) }
         }
+    }
 
     @Test
-    fun saveDraftsReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() =
+    fun saveDraftsReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -392,6 +401,7 @@ class SaveDraftTest : CoroutinesTest {
                 )
             } answers { workerStatusFlow }
 
+
             // When
             val result = saveDraft.invoke(
                 SaveDraftParameters(message, emptyList(), "parentId234", REPLY_ALL, "previousSenderId132423")
@@ -400,9 +410,10 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             assertEquals(Result.OnlineDraftCreationFailed, result)
         }
+    }
 
     @Test
-    fun saveDraftsReturnsErrorWhenUploadingNewAttachmentsFails() =
+    fun saveDraftsReturnsErrorWhenUploadingNewAttachmentsFails() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -439,6 +450,52 @@ class SaveDraftTest : CoroutinesTest {
             // Then
             assertEquals(Result.UploadDraftAttachmentsFailed, result)
         }
+    }
+
+    @Test
+    fun saveDraftRemovesMessageFromPendingForUploadListWhenUploadSucceeds() {
+        runBlockingTest {
+            // Given
+            val localDraftId = "8345"
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "45623"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+            }
+            val apiDraft = message.copy(messageId = "createdDraftMessageId345")
+            val workOutputData = workDataOf(
+                KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to "createdDraftMessageId345"
+            )
+            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            val newAttachmentIds = listOf("2345", "453")
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
+            every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
+            coEvery { uploadAttachments(any(), apiDraft, any()) } returns UploadAttachments.Result.Success
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId234",
+                    REPLY_ALL,
+                    "previousSenderId132423"
+                )
+            } answers { workerStatusFlow }
+            val addressCrypto = mockk<AddressCrypto>(relaxed = true)
+            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+
+            // When
+            saveDraft.invoke(
+                SaveDraftParameters(message, newAttachmentIds, "parentId234", REPLY_ALL, "previousSenderId132423")
+            ).first()
+
+            // Then
+            verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
+        }
+    }
 
 
     private fun buildCreateDraftWorkerResponse(
