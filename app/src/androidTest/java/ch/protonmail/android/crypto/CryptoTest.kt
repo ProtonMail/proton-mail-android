@@ -1653,53 +1653,6 @@ internal class CryptoTest {
         assertFalse(openPgp.checkPassphrase(oneAddressKeyAddressKeys[0].privateKey, "incorrect key password".toByteArray()))
     }
 
-    // author: Marin Thiercelin
-    @Test
-    fun check_key_is_correct() {
-        val password = "password"
-        val userKeyArmored = """
-            -----BEGIN PGP PRIVATE KEY BLOCK-----
-            Version: GopenPGP 2.0.1
-            Comment: https://gopenpgp.org
-
-            xYYEX2S3+RYJKwYBBAHaRw8BAQdAx1oFcppQSiuLojrc1mJfOAXGb+r1pgaZ+Bew
-            ekuFXpL+CQMIoKzdbN+Qo99gWjiRG+9+a1LGVpIGAfHI6Oob8BVXctZA/Zw2FgiJ
-            MOoyKGOHwspn338phSuKT+QcfMS/5vaYFf3bUivqCq2Ku7hfRzHNWs0adGVzdCA8
-            dGVzdEBwcm90b25tYWlsLmNvbT7CbQQTFggAHwUCX2S3+QkQmOonEgbMZt0CGwMC
-            HgECGQECCwkCFQgAACKRAP48ZCQT5r/omoAemEdK79XIHetdhi5Tyz3qEFDK/MUU
-            FAEAnG/VRdUmadG4SDHId86ROJiCoJXRh6sZtxWcpVxNhQ7HiwRfZLf5EgorBgEE
-            AZdVAQUBAQdAyfEsTa50YPIhWkZMYpB0LzrTrKH771GFKSql+6u0vRADAQoJ/gkD
-            CDCjDw6FJMvdYJQ/8GKvP11z+Ug65RlAWqeoKoxYaBRn9/eqDU1nIg2aMb29wrhI
-            vqAP8/yZocIimIyFer/Crre/G/66u+PpSV6v6Fsr3FPCYQQYFggAEwUCX2S3+QkQ
-            mOonEgbMZt0CGwwAAMkKAQDEuoRcEYx3wqNrFikrbKVh6hrorNPeGY9mLZW2GoxU
-            YQEA1YN7AuodGahzo7nyanGqRm2LoJCfBMHFeYoCHhLNPgA=
-            =pq6p
-            -----END PGP PRIVATE KEY BLOCK-----
-        """.trimIndent()
-        val userKeyModifiedArmored = """
-            -----BEGIN PGP PRIVATE KEY BLOCK-----
-            Version: GopenPGP 2.0.1
-            Comment: https://gopenpgp.org
-
-            xYYEX2S3+RYJKwYBBAHaRw8BAQdAYVI2HlQQUPmVXMPhJF2ltQfhSm1PJXwknmY9
-            CVTX7kL+CQMIoKzdbN+Qo99gWjiRG+9+a1LGVpIGAfHI6Oob8BVXctZA/Zw2FgiJ
-            MOoyKGOHwspn338phSuKT+QcfMS/5vaYFf3bUivqCq2Ku7hfRzHNWs0adGVzdCA8
-            dGVzdEBwcm90b25tYWlsLmNvbT7CbQQTFggAHwUCX2S3+QkQD1pRoRl8RZYCGwMC
-            HgECGQECCwkCFQgAADFGAQCTMEwmL9m2HKYsTmxNGkay5njEFt+oC865dv7pYoaI
-            qQD/Zw95cAR9EYSKP3keuUVj5srnXX37lKQSCgM4pf1K8A3HiwRfZLf5EgorBgEE
-            AZdVAQUBAQdAck+FCSMO5PQLyPSKZmV3zeKMoqmWEpB40AfDglBW+T8DAQoJ/gkD
-            CDCjDw6FJMvdYJQ/8GKvP11z+Ug65RlAWqeoKoxYaBRn9/eqDU1nIg2aMb29wrhI
-            vqAP8/yZocIimIyFer/Crre/G/66u+PpSV6v6Fsr3FPCYQQYFggAEwUCX2S3+QkQ
-            D1pRoRl8RZYCGwwAAH+7APsEpQs5OKL4+z71XYcy1zI1hLQVEqxFaKbwUTBHmrZc
-            sgEAuf3YfI2KDCjlOJ5N+CjKOL8vn9GGMDLbtMFW6C1TxAE=
-            =d9Jb
-            -----END PGP PRIVATE KEY BLOCK-----
-        """.trimIndent()
-        assertTrue(openPgp.checkKeyIsCorrect(userKeyArmored, password.toByteArray()))
-        assertTrue(openPgp.checkPassphrase(userKeyModifiedArmored, password.toByteArray()))
-        assertFalse(openPgp.checkKeyIsCorrect(userKeyModifiedArmored, password.toByteArray()))
-    }
-
     @Test
     fun get_public_key() {
 

@@ -1072,11 +1072,6 @@ class MailboxActivity :
                 startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
                 finish()
             }
-            AuthStatus.INCORRECT_KEY_PARAMETERS -> {
-                showToast(R.string.incorrect_key_parameters, Toast.LENGTH_SHORT)
-                startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
-                finish()
-            }
             else -> {
                 mUserManager.isLoggedIn = true
             }
