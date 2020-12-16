@@ -74,7 +74,6 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.HashMap
 import java.util.UUID
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.collections.set
@@ -105,8 +104,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _setupComplete: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _closeComposer: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private var _setupCompleteValue = false
-    private val _savingDraftComplete: MutableLiveData<Event<DraftCreatedEvent>> = MutableLiveData()
-    private var _savingDraftInProcess: AtomicBoolean = AtomicBoolean(false)
+    private val _savingDraftComplete: MutableLiveData<Message> = MutableLiveData()
     private val _deleteResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _loadingDraftResult: MutableLiveData<Message> = MutableLiveData()
     private val _messageResultError: MutableLiveData<Event<PostResult>> = MutableLiveData()
@@ -163,7 +161,7 @@ class ComposeMessageViewModel @Inject constructor(
         get() = _closeComposer
     val setupCompleteValue: Boolean
         get() = _setupCompleteValue
-    val savingDraftComplete: LiveData<Event<DraftCreatedEvent>>
+    val savingDraftComplete: LiveData<Message>
         get() = _savingDraftComplete
     val senderAddresses: List<String>
         get() = _senderAddresses
@@ -365,12 +363,6 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     @Subscribe
-    fun onDraftCreatedEvent(event: DraftCreatedEvent) {
-        _savingDraftInProcess.set(false)
-        _savingDraftComplete.postValue(Event(event))
-    }
-
-    @Subscribe
     fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent) {
         if (event.success) {
             val message = event.message
@@ -437,7 +429,6 @@ class ComposeMessageViewModel @Inject constructor(
                 //endregion
             } else {
                 //region new draft here
-                _savingDraftInProcess.set(true)
                 setOfflineDraftSaved(true)
                 if (draftId.isEmpty() && message.messageId.isNullOrEmpty()) {
                     val newDraftId = UUID.randomUUID().toString()
@@ -466,7 +457,12 @@ class ComposeMessageViewModel @Inject constructor(
                         _oldSenderAddressId
                     )
                 ).collect {
-                    Timber.d("Saving draft result $it")
+                    when (it) {
+                        is SaveDraft.Result.Success -> onDraftSaved(it.draftId, message)
+                        SaveDraft.Result.SendingInProgressError -> TODO()
+                        SaveDraft.Result.OnlineDraftCreationFailed -> TODO()
+                        SaveDraft.Result.UploadDraftAttachmentsFailed -> TODO()
+                    }
                 }
 
                 _oldSenderAddressId = ""
@@ -475,6 +471,16 @@ class ComposeMessageViewModel @Inject constructor(
             }
 
             _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).isDirty(false).build()
+        }
+    }
+
+    private suspend fun onDraftSaved(savedDraftId: String, message: Message) {
+        withContext(dispatchers.Io) {
+            val draft = messageDetailsRepository.findMessageById(savedDraftId)
+
+            val draftCreatedEvent = DraftCreatedEvent(message.messageId, message.messageId, draft)
+            onDraftCreated(draftCreatedEvent)
+            _savingDraftComplete.postValue(draft)
         }
     }
 
@@ -672,7 +678,7 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    fun onDraftCreated(event: DraftCreatedEvent) {
+    private fun onDraftCreated(event: DraftCreatedEvent) {
         val newMessageId: String?
         val eventMessage = event.message
 
@@ -686,7 +692,7 @@ class ComposeMessageViewModel @Inject constructor(
             eventMessage.messageId
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(dispatchers.Main) {
             val isOfflineDraftSaved: Boolean
             isOfflineDraftSaved =
                 if (event.status == Status.NO_NETWORK) {
@@ -1284,7 +1290,7 @@ class ComposeMessageViewModel @Inject constructor(
             viewModelScope.launch {
                 draftId = messageId!!
                 message.isDownloaded = true
-                val attachments = message.Attachments // composeMessageRepository.getAttachments(message, IO)
+                val attachments = message.Attachments
                 message.setAttachmentList(attachments)
                 setAttachmentList(ArrayList(LocalAttachment.createLocalAttachmentList(attachments)))
                 _dbId = message.dbId

@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.attachments
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
@@ -43,9 +42,6 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class UploadAttachmentsTest : CoroutinesTest {
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @RelaxedMockK
     private lateinit var attachmentsRepository: AttachmentsRepository

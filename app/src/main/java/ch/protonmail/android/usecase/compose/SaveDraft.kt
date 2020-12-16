@@ -108,9 +108,11 @@ class SaveDraft @Inject constructor(
             .map { workInfo ->
                 withContext(dispatchers.Io) {
                     if (workInfo.state == WorkInfo.State.SUCCEEDED) {
-                        val createdDraftId = workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
+                        val createdDraftId = requireNotNull(
+                            workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
+                        )
                         Timber.d(
-                            "Saving Draft to API for messageId $localDraftId succeeded. Created draftId = $createdDraftId"
+                            "Save Draft to API for messageId $localDraftId succeeded. Created draftId = $createdDraftId"
                         )
 
                         updatePendingForSendMessage(createdDraftId, localDraftId)
@@ -122,7 +124,7 @@ class SaveDraft @Inject constructor(
                                 return@withContext Result.UploadDraftAttachmentsFailed
                             }
                             pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
-                            return@withContext Result.Success
+                            return@withContext Result.Success(createdDraftId)
                         }
                     }
 
@@ -139,7 +141,7 @@ class SaveDraft @Inject constructor(
         }
     }
 
-    private fun updatePendingForSendMessage(createdDraftId: String?, messageId: String) {
+    private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {
         val pendingForSending = pendingActionsDao.findPendingSendByOfflineMessageId(messageId)
         pendingForSending?.let {
             pendingForSending.messageId = createdDraftId
@@ -148,7 +150,7 @@ class SaveDraft @Inject constructor(
     }
 
     sealed class Result {
-        object Success : Result()
+        data class Success(val draftId: String) : Result()
         object SendingInProgressError : Result()
         object OnlineDraftCreationFailed : Result()
         object UploadDraftAttachmentsFailed : Result()

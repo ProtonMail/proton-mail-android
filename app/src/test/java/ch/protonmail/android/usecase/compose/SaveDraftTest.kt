@@ -453,7 +453,7 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftRemovesMessageFromPendingForUploadListWhenUploadSucceeds() {
+    fun saveDraftRemovesMessageFromPendingForUploadListAndReturnsSuccessWhenUploadSucceeds() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -488,12 +488,13 @@ class SaveDraftTest : CoroutinesTest {
             every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
 
             // When
-            saveDraft.invoke(
+            val result = saveDraft.invoke(
                 SaveDraftParameters(message, newAttachmentIds, "parentId234", REPLY_ALL, "previousSenderId132423")
             ).first()
 
             // Then
             verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
+            assertEquals(Result.Success("createdDraftMessageId345"), result)
         }
     }
 

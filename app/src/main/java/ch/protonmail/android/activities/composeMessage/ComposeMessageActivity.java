@@ -136,7 +136,6 @@ import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
-import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.events.HumanVerifyOptionsEvent;
@@ -187,7 +186,6 @@ import timber.log.Timber;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_CREATED_EVENT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
@@ -469,10 +467,11 @@ public class ComposeMessageActivity
         composeMessageViewModel.getOpenAttachmentsScreenResult().observe(ComposeMessageActivity.this, new AddAttachmentsObserver());
         composeMessageViewModel.getMessageDraftResult().observe(ComposeMessageActivity.this, new OnDraftCreatedObserver(TextUtils.isEmpty(mAction)));
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
-            if (event != null) {
-                DraftCreatedEvent draftEvent = event.getContentIfNotHandled();
-                onDraftCreatedEvent(draftEvent);
+            if (mUpdateDraftPmMeChanged) {
+                composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
+                mUpdateDraftPmMeChanged = false;
             }
+            disableSendButton(false);
         });
 
         composeMessageViewModel.getDbIdWatcher().observe(ComposeMessageActivity.this, new SendMessageObserver());
@@ -995,18 +994,6 @@ public class ComposeMessageActivity
         }
     }
 
-    private void onDraftCreatedEvent(final DraftCreatedEvent event) {
-        String draftId = composeMessageViewModel.getDraftId();
-        if (event == null || !draftId.equals(event.getOldMessageId())) {
-            return;
-        }
-        composeMessageViewModel.onDraftCreated(event);
-        if (mUpdateDraftPmMeChanged) {
-            composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
-            mUpdateDraftPmMeChanged = false;
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -1018,7 +1005,6 @@ public class ComposeMessageActivity
             contactsPermissionHelper.checkPermission();
         }
         composeMessageViewModel.insertPendingDraft();
-//        mToRecipientsView.invalidateRecipients();
     }
 
     @Override
@@ -1492,18 +1478,14 @@ public class ComposeMessageActivity
                     onPostImportAttachmentEvent((PostImportAttachmentEvent) attachmentExtra);
                 }
                 composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
-            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT) || data.hasExtra(EXTRA_DRAFT_CREATED_EVENT)) {
+            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT)) {
                 FetchMessageDetailEvent messageDetailEvent = (FetchMessageDetailEvent) data.getSerializableExtra(EXTRA_MESSAGE_DETAIL_EVENT);
                 FetchDraftDetailEvent draftDetailEvent = (FetchDraftDetailEvent) data.getSerializableExtra(EXTRA_DRAFT_DETAILS_EVENT);
-                DraftCreatedEvent draftCreatedEvent = (DraftCreatedEvent) data.getSerializableExtra(EXTRA_DRAFT_CREATED_EVENT);
                 if (messageDetailEvent != null) {
                     composeMessageViewModel.onFetchMessageDetailEvent(messageDetailEvent);
                 }
                 if (draftDetailEvent != null) {
                     onFetchDraftDetailEvent(draftDetailEvent);
-                }
-                if (draftCreatedEvent != null) {
-                    onDraftCreatedEvent(draftCreatedEvent);
                 }
             }
             mToRecipientsView.requestFocus();
