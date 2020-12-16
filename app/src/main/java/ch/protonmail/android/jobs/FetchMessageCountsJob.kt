@@ -27,50 +27,53 @@ import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
+import timber.log.Timber
 
-// region constants
-private const val COUNTS_SINGLE_INSTANCE = "instanceIdCounts"
-private const val TAG_JOB_FETCH_UNREAD = "FetchUnReadJob"
-// endregion
+private const val FETCH_COUNTS_ID = "instanceIdCounts"
 
-class FetchMessageCountsJob(username: String?) : ProtonMailBaseJob(Params(Priority.MEDIUM).singleInstanceBy(COUNTS_SINGLE_INSTANCE).groupBy(Constants.JOB_GROUP_MISC), username) {
+class FetchMessageCountsJob(
+    username: String?
+) : ProtonMailBaseJob(
+    Params(Priority.MEDIUM).singleInstanceBy(FETCH_COUNTS_ID).groupBy(Constants.JOB_GROUP_MISC),
+    username
+) {
 
     @Throws(Throwable::class)
     override fun onRun() {
-        if (!getQueueNetworkUtil().isConnected()) {
-            Logger.doLog(TAG_JOB_FETCH_UNREAD, "no network - cannot fetch unread")
+        if (getQueueNetworkUtil().isConnected().not()) {
+            Timber.w("no network - cannot fetch unread")
             AppUtil.postEventOnUi(MessageCountsEvent(Status.FAILED))
             return
         }
 
         try {
-            val totalResponse = getApi().fetchMessagesCount(RetrofitTag(username?: getUserManager().username))
-            val messageCounts = totalResponse.counts?: emptyList()
-            val locationCounters = messageCounts.filter { it.labelId.length <= 2 }.map {
+            val countersResponse = getApi().fetchMessagesCount(RetrofitTag(username))
+
+            val counters = countersResponse.counts ?: emptyList()
+            val (labelCounters, locationCounters) = counters.partition { it.labelId.length > 2 }
+
+            val unreadLabelCounters = labelCounters.map { UnreadLabelCounter(it.labelId, it.unread) }
+            val unreadLocationCounters = locationCounters.map {
                 val location = Constants.MessageLocationType.fromInt(Integer.valueOf(it.labelId))
                 UnreadLocationCounter(location.messageLocationTypeValue, it.unread)
             }
-            val unreadCountersDatabase = CountersDatabaseFactory.getInstance(ProtonMailApplication.getApplication(), username).getDatabase()
-            val labelCounters = messageCounts.filter { it.labelId.length > 2 }.map { UnreadLabelCounter(it.labelId, it.unread) }
-            unreadCountersDatabase.updateUnreadCounters(locationCounters, labelCounters)
 
+            val unreadCountersDatabase =
+                CountersDatabaseFactory.getInstance(ProtonMailApplication.getApplication(), username).getDatabase()
+            unreadCountersDatabase.updateUnreadCounters(unreadLocationCounters, unreadLabelCounters)
 
-            AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, totalResponse))
+            AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, countersResponse))
         } catch (e: Exception) {
             AppUtil.postEventOnUi(MessageCountsEvent(Status.FAILED))
-            Logger.doLogException(e)
+            Timber.e(e)
         }
 
     }
 
-    override fun getRetryLimit(): Int {
-        return 1
-    }
+    override fun getRetryLimit() = 1
 
-    override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int, maxRunCount: Int): RetryConstraint? {
-        return RetryConstraint.CANCEL
-    }
+    override fun shouldReRunOnThrowable(throwable: Throwable, runCount: Int, maxRunCount: Int): RetryConstraint? =
+        RetryConstraint.CANCEL
 }
