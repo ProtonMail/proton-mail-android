@@ -23,7 +23,7 @@ import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -92,10 +92,10 @@ interface MessageApiSpec {
     fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse
 
     @Throws(IOException::class)
-    fun createDraft(newMessage: NewMessage): MessageResponse?
+    fun createDraft(draftBody: DraftBody): MessageResponse?
 
     @Throws(IOException::class)
-    fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse?
+    fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse?
 
     fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse>
 

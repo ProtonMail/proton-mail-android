@@ -22,7 +22,7 @@ import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -103,7 +103,7 @@ interface MessageService {
 
     @POST("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createDraft(@Body newMessage: NewMessage): Call<MessageResponse>
+    fun createDraft(@Body draftBody: DraftBody): Call<MessageResponse>
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -112,7 +112,7 @@ interface MessageService {
     @PUT("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun updateDraft(@Path("messageId") messageId: String,
-                    @Body newMessage: NewMessage, @Tag retrofitTag: RetrofitTag): Call<MessageResponse>
+                    @Body draftBody: DraftBody, @Tag retrofitTag: RetrofitTag): Call<MessageResponse>
 
     @POST("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
