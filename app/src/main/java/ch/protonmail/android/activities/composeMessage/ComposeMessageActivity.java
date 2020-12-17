@@ -1198,13 +1198,11 @@ public class ComposeMessageActivity
                         unit -> {
                             UiUtil.hideKeyboard(this);
                             composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
-                            ProtonMailApplication.getApplication().resetDraftCreated();
                             return unit;
                         }, true);
             } else {
                 UiUtil.hideKeyboard(this);
                 composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
-                ProtonMailApplication.getApplication().resetDraftCreated();
             }
         }
     }
