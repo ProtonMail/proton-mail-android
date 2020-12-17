@@ -240,7 +240,7 @@ class MessagesService : JobIntentService() {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
                     messageList.asSequence().map { msg ->
                         unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageById(msg.messageId!!)
+                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                         msg.setLabelIDs(msg.getEventLabelIDs())
                         msg.location = location.messageLocationTypeValue
                         msg.setFolderLocation(messagesDb)
@@ -312,7 +312,7 @@ class MessagesService : JobIntentService() {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
                     messageList.asSequence().map { msg ->
                         unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageById(msg.messageId!!)
+                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
                         msg.setLabelIDs(msg.getEventLabelIDs())
                         msg.location = location.messageLocationTypeValue
                         msg.setFolderLocation(messagesDb)

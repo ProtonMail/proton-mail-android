@@ -301,7 +301,7 @@ class SaveDraftTest : CoroutinesTest {
                 localId = localDraftId
             }
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { messageDetailsRepository.findMessageByIdBlocking("45623") } returns message
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
             coEvery { uploadAttachments(any(), any(), any()) } returns UploadAttachments.Result.Success
@@ -347,8 +347,8 @@ class SaveDraftTest : CoroutinesTest {
             val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { messageDetailsRepository.findMessageById("45623") } returns message
-            every { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
+            every { messageDetailsRepository.findMessageByIdBlocking("45623") } returns message
+            every { messageDetailsRepository.findMessageByIdBlocking("createdDraftMessageId345") } returns apiDraft
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
             coEvery { uploadAttachments(any(), apiDraft, any()) } returns UploadAttachments.Result.Success
@@ -390,7 +390,7 @@ class SaveDraftTest : CoroutinesTest {
             )
             val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.FAILED, workOutputData)
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { messageDetailsRepository.findMessageByIdBlocking("45623") } returns message
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every {
                 createDraftScheduler.enqueue(
@@ -430,7 +430,7 @@ class SaveDraftTest : CoroutinesTest {
             )
             val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { messageDetailsRepository.findMessageById("45623") } returns message
+            every { messageDetailsRepository.findMessageByIdBlocking("45623") } returns message
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             coEvery { uploadAttachments(newAttachmentIds, any(), any()) } returns Failure("Can't upload attachments")
             every {
@@ -471,8 +471,8 @@ class SaveDraftTest : CoroutinesTest {
             val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { messageDetailsRepository.findMessageById("45623") } returns message
-            every { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
+            every { messageDetailsRepository.findMessageByIdBlocking("45623") } returns message
+            every { messageDetailsRepository.findMessageByIdBlocking("createdDraftMessageId345") } returns apiDraft
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
             coEvery { uploadAttachments(any(), apiDraft, any()) } returns UploadAttachments.Result.Success

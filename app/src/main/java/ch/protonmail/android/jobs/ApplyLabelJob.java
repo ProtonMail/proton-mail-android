@@ -67,7 +67,7 @@ public class ApplyLabelJob extends ProtonMailEndlessJob {
                 .getDatabase();
         int totalUnread = 0;
         for (String messageId : messageIds) {
-            Message message = getMessageDetailsRepository().findMessageById(messageId);
+            Message message = getMessageDetailsRepository().findMessageByIdBlocking(messageId);
             if (message == null) {
                 continue;
             }

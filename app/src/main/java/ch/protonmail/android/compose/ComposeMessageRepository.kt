@@ -150,7 +150,7 @@ class ComposeMessageRepository @Inject constructor(
         withContext(dispatcher) {
             var message: Message? = null
             if (!TextUtils.isEmpty(draftId)) {
-                message = messageDetailsRepository.findMessageById(draftId)
+                message = messageDetailsRepository.findMessageByIdBlocking(draftId)
             }
             message
         }
@@ -216,7 +216,7 @@ class ComposeMessageRepository @Inject constructor(
 
     fun markMessageRead(messageId: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            messageDetailsRepository.findMessageById(messageId)?.let { savedMessage ->
+            messageDetailsRepository.findMessageByIdBlocking(messageId)?.let { savedMessage ->
                 val read = savedMessage.isRead
                 if (!read) {
                     jobManager.addJobInBackground(PostReadJob(listOf(savedMessage.messageId)))

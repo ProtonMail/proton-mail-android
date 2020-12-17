@@ -23,7 +23,9 @@ import androidx.fragment.app.FragmentManager
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 
 /**
  * Created by Kamil Rajtar on 24.07.18.
@@ -33,7 +35,7 @@ internal class ShowLabelsManagerDialogTask(private val fragmentManager: Fragment
                                            private val messageIds:List<String>):AsyncTask<Void,Void,List<Message>>() {
 
 	override fun doInBackground(vararg voids:Void):List<Message> {
-		return messageIds.filter {!it.isEmpty()}.mapNotNull(messageDetailsRepository::findMessageById)
+		return messageIds.filter { !it.isEmpty() }.mapNotNull(messageDetailsRepository::findMessageByIdBlocking)
 	}
 
 	override fun onPostExecute(messages:List<Message>) {

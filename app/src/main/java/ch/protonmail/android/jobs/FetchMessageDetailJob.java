@@ -53,7 +53,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
         try {
             final MessageResponse messageResponse = getApi().messageDetail(mMessageId);
             final Message message = messageResponse.getMessage();
-            Message savedMessage = getMessageDetailsRepository().findMessageById(message.getMessageId());
+            Message savedMessage = getMessageDetailsRepository().findMessageByIdBlocking(message.getMessageId());
             final FetchMessageDetailEvent event = new FetchMessageDetailEvent(true, mMessageId);
             if (savedMessage != null) {
                 message.writeTo(savedMessage);

@@ -2217,7 +2217,6 @@ public class ComposeMessageActivity
 
             Message localMessage = messageEvent.getContentIfNotHandled();
             if (localMessage != null) {
-                composeMessageViewModel.setOfflineDraftSaved(false);
 
                 String aliasAddress = composeMessageViewModel.getMessageDataResult().getAddressEmailAlias();
                 MessageSender messageSender;

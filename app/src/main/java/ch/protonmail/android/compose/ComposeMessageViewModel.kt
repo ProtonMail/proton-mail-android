@@ -108,7 +108,6 @@ class ComposeMessageViewModel @Inject constructor(
     private val _loadingDraftResult: MutableLiveData<Message> = MutableLiveData()
     private val _messageResultError: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _openAttachmentsScreenResult: MutableLiveData<List<LocalAttachment>> = MutableLiveData()
-    private val _messageDraftResult: MutableLiveData<Message> = MutableLiveData()
     private val _buildingMessageCompleted: MutableLiveData<Event<Message>> = MutableLiveData()
     private val _dbIdWatcher: MutableLiveData<Long> = MutableLiveData()
     private val _fetchMessageDetailsEvent: MutableLiveData<Event<MessageBuilderData>> = MutableLiveData()
@@ -211,9 +210,6 @@ class ComposeMessageViewModel @Inject constructor(
     val parentId: String?
         get() = _parentId
     // endregion
-
-    val messageDraftResult: LiveData<Message>
-        get() = _messageDraftResult
 
     private val loggedInUsernames = if (userManager.user.combinedContacts) {
         AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).getLoggedInUsers()
@@ -428,7 +424,6 @@ class ComposeMessageViewModel @Inject constructor(
                 //endregion
             } else {
                 //region new draft here
-                setOfflineDraftSaved(true)
                 if (draftId.isEmpty() && message.messageId.isNullOrEmpty()) {
                     val newDraftId = UUID.randomUUID().toString()
                     _draftId.set(newDraftId)
@@ -474,20 +469,18 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     private suspend fun onDraftSaved(savedDraftId: String) {
-        withContext(dispatchers.Io) {
-            val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId))
+        val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId))
 
-            viewModelScope.launch(dispatchers.Main) {
-                if (_draftId.get().isNotEmpty() && draft.messageId.isNullOrEmpty().not()) {
-                    draft.localId?.let {
-                        composeMessageRepository.deleteMessageById(it)
-                    }
+        viewModelScope.launch(dispatchers.Main) {
+            if (_draftId.get().isNotEmpty() && draft.messageId.isNullOrEmpty().not()) {
+                draft.localId?.let {
+                    composeMessageRepository.deleteMessageById(it)
                 }
-                _draftId.set(draft.messageId)
-                watchForMessageSent()
             }
-            _savingDraftComplete.postValue(draft)
+            _draftId.set(draft.messageId)
+            watchForMessageSent()
         }
+        _savingDraftComplete.postValue(draft)
     }
 
     private suspend fun calculateNewAttachments(uploadAttachments: Boolean): List<String> {
@@ -1097,13 +1090,6 @@ class ComposeMessageViewModel @Inject constructor(
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .messageTimestamp(messageTimestamp)
-            .build()
-    }
-
-    fun setOfflineDraftSaved(offlineDraftSaved: Boolean) {
-        _messageDataResult = MessageBuilderData.Builder()
-            .fromOld(_messageDataResult)
-            .offlineDraftSaved(offlineDraftSaved)
             .build()
     }
 

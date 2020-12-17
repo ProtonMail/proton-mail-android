@@ -58,7 +58,7 @@ public class PostInboxJob extends ProtonMailCounterJob {
 
         int totalUnread = 0;
         for (String id : mMessageIds) {
-            final Message message = getMessageDetailsRepository().findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (!message.isRead()) {
                     UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());

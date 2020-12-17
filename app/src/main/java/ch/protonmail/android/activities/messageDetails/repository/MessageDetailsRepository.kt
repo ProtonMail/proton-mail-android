@@ -88,29 +88,29 @@ class MessageDetailsRepository @Inject constructor(
     }
 
     fun findMessageByIdAsync(messageId: String): LiveData<Message> =
-            messagesDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
+        messagesDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
     fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> =
-            searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
+        searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
-    suspend fun findMessageById(messageId: String, dispatcher: CoroutineDispatcher) =
-            withContext(dispatcher) {
-                findMessageById(messageId)
-            }
+    suspend fun findMessageById(messageId: String) =
+        withContext(dispatchers.Io) {
+            findMessageByIdBlocking(messageId)
+        }
 
     suspend fun findSearchMessageById(messageId: String, dispatcher: CoroutineDispatcher) =
-            withContext(dispatcher) {
-                searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
-            }
+        withContext(dispatcher) {
+            searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+        }
 
 
-    suspend fun findMessageByMessageDbId(dbId: Long, dispatcher: CoroutineDispatcher) : Message? =
-            withContext(dispatcher) {
+    suspend fun findMessageByMessageDbId(dbId: Long, dispatcher: CoroutineDispatcher): Message? =
+        withContext(dispatcher) {
                 findMessageByMessageDbId(dbId)
             }
 
-    fun findMessageById(messageId: String): Message? =
-            messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+    fun findMessageByIdBlocking(messageId: String): Message? =
+        messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findSearchMessageById(messageId: String): Message? =
             searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }

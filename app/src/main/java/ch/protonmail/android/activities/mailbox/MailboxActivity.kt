@@ -1771,7 +1771,7 @@ class MailboxActivity :
     ) : AsyncTask<Unit, Unit, Message>() {
 
         override fun doInBackground(vararg params: Unit): Message? =
-            messageDetailsRepository.findMessageById(message.messageId!!)
+            messageDetailsRepository.findMessageByIdBlocking(message.messageId!!)
 
         public override fun onPostExecute(savedMessage: Message?) {
             val mailboxActivity = mailboxActivity.get()

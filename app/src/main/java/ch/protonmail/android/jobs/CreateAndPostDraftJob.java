@@ -128,7 +128,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
             newDraft.setParentID(mParentId);
             newDraft.setAction(mActionType.getMessageActionTypeValue());
             if(!isTransient) {
-                parentMessage = getMessageDetailsRepository().findMessageById(mParentId);
+                parentMessage = getMessageDetailsRepository().findMessageByIdBlocking(mParentId);
             } else {
                 parentMessage = getMessageDetailsRepository().findSearchMessageById(mParentId);
             }
@@ -136,7 +136,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         String addressId = message.getAddressID();
         String encryptedMessage = message.getMessageBody();
         if (!TextUtils.isEmpty(message.getMessageId())) {
-            Message savedMessage = getMessageDetailsRepository().findMessageById(message.getMessageId());
+            Message savedMessage = getMessageDetailsRepository().findMessageByIdBlocking(message.getMessageId());
             if (savedMessage != null) {
                 encryptedMessage = savedMessage.getMessageBody();
             }
@@ -195,7 +195,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
             pendingForSending.setMessageId(newId);
             pendingActionsDatabase.insertPendingForSend(pendingForSending);
         }
-        Message offlineDraft = getMessageDetailsRepository().findMessageById(oldId);
+        Message offlineDraft = getMessageDetailsRepository().findMessageByIdBlocking(oldId);
         if (offlineDraft != null) {
             getMessageDetailsRepository().deleteMessage(offlineDraft);
         }
@@ -266,7 +266,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         @Override
         public void onRun() throws Throwable {
             PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-            Message message = getMessageDetailsRepository().findMessageById(mMessageId);
+            Message message = getMessageDetailsRepository().findMessageByIdBlocking(mMessageId);
             User user = getUserManager().getUser(mUsername);
             if (user == null) {
                 pendingActionsDatabase.deletePendingUploadByMessageId(mMessageId, mOldMessageId);

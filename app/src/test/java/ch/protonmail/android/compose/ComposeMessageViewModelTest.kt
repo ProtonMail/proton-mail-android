@@ -112,11 +112,11 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val testObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraft.Result.Success(createdDraftId))
-            every { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
+            every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(message, hasConnectivity = false)
 
-            verify { messageDetailsRepository.findMessageById(createdDraftId) }
+            verify { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) }
             assertEquals(createdDraft, testObserver.observedValues[0])
         }
     }
@@ -129,7 +129,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraft.Result.Success(createdDraftId))
-            every { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
+            every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(Message(), hasConnectivity = false)
 
@@ -145,7 +145,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraft.Result.Success(createdDraftId))
-            every { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
+            every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(Message(), hasConnectivity = false)
 

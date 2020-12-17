@@ -200,7 +200,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             verify { apiDraftMessage.action = 2 }
             // Always get parent message from messageDetailsDB, never from searchDB
             // ignoring isTransient property as the values in the two DB appears to be the same
-            verify { messageDetailsRepository.findMessageById(parentId) }
+            verify { messageDetailsRepository.findMessageByIdBlocking(parentId) }
         }
     }
 
@@ -312,7 +312,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenPreviousSenderAddress(previousSenderAddressId)
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
-            every { messageDetailsRepository.findMessageById(parentId) } returns parentMessage
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
             every { userManager.username } returns username
             every { userManager.getUser(username).loadNew(username) } returns mockk {
                 every { findAddressById(Id("addressId835")) } returns senderAddress
@@ -358,7 +358,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenPreviousSenderAddress(previousSenderAddressId)
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
-            every { messageDetailsRepository.findMessageById(parentId) } returns parentMessage
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
             every { userManager.username } returns "username93w"
 
             // When
@@ -394,7 +394,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
-            every { messageDetailsRepository.findMessageById(parentId) } returns parentMessage
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             worker.doWork()
@@ -434,7 +434,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
-            every { messageDetailsRepository.findMessageById(parentId) } returns parentMessage
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             worker.doWork()

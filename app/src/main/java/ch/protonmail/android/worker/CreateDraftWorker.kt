@@ -94,7 +94,7 @@ class CreateDraftWorker @WorkerInject constructor(
         parentId?.let {
             createDraftRequest.setParentID(parentId)
             createDraftRequest.action = getInputActionType().messageActionTypeValue
-            val parentMessage = messageDetailsRepository.findMessageById(parentId)
+            val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
             val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
 
             buildDraftRequestParentAttachments(attachments, senderAddress).forEach {
