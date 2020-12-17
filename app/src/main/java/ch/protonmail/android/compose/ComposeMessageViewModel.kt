@@ -48,7 +48,6 @@ import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.events.DraftCreatedEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
@@ -458,7 +457,7 @@ class ComposeMessageViewModel @Inject constructor(
                     )
                 ).collect {
                     when (it) {
-                        is SaveDraft.Result.Success -> onDraftSaved(it.draftId, message)
+                        is SaveDraft.Result.Success -> onDraftSaved(it.draftId)
                         SaveDraft.Result.SendingInProgressError -> TODO()
                         SaveDraft.Result.OnlineDraftCreationFailed -> TODO()
                         SaveDraft.Result.UploadDraftAttachmentsFailed -> TODO()
@@ -474,12 +473,19 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onDraftSaved(savedDraftId: String, message: Message) {
+    private suspend fun onDraftSaved(savedDraftId: String) {
         withContext(dispatchers.Io) {
-            val draft = messageDetailsRepository.findMessageById(savedDraftId)
+            val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId))
 
-            val draftCreatedEvent = DraftCreatedEvent(message.messageId, message.messageId, draft)
-            onDraftCreated(draftCreatedEvent)
+            viewModelScope.launch(dispatchers.Main) {
+                if (_draftId.get().isNotEmpty() && draft.messageId.isNullOrEmpty().not()) {
+                    draft.localId?.let {
+                        composeMessageRepository.deleteMessageById(it)
+                    }
+                }
+                _draftId.set(draft.messageId)
+                watchForMessageSent()
+            }
             _savingDraftComplete.postValue(draft)
         }
     }
@@ -675,61 +681,6 @@ class ComposeMessageViewModel @Inject constructor(
                 .attachmentList(ArrayList(oldList))
                 .build()
             _openAttachmentsScreenResult.postValue(oldList)
-        }
-    }
-
-    private fun onDraftCreated(event: DraftCreatedEvent) {
-        val newMessageId: String?
-        val eventMessage = event.message
-
-        if (_draftId.get() != event.oldMessageId) {
-            return
-        }
-
-        newMessageId = if (eventMessage == null) {
-            event.messageId
-        } else {
-            eventMessage.messageId
-        }
-
-        viewModelScope.launch(dispatchers.Main) {
-            val isOfflineDraftSaved: Boolean
-            isOfflineDraftSaved =
-                if (event.status == Status.NO_NETWORK) {
-                    true
-                } else {
-                    val draftId = _draftId.get()
-                    if (!TextUtils.isEmpty(draftId) && !TextUtils.isEmpty(newMessageId)) {
-                        composeMessageRepository.deleteMessageById(draftId, IO)
-                    }
-                    false
-                }
-
-            setOfflineDraftSaved(isOfflineDraftSaved)
-            var draftMessage: Message? = null
-            if (eventMessage != null) {
-                val eventMessageAttachmentList =
-                    composeMessageRepository.getAttachments(eventMessage, _messageDataResult.isTransient, IO)
-
-                for (localAttachment in _messageDataResult.attachmentList) {
-                    for (attachment in eventMessageAttachmentList) {
-                        if (localAttachment.displayName == attachment.fileName) {
-                            localAttachment.attachmentId = attachment.attachmentId ?: ""
-                        }
-                    }
-                }
-                _draftId.set(newMessageId)
-                draftMessage = eventMessage
-                watchForMessageSent()
-            }
-            val draftId = _draftId.get()
-            if (draftMessage != null && draftId != null) {
-                val storedMessage = composeMessageRepository.findMessage(draftId, IO)
-                if (storedMessage != null) {
-                    draftMessage.isInline = storedMessage.isInline
-                }
-            }
-            _messageDraftResult.postValue(draftMessage)
         }
     }
 

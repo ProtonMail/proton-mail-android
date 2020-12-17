@@ -465,13 +465,18 @@ public class ComposeMessageActivity
 
         composeMessageViewModel.getDeleteResult().observe(ComposeMessageActivity.this, new CheckLocalMessageObserver());
         composeMessageViewModel.getOpenAttachmentsScreenResult().observe(ComposeMessageActivity.this, new AddAttachmentsObserver());
-        composeMessageViewModel.getMessageDraftResult().observe(ComposeMessageActivity.this, new OnDraftCreatedObserver(TextUtils.isEmpty(mAction)));
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
             if (mUpdateDraftPmMeChanged) {
                 composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
                 mUpdateDraftPmMeChanged = false;
             }
             disableSendButton(false);
+            onMessageLoaded(
+                    event,
+                    false,
+                    TextUtils.isEmpty(mAction) &&
+                            composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty()
+            );
         });
 
         composeMessageViewModel.getDbIdWatcher().observe(ComposeMessageActivity.this, new SendMessageObserver());
@@ -2142,19 +2147,6 @@ public class ComposeMessageActivity
                 TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
                 new Handler(Looper.getMainLooper()).postDelayed(ComposeMessageActivity.this::finishActivity, 500);
             }
-        }
-    }
-
-    private class OnDraftCreatedObserver implements Observer<Message> {
-        private final boolean updateAttachments;
-
-        OnDraftCreatedObserver(boolean updateAttachments) {
-            this.updateAttachments = updateAttachments;
-        }
-
-        @Override
-        public void onChanged(@Nullable Message message) {
-            onMessageLoaded(message, false, updateAttachments && composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty());
         }
     }
 

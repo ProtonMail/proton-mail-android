@@ -53,6 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -60,9 +61,10 @@ class ComposeMessageRepository @Inject constructor(
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
-    @Named("messages")var messagesDatabase: MessagesDatabase,
-    @Named("messages_search")val searchDatabase: MessagesDatabase,
-    val messageDetailsRepository: MessageDetailsRepository // FIXME: this should be removed){}
+    @Named("messages") var messagesDatabase: MessagesDatabase,
+    @Named("messages_search") val searchDatabase: MessagesDatabase,
+    val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
+    val dispatchers: DispatcherProvider
 ) {
 
     val lazyManager = resettableManager()
@@ -154,8 +156,8 @@ class ComposeMessageRepository @Inject constructor(
         }
 
 
-    suspend fun deleteMessageById(messageId: String, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
+    suspend fun deleteMessageById(messageId: String) =
+        withContext(dispatchers.Io) {
             messagesDatabase.deleteMessageById(messageId)
         }
 
