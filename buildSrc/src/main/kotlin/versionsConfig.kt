@@ -26,7 +26,7 @@ fun initVersions() {
     // region Kotlin
     `kotlin version` =                          "1.4.21"        // Released: Dec 07, 2020
     `coroutines version` =                      "1.4.2"         // Released: Nov 26, 2020
-    `serialization version` =                   "0.20.0"        // Released: Mar 04, 2020
+    `serialization version` =                   "1.0.1"         // Released: Oct 28, 2020
     // endregion
 
     // region Android

@@ -48,7 +48,7 @@ dependencies {
         // Kotlin
         `kotlin-jdk8`,
         `coroutines-android`,
-        `serialization-runtime`,
+        `serialization-json`,
 
         // DI
         `hilt-android`,
