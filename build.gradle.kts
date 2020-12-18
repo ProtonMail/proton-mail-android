@@ -26,6 +26,7 @@ buildscript {
 }
 
 plugins {
+    id("me.proton.tests") version "0.1" // Released: Oct 09, 2020
     `sonarQube`
 }
 
@@ -33,7 +34,6 @@ allprojects {
     repositories(repos)
 }
 
-setupTests()
 setupKotlin(
     // Enables new type inference: TODO remove with Kotlin 1.4
     "-XXLanguage:+NewInference",
