@@ -1055,7 +1055,7 @@ class MailboxActivity :
     @Subscribe
     fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
         showToast(
-            "${getString(R.string.attachment_failed)} ${event.messageSubject} ${event.attachmentName}",
+            "${getString(R.string.attachment_failed)} ${event.messageSubject}",
             Toast.LENGTH_SHORT
         )
     }

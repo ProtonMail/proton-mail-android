@@ -234,7 +234,7 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
                 } catch (Exception e) {
                     Logger.doLogException(TAG_UPDATE_AND_POST_DRAFT_JOB, "error while attaching file: " + attachment.getFilePath(), e);
                     AppUtil.postEventOnUi(new AttachmentFailedEvent(message.getMessageId(),
-                            message.getSubject(), attachment.getFileName()));
+                            message.getSubject()));
                 }
             }
             pendingActionsDatabase.deletePendingUploadByMessageId(mMessageId);

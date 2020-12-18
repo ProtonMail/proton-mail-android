@@ -133,7 +133,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
-import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
@@ -465,6 +464,8 @@ public class ComposeMessageActivity
 
         composeMessageViewModel.getDeleteResult().observe(ComposeMessageActivity.this, new CheckLocalMessageObserver());
         composeMessageViewModel.getOpenAttachmentsScreenResult().observe(ComposeMessageActivity.this, new AddAttachmentsObserver());
+        composeMessageViewModel.getSavingDraftError().observe(this, errorMessage ->
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
             if (mUpdateDraftPmMeChanged) {
                 composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
@@ -974,11 +975,6 @@ public class ComposeMessageActivity
     public void onLogoutEvent(LogoutEvent event) {
         startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         finishActivity();
-    }
-
-    @Subscribe
-    public void onAttachmentFailedEvent(AttachmentFailedEvent event) {
-        TextExtensions.showToast(this, getString(R.string.attachment_failed) + " " + event.getMessageSubject() + " " + event.getAttachmentName(), Toast.LENGTH_SHORT);
     }
 
     @Subscribe

@@ -45,7 +45,6 @@ import ch.protonmail.android.contacts.list.search.OnSearchClose
 import ch.protonmail.android.contacts.list.search.SearchExpandListener
 import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.permissions.PermissionHelper
@@ -250,12 +249,6 @@ class ContactsActivity :
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onLogoutEvent(event: LogoutEvent) {
         moveToLogin()
-    }
-
-    @Subscribe
-    @Suppress("unused")
-    fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
-        showToast(getString(R.string.attachment_failed, event.messageSubject, event.attachmentName))
     }
 
     private fun onContactsFetchedEvent(isSuccessful: Boolean) {

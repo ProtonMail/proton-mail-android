@@ -18,17 +18,12 @@
  */
 package ch.protonmail.android.events;
 
-/**
- * Created by sunny on 8/12/15.
- */
 public class AttachmentFailedEvent {
     private final String messageId;
     private final String messageSubject;
-    private final String attachmentName;
 
-    public AttachmentFailedEvent(String messageId, String messageSubject, String attachmentName){
+    public AttachmentFailedEvent(String messageId, String messageSubject) {
         this.messageId = messageId;
-        this.attachmentName = attachmentName;
         this.messageSubject = messageSubject;
     }
 
@@ -38,9 +33,5 @@ public class AttachmentFailedEvent {
 
     public String getMessageSubject() {
         return messageSubject;
-    }
-
-    public String getAttachmentName() {
-        return attachmentName;
     }
 }

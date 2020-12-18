@@ -118,7 +118,7 @@ class SaveDraft @Inject constructor(
                         updatePendingForSendMessage(createdDraftId, localDraftId)
                         deleteOfflineDraft(localDraftId)
 
-                        messageDetailsRepository.findMessageByIdBlocking(createdDraftId.orEmpty())?.let {
+                        messageDetailsRepository.findMessageByIdBlocking(createdDraftId)?.let {
                             val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
                             if (uploadResult is UploadAttachments.Result.Failure) {
                                 return@withContext Result.UploadDraftAttachmentsFailed

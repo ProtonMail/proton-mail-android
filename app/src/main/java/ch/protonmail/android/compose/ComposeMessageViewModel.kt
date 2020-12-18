@@ -104,6 +104,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val _closeComposer: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private var _setupCompleteValue = false
     private val _savingDraftComplete: MutableLiveData<Message> = MutableLiveData()
+    private val _savingDraftError: MutableLiveData<String> = MutableLiveData()
     private val _deleteResult: MutableLiveData<Event<PostResult>> = MutableLiveData()
     private val _loadingDraftResult: MutableLiveData<Message> = MutableLiveData()
     private val _messageResultError: MutableLiveData<Event<PostResult>> = MutableLiveData()
@@ -161,6 +162,8 @@ class ComposeMessageViewModel @Inject constructor(
         get() = _setupCompleteValue
     val savingDraftComplete: LiveData<Message>
         get() = _savingDraftComplete
+    val savingDraftError: LiveData<String>
+        get() = _savingDraftError
     val senderAddresses: List<String>
         get() = _senderAddresses
     val deleteResult: LiveData<Event<PostResult>>
@@ -453,9 +456,19 @@ class ComposeMessageViewModel @Inject constructor(
                 ).collect {
                     when (it) {
                         is SaveDraft.Result.Success -> onDraftSaved(it.draftId)
-                        SaveDraft.Result.SendingInProgressError -> TODO()
-                        SaveDraft.Result.OnlineDraftCreationFailed -> TODO()
-                        SaveDraft.Result.UploadDraftAttachmentsFailed -> TODO()
+                        SaveDraft.Result.OnlineDraftCreationFailed -> {
+                            val errorMessage = getStringResource(
+                                R.string.failed_saving_draft_online
+                            ).format(message.subject)
+                            _savingDraftError.postValue(errorMessage)
+                        }
+                        SaveDraft.Result.UploadDraftAttachmentsFailed -> {
+                            val attachmentFailed = R.string.attachment_failed
+                            val errorMessage = getStringResource(attachmentFailed) + message.subject
+                            _savingDraftError.postValue(errorMessage)
+                        }
+                        SaveDraft.Result.SendingInProgressError -> {
+                        }
                     }
                 }
 
@@ -466,6 +479,11 @@ class ComposeMessageViewModel @Inject constructor(
 
             _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).isDirty(false).build()
         }
+    }
+
+    private fun getStringResource(stringId: Int): String {
+        val context = ProtonMailApplication.getApplication().applicationContext
+        return context.getString(stringId)
     }
 
     private suspend fun onDraftSaved(savedDraftId: String) {
