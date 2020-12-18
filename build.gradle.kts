@@ -35,8 +35,6 @@ allprojects {
 }
 
 kotlinCompilerArgs(
-    // Enables new type inference: TODO remove with Kotlin 1.4
-    "-XXLanguage:+NewInference",
     "-Xuse-experimental=kotlin.Experimental",
     // Enables inline classes
     "-XXLanguage:+InlineClasses",
