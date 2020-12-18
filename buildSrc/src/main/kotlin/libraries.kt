@@ -20,6 +20,13 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
 
+@Deprecated(
+    "Use serialization json",
+    // Requires json 1.0+
+    ReplaceWith("`serialization-json`", "studio.forface.easygradle.dsl.`serialization-json`")
+)
+val DependencyHandler.`serialization-runtime` get() = serialization("runtime")
+
 // region Proton
 // Common
 val DependencyHandler.`Proton-kotlin-util` get() =                  protonUtil("kotlin") version `Proton-kotlin-util version`
