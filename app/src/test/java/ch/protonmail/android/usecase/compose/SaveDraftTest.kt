@@ -120,32 +120,6 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftInsertsPendingDraftInPendingActionsDatabase() {
-        runBlockingTest {
-            // Given
-            val message = Message().apply {
-                dbId = 123L
-                this.messageId = "456"
-                addressID = "addressId"
-                decryptedBody = "Message body in plain text"
-            }
-            val addressCrypto = mockk<AddressCrypto> {
-                every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
-            }
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
-
-            // When
-            saveDraft(
-                SaveDraftParameters(message, emptyList(), null, FORWARD, "previousSenderId1273")
-            )
-
-            // Then
-            coVerify { messageDetailsRepository.insertPendingDraft(123L) }
-        }
-    }
-
-    @Test
     fun saveDraftsInsertsPendingUploadWhenThereAreNewAttachments() {
         runBlockingTest {
             // Given

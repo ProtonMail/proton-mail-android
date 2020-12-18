@@ -377,24 +377,6 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
-    fun removePendingDraft() {
-        viewModelScope.launch {
-            _dbId?.let {
-                removePendingDraft(it)
-            }
-        }
-    }
-
-    fun insertPendingDraft() {
-        viewModelScope.launch {
-            _dbId?.let {
-                withContext(IO) {
-                    messageDetailsRepository.insertPendingDraft(it)
-                }
-            }
-        }
-    }
-
     fun saveDraft(message: Message, hasConnectivity: Boolean) {
         val uploadAttachments = _messageDataResult.uploadAttachments
 
@@ -515,11 +497,6 @@ class ComposeMessageViewModel @Inject constructor(
         setAttachmentList(currentAttachmentsList)
         return newAttachments
     }
-
-    private suspend fun removePendingDraft(messageDbId: Long) =
-        withContext(IO) {
-            messageDetailsRepository.deletePendingDraft(messageDbId)
-        }
 
     private suspend fun saveMessage(message: Message): Long =
         withContext(dispatchers.Io) {
@@ -697,8 +674,9 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun deleteDraft() {
         viewModelScope.launch {
-            deleteMessage(listOf(_draftId.get()))
-            removePendingDraft()
+            if (_draftId.get().isNotEmpty()) {
+                deleteMessage(listOf(_draftId.get()))
+            }
         }
     }
 
@@ -722,9 +700,8 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = UUID.randomUUID().toString()
                 _dbId = saveMessage(message)
             } else {
-                // this will ensure the message get latest message id if it was already saved in a create/update
-                // draft job and also that the message has all the latest edits in between draft saving (creation)
-                // and sending the message
+                // this will ensure the message get latest message id if it was already saved in a create/update draft job
+                // and also that the message has all the latest edits in between draft saving (creation) and sending the message
                 val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!, IO)
                 message.dbId = _dbId
                 savedMessage?.let {
@@ -738,9 +715,6 @@ class ComposeMessageViewModel @Inject constructor(
             }
 
             if (_dbId != null) {
-                messageDetailsRepository.deletePendingDraft(message.dbId!!)
-
-
                 val newAttachments = calculateNewAttachments(true)
                 postMessageServiceFactory.startSendingMessage(
                     _dbId!!,
@@ -780,21 +754,19 @@ class ComposeMessageViewModel @Inject constructor(
         signatureBuilder.append(NEW_LINE)
         signatureBuilder.append(NEW_LINE)
         signatureBuilder.append(NEW_LINE)
-        if (user != null) {
-            signature = if (!TextUtils.isEmpty(_messageDataResult.addressId)) {
-                user.getSignatureForAddress(_messageDataResult.addressId)
+        signature = if (!TextUtils.isEmpty(_messageDataResult.addressId)) {
+            user.getSignatureForAddress(_messageDataResult.addressId)
+        } else {
+            val senderAddresses = user.senderEmailAddresses
+            if (senderAddresses.isNotEmpty()) {
+                val selectedEmail = senderAddresses[0]
+                user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
             } else {
-                val senderAddresses = user.senderEmailAddresses
-                if (senderAddresses.isNotEmpty()) {
-                    val selectedEmail = senderAddresses[0]
-                    user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
-                } else {
-                    val selectedEmail = user.defaultEmail
-                    user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
-                }
+                val selectedEmail = user.defaultEmail
+                user.getSignatureForAddress(user.getSenderAddressIdByEmail(selectedEmail))
             }
-            mobileSignature = user.mobileSignature
         }
+        mobileSignature = user.mobileSignature
 
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)

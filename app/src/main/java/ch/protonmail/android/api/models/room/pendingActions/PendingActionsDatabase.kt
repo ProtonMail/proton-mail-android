@@ -73,13 +73,4 @@ abstract class PendingActionsDatabase {
 
     @Query("DELETE FROM $TABLE_PENDING_UPLOADS")
     abstract fun clearPendingUploadCache()
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertPendingDraft(pendingDraft: PendingDraft)
-
-    @Query("DELETE FROM $TABLE_PENDING_DRAFT WHERE ${COLUMN_PENDING_DRAFT_MESSAGE_ID}=:messageDbId")
-    abstract fun deletePendingDraftById(messageDbId: Long)
-
-    @Query("SELECT * FROM $TABLE_PENDING_DRAFT WHERE ${COLUMN_PENDING_DRAFT_MESSAGE_ID}=:messageDbId")
-    abstract fun findPendingDraftByDbId(messageDbId: Long): PendingDraft?
 }

@@ -90,9 +90,6 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(
                 getApplicationContext(), mUsername).getDatabase();
 
-        if (mUploadAttachments && (mNewAttachments != null && mNewAttachments.size() > 0)) {
-            pendingActionsDatabase.deletePendingDraftById(mMessageDbId);
-        }
         return RetryConstraint.CANCEL;
     }
 
@@ -146,7 +143,6 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         }
         PendingActionsDatabase actionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         actionsDatabase.deletePendingUploadByMessageId(message.getMessageId());
-        actionsDatabase.deletePendingDraftById(mMessageDbId);
     }
 
     private void saveMessage(Message message, PendingActionsDatabase pendingActionsDatabase) {

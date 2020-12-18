@@ -34,7 +34,6 @@ import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingDraft
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
@@ -462,16 +461,6 @@ class MessageDetailsRepository @Inject constructor(
     fun markRead(messageId: String) {
         jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
     }
-
-    /**
-     * TODO this have nothing to do with MessageDetails, extract to PendingActionsRepository
-     */
-    suspend fun insertPendingDraft(messageDbId: Long) =
-        withContext(dispatchers.Io) {
-            pendingActionsDatabase.insertPendingDraft(PendingDraft(messageDbId))
-        }
-
-    fun deletePendingDraft(messageDbId: Long) = pendingActionsDatabase.deletePendingDraftById(messageDbId)
 
     fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> {
         return pendingActionsDatabase.findAllPendingSendsAsync()

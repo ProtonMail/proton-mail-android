@@ -75,21 +75,17 @@ class SaveDraft @Inject constructor(
             )
         )
 
-        val messageDbId = messageDetailsRepository.saveMessageLocally(message)
-        // TODO this is likely uneeded as we never check pending drafts anywhere
-        messageDetailsRepository.insertPendingDraft(messageDbId)
-
         if (params.newAttachmentIds.isNotEmpty()) {
             pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
         }
 
+        val messageDbId = messageDetailsRepository.saveMessageLocally(message)
         pendingActionsDao.findPendingSendByDbId(messageDbId)?.let {
             // TODO allow draft to be saved in this case when starting to use SaveDraft use case in PostMessageJob too
             return@withContext flowOf(Result.SendingInProgressError)
         }
 
         return@withContext saveDraftOnline(message, params, messageId, addressCrypto)
-
     }
 
     private fun saveDraftOnline(

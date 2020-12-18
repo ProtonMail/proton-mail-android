@@ -23,7 +23,6 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
-import ch.protonmail.android.api.models.room.pendingActions.PendingDraft
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants
@@ -57,7 +56,6 @@ class PostMessageServiceFactory @Inject constructor(
         // this is temp fix
         GlobalScope.launch {
             val message = handleMessage(messageId, content, username) ?: return@launch
-            insertPendingDraft(ProtonMailApplication.getApplication(), messageId)
             handleUpdateDraft(message, uploadAttachments, newAttachments, ProtonMailApplication.getApplication())
             jobManager.addJobInBackground(UpdateAndPostDraftJob(messageId, newAttachments, uploadAttachments, oldSenderId, username))
         }
@@ -141,11 +139,5 @@ class PostMessageServiceFactory @Inject constructor(
             if (messageId == null) {
                 pendingActionsDatabase.insertPendingForSend(pendingForSending)
             }
-        }
-
-    private suspend fun insertPendingDraft(context: Context, messageDbId: Long) =
-        withContext(bgDispatcher) {
-            val pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(context).getDatabase()
-            pendingActionsDatabase.insertPendingDraft(PendingDraft(messageDbId))
         }
 }

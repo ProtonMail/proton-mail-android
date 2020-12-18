@@ -1005,7 +1005,6 @@ public class ComposeMessageActivity
         if (askForPermission) {
             contactsPermissionHelper.checkPermission();
         }
-        composeMessageViewModel.insertPendingDraft();
     }
 
     @Override
@@ -1056,7 +1055,6 @@ public class ComposeMessageActivity
     @Override
     protected void onStop() {
         super.onStop();
-        composeMessageViewModel.removePendingDraft();
         askForPermission = true;
         ProtonMailApplication.getApplication().getBus().unregister(this);
         ProtonMailApplication.getApplication().getBus().unregister(composeMessageViewModel);
@@ -1109,10 +1107,7 @@ public class ComposeMessageActivity
                     getString(R.string.yes),
                     getString(R.string.cancel),
                     unit -> {
-                        String draftId = composeMessageViewModel.getDraftId();
-                        if (!TextUtils.isEmpty(draftId)) {
-                            composeMessageViewModel.deleteDraft();
-                        }
+                        composeMessageViewModel.deleteDraft();
                         mComposeBodyEditText.setIsDirty(false);
                         finishActivity();
                         return unit;
