@@ -32,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -85,9 +86,10 @@ class NetworkConfigurator @Inject constructor(
         for (provider in dohProviders) {
             // 0 is quad9, 1 is google, 2 is cloudflare
             val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
-                val result = try {
+                val result: List<String>? = try {
                     provider.getAlternativeBaseUrls()
-                } catch (e: Exception) {
+                } catch (ioException: IOException) {
+                    Timber.w(ioException, "DoH getAlternativeBaseUrls error!")
                     null
                 }
                 if (result != null) {

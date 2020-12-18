@@ -32,6 +32,8 @@ import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val DISCONNECTION_EMISSION_WINDOW_MS = 20_000
+
 @Singleton
 class QueueNetworkUtil @Inject constructor(
     private val context: Context,
@@ -40,6 +42,7 @@ class QueueNetworkUtil @Inject constructor(
 
     private var listener: NetworkEventProvider.Listener? = null
     private var isInternetAccessible: Boolean = false
+    private var lastEmissionTime = 0L
 
     /**
      * Flow that emits false when backend replies with an error, or true when
@@ -49,12 +52,6 @@ class QueueNetworkUtil @Inject constructor(
         get() = backendExceptionFlow
 
     private val backendExceptionFlow = MutableStateFlow(true)
-
-    @Synchronized
-    private fun updateRealConnectivity(internetAccessible: Boolean) {
-        isInternetAccessible = internetAccessible
-        backendExceptionFlow.value = internetAccessible
-    }
 
     init {
         updateRealConnectivity(true) // initially we assume there is connectivity
@@ -75,6 +72,26 @@ class QueueNetworkUtil @Inject constructor(
             },
             IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         )
+    }
+
+    @Synchronized
+    private fun updateRealConnectivity(internetAccessible: Boolean) {
+        isInternetAccessible = internetAccessible
+
+        if (internetAccessible) {
+            backendExceptionFlow.value = internetAccessible
+        } else {
+            // to prevent consecutive series of disconnection emissions we introduce a disconnection
+            // emission buffer below
+            val currentTime = System.currentTimeMillis()
+            val emissionTimeDelta = currentTime - lastEmissionTime
+            Timber.v("updateRealConnectivity isInternetAccessible: $isInternetAccessible timeDelta: $emissionTimeDelta")
+            val mayEmit = emissionTimeDelta > DISCONNECTION_EMISSION_WINDOW_MS
+            if (mayEmit) {
+                lastEmissionTime = currentTime
+                backendExceptionFlow.value = internetAccessible
+            }
+        }
     }
 
     fun isConnected(): Boolean = hasConn(false)
