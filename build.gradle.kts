@@ -17,7 +17,6 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 import me.proton.core.util.gradle.setupDetekt
-import me.proton.core.util.gradle.setupKotlin
 
 buildscript {
     initVersions()
@@ -26,6 +25,7 @@ buildscript {
 }
 
 plugins {
+    id("me.proton.kotlin") version "0.1" // Released: Oct 09, 2020
     id("me.proton.tests") version "0.1" // Released: Oct 09, 2020
     `sonarQube`
 }
@@ -34,7 +34,7 @@ allprojects {
     repositories(repos)
 }
 
-setupKotlin(
+kotlinCompilerArgs(
     // Enables new type inference: TODO remove with Kotlin 1.4
     "-XXLanguage:+NewInference",
     "-Xuse-experimental=kotlin.Experimental",
