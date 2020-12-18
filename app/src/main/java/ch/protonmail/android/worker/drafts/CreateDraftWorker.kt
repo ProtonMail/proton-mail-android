@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker
+package ch.protonmail.android.worker.drafts
 
 import android.content.Context
 import androidx.hilt.Assisted
@@ -58,14 +58,14 @@ import timber.log.Timber
 import java.time.Duration
 import javax.inject.Inject
 
-internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID = "keyCreateDraftMessageDbId"
-internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_LOCAL_ID = "keyCreateDraftMessageLocalId"
-internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID = "keyCreateDraftMessageParentId"
-internal const val KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED = "keyCreateDraftMessageActionTypeSerialized"
-internal const val KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID = "keyCreateDraftPreviousSenderAddressId"
+internal const val KEY_INPUT_SAVE_DRAFT_MSG_DB_ID = "keySaveDraftMessageDbId"
+internal const val KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID = "keySaveDraftMessageLocalId"
+internal const val KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID = "keySaveDraftMessageParentId"
+internal const val KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON = "keySaveDraftMessageActionTypeSerialized"
+internal const val KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID = "keySaveDraftPreviousSenderAddressId"
 
-internal const val KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM = "keyCreateDraftErrorResult"
-internal const val KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID = "keyCreateDraftSuccessResultDbId"
+internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM = "keySaveDraftErrorResult"
+internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID = "keySaveDraftSuccessResultDbId"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
 private const val SAVE_DRAFT_MAX_RETRIES = 10
@@ -118,43 +118,32 @@ class CreateDraftWorker @WorkerInject constructor(
                 updateStoredLocalDraft(responseDraft, message)
                 Timber.i("Create Draft Worker API call succeeded")
                 Result.success(
-                    workDataOf(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID to response.messageId)
+                    workDataOf(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to response.messageId)
                 )
             },
             onFailure = {
                 handleFailure(it.message)
             }
         )
-
-        // TODO test whether this is needed, drop otherwise
-// set inline attachments from parent message that were inline previously
-//        for (Attachment atta : draftMessage.getAttachments()) {
-//            if (parentAttachmentList != null && !parentAttachmentList.isEmpty()) {
-//                for (Attachment parentAtta : parentAttachmentList) {
-//                    if (parentAtta.getKeyPackets().equals(atta.getKeyPackets())) {
-//                        atta.setInline(parentAtta.getInline());
-//                    }
-//                }
-//            }
-//        }
     }
 
     private fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
-        apiDraft.dbId = localDraft.dbId
-        apiDraft.toList = localDraft.toList
-        apiDraft.ccList = localDraft.ccList
-        apiDraft.bccList = localDraft.bccList
-        apiDraft.replyTos = localDraft.replyTos
-        apiDraft.sender = localDraft.sender
-        apiDraft.setLabelIDs(localDraft.getEventLabelIDs())
-        apiDraft.parsedHeaders = localDraft.parsedHeaders
-        apiDraft.isDownloaded = true
-        apiDraft.setIsRead(true)
-        apiDraft.numAttachments = localDraft.numAttachments
-        apiDraft.localId = localDraft.messageId
+        apiDraft.apply {
+            dbId = localDraft.dbId
+            toList = localDraft.toList
+            ccList = localDraft.ccList
+            bccList = localDraft.bccList
+            replyTos = localDraft.replyTos
+            sender = localDraft.sender
+            setLabelIDs(localDraft.getEventLabelIDs())
+            parsedHeaders = localDraft.parsedHeaders
+            isDownloaded = true
+            setIsRead(true)
+            numAttachments = localDraft.numAttachments
+            localId = localDraft.messageId
+        }
 
-        val id = messageDetailsRepository.saveMessageInDB(apiDraft)
-        Timber.d("Saved API draft in DB with DB id $id")
+        messageDetailsRepository.saveMessageInDB(apiDraft)
     }
 
     private fun handleFailure(error: String?): Result {
@@ -234,28 +223,23 @@ class CreateDraftWorker @WorkerInject constructor(
     }
 
     private fun failureWithError(error: CreateDraftWorkerErrors): Result {
-        val errorData = workDataOf(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM to error.name)
+        val errorData = workDataOf(KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }
 
     private fun getInputActionType(): Constants.MessageActionType =
         inputData
-            .getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)?.deserialize()
+            .getString(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON)?.deserialize()
             ?: NONE
 
     private fun getInputPreviousSenderAddressId() =
-        inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID)
+        inputData.getString(KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID)
 
     private fun getInputParentId() =
-        inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
+        inputData.getString(KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID)
 
     private fun getInputMessageDbId() =
-        inputData.getLong(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
-
-    enum class CreateDraftWorkerErrors {
-        MessageNotFound,
-        ServerError
-    }
+        inputData.getLong(KEY_INPUT_SAVE_DRAFT_MSG_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
@@ -272,11 +256,11 @@ class CreateDraftWorker @WorkerInject constructor(
                 .setConstraints(constraints)
                 .setInputData(
                     workDataOf(
-                        KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID to message.dbId,
-                        KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_LOCAL_ID to message.messageId,
-                        KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID to parentId,
-                        KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED to actionType.serialize(),
-                        KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID to previousSenderAddressId
+                        KEY_INPUT_SAVE_DRAFT_MSG_DB_ID to message.dbId,
+                        KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID to message.messageId,
+                        KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID to parentId,
+                        KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON to actionType.serialize(),
+                        KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID to previousSenderAddressId
                     )
                 )
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofSeconds(TEN_SECONDS))

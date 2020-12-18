@@ -53,6 +53,15 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.serialize
+import ch.protonmail.android.worker.drafts.CreateDraftWorker
+import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
+import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON
+import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_DB_ID
+import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID
+import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID
+import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID
+import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
+import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -136,11 +145,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val workSpec = requestSlot.captured.workSpec
             val constraints = workSpec.constraints
             val inputData = workSpec.input
-            val actualMessageDbId = inputData.getLong(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID, -1)
-            val actualMessageLocalId = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_LOCAL_ID)
-            val actualMessageParentId = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID)
-            val actualMessageActionType = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)
-            val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID)
+            val actualMessageDbId = inputData.getLong(KEY_INPUT_SAVE_DRAFT_MSG_DB_ID, -1)
+            val actualMessageLocalId = inputData.getString(KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID)
+            val actualMessageParentId = inputData.getString(KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID)
+            val actualMessageActionType = inputData.getString(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON)
+            val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
             assertEquals(messageParentId, actualMessageParentId)
@@ -165,9 +174,9 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val result = worker.doWork()
 
             // Then
-            val error = CreateDraftWorker.CreateDraftWorkerErrors.MessageNotFound
+            val error = CreateDraftWorkerErrors.MessageNotFound
             val expectedFailure = ListenableWorker.Result.failure(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM, error.name).build()
+                Data.Builder().putString(KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM, error.name).build()
             )
             assertEquals(expectedFailure, result)
         }
@@ -572,7 +581,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // Then
             verify { messageDetailsRepository.saveMessageInDB(responseMessage) }
             val expected = ListenableWorker.Result.success(
-                Data.Builder().putString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID, "response_message_id").build()
+                Data.Builder().putString(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID, "response_message_id").build()
             )
             assertEquals(expected, result)
         }
@@ -638,8 +647,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // Then
             val expected = ListenableWorker.Result.failure(
                 Data.Builder().putString(
-                    KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_ERROR_ENUM,
-                    CreateDraftWorker.CreateDraftWorkerErrors.ServerError.name
+                    KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
+                    CreateDraftWorkerErrors.ServerError.name
                 ).build()
             )
             assertEquals(expected, result)
@@ -647,22 +656,22 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     private fun givenPreviousSenderAddress(address: String) {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_PREVIOUS_SENDER_ADDRESS_ID) } answers { address }
+        every { parameters.inputData.getString(KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID) } answers { address }
     }
 
     private fun givenActionTypeInput(actionType: Constants.MessageActionType = NONE) {
         every {
-            parameters.inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_ACTION_TYPE_SERIALIZED)
+            parameters.inputData.getString(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON)
         } answers {
             actionType.serialize()
         }
     }
 
     private fun givenParentIdInput(parentId: String) {
-        every { parameters.inputData.getString(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_PARENT_ID) } answers { parentId }
+        every { parameters.inputData.getString(KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID) } answers { parentId }
     }
 
     private fun givenMessageIdInput(messageDbId: Long) {
-        every { parameters.inputData.getLong(KEY_INPUT_DATA_CREATE_DRAFT_MESSAGE_DB_ID, -1) } answers { messageDbId }
+        every { parameters.inputData.getLong(KEY_INPUT_SAVE_DRAFT_MSG_DB_ID, -1) } answers { messageDbId }
     }
 }

@@ -19,7 +19,6 @@
 package ch.protonmail.android.api.models.room.messages
 
 import android.provider.BaseColumns
-import android.text.TextUtils
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
@@ -220,7 +219,7 @@ data class Message @JvmOverloads constructor(
         get() {
             return replyTos
                 .asSequence()
-                .filterNot { TextUtils.isEmpty(it.address) }
+                .filter { it.address.isNotEmpty() }
                 .map { it.address }
                 .toList()
         }

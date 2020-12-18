@@ -53,6 +53,7 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
+import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest
@@ -437,19 +438,19 @@ class ComposeMessageViewModel @Inject constructor(
                     )
                 ).collect {
                     when (it) {
-                        is SaveDraft.Result.Success -> onDraftSaved(it.draftId)
-                        SaveDraft.Result.OnlineDraftCreationFailed -> {
+                        is SaveDraftResult.Success -> onDraftSaved(it.draftId)
+                        SaveDraftResult.OnlineDraftCreationFailed -> {
                             val errorMessage = getStringResource(
                                 R.string.failed_saving_draft_online
                             ).format(message.subject)
                             _savingDraftError.postValue(errorMessage)
                         }
-                        SaveDraft.Result.UploadDraftAttachmentsFailed -> {
+                        SaveDraftResult.UploadDraftAttachmentsFailed -> {
                             val attachmentFailed = R.string.attachment_failed
                             val errorMessage = getStringResource(attachmentFailed) + message.subject
                             _savingDraftError.postValue(errorMessage)
                         }
-                        SaveDraft.Result.SendingInProgressError -> {
+                        SaveDraftResult.SendingInProgressError -> {
                         }
                     }
                 }
@@ -754,7 +755,7 @@ class ComposeMessageViewModel @Inject constructor(
         signatureBuilder.append(NEW_LINE)
         signatureBuilder.append(NEW_LINE)
         signatureBuilder.append(NEW_LINE)
-        signature = if (!TextUtils.isEmpty(_messageDataResult.addressId)) {
+        signature = if (_messageDataResult.addressId.isNotEmpty()) {
             user.getSignatureForAddress(_messageDataResult.addressId)
         } else {
             val senderAddresses = user.senderEmailAddresses

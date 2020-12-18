@@ -33,11 +33,12 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.worker.CreateDraftWorker
-import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID
+import ch.protonmail.android.worker.drafts.CreateDraftWorker
+import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -56,7 +57,7 @@ class SaveDraft @Inject constructor(
 
     suspend operator fun invoke(
         params: SaveDraftParameters
-    ): Flow<Result> = withContext(dispatchers.Io) {
+    ): Flow<SaveDraftResult> = withContext(dispatchers.Io) {
         Timber.i("Saving Draft for messageId ${params.message.messageId}")
 
         val message = params.message
@@ -67,13 +68,7 @@ class SaveDraft @Inject constructor(
         val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
 
         message.messageBody = encryptedBody
-        message.setLabelIDs(
-            listOf(
-                ALL_DRAFT.messageLocationTypeValue.toString(),
-                ALL_MAIL.messageLocationTypeValue.toString(),
-                DRAFT.messageLocationTypeValue.toString()
-            )
-        )
+        setMessageAsDraft(message)
 
         if (params.newAttachmentIds.isNotEmpty()) {
             pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
@@ -81,19 +76,18 @@ class SaveDraft @Inject constructor(
 
         val messageDbId = messageDetailsRepository.saveMessageLocally(message)
         pendingActionsDao.findPendingSendByDbId(messageDbId)?.let {
-            // TODO allow draft to be saved in this case when starting to use SaveDraft use case in PostMessageJob too
-            return@withContext flowOf(Result.SendingInProgressError)
+            return@withContext flowOf(SaveDraftResult.SendingInProgressError)
         }
 
         return@withContext saveDraftOnline(message, params, messageId, addressCrypto)
     }
 
-    private fun saveDraftOnline(
+    private suspend fun saveDraftOnline(
         localDraft: Message,
         params: SaveDraftParameters,
         localDraftId: String,
         addressCrypto: AddressCrypto
-    ): Flow<Result> {
+    ): Flow<SaveDraftResult> {
         return createDraftWorker.enqueue(
             localDraft,
             params.parentId,
@@ -102,36 +96,35 @@ class SaveDraft @Inject constructor(
         )
             .filter { it.state.isFinished }
             .map { workInfo ->
-                withContext(dispatchers.Io) {
-                    if (workInfo.state == WorkInfo.State.SUCCEEDED) {
-                        val createdDraftId = requireNotNull(
-                            workInfo.outputData.getString(KEY_OUTPUT_DATA_CREATE_DRAFT_RESULT_MESSAGE_ID)
-                        )
-                        Timber.d(
-                            "Save Draft to API for messageId $localDraftId succeeded. Created draftId = $createdDraftId"
-                        )
+                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    val createdDraftId = requireNotNull(
+                        workInfo.outputData.getString(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID)
+                    )
+                    Timber.d(
+                        "Save Draft to API for messageId $localDraftId succeeded. Created draftId = $createdDraftId"
+                    )
 
-                        updatePendingForSendMessage(createdDraftId, localDraftId)
-                        deleteOfflineDraft(localDraftId)
+                    updatePendingForSendMessage(createdDraftId, localDraftId)
+                    deleteOfflineDraft(localDraftId)
 
-                        messageDetailsRepository.findMessageByIdBlocking(createdDraftId)?.let {
-                            val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
-                            if (uploadResult is UploadAttachments.Result.Failure) {
-                                return@withContext Result.UploadDraftAttachmentsFailed
-                            }
-                            pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
-                            return@withContext Result.Success(createdDraftId)
+                    messageDetailsRepository.findMessageById(createdDraftId)?.let {
+                        val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
+                        if (uploadResult is UploadAttachments.Result.Failure) {
+                            return@map SaveDraftResult.UploadDraftAttachmentsFailed
                         }
+                        pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
+                        return@map SaveDraftResult.Success(createdDraftId)
                     }
-
-                    Timber.e("Saving Draft to API for messageId $localDraftId FAILED.")
-                    return@withContext Result.OnlineDraftCreationFailed
                 }
+
+                Timber.e("Saving Draft to API for messageId $localDraftId FAILED.")
+                return@map SaveDraftResult.OnlineDraftCreationFailed
             }
+            .flowOn(dispatchers.Io)
     }
 
-    private fun deleteOfflineDraft(localDraftId: String) {
-        val offlineDraft = messageDetailsRepository.findMessageByIdBlocking(localDraftId)
+    private suspend fun deleteOfflineDraft(localDraftId: String) {
+        val offlineDraft = messageDetailsRepository.findMessageById(localDraftId)
         offlineDraft?.let {
             messageDetailsRepository.deleteMessage(offlineDraft)
         }
@@ -145,11 +138,14 @@ class SaveDraft @Inject constructor(
         }
     }
 
-    sealed class Result {
-        data class Success(val draftId: String) : Result()
-        object SendingInProgressError : Result()
-        object OnlineDraftCreationFailed : Result()
-        object UploadDraftAttachmentsFailed : Result()
+    private fun setMessageAsDraft(message: Message) {
+        message.setLabelIDs(
+            listOf(
+                ALL_DRAFT.messageLocationTypeValue.toString(),
+                ALL_MAIL.messageLocationTypeValue.toString(),
+                DRAFT.messageLocationTypeValue.toString()
+            )
+        )
     }
 
     data class SaveDraftParameters(

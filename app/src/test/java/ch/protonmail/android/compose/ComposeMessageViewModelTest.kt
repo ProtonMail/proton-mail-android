@@ -29,6 +29,7 @@ import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.compose.SaveDraft
+import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.utils.extensions.InstantExecutorExtension
@@ -111,7 +112,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val createdDraft = Message(messageId = createdDraftId, localId = "local28348")
             val testObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraft.Result.Success(createdDraftId))
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -128,7 +129,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val localDraftId = "localDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraft.Result.Success(createdDraftId))
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(Message(), hasConnectivity = false)
@@ -144,7 +145,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val localDraftId = "localDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraft.Result.Success(createdDraftId))
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(Message(), hasConnectivity = false)
