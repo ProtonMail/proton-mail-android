@@ -375,7 +375,7 @@ class ProcessPushNotificationDataWorkerTest {
 
             val mockNotification = mockk<Notification>()
             every { databaseProvider.provideNotificationsDao("username") } returns mockk(relaxed = true) {
-                every { findAllNotifications() } returns listOf(mockNotification)
+                every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
             every { processPushNotificationDataWorker invoke "fetchMessage" withArguments listOf(any<User>(), any<String>()) } returns mockMessage
@@ -415,7 +415,7 @@ class ProcessPushNotificationDataWorkerTest {
             val mockNotification2 = mockk<Notification>()
             val unreadNotifications = listOf(mockNotification1, mockNotification2)
             every { databaseProvider.provideNotificationsDao("username") } returns mockk(relaxed = true) {
-                every { findAllNotifications() } returns unreadNotifications
+                every { insertNewNotificationAndReturnAll(any()) } returns unreadNotifications
             }
             val mockMessage = mockk<Message>()
             every { processPushNotificationDataWorker invoke "fetchMessage" withArguments listOf(any<User>(), any<String>()) } returns mockMessage
@@ -445,7 +445,7 @@ class ProcessPushNotificationDataWorkerTest {
 
             val mockNotification = mockk<Notification>()
             every { databaseProvider.provideNotificationsDao("username") } returns mockk(relaxed = true) {
-                every { findAllNotifications() } returns listOf(mockNotification)
+                every { insertNewNotificationAndReturnAll(any()) } returns listOf(mockNotification)
             }
             val mockMessage = mockk<Message>()
             every { processPushNotificationDataWorker invoke "fetchMessage" withArguments listOf(any<User>(), any<String>()) } returns mockMessage

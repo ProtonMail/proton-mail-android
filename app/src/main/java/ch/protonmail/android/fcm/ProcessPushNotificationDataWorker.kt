@@ -147,9 +147,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
         // Insert current Notification in Database
         val notificationsDatabase = databaseProvider.provideNotificationsDao(user.username)
         val notification = Notification(messageId, sender, notificationBody)
-        notificationsDatabase.insertNotification(notification)
-
-        val notifications = notificationsDatabase.findAllNotifications()
+        val notifications = notificationsDatabase.insertNewNotificationAndReturnAll(notification)
         val message = fetchMessage(user, messageId)
 
         if (notifications.size > 1) {

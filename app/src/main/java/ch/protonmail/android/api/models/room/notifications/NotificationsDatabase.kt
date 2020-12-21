@@ -18,32 +18,40 @@
  */
 package ch.protonmail.android.api.models.room.notifications
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
 
-/**
- * Created by Kamil Rajtar on 14.07.18.
- */
 @Dao
-abstract class NotificationsDatabase {
+interface NotificationsDatabase {
 
-	@Query("SELECT * FROM Notification WHERE message_id=:messageId")
-	abstract fun findByMessageId(messageId: String): Notification?
+    @Query("SELECT * FROM Notification WHERE message_id=:messageId")
+    fun findByMessageId(messageId: String): Notification?
 
-	@Query("DELETE FROM Notification WHERE message_id=:messageId")
-	abstract fun deleteByMessageId(messageId: String)
+    @Query("DELETE FROM Notification WHERE message_id=:messageId")
+    fun deleteByMessageId(messageId: String)
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	abstract fun insertNotification(notification: Notification)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertNotification(notification: Notification)
 
-	@Query("DELETE FROM Notification")
-	abstract fun clearNotificationCache()
+    @Query("DELETE FROM Notification")
+    fun clearNotificationCache()
 
-	@Query("SELECT * FROM Notification")
-	abstract fun findAllNotifications(): List<Notification>
+    @Query("SELECT * FROM Notification")
+    fun findAllNotifications(): List<Notification>
 
-	@Delete
-	abstract fun deleteNotifications(notifications: List<Notification>)
+    @Delete
+    fun deleteNotifications(notifications: List<Notification>)
 
-	@Query("SELECT COUNT(${COLUMN_NOTIFICATION_MESSAGE_ID}) FROM $TABLE_NOTIFICATION")
-	abstract fun count(): Int
+    @Query("SELECT COUNT($COLUMN_NOTIFICATION_MESSAGE_ID) FROM $TABLE_NOTIFICATION")
+    fun count(): Int
+
+    @Transaction
+    fun insertNewNotificationAndReturnAll(notification: Notification): List<Notification> {
+        insertNotification(notification)
+        return findAllNotifications()
+    }
 }
