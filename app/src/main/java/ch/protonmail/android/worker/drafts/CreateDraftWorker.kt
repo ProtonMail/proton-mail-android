@@ -172,23 +172,28 @@ class CreateDraftWorker @WorkerInject constructor(
             val keyPackets = if (isSenderAddressChanged()) {
                 reEncryptAttachment(senderAddress, attachment)
             } else {
-                attachment.keyPackets!!
+                attachment.keyPackets
             }
-            draftAttachments[attachment.attachmentId!!] = keyPackets
+
+            keyPackets?.let {
+                draftAttachments[attachment.attachmentId!!] = keyPackets
+            }
         }
         return draftAttachments
     }
 
-    private fun reEncryptAttachment(senderAddress: Address, attachment: Attachment): String {
+    private fun reEncryptAttachment(senderAddress: Address, attachment: Attachment): String? {
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
         val addressCrypto = addressCryptoFactory.create(Id(previousSenderAddressId), Name(userManager.username))
         val primaryKey = senderAddress.keys
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 
-        val keyPackage = base64.decode(attachment.keyPackets!!)
-        val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
-        val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
-        return base64.encode(newKeyPackage)
+        return attachment.keyPackets?.let {
+            val keyPackage = base64.decode(it)
+            val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
+            val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
+            return base64.encode(newKeyPackage)
+        }
     }
 
     private fun isReplyActionAndAttachmentNotInline(attachment: Attachment): Boolean {

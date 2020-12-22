@@ -35,12 +35,10 @@ import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import ch.protonmail.android.utils.extensions.InstantExecutorExtension
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -113,11 +111,11 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val testObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
-            every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
+            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(message, hasConnectivity = false)
 
-            verify { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) }
+            coEvery { messageDetailsRepository.findMessageById(createdDraftId) }
             assertEquals(createdDraft, testObserver.observedValues[0])
         }
     }
@@ -130,7 +128,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
-            every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
+            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(Message(), hasConnectivity = false)
 
@@ -146,7 +144,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
-            every { messageDetailsRepository.findMessageByIdBlocking(createdDraftId) } returns createdDraft
+            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
 
             viewModel.saveDraft(Message(), hasConnectivity = false)
 
