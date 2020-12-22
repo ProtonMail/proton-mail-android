@@ -98,11 +98,14 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     @Test
     fun saveDraftCallsSaveDraftUseCaseWhenTheDraftIsNew() {
         runBlockingTest {
+            // Given
             val message = Message()
             givenViewModelPropertiesAreInitialised()
 
+            // When
             viewModel.saveDraft(message, hasConnectivity = false)
 
+            // Then
             val parameters = SaveDraft.SaveDraftParameters(
                 message,
                 emptyList(),
@@ -117,6 +120,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     @Test
     fun saveDraftReadsNewlyCreatedDraftFromRepositoryAndPostsItToLiveDataWhenSaveDraftUseCaseSucceeds() {
         runBlockingTest {
+            // Given
             val message = Message()
             val createdDraftId = "newDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = "local28348")
@@ -125,6 +129,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
 
+            // When
             viewModel.saveDraft(message, hasConnectivity = false)
 
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) }
@@ -142,8 +147,10 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
 
+            // When
             viewModel.saveDraft(Message(), hasConnectivity = false)
 
+            // Then
             coVerify { composeMessageRepository.deleteMessageById(localDraftId) }
         }
     }
@@ -151,6 +158,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     @Test
     fun saveDraftObservesMessageInComposeRepositoryToGetNotifiedWhenMessageIsSent() {
         runBlockingTest {
+            // Given
             val createdDraftId = "newDraftId"
             val localDraftId = "localDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
@@ -158,10 +166,35 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
 
+            // When
             viewModel.saveDraft(Message(), hasConnectivity = false)
 
+            // Then
             assertEquals(createdDraftId, viewModel.draftId)
             coVerify { composeMessageRepository.findMessageByIdObservable(createdDraftId) }
+        }
+    }
+
+    @Test
+    fun saveDraftCallsSaveDraftUseCaseWhenTheDraftIsExisting() {
+        runBlockingTest {
+            // Given
+            val message = Message()
+            givenViewModelPropertiesAreInitialised()
+            viewModel.draftId = "non-empty-draftId"
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = false)
+
+            // Then
+            val parameters = SaveDraft.SaveDraftParameters(
+                message,
+                emptyList(),
+                "parentId823",
+                Constants.MessageActionType.FORWARD,
+                "previousSenderAddressId"
+            )
+            coVerify { saveDraft(parameters) }
         }
     }
 

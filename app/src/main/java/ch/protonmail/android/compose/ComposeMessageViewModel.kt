@@ -397,11 +397,16 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                postMessageServiceFactory.startUpdateDraftService(
-                    _dbId!!,
-                    message.decryptedBody ?: "",
-                    newAttachments, uploadAttachments, _oldSenderAddressId
-                )
+                saveDraft(
+                    SaveDraft.SaveDraftParameters(
+                        message,
+                        newAttachments,
+                        parentId,
+                        _actionId,
+                        _oldSenderAddressId
+                    )
+                ).collect {}
+
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
                         ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
