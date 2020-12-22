@@ -327,13 +327,6 @@ public class LoginActivity extends BaseLoginActivity {
                 TextExtensions.showToast(this, R.string.invalid_credentials);
             }
             break;
-            case INCORRECT_KEY_PARAMETERS: {
-                hideProgress();
-                enableInput();
-                mSignIn.setClickable(true);
-                TextExtensions.showToast(this, R.string.incorrect_key_parameters);
-            }
-            break;
             case INVALID_SERVER_PROOF: {
                 hideProgress();
                 enableInput();
