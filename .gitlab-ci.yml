@@ -3,7 +3,7 @@ default:
 
 before_script:
   - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
-  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
+#  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
@@ -45,6 +45,8 @@ detekt analysis release:
     - release
     - prerelease
     - tags
+  except:
+    - schedules
 
 detekt analysis:
   extends: .detekt-analysis-common
@@ -72,6 +74,8 @@ detekt analysis:
     expire_in: 1 week
     paths:
       - app/build/outputs/apk
+  except:
+    - schedules
 
 build debug:
   extends: .build-debug-common
@@ -153,6 +157,8 @@ unit tests release:
 
 .firebase-tests-common:
   stage: test
+  except:
+    - schedules
   only:
     - merge_requests
     - branches
@@ -304,7 +310,7 @@ release-publish-github-tags:
   extends: .release-sync-tags-shared
   tags:
     - small
-  
+
 publish-github:
   stage: bot-release
   needs:

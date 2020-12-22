@@ -46,7 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Přihlášení se nezdařilo</string>
     <string name="invalid_server_proof">Neplatné ověření serveru</string>
     <string name="invalid_credentials">Neplatné přihlašovací údaje</string>
-    <string name="incorrect_key_parameters">Neplatné klíčové parametry</string>
+    <string name="incorrect_key_parameters">Nesprávné klíčové parametry</string>
     <string name="invalid_mailbox_password">Neplatné heslo k poštovní schránce</string>
     <string name="not_signed_up">Nejste přihlášeni do programu ProtonMail Android Beta</string>
     <string name="no_network">Žádná síť</string>
@@ -1000,7 +1000,7 @@ k úložišti.</string>
     <string name="signed_in_with">Signed in with %s</string>
     <string name="signed_in_with_logged_out_from">Byli jste odhlášeni z %1$s a přihlášeni k %2$s</string>
     <string name="connect_account_limit_title">Limit reached</string>
-    <string name="connect_account_limit_subtitle">Můžete přidat pouze jeden bezplatný účet. Odhlaste se z bezplatného účtu nebo přejděte na placený tarif.</string>
+    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
     <string name="switch_accounts_question">Přepnout účet?</string>
     <string name="switch_to_account">Přepnout na %s</string>
     <string name="login_failure_missing_keys">Účet, který se pokoušíte přidat, nemá vygenerované klíče. Chcete-li vygenerovat klíče, nastavte v aplikaci tento účet jako hlavní, nebo se přihlaste pomocí webové verze, vygenerujte klíče a poté účet v aplikaci přidejte.</string>
@@ -1027,7 +1027,7 @@ k úložišti.</string>
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
     <!-- region Swipe gestures changed dialog -->
-    <string name="swipe_gestures_changed">Gesta pro přesunutí prstem byla změněna</string>
+    <string name="swipe_gestures_changed">Akce pro přesunutí prstem byla změněna</string>
     <string name="swipe_gestures_changed_message">Po poslední aktualizaci byla gesta pro přejetí prstem přepnuta. Pokud chcete, v nastavení je můžete obnovit.</string>
     <string name="go_to_settings">Přejít do nastavení</string>
     <!-- endregion -->

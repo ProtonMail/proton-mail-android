@@ -46,7 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Inloggningen misslyckades</string>
     <string name="invalid_server_proof">Ogiltigt server autentisering</string>
     <string name="invalid_credentials">Ogiltiga inloggningsuppgifter</string>
-    <string name="incorrect_key_parameters">Incorrect key parameters</string>
+    <string name="incorrect_key_parameters">Felaktig nyckelparametrar</string>
     <string name="invalid_mailbox_password">Ogiltigt lösenord</string>
     <string name="not_signed_up">ProtonMail Android Beta ingår inte i ditt konto</string>
     <string name="no_network">Inget nätverk</string>
@@ -197,7 +197,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_inbox">Gå till inkorgen</string>
     <string name="message_sent">Meddelande skickat</string>
     <string name="message_failed">Meddelandet kunde inte skickas</string>
-    <string name="message_sending_failures">%d message sending failures</string>
+    <string name="message_sending_failures">%d meddelande kunde inte skickas</string>
     <string name="storage_limit">Lagringsgräns</string>
     <string name="edit_settings">Ändra inställningar</string>
     <string name="save_settings">Spara inställningar</string>
@@ -994,5 +994,5 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <string name="swipe_gestures_changed_message">Efter senaste uppdateringen har svepgester ändrats. Om du vill kan du återställa dem i inställningarna.</string>
     <string name="go_to_settings">Gå till inställningar</string>
     <!-- endregion -->
-    <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
+    <string name="invalid_firebase_api_key_message">Ogiltig Firebase API-nyckel. Push-meddelanden kommer inte fungera.</string>
 </resources>
