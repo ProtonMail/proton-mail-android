@@ -126,7 +126,7 @@ class CreateDraftWorker @WorkerInject constructor(
         )
     }
 
-    private fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
+    private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
         apiDraft.apply {
             dbId = localDraft.dbId
             toList = localDraft.toList
@@ -142,7 +142,7 @@ class CreateDraftWorker @WorkerInject constructor(
             localId = localDraft.messageId
         }
 
-        messageDetailsRepository.saveMessageInDB(apiDraft)
+        messageDetailsRepository.saveMessageLocally(apiDraft)
     }
 
     private fun handleFailure(error: String?): Result {

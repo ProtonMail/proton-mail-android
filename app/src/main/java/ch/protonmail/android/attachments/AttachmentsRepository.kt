@@ -128,7 +128,7 @@ class AttachmentsRepository @Inject constructor(
                 attachment.isUploaded = true
                 messageDetailsRepository.saveAttachment(attachment)
                 Timber.i("Upload attachment successful. attachmentId: ${response.attachmentID}")
-                return@withContext Result.Success
+                return@withContext Result.Success(response.attachmentID)
             }
 
             Timber.e("Upload attachment failed: ${response.error}")
@@ -151,7 +151,7 @@ class AttachmentsRepository @Inject constructor(
 
 
     sealed class Result {
-        object Success : Result()
+        data class Success(val uploadedAttachmentId: String) : Result()
         data class Failure(val error: String) : Result()
     }
 

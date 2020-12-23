@@ -54,7 +54,7 @@ class UploadAttachments @Inject constructor(
                 val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
 
                 if (attachment?.filePath == null || attachment.isUploaded || attachment.doesFileExist.not()) {
-                    Timber.e(
+                    Timber.d(
                         "Skipping attachment: not found, invalid or was already uploaded = ${attachment?.isUploaded}"
                     )
                     continue

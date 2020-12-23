@@ -62,6 +62,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     fun setUp() {
         MockKAnnotations.init(this)
         coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success
+        coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success("8237423")
     }
 
     @Test
@@ -254,7 +255,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { userManager.username } returns username
             every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
-                AttachmentsRepository.Result.Success
+                AttachmentsRepository.Result.Success("23421")
             }
 
             uploadAttachments(emptyList(), message, crypto)
@@ -283,7 +284,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
             coEvery { attachmentsRepository.upload(attachmentMock1, crypto) } answers {
-                AttachmentsRepository.Result.Success
+                AttachmentsRepository.Result.Success("234423")
             }
             coEvery { attachmentsRepository.upload(attachmentMock2, crypto) } answers {
                 AttachmentsRepository.Result.Failure("failed")

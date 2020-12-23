@@ -577,7 +577,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val result = worker.doWork()
 
             // Then
-            verify { messageDetailsRepository.saveMessageInDB(responseMessage) }
+            coVerify { messageDetailsRepository.saveMessageLocally(responseMessage) }
             val expected = ListenableWorker.Result.success(
                 Data.Builder().putString(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID, "response_message_id").build()
             )
