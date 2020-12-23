@@ -171,8 +171,6 @@ unit tests release:
 
 .firebase-tests-common:
   stage: test
-  except:
-    - schedules
   only:
     - merge_requests
     - branches
