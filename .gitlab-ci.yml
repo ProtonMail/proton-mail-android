@@ -82,10 +82,22 @@ build debug:
   needs:
     - job: detekt analysis
   except:
+    - develop
     - release
     - prerelease
     - tags
     - schedules
+
+build debug develop:
+  extends: .build-debug-common
+  needs:
+    - job: detekt analysis
+  only:
+    - develop
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleBetaDebug
+    - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
 
 build debug release:
   extends: .build-debug-common
@@ -104,6 +116,7 @@ build prerelease:
   tags:
     - large
   script:
+    - ./gradlew clean
     - ./gradlew assemblePlaystoreReleasePlayStore
   artifacts:
     expire_in: 3 week
@@ -119,6 +132,7 @@ build release:
   tags:
     - large
   script:
+    - ./gradlew clean
     - ./gradlew assemblePlaystoreReleasePlayStore
   artifacts:
     expire_in: 4 week
@@ -157,8 +171,6 @@ unit tests release:
 
 .firebase-tests-common:
   stage: test
-  except:
-    - schedules
   only:
     - merge_requests
     - branches
