@@ -109,15 +109,17 @@ class SaveDraft @Inject constructor(
 
                     messageDetailsRepository.findMessageById(createdDraftId)?.let {
                         val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
+                        pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
+
                         if (uploadResult is UploadAttachments.Result.Failure) {
                             return@map SaveDraftResult.UploadDraftAttachmentsFailed
                         }
-                        pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
                         return@map SaveDraftResult.Success(createdDraftId)
                     }
                 }
 
                 Timber.e("Saving Draft to API for messageId $localDraftId FAILED.")
+                pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
                 return@map SaveDraftResult.OnlineDraftCreationFailed
             }
             .flowOn(dispatchers.Io)

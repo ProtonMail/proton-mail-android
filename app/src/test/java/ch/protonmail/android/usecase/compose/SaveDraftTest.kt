@@ -353,7 +353,7 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftsReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() {
+    fun saveDraftsRemovesPendingUploadAndReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -387,12 +387,13 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
+            verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
             assertEquals(SaveDraftResult.OnlineDraftCreationFailed, result)
         }
     }
 
     @Test
-    fun saveDraftsReturnsErrorWhenUploadingNewAttachmentsFails() {
+    fun saveDraftsRemovesPendingUploadAndReturnsErrorWhenUploadingNewAttachmentsFails() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -428,6 +429,7 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
+            verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
             assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
         }
     }
