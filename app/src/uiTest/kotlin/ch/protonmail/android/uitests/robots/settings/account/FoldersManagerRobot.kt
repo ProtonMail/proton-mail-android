@@ -23,7 +23,10 @@ import androidx.test.espresso.contrib.RecyclerViewActions.scrollToHolder
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withLabelName
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.insert
+import ch.protonmail.android.uitests.testsHelper.uiactions.type
 
 /**
  * [FoldersManagerRobot] class contains actions and verifications for Folders functionality.
@@ -32,18 +35,74 @@ class FoldersManagerRobot {
 
     fun addFolder(name: String): FoldersManagerRobot {
         folderName(name)
-            .saveNewFolder()
+            .saveFolder()
+        return this
+    }
+
+    fun deleteFolder(name: String): FoldersManagerRobot {
+        selectFolderCheckbox(name)
+            .clickDeleteSelectedButton()
+            .confirmDeletion()
+        return this
+    }
+
+    fun editFolder(name: String, newName: String, colorPosition: Int): FoldersManagerRobot {
+        selectFolder(name)
+            .updateFolderName(newName)
+            .saveFolder()
+        return this
+    }
+
+    fun navigateUpToLabelsAndFolders(): LabelsAndFoldersRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return LabelsAndFoldersRobot()
+    }
+
+    private fun clickDeleteSelectedButton(): DeleteSelectedFoldersDialogRobot {
+        UIActions.id.clickViewWithId(R.id.delete_labels)
+        return DeleteSelectedFoldersDialogRobot()
+    }
+
+    private fun clickFolder(name: String): FoldersManagerRobot {
+        UIActions.id.clickViewWithId(R.id.save_new_label)
         return this
     }
 
     private fun folderName(name: String): FoldersManagerRobot {
-        UIActions.id.typeTextIntoFieldWithId(R.id.label_name, name)
+        UIActions.wait.forViewWithIdAndParentId(R.id.label_name, R.id.add_label_container).type(name)
         return this
     }
 
-    private fun saveNewFolder(): FoldersManagerRobot {
-        UIActions.id.clickViewWithId(R.id.save_new_label)
+    private fun updateFolderName(name: String): FoldersManagerRobot {
+        UIActions.wait.forViewWithIdAndParentId(R.id.label_name, R.id.add_label_container).insert(name)
         return this
+    }
+
+    private fun saveFolder(): FoldersManagerRobot {
+        UIActions.wait.forViewWithId(R.id.save_new_label).click()
+        return this
+    }
+
+    private fun selectFolder(name: String): FoldersManagerRobot {
+        UIActions.wait.forViewWithId(R.id.labels_recycler_view)
+        UIActions.recyclerView.common.clickOnRecyclerViewMatchedItem(R.id.labels_recycler_view, withLabelName(name))
+        return this
+    }
+
+    private fun selectFolderCheckbox(name: String): FoldersManagerRobot {
+        UIActions.wait.forViewWithId(R.id.labels_recycler_view)
+        UIActions.recyclerView.common
+            .clickOnRecyclerViewItemChild(R.id.labels_recycler_view, withLabelName(name), R.id.label_check)
+        return this
+    }
+
+
+    class DeleteSelectedFoldersDialogRobot {
+
+        fun confirmDeletion(): FoldersManagerRobot {
+            UIActions.system.clickPositiveDialogButton()
+            return FoldersManagerRobot()
+        }
     }
 
     /**
@@ -53,6 +112,10 @@ class FoldersManagerRobot {
 
         fun folderWithNameShown(name: String) {
             onView(withId(R.id.labels_recycler_view)).perform(scrollToHolder(withLabelName(name)))
+        }
+
+        fun folderWithNameDoesNotExist(name: String) {
+            UIActions.wait.untilViewWithTextIsGone(name)
         }
     }
 

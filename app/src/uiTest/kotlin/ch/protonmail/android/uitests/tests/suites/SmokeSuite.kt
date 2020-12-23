@@ -24,6 +24,7 @@ import ch.protonmail.android.uitests.tests.composer.SendNewMessageTests
 import ch.protonmail.android.uitests.tests.contacts.ContactsTests
 import ch.protonmail.android.uitests.tests.inbox.InboxTests
 import ch.protonmail.android.uitests.tests.inbox.SearchTests
+import ch.protonmail.android.uitests.tests.labelsfolders.LabelsFoldersTests
 import ch.protonmail.android.uitests.tests.login.LoginTests
 import ch.protonmail.android.uitests.tests.manageaccounts.MultiuserManagementTests
 import ch.protonmail.android.uitests.tests.menu.MenuTests
@@ -43,6 +44,7 @@ import org.junit.runners.Suite
     ReplyToMessageTests::class,
     ContactsTests::class,
     InboxTests::class,
+    LabelsFoldersTests::class,
     LoginTests::class,
     MultiuserManagementTests::class,
     MenuTests::class,

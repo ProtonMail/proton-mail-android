@@ -33,20 +33,19 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.intent.IntentCallback
 import androidx.test.runner.intent.IntentMonitorRegistry
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import org.jetbrains.annotations.Contract
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.ArrayList
 
-/**
- * Created by Nikola Nolchevski on 13-May-20.
- */
 object MockAddAttachmentIntent {
     private fun createImage(@IdRes resourceId: Int) {
         val icon = BitmapFactory.decodeResource(
             InstrumentationRegistry.getInstrumentation().targetContext.resources,
-            resourceId)
+            resourceId
+        )
         val file = File(InstrumentationRegistry.getInstrumentation().targetContext.externalCacheDir, "pickImageResult.jpeg")
         try {
             val fos = FileOutputStream(file)
@@ -95,7 +94,8 @@ object MockAddAttachmentIntent {
                     val imageUri = intent.getParcelableExtra<Uri>(MediaStore.EXTRA_OUTPUT)!!
                     val image = BitmapFactory.decodeResource(
                         InstrumentationRegistry.getInstrumentation().targetContext.resources,
-                        resourceId)
+                        resourceId
+                    )
                     val out = InstrumentationRegistry.getInstrumentation().targetContext.contentResolver.openOutputStream(imageUri)
                     image.compress(Bitmap.CompressFormat.JPEG, 100, out)
                     assert(out != null)

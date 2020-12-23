@@ -19,13 +19,15 @@
 package ch.protonmail.android.uitests.robots.settings
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.actions.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
+import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
+import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsValue
 import ch.protonmail.android.uitests.robots.settings.autolock.AutoLockRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.User
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [SettingsRobot] class contains actions and verifications for Settings view.
@@ -42,6 +44,16 @@ class SettingsRobot {
         return this
     }
 
+    fun menuDrawer(): MenuRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return MenuRobot()
+    }
+
+    fun openUserAccountSettings(user: User): AccountSettingsRobot {
+        selectSettingsItemByValue(user.email)
+        return AccountSettingsRobot()
+    }
+
     fun selectAutoLock(): AutoLockRobot {
         selectItemByHeader(autoLockText)
         return AutoLockRobot()
@@ -49,13 +61,15 @@ class SettingsRobot {
 
     fun selectSettingsItemByValue(value: String): AccountSettingsRobot {
         UIActions.wait.forViewWithId(R.id.settingsRecyclerView)
-        UIActions.recyclerView.clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsValue(value))
+        UIActions.recyclerView
+            .common.clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsValue(value))
         return AccountSettingsRobot()
     }
 
     fun selectItemByHeader(header: String) {
         UIActions.wait.forViewWithId(R.id.settingsRecyclerView)
-        UIActions.recyclerView.clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsHeader(header))
+        UIActions.recyclerView
+            .common.clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsHeader(header))
     }
 
     /**

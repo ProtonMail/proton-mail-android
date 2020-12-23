@@ -20,8 +20,8 @@
 package ch.protonmail.android.uitests.robots.contacts
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.insert
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.insert
 
 /**
  * [AddContactGroupRobot] class contains actions and verifications for Add/Edit Contact Groups.

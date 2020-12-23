@@ -5,8 +5,8 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatchers.withPrimaryAccountInAccountManager
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
 
 /**
  * [AccountManagerRobot] class contains actions and verifications for Account Manager functionality.
@@ -42,7 +42,7 @@ open class AccountManagerRobot {
     }
 
     private fun accountMoreMenu(email: String): AccountManagerRobot {
-        UIActions.recyclerView.clickAccountManagerViewItem(
+        UIActions.recyclerView.manageAccounts.clickAccountManagerViewItem(
             accountsRecyclerViewId,
             email,
             R.id.accUserMoreMenu
@@ -91,17 +91,15 @@ open class AccountManagerRobot {
         }
 
         fun switchedToAccount(username: String) {
-            UIActions
-                .recyclerView
-                .scrollToRecyclerViewMatchedItem(
-                    accountsRecyclerViewId,
-                    withPrimaryAccountInAccountManager(
-                        stringFromResource(
-                            R.string.manage_accounts_user_primary,
-                            username
-                        )
+            UIActions.recyclerView.common.scrollToRecyclerViewMatchedItem(
+                accountsRecyclerViewId,
+                withPrimaryAccountInAccountManager(
+                    stringFromResource(
+                        R.string.manage_accounts_user_primary,
+                        username
                     )
                 )
+            )
         }
     }
 

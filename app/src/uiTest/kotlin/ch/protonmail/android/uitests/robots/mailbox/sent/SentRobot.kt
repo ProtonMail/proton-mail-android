@@ -19,11 +19,12 @@
 package ch.protonmail.android.uitests.robots.mailbox.sent
 
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.ApplyLabelRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MoveToFolderRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.SelectionStateRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [SentRobot] class implements [MailboxRobotInterface],
@@ -66,9 +67,9 @@ class SentRobot : MailboxRobotInterface {
             return this
         }
 
-        override fun addLabel(): SentRobot {
+        override fun addLabel(): ApplyLabelRobot {
             super.addLabel()
-            return SentRobot()
+            return ApplyLabelRobot()
         }
 
         override fun addFolder(): MoveToFolderRobot {
@@ -90,6 +91,22 @@ class SentRobot : MailboxRobotInterface {
         override fun moveToExistingFolder(name: String): InboxRobot {
             super.moveToExistingFolder(name)
             return InboxRobot()
+        }
+    }
+
+    /**
+     * Handles Move to folder dialog actions.
+     */
+    class ApplyLabelRobot : ApplyLabelRobotInterface {
+
+        override fun selectLabelByName(name: String): ApplyLabelRobot {
+            super.selectLabelByName(name)
+            return ApplyLabelRobot()
+        }
+
+        override fun apply(): SentRobot {
+            super.apply()
+            return SentRobot()
         }
     }
 

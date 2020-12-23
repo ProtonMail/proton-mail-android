@@ -91,6 +91,7 @@ build debug develop:
     - job: detekt analysis
   only:
     - develop
+    - schedules
   script:
     - ./gradlew clean
     - ./gradlew assembleBetaDebug

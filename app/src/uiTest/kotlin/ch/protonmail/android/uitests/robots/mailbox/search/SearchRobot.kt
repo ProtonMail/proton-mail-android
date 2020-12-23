@@ -26,7 +26,7 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [SearchRobot] class contains actions and verifications for Search functionality.
@@ -40,15 +40,14 @@ class SearchRobot {
 
     fun clickSearchedMessageBySubject(subject: String): MessageRobot {
         UIActions.recyclerView
-            .waitForBeingPopulated(messagesRecyclerViewId)
-            .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
         return MessageRobot()
     }
 
     fun clickSearchedDraftBySubject(subject: String): ComposerRobot {
-        UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
-        UIActions.recyclerView
-            .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+        UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+        UIActions.recyclerView.common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
         return ComposerRobot()
     }
 
@@ -59,8 +58,8 @@ class SearchRobot {
 
     fun clickSearchedMessageBySubjectPart(subject: String): MessageRobot {
         UIActions.recyclerView
-            .waitForBeingPopulated(messagesRecyclerViewId)
-            .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectContaining(subject))
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectContaining(subject))
         return MessageRobot()
     }
 
@@ -71,8 +70,8 @@ class SearchRobot {
 
         fun searchedMessageFound() {
             UIActions.recyclerView
-                .waitForBeingPopulated(messagesRecyclerViewId)
-                .scrollToRecyclerViewMatchedItem(
+                .common.waitForBeingPopulated(messagesRecyclerViewId)
+                .common.scrollToRecyclerViewMatchedItem(
                     R.id.messages_list_view,
                     withFirstInstanceMessageSubject(TestData.searchMessageSubject)
                 )
