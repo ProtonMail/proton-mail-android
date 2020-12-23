@@ -147,4 +147,12 @@ object TestData {
 
     const val editedPassword = "123"
     const val editedPasswordHint = "ProtonMail"
+
+    // Share intent file names
+    const val pdfFile = "lorem_ipsum.pdf"
+    const val zipFile = "lorem_ipsum.zip"
+    const val pngFile = "lorem_ipsum.png"
+    const val jpegFile = "lorem_ipsum.jpeg"
+    const val docxFile = "lorem_ipsum.docx"
+
 }
