@@ -157,9 +157,17 @@ unit tests:
   needs:
     - job: build debug
   except:
+    - develop
     - release
     - prerelease
     - tags
+
+unit tests develop:
+  extends: .unit-tests-common
+  needs:
+    - job: build debug develop
+  only:
+    - develop
 
 unit tests release:
   extends: .unit-tests-common
@@ -203,9 +211,17 @@ firebase tests:
   needs:
     - job: build debug
   except:
+    - develop
     - release
     - prerelease
     - tags
+
+firebase tests develop:
+  extends: .firebase-tests-common
+  needs:
+    - job: build debug develop
+  only:
+    - develop
 
 firebase tests release:
   extends: .firebase-tests-common
