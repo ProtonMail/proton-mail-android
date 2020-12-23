@@ -50,21 +50,26 @@ class UploadAttachments @Inject constructor(
         withContext(dispatchers.Io) {
             Timber.i("UploadAttachments started for messageId ${message.messageId} - attachmentIds $attachmentIds")
 
-            for (attachmentId in attachmentIds) {
+            attachmentIds.forEach { attachmentId ->
                 val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
 
                 if (attachment?.filePath == null || attachment.isUploaded || attachment.doesFileExist.not()) {
                     Timber.d(
                         "Skipping attachment: not found, invalid or was already uploaded = ${attachment?.isUploaded}"
                     )
-                    continue
+                    return@forEach
                 }
                 attachment.setMessage(message)
 
                 val result = attachmentsRepository.upload(attachment, crypto)
 
-                if (result is AttachmentsRepository.Result.Failure) {
-                    return@withContext Result.Failure(result.error)
+                when (result) {
+                    is AttachmentsRepository.Result.Success -> {
+                        updateMessageWithUploadedAttachment(message, result.uploadedAttachmentId)
+                    }
+                    is AttachmentsRepository.Result.Failure -> {
+                        return@withContext Result.Failure(result.error)
+                    }
                 }
 
                 attachment.deleteLocalFile()
@@ -81,6 +86,20 @@ class UploadAttachments @Inject constructor(
 
             return@withContext Result.Success
         }
+
+    private suspend fun updateMessageWithUploadedAttachment(
+        message: Message,
+        uploadedAttachmentId: String
+    ) {
+        val uploadedAttachment = messageDetailsRepository.findAttachmentById(uploadedAttachmentId)
+        uploadedAttachment?.let {
+            val attachments = message.Attachments.toMutableList()
+            attachments.removeIf { it.fileName == uploadedAttachment.fileName }
+            attachments.add(uploadedAttachment)
+            message.setAttachmentList(attachments)
+            messageDetailsRepository.saveMessageLocally(message)
+        }
+    }
 
     sealed class Result {
         object Success : Result()
