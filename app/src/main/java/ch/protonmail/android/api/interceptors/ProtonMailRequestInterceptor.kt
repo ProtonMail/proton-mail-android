@@ -64,32 +64,34 @@ class ProtonMailRequestInterceptor private constructor(
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        val request: Request = applyHeadersToRequest(chain.request())
+        synchronized(this) {
+            val request: Request = applyHeadersToRequest(chain.request())
 
-        // try the request
-        var response: Response? = null
-        try {
-            requestCount++
-            Timber.d("Intercept: advancing request with url: " + request.url())
-            response = chain.proceed(request)
+            // try the request
+            var response: Response? = null
+            try {
+                requestCount++
+                Timber.d("Intercept: advancing request with url: " + request.url())
+                response = chain.proceed(request)
 
-        } catch (exception: IOException) {
-            Timber.d(exception, "Intercept: IOException with url: " + request.url())
-            AppUtil.postEventOnUi(ConnectivityEvent(false))
-            networkUtils.setCurrentlyHasConnectivity(false)
+            } catch (exception: IOException) {
+                Timber.d(exception, "Intercept: IOException with url: " + request.url())
+                AppUtil.postEventOnUi(ConnectivityEvent(false))
+                networkUtils.setCurrentlyHasConnectivity(false)
+            }
+
+            requestCount--
+            if (response == null) {
+                return chain.proceed(request)
+            } else {
+                networkUtils.setCurrentlyHasConnectivity(true)
+                AppUtil.postEventOnUi(ConnectivityEvent(true))
+            }
+
+            // check if expired token, otherwise just pass the original response on
+            val reAuthResponse = checkIfTokenExpired(chain, request, response)
+
+            return reAuthResponse ?: response
         }
-
-        requestCount--
-        if (response == null) {
-            return chain.proceed(request)
-        } else {
-            networkUtils.setCurrentlyHasConnectivity(true)
-            AppUtil.postEventOnUi(ConnectivityEvent(true))
-        }
-
-        // check if expired token, otherwise just pass the original response on
-        val reAuthResponse = checkIfTokenExpired(chain, request, response)
-
-        return reAuthResponse ?: response
     }
 }
