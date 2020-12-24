@@ -191,6 +191,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         getMessageDetailsRepository().reloadDependenciesForUser(mUsername);
         ContactsDatabase contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
+
         if (mMessageDbId == null) {
             Exception e = new RuntimeException("Message id is null");
             if (!BuildConfig.DEBUG) {
@@ -209,12 +210,10 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     .withTag("EXCEPTION", "MESSAGE NULL")
                     .withTag("DBID", String.valueOf(mMessageDbId));
             Sentry.capture(eventBuilder.withMessage("username same with primary: " + (mUsername.equals(getUserManager().getUsername()))).build());
+            Timber.w("Message is null! Can not continue");
+            throw new IllegalArgumentException("Message is null! Can not continue");
         }
 
-        if (message == null) {
-            Timber.w("Message is null! Cannot continue");
-            return;
-        }
         String messageBody = message.getMessageBody();
         AddressCrypto crypto = Crypto.forAddress(getUserManager(), mUsername, message.getAddressID());
 
@@ -345,7 +344,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 eventBuilder.withMessage("Draft response is null");
                 Sentry.capture(eventBuilder.build());
             }
-            return;
+            throw new IllegalStateException("Draft response is null");
         }
 
         if (draftResponse.getCode() != RESPONSE_CODE_OK) {
@@ -354,7 +353,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
                 Sentry.capture(eventBuilder.build());
                 sendErrorSending(draftResponse.getError());
             }
-            return;
+            throw new RuntimeException(draftResponse.getError());
         }
 
         Message draftMessage = draftResponse.getMessage();
@@ -404,7 +403,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
                         Sentry.capture(eventBuilder.withMessage(builder.toString()).build());
                     }
                     sendErrorSending(errorSending);
-                    return;
+                    throw new RuntimeException(errorSending);
                 }
             } else {
                 if (messageSendResponse != null) {
