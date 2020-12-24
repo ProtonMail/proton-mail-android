@@ -115,8 +115,19 @@ interface MessageService {
 
     @PUT("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateDraft(@Path("messageId") messageId: String,
-                    @Body draftBody: DraftBody, @Tag retrofitTag: RetrofitTag): Call<MessageResponse>
+    fun updateDraftCall(
+        @Path("messageId") messageId: String,
+        @Body draftBody: DraftBody,
+        @Tag retrofitTag: RetrofitTag
+    ): Call<MessageResponse>
+
+    @PUT("mail/v4/messages/{messageId}")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    fun updateDraft(
+        @Path("messageId") messageId: String,
+        @Body draftBody: DraftBody,
+        @Tag retrofitTag: RetrofitTag
+    ): MessageResponse
 
     @POST("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

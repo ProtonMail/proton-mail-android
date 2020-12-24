@@ -329,7 +329,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             newMessage.getMessage().setSender(new ServerMessageSender(message.getSenderName(), message.getSenderEmail()));
         }
 
-        final MessageResponse draftResponse = getApi().updateDraft(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
+        final MessageResponse draftResponse = getApi().updateDraftBlocking(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
         EventBuilder eventBuilder = new EventBuilder()
                 .withTag(SENDING_FAILED_TAG, getAppVersion())
                 .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)

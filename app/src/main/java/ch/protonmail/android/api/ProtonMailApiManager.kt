@@ -318,7 +318,17 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
 
-    override fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, draftBody, retrofitTag)
+    override fun updateDraftBlocking(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse? = api.updateDraftBlocking(messageId, newMessage, retrofitTag)
+
+    override suspend fun updateDraft(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse = api.updateDraft(messageId, newMessage, retrofitTag)
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> = api.sendMessage(messageId, message, retrofitTag)
 

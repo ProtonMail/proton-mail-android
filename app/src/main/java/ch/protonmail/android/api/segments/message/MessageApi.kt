@@ -130,9 +130,15 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = service.createDraft(draftBody)
 
+    override suspend fun updateDraft(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse = service.updateDraft(messageId, newMessage, retrofitTag)
+
     @Throws(IOException::class)
-    override fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? =
-        ParseUtils.parse(service.updateDraft(messageId, draftBody, retrofitTag).execute())
+    override fun updateDraftBlocking(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? =
+        ParseUtils.parse(service.updateDraftCall(messageId, newMessage, retrofitTag).execute())
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> =
         service.sendMessage(messageId, message, retrofitTag)
