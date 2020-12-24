@@ -2153,9 +2153,13 @@ public class ComposeMessageActivity
             if (!mNetworkUtil.isConnected()) {
                 sendingToast = R.string.sending_message_offline;
             }
-
-            TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
-            new Handler().postDelayed(ComposeMessageActivity.this::finishActivity, 500);
+            if(dbId == null){
+                Timber.w("Error while saving message. DbId is null.");
+                TextExtensions.showToast(ComposeMessageActivity.this, R.string.error_saving_try_again);
+            } else {
+                TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
+                new Handler(Looper.getMainLooper()).postDelayed(ComposeMessageActivity.this::finishActivity, 500);
+            }
         }
     }
 
