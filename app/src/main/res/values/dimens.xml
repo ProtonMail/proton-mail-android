@@ -137,4 +137,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <dimen name="image_final_width">42dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
 
+    <dimen name="custom_check_box_size">24dp</dimen>
+
 </resources>

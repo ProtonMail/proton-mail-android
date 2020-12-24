@@ -31,8 +31,8 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.externalGmailPGPEncrypted
 import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.mailer.Mail
 import org.junit.Before
 import org.junit.Test

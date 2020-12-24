@@ -27,8 +27,8 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 open class SpamRobot : MailboxRobotInterface {
 
-    override fun swipeLeftMessageAtPosition(messagePosition: Int): SpamRobot {
-        super.swipeLeftMessageAtPosition(messagePosition)
+    override fun swipeLeftMessageAtPosition(position: Int): SpamRobot {
+        super.swipeLeftMessageAtPosition(position)
         return this
     }
 

@@ -264,15 +264,6 @@ public class OpenPGP {
         return false;
     }
 
-    public boolean checkKeyIsCorrect(@NonNull String armoredKey, @NonNull byte[] passphrase) {
-        try {
-            return Crypto.newKeyFromArmored(armoredKey).unlock(passphrase).check();
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return false;
-    }
-
     /**
      * Builds KeyRing from single armored Private Key and unlocks it with provided passphrase.
      */

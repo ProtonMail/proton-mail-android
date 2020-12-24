@@ -46,7 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">ログインに失敗しました。</string>
     <string name="invalid_server_proof">無効なサーバー証明です。</string>
     <string name="invalid_credentials">無効な認証情報です。</string>
-    <string name="incorrect_key_parameters">Incorrect key parameters</string>
+    <string name="incorrect_key_parameters">キーパラメータが正しくありません</string>
     <string name="invalid_mailbox_password">無効なメールボックスのパスワードです。</string>
     <string name="not_signed_up">ProtonMail Android ベータ版にサインアップしていません。</string>
     <string name="no_network">ネットワーク接続がありません。</string>
@@ -941,24 +941,24 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="signed_in_with">%s にログイン</string>
     <string name="signed_in_with_logged_out_from">%1$s からログアウトし %2$s にログイン</string>
     <string name="connect_account_limit_title">アカウントのご利用限度に達しました。</string>
-    <string name="connect_account_limit_subtitle">You cannot add another free ProtonMail account. Only one free ProtonMail account can be added. Please logout of your other free account or upgrade one of your free accounts to a paid account.</string>
+    <string name="connect_account_limit_subtitle">複数の無料プランのProtonMailアカウントを追加することはできません。追加できる無料プランのProtonMailアカウントは1つだけです。他の無料プランのアカウントからログアウトするか、無料プランのアカウントのいずれかを有料プランにアップグレードしてください。</string>
     <string name="switch_accounts_question">アカウントを切り替えますか？</string>
     <string name="switch_to_account">%s に切り替える</string>
     <string name="login_failure_missing_keys">The account you are trying to add does not have generated keys. Please add this account as a first account on the app, or log in via the web version, to generate keys and then add it as a additional account in the app.</string>
     <!-- endregion -->
     <!-- region Compose shortcut -->
     <string name="shortcut_compose">新規作成</string>
-    <string name="shortcut_compose_new_message">Compose a new message</string>
+    <string name="shortcut_compose_new_message">新しいメッセージを作成する</string>
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">一般的な接続の問題と解決策</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;インターネットに接続されていない&lt;/i&gt; - インターネットに接続されていることをご確認ください。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;インターネットサービスプロバイダー (ISP) の問題&lt;/i&gt; - 別のネットワークから Proton への接続を試みてみてください (または &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; もしくは &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;を使用してみてください) 。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府等による検閲&lt;/i&gt; - あなたの国(の政府)が、 Proton への接続を検閲(遮断)している可能性があります。 Proton に接続するために &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (もしくは他のVPN) または &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; を使用してみてください。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;ウイルス対策ソフトウェアの干渉&lt;/i&gt; - ウイルス対策ソフトウェアを一時的に無効にするか、削除することで解決する可能性もあります。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシまたはファイアウォールの干渉&lt;/i&gt; - プロキシまたはファイアウォールを無効にするか、ネットワーク管理者に問い合わせてみてください。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton のサービスが一時的にダウンしている&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton ステータス&lt;/a&gt; から私たちのシステムの動作状況をご確認ください。
+&lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;電子メール&lt;/a&gt; (support@protonmail.com), または &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.から直接私たちにお問い合わせください。
 </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -972,5 +972,5 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="swipe_gestures_changed_message">最新の更新で、スワイプ操作が変更されました。必要に応じて、設定からスワイプ操作の設定をリセットできます。</string>
     <string name="go_to_settings">設定を開く</string>
     <!-- endregion -->
-    <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
+    <string name="invalid_firebase_api_key_message">Firebase API キーが無効です。プッシュ通知は動作しません。</string>
 </resources>

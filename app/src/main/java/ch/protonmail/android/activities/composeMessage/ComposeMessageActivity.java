@@ -675,7 +675,7 @@ public class ComposeMessageActivity
         mProgressView.setVisibility(View.GONE);
         boolean isRetry = false;
         for (FetchPublicKeysResult result : results) {
-            isRetry = isRetry || result.isSendRetryRequired() ;
+            isRetry = isRetry || result.isSendRetryRequired();
             Map<String, String> keys = result.getKeysMap();
             Constants.RecipientLocationType location = result.getRecipientsType();
             if (location == Constants.RecipientLocationType.TO) {
@@ -1005,7 +1005,6 @@ public class ComposeMessageActivity
             composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
             mUpdateDraftPmMeChanged = false;
         }
-        disableSendButton(false);
     }
 
     @Override
@@ -1739,7 +1738,7 @@ public class ComposeMessageActivity
         composeMessageViewModel.onMessageLoaded(loadedMessage);
         renderViews();
         new SaveMassageTask(messageDetailsRepository, loadedMessage).execute();
-        new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false),500);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
     }
 
     private void setInlineContent(String messageBody, boolean clean, boolean isPlainText) {
@@ -2154,9 +2153,13 @@ public class ComposeMessageActivity
             if (!mNetworkUtil.isConnected()) {
                 sendingToast = R.string.sending_message_offline;
             }
-
-            TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
-            new Handler().postDelayed(ComposeMessageActivity.this::finishActivity, 500);
+            if(dbId == null){
+                Timber.w("Error while saving message. DbId is null.");
+                TextExtensions.showToast(ComposeMessageActivity.this, R.string.error_saving_try_again);
+            } else {
+                TextExtensions.showToast(ComposeMessageActivity.this, sendingToast);
+                new Handler(Looper.getMainLooper()).postDelayed(ComposeMessageActivity.this::finishActivity, 500);
+            }
         }
     }
 
@@ -2271,6 +2274,7 @@ public class ComposeMessageActivity
                 fillMessageFromUserInputs(localMessage, true);
                 localMessage.setExpirationTime(0);
                 composeMessageViewModel.saveDraft(localMessage, composeMessageViewModel.getParentId(), mNetworkUtil.isConnected());
+                new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
                 if (userAction == UserAction.SAVE_DRAFT_EXIT) {
                     finishActivity();
                 }

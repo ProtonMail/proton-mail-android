@@ -22,8 +22,8 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category

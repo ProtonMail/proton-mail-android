@@ -34,6 +34,7 @@ class LoginRobot {
         return username(user.name)
             .password(user.password)
             .signIn()
+            .refreshMessageList()
     }
 
     fun loginUserWithTwoFa(user: User): TwoFaRobot {

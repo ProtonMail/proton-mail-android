@@ -28,8 +28,8 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 class TrashRobot : MailboxRobotInterface {
 
-    override fun swipeLeftMessageAtPosition(messagePosition: Int): TrashRobot {
-        super.swipeLeftMessageAtPosition(messagePosition)
+    override fun swipeLeftMessageAtPosition(position: Int): TrashRobot {
+        super.swipeLeftMessageAtPosition(position)
         return this
     }
 

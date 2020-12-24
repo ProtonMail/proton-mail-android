@@ -18,6 +18,12 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
+import android.content.Intent
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasType
+import androidx.test.espresso.intent.matcher.UriMatchers.hasPath
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
@@ -28,6 +34,8 @@ import ch.protonmail.android.uitests.robots.mailbox.spam.SpamRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
 import ch.protonmail.android.uitests.testsHelper.click
+import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.containsString
 
 /**
  * [MessageRobot] class contains actions and verifications for Message detail view functionality.
@@ -37,6 +45,16 @@ class MessageRobot {
     fun selectFolder(folderName: String): MessageRobot {
         UIActions.wait.forViewWithId(R.id.folders_list_view)
         UIActions.allOf.clickViewWithIdAndText(R.id.folder_name, folderName)
+        return this
+    }
+
+    fun expandAttachments(): MessageRobot {
+        UIActions.wait.forViewWithId(R.id.attachments_toggle).click()
+        return this
+    }
+
+    fun clickAttachment(attachmentFileName: String): MessageRobot {
+        UIActions.wait.forViewWithIdAndText(R.id.attachment_name, attachmentFileName).click()
         return this
     }
 
@@ -98,6 +116,13 @@ class MessageRobot {
         return DraftsRobot()
     }
 
+    fun clickLoadEmbeddedImagesButton(): MessageRobot {
+        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+        UIActions.wait.forViewWithIdAndAncestorId(R.id.loadContentButton, R.id.containerLoadEmbeddedImagesContainer)
+            .click()
+        return this
+    }
+
     inner class MessageMoreOptions {
 
         fun viewHeaders(): ViewHeadersRobot {
@@ -139,11 +164,30 @@ class MessageRobot {
         fun messageWebViewContainerShown() {
             UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
         }
+
+        fun loadEmbeddedImagesButtonIsGone() {
+            UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+            UIActions.wait.untilViewWithIdIsNotShown(R.id.containerLoadEmbeddedImagesContainer)
+        }
+
+        fun intentWithActionFileNameAndMimeTypeSent(fileName: String, mimeType: String) {
+            UIActions.wait.forIntent(allOf(
+                hasAction(Intent.ACTION_VIEW),
+                hasData(hasPath(containsString(fileName.split('.')[0]))),
+                hasData(hasPath(containsString(fileName.split('.')[1]))),
+                hasType(mimeType))
+            )
+        }
     }
 
     inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
 
     companion object {
         const val sendMessageId = R.id.send_message
+        const val attachmentToggleId = R.id.attachments_toggle
+        const val attachmentTitleId = R.id.attachment_title
+        const val attachmentNameId = R.id.attachment_name
+        const val downloadAttachmentButtonId = R.id.attachment_name
+
     }
 }

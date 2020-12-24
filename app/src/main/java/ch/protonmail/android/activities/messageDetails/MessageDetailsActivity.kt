@@ -142,9 +142,9 @@ internal class MessageDetailsActivity :
     private var showPhishingReportButton = true
     private val viewModel: MessageDetailsViewModel by viewModels()
 
-    override fun getLayoutId(): Int = R.layout.activity_message_details
+    private var buttonsVisibilityRunnable = Runnable { action_buttons.visibility = View.VISIBLE }
 
-    var buttonsVisibilityRunnable = Runnable { action_buttons.visibility = View.VISIBLE }
+    override fun getLayoutId(): Int = R.layout.activity_message_details
 
     override fun storagePermissionGranted() {
         val attachmentToDownloadIdAux = attachmentToDownloadId.getAndSet(null)

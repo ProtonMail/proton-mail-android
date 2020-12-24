@@ -217,10 +217,13 @@ class MailboxActivity :
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
+
     @Inject
     lateinit var contactsRepository: ContactsRepository
+
     @Inject
     lateinit var networkSnackBarUtil: NetworkSnackBarUtil
+
     @Inject
     lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
 
@@ -352,7 +355,6 @@ class MailboxActivity :
             }
         )
 
-        setRefreshing(true)
         checkUserAndFetchNews()
 
         if (extras != null && extras.containsKey(EXTRA_SWITCHED_TO_USER)) {
@@ -439,34 +441,6 @@ class MailboxActivity :
 
     override fun secureContent(): Boolean = true
 
-    override fun enableScreenshotProtector() {
-        screenShotPreventer.visibility = View.VISIBLE
-    }
-
-    override fun disableScreenshotProtector() {
-        screenShotPreventer.visibility = View.GONE
-    }
-
-    private fun startObserving() {
-        mailboxViewModel.usedSpaceActionEvent(FLOW_START_ACTIVITY)
-        mailboxViewModel.manageLimitReachedWarning.observe(this, setupUpLimitReachedObserver)
-        mailboxViewModel.manageLimitApproachingWarning.observe(this, setupUpLimitApproachingObserver)
-        mailboxViewModel.manageLimitBelowCritical.observe(this, setupUpLimitBelowCriticalObserver)
-        mailboxViewModel.manageLimitReachedWarningOnTryCompose.observe(this, setupUpLimitReachedTryComposeObserver)
-    }
-
-    private fun startObservingUsedSpace() {
-        liveSharedPreferences?.removeObservers(this)
-        liveSharedPreferences = LiveSharedPreferences(
-            app.getSecureSharedPreferences(mUserManager.username) as SecureSharedPreferences,
-            Constants.Prefs.PREF_USED_SPACE
-        )
-        liveSharedPreferences!!.observe(
-            this,
-            { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) }
-        )
-    }
-
     private val setupUpLimitReachedObserver = Observer { limitReached: Event<Boolean> ->
         // val _limitReached = limitReached.getContentIfNotHandled()
         if (limitReached.getContentIfNotHandled() == true /* _limitReached != null */) {
@@ -502,22 +476,6 @@ class MailboxActivity :
         }
     }
 
-    private fun showStorageLimitApproachingAlertDialog() {
-        storageLimitApproachingAlertDialog = showInfoDialogWithTwoButtons(
-            this@MailboxActivity,
-            getString(R.string.storage_limit_warning_title),
-            getString(R.string.storage_limit_approaching_text),
-            getString(R.string.dont_remind_again),
-            getString(R.string.okay),
-            {
-                mUserManager.setShowStorageLimitWarning(false)
-                storageLimitApproachingAlertDialog = null
-            },
-            { storageLimitApproachingAlertDialog = null },
-            true
-        )
-    }
-
     private val setupUpLimitApproachingObserver = Observer { limitApproaching: Event<Boolean> ->
         // val _limitApproaching = limitApproaching.getContentIfNotHandled()
 
@@ -535,6 +493,7 @@ class MailboxActivity :
             storageLimitAlert.visibility = View.GONE
         }
     }
+
     private val setupUpLimitBelowCriticalObserver = Observer { limitReached: Event<Boolean> ->
         // val _limitReached = limitReached.getContentIfNotHandled()
         if (limitReached.getContentIfNotHandled() == true /* _limitReached != null */) {
@@ -543,6 +502,7 @@ class MailboxActivity :
             storageLimitAlert.visibility = View.GONE
         }
     }
+
     private val setupUpLimitReachedTryComposeObserver = Observer { limitReached: Event<Boolean> ->
         // val _limitReached = limitReached.getContentIfNotHandled()
         if (limitReached.getContentIfNotHandled() == true /* _limitReached != null && _limitReached */) {
@@ -571,6 +531,55 @@ class MailboxActivity :
             )
             startActivityForResult(intent, REQUEST_CODE_COMPOSE_MESSAGE)
         }
+    }
+
+    private val selectedMessages: List<SimpleMessage>
+        get() = messagesAdapter.checkedMessages.map { SimpleMessage(it) }
+
+    private var firstLogin: Boolean? = null
+
+    override fun enableScreenshotProtector() {
+        screenShotPreventer.visibility = View.VISIBLE
+    }
+
+    override fun disableScreenshotProtector() {
+        screenShotPreventer.visibility = View.GONE
+    }
+
+    private fun startObserving() {
+        mailboxViewModel.usedSpaceActionEvent(FLOW_START_ACTIVITY)
+        mailboxViewModel.manageLimitReachedWarning.observe(this, setupUpLimitReachedObserver)
+        mailboxViewModel.manageLimitApproachingWarning.observe(this, setupUpLimitApproachingObserver)
+        mailboxViewModel.manageLimitBelowCritical.observe(this, setupUpLimitBelowCriticalObserver)
+        mailboxViewModel.manageLimitReachedWarningOnTryCompose.observe(this, setupUpLimitReachedTryComposeObserver)
+    }
+
+    private fun startObservingUsedSpace() {
+        liveSharedPreferences?.removeObservers(this)
+        liveSharedPreferences = LiveSharedPreferences(
+            app.getSecureSharedPreferences(mUserManager.username) as SecureSharedPreferences,
+            Constants.Prefs.PREF_USED_SPACE
+        )
+        liveSharedPreferences!!.observe(
+            this,
+            { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) }
+        )
+    }
+
+    private fun showStorageLimitApproachingAlertDialog() {
+        storageLimitApproachingAlertDialog = showInfoDialogWithTwoButtons(
+            this@MailboxActivity,
+            getString(R.string.storage_limit_warning_title),
+            getString(R.string.storage_limit_approaching_text),
+            getString(R.string.dont_remind_again),
+            getString(R.string.okay),
+            {
+                mUserManager.setShowStorageLimitWarning(false)
+                storageLimitApproachingAlertDialog = null
+            },
+            { storageLimitApproachingAlertDialog = null },
+            true
+        )
     }
 
     private fun getLiveDataByLocation(
@@ -733,8 +742,6 @@ class MailboxActivity :
         }
     }
 
-    private var firstLogin: Boolean? = null
-
     private fun checkUserAndFetchNews(): Boolean {
         syncUUID = UUID.randomUUID().toString()
         if (mUserManager.isBackgroundSyncEnabled) {
@@ -793,6 +800,7 @@ class MailboxActivity :
             !prefs.getBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, false)
     }
 
+
     private fun showSwipeGesturesChangedDialog() {
         val prefs: SharedPreferences = (applicationContext as ProtonMailApplication).defaultSharedPreferences
         showInfoDialogWithTwoButtons(
@@ -819,7 +827,6 @@ class MailboxActivity :
         )
         prefs.edit().putBoolean(PREF_SWIPE_GESTURES_DIALOG_SHOWN, true).apply()
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -961,6 +968,7 @@ class MailboxActivity :
     }
 
     fun setRefreshing(shouldRefresh: Boolean) {
+        Timber.v("setRefreshing shouldRefresh:$shouldRefresh")
         swipe_refresh_layout.isRefreshing = shouldRefresh
         spinner_layout.isRefreshing = shouldRefresh
         no_messages_layout.isRefreshing = shouldRefresh
@@ -972,9 +980,6 @@ class MailboxActivity :
         messages_list_view.post { messagesAdapter.includeFooter = isLoadingMore.get() }
         return previousValue
     }
-
-    private val selectedMessages: List<SimpleMessage>
-        get() = messagesAdapter.checkedMessages.map { SimpleMessage(it) }
 
     @Subscribe
     fun onSwitchedAccountEvent(event: ForceSwitchedAccountEvent) {
@@ -1067,11 +1072,6 @@ class MailboxActivity :
                 startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
                 finish()
             }
-            AuthStatus.INCORRECT_KEY_PARAMETERS -> {
-                showToast(R.string.incorrect_key_parameters, Toast.LENGTH_SHORT)
-                startActivity(AppUtil.decorInAppIntent(Intent(this, MailboxLoginActivity::class.java)))
-                finish()
-            }
             else -> {
                 mUserManager.isLoggedIn = true
             }
@@ -1136,7 +1136,7 @@ class MailboxActivity :
             return
         }
         refreshMailboxJobRunning = false
-        syncingHandler.postDelayed(SyncDoneRunnable(this), 1000)
+        handler.postDelayed(SyncDoneRunnable(this), 1000)
         setLoadingMore(false)
         if (!isDohOngoing) {
             showToast(event.status)
@@ -1164,7 +1164,6 @@ class MailboxActivity :
                 showNoConnSnackAndScheduleRetry()
             } else {
                 hideNoConnSnack()
-                setRefreshing(true)
                 fetchUpdates(false)
             }
         } else {
@@ -1175,7 +1174,7 @@ class MailboxActivity :
     @Subscribe
     fun onMailboxNoMessages(event: MailboxNoMessagesEvent?) {
         // show toast only if user initiated load more
-        syncingHandler.postDelayed(SyncDoneRunnable(this), 300)
+        handler.postDelayed(SyncDoneRunnable(this), 300)
         if (isLoadingMore.get()) {
             showToast(R.string.no_more_messages, Toast.LENGTH_SHORT)
             messagesAdapter.notifyDataSetChanged()
@@ -1187,7 +1186,7 @@ class MailboxActivity :
     fun onUpdatesLoaded(event: FetchUpdatesEvent?) {
         syncingDone()
         refreshDrawerHeader(mUserManager.user)
-        syncingHandler.postDelayed(SyncDoneRunnable(this), 1000)
+        handler.postDelayed(SyncDoneRunnable(this), 1000)
     }
 
     private fun showToast(status: Status) {
@@ -1463,7 +1462,6 @@ class MailboxActivity :
         UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar))
     }
 
-    /* END AbsListView.MultiChoiceModeListener */
     private fun showFoldersManagerDialog(messageIds: List<String>) {
         // show progress bar for visual representation of work in background,
         // if all the messages inside the folder are impacted by the action
@@ -1536,7 +1534,6 @@ class MailboxActivity :
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
         if (!spinner_layout.isRefreshing) {
-            setRefreshing(true)
             fetchUpdates(true)
         }
     }
@@ -1547,6 +1544,7 @@ class MailboxActivity :
      * @param isRefreshMessagesRequired flag set to true refreshes all the messages and deletes mesage content in the DB
      */
     private fun fetchUpdates(isRefreshMessagesRequired: Boolean = false) {
+        setRefreshing(true)
         syncUUID = UUID.randomUUID().toString()
         reloadMessageCounts()
         mJobManager.addJobInBackground(
@@ -1560,8 +1558,6 @@ class MailboxActivity :
         )
     }
 
-    /* END SwipeRefreshLayout.OnRefreshListener */
-    private val syncingHandler = Handler(Looper.getMainLooper())
     private fun syncingDone() {
         layout_sync.visibility = View.GONE
     }

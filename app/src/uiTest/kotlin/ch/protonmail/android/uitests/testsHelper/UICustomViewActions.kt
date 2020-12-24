@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.uitests.testsHelper
 
+import android.content.Intent
 import android.view.View
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -37,6 +38,8 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerViewAction
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.platform.app.InstrumentationRegistry
@@ -45,13 +48,16 @@ import ch.protonmail.android.contacts.list.listView.ContactsListAdapter
 import ch.protonmail.android.uitests.testsHelper.ActivityProvider.currentActivity
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 import org.jetbrains.annotations.Contract
 import kotlin.test.assertFalse
 
 object UICustomViewActions {
 
-    private const val TIMEOUT_10S = 10_000L
+    const val TIMEOUT_15S = 15_000L
+    const val TIMEOUT_10S = 10_000L
+    private const val TIMEOUT_5S = 5_000L
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
@@ -65,10 +71,20 @@ object UICustomViewActions {
     }
 
     fun waitUntilViewIsGone(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
-        val errorDescription = "UICustomViewActions.waitUntilViewAppears"
+        val errorDescription = "UICustomViewActions.waitUntilViewIsGone"
         return waitUntilMatcherFulfilled(
             interaction,
             assertion = doesNotExist(),
+            timeout = timeout,
+            errorDescription = errorDescription
+        )
+    }
+
+    fun waitUntilViewIsNotDisplayed(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
+        val errorDescription = "UICustomViewActions.waitUntilViewIsGone"
+        return waitUntilMatcherFulfilled(
+            interaction,
+            assertion = matches(not(isDisplayed())),
             timeout = timeout,
             errorDescription = errorDescription
         )
@@ -132,6 +148,31 @@ object UICustomViewActions {
             }
         })
         return interaction
+    }
+
+    fun waitUntilIntentMatcherFulfilled(
+        matcher: Matcher<Intent>,
+        timeout: Long = TIMEOUT_5S
+    ) {
+        ProtonWatcher.setTimeout(timeout)
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+            var errorMessage = ""
+
+            override fun getDescription() = "UICustomViewActions.waitUntilIntentMatcherFulfilled $errorMessage"
+
+            override fun checkCondition(): Boolean {
+                return try {
+                    intended(matcher)
+                    true
+                } catch (e: AssertionFailedError) {
+                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
+                        throw e
+                    } else {
+                        false
+                    }
+                }
+            }
+        })
     }
 
     fun performActionWithRetry(

@@ -149,11 +149,7 @@ class ChangePasswordJob(
         var newOrganizationPrivateKey: String? = ""
         keysResponse?.let { it ->
             newOrganizationPrivateKey = if (openPGP.checkPassphrase(it.privateKey, getUserManager().getMailboxPassword()!!)) {
-                if (openPGP.checkKeyIsCorrect(it.privateKey, getUserManager().getMailboxPassword()!!)) {
-                    openPGP.updatePrivateKeyPassphrase(it.privateKey, getUserManager().getMailboxPassword(), generatedMailboxPassword)
-                } else {
-                    null
-                }
+                openPGP.updatePrivateKeyPassphrase(it.privateKey, getUserManager().getMailboxPassword(), generatedMailboxPassword)
             } else {
                 null
             }

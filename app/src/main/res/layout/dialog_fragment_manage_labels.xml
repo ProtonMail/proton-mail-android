@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 Copyright (c) 2020 Proton Technologies AG
 
 This file is part of ProtonMail.
@@ -24,8 +23,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     android:background="@color/labels_dialog_bg"
     android:minWidth="@dimen/manage_labels_min_width"
     android:orientation="vertical"
-    android:paddingBottom="0dp"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="0dp"
     tools:layoutDirection="rtl">
 
     <LinearLayout
@@ -57,20 +56,20 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/fields_default_space_large"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:background="@drawable/new_label_edittext"
                 android:hint="@string/label_name"
                 android:imeOptions="actionDone"
                 android:inputType="text"
-                android:paddingBottom="0dp"
                 android:paddingStart="2dp"
-                android:paddingEnd="0dp"
                 android:paddingTop="0dp"
+                android:paddingEnd="0dp"
+                android:paddingBottom="0dp"
                 android:singleLine="true"
+                android:textAlignment="viewStart"
                 android:textColorHint="@color/fog_gray"
-                android:textSize="@dimen/h4"
-                android:textAlignment="viewStart"/>
+                android:textSize="@dimen/h4" />
 
 
             <GridView
@@ -79,8 +78,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_height="wrap_content"
                 android:layout_below="@id/label_name"
                 android:layout_marginStart="@dimen/activity_horizontal_margin_small"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin_small"
                 android:layout_marginTop="@dimen/fields_default_space_large"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin_small"
                 android:divider="@null"
                 android:dividerHeight="0dp"
                 android:numColumns="2"
@@ -110,7 +109,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:divider="@null"
                 android:dividerHeight="0dp"
-                android:paddingTop="0dp"/>
+                android:paddingTop="0dp" />
 
             <TextView
                 android:id="@+id/no_labels"
@@ -132,8 +131,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fields_default_space"
         android:orientation="vertical"
-        android:paddingBottom="8dp"
-        android:paddingTop="0dp">
+        android:paddingTop="0dp"
+        android:paddingBottom="8dp">
 
         <RelativeLayout
             android:id="@+id/archive_container"
@@ -159,12 +158,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:textColor="#505061"
                 android:textSize="@dimen/h5" />
 
-            <ch.protonmail.android.views.ThreeStateCheckBox
+            <ch.protonmail.android.views.ThreeStateButton
                 android:id="@+id/also_archive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_width="@dimen/custom_check_box_size"
+                android:layout_height="@dimen/custom_check_box_size"
                 android:layout_below="@id/archive_separator"
+                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="16dp"
@@ -191,10 +190,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:id="@+id/close"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:minHeight="35dp"
-                android:minWidth="75dp"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:minWidth="75dp"
+                android:minHeight="35dp"
                 android:padding="0dp"
                 android:text="@string/close"
                 android:textAllCaps="true"
@@ -207,8 +206,8 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:minHeight="35dp"
                 android:minWidth="58dp"
+                android:minHeight="35dp"
                 android:padding="0dp"
                 android:text="@string/label_apply"
                 android:textAllCaps="true"

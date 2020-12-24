@@ -46,7 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Giriş yapılamadı</string>
     <string name="invalid_server_proof">Geçersiz sunucu kanıtı</string>
     <string name="invalid_credentials">Geçersiz kimlik bilgileri</string>
-    <string name="incorrect_key_parameters">Incorrect key parameters</string>
+    <string name="incorrect_key_parameters">Yanlış anahtar parametreleri</string>
     <string name="invalid_mailbox_password">Geçersiz posta kutusu şifresi</string>
     <string name="not_signed_up">ProtonMail Android Beta\'ya kaydolmadınız</string>
     <string name="no_network">Ağ bağlantısı yok</string>
