@@ -381,7 +381,7 @@ class ComposeMessageViewModel @Inject constructor(
     fun saveDraft(message: Message, hasConnectivity: Boolean) {
         val uploadAttachments = _messageDataResult.uploadAttachments
 
-        viewModelScope.launch(dispatchers.Main) {
+        GlobalScope.launch(dispatchers.Main) {
             if (_dbId == null) {
                 _dbId = saveMessage(message)
                 message.dbId = _dbId
