@@ -30,6 +30,7 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DraftBody
+import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
@@ -497,6 +498,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "ac7b3d53-fc64-4d44-a1f5-39ed45b629ef"
                 addressID = "addressId835"
                 messageBody = "messageBody"
                 sender = MessageSender("sender2342", "senderEmail@2340.com")
@@ -551,6 +553,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val message = Message().apply {
                 dbId = messageDbId
                 addressID = "addressId835"
+                messageId = "ac7b3d53-fc64-4d44-a1f5-39df45b629ef"
                 messageBody = "messageBody"
                 sender = MessageSender("sender2342", "senderEmail@2340.com")
                 setLabelIDs(listOf("label", "label1", "label2"))
@@ -650,6 +653,62 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 ).build()
             )
             assertEquals(expected, result)
+        }
+    }
+
+    @Test
+    fun workerPerformsUpdateDraftRequestWhenMessageIsNotLocal() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val messageDbId = 345L
+            val remoteMessageId = "7pmfkddyCO69Ch5Gzn0b517H-x-zycdj1Urhn-pj6Eam38FnYY3IxZ62jJ-gbwxVg=="
+            val message = Message().apply {
+                dbId = messageDbId
+                messageId = remoteMessageId
+                addressID = "addressId835"
+                messageBody = "messageBody"
+                sender = MessageSender("sender2342", "senderEmail@2340.com")
+                setLabelIDs(listOf("label", "label1", "label2"))
+                parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
+                numAttachments = 3
+            }
+
+            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val responseMessage = mockk<Message>(relaxed = true)
+            val apiDraftResponse = mockk<MessageResponse> {
+                every { code } returns 1000
+                every { messageId } returns "response_message_id"
+                every { this@mockk.message } returns responseMessage
+            }
+            val retrofitTag = RetrofitTag(userManager.username)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
+            coEvery { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) } returns apiDraftResponse
+
+            // When
+            worker.doWork()
+
+            // Then
+            coVerify { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) }
+            verifySequence {
+                responseMessage.dbId = messageDbId
+                responseMessage.toList = listOf()
+                responseMessage.ccList = listOf()
+                responseMessage.bccList = listOf()
+                responseMessage.replyTos = listOf()
+                responseMessage.sender = message.sender
+                responseMessage.setLabelIDs(message.getEventLabelIDs())
+                responseMessage.parsedHeaders = message.parsedHeaders
+                responseMessage.isDownloaded = true
+                responseMessage.setIsRead(true)
+                responseMessage.numAttachments = message.numAttachments
+                responseMessage.localId = message.messageId
+            }
         }
     }
 

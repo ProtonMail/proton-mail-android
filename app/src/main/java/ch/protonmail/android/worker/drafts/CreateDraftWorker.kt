@@ -34,6 +34,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
@@ -49,6 +50,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
@@ -106,7 +108,11 @@ class CreateDraftWorker @WorkerInject constructor(
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
         return runCatching {
-            apiManager.createDraft(createDraftRequest)
+            if (MessageUtils.isLocalMessageId(message.messageId)) {
+                apiManager.createDraft(createDraftRequest)
+            } else {
+                apiManager.updateDraft(message.messageId!!, createDraftRequest, RetrofitTag(userManager.username))!!
+            }
         }.fold(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
