@@ -27,32 +27,36 @@ import org.hamcrest.TypeSafeDiagnosingMatcher
 
 /**
  * Created by Kamil Rajtar on 07.09.18.  */
-class MessageRecipientMatcher(messageRecipient:MessageRecipient):TypeSafeDiagnosingMatcher<MessageRecipient>() {
-	private val name=`is`(equalTo(messageRecipient.Name))
-	private val address=`is`(equalTo(messageRecipient.Address))
-	private val icon=`is`(equalTo(messageRecipient.mIcon))
-	private val iconColor=`is`(equalTo(messageRecipient.mIconColor))
-	private val description=`is`(equalTo(messageRecipient.mDescription))
-	private val isPgp=`is`(equalTo(messageRecipient.mIsPGP))
+class MessageRecipientMatcher(messageRecipient: MessageRecipient) : TypeSafeDiagnosingMatcher<MessageRecipient>() {
+    private val name = `is`(equalTo(messageRecipient.name))
+    private val address = `is`(equalTo(messageRecipient.address))
+    private val icon = `is`(equalTo(messageRecipient.icon))
+    private val iconColor = `is`(equalTo(messageRecipient.iconColor))
+    private val description = `is`(equalTo(messageRecipient.description))
+    private val isPgp = `is`(equalTo(messageRecipient.isPGP))
 
-	override fun describeTo(description:Description) {
-		description.build("name" to name,
-				"address" to address,
-				"icon" to icon,
-				"iconColor" to iconColor,
-				"description" to this.description,
-				"isPgp" to isPgp)
-	}
+    override fun describeTo(description: Description) {
+        description.build(
+            "name" to name,
+            "address" to address,
+            "icon" to icon,
+            "iconColor" to iconColor,
+            "description" to this.description,
+            "isPgp" to isPgp
+        )
+    }
 
-	override fun matchesSafely(item:MessageRecipient,mismatchDescription:Description):Boolean {
-		return HamcrestMismatchBuilder(mismatchDescription)
-				.match("name",name,item.Name)
-				.match("address",address,item.Address)
-				.match("icon", icon,item.icon)
-				.match("iconColor",iconColor,item.iconColor)
-				.match("description",description,item.description)
-				.match("isPgp",isPgp,item.isPGP)
-				.build()
-	}
+    override fun matchesSafely(
+        item: MessageRecipient,
+        mismatchDescription: Description
+    ): Boolean {
+        return HamcrestMismatchBuilder(mismatchDescription)
+            .match("name", name, item.name)
+            .match("address", address, item.address)
+            .match("icon", icon, item.icon)
+            .match("iconColor", iconColor, item.iconColor)
+            .match("description", description, item.description)
+            .match("isPgp", isPgp, item.isPGP)
+            .build()
+    }
 }
-

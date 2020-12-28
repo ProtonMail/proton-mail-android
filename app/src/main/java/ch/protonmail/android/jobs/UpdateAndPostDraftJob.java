@@ -123,9 +123,9 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         if (message.getSenderEmail().contains("+")) { // it's being sent by alias
             draftBody.getMessage().setSender(new ServerMessageSender(message.getSenderName(), message.getSenderEmail()));
         }
-        final MessageResponse draftResponse = getApi().updateDraft(draftBody.getMessage().getID(), draftBody, new RetrofitTag(mUsername));
+        final MessageResponse draftResponse = getApi().updateDraft(draftBody.getMessage().getId(), draftBody, new RetrofitTag(mUsername));
         if (draftResponse.getCode() == Constants.RESPONSE_CODE_OK) {
-            getApi().markMessageAsRead(new IDList(Arrays.asList(draftBody.getMessage().getID())));
+            getApi().markMessageAsRead(new IDList(Arrays.asList(draftBody.getMessage().getId())));
         } else {
             pendingActionsDatabase.deletePendingUploadByMessageId(message.getMessageId());
             return;

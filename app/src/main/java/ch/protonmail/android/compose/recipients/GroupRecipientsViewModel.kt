@@ -55,7 +55,7 @@ class GroupRecipientsViewModel @Inject constructor(
 
     fun setData(recipients: ArrayList<MessageRecipient>, location: Constants.RecipientLocationType) {
         _recipients = recipients
-        _group = _recipients[0].group
+        _group = _recipients[0].group!!
         _location = location
         getContactGroupFromDB()
     }
@@ -66,7 +66,7 @@ class GroupRecipientsViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun getContactGroupFromDB() {
-        val groupName = _recipients[0].group
+        val groupName = _recipients[0].group!!
         composeMessageRepository.getContactGroupFromDB(groupName).subscribeOn(ThreadSchedulers.io())
             .observeOn(ThreadSchedulers.main())
             .flatMapObservable {
@@ -76,11 +76,11 @@ class GroupRecipientsViewModel @Inject constructor(
             .subscribe({ it ->
                            _groupAllEmails = it
                            _groupAllEmails.forEach {
-                               it.selected = _recipients.find { selected -> selected.emailAddress == it.email && selected.name == it.name } != null
-                               it.isPGP = _recipients.find { selected -> selected.emailAddress == it.email }?.isPGP ?: false
-                               it.pgpIcon = _recipients.find { selected -> selected.emailAddress == it.email }?.icon ?: 0
-                               it.pgpIconColor = _recipients.find { selected -> selected.emailAddress == it.email }?.iconColor ?: 0
-                               it.pgpDescription = _recipients.find { selected -> selected.emailAddress == it.email }?.description ?: 0
+                               it.selected = _recipients.find { selected -> selected.address == it.email && selected.name == it.name } != null
+                               it.isPGP = _recipients.find { selected -> selected.address == it.email }?.isPGP ?: false
+                               it.pgpIcon = _recipients.find { selected -> selected.address == it.email }?.icon ?: 0
+                               it.pgpIconColor = _recipients.find { selected -> selected.address == it.email }?.iconColor ?: 0
+                               it.pgpDescription = _recipients.find { selected -> selected.address == it.email }?.description ?: 0
                            }
                            _contactGroupResult.postValue(it)
                        }, {
@@ -94,7 +94,7 @@ class GroupRecipientsViewModel @Inject constructor(
         return _recipients
     }
 
-    fun getTitle(): String = _recipients[0].group
+    fun getTitle(): String = _recipients[0].group!!
 
     fun getGroupColor(): Int = _recipients[0].groupColor
 

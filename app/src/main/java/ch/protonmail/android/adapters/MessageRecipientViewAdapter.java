@@ -62,7 +62,7 @@ public class MessageRecipientViewAdapter extends ArrayAdapter<MessageRecipient> 
         }
 
         MessageRecipient messageRecipient = getItem(position);
-        viewHolder.text2.setText(messageRecipient.getEmailAddress());
+        viewHolder.text2.setText(messageRecipient.getAddress());
         viewHolder.text1.setText(messageRecipient.getName());
 
         if(messageRecipient.getName().contains(getContext().getString(R.string.members))) {
@@ -127,7 +127,7 @@ public class MessageRecipientViewAdapter extends ArrayAdapter<MessageRecipient> 
 
                 for (MessageRecipient p : data) {
                     final String name = p.getName();
-                    final String email = p.getEmailAddress();
+                    final String email = p.getAddress();
 
                     final String pattern = constraint.toString().toLowerCase();
                     if ((name != null && name.toLowerCase()
