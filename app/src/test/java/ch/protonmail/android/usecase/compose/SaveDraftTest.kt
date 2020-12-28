@@ -267,47 +267,6 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftsDeletesOfflineDraftWhenCreatingRemoteDraftThroughApiSucceds() {
-        runBlockingTest {
-            // Given
-            val localDraftId = "8345"
-            val message = Message().apply {
-                dbId = 123L
-                this.messageId = "45623"
-                addressID = "addressId"
-                decryptedBody = "Message body in plain text"
-                localId = localDraftId
-            }
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns null
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
-            every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
-            coEvery { uploadAttachments(any(), any(), any()) } returns UploadAttachments.Result.Success
-            val workOutputData = workDataOf(
-                KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "createdDraftMessageId345"
-            )
-            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
-            every {
-                createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
-                )
-            } answers { workerStatusFlow }
-
-            // When
-            saveDraft.invoke(
-                SaveDraftParameters(message, emptyList(), "parentId234", REPLY_ALL, "previousSenderId132423")
-            ).first()
-
-            // Then
-            verify { messageDetailsRepository.deleteMessage(message) }
-        }
-    }
-
-    @Test
     fun saveDraftsCallsUploadAttachmentsUseCaseToUploadNewAttachments() {
         runBlockingTest {
             // Given

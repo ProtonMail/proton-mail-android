@@ -105,7 +105,6 @@ class SaveDraft @Inject constructor(
                     )
 
                     updatePendingForSendMessage(createdDraftId, localDraftId)
-                    deleteOfflineDraft(localDraftId)
 
                     messageDetailsRepository.findMessageById(createdDraftId)?.let {
                         val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
@@ -123,13 +122,6 @@ class SaveDraft @Inject constructor(
                 return@map SaveDraftResult.OnlineDraftCreationFailed
             }
             .flowOn(dispatchers.Io)
-    }
-
-    private suspend fun deleteOfflineDraft(localDraftId: String) {
-        val offlineDraft = messageDetailsRepository.findMessageById(localDraftId)
-        offlineDraft?.let {
-            messageDetailsRepository.deleteMessage(offlineDraft)
-        }
     }
 
     private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {

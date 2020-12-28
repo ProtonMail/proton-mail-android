@@ -478,11 +478,6 @@ class ComposeMessageViewModel @Inject constructor(
         val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId))
 
         viewModelScope.launch(dispatchers.Main) {
-            if (_draftId.get().isNotEmpty() && draft.messageId.isNullOrEmpty().not()) {
-                draft.localId?.let {
-                    composeMessageRepository.deleteMessageById(it)
-                }
-            }
             _draftId.set(draft.messageId)
             watchForMessageSent()
         }

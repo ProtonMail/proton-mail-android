@@ -111,7 +111,11 @@ class CreateDraftWorker @WorkerInject constructor(
             if (MessageUtils.isLocalMessageId(message.messageId)) {
                 apiManager.createDraft(createDraftRequest)
             } else {
-                apiManager.updateDraft(message.messageId!!, createDraftRequest, RetrofitTag(userManager.username))!!
+                apiManager.updateDraft(
+                    requireNotNull(message.messageId),
+                    createDraftRequest,
+                    RetrofitTag(userManager.username)
+                )
             }
         }.fold(
             onSuccess = { response ->
@@ -119,7 +123,7 @@ class CreateDraftWorker @WorkerInject constructor(
                     return handleFailure(response.error)
                 }
 
-                val responseDraft = response.message
+                val responseDraft = response.message.copy()
                 updateStoredLocalDraft(responseDraft, message)
                 Timber.i("Create Draft Worker API call succeeded")
                 Result.success(

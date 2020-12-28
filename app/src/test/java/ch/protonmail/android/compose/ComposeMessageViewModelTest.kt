@@ -138,24 +138,6 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftDeletesLocalMessageFromComposerRepositoryWhenSaveDraftUseCaseIsSuccessful() {
-        runBlockingTest {
-            val createdDraftId = "newDraftId"
-            val localDraftId = "localDraftId"
-            val createdDraft = Message(messageId = createdDraftId, localId = localDraftId)
-            givenViewModelPropertiesAreInitialised()
-            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
-            coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
-
-            // When
-            viewModel.saveDraft(Message(), hasConnectivity = false)
-
-            // Then
-            coVerify { composeMessageRepository.deleteMessageById(localDraftId) }
-        }
-    }
-
-    @Test
     fun saveDraftObservesMessageInComposeRepositoryToGetNotifiedWhenMessageIsSent() {
         runBlockingTest {
             // Given

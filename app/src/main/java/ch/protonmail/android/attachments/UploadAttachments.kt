@@ -65,9 +65,11 @@ class UploadAttachments @Inject constructor(
 
                 when (result) {
                     is AttachmentsRepository.Result.Success -> {
+                        Timber.d("UploadAttachment $attachmentId to API for messageId ${message.messageId} Succeeded.")
                         updateMessageWithUploadedAttachment(message, result.uploadedAttachmentId)
                     }
                     is AttachmentsRepository.Result.Failure -> {
+                        Timber.e("UploadAttachment $attachmentId to API for messageId ${message.messageId} FAILED.")
                         return@withContext Result.Failure(result.error)
                     }
                 }

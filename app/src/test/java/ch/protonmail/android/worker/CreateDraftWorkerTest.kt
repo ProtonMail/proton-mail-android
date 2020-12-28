@@ -72,7 +72,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifyOrder
-import io.mockk.verifySequence
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
@@ -508,7 +507,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
-            val responseMessage = mockk<Message>(relaxed = true)
+            val responseMessage = Message()
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
                 every { messageId } returns "response_message_id"
@@ -527,25 +526,26 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             coVerify { apiManager.createDraft(apiDraftRequest) }
-            verifySequence {
-                responseMessage.dbId = messageDbId
-                responseMessage.toList = listOf()
-                responseMessage.ccList = listOf()
-                responseMessage.bccList = listOf()
-                responseMessage.replyTos = listOf()
-                responseMessage.sender = message.sender
-                responseMessage.setLabelIDs(message.getEventLabelIDs())
-                responseMessage.parsedHeaders = message.parsedHeaders
-                responseMessage.isDownloaded = true
-                responseMessage.setIsRead(true)
-                responseMessage.numAttachments = message.numAttachments
-                responseMessage.localId = message.messageId
+            val expected = Message().apply {
+                this.dbId = messageDbId
+                this.toList = listOf()
+                this.ccList = listOf()
+                this.bccList = listOf()
+                this.replyTos = listOf()
+                this.sender = message.sender
+                this.setLabelIDs(message.getEventLabelIDs())
+                this.parsedHeaders = message.parsedHeaders
+                this.isDownloaded = true
+                this.setIsRead(true)
+                this.numAttachments = message.numAttachments
+                this.localId = message.messageId
             }
+            coVerify { messageDetailsRepository.saveMessageLocally(expected) }
         }
     }
 
     @Test
-    fun workerSavesCreatedDraftToDbAndReturnsSuccessWhenRequestSucceeds() {
+    fun workerUpdatesLocalDbDraftWithCreatedDraftAndReturnsSuccessWhenRequestSucceeds() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -561,8 +561,19 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 numAttachments = 3
             }
 
+<<<<<<< HEAD
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val responseMessage = mockk<Message>(relaxed = true)
+=======
+            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val responseMessage = message.copy(
+                messageId = "response_message_id",
+                isDownloaded = true,
+                localId = "ac7b3d53-fc64-4d44-a1f5-39df45b629ef",
+                Unread = false
+            )
+            responseMessage.dbId = messageDbId
+>>>>>>> d9274306 (Do not delete local draft after create / update API draft)
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
                 every { messageId } returns "response_message_id"
@@ -581,6 +592,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             coVerify { messageDetailsRepository.saveMessageLocally(responseMessage) }
+            assertEquals(message.dbId, responseMessage.dbId)
             val expected = ListenableWorker.Result.success(
                 Data.Builder().putString(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID, "response_message_id").build()
             )
@@ -657,7 +669,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerPerformsUpdateDraftRequestWhenMessageIsNotLocal() {
+    fun workerPerformsUpdateDraftRequestAndStoresResponseMessageInDbWhenMessageIsNotLocal() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -675,7 +687,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
 
             val apiDraftRequest = mockk<NewMessage>(relaxed = true)
-            val responseMessage = mockk<Message>(relaxed = true)
+            val responseMessage = Message()
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
                 every { messageId } returns "response_message_id"
@@ -695,20 +707,21 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             coVerify { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) }
-            verifySequence {
-                responseMessage.dbId = messageDbId
-                responseMessage.toList = listOf()
-                responseMessage.ccList = listOf()
-                responseMessage.bccList = listOf()
-                responseMessage.replyTos = listOf()
-                responseMessage.sender = message.sender
-                responseMessage.setLabelIDs(message.getEventLabelIDs())
-                responseMessage.parsedHeaders = message.parsedHeaders
-                responseMessage.isDownloaded = true
-                responseMessage.setIsRead(true)
-                responseMessage.numAttachments = message.numAttachments
-                responseMessage.localId = message.messageId
+            val expectedMessage = Message().apply {
+                this.dbId = messageDbId
+                this.toList = listOf()
+                this.ccList = listOf()
+                this.bccList = listOf()
+                this.replyTos = listOf()
+                this.sender = message.sender
+                this.setLabelIDs(message.getEventLabelIDs())
+                this.parsedHeaders = message.parsedHeaders
+                this.isDownloaded = true
+                this.setIsRead(true)
+                this.numAttachments = message.numAttachments
+                this.localId = message.messageId
             }
+            coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
         }
     }
 
