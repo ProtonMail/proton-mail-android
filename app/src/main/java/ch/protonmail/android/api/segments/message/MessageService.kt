@@ -63,43 +63,57 @@ interface MessageService {
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun messages(@Query("LabelID") location: Int,
-                 @Query("Order") order: String,
-                 @Query("Begin") begin: String,
-                 @Query("End") end: String): Call<MessagesResponse>
+    fun messages(
+        @Query("LabelID") location: Int,
+        @Query("Order") order: String,
+        @Query("Begin") begin: String,
+        @Query("End") end: String
+    ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun messages(@Query("LabelID") location: Int,
-                 @Query("Order") order: String,
-                 @Query("Begin") begin: String,
-                 @Query("End") end: String,
-                 @Tag retrofitTag: RetrofitTag): Call<MessagesResponse>
+    fun messages(
+        @Query("LabelID") location: Int,
+        @Query("Order") order: String,
+        @Query("Begin") begin: String,
+        @Query("End") end: String,
+        @Tag retrofitTag: RetrofitTag
+    ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchMessages(@Query("LabelID") location: Int,
-                      @Query("End") unixTime: Long): Call<MessagesResponse>
+    fun fetchMessages(
+        @Query("LabelID") location: Int,
+        @Query("End") unixTime: Long
+    ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchStarredMessages(@Query("Starred") starred: Int,
-                             @Query("End") unixTime: Long): Call<MessagesResponse>
+    fun fetchStarredMessages(
+        @Query("Starred") starred: Int,
+        @Query("End") unixTime: Long
+    ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun search(@Query("Keyword") query: String,
-               @Query("Page") page: Int): Call<MessagesResponse>
+    fun search(
+        @Query("Keyword") query: String,
+        @Query("Page") page: Int
+    ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun searchByLabel(@Query("LabelID") query: String,
-                      @Query("Page") page: Int): Call<MessagesResponse>
+    fun searchByLabel(
+        @Query("LabelID") query: String,
+        @Query("Page") page: Int
+    ): Call<MessagesResponse>
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun searchByLabel(@Query("LabelID") query: String,
-                      @Query("End") unixTime: Long): Call<MessagesResponse>
+    fun searchByLabel(
+        @Query("LabelID") query: String,
+        @Query("End") unixTime: Long
+    ): Call<MessagesResponse>
 
     @POST("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -107,7 +121,10 @@ interface MessageService {
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchSingleMessageMetadata(@Query("ID") messageId: String): Call<MessagesResponse>
+    suspend fun fetchMessageMetadata(
+        @Query("ID") messageId: String,
+        @Tag retrofitTag: RetrofitTag?
+    ): MessagesResponse
 
     @PUT("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -127,11 +144,21 @@ interface MessageService {
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)
-    fun messageDetail(@Path("messageId") messageId: String): Call<MessageResponse>
+    fun fetchMessageDetailsBlocking(@Path("messageId") messageId: String): Call<MessageResponse>
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)
-    fun messageDetail(@Path("messageId") messageId: String, @Tag retrofitTag: RetrofitTag): Call<MessageResponse>
+    suspend fun fetchMessageDetails(
+        @Path("messageId") messageId: String,
+        @Tag retrofitTag: RetrofitTag?
+    ): MessageResponse
+
+    @GET("mail/v4/messages/{messageId}")
+    @Headers(ACCEPT_HEADER_V1)
+    fun fetchMessageDetailsBlocking(
+        @Path("messageId") messageId: String,
+        @Tag retrofitTag: RetrofitTag
+    ): Call<MessageResponse>
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)

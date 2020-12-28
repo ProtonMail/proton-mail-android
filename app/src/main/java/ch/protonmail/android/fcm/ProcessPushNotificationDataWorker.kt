@@ -30,12 +30,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.messages.receive.MessageResponse
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.notifications.Notification
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -44,6 +40,7 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.fcm.models.PushNotification
 import ch.protonmail.android.fcm.models.PushNotificationData
+import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
 import me.proton.core.util.kotlin.EMPTY_STRING
@@ -68,8 +65,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
     private val queueNetworkUtil: QueueNetworkUtil,
     private val userManager: UserManager,
     private val databaseProvider: DatabaseProvider,
-    private val messageDetailsRepository: MessageDetailsRepository,
-    private val protonMailApiManager: ProtonMailApiManager
+    private val messageRepository: MessageRepository
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
@@ -106,7 +102,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
             val userCrypto = UserCrypto(userManager, userManager.openPgp, Name(notificationUsername))
             val textDecryptionResult = userCrypto.decryptMessage(encryptedMessage)
             val decryptedData = textDecryptionResult.decryptedData
-            pushNotification = decryptedData.deserialize()
+            pushNotification = decryptedData.deserialize(PushNotification.serializer())
             pushNotificationData = pushNotification.data
         } catch (e: Exception) {
             Timber.e(e, "Error with decryption or deserialization of the notification data")
@@ -136,7 +132,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
         return Result.success()
     }
 
-    private fun sendNotification(
+    private suspend fun sendNotification(
         user: User,
         messageId: String,
         notificationBody: String,
@@ -147,10 +143,8 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
         // Insert current Notification in Database
         val notificationsDatabase = databaseProvider.provideNotificationsDao(user.username)
         val notification = Notification(messageId, sender, notificationBody)
-        notificationsDatabase.insertNotification(notification)
-
-        val notifications = notificationsDatabase.findAllNotifications()
-        val message = fetchMessage(user, messageId)
+        val notifications = notificationsDatabase.insertNewNotificationAndReturnAll(notification)
+        val message = messageRepository.getMessage(messageId, user.username)
 
         if (notifications.size > 1) {
             notificationServer.notifyMultipleUnreadEmail(userManager, user, notifications)
@@ -159,61 +153,6 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
                 userManager, user, message, messageId, notificationBody, sender, primaryUser
             )
         }
-    }
-
-    private fun fetchMessage(user: User, messageId: String): Message? {
-        // Fetch message details if required by the current config
-        val fetchMessageDetails = user.isGcmDownloadMessageDetails
-        return if (fetchMessageDetails) {
-            fetchMessageDetails(messageId)
-        } else {
-            fetchMessageMetadata(messageId)
-        }
-            ?: messageDetailsRepository.findMessageByIdBlocking(messageId)
-    }
-
-    private fun fetchMessageMetadata(messageId: String): Message? {
-        var message: Message? = null
-        try {
-            val messageResponse = protonMailApiManager.fetchSingleMessageMetadata(messageId)
-            if (messageResponse != null) {
-                val messages = messageResponse.messages
-                if (messages.isNotEmpty()) {
-                    message = messages[0]
-                }
-                if (message != null) {
-                    val savedMessage = messageDetailsRepository.findMessageByIdBlocking(message.messageId!!)
-                    if (savedMessage != null) {
-                        message.isInline = savedMessage.isInline
-                    }
-                    message.isDownloaded = false
-                    messageDetailsRepository.saveMessageInDB(message)
-                } else {
-                    // check if the message is already in local store
-                    message = messageDetailsRepository.findMessageByIdBlocking(messageId)
-                }
-            }
-        } catch (error: Exception) {
-            Timber.e(error, "error while fetching message metadata in ProcessPushNotificationDataWorker")
-        }
-        return message
-    }
-
-    private fun fetchMessageDetails(messageId: String): Message? {
-        var message: Message? = null
-        try {
-            val messageResponse: MessageResponse = protonMailApiManager.messageDetail(messageId)
-            message = messageResponse.message
-            val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageId)
-            if (savedMessage != null) {
-                message.isInline = savedMessage.isInline
-            }
-            message.isDownloaded = true
-            messageDetailsRepository.saveMessageInDB(message)
-        } catch (error: Exception) {
-            Timber.e(error, "error while fetching message detail in ProcessPushNotificationDataWorker")
-        }
-        return message
     }
 
     private fun shouldSuppressNotification(): Boolean {

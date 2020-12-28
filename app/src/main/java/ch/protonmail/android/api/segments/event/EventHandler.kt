@@ -157,7 +157,7 @@ class EventHandler @AssistedInject constructor(
                 continue
             }
 
-            val messageResponse = protonMailApiManager.messageDetail(messageID, RetrofitTag(username))
+            val messageResponse = protonMailApiManager.fetchMessageDetailsBlocking(messageID, RetrofitTag(username))
             val isMessageStaged = if (messageResponse == null) {
                 // If the response is null, an exception has been thrown while fetching message details
                 // Return false and with that terminate processing this event any further

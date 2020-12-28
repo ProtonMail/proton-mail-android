@@ -301,7 +301,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? = api.fetchMessages(location, time)
 
-    override fun fetchSingleMessageMetadata(messageId: String): MessagesResponse? = api.fetchSingleMessageMetadata(messageId)
+    override suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag?): MessagesResponse =
+        api.fetchMessageMetadata(messageId, retrofitTag)
 
     override fun markMessageAsRead(messageIds: IDList) = api.markMessageAsRead(messageIds)
 
@@ -317,10 +318,14 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun emptyCustomFolder(labelId: String) = api.emptyCustomFolder(labelId)
 
-    override fun messageDetail(messageId: String): MessageResponse = api.messageDetail(messageId)
+    override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =
+        api.fetchMessageDetailsBlocking(messageId)
 
-    override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
-        api.messageDetail(messageId, retrofitTag)
+    override suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag?): MessageResponse =
+        api.fetchMessageDetails(messageId, retrofitTag)
+
+    override fun fetchMessageDetailsBlocking(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
+        api.fetchMessageDetailsBlocking(messageId, retrofitTag)
 
     override fun messageDetailObservable(messageId: String): Observable<MessageResponse> = api.messageDetailObservable(messageId)
 
