@@ -1026,6 +1026,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region errors -->
     <string name="error_image_not_found">Изображение не найдено</string>
     <string name="error_image_bad_url">Некорректный URL-адрес изображения</string>
+    <string name="error_saving_try_again">Ошибка при сохранении сообщения. Попробуйте еще раз.</string>
     <!-- endregion -->
     <string name="allowed">Разрешена</string>
     <string name="denied">Запрещена</string>

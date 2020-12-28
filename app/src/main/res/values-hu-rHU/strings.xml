@@ -47,7 +47,7 @@ Svájci székhellyel</string>
     <string name="login_failure">Sikertelen bejelentkezés</string>
     <string name="invalid_server_proof">Érvénytelen szerver tanúsítvány</string>
     <string name="invalid_credentials">Érvénytelen hitelesítés</string>
-    <string name="incorrect_key_parameters">Incorrect key parameters</string>
+    <string name="incorrect_key_parameters">Hibás kulcs paraméterek</string>
     <string name="invalid_mailbox_password">Érvénytelen e-mail jelszó</string>
     <string name="not_signed_up">Ön nem regisztrált a ProtonMail Android Béta verziójára</string>
     <string name="no_network">Nincs hálózat</string>
@@ -89,7 +89,7 @@ Svájci székhellyel</string>
     <string name="no_search_results">Nincs találat</string>
     <string name="compose">Levélírás</string>
     <string name="compose_message">Üzenet írása</string>
-    <string name="empty_folder">Üres mappa</string>
+    <string name="empty_folder">Mappa kiürítése</string>
     <string name="view_headers">Fejlécek megtekintése</string>
     <string name="message_headers">Üzenet fejléc</string>
     <string name="delete_message">Üzenet törlése</string>
@@ -992,6 +992,7 @@ a tárhely elérését.</string>
     <!-- region errors -->
     <string name="error_image_not_found">A kép nem található</string>
     <string name="error_image_bad_url">Deformált kép url</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
@@ -1000,5 +1001,5 @@ a tárhely elérését.</string>
     <string name="swipe_gestures_changed_message">A legutóbbi frissítés után a csúsztatás műveletek megváltoztak. Ha szeretné, visszaállíthatja a beállításoknál.</string>
     <string name="go_to_settings">Beállítások megnyitása</string>
     <!-- endregion -->
-    <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
+    <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
 </resources>

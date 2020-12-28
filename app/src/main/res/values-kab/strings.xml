@@ -988,6 +988,7 @@ akeccum ar tkatut n uḥraz.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Ur nufi ara tugna</string>
     <string name="error_image_bad_url">Tugna Url texṣer</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>

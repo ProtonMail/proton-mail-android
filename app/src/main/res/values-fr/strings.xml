@@ -994,6 +994,7 @@ l\'accès au stockage.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Image non trouvée</string>
     <string name="error_image_bad_url">URL d\'image invalide</string>
+    <string name="error_saving_try_again">Erreur lors de l\'enregistrement du message. Veuillez réessayer.</string>
     <!-- endregion -->
     <string name="allowed">Autorisé</string>
     <string name="denied">Refusé</string>

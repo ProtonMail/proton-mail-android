@@ -994,6 +994,7 @@ l\'accesso all\'archiviazione.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Immagine non trovata</string>
     <string name="error_image_bad_url">Url dell\'immagine malformato</string>
+    <string name="error_saving_try_again">Errore durante il salvataggio del messaggio. Riprova.</string>
     <!-- endregion -->
     <string name="allowed">Consentito</string>
     <string name="denied">Rifiutato</string>

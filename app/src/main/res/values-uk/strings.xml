@@ -1024,6 +1024,7 @@ access to storage.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Зображення не знайдено</string>
     <string name="error_image_bad_url">Неправильний URL зображення</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>

@@ -978,6 +978,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- region errors -->
     <string name="error_image_not_found">Grafik nicht gefunden</string>
     <string name="error_image_bad_url">Fehlerhaftes Grafik-Adresse</string>
+    <string name="error_saving_try_again">Fehler beim Speichern der Nachricht. Bitte versuchen Sie es erneut.</string>
     <!-- endregion -->
     <string name="allowed">Zugelassen</string>
     <string name="denied">Abgelehnt</string>

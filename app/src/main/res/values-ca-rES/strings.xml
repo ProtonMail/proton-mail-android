@@ -992,6 +992,7 @@ l\'accés a l\'emmagatzemament.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>
     <string name="error_image_bad_url">Url de la imatge mal formada</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">Permés</string>
     <string name="denied">Denegat</string>
