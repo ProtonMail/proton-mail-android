@@ -20,7 +20,6 @@ package ch.protonmail.android.api.interceptors
 
 import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProgressResponseBody
-import ch.protonmail.android.api.ProtonMailPublicService
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -92,24 +91,19 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
 
         fun getInstance(
-            publicService: ProtonMailPublicService,
             userManager: UserManager,
             jobManager: JobManager,
             networkUtil: QueueNetworkUtil
         ): ProtonMailAttachmentRequestInterceptor =
             INSTANCE ?: synchronized(this) {
                 INSTANCE
-                    ?: buildInstance(publicService, userManager, jobManager, networkUtil).also { INSTANCE = it }
+                    ?: buildInstance(/* publicService, */ userManager, jobManager, networkUtil).also { INSTANCE = it }
             }
 
         private fun buildInstance(
-            publicService: ProtonMailPublicService,
             userManager: UserManager,
             jobManager: JobManager,
             networkUtil: QueueNetworkUtil
-        ) =
-            ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil).also {
-                it.publicService = publicService
-            }
+        ) = ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil)
     }
 }

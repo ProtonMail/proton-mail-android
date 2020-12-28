@@ -32,11 +32,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import io.mockk.verify
-import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
-import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import org.junit.After
 import kotlin.test.BeforeTest

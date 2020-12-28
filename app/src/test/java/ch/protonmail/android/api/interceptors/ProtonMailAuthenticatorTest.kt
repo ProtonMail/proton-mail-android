@@ -22,30 +22,39 @@ package ch.protonmail.android.api.interceptors
 import android.content.SharedPreferences
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.RefreshBody
+import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
+import ch.protonmail.android.api.segments.HEADER_AUTH
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.unmockkStatic
-import junit.framework.Assert
 import okhttp3.Request
 import okhttp3.Response
 import org.junit.After
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
+
+const val AUTH_ACCESS_TOKEN = "auth_access_token"
+const val TEST_URL = "https://legit_url"
+const val TEST_USERNAME = "testuser"
+const val NON_NULL_ERROR_MESSAGE = "non null error message"
 
 class ProtonMailAuthenticatorTest {
 
     private val userMock = mockk<User> {
-        every { username } returns "testuser"
+        every { username } returns TEST_USERNAME
         every { allowSecureConnectionsViaThirdParties } returns true
         every { usingDefaultApi } returns true
     }
@@ -56,27 +65,25 @@ class ProtonMailAuthenticatorTest {
 
     private val tokenManagerMock = mockk<TokenManager> {
         every { createRefreshBody() } returns RefreshBody("refresh_token")
-        every { handleRefresh(any()) } returns mockk<Unit>()
-        every { authAccessToken } returns "auth_access_token"
+        every { handleRefresh(any()) } returns mockk()
+        every { authAccessToken } returns AUTH_ACCESS_TOKEN
         every { uid } returns "uid"
         every { isRefreshTokenBlank() } returns false
         every { isUidBlank() } returns false
     }
 
     private val userManagerMock = mockk<UserManager> {
-        every { username } answers { "testuser" }
-        every { getTokenManager("testuser") } returns tokenManagerMock
-        every { getMailboxPassword("testuser") } returns "mailbox password".toByteArray()
+        every { username } answers { TEST_USERNAME }
+        every { getTokenManager(TEST_USERNAME) } returns tokenManagerMock
+        every { getMailboxPassword(TEST_USERNAME) } returns "mailbox password".toByteArray()
         every { user } returns userMock
-        every { logoutOffline("testuser")} just runs
+        every { logoutOffline(TEST_USERNAME) } just runs
     }
 
     private val jobManagerMock = mockk<JobManager> (relaxed = true)
 
     private val authenticator =
-        ProtonMailAuthenticator.getInstance(userManagerMock, jobManagerMock, mockk())
-
-
+        ProtonMailAuthenticator(userManagerMock, jobManagerMock)
 
     @Before
     fun setup() {
@@ -84,7 +91,6 @@ class ProtonMailAuthenticatorTest {
         mockkStatic(ProtonMailApplication::class)
         MockKAnnotations.init(this)
         every { AppUtil.postEventOnUi(any()) } answers { mockk<Void>() }
-        every { AppUtil.getAppVersionName(any()) } answers { "app version name" }
         every { AppUtil.buildUserAgent() } answers { "user agent" }
 
         every { ProtonMailApplication.getApplication().currentLocale } returns "current locale"
@@ -92,7 +98,7 @@ class ProtonMailAuthenticatorTest {
             ProtonMailApplication.getApplication().defaultSharedPreferences
         } returns prefsMock
 
-        every { ProtonMailApplication.getApplication().notifyLoggedOut("testuser") } just runs
+        every { ProtonMailApplication.getApplication().notifyLoggedOut(TEST_USERNAME) } just runs
     }
 
     @After
@@ -104,153 +110,142 @@ class ProtonMailAuthenticatorTest {
     @Test
     fun verifyThatUnauthorisedWithAutoRetryCancelsRequest() {
         // given
-        val requestMock = mockk<Request> {
-            every { tag(RetrofitTag::class.java) } returns null
-            every { header("Authorization") } returns "auth_access_token"
-            every { url() } returns mockk {
-                every { encodedPath() } returns "https://legit_url"
-            }
-        }
+        val request = Request.Builder()
+            .tag(null)
+            .header(HEADER_AUTH, AUTH_ACCESS_TOKEN)
+            .url(TEST_URL)
+            .build()
         val priorResponse = mockk<Response>(relaxed = true)
         val responseMock = mockk<Response> {
-            every { request() } answers { requestMock }
+            every { request() } answers { request }
             every { priorResponse() } answers { priorResponse }
         }
 
         // when
-        val unauthorizedWithAutoRetryResultRequest = authenticator.refreshAuthToken(mockk(), responseMock)
+        val unauthorizedWithAutoRetryResultRequest = authenticator.authenticate(mockk(), responseMock)
 
         // then
-        Assert.assertNull(unauthorizedWithAutoRetryResultRequest)
+        assertNull(unauthorizedWithAutoRetryResultRequest)
     }
 
     @Test
     fun verifyThatUnauthorisedFollowedByTooManyRequestsErrorCancelsRequest() {
         // given
-        val requestMock = mockk<Request> {
-            every { tag(RetrofitTag::class.java) } returns null
-            every { header("Authorization") } returns "auth_access_token"
-            every { url() } returns mockk {
-                every { encodedPath() } returns "https://legit_url"
-            }
-        }
+        val request = Request.Builder()
+            .tag(null)
+            .header(HEADER_AUTH, AUTH_ACCESS_TOKEN)
+            .url(TEST_URL)
+            .build()
         val responseMock = mockk<Response> {
-            every { request() } answers { requestMock }
+            every { request() } answers { request }
             every { priorResponse() } answers { null }
         }
 
-        authenticator.publicService = mockk {
-            every { refreshSyncBlocking(any(), any()) } returns mockk {
-                every { execute() } returns mockk {
-                    every { body() } answers { null } // refresh failed
-                    every { code() } answers { ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS }
-                }
-            }
+        val authResponseMock = mockk<RefreshResponse> {
+            every { code } answers { ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS }
+            every { error } answers { NON_NULL_ERROR_MESSAGE }
         }
 
+        coEvery {
+            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        } returns authResponseMock
+
         // when
-        val checkIfTokenExpiredResponse = authenticator.refreshAuthToken(mockk(), responseMock)
+        val tooManyErrorsRequest = authenticator.authenticate(mockk(), responseMock)
 
         // then
-        Assert.assertNull(checkIfTokenExpiredResponse)
+        assertNull(tooManyErrorsRequest)
     }
 
     @Test
     fun verifyThatUnauthorisedFollowedByUnauthorisedErrorCancelsRequest() {
         // given
-        val requestMock = mockk<Request> {
-            every { tag(RetrofitTag::class.java) } returns null
-            every { header("Authorization") } returns "auth_access_token"
-            every { url() } returns mockk {
-                every { encodedPath() } returns "https://legit_url/auth/refresh"
-            }
-        }
+        val request = Request.Builder()
+            .tag(null)
+            .header(HEADER_AUTH, AUTH_ACCESS_TOKEN)
+            .url("$TEST_URL/auth/refresh")
+            .build()
+
         val responseMock = mockk<Response> {
-            every { request() } answers { requestMock }
+            every { request() } answers { request }
             every { priorResponse() } answers { null }
         }
 
-        authenticator.publicService = mockk {
-            every { refreshSyncBlocking(any(), any()) } returns mockk {
-                every { execute() } returns mockk {
-                    every { body() } answers { null } // refresh failed
-                    every { code() } answers { ch.protonmail.android.api.segments.RESPONSE_CODE_UNAUTHORIZED }
-                }
-            }
+        val authResponseMock = mockk<RefreshResponse> {
+            every { code } answers { ch.protonmail.android.api.segments.RESPONSE_CODE_UNAUTHORIZED }
+            every { error } answers { NON_NULL_ERROR_MESSAGE }
         }
 
+        coEvery {
+            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        } returns authResponseMock
+
         // when
-        val checkIfTokenExpiredResponse = authenticator.refreshAuthToken(mockk(), responseMock)
+        val subsequentUnauthorisedRequest = authenticator.authenticate(mockk(), responseMock)
 
         // then
-        Assert.assertNull(checkIfTokenExpiredResponse)
+        assertNull(subsequentUnauthorisedRequest)
     }
 
     @Test
     fun verifyThatUnauthorisedFollowedByGatewayTimeoutErrorCancelsRequest() {
         // given
-        val requestMock = mockk<Request> {
-            every { tag(RetrofitTag::class.java) } returns null
-            every { header("Authorization") } returns "auth_access_token"
-            every { url() } returns mockk {
-                every { encodedPath() } returns "https://legit_url"
-            }
-        }
+        val request = Request.Builder()
+            .tag(null)
+            .header(HEADER_AUTH, "auth_access_token")
+            .url("https://legit_url")
+            .build()
+
         val responseMock = mockk<Response> {
-            every { request() } answers { requestMock }
+            every { request() } answers { request }
             every { priorResponse() } answers { null }
         }
 
-        authenticator.publicService = mockk {
-            every { refreshSyncBlocking(any(), any()) } returns mockk {
-                every { execute() } returns mockk {
-                    every { body() } answers { null } // refresh failed
-                    every { code() } answers { ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT }
-                }
-            }
+        val authResponseMock = mockk<RefreshResponse> {
+            every { code } answers { ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT }
+            every { error } answers { NON_NULL_ERROR_MESSAGE }
         }
 
+        coEvery {
+            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        } returns authResponseMock
+
         // when
-        val checkIfTokenExpiredResponse = authenticator.refreshAuthToken(mockk(), responseMock)
+        val gatewayTimeoutRequest = authenticator.authenticate(mockk(), responseMock)
 
         // then
-        Assert.assertNull(checkIfTokenExpiredResponse)
+        assertNull(gatewayTimeoutRequest)
     }
 
     @Test
     fun verifyThatAfterReceivingUnauthorisedTokenRetryReturnsNewResponse() {
 
         // given
-        val requestMock = mockk<Request> {
-            every { tag(RetrofitTag::class.java) } returns null
-            every { header("Authorization") } returns "auth_access_token"
-            every { url() } returns mockk {
-                every { encodedPath() } returns "https://legit_url"
-            }
-            every { newBuilder() } returns mockk(relaxed = true)
-        }
+        val request = Request.Builder()
+            .tag(null)
+            .header(HEADER_AUTH, AUTH_ACCESS_TOKEN)
+            .url(TEST_URL)
+            .build()
 
         val responseMock = mockk<Response> {
-            every { request() } answers { requestMock }
+            every { request() } answers { request }
             every { priorResponse() } answers { null }
         }
 
-        authenticator.publicService = mockk {
-            every { refreshSyncBlocking(any(), any()) } returns mockk {
-                every { execute() } returns mockk {
-                    every { body() } returns mockk {
-                        // successful token refresh response
-                        every { accessToken } returns "correct_access_token"
-                    }
-                    every { code() } answers { 200 }
-                }
-            }
+        val authResponseMock = mockk<RefreshResponse> {
+            every { code } answers { 200 }
+            every { error } answers { "" }
+            every { accessToken } answers { "correct_access_token" }
         }
 
+        coEvery {
+            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        } returns authResponseMock
+
         // when
-        val updatedRequest = authenticator.refreshAuthToken(mockk(), responseMock)
+        val updatedRequest = authenticator.authenticate(mockk(), responseMock)
 
         // then
-        Assert.assertNotNull(updatedRequest)
+        assertNotNull(updatedRequest)
     }
 }

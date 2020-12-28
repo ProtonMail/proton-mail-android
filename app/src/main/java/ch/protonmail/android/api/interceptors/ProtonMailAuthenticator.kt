@@ -29,24 +29,25 @@ import ch.protonmail.android.api.segments.HEADER_USER_AGENT
 import ch.protonmail.android.api.segments.REFRESH_PATH
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
+import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
-import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ProtonMailAuthenticator private constructor(
-    userManager: UserManager,
-    jobManager: JobManager,
-    networkUtil: QueueNetworkUtil
-) : BaseRequestInterceptor(userManager, jobManager, networkUtil), Authenticator {
+@Singleton
+class ProtonMailAuthenticator @Inject constructor(
+    private val userManager: UserManager,
+    private val jobManager: JobManager
+) : Authenticator {
 
     private val appVersionName by lazy {
         val name = "Android_" + BuildConfig.VERSION_NAME
@@ -58,25 +59,15 @@ class ProtonMailAuthenticator private constructor(
     }
 
     @Throws(IOException::class)
-    override fun intercept(chain: Interceptor.Chain): Response = // transparent for now
-        chain.proceed(chain.request())
-
-    @Throws(IOException::class)
-    override fun authenticate(route: Route?, response: Response?): Request? {
-        return if (response != null) {
-            refreshAuthToken(route, response)
-        } else {
-            null
-        }
-    }
+    override fun authenticate(route: Route?, response: Response): Request? = refreshAuthToken(response)
 
     @Synchronized
-    fun refreshAuthToken(route: Route?, response: Response): Request? {
+    private fun refreshAuthToken(response: Response): Request? {
         val usernameAuth = response.request().tag(RetrofitTag::class.java)?.usernameAuth ?: userManager.username
         val tokenManager = userManager.getTokenManager(usernameAuth)
 
         val originalRequest = response.request()
-        if (originalRequest.header("Authorization") != tokenManager?.authAccessToken) {
+        if (originalRequest.header(HEADER_AUTH) != tokenManager?.authAccessToken) {
             // update request with new token
             return if (tokenManager != null) {
                 updateRequestHeaders(tokenManager, originalRequest)
@@ -94,16 +85,17 @@ class ProtonMailAuthenticator private constructor(
 
         if (tokenManager != null && !originalRequest.url().encodedPath().contains(REFRESH_PATH)) {
             val refreshBody = tokenManager.createRefreshBody()
-            val refreshResponse =
-                publicService.refreshSyncBlocking(refreshBody, RetrofitTag(usernameAuth)).execute()
-            val refreshResponseBody = refreshResponse.body()
-            if (refreshResponseBody != null && refreshResponseBody.accessToken != null) {
+            val refreshResponse = runBlocking {
+                ProtonMailApplication.getApplication().api
+                    .refreshAuth(refreshBody, RetrofitTag(usernameAuth))
+            }
+            if (refreshResponse.error.isNullOrEmpty() && refreshResponse.accessToken != null) {
                 Timber.i(
                     "access token expired: got correct refresh response, handle refresh in token manager"
                 )
-                tokenManager.handleRefresh(refreshResponseBody)
+                tokenManager.handleRefresh(refreshResponse)
             } else {
-                return if (refreshResponse.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
+                return if (refreshResponse.code == RESPONSE_CODE_TOO_MANY_REQUESTS) {
                     Timber.i(
                         "access token expired: got 429 response trying to refresh it, quitting flow"
                     )
@@ -111,7 +103,7 @@ class ProtonMailAuthenticator private constructor(
                 } else {
                     Timber.i(
                         "access token expired: " +
-                            "got error response (${refreshResponse.code()}) trying to refresh it: " +
+                            "got error response (${refreshResponse.code}) trying to refresh it: " +
                             "(refresh token blank = ${tokenManager.isRefreshTokenBlank()}, " +
                             "uid blank = ${tokenManager.isUidBlank()}), logging out"
                     )
@@ -167,24 +159,5 @@ class ProtonMailAuthenticator private constructor(
     // stub for migrating header application from BaseRequestInterceptor.kt to here
     private fun applyHeadersToRequest(tokenManager: TokenManager, originalRequest: Request): Request? {
         return null
-    }
-
-    companion object {
-
-        @Volatile
-        private var INSTANCE: ProtonMailAuthenticator? = null
-
-        fun getInstance(
-            userManager: UserManager,
-            jobManager: JobManager,
-            networkUtil: QueueNetworkUtil
-        ): ProtonMailAuthenticator =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE
-                    ?: buildInstance(userManager, jobManager, networkUtil).also { INSTANCE = it }
-            }
-
-        private fun buildInstance(userManager: UserManager, jobManager: JobManager, networkUtil: QueueNetworkUtil) =
-            ProtonMailAuthenticator(userManager, jobManager, networkUtil)
     }
 }

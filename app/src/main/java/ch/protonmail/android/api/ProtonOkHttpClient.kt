@@ -49,7 +49,7 @@ const val TLS = "TLS"
 sealed class ProtonOkHttpClient(
     timeout: Long,
     defaultInterceptor: Interceptor?,
-    authenticator: Authenticator?,
+    authenticator: Authenticator,
     loggingLevel: HttpLoggingInterceptor.Level,
     connectionSpecs: List<ConnectionSpec?>,
     serverTimeInterceptor: ServerTimeInterceptor?,
@@ -74,9 +74,9 @@ sealed class ProtonOkHttpClient(
         if (defaultInterceptor != null) {
             okClientBuilder.addInterceptor(defaultInterceptor)
         }
-        if(authenticator != null) {
-            okClientBuilder.authenticator(authenticator)
-        }
+
+        okClientBuilder.authenticator(authenticator)
+
         if (AppUtil.isDebug()) {
             val httpLoggingInterceptor = HttpLoggingInterceptor()
             httpLoggingInterceptor.level = loggingLevel
@@ -100,17 +100,26 @@ sealed class ProtonOkHttpClient(
  * This class defines and configures the OkHttpClient that is used by default.
  */
 class DefaultOkHttpClient(
-        timeout: Long,
-        interceptor: Interceptor?,
-        authenticator: Authenticator?,
-        loggingLevel: HttpLoggingInterceptor.Level,
-        connectionSpecs: List<ConnectionSpec?>,
-        serverTimeInterceptor: ServerTimeInterceptor?) : ProtonOkHttpClient(timeout, interceptor, authenticator, loggingLevel, connectionSpecs, serverTimeInterceptor, Constants.ENDPOINT_URI) {
+    timeout: Long,
+    interceptor: Interceptor?,
+    authenticator: Authenticator,
+    loggingLevel: HttpLoggingInterceptor.Level,
+    connectionSpecs: List<ConnectionSpec?>,
+    serverTimeInterceptor: ServerTimeInterceptor?
+) : ProtonOkHttpClient(
+    timeout,
+    interceptor,
+    authenticator,
+    loggingLevel,
+    connectionSpecs,
+    serverTimeInterceptor,
+    Constants.ENDPOINT_URI
+) {
 
     init {
         okClientBuilder.sslSocketFactory(
-                trustKit.getSSLSocketFactory(serverHostname),
-                trustKit.getTrustManager(serverHostname)
+            trustKit.getSSLSocketFactory(serverHostname),
+            trustKit.getTrustManager(serverHostname)
         )
     }
 }
@@ -120,25 +129,33 @@ class DefaultOkHttpClient(
  * is not available (api not accessible or banned).
  */
 class ProxyOkHttpClient(
-        timeout: Long,
-        interceptor: Interceptor?,
-        authenticator: Authenticator?,
-        loggingLevel: HttpLoggingInterceptor.Level,
-        connectionSpecs: List<ConnectionSpec?>,
-        serverTimeInterceptor: ServerTimeInterceptor?,
-        endpointUri: String,
-        pinnedKeyHashes: List<String>
-) : ProtonOkHttpClient(timeout, interceptor, authenticator, loggingLevel, connectionSpecs, serverTimeInterceptor, endpointUri) {
+    timeout: Long,
+    interceptor: Interceptor?,
+    authenticator: Authenticator,
+    loggingLevel: HttpLoggingInterceptor.Level,
+    connectionSpecs: List<ConnectionSpec?>,
+    serverTimeInterceptor: ServerTimeInterceptor?,
+    endpointUri: String,
+    pinnedKeyHashes: List<String>
+) : ProtonOkHttpClient(
+    timeout,
+    interceptor,
+    authenticator,
+    loggingLevel,
+    connectionSpecs,
+    serverTimeInterceptor,
+    endpointUri
+) {
 
     init {
         val trustManager = PinningTrustManager(pinnedKeyHashes)
         val sslContext = SSLContext.getInstance(TLS)
         sslContext.init(null, arrayOf(trustManager), null)
         okClientBuilder.sslSocketFactory(sslContext.socketFactory, trustManager)
-        okClientBuilder.hostnameVerifier(HostnameVerifier { _, _ ->
+        okClientBuilder.hostnameVerifier(
             // Verification is based solely on SPKI pinning of leaf certificate
-            true
-        })
+            HostnameVerifier { _, _ -> true }
+        )
     }
 
     class PinningTrustManager(pinnedKeyHashes: List<String>) : X509TrustManager {
@@ -147,7 +164,7 @@ class ProxyOkHttpClient(
 
         @Throws(CertificateException::class)
         override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-            //TODO: is that enough? need security review
+            // TODO: is that enough? need security review
             if (PublicKeyPin(chain.first()) !in pins)
                 throw CertificateException("Pin verification failed")
         }

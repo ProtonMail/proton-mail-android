@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.interceptors
 
-import ch.protonmail.android.api.ProtonMailPublicService
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
@@ -52,9 +51,6 @@ abstract class BaseRequestInterceptor(
     protected val jobManager: JobManager,
     protected val networkUtils: QueueNetworkUtil
 ) : Interceptor {
-
-    // this can't be required in constructor because of circular dependency when setting up networking
-    lateinit var publicService: ProtonMailPublicService
 
     private val appVersionName by lazy {
         val name = "Android_" + AppUtil.getAppVersionName(ProtonMailApplication.getApplication())

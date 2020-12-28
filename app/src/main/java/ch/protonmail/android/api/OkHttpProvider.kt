@@ -43,7 +43,7 @@ class OkHttpProvider @Inject constructor(
         id: String = endpointUri,
         timeout: Long,
         interceptor: Interceptor?,
-        authenticator: Authenticator?,
+        authenticator: Authenticator,
         loggingLevel: HttpLoggingInterceptor.Level,
         connectionSpecs: List<ConnectionSpec?>,
         serverTimeInterceptor: ServerTimeInterceptor?
@@ -52,9 +52,25 @@ class OkHttpProvider @Inject constructor(
             return okHttpClients[id]!! // we can safely enforce here because we are sure it exists
         }
         okHttpClients[id] = if (endpointUri == Constants.ENDPOINT_URI) {
-            DefaultOkHttpClient(timeout, interceptor, authenticator, loggingLevel, connectionSpecs, serverTimeInterceptor)
+            DefaultOkHttpClient(
+                timeout,
+                interceptor,
+                authenticator,
+                loggingLevel,
+                connectionSpecs,
+                serverTimeInterceptor
+            )
         } else {
-            ProxyOkHttpClient(timeout, interceptor, authenticator, loggingLevel, connectionSpecs, serverTimeInterceptor, endpointUri, pinnedKeyHashes)
+            ProxyOkHttpClient(
+                timeout,
+                interceptor,
+                authenticator,
+                loggingLevel,
+                connectionSpecs,
+                serverTimeInterceptor,
+                endpointUri,
+                pinnedKeyHashes
+            )
         }
         return okHttpClients[id]!!
     }
