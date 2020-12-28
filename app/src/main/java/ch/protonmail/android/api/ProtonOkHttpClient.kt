@@ -24,6 +24,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
 import com.datatheorem.android.trustkit.TrustKit
 import com.datatheorem.android.trustkit.config.PublicKeyPin
+import okhttp3.Authenticator
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -46,12 +47,13 @@ const val TLS = "TLS"
  * Created by dinokadrikj on 2/29/20.
  */
 sealed class ProtonOkHttpClient(
-        timeout: Long,
-        defaultInterceptor: Interceptor?,
-        loggingLevel: HttpLoggingInterceptor.Level,
-        connectionSpecs: List<ConnectionSpec?>,
-        serverTimeInterceptor: ServerTimeInterceptor?,
-        endpointUri: String
+    timeout: Long,
+    defaultInterceptor: Interceptor?,
+    authenticator: Authenticator?,
+    loggingLevel: HttpLoggingInterceptor.Level,
+    connectionSpecs: List<ConnectionSpec?>,
+    serverTimeInterceptor: ServerTimeInterceptor?,
+    endpointUri: String
 ) {
 
     // the OkHttp builder instance
@@ -71,6 +73,9 @@ sealed class ProtonOkHttpClient(
         okClientBuilder.writeTimeout(timeout, TimeUnit.SECONDS)
         if (defaultInterceptor != null) {
             okClientBuilder.addInterceptor(defaultInterceptor)
+        }
+        if(authenticator != null) {
+            okClientBuilder.authenticator(authenticator)
         }
         if (AppUtil.isDebug()) {
             val httpLoggingInterceptor = HttpLoggingInterceptor()
@@ -97,9 +102,10 @@ sealed class ProtonOkHttpClient(
 class DefaultOkHttpClient(
         timeout: Long,
         interceptor: Interceptor?,
+        authenticator: Authenticator?,
         loggingLevel: HttpLoggingInterceptor.Level,
         connectionSpecs: List<ConnectionSpec?>,
-        serverTimeInterceptor: ServerTimeInterceptor?) : ProtonOkHttpClient(timeout, interceptor, loggingLevel, connectionSpecs, serverTimeInterceptor, Constants.ENDPOINT_URI) {
+        serverTimeInterceptor: ServerTimeInterceptor?) : ProtonOkHttpClient(timeout, interceptor, authenticator, loggingLevel, connectionSpecs, serverTimeInterceptor, Constants.ENDPOINT_URI) {
 
     init {
         okClientBuilder.sslSocketFactory(
@@ -116,12 +122,13 @@ class DefaultOkHttpClient(
 class ProxyOkHttpClient(
         timeout: Long,
         interceptor: Interceptor?,
+        authenticator: Authenticator?,
         loggingLevel: HttpLoggingInterceptor.Level,
         connectionSpecs: List<ConnectionSpec?>,
         serverTimeInterceptor: ServerTimeInterceptor?,
         endpointUri: String,
         pinnedKeyHashes: List<String>
-) : ProtonOkHttpClient(timeout, interceptor, loggingLevel, connectionSpecs, serverTimeInterceptor, endpointUri) {
+) : ProtonOkHttpClient(timeout, interceptor, authenticator, loggingLevel, connectionSpecs, serverTimeInterceptor, endpointUri) {
 
     init {
         val trustManager = PinningTrustManager(pinnedKeyHashes)

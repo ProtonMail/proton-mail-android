@@ -29,18 +29,15 @@ import ch.protonmail.android.api.segments.HEADER_AUTH
 import ch.protonmail.android.api.segments.HEADER_LOCALE
 import ch.protonmail.android.api.segments.HEADER_UID
 import ch.protonmail.android.api.segments.HEADER_USER_AGENT
-import ch.protonmail.android.api.segments.REFRESH_PATH
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
 import ch.protonmail.android.api.segments.RESPONSE_CODE_SERVICE_UNAVAILABLE
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
-import ch.protonmail.android.api.segments.RESPONSE_CODE_UNAUTHORIZED
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.RequestTimeoutEvent
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
-import com.birbit.android.jobqueue.TagConstraint
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -124,7 +121,7 @@ abstract class BaseRequestInterceptor(
     /**
      * @return if returned null, no need to re-authorize or HTTP 504/429 happened (there's nothing we can do)
      */
-    fun checkIfTokenExpired(chain: Interceptor.Chain, request: Request, response: Response?): Response? {
+    fun checkResponse(response: Response?): Response? {
         if (response == null) {
             return null
         }
@@ -133,74 +130,18 @@ abstract class BaseRequestInterceptor(
             return null
         }
 
-        if (response.code() == RESPONSE_CODE_UNAUTHORIZED) {
-            val usernameAuth = chain.request().tag(RetrofitTag::class.java)?.usernameAuth ?: userManager.username
-            val tokenManager = userManager.getTokenManager(usernameAuth)
-
-            if (tokenManager != null && !request.url().encodedPath().contains(REFRESH_PATH)) {
-                synchronized(this) {
-                    Timber.d("access token expired, trying to refresh")
-                    // get a new token with synchronous retrofit call
-                    val refreshBody = tokenManager.createRefreshBody()
-                    val refreshResponse = publicService.refreshSync(refreshBody, RetrofitTag(usernameAuth)).execute()
-                    val refreshResponseBody = refreshResponse.body()
-                    if (refreshResponseBody != null && refreshResponseBody.accessToken != null) {
-                        Timber.tag("429").i("access token expired, got correct refresh response, handle refresh in token manager")
-                        tokenManager.handleRefresh(refreshResponseBody)
-                    } else {
-                        return if (refreshResponse.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
-                            Timber.tag("429").i("access token expired, got 429 response trying to refresh it, quitting flow")
-                            null
-                        } else {
-                            Timber.tag("429").i("access token expired, got error response (${refreshResponse.code()}) trying to refresh it (refresh token blank = ${tokenManager.isRefreshTokenBlank()}, uid blank = ${tokenManager.isUidBlank()}), logging out")
-                            ProtonMailApplication.getApplication().notifyLoggedOut(usernameAuth)
-                            jobManager.stop()
-                            jobManager.clear()
-                            jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
-                            userManager.logoutOffline(usernameAuth)
-                            response
-                        }
-                    }
-
-                    // update request with new token
-                    val newRequest: Request
-                    if (tokenManager.authAccessToken != null) {
-                        Timber.d("access token expired, updating request with new token")
-                        newRequest = request.newBuilder()
-                            .header(HEADER_AUTH, tokenManager.authAccessToken!!)
-                            .header(HEADER_UID, tokenManager.uid)
-                            .header(HEADER_APP_VERSION, appVersionName)
-                            .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
-                            .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
-                            .build()
-                    } else {
-                        Timber.tag("429").i("access token expired, updating request without the token (should not happen!) and uid blank? ${tokenManager.isUidBlank()}")
-                        newRequest = request.newBuilder()
-                            .header(HEADER_UID, tokenManager.uid)
-                            .header(HEADER_APP_VERSION, appVersionName)
-                            .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
-                            .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
-                            .build()
-                    }
-                    // retry the original request which got 401 when we first tried it
-                    response.close()
-                    return chain.proceed(newRequest)
-                }
-            } else { // if received 401 error while refreshing access token, send event to logout user
-                Timber.tag("429").i("access token expired, got 401 while trying to refresh it (refresh token blank = ${tokenManager?.isRefreshTokenBlank()}, uid blank = ${tokenManager?.isUidBlank()})") // TODO will log `null` if TokenManager was null
-                ProtonMailApplication.getApplication().notifyLoggedOut(usernameAuth)
-                userManager.logoutOffline(usernameAuth)
-                return response
+        when {
+            response.code() == RESPONSE_CODE_GATEWAY_TIMEOUT -> {
+                Timber.d("'gateway timeout' when processing request")
+                AppUtil.postEventOnUi(RequestTimeoutEvent())
             }
-        } else if (response.code() == RESPONSE_CODE_GATEWAY_TIMEOUT) {
-            Timber.d("'gateway timeout' when processing request")
-            AppUtil.postEventOnUi(RequestTimeoutEvent())
-        } else if (response.code() == RESPONSE_CODE_TOO_MANY_REQUESTS) {
-            Timber.d("'too many requests' when processing request")
-        } else if (response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE) { // 503
-            Timber.d("'service unavailable' when processing request")
+            response.code() == RESPONSE_CODE_TOO_MANY_REQUESTS -> {
+                Timber.d("'too many requests' when processing request")
+            }
+            response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
+                Timber.d("'service unavailable' when processing request")
+            }
         }
-
         return null
     }
 

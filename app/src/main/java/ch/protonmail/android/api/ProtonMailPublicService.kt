@@ -38,6 +38,9 @@ interface ProtonMailPublicService {
     //region auth
     @POST("auth/refresh")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun refreshSync(@Body refreshBody: RefreshBody, @Tag retrofitTag: RetrofitTag? = null): Call<RefreshResponse>
+    fun refreshSyncBlocking(
+        @Body refreshBody: RefreshBody,
+        @Tag retrofitTag: RetrofitTag? = null
+    ): Call<RefreshResponse>
     //endregion
 }
