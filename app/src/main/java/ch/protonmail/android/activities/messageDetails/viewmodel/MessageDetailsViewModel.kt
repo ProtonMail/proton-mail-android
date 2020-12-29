@@ -50,7 +50,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
@@ -531,7 +530,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             message?.let {
                 fetchingPubKeys = true
                 viewModelScope.launch {
-                    val result = fetchVerificationKeys(EmailAddress(message.senderEmail))
+                    val result = fetchVerificationKeys(message.senderEmail)
                     onFetchVerificationKeysEvent(result)
                 }
             }
