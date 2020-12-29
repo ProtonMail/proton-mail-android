@@ -232,7 +232,7 @@ dependencies {
         `kotlin-jdk7`,
         `kotlin-reflect`,
         `coroutines-android`,
-        `serialization`,
+        `serialization-json`,
 
         // Android
         `android-annotation`,

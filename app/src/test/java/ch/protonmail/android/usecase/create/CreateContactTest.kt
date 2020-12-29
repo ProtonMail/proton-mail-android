@@ -226,7 +226,7 @@ class CreateContactTest : CoroutinesTest {
                     }
                 ]
 
-             """.trimIndent()
+            """.trimIndent()
 
             val workOutputData = workDataOf(
                 KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to "ID",

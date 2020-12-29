@@ -65,7 +65,7 @@ val DependencyHandler.`jUnit5-jupiter-params` get() =       jUnit5jupiter("param
 val DependencyHandler.`jUnit5-vintage-engine` get() =       jUnit5vintage("engine")
 
 // testRail
-val DependencyHandler.`jsonsimple` get() =                 dependency("com.googlecode.json-simple", module = "json-simple") version `json-simple version`
+val DependencyHandler.`json-simple` get() =                 dependency("com.googlecode.json-simple", module = "json-simple") version `json-simple version`
 
 // region jUnit 5 groups
 fun DependencyHandler.jUnit5jupiter(moduleSuffix: String, version: String = `jUnit5 version`) =

@@ -16,8 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-import me.proton.core.util.gradle.setupDetekt
-import me.proton.core.util.gradle.setupKotlin
 
 buildscript {
     initVersions()
@@ -26,6 +24,9 @@ buildscript {
 }
 
 plugins {
+    id("me.proton.kotlin") version "0.1" // Released: Oct 09, 2020
+    id("me.proton.tests") version "0.1" // Released: Oct 09, 2020
+    id("me.proton.detekt") version "0.2" // Released: Nov 23, 2020
     `sonarQube`
 }
 
@@ -33,10 +34,7 @@ allprojects {
     repositories(repos)
 }
 
-setupTests()
-setupKotlin(
-    // Enables new type inference: TODO remove with Kotlin 1.4
-    "-XXLanguage:+NewInference",
+kotlinCompilerArgs(
     "-Xuse-experimental=kotlin.Experimental",
     // Enables inline classes
     "-XXLanguage:+InlineClasses",
@@ -47,7 +45,6 @@ setupKotlin(
     // Enables experimental kotlin.time
     "-Xopt-in=kotlin.time.ExperimentalTime"
 )
-setupDetekt { "tokenAutoComplete" !in it.name }
 
 tasks.register("clean", Delete::class.java) {
     delete(rootProject.buildDir)

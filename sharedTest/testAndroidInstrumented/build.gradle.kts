@@ -44,8 +44,8 @@ dependencies {
         `lifecycle-liveData`,
         `lifecycle-viewModel`,
 
-        //TestRail
-         `jsonsimple`
+        // TestRail
+         `json-simple`
     )
 
     // Test dependencies
@@ -77,6 +77,6 @@ dependencies {
         `android-work-testing`,
         `espresso`,
         `hamcrest`,
-        `jsonsimple`
+        `json-simple`
     )
 }

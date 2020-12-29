@@ -24,9 +24,9 @@ import studio.forface.easygradle.dsl.android.*
 fun initVersions() {
 
     // region Kotlin
-    `kotlin version` =                          "1.3.72"        // Released: Apr 14, 2020
-    `coroutines version` =                      "1.3.9"         // Released: Aug 14, 2020
-    `serialization version` =                   "0.20.0"        // Released: Mar 04, 2020
+    `kotlin version` =                          "1.4.21"        // Released: Dec 07, 2020
+    `coroutines version` =                      "1.4.2"         // Released: Nov 26, 2020
+    `serialization version` =                   "1.0.1"         // Released: Oct 28, 2020
     // endregion
 
     // region Android
@@ -63,15 +63,15 @@ fun initVersions() {
 
 // Proton Core
 // Common
-const val `Proton-kotlin-util version` =        "0.1.6"         // Released: Aug 30, 2020
-const val `Proton-shared-preferences version` = "0.1.2"         // Released: Aug 30, 2020
-const val `Proton-work-manager version` =       "0.1.1"         // Released: Sep 14, 2020
+const val `Proton-kotlin-util version` =        "0.2.4"         // Released: Nov 19, 2020
+const val `Proton-shared-preferences version` = "0.2.3"         // Released: Dec 18, 2020
+const val `Proton-work-manager version` =       "0.2.2"         // Released: Dec 18, 2020
 // Test
-const val `Proton-android-test version` =       "0.1"           // Released: May 30, 2020
-const val `Proton-android-instr-test version` = "0.1.2"         // Released: Sep 14, 2020
-const val `Proton-kotlin-test version` =        "0.1.1"         // Released: Sep 16, 2020
+const val `Proton-android-test version` =       "0.3.3"         // Released: Dec 18, 2020
+const val `Proton-android-instr-test version` = "0.2.2"         // Released: Dec 18, 2020
+const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct 21, 2020
 
-const val `Proton-domain version` =             "0.1"           // Released: Jul 03, 2020
+const val `Proton-domain version` =             "0.2.4"         // Released: Nov 18, 2020
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
