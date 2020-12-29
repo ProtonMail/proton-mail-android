@@ -115,6 +115,7 @@ import me.proton.core.util.android.workmanager.activity.getWorkManager
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import timber.log.Timber
+import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
@@ -557,7 +558,14 @@ internal class MessageDetailsActivity :
                     return doc
                 }
             })
-        viewModel.nonBrokenEmail = contentTransformer.transform(Jsoup.parse(decryptedMessage)).toString()
+
+        viewModel.nonBrokenEmail = try {
+            contentTransformer.transform(Jsoup.parse(decryptedMessage)).toString()
+        } catch (ioException: IOException) {
+            Timber.e(ioException, "Jsoup is unable to parse HTML message details")
+            resources.getString(R.string.request_timeout)
+        }
+
         viewModel.bodyString = viewModel.nonBrokenEmail
         if (showImages) {
             viewModel.remoteContentDisplayed()
