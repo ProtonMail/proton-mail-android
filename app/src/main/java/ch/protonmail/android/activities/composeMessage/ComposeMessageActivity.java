@@ -1840,7 +1840,7 @@ public class ComposeMessageActivity
                 }
                 MessageRecipient recipient = new MessageRecipient(name, "");
                 recipient.setGroup(groupName);
-                recipient.setGroupIcon( R.string.contact_group_groups_icon);
+                recipient.setGroupIcon(R.string.contact_group_groups_icon);
                 recipient.setGroupColor(Color.parseColor(UiUtil.normalizeColor(group.getColor())));
                 recipient.setGroupRecipients(groupRecipients);
                 messageRecipientView.addObject(recipient);

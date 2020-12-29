@@ -22,8 +22,6 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.ContactEncryptedData
-import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.models.MessageRecipientMatcher
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.Constants
 import org.hamcrest.Matchers.`is`
@@ -242,17 +240,6 @@ internal class ContactsDatabaseTest {
 	@Test
 	fun findAllContactsEmailsByContactGroupAsync() {
 		TODO()
-		assertDatabaseState()
-	}
-
-	@Test
-	fun findAllMessageRecipients() {
-		val expected=contactEmails.map {email-> contactData.filter {it.contactId==email.contactId}.map {MessageRecipient(it.name,email.email)}}.flatten().map{
-			`is`(MessageRecipientMatcher(it))
-		}
-		// fixme
-//		val actual=database.findAllMessageRecipients().testValue?.toSet()
-//		Assert.assertThat(actual,containsInAnyOrder(expected))
 		assertDatabaseState()
 	}
 
