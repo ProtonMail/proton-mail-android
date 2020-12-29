@@ -26,6 +26,7 @@ import androidx.lifecycle.asFlow
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
@@ -262,7 +263,7 @@ class CreateDraftWorker @WorkerInject constructor(
             parentId: String?,
             actionType: Constants.MessageActionType,
             previousSenderAddressId: String
-        ): Flow<WorkInfo> {
+        ): Flow<WorkInfo?> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -280,7 +281,11 @@ class CreateDraftWorker @WorkerInject constructor(
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofSeconds(TEN_SECONDS))
                 .build()
 
-            workManager.enqueue(createDraftRequest)
+            workManager.enqueueUniqueWork(
+                requireNotNull(message.messageId),
+                ExistingWorkPolicy.REPLACE,
+                createDraftRequest
+            )
             return workManager.getWorkInfoByIdLiveData(createDraftRequest.id).asFlow()
         }
     }

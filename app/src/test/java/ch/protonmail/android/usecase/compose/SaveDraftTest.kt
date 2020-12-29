@@ -54,6 +54,7 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
@@ -218,6 +219,34 @@ class SaveDraftTest : CoroutinesTest {
 
             // Then
             verify { createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273") }
+        }
+    }
+
+    @Test
+    fun saveDraftsIgnoresEmissionsFromCreateDraftWorkerWhenWorkInfoIsNull() {
+        // This test is needed to ensure CreateDraftWorker is returning a flow of (Optional) WorkInfo?
+        // as this is possible because of `getWorkInfoByIdLiveData` implementation
+        runBlockingTest {
+            // Given
+            val message = Message().apply {
+                dbId = 123L
+                this.messageId = "456"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+            }
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
+            every {
+                createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273")
+            } answers { flowOf(null) }
+
+            // When
+            saveDraft.invoke(
+                SaveDraftParameters(message, emptyList(), "parentId123", REPLY_ALL, "previousSenderId1273")
+            )
+
+            // Then\
+            coVerify(exactly = 0) { messageDetailsRepository.findMessageById(any()) }
         }
     }
 

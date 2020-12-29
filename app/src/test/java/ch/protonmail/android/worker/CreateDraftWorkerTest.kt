@@ -20,11 +20,14 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
+import androidx.lifecycle.liveData
 import androidx.work.BackoffPolicy
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.ListenableWorker
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -118,18 +121,20 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerEnqueuerCreatesOneTimeRequestWorkerWithParams() {
+    fun workerEnqueuerCreatesOneTimeRequestWorkerWhichIsUniqueForMessageId() {
         runBlockingTest {
             // Given
             val messageParentId = "98234"
-            val messageLocalId = "2834"
+            val messageId = "2834"
             val messageDbId = 534L
             val messageActionType = REPLY_ALL
-            val message = Message(messageLocalId)
+            val message = Message(messageId = messageId)
             message.dbId = messageDbId
             val previousSenderAddressId = "previousSenderId82348"
             val requestSlot = slot<OneTimeWorkRequest>()
-            every { workManager.enqueue(capture(requestSlot)) } answers { mockk() }
+            every {
+                workManager.enqueueUniqueWork(messageId, ExistingWorkPolicy.REPLACE, capture(requestSlot))
+            } answers { mockk() }
 
             // When
             CreateDraftWorker.Enqueuer(workManager).enqueue(

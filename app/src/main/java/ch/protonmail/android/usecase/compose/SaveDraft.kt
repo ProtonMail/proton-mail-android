@@ -94,9 +94,9 @@ class SaveDraft @Inject constructor(
             params.actionType,
             params.previousSenderAddressId
         )
-            .filter { it.state.isFinished }
+            .filter { it?.state?.isFinished == true }
             .map { workInfo ->
-                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                if (workInfo?.state == WorkInfo.State.SUCCEEDED) {
                     val createdDraftId = requireNotNull(
                         workInfo.outputData.getString(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID)
                     )
