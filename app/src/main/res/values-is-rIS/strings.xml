@@ -991,6 +991,7 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <!-- region errors -->
     <string name="error_image_not_found">Mynd fannst ekki</string>
     <string name="error_image_bad_url">Gölluð slóð á mynd</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">Heimilað</string>
     <string name="denied">Hafnað</string>

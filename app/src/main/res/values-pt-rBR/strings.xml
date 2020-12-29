@@ -994,6 +994,7 @@ acesso ao armazenamento.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Imagem não encontrada</string>
     <string name="error_image_bad_url">Url da imagem inválida</string>
+    <string name="error_saving_try_again">Erro ao salvar mensagem. Tente novamente.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
     <string name="denied">Negado</string>

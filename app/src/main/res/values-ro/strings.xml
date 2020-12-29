@@ -1008,6 +1008,7 @@ accesul la spațiul de stocare al telefonului.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Imagine negăsită</string>
     <string name="error_image_bad_url">Adresă eronată imagine</string>
+    <string name="error_saving_try_again">Eroare la salvare. Mai încercați.</string>
     <!-- endregion -->
     <string name="allowed">Permis</string>
     <string name="denied">Respins</string>

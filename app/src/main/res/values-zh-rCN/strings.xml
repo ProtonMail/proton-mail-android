@@ -961,6 +961,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region errors -->
     <string name="error_image_not_found">图片未找到</string>
     <string name="error_image_bad_url">图片网址不正确</string>
+    <string name="error_saving_try_again">保存邮件失败，请重试。</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>

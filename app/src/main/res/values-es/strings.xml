@@ -370,7 +370,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="hyperlink_confirmation_dialog_text_html">Está a punto de lanzar el navegador e ir a:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;¿Desea continuar?</string>
     <string name="dont_ask_again">No preguntar de nuevo</string>
     <string name="none">Ninguno</string>
-    <string name="changes_affected_after_closing">Se efectuaran los cambios después de cerrar la aplicación</string>
+    <string name="changes_affected_after_closing">Los cambios tendrán efecto después de cerrar la aplicación</string>
     <plurals name="incorrect_pin_remaining_attempts">
         <item quantity="one">PIN incorrecto, %d intento restante</item>
         <item quantity="other">PIN incorrecto, %d intentos restantes</item>
@@ -907,7 +907,7 @@ el acceso al almacenamiento.</string>
     <string name="settings_auto_show_images">Mostrar imágenes remotas automáticamente</string>
     <string name="settings_auto_show_embedded_images">Mostrar automáticamente las imágenes incrustadas</string>
     <string name="settings_prevent_taking_screenshots">Prevenir capturas de pantalla</string>
-    <string name="hyperlink_confirmation">Solicitar enlace de confirmación</string>
+    <string name="hyperlink_confirmation">Solicitar confirmación de enlace</string>
     <string name="labels_and_folders">Etiquetas y carpetas </string>
     <string name="labels_manage">Gestionar etiquetas</string>
     <string name="folders_manage">Gestionar carpetas</string>
@@ -972,7 +972,7 @@ el acceso al almacenamiento.</string>
     <string name="signed_in_with">Sesión iniciada con %s</string>
     <string name="signed_in_with_logged_out_from">Sesión cerrada de %1$s e iniciada con %2$s</string>
     <string name="connect_account_limit_title">Límite alcanzado</string>
-    <string name="connect_account_limit_subtitle">No puedes añadir otra cuenta gratuita de ProtonMail. Sólo se puede añadir una cuenta gratuita de ProtonMail. Por favor, cierre la sesión de su otra cuenta gratuita o actualice una de sus cuentas gratuitas a una cuenta de pago.</string>
+    <string name="connect_account_limit_subtitle">No puedes añadir otra cuenta gratuita de ProtonMail. Sólo se puede añadir una cuenta gratuita de ProtonMail. Por favor, cierra la sesión de tu otra cuenta gratuita o actualiza una de tus cuentas gratuitas a una cuenta de pago.</string>
     <string name="switch_accounts_question">¿Cambiar de cuenta?</string>
     <string name="switch_to_account">Cambiar a %s</string>
     <string name="login_failure_missing_keys">La cuenta que está intentando añadir no tiene claves generadas. Añada esta cuenta como una primera cuenta en la app, o inicie sesión en la versión web para generar claves y luego añadirla como una cuenta adicional en la app.</string>
@@ -995,13 +995,14 @@ el acceso al almacenamiento.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
     <string name="error_image_bad_url">URL de la imagen mal formada</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
     <string name="denied">Denegado</string>
     <!-- region Swipe gestures changed dialog -->
     <string name="swipe_gestures_changed">Gestos de deslizamiento cambiados</string>
-    <string name="swipe_gestures_changed_message">Después de la última actualización, se han cambiado los gestos de deslizamiento. Si lo desea, puede restablecerlos en la configuración.</string>
+    <string name="swipe_gestures_changed_message">Después de la última actualización, se han cambiado los gestos de deslizamiento. Si lo deseas, puedes restablecerlos en la configuración.</string>
     <string name="go_to_settings">Ir a los ajustes</string>
     <!-- endregion -->
-    <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
+    <string name="invalid_firebase_api_key_message">La clave de la API de Firebase no es válida. Las notificaciones Push no funcionarán.</string>
 </resources>

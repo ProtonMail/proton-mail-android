@@ -976,6 +976,7 @@ webmail 介面升級 ProtonMail。</string>
     <!-- region errors -->
     <string name="error_image_not_found">找不到圖片</string>
     <string name="error_image_bad_url">圖片 URL 格式錯誤</string>
+    <string name="error_saving_try_again">儲存訊息時發生錯誤。請再試一次。</string>
     <!-- endregion -->
     <string name="allowed">已允許</string>
     <string name="denied">已拒絕</string>

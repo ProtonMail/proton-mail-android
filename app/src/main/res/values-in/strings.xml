@@ -979,6 +979,7 @@ akses menuju penyimpanan.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Gambar tidak ditemukan</string>
     <string name="error_image_bad_url">Url gambar tidak valid</string>
+    <string name="error_saving_try_again">Gagal menyimpan pesan. Coba lagi.</string>
     <!-- endregion -->
     <string name="allowed">Diizinkan</string>
     <string name="denied">Ditolak</string>

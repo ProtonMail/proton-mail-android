@@ -1010,6 +1010,7 @@ pristup pohrani.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Slika nije pronađena</string>
     <string name="error_image_bad_url">Neispravni URL slike</string>
+    <string name="error_saving_try_again">Pogreška prilikom spremanja poruke. Pokušajte kasnije.</string>
     <!-- endregion -->
     <string name="allowed">Dopušteno</string>
     <string name="denied">Odbijeno</string>

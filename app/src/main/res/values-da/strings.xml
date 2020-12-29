@@ -994,6 +994,7 @@ lagerpladsadgang.</string>
     <!-- region errors -->
     <string name="error_image_not_found">Image not found</string>
     <string name="error_image_bad_url">Malformed image url</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>

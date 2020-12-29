@@ -986,6 +986,7 @@ om du inte permanent tar bort några e-postmeddelanden eller köper mer lagrings
     <!-- region errors -->
     <string name="error_image_not_found">Bilden hittades inte</string>
     <string name="error_image_bad_url">Felinmatad bild URL</string>
+    <string name="error_saving_try_again">Fel vid sparande av meddelande. Försök igen.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
