@@ -97,8 +97,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     private static final int REQUEST_CODE_TAKE_PHOTO = 2;
     private static final String STATE_PHOTO_PATH = "STATE_PATH_TO_PHOTO";
 
-    private MessagesDatabase messagesDatabase;
-
     private AttachmentListAdapter mAdapter;
     @BindView(R.id.progress_layout)
     View mProgressLayout;
@@ -193,7 +191,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
+        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
                 getApplicationContext()).getDatabase();
 
         ActionBar actionBar = getSupportActionBar();
