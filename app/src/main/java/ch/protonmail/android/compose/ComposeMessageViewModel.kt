@@ -378,9 +378,13 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
+    @SuppressLint("GlobalCoroutineUsage")
     fun saveDraft(message: Message, hasConnectivity: Boolean) {
         val uploadAttachments = _messageDataResult.uploadAttachments
 
+        // This coroutine **needs** to be launched in `GlobalScope` to allow the process of saving a
+        // draft to complete without depending on this VM's lifecycle. See MAILAND-1301 for more details
+        // and notes on the plan to remove this GlobalScope usage
         GlobalScope.launch(dispatchers.Main) {
             if (_dbId == null) {
                 _dbId = saveMessage(message)
@@ -405,7 +409,9 @@ class ComposeMessageViewModel @Inject constructor(
                         _actionId,
                         _oldSenderAddressId
                     )
-                ).collect {}
+                ).collect {
+                    Timber.d("Received saveDraft outcome on VM: $it")
+                }
 
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
