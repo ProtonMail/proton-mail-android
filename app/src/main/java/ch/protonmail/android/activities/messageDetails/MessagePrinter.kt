@@ -47,9 +47,9 @@ internal class MessagePrinter(
             return
         }
         val first = recipients.first()
-        append(String.format(resources.getString(header), first.emailAddress))
+        append(String.format(resources.getString(header), first.address))
         recipients.drop(1).forEach {
-            append(String.format(resources.getString(header), it.emailAddress))
+            append(String.format(resources.getString(header), it.address))
             append("<br/>")
         }
     }

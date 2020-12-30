@@ -22,7 +22,7 @@ import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -125,12 +125,12 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
             ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
 
     @Throws(IOException::class)
-    override fun createDraft(newMessage: NewMessage): MessageResponse? =
-            ParseUtils.parse(service.createDraft(newMessage).execute())
+    override fun createDraft(draftBody: DraftBody): MessageResponse? =
+            ParseUtils.parse(service.createDraft(draftBody).execute())
 
     @Throws(IOException::class)
-    override fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse? =
-            ParseUtils.parse(service.updateDraft(messageId, newMessage, retrofitTag).execute())
+    override fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? =
+            ParseUtils.parse(service.updateDraft(messageId, draftBody, retrofitTag).execute())
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> =
             service.sendMessage(messageId, message, retrofitTag)

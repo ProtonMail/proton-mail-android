@@ -249,7 +249,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             event?.getContentIfNotHandled()?.let {
                 composeIntent.putExtra(
                     ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS, it.asSequence().map { email ->
-                    MessageRecipient(email.name, email.email, contactGroup.name)
+                    MessageRecipient(email.name!!, email.email, contactGroup.name)
                 }.toList() as Serializable
                 )
                 startActivity(AppUtil.decorInAppIntent(composeIntent))

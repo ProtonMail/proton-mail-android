@@ -36,7 +36,7 @@ class GroupRecipientViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bind(recipient: MessageRecipient, clickListener: () -> Unit) {
         val name = recipient.name
-        val address = recipient.emailAddress
+        val address = recipient.address
 
         itemView.pgpIcon.typeface =
                 Typeface.createFromAsset(this.itemView.context.assets, "pgp-icons-android.ttf")

@@ -51,7 +51,7 @@ import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.MailboxResetBody
 import ch.protonmail.android.api.models.ModulusResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.models.PasswordVerifier
 import ch.protonmail.android.api.models.PaymentMethodResponse
@@ -311,9 +311,9 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
-    override fun createDraft(newMessage: NewMessage): MessageResponse? = api.createDraft(newMessage)
+    override fun createDraft(draftBody: DraftBody): MessageResponse? = api.createDraft(draftBody)
 
-    override fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, newMessage, retrofitTag)
+    override fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, draftBody, retrofitTag)
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> = api.sendMessage(messageId, message, retrofitTag)
 
