@@ -57,7 +57,7 @@ import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
-import java.time.Duration
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_DB_ID = "keySaveDraftMessageDbId"
@@ -278,7 +278,7 @@ class CreateDraftWorker @WorkerInject constructor(
                         KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID to previousSenderAddressId
                     )
                 )
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofSeconds(TEN_SECONDS))
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
             workManager.enqueueUniqueWork(
