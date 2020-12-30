@@ -24,9 +24,6 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants.DIR_MESSAGE_BODY_DOWNLOADS
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 /**
@@ -35,6 +32,7 @@ import javax.inject.Inject
 
 class MessageBodyFileManager @Inject constructor(
     private val applicationContext: Context,
+    private val fileHelper: FileHelper,
     private val dispatcherProvider: DispatcherProvider
 ) {
 
@@ -42,18 +40,11 @@ class MessageBodyFileManager @Inject constructor(
         withContext(dispatcherProvider.Io) {
             val messageId = message.messageId
             if (messageId != null) {
-                val messageBodyFile = File(
+                val messageBodyFile = fileHelper.createFile(
                     applicationContext.filesDir.toString() + DIR_MESSAGE_BODY_DOWNLOADS,
                     messageId.replace(" ", "_").replace("/", ":")
                 )
-                return@withContext runCatching {
-                    FileInputStream(messageBodyFile)
-                        .bufferedReader()
-                        .use { it.readText() }
-                }.fold(
-                    onSuccess = { it },
-                    onFailure = { null }
-                )
+                return@withContext fileHelper.readFromFile(messageBodyFile)
             }
             return@withContext null
         }
@@ -62,22 +53,16 @@ class MessageBodyFileManager @Inject constructor(
         withContext(dispatcherProvider.Io) {
             val messageId = message.messageId
             val messageBody = message.messageBody
-            val messageBodyDirectory = File(applicationContext.filesDir.toString() + DIR_MESSAGE_BODY_DOWNLOADS)
-            messageBodyDirectory.mkdirs()
 
             if (messageId != null && messageBody != null) {
-                val messageBodyFile = File(
-                    messageBodyDirectory,
+                val messageBodyFile = fileHelper.createFile(
+                    applicationContext.filesDir.toString() + DIR_MESSAGE_BODY_DOWNLOADS,
                     messageId.replace(" ", "_").replace("/", ":")
                 )
                 if (shouldOverwrite || !messageBodyFile.exists()) {
-                    return@withContext runCatching {
-                        FileOutputStream(messageBodyFile)
-                            .use { it.write(messageBody.toByteArray()) }
-                    }.fold(
-                        onSuccess = { "file://${messageBodyFile.absolutePath}" },
-                        onFailure = { null }
-                    )
+                    if (fileHelper.writeToFile(messageBodyFile, messageBody)) {
+                        return@withContext "file://${messageBodyFile.absolutePath}"
+                    }
                 }
             }
             return@withContext null
