@@ -436,9 +436,9 @@ class ComposeMessageViewModel @Inject constructor(
                         _actionId,
                         _oldSenderAddressId
                     )
-                ).collect {
-                    when (it) {
-                        is SaveDraftResult.Success -> onDraftSaved(it.draftId)
+                ).collect { saveDraftResult ->
+                    when (saveDraftResult) {
+                        is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
                         SaveDraftResult.OnlineDraftCreationFailed -> {
                             val errorMessage = getStringResource(
                                 R.string.failed_saving_draft_online
