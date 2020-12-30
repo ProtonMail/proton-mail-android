@@ -18,18 +18,17 @@
  */
 package ch.protonmail.android.utils.HTMLTransformer;
 
+import androidx.annotation.NonNull;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-/**
- * Created by kaylukas on 26/06/2018.
- */
 public class ViewportTransformer extends AbstractTransformer {
 
     private int mRenderWidth;
     private String mCss;
 
-    public ViewportTransformer(int renderWidth, String css) {
+    public ViewportTransformer(int renderWidth, @NonNull String css) {
         mRenderWidth = renderWidth;
         mCss = css;
     }

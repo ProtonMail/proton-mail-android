@@ -59,13 +59,17 @@ import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
+import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import org.jsoup.Jsoup
 import timber.log.Timber
+import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -573,5 +577,25 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 remoteContentDisplayed
             ).printMessage(it, this.bodyString ?: "")
         }
+    }
+
+    fun getParsedMessage(
+        decryptedMessage: String,
+        windowWidth: Int,
+        css: String,
+        defaultErrorMessage: String
+    ): String? {
+        nonBrokenEmail = try {
+            val contentTransformer = DefaultTransformer()
+                .pipe(ViewportTransformer(windowWidth, css))
+
+            contentTransformer.transform(Jsoup.parse(decryptedMessage)).toString()
+        } catch (ioException: IOException) {
+            Timber.e(ioException, "Jsoup is unable to parse HTML message details")
+            defaultErrorMessage
+        }
+
+        bodyString = nonBrokenEmail
+        return nonBrokenEmail
     }
 }
