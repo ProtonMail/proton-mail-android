@@ -96,7 +96,9 @@ class UploadAttachments @Inject constructor(
         val uploadedAttachment = messageDetailsRepository.findAttachmentById(uploadedAttachmentId)
         uploadedAttachment?.let {
             val attachments = message.Attachments.toMutableList()
-            attachments.removeIf { it.fileName == uploadedAttachment.fileName }
+            attachments
+                .find { it.fileName == uploadedAttachment.fileName }
+                ?.let { attachments.remove(it) }
             attachments.add(uploadedAttachment)
             message.setAttachmentList(attachments)
             messageDetailsRepository.saveMessageLocally(message)
