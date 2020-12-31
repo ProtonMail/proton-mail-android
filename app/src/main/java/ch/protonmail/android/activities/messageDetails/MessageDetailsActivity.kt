@@ -28,7 +28,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Pair
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.Menu
@@ -572,17 +571,14 @@ internal class MessageDetailsActivity :
     @Subscribe
     @Suppress("unused")
     fun onDownloadEmbeddedImagesEvent(event: DownloadEmbeddedImagesEvent) {
-        val status = event.status
-        when (status) {
+        when (event.status) {
             Status.SUCCESS -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.VISIBLE)
                 viewModel.downloadEmbeddedImagesResult.observe(
                     this,
-                    Observer { pair: Pair<String, String> ->
-                        Timber.v("downloadEmbeddedImagesResult pair: $pair")
-                        val content = pair.first
-                        viewModel.nonBrokenEmail = pair.second
+                    Observer { content ->
+                        Timber.v("downloadEmbeddedImagesResult pair: $content")
                         messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
                         if (content.isNullOrEmpty()) {
                             return@Observer

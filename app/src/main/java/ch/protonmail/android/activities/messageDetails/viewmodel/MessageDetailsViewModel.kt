@@ -20,7 +20,6 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
 import android.print.PrintManager
-import android.util.Pair
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -120,14 +119,13 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     var refreshedKeys: Boolean = true
 
     private val _messageSavedInDBResult: MutableLiveData<Boolean> = MutableLiveData()
-    private val _downloadEmbeddedImagesResult: MutableLiveData<Pair<String, String>> = MutableLiveData()
+    private val _downloadEmbeddedImagesResult: MutableLiveData<String> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
-    var nonBrokenEmail: String? = null
-    var bodyString: String? = null
+    private var bodyString: String? = null
         set(value) {
             field = value
             messageRenderer.messageBody = value
@@ -159,7 +157,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     val messageDetailsError: LiveData<Event<String>>
         get() = _messageDetailsError
 
-    val downloadEmbeddedImagesResult: LiveData<Pair<String, String>>
+    val downloadEmbeddedImagesResult: LiveData<String>
         get() = _downloadEmbeddedImagesResult
 
     val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
@@ -197,7 +195,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
                 // TODO Sending twice the same value, perhaps we could improve this
-                _downloadEmbeddedImagesResult.postValue(Pair(body, body))
+                _downloadEmbeddedImagesResult.postValue(body)
                 mImagesDisplayed = true
             }
         }
@@ -276,7 +274,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     fun onEmbeddedImagesDownloaded(event: DownloadEmbeddedImagesEvent) {
         if (bodyString.isNullOrEmpty()) {
-            _downloadEmbeddedImagesResult.value = Pair(bodyString ?: "", nonBrokenEmail ?: "")
+            _downloadEmbeddedImagesResult.value = bodyString ?: ""
             return
         }
 
@@ -490,7 +488,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun displayRemoteContentClicked() {
-        bodyString = nonBrokenEmail
         webViewContentWithImages.value = bodyString
         remoteContentDisplayed()
         prepareEmbeddedImages()
@@ -585,7 +582,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         css: String,
         defaultErrorMessage: String
     ): String? {
-        nonBrokenEmail = try {
+        bodyString = try {
             val contentTransformer = DefaultTransformer()
                 .pipe(ViewportTransformer(windowWidth, css))
 
@@ -595,7 +592,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             defaultErrorMessage
         }
 
-        bodyString = nonBrokenEmail
-        return nonBrokenEmail
+        return bodyString
     }
 }
