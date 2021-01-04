@@ -20,9 +20,9 @@ package ch.protonmail.android.api.segments.message
 
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -134,11 +134,11 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         messageId: String,
         draftBody: DraftBody,
         retrofitTag: RetrofitTag
-    ): MessageResponse = service.updateDraft(messageId, newMessage, retrofitTag)
+    ): MessageResponse = service.updateDraft(messageId, draftBody, retrofitTag)
 
     @Throws(IOException::class)
     override fun updateDraftBlocking(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? =
-        ParseUtils.parse(service.updateDraftCall(messageId, newMessage, retrofitTag).execute())
+        ParseUtils.parse(service.updateDraftCall(messageId, draftBody, retrofitTag).execute())
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> =
         service.sendMessage(messageId, message, retrofitTag)

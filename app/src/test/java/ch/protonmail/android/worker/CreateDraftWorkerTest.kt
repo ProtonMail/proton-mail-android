@@ -30,8 +30,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
@@ -40,7 +40,6 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
-import ch.protonmail.android.api.utils.Fields.Message.SELF
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
@@ -631,7 +630,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 numAttachments = 3
             }
 
-            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val responseMessage = message.copy(
                 messageId = "response_message_id",
                 isDownloaded = true,
@@ -751,7 +750,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 numAttachments = 3
             }
 
-            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val responseMessage = Message(messageId = "created_draft_id")
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
