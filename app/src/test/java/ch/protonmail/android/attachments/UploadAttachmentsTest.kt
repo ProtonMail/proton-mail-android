@@ -305,6 +305,91 @@ class UploadAttachmentsTest : CoroutinesTest {
             val attachmentIds = listOf("1", "2")
             val messageId = "82342"
             val message = Message(messageId = messageId)
+            val uploadedAttachmentMock1Id = "823472"
+            val uploadedAttachmentMock2Id = "234092"
+            val attachmentMock1 = mockk<Attachment>(relaxed = true) {
+                every { fileName } returns "att1FileName"
+                every { attachmentId } returns "1"
+                every { filePath } returns "filePath1"
+                every { isUploaded } returns false
+                every { doesFileExist } returns true
+            }
+            val uploadedAttachmentMock1 = mockk<Attachment>(relaxed = true) {
+                every { fileName } returns "att1FileName"
+                every { attachmentId } returns uploadedAttachmentMock1Id
+                every { filePath } returns "filePath1"
+                every { isUploaded } returns true
+                every { doesFileExist } returns true
+            }
+            val attachmentMock2 = mockk<Attachment>(relaxed = true) {
+                every { fileName } returns "att2FileName"
+                every { attachmentId } returns "2"
+                every { filePath } returns "filePath2"
+                every { isUploaded } returns false
+                every { doesFileExist } returns true
+            }
+            val uploadedAttachmentMock2 = mockk<Attachment>(relaxed = true) {
+                every { fileName } returns "att2FileName"
+                every { attachmentId } returns uploadedAttachmentMock2Id
+                every { filePath } returns "filePath2"
+                every { keyPackets } returns "uploadedPackets"
+                every { isUploaded } returns true
+                every { doesFileExist } returns true
+            }
+            message.setAttachmentList(listOf(attachmentMock1, attachmentMock2))
+            every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
+            every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
+            every { messageDetailsRepository.findAttachmentById(uploadedAttachmentMock1Id) } returns uploadedAttachmentMock1
+            every { messageDetailsRepository.findAttachmentById(uploadedAttachmentMock2Id) } returns uploadedAttachmentMock2
+            coEvery { attachmentsRepository.upload(attachmentMock1, crypto) } answers {
+                AttachmentsRepository.Result.Success(uploadedAttachmentMock1Id)
+            }
+            coEvery { attachmentsRepository.upload(attachmentMock2, crypto) } answers {
+                AttachmentsRepository.Result.Success(uploadedAttachmentMock2Id)
+            }
+
+            uploadAttachments(attachmentIds, message, crypto)
+
+            val actualMessage = slot<Message>()
+            val expectedAttachments = listOf(uploadedAttachmentMock1, uploadedAttachmentMock2)
+            verify { messageDetailsRepository.findAttachmentById(uploadedAttachmentMock2Id) }
+            coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
+            assertEquals(expectedAttachments, actualMessage.captured.Attachments)
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsDoesNotUpdateLocalMessageWithUploadedAttachmentWhenUploadFails() {
+        runBlockingTest {
+            val attachmentIds = listOf("1")
+            val messageId = "82342"
+            val message = Message(messageId = messageId)
+            val attachmentMock1 = mockk<Attachment>(relaxed = true) {
+                every { fileName } returns "att1FileName"
+                every { attachmentId } returns "1"
+                every { filePath } returns "filePath1"
+                every { isUploaded } returns false
+                every { doesFileExist } returns true
+            }
+            message.setAttachmentList(listOf(attachmentMock1))
+            every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
+            coEvery { attachmentsRepository.upload(attachmentMock1, crypto) } answers {
+                AttachmentsRepository.Result.Failure("Failed uploading attachment!")
+            }
+
+            uploadAttachments(attachmentIds, message, crypto)
+
+            verify(exactly = 1) { messageDetailsRepository.findAttachmentById("1") }
+            coVerify(exactly = 0) { messageDetailsRepository.saveMessageLocally(any()) }
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsDoesNotAddUploadedAttachmentToLocalMessageIfAttachmentWasNotInTheMessageAttachments() {
+        runBlockingTest {
+            val attachmentIds = listOf("1", "2")
+            val messageId = "82342"
+            val message = Message(messageId = messageId)
             val attachmentMock1 = mockk<Attachment>(relaxed = true) {
                 every { fileName } returns "att1FileName"
                 every { attachmentId } returns "1"
@@ -319,36 +404,30 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { isUploaded } returns false
                 every { doesFileExist } returns true
             }
-            val uploadAttachmentMock = mockk<Attachment>(relaxed = true) {
-                every { fileName } returns "att2FileName"
-                every { attachmentId } returns "234092"
-                every { filePath } returns "filePath2"
-                every { keyPackets } returns "uploadedPackets"
-                every { isUploaded } returns true
-                every { doesFileExist } returns true
-            }
-            message.setAttachmentList(listOf(attachmentMock1, attachmentMock2))
-            val uploadedAttachmentId = "234092"
+            val uploadedAttachment1Id = "82372"
+            val uploadedAttachment2Id = "24832"
+            message.setAttachmentList(listOf(attachmentMock1))
             every { messageDetailsRepository.findAttachmentById("1") } returns attachmentMock1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachmentMock2
-            every { messageDetailsRepository.findAttachmentById(uploadedAttachmentId) } returns uploadAttachmentMock
+            // Reusing the same mock for the success just to avoid creating new ones
+            // In production, this would be a different attachment with another ID
+            every { messageDetailsRepository.findAttachmentById(uploadedAttachment1Id) } returns attachmentMock1
+            every { messageDetailsRepository.findAttachmentById(uploadedAttachment2Id) } returns attachmentMock2
             coEvery { attachmentsRepository.upload(attachmentMock1, crypto) } answers {
-                AttachmentsRepository.Result.Success(uploadedAttachmentId)
+                AttachmentsRepository.Result.Success(uploadedAttachment1Id)
             }
             coEvery { attachmentsRepository.upload(attachmentMock2, crypto) } answers {
-                AttachmentsRepository.Result.Failure("Failed uploading")
+                AttachmentsRepository.Result.Success(uploadedAttachment2Id)
             }
 
             uploadAttachments(attachmentIds, message, crypto)
 
             val actualMessage = slot<Message>()
-            val expectedAttachments = listOf(attachmentMock1, uploadAttachmentMock)
-            verify { messageDetailsRepository.findAttachmentById(uploadedAttachmentId) }
-            coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
+            val expectedAttachments = listOf(attachmentMock1)
+            coVerify(exactly = 2) { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
             assertEquals(expectedAttachments, actualMessage.captured.Attachments)
         }
     }
-
 }
 
 
