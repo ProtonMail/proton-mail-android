@@ -1,91 +1,105 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-//package ch.protonmail.android.activities.messageDetails.viewmodel
-//
-//import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-//import androidx.lifecycle.MutableLiveData
-//import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-//import ch.protonmail.android.api.models.room.messages.Message
-//import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-//import ch.protonmail.android.sharedTest.kotlin.CoroutinesTestRule
-//import com.nhaarman.mockito_kotlin.any
-//import com.nhaarman.mockito_kotlin.doReturn
-//import com.nhaarman.mockito_kotlin.mock
-//import org.junit.After
-//import org.junit.Rule
-//import org.junit.rules.TestRule
-//import org.mockito.Mockito
-//
-///**
-// * Test suite for [MessageDetailsViewModel]
-// * @author Davide Farella
-// */
-//internal class MessageDetailsViewModelTest {
-//
-//    @get:Rule val archRule: TestRule = InstantTaskExecutorRule()
-//    @get:Rule val coroutinesRule: TestRule = CoroutinesTestRule()
-//
-//    /**
-//     * See [Memory leak in mockito-inline...](https://github.com/mockito/mockito/issues/1614)
-//     * TODO: replicate in other tests
-//     */
-//    @After
-//    fun clearMocks() {
-//        Mockito.framework().clearInlineMocks()
-//    }
-//
-//    private val mockMessagesDatabase by lazy { mock<MessagesDatabase> {
-//        on { findMessageByIdAsync(any()) } doReturn MutableLiveData<Message>()
-//                .apply { value = mock() }
-//    } }
-//
-//    private val realDetailsRepository by lazy { MessageDetailsRepository(
-//            mock(), mock(), mockMessagesDatabase, mock(), mock(), mock()
-//    ) }
-//
-//    // TODO comment due to different ViewModel initialization
-//    //private fun viewModel(
-//    //        detailsRepo: MessageDetailsRepository = realDetailsRepository,
-//    //        userManager: UserManager = mock(),
-//    //        contactsRepository: ContactsRepository = mock(),
-//    //        metadataDatabase: AttachmentMetadataDatabase = mock(),
-//    //        messageId: String = "",
-//    //        transient: Boolean = false
-//    //) = MessageDetailsViewModel(
-//    //        detailsRepo, userManager, contactsRepository, metadataDatabase, messageId, transient
-//    //)
-//
-//    // TODO: Impossible to test due to static methods and too many properties initialized conditionally
-//    //@Test
-//    //fun messageAttachments() = runBlocking {
-//    //    val observer = mock<(List<Attachment>) -> Unit>()
-//    //    val lifecycle = TestLifecycle()
-//    //
-//    //    // Init MessageDetailsViewModel
-//    //    val viewModel = viewModel()
-//    //
-//    //    // Start observing
-//    //    viewModel.messageAttachments.observe(lifecycle, Observer(observer))
-//    //    verify(observer, never()).invoke(any())
-//    //
-//    //    lifecycle.resume()
-//    //    verify(observer, times(1)).invoke(any())
-//    //}
-//
-//}
+
+package ch.protonmail.android.activities.messageDetails.viewmodel
+
+import androidx.lifecycle.SavedStateHandle
+import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
+import ch.protonmail.android.activities.messageDetails.MessageRenderer
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.usecase.VerifyConnection
+import ch.protonmail.android.usecase.delete.DeleteMessage
+import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
+import io.mockk.MockKAnnotations
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
+import kotlinx.coroutines.channels.Channel
+import me.proton.core.test.android.ArchTest
+import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Before
+import org.junit.Test
+import kotlin.test.assertEquals
+
+class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
+
+    private var savedStateHandle = mockk<SavedStateHandle> {
+        every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "id1"
+        every { get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE) } returns false
+    }
+
+    @RelaxedMockK
+    private lateinit var messageDetailsRepository: MessageDetailsRepository
+
+    @RelaxedMockK
+    private lateinit var userManager: UserManager
+
+    @RelaxedMockK
+    private lateinit var contactsRepository: ContactsRepository
+
+    @RelaxedMockK
+    private lateinit var attachmentMetadataDatabase: AttachmentMetadataDatabase
+
+    private var messageRendererFactory = mockk<MessageRenderer.Factory> {
+        every { create(any(), any()) } returns mockk(relaxed = true) {
+            every { renderedBody } returns Channel()
+        }
+    }
+
+    @RelaxedMockK
+    private lateinit var deleteMessageUseCase: DeleteMessage
+
+    @RelaxedMockK
+    private lateinit var fetchVerificationKeys: FetchVerificationKeys
+
+    @RelaxedMockK
+    private lateinit var verifyConnection: VerifyConnection
+
+    @RelaxedMockK
+    private lateinit var networkConfigurator: NetworkConfigurator
+
+    @InjectMockKs
+    private lateinit var viewModel: MessageDetailsViewModel
+
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+    }
+
+    @Test
+    fun getParsedMessage() {
+        val decryptedMessage = "decrypted message content"
+        val windowWidth = 500
+        val defaultErrorMessage = "errorHappened"
+        val cssContent = "css"
+        // given
+        val expected = "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessage  \n  </div>\n </body>\n</html>"
+
+        // when
+        val parsedMessage = viewModel.getParsedMessage(decryptedMessage, windowWidth, cssContent, defaultErrorMessage)
+
+        // then
+        assertEquals(expected, parsedMessage)
+    }
+}
