@@ -166,7 +166,6 @@ sealed class ProtonRetrofit(
     // region gson specs
     private val gsonUcc: Gson = GsonBuilder()
         .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
-        .registerTypeAdapter(NewMessage::class.java, NewMessage.NewMessageSerializer())
         .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientSerializer())
         .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientDeserializer())
         .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodySerializer())
