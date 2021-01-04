@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.api.models.factories.checkIfSet
 import ch.protonmail.android.api.models.factories.makeInt
@@ -34,8 +34,8 @@ class MessageFactory @Inject constructor(
     private val messageSenderFactory: IMessageSenderFactory
 ) : IMessageFactory {
 
-    override fun createDraftApiRequest(message: Message): NewMessage =
-        NewMessage(createServerMessage(message))
+    override fun createDraftApiRequest(message: Message): DraftBody =
+        DraftBody(createServerMessage(message))
 
     override fun createServerMessage(message: Message): ServerMessage {
         return message.let {

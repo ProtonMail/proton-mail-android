@@ -29,14 +29,13 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
-import ch.protonmail.android.api.utils.Fields.Message.SELF
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
@@ -194,7 +193,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 addressID = "addressId"
                 messageBody = "messageBody"
             }
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenActionTypeInput(actionType)
@@ -205,7 +204,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             worker.doWork()
 
             // Then
-            verify { apiDraftMessage.setParentID(parentId) }
+            verify { apiDraftMessage.parentID = parentId }
             verify { apiDraftMessage.action = 2 }
             // Always get parent message from messageDetailsDB, never from searchDB
             // ignoring isTransient property as the values in the two DB appears to be the same
@@ -224,7 +223,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 addressID = addressId
                 messageBody = "messageBody"
             }
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val address = Address(
                 Id(addressId),
                 null,
@@ -251,7 +250,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // Then
             val messageSender = MessageSender("senderName", "sender@email.it")
             verify { apiDraftMessage.setSender(messageSender) }
-            verify { apiDraftMessage.addMessageBody(SELF, "messageBody") }
+            verify { apiDraftMessage.setMessageBody("messageBody") }
         }
     }
 
@@ -267,7 +266,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 messageBody = "messageBody2341"
                 sender = MessageSender("sender by alias", "sender+alias@pm.me")
             }
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             givenMessageIdInput(messageDbId)
             givenActionTypeInput()
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
@@ -302,7 +301,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val decodedPacketsBytes = "decoded attachment packets".toByteArray()
             val encryptedKeyPackets = "re-encrypted att key packets".toByteArray()
 
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
                 every { attachments(any()) } returns listOf(attachment)
             }
@@ -338,7 +337,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val attachmentReEncrypted = attachment.copy(keyPackets = "encrypted encoded packets")
             verify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
             verify { addressCrypto.buildArmoredPublicKey(privateKey) }
-            verify { apiDraftMessage.addAttachmentKeyPacket("attachment1", attachmentReEncrypted.keyPackets) }
+            verify { apiDraftMessage.addAttachmentKeyPacket("attachment1", attachmentReEncrypted.keyPackets!!) }
         }
     }
 
@@ -357,7 +356,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val attachment2 = Attachment("attachment2", "pic2.jpg", keyPackets = "somePackets2", inline = false)
             val previousSenderAddressId = "previousSenderId82348"
 
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
                 every { attachments(any()) } returns listOf(attachment, attachment2)
             }
@@ -389,7 +388,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
                 every { attachments(any()) } returns listOf(
                     Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true),
@@ -429,7 +428,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             val parentMessage = mockk<Message> {
                 every { attachments(any()) } returns listOf(
                     Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true),
@@ -475,7 +474,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 messageBody = "messageBody"
             }
 
-            val apiDraftMessage = mockk<NewMessage>(relaxed = true)
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
@@ -507,7 +506,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 numAttachments = 3
             }
 
-            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val responseMessage = mockk<Message>(relaxed = true)
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
@@ -560,7 +559,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 numAttachments = 3
             }
 
-            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val apiDraftRequest = mockk<DraftBody>(relaxed = true)
             val responseMessage = mockk<Message>(relaxed = true)
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000

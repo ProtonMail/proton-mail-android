@@ -19,9 +19,10 @@
 package ch.protonmail.android.api.models
 
 import ch.protonmail.android.api.models.messages.receive.ServerMessage
+import ch.protonmail.android.api.models.messages.receive.ServerMessageSender
+import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.utils.Fields
 import com.google.gson.annotations.SerializedName
-import java.util.HashMap
 
 data class DraftBody(
     val serverMessage: ServerMessage
@@ -39,9 +40,22 @@ data class DraftBody(
     var attachmentKeyPackets: MutableMap<String, String>? = null
         get() {
             if (field == null) {
-                field = HashMap()
+                field = hashMapOf()
             }
             return field
         }
+
+    fun setSender(messageSender: MessageSender) {
+        message.sender = ServerMessageSender(messageSender.name, messageSender.emailAddress)
+    }
+
+    fun setMessageBody(messageBody: String) {
+        message.body = messageBody
+    }
+
+    fun addAttachmentKeyPacket(key: String, value: String) {
+        attachmentKeyPackets!![key] = value
+    }
+
 }
 

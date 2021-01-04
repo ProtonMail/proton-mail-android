@@ -39,7 +39,6 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.segments.TEN_SECONDS
-import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
@@ -92,7 +91,7 @@ class CreateDraftWorker @WorkerInject constructor(
         val createDraftRequest = messageFactory.createDraftApiRequest(message)
 
         parentId?.let {
-            createDraftRequest.setParentID(parentId)
+            createDraftRequest.parentID = parentId
             createDraftRequest.action = getInputActionType().messageActionTypeValue
             val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
             val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
@@ -103,7 +102,7 @@ class CreateDraftWorker @WorkerInject constructor(
         }
 
         val encryptedMessage = requireNotNull(message.messageBody)
-        createDraftRequest.addMessageBody(Fields.Message.SELF, encryptedMessage);
+        createDraftRequest.setMessageBody(encryptedMessage)
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
         return runCatching {

@@ -18,11 +18,11 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.room.messages.Message
 
 interface IMessageFactory {
 	fun createMessage(serverMessage: ServerMessage): Message
 	fun createServerMessage(message: Message): ServerMessage
-	fun createDraftApiRequest(message: Message): NewMessage
+	fun createDraftApiRequest(message: Message): DraftBody
 }
