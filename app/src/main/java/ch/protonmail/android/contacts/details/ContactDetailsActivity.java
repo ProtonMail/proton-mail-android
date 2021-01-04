@@ -1052,7 +1052,11 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(title, value);
         if (clipboard != null) {
-            clipboard.setPrimaryClip(clip);
+            try {
+                clipboard.setPrimaryClip(clip);
+            } catch (IllegalStateException ise) {
+                Timber.w(ise, "Clipboard bug");
+            }
         }
         TextExtensions.showToast(ContactDetailsActivity.this, R.string.details_copied, Toast.LENGTH_SHORT);
     }
