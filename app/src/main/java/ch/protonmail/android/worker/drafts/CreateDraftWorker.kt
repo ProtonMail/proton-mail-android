@@ -40,6 +40,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
@@ -80,7 +81,8 @@ class CreateDraftWorker @WorkerInject constructor(
     private val userManager: UserManager,
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val base64: Base64Encoder,
-    val apiManager: ProtonMailApiManager
+    private val apiManager: ProtonMailApiManager,
+    private val pendingActionsDao: PendingActionsDao
 ) : CoroutineWorker(context, params) {
 
     internal var retries: Int = 0
@@ -108,12 +110,14 @@ class CreateDraftWorker @WorkerInject constructor(
         createDraftRequest.setMessageBody(encryptedMessage)
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
+        val messageId = requireNotNull(message.messageId)
+
         return runCatching {
             if (MessageUtils.isLocalMessageId(message.messageId)) {
                 apiManager.createDraft(createDraftRequest)
             } else {
                 apiManager.updateDraft(
-                    requireNotNull(message.messageId),
+                    messageId,
                     createDraftRequest,
                     RetrofitTag(userManager.username)
                 )
@@ -126,6 +130,8 @@ class CreateDraftWorker @WorkerInject constructor(
 
                 val responseDraft = response.message.copy()
                 updateStoredLocalDraft(responseDraft, message)
+                updatePendingUploadMessage(messageId, responseDraft)
+
                 Timber.i("Create Draft Worker API call succeeded")
                 Result.success(
                     workDataOf(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to response.messageId)
@@ -135,6 +141,14 @@ class CreateDraftWorker @WorkerInject constructor(
                 handleFailure(it.message)
             }
         )
+    }
+
+    private fun updatePendingUploadMessage(messageId: String, responseDraft: Message) {
+        val pendingForUpload = pendingActionsDao.findPendingUploadByMessageId(messageId)
+        pendingForUpload?.let {
+            pendingForUpload.messageId = requireNotNull(responseDraft.messageId)
+            pendingActionsDao.insertPendingForUpload(pendingForUpload)
+        }
     }
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {

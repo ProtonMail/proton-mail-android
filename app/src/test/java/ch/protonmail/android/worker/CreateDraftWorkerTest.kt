@@ -20,14 +20,12 @@
 package ch.protonmail.android.worker
 
 import android.content.Context
-import androidx.lifecycle.liveData
 import androidx.work.BackoffPolicy
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.ListenableWorker
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
@@ -40,6 +38,9 @@ import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.api.utils.Fields.Message.SELF
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
@@ -110,6 +111,9 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var apiManager: ProtonMailApiManager
+
+    @RelaxedMockK
+    private lateinit var pendingActionsDao: PendingActionsDao
 
     @InjectMockKs
     private lateinit var worker: CreateDraftWorker
@@ -194,6 +198,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c27-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId"
                 messageBody = "messageBody"
             }
@@ -224,6 +229,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val addressId = "addressId"
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c24-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = addressId
                 messageBody = "messageBody"
             }
@@ -266,6 +272,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val addressId = "addressId234"
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c30-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = addressId
                 messageBody = "messageBody2341"
                 sender = MessageSender("sender by alias", "sender+alias@pm.me")
@@ -294,6 +301,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c26-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
@@ -353,6 +361,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c25-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
@@ -389,6 +398,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c29-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
@@ -429,6 +439,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c28-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
@@ -474,6 +485,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c31-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
@@ -512,10 +524,10 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
-            val responseMessage = Message()
+            val responseMessage = Message(messageId = "created_draft_id")
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
-                every { messageId } returns "response_message_id"
+                every { messageId } returns "created_draft_id"
                 every { this@mockk.message } returns responseMessage
             }
             givenMessageIdInput(messageDbId)
@@ -533,6 +545,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             coVerify { apiManager.createDraft(apiDraftRequest) }
             val expected = Message().apply {
                 this.dbId = messageDbId
+                this.messageId = "created_draft_id"
                 this.toList = listOf()
                 this.ccList = listOf()
                 this.bccList = listOf()
@@ -566,11 +579,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 numAttachments = 3
             }
 
-<<<<<<< HEAD
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
-            val responseMessage = mockk<Message>(relaxed = true)
-=======
-            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
             val responseMessage = message.copy(
                 messageId = "response_message_id",
                 isDownloaded = true,
@@ -578,7 +587,6 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 Unread = false
             )
             responseMessage.dbId = messageDbId
->>>>>>> d9274306 (Do not delete local draft after create / update API draft)
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
                 every { messageId } returns "response_message_id"
@@ -606,6 +614,56 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerUpdatesPendingForUploadActionInDbWithIdOfCreatedDraft() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val messageDbId = 345L
+            val localMessageId = "ac7b3d53-fc64-4d44-a1f5-39df45b629ef"
+            val message = Message().apply {
+                dbId = messageDbId
+                addressID = "addressId835"
+                messageId = localMessageId
+                messageBody = "messageBody"
+                sender = MessageSender("sender2342", "senderEmail@2340.com")
+                setLabelIDs(listOf("label", "label1", "label2"))
+                parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
+                numAttachments = 3
+            }
+
+            val apiDraftRequest = mockk<NewMessage>(relaxed = true)
+            val responseMessage = message.copy(
+                messageId = "response_message_id",
+                isDownloaded = true,
+                localId = localMessageId,
+                Unread = false
+            )
+            responseMessage.dbId = messageDbId
+            val apiDraftResponse = mockk<MessageResponse> {
+                every { code } returns 1000
+                every { messageId } returns "response_message_id"
+                every { this@mockk.message } returns responseMessage
+            }
+            val pendingUpload = PendingUpload(localMessageId)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
+            coEvery { apiManager.createDraft(apiDraftRequest) } returns apiDraftResponse
+            every { pendingActionsDao.findPendingUploadByMessageId(localMessageId) } returns pendingUpload
+
+            // When
+            val result = worker.doWork()
+
+            // Then
+            val expectedPendingUpload = PendingUpload("response_message_id")
+            coVerify { pendingActionsDao.insertPendingForUpload(expectedPendingUpload) }
+        }
+    }
+
+    @Test
     fun workerRetriesSavingDraftWhenApiRequestFailsAndMaxTriesWereNotReached() {
         runBlockingTest {
             // Given
@@ -613,6 +671,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c23-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
@@ -647,6 +706,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
+                messageId = "17575c22-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
             }
@@ -692,10 +752,10 @@ class CreateDraftWorkerTest : CoroutinesTest {
             }
 
             val apiDraftRequest = mockk<NewMessage>(relaxed = true)
-            val responseMessage = Message()
+            val responseMessage = Message(messageId = "created_draft_id")
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
-                every { messageId } returns "response_message_id"
+                every { messageId } returns "created_draft_id"
                 every { this@mockk.message } returns responseMessage
             }
             val retrofitTag = RetrofitTag(userManager.username)
@@ -714,6 +774,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             coVerify { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) }
             val expectedMessage = Message().apply {
                 this.dbId = messageDbId
+                this.messageId = "created_draft_id"
                 this.toList = listOf()
                 this.ccList = listOf()
                 this.bccList = listOf()
