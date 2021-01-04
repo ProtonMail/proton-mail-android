@@ -255,10 +255,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_me_for_new_features">Сообщайте мне о новых функциях</string>
     <string name="create_mailbox_password">Создать пароль</string>
     <string name="password_note"><b>Примечание:</b> Этот пароль используется для шифрования и расшифровки ваших сообщений.
-Не забудьте этот пароль, мы не сможем его восстановить. Если вы забудете свой пароль, то не сможете прочитать свои письма.</string>
+        Не забудьте этот пароль, мы не сможем его восстановить. Если вы забудете свой пароль, то не сможете прочитать свои письма.</string>
     <string name="username_note"><b>Примечание:</b> Имя пользователя также является вашим адресом в ProtonMail</string>
     <string name="terms_and_conditions">Используя ProtonMail, вы соглашаетесь с нашими\n
-<a href="https://protonmail.com/terms-and-conditions">условиями и положениями</a> и <a href="https://protonmail.com/privacy-policy">политикой конфиденциальности</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">условиями и положениями</a> и <a href="https://protonmail.com/privacy-policy">политикой конфиденциальности</a></string>
     <string name="human_verification">Проверка \"Я не робот\"</string>
     <string name="human_verification_subtitle">Для предотвращения злоупотребления ProtonMail\nнам необходимо убедиться, что вы – человек.</string>
     <string name="select_options">Пожалуйста, выберите один из вариантов:</string>
@@ -295,7 +295,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Ошибка при удалении некоторых сообщений. Находятся ли некоторые из них в процессе отправки?!</string>
     <string name="respond_inline">Ответить с цитированием</string>
     <string name="no_connectivity_detected">Подключение не обнаружено...</string>
-    <string name="no_connectivity_detected_troubleshoot">Подключение не обнаружено... (<u>Устраните неполадки</u>)</string>
+    <string name="no_connectivity_detected_troubleshoot">Подключение не обнаружено… (<u>Устраните неполадки</u>)</string>
     <string name="connectivity_checking">Проверка подключения...</string>
     <string name="sync_short">синхр.</string>
     <string name="draft_attachments_uploading">Черновик ещё загружается...</string>
@@ -316,9 +316,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="congratulation">Поздравляем!</string>
     <string name="new_account_ready">Ваша новая учётная запись\nзащищённой эл. почты готова.</string>
     <string name="optional_email_note">Резервный адрес эл. почты позволит вам
-сбросить пароль для входа, если вы его забудете.</string>
+        сбросить пароль для входа, если вы его забудете.</string>
     <string name="optional_display_name">Когда вы отправляете письмо, указанное имя будет
-отображено в графе отправителя.</string>
+        отображено в графе отправителя.</string>
     <string name="error_captcha_not_valid">Неправильно</string>
     <string name="close_engagement">закрыть тур</string>
     <string name="engagement_title_welcome">Добро пожаловать в ProtonMail!</string>
@@ -404,9 +404,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upselling_donate_title">Пожертвовать</string>
     <string name="upselling_upgrade_title">Повысить до ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">Ваше пожертвование поможет нам увеличить
-вместимость и продолжать разработку ProtonMail как свободного ПО с открытым исходным кодом. Только благодаря
-поддержке сообщества мы можем продолжать предоставлять доступ к ProtonMail людям со всего
-мира.</string>
+    вместимость и продолжать разработку ProtonMail как свободного ПО с открытым исходным кодом. Только благодаря
+    поддержке сообщества мы можем продолжать предоставлять доступ к ProtonMail людям со всего
+    мира.</string>
     <string name="upgrade_donate">Повысить/Пожертвовать</string>
     <string name="upselling_donate_pick_amount">Выберите размер пожертвования или введите любую сумму</string>
     <string name="amount_5">5€</string>
@@ -424,11 +424,11 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="upgrade">Повысить</string>
     <string name="payment_options">Вариант оплаты</string>
     <string name="other_plans">Чтобы использовать тарифы с большим объёмом хранилища, переходите на них с помощью
-веб-интерфейса ProtonMail.</string>
+    веб-интерфейса ProtonMail.</string>
     <string name="upgrade_paid_user">Благодарим за оформление платной учётной записи!</string>
     <string name="select_account_type">Выберите тип учётной записи</string>
     <string name="select_account_type_subtitle">ProtonMail представляет собой бесплатный сервис
-ради общего блага. Вы можете поддержать конфиденциальность в Интернете, выбрав платную учётную запись.</string>
+    ради общего блага. Вы можете поддержать конфиденциальность в Интернете, выбрав платную учётную запись.</string>
     <string name="plan_free_with_price">БЕСПЛАТНЫЙ</string>
     <string name="plan_plus_with_price">PLUS %s /месяц</string>
     <string name="plan_visionary_with_price">VISIONARY %s /месяц</string>
@@ -459,7 +459,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="country">Страна</string>
     <string name="cvc">CVC-код</string>
     <string name="terms_and_conditions_billing">Нажимая \"Отправить\", вы соглашаетесь
-соблюдать\n<a href="https://protonmail.com/terms-and-conditions">условия и положения ProtonMail</a></string>
+    соблюдать\n<a href="https://protonmail.com/terms-and-conditions">условия и положения ProtonMail</a></string>
     <string name="submit">Отправить</string>
     <string name="currency">Валюта</string>
     <string name="plan_duration">Платёжный цикл</string>
@@ -688,9 +688,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close_app">Закрыть приложение</string>
     <string name="empty_subject">(Без темы)</string>
     <string name="contacts_unknown">Неизвестно</string>
-    <string name="learn_more">
-        <u>Узнать больше</u>
-    </string>
+    <string name="learn_more"><u>Узнать больше</u></string>
     <string name="info">Информация</string>
     <string name="error_can_not_send_from_this_address">Перейдите на платный тариф для отправки с вашего адреса %s.</string>
     <string name="email_empty">Адрес электронной почты отсутствует</string>
@@ -750,9 +748,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="expiration_error_add_msg_password">Пожалуйста, добавьте пароль сообщения для следующих получателей:</string>
     <string name="expiration_error_disable_pgp_sending">Пожалуйста, отключите PGP-отправку для включения срока действия для следующих получателей:</string>
     <string name="expiration_error_proceed">Нажмите \"Всё равно отправить\", чтобы отправить без срока действия этим получателям.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ПОДРОБНЕЕ</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">ПОДРОБНЕЕ</a></string>
     <string name="channel_name_attachments">Вложения</string>
     <string name="channel_description_attachments">Сообщает о состоянии скачивания вложения</string>
     <string name="channel_name_emails">Эл. письма</string>
@@ -761,14 +757,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_description_account">Статус учётной записи</string>
     <string name="channel_name_ongoing_operations">Текущие операции</string>
     <string name="channel_description_ongoing_operations">Показывает все текущие операции вроде
-скачивания нового сообщения в фоне</string>
+		скачивания нового сообщения в фоне</string>
     <string name="checking_mailbox">Проверка почтового ящика</string>
     <string name="report_phishing">Пожаловаться на фишинг</string>
     <string name="print">Печать</string>
     <string name="phishing_dialog_title">Подтвердить жалобу на фишинг</string>
     <string name="phishing_dialog_message">Жалоба о попытке фишинга отправит
-сообщение нам, чтобы мы смогли проанализировать его и улучшить наши фильтры. Это означает, что мы будем способны
-увидеть содержимое сообщения полностью.</string>
+		сообщение нам, чтобы мы смогли проанализировать его и улучшить наши фильтры. Это означает, что мы будем способны
+		увидеть содержимое сообщения полностью.</string>
     <string name="phishing_report_send_message_moved_to_spam">Отчёт отправлен. Сообщение перемещено в спам.</string>
     <string name="cannot_send_report_send">Невозможно отправить отчёт</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
@@ -847,17 +843,17 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="save_group_validation_error">Пожалуйста, укажите название группы</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Достигнут предел объёма хранилища. Невозможно отправлять или получать почту.
-Нажмите, чтобы узнать подробности.</string>
+        Нажмите, чтобы узнать подробности.</string>
     <string name="storage_limit_warning_title">Предупреждение</string>
     <string name="storage_limit_reached_text">Вы достигли 100% ёмкости своего хранилища. Вы
-не сможете отправлять или принимать почту, пока полностью не удалите некоторые письма или пока не купите больше
-места для хранения.</string>
+        не сможете отправлять или принимать почту, пока полностью не удалите некоторые письма или пока не купите больше
+        места для хранения.</string>
     <string name="storage_limit_approaching_text">Вы достигли 90% ёмкости своего хранилища.
-Подумайте насчёт освобождения некоторого объёма или покупки большего места для хранения до того, как ваш объём закончится.</string>
+        Подумайте насчёт освобождения некоторого объёма или покупки большего места для хранения до того, как ваш объём закончится.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Разрешения</string>
     <string name="need_storage_permissions_text">Чтобы добавлять вложения, вам нужно разрешить
-доступ к хранилищу.</string>
+        доступ к хранилищу.</string>
     <string name="push_notifications_alert_title">Предупреждение о push-уведомлениях</string>
     <string name="push_notifications_alert_subtitle">Push-уведомления для ProtonMail не работают без обновлённых сервисов Google Play.</string>
     <string name="app_locked">Приложение заблокировано</string>
@@ -1015,13 +1011,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Наиболее часто встречающиеся проблемы с соединением и их решения</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
-</string>
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Изображение не найдено</string>
