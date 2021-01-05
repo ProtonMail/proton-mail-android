@@ -519,7 +519,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 sender = MessageSender("sender2342", "senderEmail@2340.com")
                 setLabelIDs(listOf("label", "label1", "label2"))
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
-                numAttachments = 3
+                numAttachments = 2
+                Attachments = listOf(Attachment("235423"), Attachment("823421"))
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
@@ -555,9 +556,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.isDownloaded = true
                 this.setIsRead(true)
                 this.numAttachments = message.numAttachments
+                this.Attachments = message.Attachments
                 this.localId = message.messageId
             }
-            coVerify { messageDetailsRepository.saveMessageLocally(expected) }
+            val actualMessage = slot<Message>()
+            coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
+            assertEquals(expected, actualMessage.captured)
+            assertEquals(expected.Attachments, actualMessage.captured.Attachments)
         }
     }
 
@@ -747,7 +752,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 sender = MessageSender("sender2342", "senderEmail@2340.com")
                 setLabelIDs(listOf("label", "label1", "label2"))
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
-                numAttachments = 3
+                numAttachments = 1
+                Attachments = listOf(Attachment(attachmentId = "82374"))
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
@@ -784,9 +790,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.isDownloaded = true
                 this.setIsRead(true)
                 this.numAttachments = message.numAttachments
+                this.Attachments = message.Attachments
                 this.localId = message.messageId
             }
-            coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+            val actualMessage = slot<Message>()
+            coVerify { messageDetailsRepository.saveMessageLocally(capture(actualMessage)) }
+            assertEquals(expectedMessage, actualMessage.captured)
+            assertEquals(expectedMessage.Attachments, actualMessage.captured.Attachments)
         }
     }
 

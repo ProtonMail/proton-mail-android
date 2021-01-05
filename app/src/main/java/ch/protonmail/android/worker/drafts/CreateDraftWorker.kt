@@ -164,6 +164,7 @@ class CreateDraftWorker @WorkerInject constructor(
             isDownloaded = true
             setIsRead(true)
             numAttachments = localDraft.numAttachments
+            Attachments = localDraft.Attachments
             localId = localDraft.messageId
         }
 
