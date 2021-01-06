@@ -56,6 +56,7 @@ import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.serialize
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON
@@ -83,6 +84,9 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class CreateDraftWorkerTest : CoroutinesTest {
+
+    @RelaxedMockK
+    private lateinit var errorNotifier: ErrorNotifier
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -703,7 +707,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerReturnsFailureWithErrorWhenAPIRequestFailsAndMaxTriesWereReached() {
+    fun workerNotifiesErrorAndReturnsFailureWithErrorWhenAPIRequestFailsAndMaxTriesWereReached() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -713,20 +717,25 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 messageId = "17575c22-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
+                subject = "Subject001"
             }
+            val errorMessage = "Error performing request"
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-            every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true)
-            coEvery { apiManager.createDraft(any()) } throws IOException("Error performing request")
+            every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true) {
+                every { this@mockk.message.subject } returns "Subject001"
+            }
+            coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
             worker.retries = 11
 
             // When
             val result = worker.doWork()
 
             // Then
+            verify { errorNotifier.showPersistentError(errorMessage, "Subject001") }
             val expected = ListenableWorker.Result.failure(
                 Data.Builder().putString(
                     KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
