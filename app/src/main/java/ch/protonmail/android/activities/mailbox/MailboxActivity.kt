@@ -127,7 +127,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHO
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
@@ -1050,14 +1049,6 @@ class MailboxActivity :
         Timber.v("hideNoConnSnack")
         networkSnackBarUtil.hideCheckingConnectionSnackBar()
         networkSnackBarUtil.hideNoConnectionSnackBar()
-    }
-
-    @Subscribe
-    fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
-        showToast(
-            "${getString(R.string.attachment_failed)} ${event.messageSubject}",
-            Toast.LENGTH_SHORT
-        )
     }
 
     @Subscribe
