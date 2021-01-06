@@ -22,6 +22,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.util.PatternsCompat
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,15 +47,14 @@ import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.BaseViewModel
 import ch.protonmail.android.worker.DeleteContactWorker
-import ch.protonmail.libs.core.utils.ViewModelFactory
 import io.reactivex.Completable
 import io.reactivex.Observable
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
 import studio.forface.viewstatestore.ViewStateStore
+import timber.log.Timber
 import java.io.FileNotFoundException
-import javax.inject.Inject
 
 /**
  * A [ViewModel] for display a contact
@@ -70,7 +70,7 @@ import javax.inject.Inject
  *   [ x] Inject dispatchers in the constructor
  *   [ ] Replace [ContactDetailsRepository] with a `ContactsRepository`
  */
-open class ContactDetailsViewModel(
+open class ContactDetailsViewModel @ViewModelInject constructor(
     dispatchers: DispatcherProvider,
     private val downloadFile: DownloadFile,
     private val contactDetailsRepository: ContactDetailsRepository,
@@ -114,7 +114,7 @@ open class ContactDetailsViewModel(
     val profilePicture = ViewStateStore<Bitmap>().lock
 
     private var fetchContactDetailsId = MutableLiveData<String>()
-    val contatDetailsFetchResult: LiveData<FetchContactDetailsResult>
+    val contactDetailsFetchResult: LiveData<FetchContactDetailsResult>
         get() = fetchContactDetailsId.switchMap {
             liveData {
                 emitSource(fetchContactDetails(it))
@@ -130,10 +130,10 @@ open class ContactDetailsViewModel(
                 val list1 = allContactGroups
                 val list2 = _mapEmailGroups[contactEmail.contactEmailId]
                 list2?.let { _ ->
-                    list1.forEach {
+                    list1.forEach { contactLabel ->
                         val selectedState =
-                            list2.find { selected -> selected.ID == it.ID } != null
-                        it.isSelected = if (selectedState) {
+                            list2.find { selected -> selected.ID == contactLabel.ID } != null
+                        contactLabel.isSelected = if (selectedState) {
                             SELECTED
                         } else {
                             ContactEmailGroupSelectionState.DEFAULT
@@ -324,23 +324,7 @@ open class ContactDetailsViewModel(
     }
 
     fun fetchDetails(contactId: String) {
+        Timber.v("Fetch contactId: $contactId")
         fetchContactDetailsId.value = contactId
-    }
-
-    // TODO: remove when the ViewModel can be injected into a Kotlin class
-    class Factory @Inject constructor(
-        private val dispatcherProvider: DispatcherProvider,
-        private val downloadFile: DownloadFile,
-        private val contactDetailsRepository: ContactDetailsRepository,
-        private val workManager: WorkManager,
-        private val fetchContactDetails: FetchContactDetails
-    ) : ViewModelFactory<ContactDetailsViewModel>() {
-        override fun create() = ContactDetailsViewModel(
-            dispatcherProvider,
-            downloadFile,
-            contactDetailsRepository,
-            workManager,
-            fetchContactDetails
-        )
     }
 }

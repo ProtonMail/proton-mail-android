@@ -76,8 +76,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
@@ -210,10 +208,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     private List<String> mVCardAddressUIOptions;
     private List<String> mVCardAddressOptions;
     private Menu collapsedMenu;
-    @Inject
-    ContactDetailsViewModel.Factory contactDetailsViewModelFactory;
-    ContactDetailsViewModel contactDetailsViewModel;
-    ContactEditDetailsEmailGroupsAdapter contactEditDetailsEmailGroupsAdapter;
+    private ContactDetailsViewModel viewModel;
+    private ContactEditDetailsEmailGroupsAdapter contactEditDetailsEmailGroupsAdapter;
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
     private static final float PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f;
     private static final int ALPHA_ANIMATIONS_DURATION = 200;
@@ -225,8 +221,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-        contactDetailsViewModel = new ViewModelProvider(this, contactDetailsViewModelFactory)
-                .get(ContactDetailsViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ContactDetailsViewModel.class);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -248,7 +243,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         mVCardAddressUIOptions = Arrays.asList(getResources().getStringArray(R.array.vcard_option_address));
         mVCardAddressOptions = Arrays.asList(getResources().getStringArray(R.array.vcard_option_address_val));
         contactEditDetailsEmailGroupsAdapter = new ContactEditDetailsEmailGroupsAdapter(ContactDetailsActivity.this, new ArrayList<>());
-        contactDetailsViewModel.getSetupComplete().observe(this, booleanEvent -> {
+        viewModel.getSetupComplete().observe(this, booleanEvent -> {
             Boolean didSetupCompleteBoxed = booleanEvent.getContentIfNotHandled();
             boolean didSetupComplete;
             if (didSetupCompleteBoxed != null) didSetupComplete = didSetupCompleteBoxed;
@@ -261,7 +256,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 }).execute();
             }
         });
-        contactDetailsViewModel.getSetupError().observe(this, event -> {
+        viewModel.getSetupError().observe(this, event -> {
             ErrorResponse error = new ErrorResponse("", ErrorEnum.DEFAULT);
             if (event != null) {
                 error = event.getContentIfNotHandled();
@@ -272,7 +267,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             }
         });
 
-        contactDetailsViewModel.getProfilePicture().observe(this, observer -> {
+        viewModel.getProfilePicture().observe(this, observer -> {
             observer.doOnData(bitmap -> {
                 contactAvatar.setAvatarType(TYPE_PHOTO);
                 contactAvatar.setImage(bitmap);
@@ -288,19 +283,19 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             return Unit.INSTANCE;
         });
 
-        contactDetailsViewModel.getContatDetailsFetchResult().observe(
+        viewModel.getContactDetailsFetchResult().observe(
                 this,
                 this::onContactDetailsLoadedEvent
         );
 
-        contactDetailsViewModel.fetchContactGroupsAndContactEmails(mContactId);
+        viewModel.fetchContactGroupsAndContactEmails(mContactId);
         appBarLayout.addOnOffsetChangedListener(this);
         startAlphaAnimation(contactCollapsedTitle, 0, View.INVISIBLE);
     }
 
     void onInitialiseContact(FullContactDetails fullContactDetails) {
         if (fullContactDetails == null || fullContactDetails.getEncryptedData() == null || fullContactDetails.getEncryptedData().size() == 0) {
-            contactDetailsViewModel.fetchDetails(mContactId);
+            viewModel.fetchDetails(mContactId);
         } else {
             decryptAndFillVCard(fullContactDetails);
         }
@@ -348,7 +343,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         if (itemId == R.id.action_delete) {
             DialogInterface.OnClickListener clickListener = (dialog, which) -> {
                 if (which == DialogInterface.BUTTON_POSITIVE) {
-                    contactDetailsViewModel.deleteContact(mContactId);
+                    viewModel.deleteContact(mContactId);
                     new Handler(Looper.getMainLooper()).postDelayed(this::finish, 500);
                 }
                 dialog.dismiss();
@@ -390,7 +385,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     private void onEditContact(FullContactDetails fullContactDetails, String contactId) {
         if (fullContactDetails == null && !TextUtils.isEmpty(contactId)) {
-            contactDetailsViewModel.fetchDetails(contactId);
+            viewModel.fetchDetails(contactId);
         } else if (fullContactDetails == null && TextUtils.isEmpty(contactId)) {
             onBackPressed();
         } else if (fullContactDetails != null) {
@@ -630,7 +625,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             mErrorEncryptedView = mErrorEncryptedStub.inflate();
             mErrorEncryptedView.findViewById(R.id.retry).setOnClickListener(v -> {
                 progressBar.setVisibility(View.VISIBLE);
-                contactDetailsViewModel.fetchDetails(mContactId);
+                viewModel.fetchDetails(mContactId);
             });
         }
     }
@@ -734,7 +729,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
     private void refresh() {
 
-        contactDetailsViewModel.fetchContactGroupsAndContactEmails(mContactId);
+        viewModel.fetchContactGroupsAndContactEmails(mContactId);
     }
 
     private void fillTopPart(VCard vCardType0, VCard vCardType2) {
@@ -753,7 +748,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     private void fillTopPart(VCard vCard) {
 
         List<Email> vCardEmails = vCard.getEmails();
-        contactDetailsViewModel.getContactEmailsGroups().observe(this, contactEmailsGroups -> {
+        viewModel.getContactEmailsGroups().observe(this, contactEmailsGroups -> {
             int rowId = contactEmailsGroups.getRowID();
             List<Integer> childIds = mAddressesContainer.getChildIds();
             for (Integer id : childIds) {
@@ -776,7 +771,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
                 }
             }
         });
-        contactDetailsViewModel.getContactEmailsError().observe(this, event -> {
+        viewModel.getContactEmailsError().observe(this, event -> {
             ErrorResponse error = new ErrorResponse("", ErrorEnum.DEFAULT);
             if (event != null) {
                 error = event.getContentIfNotHandled();
@@ -809,7 +804,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             });
             UiUtil.generateViewId(emailRowView);
             mAddressesContainer.addView(emailRowView);
-            contactDetailsViewModel.fetchContactEmailGroups(emailRowView.getId(), email.getValue());
+            viewModel.fetchContactEmailGroups(emailRowView.getId(), email.getValue());
         }
         FormattedName formattedName = vCard.getFormattedName();
         if (formattedName != null && !TextUtils.isEmpty(formattedName.getValue())) {
@@ -895,7 +890,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             } else if (!vCardPhotos.get(0).getUrl().isEmpty()) {
                 contactAvatar.setName(mDisplayName);
                 contactAvatar.setAvatarType(TYPE_INITIALS);
-                contactDetailsViewModel.getBitmapFromURL(photo.getUrl());
+                viewModel.getBitmapFromURL(photo.getUrl());
             }
         } else {
             contactAvatar.setName(mDisplayName);
@@ -1080,8 +1075,8 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         TextView noResults = popupView.findViewById(R.id.noResults);
         CustomFontButton applyBtn = popupView.findViewById(R.id.applyBtn);
 
-        contactDetailsViewModel.mergeContactEmailGroups(email);
-        contactDetailsViewModel.getMergedContactEmailGroupsResult().observe(ContactDetailsActivity.this, contactLabels -> {
+        viewModel.mergeContactEmailGroups(email);
+        viewModel.getMergedContactEmailGroupsResult().observe(ContactDetailsActivity.this, contactLabels -> {
 
             if (contactLabels != null) {
                 if (contactLabels.isEmpty()) {
@@ -1095,7 +1090,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             }
         });
 
-        contactDetailsViewModel.getMergedContactEmailGroupsError().observe(ContactDetailsActivity.this, event -> {
+        viewModel.getMergedContactEmailGroupsError().observe(ContactDetailsActivity.this, event -> {
             ErrorResponse error = new ErrorResponse("", ErrorEnum.DEFAULT);
             if (event != null) {
                 error = event.getContentIfNotHandled();
@@ -1112,7 +1107,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
         applyBtn.setOnClickListener(v -> {
             for (ContactLabel label : contactEditDetailsEmailGroupsAdapter.getItems()) {
-                contactDetailsViewModel.updateContactEmailGroup(label, email);
+                viewModel.updateContactEmailGroup(label, email);
             }
             pw.dismiss();
         });
