@@ -23,7 +23,6 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
@@ -53,14 +52,11 @@ import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
-import ch.protonmail.android.worker.FetchContactsEmailsWorker
-import com.birbit.android.jobqueue.JobManager
 import com.github.clans.fab.FloatingActionButton
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contacts_v2.*
 import timber.log.Timber
-import javax.inject.Inject
 
 // region constants
 const val REQUEST_CODE_CONTACT_DETAILS = 1
@@ -74,20 +70,15 @@ class ContactsActivity :
     IContactsListFragmentListener,
     ContactsActivityContract {
 
-    override fun dataUpdated(position: Int, count: Int) {
-        pagerAdapter.update(position, count)
-        tabLayout.setupWithViewPager(viewPager, true)
-    }
-
-    override val jobManager: JobManager get() = mJobManager
+    lateinit var pagerAdapter: ContactsFragmentsPagerAdapter
 
     private var alreadyCheckedPermission = false
 
     private val contactsViewModel: ContactsViewModel by viewModels()
 
-    lateinit var pagerAdapter: ContactsFragmentsPagerAdapter
+    private val contactsListFragment get() = supportFragmentManager.fragments[0] as ContactsListFragment
 
-    override fun getLayoutId() = R.layout.activity_contacts_v2
+    private val contactGroupsFragment get() = supportFragmentManager.fragments[1] as ContactGroupsFragment
 
     private val contactsPermissionHelper by lazy {
         PermissionHelper.newInstance(
@@ -98,17 +89,12 @@ class ContactsActivity :
         )
     }
 
-    private inner class ContactsPermissionHelperCallbacks : PermissionHelper.PermissionCallback {
-        override fun onPermissionConfirmed(type: Constants.PermissionType) {
-            pagerAdapter.onContactPermissionChange(supportFragmentManager, true)
-        }
-
-        override fun onPermissionDenied(type: Constants.PermissionType) {
-            pagerAdapter.onContactPermissionChange(supportFragmentManager, false)
-        }
-
-        override fun onHasPermission(type: Constants.PermissionType) = onPermissionConfirmed(type)
+    override fun dataUpdated(position: Int, count: Int) {
+        pagerAdapter.update(position, count)
+        tabLayout.setupWithViewPager(viewPager, true)
     }
+
+    override fun getLayoutId() = R.layout.activity_contacts_v2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -289,9 +275,6 @@ class ContactsActivity :
         }
     }
 
-    private val contactsListFragment get() = supportFragmentManager.fragments[0] as ContactsListFragment
-    private val contactGroupsFragment get() = supportFragmentManager.fragments[1] as ContactGroupsFragment
-
     private fun onPageSelected(position: Int) {
         addFab.visibility = ViewGroup.VISIBLE
         val recyclerViewBottomPadding = {
@@ -336,6 +319,19 @@ class ContactsActivity :
     override fun registerObject(registerObject: Any) = mApp.bus.register(registerObject)
 
     override fun unregisterObject(unregisterObject: Any) = mApp.bus.unregister(unregisterObject)
+
+    private inner class ContactsPermissionHelperCallbacks : PermissionHelper.PermissionCallback {
+
+        override fun onPermissionConfirmed(type: Constants.PermissionType) {
+            pagerAdapter.onContactPermissionChange(supportFragmentManager, true)
+        }
+
+        override fun onPermissionDenied(type: Constants.PermissionType) {
+            pagerAdapter.onContactPermissionChange(supportFragmentManager, false)
+        }
+
+        override fun onHasPermission(type: Constants.PermissionType) = onPermissionConfirmed(type)
+    }
 }
 
 class ViewPagerOnPageSelected(private val pageSelected: (Int) -> Unit = {}) : ViewPager.OnPageChangeListener {
