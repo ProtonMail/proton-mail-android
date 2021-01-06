@@ -60,23 +60,18 @@ import ch.protonmail.android.utils.extensions.showToast
 import javax.inject.Inject
 import ch.protonmail.android.api.models.room.notifications.Notification as RoomNotification
 
-// region constants
 const val CHANNEL_ID_EMAIL = "emails"
 const val CHANNEL_ID_ONGOING_OPS = "ongoingOperations"
 const val CHANNEL_ID_ACCOUNT = "account"
 const val CHANNEL_ID_ATTACHMENTS = "attachments"
-
 const val NOTIFICATION_GROUP_ID_EMAIL = 99
 const val NOTIFICATION_ID_SENDING_FAILED = 680
-
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
 const val EXTRA_USERNAME = "username"
-// endregion
 
 /**
  * A class that is responsible for creating notification channels, and creating and showing notifications.
  */
-
 class NotificationServer @Inject constructor(
     private val context: Context,
     private val notificationManager: NotificationManager
@@ -432,20 +427,20 @@ class NotificationServer @Inject constructor(
      * Show a Notification for MORE THAN ONE unread Emails. This will be called ONLY if there are
      * MORE than one unread Notifications
      *
-     * @param user current logged [User]
+     * @param loggedInUser current logged [User]
      * @param unreadNotifications [List] of [RoomNotification] to show to the user
      */
     override fun notifyMultipleUnreadEmail(
         userManager: UserManager,
-        user: User,
+        loggedInUser: User,
         unreadNotifications: List<RoomNotification>
     ) {
         val currentUserUsername = userManager.username
         // Create content Intent for open MailboxActivity
         val contentIntent = Intent(context, MailboxActivity::class.java)
-        if (currentUserUsername != user.username) {
+        if (currentUserUsername != loggedInUser.username) {
             contentIntent.putExtra(EXTRA_SWITCHED_USER, true)
-            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER, user.username)
+            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER, loggedInUser.username)
         }
         val currentTime = System.currentTimeMillis().toInt()
         val contentPendingIntent = PendingIntent.getActivity(context, currentTime, contentIntent, 0)
@@ -456,7 +451,7 @@ class NotificationServer @Inject constructor(
         // Create Notification Style
         val inboxStyle = NotificationCompat.InboxStyle()
             .setBigContentTitle(notificationTitle)
-            .setSummaryText(user.username)
+            .setSummaryText(loggedInUser.username)
         unreadNotifications.reversed().forEach { notification ->
             inboxStyle.addLine(createSpannableLine(
                 notification.notificationTitle, notification.notificationBody
@@ -464,7 +459,7 @@ class NotificationServer @Inject constructor(
         }
 
         // Create Notification's Builder with the prepared params
-        val builder = createGenericEmailNotification(user)
+        val builder = createGenericEmailNotification(loggedInUser)
             .setContentTitle(notificationTitle)
             .setContentIntent(contentPendingIntent)
             .setStyle(inboxStyle)
@@ -472,7 +467,7 @@ class NotificationServer @Inject constructor(
         // Build the Notification
         val notification = builder.build()
 
-        notificationManager.notify(user.username.hashCode(), notification)
+        notificationManager.notify(loggedInUser.username.hashCode(), notification)
     }
 
     /** @return [Spannable] a single line [Spannable] where [title] is [BOLD] */
@@ -483,7 +478,9 @@ class NotificationServer @Inject constructor(
         return spannableText
     }
 
-    private fun createSpannableBigText(sendingFailedNotifications: List<SendingFailedNotification>): Spannable {
+    private fun createSpannableBigText(
+        sendingFailedNotifications: List<SendingFailedNotification>
+    ): Spannable {
         val spannableStringBuilder = SpannableStringBuilder()
         sendingFailedNotifications.reversed().forEach { sendingFailedNotification ->
             spannableStringBuilder.append(createSpannableLine(
