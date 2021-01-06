@@ -234,7 +234,7 @@ open class ContactDetailsViewModel(
                     }
                 },
             { groups: List<ContactLabel>,
-              emails: List<ContactEmail> ->
+                emails: List<ContactEmail> ->
                 allContactGroups = groups
                 allContactEmails = emails
             }

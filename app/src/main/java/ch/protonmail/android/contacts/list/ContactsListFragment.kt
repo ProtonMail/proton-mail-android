@@ -94,6 +94,16 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
             ?: throw IllegalStateException("Activity must implement IContactsListFragmentListener")
     }
 
+    private val Int.statusTextId: Int
+        get() = when (this) {
+            ContactEvent.SUCCESS -> R.string.contact_saved
+            ContactEvent.ALREADY_EXIST -> R.string.contact_exist
+            ContactEvent.INVALID_EMAIL -> R.string.invalid_email_some_contacts
+            ContactEvent.DUPLICATE_EMAIL -> R.string.duplicate_email
+            ContactEvent.SAVED -> R.string.contact_saved
+            else -> R.string.contact_saved_offline
+        }
+
     private fun getSelectedContactsIds(): List<String> {
         val selectedContactIds = ArrayList<String>()
         contactsAdapter.getSelectedItems!!.forEach {
@@ -348,27 +358,6 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     }
 
-    private val Int.statusTextId: Int
-        get() = when (this) {
-            ContactEvent.SUCCESS -> R.string.contact_saved
-            ContactEvent.ALREADY_EXIST -> R.string.contact_exist
-            ContactEvent.INVALID_EMAIL -> R.string.invalid_email_some_contacts
-            ContactEvent.DUPLICATE_EMAIL -> R.string.duplicate_email
-            ContactEvent.SAVED -> R.string.contact_saved
-            else -> R.string.contact_saved_offline
-        }
-
-    companion object {
-
-        fun newInstance(hasPermission: Boolean): ContactsListFragment {
-            val fragment = ContactsListFragment()
-            val extras = Bundle()
-            extras.putBoolean(EXTRA_PERMISSION, hasPermission)
-            fragment.arguments = extras
-            return fragment
-        }
-    }
-
     private fun initAdapter() {
         var actionMode: ActionMode? = null
         contactsAdapter = ContactsListAdapter(
@@ -414,6 +403,17 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         } else {
             actionMode?.title =
                 String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+        }
+    }
+
+    companion object {
+
+        fun newInstance(hasPermission: Boolean): ContactsListFragment {
+            val fragment = ContactsListFragment()
+            val extras = Bundle()
+            extras.putBoolean(EXTRA_PERMISSION, hasPermission)
+            fragment.arguments = extras
+            return fragment
         }
     }
 }
