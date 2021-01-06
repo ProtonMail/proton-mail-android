@@ -1117,6 +1117,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
 
     <string name="invalid_firebase_api_key_message">Invalid Firebase API key. Push notifications will not work.</string>
-    <string name="failed_saving_draft_online">Failed saving online draft for message %s</string>
+    <string name="failed_saving_draft_online">Failed saving online draft for message: "%s"</string>
     <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
 </resources>

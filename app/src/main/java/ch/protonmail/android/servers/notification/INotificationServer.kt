@@ -92,4 +92,6 @@ interface INotificationServer {
         unreadSendingFailedNotifications: List<SendingFailedNotification>,
         user: User
     )
+
+    fun notifySaveDraftError(errorMessage: String, messageSubject: String?, username: String)
 }

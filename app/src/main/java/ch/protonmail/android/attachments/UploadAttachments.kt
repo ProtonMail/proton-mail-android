@@ -79,6 +79,7 @@ class UploadAttachments @Inject constructor(
 
             val isAttachPublicKey = userManager.getMailSettings(userManager.username)?.getAttachPublicKey() ?: false
             if (isAttachPublicKey) {
+                Timber.i("UploadAttachments attaching publicKey for messageId ${message.messageId}")
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
 
                 if (result is AttachmentsRepository.Result.Failure) {

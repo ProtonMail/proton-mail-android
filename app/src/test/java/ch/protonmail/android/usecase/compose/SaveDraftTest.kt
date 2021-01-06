@@ -39,6 +39,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker.Enqueuer
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
@@ -63,6 +64,9 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class SaveDraftTest : CoroutinesTest {
+
+    @RelaxedMockK
+    private lateinit var errorNotifier: ErrorNotifier
 
     @RelaxedMockK
     private lateinit var uploadAttachments: UploadAttachments
@@ -381,7 +385,7 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftsRemovesPendingUploadAndReturnsErrorWhenUploadingNewAttachmentsFails() {
+    fun saveDraftsRemovesPendingUploadAndShowAndReturnsErrorWhenUploadingNewAttachmentsFails() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -391,17 +395,19 @@ class SaveDraftTest : CoroutinesTest {
                 addressID = "addressId"
                 decryptedBody = "Message body in plain text"
                 localId = localDraftId
+                subject = "Message Subject"
             }
             val newAttachmentIds = listOf("2345", "453")
             val workOutputData = workDataOf(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "newDraftId"
             )
             val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            val errorMessage = "Can't upload attachments"
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns message.copy(messageId = "newDraftId")
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
             every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
-            coEvery { uploadAttachments(newAttachmentIds, any(), any()) } returns Failure("Can't upload attachments")
+            coEvery { uploadAttachments(newAttachmentIds, any(), any()) } returns Failure(errorMessage)
             every {
                 createDraftScheduler.enqueue(
                     message,
@@ -418,6 +424,7 @@ class SaveDraftTest : CoroutinesTest {
 
             // Then
             verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
+            verify { errorNotifier.showPersistentError(errorMessage, "Message Subject") }
             assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
         }
     }

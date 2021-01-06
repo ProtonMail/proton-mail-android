@@ -409,9 +409,7 @@ class ComposeMessageViewModel @Inject constructor(
                         _actionId,
                         _oldSenderAddressId
                     )
-                ).collect {
-                    Timber.d("Received saveDraft outcome on VM: $it")
-                }
+                ).collect()
 
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID

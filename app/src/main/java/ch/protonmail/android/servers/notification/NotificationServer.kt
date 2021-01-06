@@ -66,6 +66,7 @@ const val CHANNEL_ID_ACCOUNT = "account"
 const val CHANNEL_ID_ATTACHMENTS = "attachments"
 const val NOTIFICATION_GROUP_ID_EMAIL = 99
 const val NOTIFICATION_ID_SENDING_FAILED = 680
+const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
 const val EXTRA_USERNAME = "username"
 
@@ -492,7 +493,7 @@ class NotificationServer @Inject constructor(
     }
 
     private fun createGenericErrorSendingMessageNotification(
-        user: User
+        username: String
     ): NotificationCompat.Builder {
 
         // Create channel and get id
@@ -501,13 +502,13 @@ class NotificationServer @Inject constructor(
         // Create content Intent to open Drafts
         val contentIntent = Intent(context, MailboxActivity::class.java)
         contentIntent.putExtra(EXTRA_MAILBOX_LOCATION, Constants.MessageLocationType.DRAFT.messageLocationTypeValue)
-        contentIntent.putExtra(EXTRA_USERNAME, user.username)
+        contentIntent.putExtra(EXTRA_USERNAME, username)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MailboxActivity::class.java)
             .addNextIntent(contentIntent)
 
-        val contentPendingIntent = stackBuilder.getPendingIntent(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentPendingIntent = stackBuilder.getPendingIntent(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Set Notification's colors
         val mainColor = context.getColorCompat(R.color.ocean_blue)
@@ -535,7 +536,7 @@ class NotificationServer @Inject constructor(
             .bigText(error)
 
         // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
             .setStyle(bigTextStyle)
 
         // Build and show notification
@@ -557,11 +558,26 @@ class NotificationServer @Inject constructor(
             .bigText(createSpannableBigText(unreadSendingFailedNotifications))
 
         // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
             .setStyle(bigTextStyle)
 
         // Build and show notification
         val notification = notificationBuilder.build()
         notificationManager.notify(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
+    }
+
+    override fun notifySaveDraftError(errorMessage: String, messageSubject: String?, username: String) {
+        val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
+
+        val bigTextStyle = NotificationCompat.BigTextStyle()
+            .setBigContentTitle(title)
+            .setSummaryText(username)
+            .bigText(errorMessage)
+
+        val notificationBuilder = createGenericErrorSendingMessageNotification(username)
+            .setStyle(bigTextStyle)
+
+        val notification = notificationBuilder.build()
+        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
     }
 }

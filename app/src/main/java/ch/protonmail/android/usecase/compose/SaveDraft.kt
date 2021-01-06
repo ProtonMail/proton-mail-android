@@ -33,6 +33,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import kotlinx.coroutines.flow.Flow
@@ -52,7 +53,8 @@ class SaveDraft @Inject constructor(
     private val pendingActionsDao: PendingActionsDao,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
     @CurrentUsername private val username: String,
-    val uploadAttachments: UploadAttachments
+    private val uploadAttachments: UploadAttachments,
+    private val errorNotifier: ErrorNotifier
 ) {
 
     suspend operator fun invoke(
@@ -111,6 +113,7 @@ class SaveDraft @Inject constructor(
                         pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
 
                         if (uploadResult is UploadAttachments.Result.Failure) {
+                            errorNotifier.showPersistentError(uploadResult.error, localDraft.subject)
                             return@map SaveDraftResult.UploadDraftAttachmentsFailed
                         }
                         return@map SaveDraftResult.Success(createdDraftId)
