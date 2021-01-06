@@ -36,6 +36,9 @@ data class DraftBody(
     @SerializedName(Fields.Message.ACTION)
     var action = 0
 
+    @SerializedName(Fields.Message.UNREAD)
+    var unread: Int? = message.unread
+
     @SerializedName(Fields.Message.Send.ATTACHMENT_KEY_PACKETS)
     var attachmentKeyPackets: MutableMap<String, String>? = null
         get() {

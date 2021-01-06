@@ -73,6 +73,7 @@ data class ServerMessage(
         Body,
         ToList,
         CCList,
-        BCCList
+        BCCList,
+        Unread
     )
 }
