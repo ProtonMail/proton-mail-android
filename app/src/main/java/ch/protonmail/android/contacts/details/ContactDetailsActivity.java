@@ -654,7 +654,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             try {
                 type2Verify = crypto.verify(mVCardType2, mVCardType2Signature).isSignatureValid();
             } catch (Exception e) {
-                Logger.doLogException(e);
+                Timber.w(e, "VCard type2 verification error");
             }
         } else {
             type2Verify = true;
@@ -664,7 +664,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             try {
                 type3Verify = crypto.verify(mVCardType3, mVCardType3Signature).isSignatureValid();
             } catch (Exception e) {
-                Logger.doLogException(e);
+                Timber.w(e, "VCard type3 verification error");
             }
         } else {
             type3Verify = true;
@@ -697,7 +697,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             }
             fw.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Timber.w(e, "VCard file operation error");
         }
 
         fabWeb.setOnClickListener(v -> {
@@ -990,7 +990,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
         return isEmpty;
     }
 
-    private View.OnClickListener mUpgradeClickListener = v -> {
+    private final View.OnClickListener mUpgradeClickListener = v -> {
         Intent upgradeIntent = new Intent(ContactDetailsActivity.this, UpsellingActivity.class);
         upgradeIntent.putExtra(UpsellingActivity.EXTRA_OPEN_UPGRADE_CONTAINER, true);
         startActivityForResult(AppUtil.decorInAppIntent(upgradeIntent), REQUEST_CODE_UPGRADE);
