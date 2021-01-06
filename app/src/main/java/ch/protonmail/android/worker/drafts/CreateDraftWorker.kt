@@ -87,8 +87,6 @@ class CreateDraftWorker @WorkerInject constructor(
     private val errorNotifier: ErrorNotifier
 ) : CoroutineWorker(context, params) {
 
-    internal var retries: Int = 0
-
     override suspend fun doWork(): Result {
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
@@ -174,8 +172,7 @@ class CreateDraftWorker @WorkerInject constructor(
     }
 
     private fun retryOrFail(error: String?, messageSubject: String?): Result {
-        if (retries <= SAVE_DRAFT_MAX_RETRIES) {
-            retries++
+        if (runAttemptCount <= SAVE_DRAFT_MAX_RETRIES) {
             Timber.d("Create Draft Worker API call FAILED with error = $error. Retrying...")
             return Result.retry()
         }

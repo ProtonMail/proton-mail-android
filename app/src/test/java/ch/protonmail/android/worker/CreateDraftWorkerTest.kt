@@ -663,7 +663,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { pendingActionsDao.findPendingUploadByMessageId(localMessageId) } returns pendingUpload
 
             // When
-            val result = worker.doWork()
+            worker.doWork()
 
             // Then
             val expectedPendingUpload = PendingUpload("response_message_id")
@@ -694,7 +694,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true)
             coEvery { apiManager.createDraft(any()) } returns errorAPIResponse
-            worker.retries = 0
+            every { parameters.runAttemptCount } returns 0
 
             // When
             val result = worker.doWork()
@@ -702,7 +702,6 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // Then
             val expected = ListenableWorker.Result.retry()
             assertEquals(expected, result)
-            assertEquals(1, worker.retries)
         }
     }
 
@@ -729,7 +728,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject001"
             }
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
-            worker.retries = 11
+            every { parameters.runAttemptCount } returns 11
 
             // When
             val result = worker.doWork()
