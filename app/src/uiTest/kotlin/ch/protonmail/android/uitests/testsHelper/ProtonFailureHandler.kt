@@ -22,7 +22,6 @@ import android.app.Instrumentation
 import android.view.View
 import androidx.test.espresso.FailureHandler
 import androidx.test.espresso.base.DefaultFailureHandler
-import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.artifactsPath
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.testName
 import com.jraska.falcon.Falcon

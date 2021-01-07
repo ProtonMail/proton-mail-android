@@ -39,7 +39,7 @@ class AccountSettingsTests : BaseTest() {
             .loginUser(TestData.onePassUser)
             .menuDrawer()
             .settings()
-            .selectItemByValue(TestData.onePassUser.email)
+            .selectSettingsItemByValue(TestData.onePassUser.email)
     }
 
     @Test

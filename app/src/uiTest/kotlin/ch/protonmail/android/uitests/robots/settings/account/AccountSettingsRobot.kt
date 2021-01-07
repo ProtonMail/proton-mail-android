@@ -25,12 +25,14 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnHolderItem
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
+import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.robots.settings.account.DefaultEmailAddressRobot
 import ch.protonmail.android.uitests.robots.settings.account.DisplayNameAndSignatureRobot
 import ch.protonmail.android.uitests.robots.settings.account.LabelsAndFoldersRobot
 import ch.protonmail.android.uitests.robots.settings.account.PasswordManagementRobot
 import ch.protonmail.android.uitests.robots.settings.account.RecoveryEmailRobot
 import ch.protonmail.android.uitests.robots.settings.account.SubscriptionRobot
+import ch.protonmail.android.uitests.robots.settings.account.SwipingGesturesSettingsRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.UIActions
 
@@ -68,6 +70,16 @@ class AccountSettingsRobot {
     fun foldersAndLabels(): LabelsAndFoldersRobot {
         clickOnSettingsItemWithHeader(R.string.labels_and_folders)
         return LabelsAndFoldersRobot()
+    }
+
+    fun navigateUpToSettings(): SettingsRobot {
+        UIActions.system.clickHamburgerOrUpButton()
+        return SettingsRobot()
+    }
+
+    fun swipingGestures(): SwipingGesturesSettingsRobot {
+        clickOnSettingsItemWithHeader(R.string.swiping_gesture)
+        return SwipingGesturesSettingsRobot()
     }
 
     private fun clickOnSettingsItemWithHeader(@IdRes stringId: Int) {
