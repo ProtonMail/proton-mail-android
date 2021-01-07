@@ -125,7 +125,9 @@ class CreateDraftWorker @WorkerInject constructor(
         }.fold(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
-                    return retryOrFail(response.error, createDraftRequest.message.subject)
+                    Timber.e("Create Draft Worker Failed with bad response code: $response")
+                    errorNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
+                    return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
 
                 val responseDraft = response.message.copy()

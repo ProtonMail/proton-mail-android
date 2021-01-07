@@ -672,6 +672,49 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerReturnsFailureWithoutRetryingWhenApiRequestSucceedsButReturnsNonSuccessResponseCode() {
+        runBlockingTest {
+            // Given
+            val parentId = "89345"
+            val messageDbId = 3452L
+            val message = Message().apply {
+                dbId = messageDbId
+                messageId = "17575c23-c3d9-4f3a-9188-02dea1321cc6"
+                addressID = "addressId835"
+                messageBody = "messageBody"
+                subject = "Subject002"
+            }
+            val errorMessage = "Draft not created because.."
+            val errorAPIResponse = mockk<MessageResponse> {
+                every { code } returns 402
+                every { error } returns errorMessage
+            }
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(NONE)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true) {
+                every { this@mockk.message.subject } returns "Subject002"
+            }
+            coEvery { apiManager.createDraft(any()) } returns errorAPIResponse
+            every { parameters.runAttemptCount } returns 0
+
+            // When
+            val result = worker.doWork()
+
+            verify { errorNotifier.showPersistentError(errorMessage, "Subject002") }
+            val expected = ListenableWorker.Result.failure(
+                Data.Builder().putString(
+                    KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
+                    CreateDraftWorkerErrors.BadResponseCodeError.name
+                ).build()
+            )
+            assertEquals(expected, result)
+        }
+    }
+
+    @Test
     fun workerRetriesSavingDraftWhenApiRequestFailsAndMaxTriesWereNotReached() {
         runBlockingTest {
             // Given
@@ -679,22 +722,22 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val messageDbId = 345L
             val message = Message().apply {
                 dbId = messageDbId
-                messageId = "17575c23-c3d9-4f3a-9188-02dea1321cc6"
+                messageId = "17575c22-c3d9-4f3a-9188-02dea1321cc6"
                 addressID = "addressId835"
                 messageBody = "messageBody"
+                subject = "Subject001"
             }
-            val errorAPIResponse = mockk<MessageResponse> {
-                every { code } returns 500
-                every { error } returns "Internal Error: Draft not created"
-            }
+            val errorMessage = "Error performing request"
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-            every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true)
-            coEvery { apiManager.createDraft(any()) } returns errorAPIResponse
-            every { parameters.runAttemptCount } returns 0
+            every { messageFactory.createDraftApiRequest(message) } returns mockk(relaxed = true) {
+                every { this@mockk.message.subject } returns "Subject001"
+            }
+            coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
+            every { parameters.runAttemptCount } returns 3
 
             // When
             val result = worker.doWork()
