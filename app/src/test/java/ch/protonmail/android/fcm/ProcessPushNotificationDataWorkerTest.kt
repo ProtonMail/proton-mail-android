@@ -192,7 +192,7 @@ class ProcessPushNotificationDataWorkerTest {
             processPushNotificationDataWorker.doWork()
 
             // then
-            verify { queueNetworkUtil.setCurrentlyHasConnectivity(true) }
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
         }
     }
 

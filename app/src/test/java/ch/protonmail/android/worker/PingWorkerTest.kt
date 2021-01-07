@@ -35,6 +35,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
+import me.proton.core.util.android.workmanager.toWorkData
+import me.proton.core.util.kotlin.EMPTY_STRING
 import java.io.IOException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -76,7 +78,7 @@ class PingWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            verify { queueNetworkUtil.setCurrentlyHasConnectivity(true) }
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
             assertEquals(operationResult, expected)
         }
     }
@@ -95,7 +97,7 @@ class PingWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            verify { queueNetworkUtil.setCurrentlyHasConnectivity(true) }
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
             assertEquals(operationResult, expected)
         }
     }
@@ -115,7 +117,6 @@ class PingWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            verify { queueNetworkUtil.setCurrentlyHasConnectivity(false) }
             assertEquals(operationResult, expected)
         }
     }
@@ -124,15 +125,15 @@ class PingWorkerTest {
     fun verifyFailureIsReturnedWhenNetworkConnectionFails() {
         runBlockingTest {
             // given
-            val expected = ListenableWorker.Result.failure()
             val ioException = IOException("NetworkError!")
+            val expected = ListenableWorker.Result.failure(WorkerError(ioException.message ?: EMPTY_STRING).toWorkData())
             coEvery { api.pingAsync() } throws ioException
 
             // when
             val operationResult = worker.doWork()
 
             // then
-            verify { queueNetworkUtil.setCurrentlyHasConnectivity(false) }
+            verify { queueNetworkUtil.setConnectivityHasFailed(ioException) }
             assertEquals(operationResult, expected)
         }
     }

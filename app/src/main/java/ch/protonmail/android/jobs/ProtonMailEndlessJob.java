@@ -50,11 +50,8 @@ public abstract class ProtonMailEndlessJob extends ProtonMailBaseJob {
         if (throwable instanceof Exception) {
             if (throwable.getCause() instanceof IOException) {
                 shouldReschedule = true;
-                getQueueNetworkUtil().setCurrentlyHasConnectivity(false);
+                getQueueNetworkUtil().setConnectivityHasFailed(throwable);
             }
-        } else if (throwable instanceof IOException) {
-            shouldReschedule = true;
-            getQueueNetworkUtil().setCurrentlyHasConnectivity(false);
         }
         return RetryConstraint.RETRY;
     }

@@ -290,7 +290,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     public void startJobManager() {
         if (jobManager != null) {
-            mNetworkUtil.setCurrentlyHasConnectivity(true);
+            mNetworkUtil.setCurrentlyHasConnectivity();
             jobManager.start();
         }
     }
@@ -554,7 +554,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private void checkForUpdateAndClearCache() {
         final SharedPreferences prefs = getDefaultSharedPreferences();
         int currentAppVersion = AppUtil.getAppVersionCode(this);
-        mNetworkUtil.setCurrentlyHasConnectivity(true);
+        mNetworkUtil.setCurrentlyHasConnectivity();
         //refresh local cache if new app version
         int previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
         if (previousVersion != currentAppVersion && previousVersion > 0) {

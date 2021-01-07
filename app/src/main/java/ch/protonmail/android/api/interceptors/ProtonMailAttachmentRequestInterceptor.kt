@@ -59,11 +59,11 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
             response = chain.proceed(request)
         } catch (exception: IOException) {
             AppUtil.postEventOnUi(ConnectivityEvent(false))
-            networkUtils.setCurrentlyHasConnectivity(false)
+            networkUtils.setConnectivityHasFailed(exception)
             throw exception
         }
 
-        networkUtils.setCurrentlyHasConnectivity(true)
+        networkUtils.setCurrentlyHasConnectivity()
         AppUtil.postEventOnUi(ConnectivityEvent(true))
 
         // check validity of response (DoH expiration and error codes)
