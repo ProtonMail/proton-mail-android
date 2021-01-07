@@ -73,8 +73,6 @@ detekt analysis:
     expire_in: 1 week
     paths:
       - app/build/outputs/apk
-  except:
-    - schedules
 
 build debug:
   extends: .build-debug-common
@@ -85,6 +83,7 @@ build debug:
     - release
     - prerelease
     - tags
+    - schedules
 
 build debug develop:
   extends: .build-debug-common
@@ -92,11 +91,15 @@ build debug develop:
     - job: detekt analysis
   only:
     - develop
-    - schedules
   script:
     - ./gradlew clean
     - ./gradlew assembleBetaDebug
     - ./gradlew assembleBetaDebugAndroidTest
+
+build debug uitests:
+  extends: .build-debug-common
+  only:
+    - schedules
 
 build debug release:
   extends: .build-debug-common
@@ -231,10 +234,11 @@ firebase tests release:
     - prerelease
     - tags
 
+
 firebase feature tests:
   stage: test
   needs:
-    - job: build debug
+    - job: build debug uitests
   rules:
     - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
   tags:
