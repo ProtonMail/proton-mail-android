@@ -19,7 +19,6 @@
 package ch.protonmail.android.activities;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +27,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -39,7 +37,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.otto.Subscribe;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 import javax.inject.Inject;
@@ -51,13 +48,12 @@ import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
+import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase;
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
-import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.events.LogoutEvent;
@@ -65,11 +61,11 @@ import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.utils.AppUtil;
-import ch.protonmail.android.utils.extensions.TextExtensions;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_SETTLING;
+import static ch.protonmail.android.core.Constants.MessageLocationType;
 
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
@@ -141,11 +137,12 @@ public class SearchActivity extends BaseActivity {
         });
 
         mAdapter.setItemClick(message -> {
-           if (Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.ALL_DRAFT ||
-                   Constants.MessageLocationType.Companion.fromInt(message.getLocation()) == Constants.MessageLocationType.DRAFT) {
-               new CheckPendingUploadsAndStartComposeTask(
-                       new WeakReference<>(SearchActivity.this), pendingActionsDatabase, message.getMessageId(), message.isInline()).execute();
-           } else {
+            if (isDraftMessage(message)) {
+                Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, ComposeMessageActivity.class));
+                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, message.getMessageId());
+                intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, message.isInline());
+                startActivity(intent);
+            } else {
                 Intent intent = AppUtil.decorInAppIntent(new Intent(SearchActivity.this, MessageDetailsActivity.class));
                 intent.putExtra(MessageDetailsActivity.EXTRA_MESSAGE_ID, message.getMessageId());
                 intent.putExtra(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE, true);
@@ -160,7 +157,7 @@ public class SearchActivity extends BaseActivity {
                 mAdapter.addAll(messages);
                 setLoadingMore(false);
                 mProgressBar.setVisibility(View.GONE);
-                mAdapter.setNewLocation(Constants.MessageLocationType.SEARCH);
+                mAdapter.setNewLocation(MessageLocationType.SEARCH);
             }
         });
 
@@ -256,8 +253,14 @@ public class SearchActivity extends BaseActivity {
         mJobManager.addJobInBackground(new SearchMessagesJob(mQueryText, mCurrentPage, newSearch));
     }
 
+    private boolean isDraftMessage(Message message) {
+        MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(message.getLocation());
+        return messageLocation == MessageLocationType.ALL_DRAFT ||
+                messageLocation == MessageLocationType.DRAFT;
+    }
+
     @Subscribe
-    public void  onMailSettingsEvent(MailSettingsEvent event) {
+    public void onMailSettingsEvent(MailSettingsEvent event) {
         loadMailSettings();
     }
 
@@ -281,43 +284,4 @@ public class SearchActivity extends BaseActivity {
         mAdapter.setIncludeFooter(loadingMore);
     }
 
-    private static class CheckPendingUploadsAndStartComposeTask
-            extends AsyncTask<Void,Void,PendingUpload> {
-
-        private final WeakReference<SearchActivity> searchActivity;
-        private final PendingActionsDatabase pendingActionsDatabase;
-        private final String messageId;
-        private final boolean isInline;
-
-        CheckPendingUploadsAndStartComposeTask(WeakReference<SearchActivity> searchActivity,
-                                               PendingActionsDatabase pendingActionsDatabase,
-                                               String messageId, boolean isInline) {
-            this.searchActivity = searchActivity;
-            this.pendingActionsDatabase = pendingActionsDatabase;
-            this.messageId = messageId;
-            this.isInline = isInline;
-        }
-
-        @Override
-        protected PendingUpload doInBackground(Void... voids) {
-            return pendingActionsDatabase.findPendingUploadByMessageId(messageId);
-        }
-
-        @Override
-        protected void onPostExecute(PendingUpload pendingUpload) {
-            SearchActivity searchActivity = this.searchActivity.get();
-            if (searchActivity == null) {
-                return;
-            }
-            if (pendingUpload != null) {
-                TextExtensions.showToast(searchActivity, R.string.draft_attachments_uploading, Toast.LENGTH_SHORT);
-                return;
-            }
-
-            Intent intent = AppUtil.decorInAppIntent(new Intent(searchActivity, ComposeMessageActivity.class));
-            intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, messageId);
-            intent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, isInline);
-            searchActivity.startActivity(intent);
-        }
-    }
 }
