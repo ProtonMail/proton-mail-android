@@ -49,10 +49,6 @@ import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
 import ch.protonmail.android.api.models.room.messages.Message;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase;
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
@@ -70,8 +66,6 @@ import static ch.protonmail.android.core.Constants.MessageLocationType;
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
 
-    private PendingActionsDatabase pendingActionsDatabase;
-
     private MessagesRecyclerViewAdapter mAdapter;
     private TextView noMessagesView;
     private ProgressBar mProgressBar;
@@ -79,7 +73,6 @@ public class SearchActivity extends BaseActivity {
     private String mQueryText = "";
     private int mCurrentPage;
     private SearchView searchView = null;
-    private MessagesDatabase searchDatabase;
 
     @Inject
     MessageDetailsRepository messageDetailsRepository;
@@ -94,8 +87,6 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        searchDatabase = MessagesDatabaseFactory.Companion.getSearchDatabase(getApplicationContext()).getDatabase();
-        pendingActionsDatabase= PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
