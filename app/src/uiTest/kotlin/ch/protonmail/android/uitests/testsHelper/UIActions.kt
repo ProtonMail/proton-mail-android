@@ -177,6 +177,9 @@ object UIActions {
         fun viewWithIdAndTextDoesNotExist(@IdRes id: Int, text: String): ViewInteraction =
             onView(allOf(withId(id), withText(text))).check(doesNotExist())
 
+        fun viewWithTextIsChecked(@StringRes textId: Int): ViewInteraction =
+            onView(withText(textId)).check(matches(isChecked()))
+
         fun viewWithIdAndAncestorTagIsChecked(
             @IdRes id: Int,
             ancestorTag: String,

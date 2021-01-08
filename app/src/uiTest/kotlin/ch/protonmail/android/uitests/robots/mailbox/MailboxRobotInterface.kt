@@ -115,14 +115,6 @@ interface MailboxRobotInterface {
     @Suppress("ClassName")
     open class verify {
 
-        fun messageMoved(messageSubject: String) {
-            UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, messageSubject)
-        }
-
-        fun draftWithAttachmentSaved(draftSubject: String) {
-            UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, draftSubject)
-        }
-
         fun mailboxLayoutShown() {
             UIActions.wait.forViewWithId(R.id.swipe_refresh_layout)
         }
@@ -146,18 +138,6 @@ interface MailboxRobotInterface {
             UIActions.recyclerView
                 .scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectAndRecipient(subject, to))
         }
-    }
-
-    fun setSwipedLeftMessage(text: String) {
-        swipeLeftMessageSubject = text
-    }
-
-    fun setSelectedMessage(text: String) {
-        selectedMessageSubject = text
-    }
-
-    fun setDeletedMessage(text: String) {
-        deletedMessageSubject = text
     }
 
     private class SetLongClickMessage : (String, String) -> Unit {
@@ -199,7 +179,6 @@ interface MailboxRobotInterface {
         var deletedMessageDate = ""
 
         private const val messagesRecyclerViewId = R.id.messages_list_view
-        private const val messageTitleTextViewId = R.id.messageTitleTextView
         private const val drawerLayoutId = R.id.drawer_layout
     }
 }
