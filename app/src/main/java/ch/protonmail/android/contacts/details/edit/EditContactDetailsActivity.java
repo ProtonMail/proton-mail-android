@@ -68,8 +68,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.BaseConnectivityActivity;
@@ -175,9 +173,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private LayoutInflater inflater;
     private final AtomicBoolean mSavingInProgress = new AtomicBoolean(false);
 
-    @Inject
-    EditContactDetailsViewModel.Factory editContactDetailsViewModelFactory;
-    EditContactDetailsViewModel editContactDetailsViewModel;
+    private EditContactDetailsViewModel viewModel;
 
     public static Intent startNewContactActivity(@NonNull Context context) {
         final Intent intent = AppUtil.decorInAppIntent(
@@ -217,8 +213,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        editContactDetailsViewModel = new ViewModelProvider(this, editContactDetailsViewModelFactory)
-                .get(EditContactDetailsViewModel.class);
+        viewModel = new ViewModelProvider(this).get(EditContactDetailsViewModel.class);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -234,7 +229,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             finish();
             return;
         }
-        editContactDetailsViewModel.setup(
+        viewModel.setup(
                 extras.getInt(EXTRA_FLOW),
                 extras.getString(EXTRA_CONTACT, ""),
                 (LocalContact) extras.getSerializable(EXTRA_LOCAL_CONTACT),
@@ -250,7 +245,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE2),
                 extras.getString(EXTRA_CONTACT_VCARD_TYPE3));
 
-        editContactDetailsViewModel.getSetupComplete().observe(this, setupCompleteObserver);
+        viewModel.getSetupComplete().observe(this, setupCompleteObserver);
 
         addPhotoBtn.setOnClickListener(v -> {
 
@@ -317,7 +312,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        editContactDetailsViewModel.checkConnectivity();
+        viewModel.checkConnectivity();
     }
 
     @Override
@@ -328,12 +323,12 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
     @Override
     public void onBackPressed() {
-        editContactDetailsViewModel.onBackPressed();
+        viewModel.onBackPressed();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (editContactDetailsViewModel.isConvertContactFlow()) {
+        if (viewModel.isConvertContactFlow()) {
             getMenuInflater().inflate(R.menu.contact_details_convert_menu, menu);
         } else {
             getMenuInflater().inflate(R.menu.contact_details_edit_menu, menu);
@@ -366,8 +361,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         if (TextUtils.isEmpty(contactName)) {
             contactName = getString(R.string.contacts_unknown);
         }
-        VCard vCardEncrypted = editContactDetailsViewModel.buildEncryptedCard();
-        VCard vCardSigned = editContactDetailsViewModel.buildSignedCard(contactName);
+        VCard vCardEncrypted = viewModel.buildEncryptedCard();
+        VCard vCardSigned = viewModel.buildSignedCard(contactName);
 
         if (contactPhoto.getVisibility() == View.VISIBLE && contactPhoto.getDrawable() != null) {
             Bitmap bitmap = ((BitmapDrawable) contactPhoto.getDrawable()).getBitmap();
@@ -403,7 +398,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             }
             if (!TextUtils.isEmpty(optionValue)) {
                 emailsToBeRemoved.add(optionValue);
-                emails.add(new ContactEmail(editContactDetailsViewModel.getContactId(), optionValue, contactName));
+                emails.add(new ContactEmail(viewModel.getContactId(), optionValue, contactName));
                 Email vCardEmail = new Email(optionValue);
                 if (!TextUtils.isEmpty(optionType)) {
                     EmailType emailType = EmailType.find(optionType);
@@ -418,11 +413,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 i++;
             }
         }
-        for (RawProperty rawProperty : editContactDetailsViewModel.getExtendedPropertiesType2()) {
+        for (RawProperty rawProperty : viewModel.getExtendedPropertiesType2()) {
             RawProperty rawProperty1 = new RawProperty(rawProperty);
             vCardSigned.addProperty(rawProperty1);
         }
-        for (Key key : editContactDetailsViewModel.getKeysType2()) {
+        for (Key key : viewModel.getKeysType2()) {
             vCardSigned.addKey(key);
         }
         childIds = mEncryptedDataPhone.getChildIds();
@@ -541,7 +536,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 vCardEncrypted.addNote(note);
             }
         }
-        List<RawProperty> vCardExtendedProperties = editContactDetailsViewModel.getExtendedPropertiesType3();
+        List<RawProperty> vCardExtendedProperties = viewModel.getExtendedPropertiesType3();
         if (vCardExtendedProperties.size() > 0) {
             for (RawProperty rawProperty : vCardExtendedProperties) {
                 vCardEncrypted.addProperty(rawProperty);
@@ -549,13 +544,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         }
         TextExtensions.showToast(EditContactDetailsActivity.this, R.string.saving);
 
-        editContactDetailsViewModel.getCreateContactResult().observe(
+        viewModel.getCreateContactResult().observe(
                 this, resultStringId -> {
                     String message = getString(resultStringId);
                     Toast.makeText(EditContactDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
                     saveAndFinish();
                 });
-        editContactDetailsViewModel.save(emailsToBeRemoved, contactName, emails);
+        viewModel.save(emailsToBeRemoved, contactName, emails);
     }
 
     @Override
@@ -581,17 +576,17 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private boolean fillTopPart(VCard vCard) {
         List<Email> vCardEmails = vCard.getEmails();
         if (vCardEmails.size() == 0 && mEmailAddressesContainer.getChildCount() == 0) {
-            createEmailAddressView(editContactDetailsViewModel.getDefaultEmailOption(), editContactDetailsViewModel.getDefaultEmailUIOption(), "");
+            createEmailAddressView(viewModel.getDefaultEmailOption(), viewModel.getDefaultEmailUIOption(), "");
         }
         for (Email email : vCardEmails) {
             List<EmailType> emailTypes = email.getTypes();
-            String emailUIType = editContactDetailsViewModel.getDefaultEmailUIOption();
-            String emailType = editContactDetailsViewModel.getDefaultEmailOption();
+            String emailUIType = viewModel.getDefaultEmailUIOption();
+            String emailType = viewModel.getDefaultEmailOption();
             if (emailTypes != null && emailTypes.size() > 0) {
                 emailType = emailTypes.iterator().next().getValue();
                 emailUIType = VCardUtil.capitalizeType(VCardUtil.removeCustomPrefixForCustomType(emailType));
-                List<String> vCardEmailOptions = editContactDetailsViewModel.getEmailOptions();
-                List<String> vCardEmailUIOptions = editContactDetailsViewModel.getEmailUIOptions();
+                List<String> vCardEmailOptions = viewModel.getEmailOptions();
+                List<String> vCardEmailUIOptions = viewModel.getEmailUIOptions();
                 if (vCardEmailOptions.contains(emailUIType)) {
                     emailUIType = vCardEmailUIOptions.get(vCardEmailOptions.indexOf(emailUIType));
                 }
@@ -803,7 +798,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     private Function0<Unit> onConnectivityCheckRetry() {
         return () -> {
             networkSnackBarUtil.getCheckingConnectionSnackBar(mSnackLayout, null).show();
-            editContactDetailsViewModel.checkConnectivityDelayed();
+            viewModel.checkConnectivityDelayed();
             return null;
         };
     }
@@ -846,24 +841,24 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
     private View createEmailAddressView(String emailType, String emailUIType, String emailValue) {
         View view = createExistingVCardOptionRow(emailType, "\ue914 " + emailUIType, emailValue,
-                getString(R.string.contact_vcard_hint_email), editContactDetailsViewModel.getEmailUIOptions(),
-                editContactDetailsViewModel.getEmailOptions(), mEmailAddressesContainer, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                getString(R.string.contact_vcard_hint_email), viewModel.getEmailUIOptions(),
+                viewModel.getEmailOptions(), mEmailAddressesContainer, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         mEmailAddressesContainer.addView(view);
         return view;
     }
 
     private void createPhoneView(String phoneType, String phoneUIType, String phoneValue) {
         View view = createExistingVCardOptionRow(phoneType, "\ue913 " + phoneUIType, phoneValue,
-                getString(R.string.contact_vcard_hint_phone), editContactDetailsViewModel.getPhoneUIOptions(),
-                editContactDetailsViewModel.getPhoneOptions(), mEncryptedDataPhone, true, 1,
+                getString(R.string.contact_vcard_hint_phone), viewModel.getPhoneUIOptions(),
+                viewModel.getPhoneOptions(), mEncryptedDataPhone, true, 1,
                 InputType.TYPE_CLASS_NUMBER | InputType.TYPE_CLASS_PHONE);
         mEncryptedDataPhone.addView(view);
     }
 
     private void createAddressView(String addressType, String addressUIType, Address address) {
         View view = createExistingVCardOptionRow(addressType, addressUIType, address,
-                getString(R.string.contact_vcard_hint_address), editContactDetailsViewModel.getAddressUIOptions(),
-                editContactDetailsViewModel.getAddressOptions(), mEncryptedDataAddress);
+                getString(R.string.contact_vcard_hint_address), viewModel.getAddressUIOptions(),
+                viewModel.getAddressOptions(), mEncryptedDataAddress);
         mEncryptedDataAddress.addView(view);
     }
 
@@ -871,7 +866,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                                  Constants.VCardOtherInfoType otherInfoType) {
         View view = createExistingVCardOptionRow(otherInformationType, "\ue905 " + otherInformationType,
                 otherInformationValue, getString(R.string.contact_vcard_hint_other),
-                editContactDetailsViewModel.getOtherOptions(), editContactDetailsViewModel.getOtherOptions(), mEncryptedDataOther, false, 1,
+                viewModel.getOtherOptions(), viewModel.getOtherOptions(), mEncryptedDataOther, false, 1,
                 InputType.TYPE_CLASS_TEXT);
         view.setTag(otherInfoType);
         mEncryptedDataOther.addView(view);
@@ -908,14 +903,14 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         @Override
         public void afterTextChanged(Editable s) {
             if (!firstChange) {
-                editContactDetailsViewModel.setChanged();
+                viewModel.setChanged();
             }
             firstChange = false;
         }
     }
 
     private void startObserving() {
-        editContactDetailsViewModel.getCleanUpComplete().observe(this, booleanEvent -> {
+        viewModel.getCleanUpComplete().observe(this, booleanEvent -> {
             if (booleanEvent == null) {
                 return;
             }
@@ -926,16 +921,16 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 super.onBackPressed();
             }
         });
-        editContactDetailsViewModel.getSetupNewContactFlow().observe(this, setupNewContactObserver);
-        editContactDetailsViewModel.getSetupEditContactFlow().observe(this, setupEditContactObserver);
-        editContactDetailsViewModel.getSetupConvertContactFlow().observe(this, setupConvertContactObserver);
-        editContactDetailsViewModel.getFreeUserEvent().observe(this, unit -> {
+        viewModel.getSetupNewContactFlow().observe(this, setupNewContactObserver);
+        viewModel.getSetupEditContactFlow().observe(this, setupEditContactObserver);
+        viewModel.getSetupConvertContactFlow().observe(this, setupConvertContactObserver);
+        viewModel.getFreeUserEvent().observe(this, unit -> {
             View upgradeView = mUpgradeEncryptedDataStub.inflate();
             upgradeView.findViewById(R.id.upgrade).setOnClickListener(mUpgradeClickListener);
 
             new Handler().postDelayed(() -> enableControls(false, mEncryptedDataContainer), 10);
         });
-        editContactDetailsViewModel.getProfilePicture().observe(this, observer -> {
+        viewModel.getProfilePicture().observe(this, observer -> {
             observer.doOnData(bitmap -> {
                 photoCardViewWrapper.setVisibility(View.VISIBLE);
                 contactInitials.setVisibility(View.GONE);
@@ -951,18 +946,18 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
             return Unit.INSTANCE;
         });
-        editContactDetailsViewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
+        viewModel.getHasConnectivity().observe(this, this::onConnectivityEvent);
     }
 
     private Observer setupNewContactObserver = (Observer<String>) email -> {
         getSupportActionBar().setTitle(R.string.add_contact);
-        createEmailAddressView(editContactDetailsViewModel.getDefaultEmailOption(), editContactDetailsViewModel.getDefaultEmailUIOption(), email);
+        createEmailAddressView(viewModel.getDefaultEmailOption(), viewModel.getDefaultEmailUIOption(), email);
         initEmptyEmailView();
-        createPhoneView(editContactDetailsViewModel.getDefaultPhoneOption(), editContactDetailsViewModel.getDefaultPhoneUIOption(), "");
+        createPhoneView(viewModel.getDefaultPhoneOption(), viewModel.getDefaultPhoneUIOption(), "");
         initNewPhone();
-        createAddressView(editContactDetailsViewModel.getDefaultAddressOption(), editContactDetailsViewModel.getDefaultAddressUIOption(), new Address());
+        createAddressView(viewModel.getDefaultAddressOption(), viewModel.getDefaultAddressUIOption(), new Address());
         initNewAddressRow();
-        createOtherView(editContactDetailsViewModel.getDefaultOtherOption(), "", Constants.VCardOtherInfoType.ORGANIZATION);
+        createOtherView(viewModel.getDefaultOtherOption(), "", Constants.VCardOtherInfoType.ORGANIZATION);
         initNewOptionRow();
         initExistingOptionsRow();
 
@@ -978,8 +973,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         if (vCardPhones != null && vCardPhones.size() > 0) {
             for (Telephone phone : vCardPhones) {
                 List<TelephoneType> types = phone.getTypes();
-                String typeUIPhone = editContactDetailsViewModel.getDefaultPhoneUIOption();
-                String typePhone = editContactDetailsViewModel.getDefaultPhoneOption();
+                String typeUIPhone = viewModel.getDefaultPhoneUIOption();
+                String typePhone = viewModel.getDefaultPhoneOption();
                 if (types != null && types.size() > 0) {
                     typePhone = types.iterator().next().getValue();
                     typeUIPhone = VCardUtil.capitalizeType(
@@ -988,22 +983,22 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 createPhoneView(typePhone, typeUIPhone, phone.getText());
             }
         } else {
-            createPhoneView(editContactDetailsViewModel.getDefaultPhoneOption(), editContactDetailsViewModel.getDefaultPhoneUIOption(), "");
+            createPhoneView(viewModel.getDefaultPhoneOption(), viewModel.getDefaultPhoneUIOption(), "");
         }
         initPhone();
         initAddresses(vCardType3);
         initNewAddressRow();
 
-        List<Photo> vCardPhotos = editContactDetailsViewModel.getPhotos();
-        List<Organization> vCardOrganizations = editContactDetailsViewModel.getOrganizations();
-        List<Title> vCardTitles = editContactDetailsViewModel.getTitles();
-        List<Nickname> vCardNicknames = editContactDetailsViewModel.getNicknames();
-        List<Birthday> vCardBirthdays = editContactDetailsViewModel.getBirthdays();
-        List<Anniversary> vCardAnniversary = editContactDetailsViewModel.getAnniversaries();
-        List<Role> vCardRoles = editContactDetailsViewModel.getRoles();
-        List<Url> vCardUrls = editContactDetailsViewModel.getUrls();
-        Gender vCardGender = editContactDetailsViewModel.getGender();
-        List<RawProperty> vCardCustomFields = editContactDetailsViewModel.getExtendedPropertiesType3();
+        List<Photo> vCardPhotos = viewModel.getPhotos();
+        List<Organization> vCardOrganizations = viewModel.getOrganizations();
+        List<Title> vCardTitles = viewModel.getTitles();
+        List<Nickname> vCardNicknames = viewModel.getNicknames();
+        List<Birthday> vCardBirthdays = viewModel.getBirthdays();
+        List<Anniversary> vCardAnniversary = viewModel.getAnniversaries();
+        List<Role> vCardRoles = viewModel.getRoles();
+        List<Url> vCardUrls = viewModel.getUrls();
+        Gender vCardGender = viewModel.getGender();
+        List<RawProperty> vCardCustomFields = viewModel.getExtendedPropertiesType3();
 
         if (vCardPhotos != null && vCardPhotos.size() > 0) {
             photoCardViewWrapper.setVisibility(View.VISIBLE);
@@ -1015,7 +1010,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 photoCardViewWrapper.setVisibility(View.GONE);
                 contactInitials.setVisibility(View.VISIBLE);
                 if (mNetworkUtil.isConnected()) {
-                    editContactDetailsViewModel.getBitmapFromURL(vCardPhotos.get(0).getUrl());
+                    viewModel.getBitmapFromURL(vCardPhotos.get(0).getUrl());
                 }
             }
         }
@@ -1116,11 +1111,11 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
             }
             //endregion
         } else {
-            createOtherView(editContactDetailsViewModel.getDefaultOtherOption(), "", Constants.VCardOtherInfoType.ORGANIZATION);
+            createOtherView(viewModel.getDefaultOtherOption(), "", Constants.VCardOtherInfoType.ORGANIZATION);
         }
         initNewOptionRow();
 
-        List<Note> vCardNotes = editContactDetailsViewModel.getNotes();
+        List<Note> vCardNotes = viewModel.getNotes();
         if (vCardNotes != null && vCardNotes.size() > 0) {
             for (Note note : vCardNotes) {
                 mEncryptedDataNote.addView(
@@ -1141,7 +1136,7 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
 
     private Observer setupConvertContactObserver = o -> {
         getSupportActionBar().setTitle(R.string.convert_contact);
-        LocalContact localContact = editContactDetailsViewModel.getLocalContact();
+        LocalContact localContact = viewModel.getLocalContact();
         mDisplayNameView.setText(localContact.getName());
         contactInitials.setText(UiUtil.extractInitials(localContact.getName()));
 
@@ -1150,17 +1145,17 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         List<LocalContactAddress> addresses = localContact.getAddresses();
         if (emails.size() > 0) {
             for (String email : emails) {
-                createEmailAddressView(editContactDetailsViewModel.getDefaultEmailOption(), editContactDetailsViewModel.getDefaultEmailUIOption(), email);
+                createEmailAddressView(viewModel.getDefaultEmailOption(), viewModel.getDefaultEmailUIOption(), email);
             }
         } else {
-            createEmailAddressView(editContactDetailsViewModel.getDefaultEmailOption(), editContactDetailsViewModel.getDefaultEmailUIOption(), "");
+            createEmailAddressView(viewModel.getDefaultEmailOption(), viewModel.getDefaultEmailUIOption(), "");
         }
         if (phones.size() > 0) {
             for (String phone : phones) {
-                createPhoneView(editContactDetailsViewModel.getDefaultPhoneOption(), editContactDetailsViewModel.getDefaultPhoneUIOption(), phone);
+                createPhoneView(viewModel.getDefaultPhoneOption(), viewModel.getDefaultPhoneUIOption(), phone);
             }
         } else {
-            createPhoneView(editContactDetailsViewModel.getDefaultPhoneOption(), editContactDetailsViewModel.getDefaultPhoneUIOption(), "");
+            createPhoneView(viewModel.getDefaultPhoneOption(), viewModel.getDefaultPhoneUIOption(), "");
         }
         if (addresses.size() > 0) {
             for (LocalContactAddress localContactAddress : addresses) {
@@ -1170,36 +1165,36 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 address.setRegion(localContactAddress.getRegion());
                 address.setPostalCode(localContactAddress.getPostcode());
                 address.setCountry(localContactAddress.getCountry());
-                createAddressView(editContactDetailsViewModel.getDefaultAddressOption(), editContactDetailsViewModel.getDefaultAddressUIOption(), address);
+                createAddressView(viewModel.getDefaultAddressOption(), viewModel.getDefaultAddressUIOption(), address);
             }
         } else {
-            createAddressView(editContactDetailsViewModel.getDefaultAddressOption(), editContactDetailsViewModel.getDefaultAddressUIOption(), new Address());
+            createAddressView(viewModel.getDefaultAddressOption(), viewModel.getDefaultAddressUIOption(), new Address());
         }
         initEmptyEmailView();
         initPhone();
         initNewAddressRow();
-        createOtherView(editContactDetailsViewModel.getDefaultOtherOption(), "", Constants.VCardOtherInfoType.ORGANIZATION);
+        createOtherView(viewModel.getDefaultOtherOption(), "", Constants.VCardOtherInfoType.ORGANIZATION);
         initNewOptionRow();
         initExistingOptionsRow();
     };
 
     private Observer setupCompleteObserver = (Observer<Event<Boolean>>) event -> {
-        editContactDetailsViewModel.fetchContactGroupsForEmails();
+        viewModel.fetchContactGroupsForEmails();
     };
 
     // region helper methods
     private void initPhone() {
         mEncryptedDataPhone.addView(
-                createNewVCardOptionRow("\ue913 " + editContactDetailsViewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_hint_phone), getString(R.string.contact_vcard_new_row_phone),
-                        editContactDetailsViewModel.getPhoneUIOptions(), editContactDetailsViewModel.getPhoneOptions(),
+                createNewVCardOptionRow("\ue913 " + viewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_hint_phone), getString(R.string.contact_vcard_new_row_phone),
+                        viewModel.getPhoneUIOptions(), viewModel.getPhoneOptions(),
                         mEncryptedDataPhone, false, InputType.TYPE_CLASS_NUMBER | InputType.TYPE_CLASS_PHONE));
     }
 
     private void initNewAddressRow() {
         mEncryptedDataAddress.addView(createNewVCardAddressRow(getString(R.string.contact_vcard_new_row_address),
-                editContactDetailsViewModel.getDefaultAddressUIOption(),
-                editContactDetailsViewModel.getAddressUIOptions(),
-                editContactDetailsViewModel.getAddressOptions(), mEncryptedDataAddress));
+                viewModel.getDefaultAddressUIOption(),
+                viewModel.getAddressUIOptions(),
+                viewModel.getAddressOptions(), mEncryptedDataAddress));
     }
 
     private void initAddresses(VCard vCardType3) {
@@ -1207,8 +1202,8 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         if (vCardAddresses != null && vCardAddresses.size() > 0) {
             for (Address address : vCardAddresses) {
                 List<AddressType> addressTypes = address.getTypes();
-                String typeUIAddress = editContactDetailsViewModel.getDefaultAddressUIOption();
-                String typeAddress = editContactDetailsViewModel.getDefaultAddressOption();
+                String typeUIAddress = viewModel.getDefaultAddressUIOption();
+                String typeAddress = viewModel.getDefaultAddressOption();
                 if (addressTypes != null && addressTypes.size() > 0) {
                     typeAddress = addressTypes.iterator().next().getValue();
                     typeUIAddress = VCardUtil.capitalizeType(
@@ -1217,13 +1212,13 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
                 createAddressView(typeAddress, typeUIAddress, address);
             }
         } else {
-            createAddressView(editContactDetailsViewModel.getDefaultAddressOption(), editContactDetailsViewModel.getDefaultAddressUIOption(), new Address());
+            createAddressView(viewModel.getDefaultAddressOption(), viewModel.getDefaultAddressUIOption(), new Address());
         }
     }
 
     private void initNewOptionRow() {
-        mEncryptedDataOther.addView(createNewVCardOptionRow("\ue905 " + editContactDetailsViewModel.getDefaultOtherOption(), getString(R.string.contact_vcard_hint_other), getString(R.string.contact_vcard_new_row_other),
-                editContactDetailsViewModel.getOtherOptions(), editContactDetailsViewModel.getOtherOptions(),
+        mEncryptedDataOther.addView(createNewVCardOptionRow("\ue905 " + viewModel.getDefaultOtherOption(), getString(R.string.contact_vcard_hint_other), getString(R.string.contact_vcard_new_row_other),
+                viewModel.getOtherOptions(), viewModel.getOtherOptions(),
                 mEncryptedDataOther, false, InputType.TYPE_CLASS_TEXT));
     }
 
@@ -1235,17 +1230,17 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
     }
 
     private void initEmptyEmailView() {
-        mEmailAddressesContainer.addView(createNewVCardOptionRow("\ue914 " + editContactDetailsViewModel.getDefaultEmailUIOption(), getString(R.string.contact_vcard_hint_email), getString(R.string.contact_vcard_new_row_email),
-                editContactDetailsViewModel.getEmailUIOptions(), editContactDetailsViewModel.getEmailOptions(),
+        mEmailAddressesContainer.addView(createNewVCardOptionRow("\ue914 " + viewModel.getDefaultEmailUIOption(), getString(R.string.contact_vcard_hint_email), getString(R.string.contact_vcard_new_row_email),
+                viewModel.getEmailUIOptions(), viewModel.getEmailOptions(),
                 mEmailAddressesContainer, true, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS));
     }
 
     private void initNewPhone() {
         mEncryptedDataPhone.addView(
                 createNewVCardOptionRow(getString(R.string.contact_vcard_new_row_phone),
-                        "\ue913 " + editContactDetailsViewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_new_row_phone),
-                        editContactDetailsViewModel.getPhoneUIOptions(),
-                        editContactDetailsViewModel.getPhoneOptions(), mEncryptedDataPhone, false,
+                        "\ue913 " + viewModel.getDefaultPhoneUIOption(), getString(R.string.contact_vcard_new_row_phone),
+                        viewModel.getPhoneUIOptions(),
+                        viewModel.getPhoneOptions(), mEncryptedDataPhone, false,
                         InputType.TYPE_CLASS_NUMBER | InputType.TYPE_CLASS_PHONE));
     }
     // endregion

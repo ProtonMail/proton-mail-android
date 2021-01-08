@@ -32,6 +32,7 @@ import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -81,28 +82,35 @@ class FetchContactDetails @Inject constructor(
 
         if (!encryptedDataList.isNullOrEmpty()) {
             val crypto = UserCrypto(userManager, userManager.openPgp, Name(userManager.username))
+            var decryptedVCardType0: String = EMPTY_STRING
+            var decryptedVCardType2: String = EMPTY_STRING
+            var decryptedVCardType3: String = EMPTY_STRING
+            var vCardType2Signature: String = EMPTY_STRING
+            var vCardType3Signature: String = EMPTY_STRING
+
             for (contactEncryptedData in encryptedDataList) {
-                return when (getCardTypeFromInt(contactEncryptedData.type)) {
+                when (getCardTypeFromInt(contactEncryptedData.type)) {
                     Constants.VCardType.SIGNED_ENCRYPTED -> {
                         val tct = CipherText(contactEncryptedData.data)
-                        FetchContactDetailsResult.Data(
-                            decryptedVCardType3 = crypto.decrypt(tct).decryptedData,
-                            vCardType3Signature = contactEncryptedData.signature
-                        )
+                        decryptedVCardType3 = crypto.decrypt(tct).decryptedData
+                        vCardType3Signature = contactEncryptedData.signature
                     }
                     Constants.VCardType.SIGNED -> {
-                        FetchContactDetailsResult.Data(
-                            decryptedVCardType2 = contactEncryptedData.data,
-                            vCardType2Signature = contactEncryptedData.signature
-                        )
+                        decryptedVCardType2 = contactEncryptedData.data
+                        vCardType2Signature = contactEncryptedData.signature
                     }
                     Constants.VCardType.UNSIGNED -> {
-                        FetchContactDetailsResult.Data(
-                            decryptedVCardType0 = contactEncryptedData.data
-                        )
+                        decryptedVCardType0 = contactEncryptedData.data
                     }
                 }
             }
+            return FetchContactDetailsResult.Data(
+                decryptedVCardType0,
+                decryptedVCardType2,
+                decryptedVCardType3,
+                vCardType2Signature,
+                vCardType3Signature
+            )
         }
         return null
     }
