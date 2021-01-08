@@ -40,7 +40,6 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
@@ -83,7 +82,6 @@ class CreateDraftWorker @WorkerInject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val base64: Base64Encoder,
     private val apiManager: ProtonMailApiManager,
-    private val pendingActionsDao: PendingActionsDao,
     private val errorNotifier: ErrorNotifier
 ) : CoroutineWorker(context, params) {
 
@@ -132,7 +130,6 @@ class CreateDraftWorker @WorkerInject constructor(
 
                 val responseDraft = response.message.copy()
                 updateStoredLocalDraft(responseDraft, message)
-                updatePendingUploadMessage(messageId, responseDraft)
 
                 Timber.i("Create Draft Worker API call succeeded")
                 Result.success(
@@ -143,14 +140,6 @@ class CreateDraftWorker @WorkerInject constructor(
                 retryOrFail(it.message, createDraftRequest.message.subject)
             }
         )
-    }
-
-    private fun updatePendingUploadMessage(messageId: String, responseDraft: Message) {
-        val pendingForUpload = pendingActionsDao.findPendingUploadByMessageId(messageId)
-        pendingForUpload?.let {
-            pendingForUpload.messageId = requireNotNull(responseDraft.messageId)
-            pendingActionsDao.insertPendingForUpload(pendingForUpload)
-        }
     }
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {

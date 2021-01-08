@@ -23,7 +23,6 @@ import androidx.work.WorkInfo
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
@@ -72,10 +71,6 @@ class SaveDraft @Inject constructor(
         message.messageBody = encryptedBody
         setMessageAsDraft(message)
 
-        if (params.newAttachmentIds.isNotEmpty()) {
-            pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
-        }
-
         val messageDbId = messageDetailsRepository.saveMessageLocally(message)
         pendingActionsDao.findPendingSendByDbId(messageDbId)?.let {
             return@withContext flowOf(SaveDraftResult.SendingInProgressError)
@@ -110,7 +105,6 @@ class SaveDraft @Inject constructor(
 
                     messageDetailsRepository.findMessageById(createdDraftId)?.let {
                         val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
-                        pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
 
                         if (uploadResult is UploadAttachments.Result.Failure) {
                             errorNotifier.showPersistentError(uploadResult.error, localDraft.subject)
@@ -121,7 +115,6 @@ class SaveDraft @Inject constructor(
                 }
 
                 Timber.e("Saving Draft to API for messageId $localDraftId FAILED.")
-                pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
                 return@map SaveDraftResult.OnlineDraftCreationFailed
             }
             .flowOn(dispatchers.Io)

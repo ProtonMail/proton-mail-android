@@ -39,7 +39,6 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
@@ -618,56 +617,6 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 Data.Builder().putString(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID, "response_message_id").build()
             )
             assertEquals(expected, result)
-        }
-    }
-
-    @Test
-    fun workerUpdatesPendingForUploadActionInDbWithIdOfCreatedDraft() {
-        runBlockingTest {
-            // Given
-            val parentId = "89345"
-            val messageDbId = 345L
-            val localMessageId = "ac7b3d53-fc64-4d44-a1f5-39df45b629ef"
-            val message = Message().apply {
-                dbId = messageDbId
-                addressID = "addressId835"
-                messageId = localMessageId
-                messageBody = "messageBody"
-                sender = MessageSender("sender2342", "senderEmail@2340.com")
-                setLabelIDs(listOf("label", "label1", "label2"))
-                parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
-                numAttachments = 3
-            }
-
-            val apiDraftRequest = mockk<DraftBody>(relaxed = true)
-            val responseMessage = message.copy(
-                messageId = "response_message_id",
-                isDownloaded = true,
-                localId = localMessageId,
-                Unread = false
-            )
-            responseMessage.dbId = messageDbId
-            val apiDraftResponse = mockk<MessageResponse> {
-                every { code } returns 1000
-                every { messageId } returns "response_message_id"
-                every { this@mockk.message } returns responseMessage
-            }
-            val pendingUpload = PendingUpload(localMessageId)
-            givenMessageIdInput(messageDbId)
-            givenParentIdInput(parentId)
-            givenActionTypeInput(NONE)
-            givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-            every { messageFactory.createDraftApiRequest(message) } returns apiDraftRequest
-            coEvery { apiManager.createDraft(apiDraftRequest) } returns apiDraftResponse
-            every { pendingActionsDao.findPendingUploadByMessageId(localMessageId) } returns pendingUpload
-
-            // When
-            worker.doWork()
-
-            // Then
-            val expectedPendingUpload = PendingUpload("response_message_id")
-            coVerify { pendingActionsDao.insertPendingForUpload(expectedPendingUpload) }
         }
     }
 

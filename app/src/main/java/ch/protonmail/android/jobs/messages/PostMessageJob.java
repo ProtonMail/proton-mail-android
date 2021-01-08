@@ -42,8 +42,8 @@ import java.util.Set;
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.interceptors.RetrofitTag;
-import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.DraftBody;
+import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.factories.PackageFactory;
@@ -245,7 +245,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
-        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase();
+        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase(pendingActionsDatabase);
         UploadAttachments.Result result = uploadAttachments.blocking(mNewAttachments, message, crypto);
 
         if (result instanceof UploadAttachments.Result.Failure) {
@@ -273,7 +273,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
      * TODO Drop this and just inject the use case when migrating this Job to a worker
      */
     @NotNull
-    private UploadAttachments buildUploadAttachmentsUseCase() {
+    private UploadAttachments buildUploadAttachmentsUseCase(PendingActionsDatabase pendingActionsDatabase) {
         DispatcherProvider dispatchers = new DispatcherProvider() {
             @Override
             public @NotNull CoroutineDispatcher getMain() {
@@ -300,6 +300,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         return new UploadAttachments(
                 dispatchers,
                 attachmentsRepository,
+                pendingActionsDatabase,
                 getMessageDetailsRepository(),
                 getUserManager()
         );

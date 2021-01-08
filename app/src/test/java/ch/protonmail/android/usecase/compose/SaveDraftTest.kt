@@ -26,7 +26,6 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.attachments.UploadAttachments.Result.Failure
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
@@ -124,33 +123,6 @@ class SaveDraftTest : CoroutinesTest {
                 )
             )
             coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
-        }
-    }
-
-    @Test
-    fun saveDraftsInsertsPendingUploadWhenThereAreNewAttachments() {
-        runBlockingTest {
-            // Given
-            val message = Message().apply {
-                dbId = 123L
-                this.messageId = "456"
-                addressID = "addressId"
-                decryptedBody = "Message body in plain text"
-            }
-            val addressCrypto = mockk<AddressCrypto> {
-                every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
-            }
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
-
-            // When
-            val newAttachments = listOf("attachmentId")
-            saveDraft.invoke(
-                SaveDraftParameters(message, newAttachments, "parentId", REPLY, "previousSenderId1273")
-            )
-
-            // Then
-            verify { pendingActionsDao.insertPendingForUpload(PendingUpload("456")) }
         }
     }
 
@@ -345,7 +317,7 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftsRemovesPendingUploadAndReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() {
+    fun saveDraftsReturnsFailureWhenWorkerFailsCreatingDraftOnAPI() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -379,13 +351,12 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
             assertEquals(SaveDraftResult.OnlineDraftCreationFailed, result)
         }
     }
 
     @Test
-    fun saveDraftsRemovesPendingUploadAndShowAndReturnsErrorWhenUploadingNewAttachmentsFails() {
+    fun saveDraftsShowPersistentErrorAndReturnsErrorWhenUploadingNewAttachmentsFails() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -423,14 +394,13 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
             verify { errorNotifier.showPersistentError(errorMessage, "Message Subject") }
             assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
         }
     }
 
     @Test
-    fun saveDraftRemovesMessageFromPendingForUploadListAndReturnsSuccessWhenUploadSucceeds() {
+    fun saveDraftReturnsSuccessWhenBothDraftCreationAndAttachmentsUploadSucceeds() {
         runBlockingTest {
             // Given
             val localDraftId = "8345"
@@ -470,7 +440,6 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            verify { pendingActionsDao.deletePendingUploadByMessageId("45623") }
             assertEquals(SaveDraftResult.Success("createdDraftMessageId345"), result)
         }
     }

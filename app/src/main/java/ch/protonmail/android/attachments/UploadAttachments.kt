@@ -20,6 +20,8 @@ package ch.protonmail.android.attachments
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import kotlinx.coroutines.runBlocking
@@ -31,6 +33,7 @@ import javax.inject.Inject
 class UploadAttachments @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
+    private val pendingActionsDao: PendingActionsDao,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager
 ) {
@@ -48,14 +51,23 @@ class UploadAttachments @Inject constructor(
 
     suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto): Result =
         withContext(dispatchers.Io) {
-            Timber.i("UploadAttachments started for messageId ${message.messageId} - attachmentIds $attachmentIds")
+            val messageId = requireNotNull(message.messageId)
+            Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
+
+            pendingActionsDao.findPendingUploadByMessageId(messageId)?.let {
+                Timber.i("UploadAttachments STOPPED for messageId $messageId as already in progress")
+                return@withContext Result.UploadInProgress
+            }
+
+            pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
 
             attachmentIds.forEach { attachmentId ->
                 val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
 
                 if (attachment?.filePath == null || attachment.isUploaded || attachment.doesFileExist.not()) {
                     Timber.d(
-                        "Skipping attachment: not found, invalid or was already uploaded = ${attachment?.isUploaded}"
+                        "Skipping attachment ${attachment?.attachmentId}: " +
+                            "not found, invalid or was already uploaded = ${attachment?.isUploaded}"
                     )
                     return@forEach
                 }
@@ -65,11 +77,12 @@ class UploadAttachments @Inject constructor(
 
                 when (result) {
                     is AttachmentsRepository.Result.Success -> {
-                        Timber.d("UploadAttachment $attachmentId to API for messageId ${message.messageId} Succeeded.")
+                        Timber.d("UploadAttachment $attachmentId to API for messageId $messageId Succeeded.")
                         updateMessageWithUploadedAttachment(message, result.uploadedAttachmentId)
                     }
                     is AttachmentsRepository.Result.Failure -> {
-                        Timber.e("UploadAttachment $attachmentId to API for messageId ${message.messageId} FAILED.")
+                        Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
+                        pendingActionsDao.deletePendingUploadByMessageId(messageId)
                         return@withContext Result.Failure(result.error)
                     }
                 }
@@ -79,14 +92,16 @@ class UploadAttachments @Inject constructor(
 
             val isAttachPublicKey = userManager.getMailSettings(userManager.username)?.getAttachPublicKey() ?: false
             if (isAttachPublicKey) {
-                Timber.i("UploadAttachments attaching publicKey for messageId ${message.messageId}")
+                Timber.i("UploadAttachments attaching publicKey for messageId $messageId")
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
 
                 if (result is AttachmentsRepository.Result.Failure) {
+                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
                     return@withContext Result.Failure(result.error)
                 }
             }
 
+            pendingActionsDao.deletePendingUploadByMessageId(messageId)
             return@withContext Result.Success
         }
 
@@ -110,6 +125,7 @@ class UploadAttachments @Inject constructor(
 
     sealed class Result {
         object Success : Result()
+        object UploadInProgress : Result()
         data class Failure(val error: String) : Result()
     }
 }

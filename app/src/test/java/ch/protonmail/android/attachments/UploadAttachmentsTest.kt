@@ -22,6 +22,8 @@ package ch.protonmail.android.attachments
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import io.mockk.MockKAnnotations
@@ -45,6 +47,9 @@ import kotlin.test.Test
 class UploadAttachmentsTest : CoroutinesTest {
 
     @RelaxedMockK
+    private lateinit var pendingActionsDao: PendingActionsDao
+
+    @RelaxedMockK
     private lateinit var attachmentsRepository: AttachmentsRepository
 
     @RelaxedMockK
@@ -65,6 +70,36 @@ class UploadAttachmentsTest : CoroutinesTest {
         coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success
         coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success("8237423")
         coEvery { messageDetailsRepository.saveMessageLocally(any()) } returns 823L
+        every { pendingActionsDao.findPendingUploadByMessageId(any()) } returns null
+    }
+
+    @Test
+    fun uploadAttachmentsSetsMessageAsPendingToUploadWhenStartingToUpload() {
+        runBlockingTest {
+            val attachmentIds = listOf("1")
+            val messageId = "message-id-238237"
+            val message = Message(messageId)
+
+            uploadAttachments(attachmentIds, message, crypto)
+
+            val pendingUpload = PendingUpload(messageId)
+            verify { pendingActionsDao.insertPendingForUpload(pendingUpload) }
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsIsNotExecutedAgainWhenUploadAlreadyOngoingForTheGivenMessage() {
+        runBlockingTest {
+            val attachmentIds = listOf("1")
+            val messageId = "message-id-123842"
+            val message = Message(messageId)
+            every { pendingActionsDao.findPendingUploadByMessageId(messageId) } returns PendingUpload(messageId)
+
+            val result = uploadAttachments(attachmentIds, message, crypto)
+
+            verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
+            assertEquals(UploadAttachments.Result.UploadInProgress, result)
+        }
     }
 
     @Test
@@ -83,17 +118,19 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
-            val message = Message(messageId = "messageId")
+            val message = Message(messageId = "messageId8234")
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
             val result = uploadAttachments(attachmentIds, message, crypto)
 
             coVerifyOrder {
+                pendingActionsDao.findPendingUploadByMessageId("messageId8234")
                 attachment1.setMessage(message)
                 attachmentsRepository.upload(attachment1, crypto)
                 attachment2.setMessage(message)
                 attachmentsRepository.upload(attachment2, crypto)
+                pendingActionsDao.deletePendingUploadByMessageId("messageId8234")
             }
             assertEquals(UploadAttachments.Result.Success, result)
         }
@@ -115,7 +152,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
-            val message = Message()
+            val message = Message("messageId8237")
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
             coEvery { attachmentsRepository.upload(attachment2, crypto) } answers {
@@ -126,6 +163,7 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val expected = UploadAttachments.Result.Failure("Failed to upload attachment2")
             assertEquals(expected, result)
+            verify { pendingActionsDao.deletePendingUploadByMessageId("messageId8237") }
         }
     }
 
@@ -133,7 +171,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     fun uploadAttachmentsReturnsFailureIfPublicKeyFailsToBeUploaded() {
         runBlockingTest {
             val attachmentIds = listOf("1")
-            val message = Message()
+            val message = Message("messageId9273585")
             val username = "username"
             every { userManager.username } returns username
             every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
@@ -145,6 +183,7 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val expected = UploadAttachments.Result.Failure("Failed to upload public key")
             assertEquals(expected, result)
+            verify { pendingActionsDao.deletePendingUploadByMessageId("messageId9273585") }
         }
     }
 
@@ -158,7 +197,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
-            val message = Message()
+            val message = Message("messageId9237")
             every { messageDetailsRepository.findAttachmentById("1") } returns null
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
@@ -184,7 +223,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
-            val message = Message()
+            val message = Message("messageId36926543")
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
@@ -211,7 +250,7 @@ class UploadAttachmentsTest : CoroutinesTest {
                 every { doesFileExist } returns true
             }
             val attachmentIds = listOf("1", "2")
-            val message = Message()
+            val message = Message("messageId0123876")
             every { messageDetailsRepository.findAttachmentById("1") } returns attachment1
             every { messageDetailsRepository.findAttachmentById("2") } returns attachment2
 
@@ -226,7 +265,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     fun uploadAttachmentsSkipsUploadingIfAttachmentFileDoesNotExist() {
         runBlockingTest {
             val attachmentIds = listOf("1", "2")
-            val message = Message()
+            val message = Message("messageId83483")
             val attachmentMock1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
@@ -253,7 +292,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     fun uploadAttachmentsCallRepositoryUploadPublicKeyWhenMailSettingsGetAttachPublicKeyIsTrue() {
         runBlockingTest {
             val username = "username"
-            val message = Message()
+            val message = Message("messageId823762")
             every { userManager.username } returns username
             every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
             coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
@@ -270,7 +309,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     fun uploadAttachmentsDeletesLocalFileAfterSuccessfulUpload() {
         runBlockingTest {
             val attachmentIds = listOf("1", "2")
-            val message = Message()
+            val message = Message("messageId126943")
             val attachmentMock1 = mockk<Attachment>(relaxed = true) {
                 every { attachmentId } returns "1"
                 every { filePath } returns "filePath1"
