@@ -59,7 +59,6 @@ class VerifyConnection @Inject constructor(
 ) {
 
     operator fun invoke(): Flow<Boolean> {
-        Timber.v("VerifyConnection invoked")
 
         val connectivityManagerFlow = flowOf(
             connectivityManager.isConnectionAvailableFlow(),
@@ -68,7 +67,7 @@ class VerifyConnection @Inject constructor(
             .flattenMerge()
             .filter { !it } // observe only disconnections
             .onEach {
-                delay(2.seconds) // this delay has been added in case of DoH being established in the meantime
+                delay(5.seconds)
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
             }
 

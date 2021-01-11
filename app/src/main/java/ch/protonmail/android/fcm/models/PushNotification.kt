@@ -16,32 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events.payment;
+package ch.protonmail.android.fcm.models
 
-import ch.protonmail.android.api.models.CheckSubscriptionResponse;
-import ch.protonmail.android.events.Status;
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-/**
- * Created by dkadrikj on 7/12/16.
- */
-public class CheckSubscriptionEvent {
-    private final Status status;
-    private CheckSubscriptionResponse response;
-
-    public CheckSubscriptionEvent(Status status) {
-        this.status = status;
-    }
-
-    public CheckSubscriptionEvent(Status status, CheckSubscriptionResponse response) {
-        this.status = status;
-        this.response = response;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public CheckSubscriptionResponse getResponse() {
-        return response;
-    }
-}
+@Serializable
+data class PushNotification(
+    @SerialName("type") val type: String,
+    @SerialName("version") val version: Int,
+    @SerialName("data") val data: PushNotificationData?
+)

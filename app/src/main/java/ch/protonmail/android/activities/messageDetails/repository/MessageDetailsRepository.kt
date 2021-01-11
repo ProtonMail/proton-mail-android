@@ -42,7 +42,6 @@ import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
-import ch.protonmail.android.jobs.FetchVerificationKeysJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.utils.MessageUtils
@@ -456,10 +455,6 @@ class MessageDetailsRepository @Inject constructor(
 
     fun startDownloadEmbeddedImages(messageId: String, username: String) {
         DownloadEmbeddedAttachmentsWorker.enqueue(messageId, username, "")
-    }
-
-    fun fetchVerificationKeys(senderEmail: String) {
-        jobManager.addJobInBackground(FetchVerificationKeysJob(senderEmail))
     }
 
     fun markRead(messageId: String) {

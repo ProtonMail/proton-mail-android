@@ -79,6 +79,7 @@ import static ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CREDIT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_CURRENCY;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID;
+import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_LEGACY_ACCOUNT;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_USER_SERVICES;
@@ -166,6 +167,7 @@ public class User {
     private boolean ManuallyLocked; // this can remain here, local only setting
     private String username; // this can remain here, local only setting
     private boolean CombinedContacts; // this can remain here, local only setting
+    private boolean isLegacyAccount;
     // endregion
 
     @NonNull
@@ -227,6 +229,7 @@ public class User {
         user.credit = securePrefs.getInt(PREF_USER_CREDIT, 0);
         user.isPrivate = securePrefs.getInt(PREF_USER_PRIVATE, 0);
         user.services = securePrefs.getInt(PREF_USER_SERVICES, 0);
+        user.isLegacyAccount = securePrefs.getBoolean(PREF_USER_LEGACY_ACCOUNT, true);
 
         return user;
     }
@@ -272,6 +275,7 @@ public class User {
         BackgroundSync = loadBackgroundSyncSetting();
         GcmDownloadMessageDetails = loadGcmDownloadMessageDetailsSetting();
         CombinedContacts = loadCombinedContactsFromBackup();
+        isLegacyAccount = loadUserAccountLegacy();
 
         if (NotificationVisibilityLockScreen == -1) {
             NotificationVisibilityLockScreen = loadNotificationVisibilityLockScreenSettingsFromBackup();
@@ -317,6 +321,7 @@ public class User {
                 .putInt(PREF_USER_CREDIT, credit)
                 .putInt(PREF_USER_PRIVATE, isPrivate)
                 .putInt(PREF_USER_SERVICES, services)
+                .putBoolean(PREF_USER_LEGACY_ACCOUNT, isLegacyAccount)
                 .apply();
     }
 
@@ -1104,6 +1109,25 @@ public class User {
         if (!TextUtils.isEmpty(username)) {
             this.username = username;
         }
+    }
+
+    public void setLegacyAccount (boolean legacy) {
+        isLegacyAccount = legacy;
+        saveUserAccountLegacy(legacy);
+    }
+
+    public boolean getLegacyAccount() {
+        return loadUserAccountLegacy();
+    }
+
+    private void saveUserAccountLegacy(boolean isUserLegacy) {
+        SharedPreferences defaultSharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        defaultSharedPreferences.edit().putBoolean(PREF_USER_LEGACY_ACCOUNT, isUserLegacy).apply();
+    }
+
+    private boolean loadUserAccountLegacy() {
+        SharedPreferences defaultSharedPreferences = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+        return defaultSharedPreferences.getBoolean(PREF_USER_LEGACY_ACCOUNT, true);
     }
 
     /**

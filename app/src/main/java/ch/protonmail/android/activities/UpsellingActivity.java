@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.squareup.otto.Subscribe;
 
@@ -52,28 +53,23 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.AvailablePlansResponse;
+import ch.protonmail.android.api.models.CheckSubscriptionResponse;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.Plan;
+import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.AvailablePlansEvent;
 import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.PaymentMethodEvent;
-import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.payment.CheckSubscriptionEvent;
-import ch.protonmail.android.events.payment.PaymentsStatusEvent;
 import ch.protonmail.android.jobs.GetCurrenciesPlansJob;
-import ch.protonmail.android.jobs.payments.CheckSubscriptionJob;
-import ch.protonmail.android.jobs.payments.CreateSubscriptionJob;
-import ch.protonmail.android.jobs.payments.GetPaymentMethodsJob;
-import ch.protonmail.android.jobs.payments.GetPaymentsStatusJob;
+import ch.protonmail.android.usecase.model.CheckSubscriptionResult;
+import ch.protonmail.android.usecase.model.CreateSubscriptionResult;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
+import ch.protonmail.android.viewmodel.UpsellingViewModel;
+import timber.log.Timber;
 
-/**
- * Created by dkadrikj on 6/28/16.
- */
 public class UpsellingActivity extends BaseActivity {
 
     public static final String EXTRA_OPEN_UPGRADE_CONTAINER = "EXTRA_OPEN_UPGRADE";
@@ -116,6 +112,9 @@ public class UpsellingActivity extends BaseActivity {
     TextView mPaymentOptions;
     @BindView(R.id.progress)
     View mProgress;
+
+    private UpsellingViewModel viewModel;
+
     private State upgradeContainerState;
     private State donateContainerState;
 
@@ -152,8 +151,8 @@ public class UpsellingActivity extends BaseActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        viewModel = new ViewModelProvider(this).get(UpsellingViewModel.class);
         boolean openUpgrade = getIntent().getBooleanExtra(EXTRA_OPEN_UPGRADE_CONTAINER, false);
-        checkPaymentStatus();
         fetchPlan(Constants.CurrencyType.EUR);
         donateContainerState = State.CLOSED;
         btnAmount5.setOnTouchListener(pressListener);
@@ -182,13 +181,14 @@ public class UpsellingActivity extends BaseActivity {
             upgradeHeader.setOnClickListener(v -> onUpgradeHeaderClick());
         }
 
-        GetPaymentMethodsJob paymentMethodsJob = new GetPaymentMethodsJob();
-        mJobManager.addJobInBackground(paymentMethodsJob);
-    }
-
-    private void checkPaymentStatus() {
-        GetPaymentsStatusJob job = new GetPaymentsStatusJob();
-        mJobManager.addJobInBackground(job);
+        viewModel.getCreateSubscriptionResult().observe(
+                this,
+                this::onCreateSubscriptionResult
+        );
+        viewModel.getCheckSubscriptionResult().observe(
+                this,
+                this::onCheckSubscriptionEvent
+        );
     }
 
     private void fetchPlan(Constants.CurrencyType currency) {
@@ -433,57 +433,54 @@ public class UpsellingActivity extends BaseActivity {
         donateContract.setVisibility(View.GONE);
     }
 
-    @Subscribe
-    public void onPaymentsStatusEvent(PaymentsStatusEvent event) {
-        if (event.getStatus() == Status.FAILED) {
-            // TODO: show failed
-        } else {
-            if (!event.isStripeActive()) {
-                // TODO: show stripe not active
-            }
-        }
-    }
+    private void onCheckSubscriptionEvent(CheckSubscriptionResult result) {
+        Timber.v("CheckSubscriptionEvent result:%s", result);
+        if (result instanceof CheckSubscriptionResult.Success) {
+            CheckSubscriptionResponse response = ((CheckSubscriptionResult.Success) result).getResponse();
 
-    @Subscribe
-    public void onCheckSubscriptionEvent(CheckSubscriptionEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            if (event.getResponse().getAmountDue() == 0) {
+            if (response.getAmountDue() == 0) {
                 // prevent user from making illegal payment of value 0
-                CreateSubscriptionJob job = new CreateSubscriptionJob(0, Constants.CurrencyType.valueOf(event.getResponse().getCurrency()), null, Collections.singletonList(mSelectedPlanId), mCycle, null);
-                mJobManager.addJobInBackground(job);
+                viewModel.createSubscription(
+                        0,
+                        response.getCurrency(),
+                        mCycle,
+                        Collections.singletonList(mSelectedPlanId),
+                        null,
+                        null
+                );
             } else {
                 Intent billingIntent = new Intent(this, BillingActivity.class);
                 billingIntent.putExtra(BillingActivity.EXTRA_WINDOW_SIZE, getWindow().getDecorView().getHeight());
-                billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, event.getResponse().getAmountDue());
-                billingIntent.putExtra(BillingActivity.EXTRA_CURRENCY, event.getResponse().getCurrency());
+                billingIntent.putExtra(BillingActivity.EXTRA_AMOUNT, response.getAmountDue());
+                billingIntent.putExtra(BillingActivity.EXTRA_CURRENCY, response.getCurrency());
                 billingIntent.putExtra(BillingActivity.EXTRA_BILLING_TYPE, Constants.BillingType.UPGRADE);
                 billingIntent.putExtra(BillingActivity.EXTRA_SELECTED_PLAN_ID, mSelectedPlanId);
                 billingIntent.putExtra(BillingActivity.EXTRA_SELECTED_CYCLE, mCycle);
                 startActivityForResult(AppUtil.decorInAppIntent(billingIntent), REQUEST_CODE_UPGRADE);
             }
         } else {
-            TextExtensions.showToast(this, event.getResponse().getError());
+            ResponseBody response = ((CheckSubscriptionResult.Error) result).getResponse();
+            Timber.v("CheckSubscription Error %s", response);
+            if (response != null) {
+                TextExtensions.showToast(this, response.getError());
+            }
             if (upsellingProgress != null) {
                 upsellingProgress.setVisibility(View.GONE);
             }
         }
     }
 
-    @Subscribe
-    public void onPaymentMethodEvent(PaymentMethodEvent event) {
-
+    private void onCreateSubscriptionResult(CreateSubscriptionResult result) {
+        Timber.v("onPaymentMethodEvent %s", result);
         if (mProgressView != null) {
             mProgressView.setVisibility(View.GONE);
         }
 
-        switch (event.getStatus()) {
-            case SUCCESS: {
-                TextExtensions.showToast(this, R.string.upgrade_paid_user);
-                finish();
-                break;
-            }
-            default:
-                TextExtensions.showToast(this, event.getError());
+        if (result instanceof CreateSubscriptionResult.Success) {
+            TextExtensions.showToast(this, R.string.upgrade_paid_user);
+            finish();
+        } else if (result instanceof CreateSubscriptionResult.Error) {
+            TextExtensions.showToast(this, ((CreateSubscriptionResult.Error) result).getError());
         }
     }
 
@@ -644,17 +641,16 @@ public class UpsellingActivity extends BaseActivity {
         }
         List<String> planIds = new ArrayList<>();
         planIds.add(mSelectedPlanId);
-        CheckSubscriptionJob job = new CheckSubscriptionJob(null, planIds, mCurrency, mCycle);
-        mJobManager.addJobInBackground(job);
-    }
-
-    private enum State {
-        CLOSED, OPENED
+        viewModel.checkSubscription(null, planIds, mCurrency, mCycle);
     }
 
     @Subscribe
     public void onLogoutEvent(LogoutEvent event) {
         startActivity(AppUtil.decorInAppIntent(new Intent(this, LoginActivity.class)));
         finish();
+    }
+
+    private enum State {
+        CLOSED, OPENED
     }
 }

@@ -33,8 +33,8 @@ import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.Sho
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowLabelNameDuplicatedError
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingColorError
 import ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewState.ShowMissingNameError
-import ch.protonmail.android.views.ThreeStateButton.STATE_CHECKED
-import ch.protonmail.android.views.ThreeStateButton.STATE_UNPRESSED
+import ch.protonmail.android.views.ThreeStateButton.Companion.STATE_CHECKED
+import ch.protonmail.android.views.ThreeStateButton.Companion.STATE_UNPRESSED
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs

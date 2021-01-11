@@ -27,7 +27,6 @@ import ch.protonmail.android.api.models.UserInfo
 import ch.protonmail.android.api.models.address.KeyActivationBody
 import java.io.IOException
 
-
 interface KeyApiSpec {
 
     @Throws(IOException::class)
@@ -44,6 +43,9 @@ interface KeyApiSpec {
 
     @Throws(Exception::class)
     fun activateKey(keyActivationBody: KeyActivationBody, keyId: String): ResponseBody
+
+    @Throws(Exception::class)
+    suspend fun activateKeyLegacy(keyActivationBody: KeyActivationBody, keyId: String): ResponseBody
 
     @Throws(IOException::class)
     fun setupKeys(keysSetupBody: KeysSetupBody): UserInfo

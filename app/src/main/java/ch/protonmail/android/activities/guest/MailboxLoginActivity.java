@@ -30,9 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.squareup.otto.Subscribe;
+import androidx.lifecycle.ViewModelProvider;
 
-import javax.inject.Inject;
+import com.squareup.otto.Subscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -58,8 +58,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
 
     public static final String EXTRA_KEY_SALT = "key_salt";
 
-    @Inject
-    ConnectivityBaseViewModel viewModel;
+    private ConnectivityBaseViewModel viewModel;
 
     @BindView(R.id.mailbox_password)
     EditText mPasswordEditText;
@@ -95,6 +94,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(ConnectivityBaseViewModel.class);
         mProgressBar.getIndeterminateDrawable().setColorFilter(0xFFFFFFFF, android.graphics.PorterDuff.Mode.MULTIPLY);
         mUserManager.setLoggedIn(false);
         mPasswordEditText.setFocusable(false);

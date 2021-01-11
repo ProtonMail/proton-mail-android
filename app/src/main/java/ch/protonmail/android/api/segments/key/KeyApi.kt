@@ -54,11 +54,24 @@ class KeyApi (private val service : KeyService) : BaseApi(), KeyApiSpec {
     }
 
     @Throws(Exception::class)
-    override fun updatePrivateKeys(body: SinglePasswordChange): ResponseBody = ParseUtils.parse(service.updatePrivateKeys(body).execute())
+    override fun updatePrivateKeys(
+        body: SinglePasswordChange
+    ): ResponseBody = ParseUtils.parse(service.updatePrivateKeys(body).execute())
 
     @Throws(Exception::class)
-    override fun activateKey(keyActivationBody: KeyActivationBody, keyId: String): ResponseBody = ParseUtils.parse(service.activateKey(keyActivationBody, keyId).execute())
+    override fun activateKey(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = ParseUtils.parse(service.activateKey(keyActivationBody, keyId).execute())
+
+    @Throws(Exception::class)
+    override suspend fun activateKeyLegacy(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = service.activateKeyLegacy(keyActivationBody, keyId)
 
     @Throws(IOException::class)
-    override fun setupKeys(keysSetupBody: KeysSetupBody): UserInfo = ParseUtils.parse(service.setupKeys(keysSetupBody).execute())
+    override fun setupKeys(
+        keysSetupBody: KeysSetupBody
+    ): UserInfo = ParseUtils.parse(service.setupKeys(keysSetupBody).execute())
 }

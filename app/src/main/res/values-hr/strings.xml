@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Neuspješna prijava</string>
     <string name="invalid_server_proof">Nevažeći dokaz poslužitelja</string>
     <string name="invalid_credentials">Nevažeće vjerodajnice</string>
+    <string name="incorrect_key_parameters">Nevažeći ključni parametri</string>
     <string name="invalid_mailbox_password">Nevažeća lozinka sandučića e-pošte</string>
     <string name="not_signed_up">Niste prijavljeni za Android Beta program ProtonMaila</string>
     <string name="no_network">Nema mreže</string>

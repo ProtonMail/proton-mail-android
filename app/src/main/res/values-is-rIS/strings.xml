@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Mistókst að skrá inn</string>
     <string name="invalid_server_proof">Ógild auðkenni vefþjóns</string>
     <string name="invalid_credentials">Ógild auðkenni</string>
+    <string name="incorrect_key_parameters">Röng viðföng lykils</string>
     <string name="invalid_mailbox_password">Ógilt lykilorð á pósthólfi</string>
     <string name="not_signed_up">Þú ert ekki skráð(ur) fyrir notkun á ProtonMail Android Beta-þróunarútgáfu</string>
     <string name="no_network">Engin nettenging</string>

@@ -742,7 +742,6 @@ class ComposeMessageViewModel @Inject constructor(
             return
         }
         sendingInProcess = true
-
         GlobalScope.launch {
             _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).message(message).build()
             if (_dbId == null) {
@@ -751,8 +750,9 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = UUID.randomUUID().toString()
                 _dbId = saveMessage(message, IO)
             } else {
-                // this will ensure the message get latest message id if it was already saved in a create/update draft job
-                // and also that the message has all the latest edits in between draft saving (creation) and sending the message
+                // this will ensure the message get latest message id if it was already saved in a create/update
+                // draft job and also that the message has all the latest edits in between draft saving (creation)
+                // and sending the message
                 val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!, IO)
                 message.dbId = _dbId
                 savedMessage?.let {
@@ -765,20 +765,26 @@ class ComposeMessageViewModel @Inject constructor(
                 }
             }
 
-            messageDetailsRepository.deletePendingDraft(message.dbId!!)
+            if (_dbId != null) {
+                messageDetailsRepository.deletePendingDraft(message.dbId!!)
 
-            val newAttachments = calculateNewAttachments(true)
-            postMessageServiceFactory.startSendingMessage(
-                _dbId!!,
-                messageDataResult.message.decryptedBody ?: "",
-                messageDataResult.messagePassword,
-                messageDataResult.passwordHint,
-                messageDataResult.expirationTime!!,
-                parentId, _actionId,
-                newAttachments,
-                ArrayList(messageDataResult.sendPreferences.values),
-                _oldSenderAddressId
-            )
+
+                val newAttachments = calculateNewAttachments(true)
+                postMessageServiceFactory.startSendingMessage(
+                    _dbId!!,
+                    messageDataResult.message.decryptedBody ?: "",
+                    messageDataResult.messagePassword,
+                    messageDataResult.passwordHint,
+                    messageDataResult.expirationTime!!,
+                    parentId, _actionId,
+                    newAttachments,
+                    ArrayList(messageDataResult.sendPreferences.values),
+                    _oldSenderAddressId
+                )
+            } else {
+                sendingInProcess = false
+            }
+
             _dbIdWatcher.postValue(_dbId)
         }
     }

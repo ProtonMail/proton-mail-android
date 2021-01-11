@@ -366,11 +366,6 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
                 enableSubmitButton();
             }
             break;
-            case INCORRECT_KEY_PARAMETERS: {
-                TextExtensions.showToast(getContext(), R.string.incorrect_key_parameters);
-                enableSubmitButton();
-            }
-            break;
             case INVALID_SERVER_PROOF: {
                 TextExtensions.showToast(getContext(), R.string.invalid_server_proof);
                 enableSubmitButton();
@@ -424,8 +419,6 @@ public abstract class CreateAccountBaseFragment extends BaseFragment implements 
         boolean hasConnectivity();
 
         void createVerificationPaymentForPaymentToken(int amount, Constants.CurrencyType currency, String paymentToken);
-
-        void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle);
 
         void onPaymentOptionChosen(Constants.CurrencyType currency, int amount, String planId, int cycle);
 

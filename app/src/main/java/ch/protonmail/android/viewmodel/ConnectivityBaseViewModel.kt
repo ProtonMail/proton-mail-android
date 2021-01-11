@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.viewmodel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -32,14 +33,13 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 internal const val NETWORK_CHECK_DELAY = 800L
 
 /**
  * Base view model for activities that require connectivity check logic.
  */
-open class ConnectivityBaseViewModel @Inject constructor(
+open class ConnectivityBaseViewModel @ViewModelInject constructor(
     private val verifyConnection: VerifyConnection,
     private val networkConfigurator: NetworkConfigurator
 ) : ViewModel() {

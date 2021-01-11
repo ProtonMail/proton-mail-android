@@ -90,11 +90,13 @@ interface MailboxRobotInterface {
 
     fun clickMessageBySubject(subject: String): MessageRobot {
         UIActions.wait
-            .untilViewByViewInteractionIsGone(onView(
-                allOf(
-                    instanceOf(ImageView::class.java), withParent(withId(R.id.messages_list_view))
+            .untilViewByViewInteractionIsGone(
+                onView(
+                    allOf(
+                        instanceOf(ImageView::class.java), withParent(withId(R.id.messages_list_view))
+                    )
                 )
-            ))
+            )
         UIActions.wait.forViewWithId(messagesRecyclerViewId)
         UIActions.recyclerView
             .waitForBeingPopulated(messagesRecyclerViewId)

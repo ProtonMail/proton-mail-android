@@ -48,6 +48,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.squareup.otto.Produce
+import timber.log.Timber
 import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -432,13 +433,14 @@ class UserManager @Inject constructor(
         val nextLoggedInAccount = accountManager.getNextLoggedInAccountOtherThan(username, currentPrimary)
             ?: // fallback to "last user logout"
             return logoutLastActiveAccount()
+        Timber.v("logoutAccount new user:$nextLoggedInAccount")
         LogoutService.startLogout(false, username = username)
         accountManager.onSuccessfulLogout(username)
         AppUtil.deleteSecurePrefs(username, false)
         AppUtil.deleteDatabases(context, username, clearDoneListener)
+        switchToAccount(nextLoggedInAccount)
         setUsernameAndReload(nextLoggedInAccount)
         app.eventManager.clearState(username)
-        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -456,7 +458,6 @@ class UserManager @Inject constructor(
         AppUtil.deletePrefs()
         AppUtil.deleteBackupPrefs()
         AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
-        app.clearPaymentMethods()
     }
 
     @JvmOverloads
@@ -465,7 +466,6 @@ class UserManager @Inject constructor(
         if (username.isEmpty()) {
             return
         }
-        app.clearPaymentMethods()
         val nextLoggedInAccount = nextLoggedInAccountOtherThanCurrent
         val accountManager = AccountManager.getInstance(context)
         if (!accountManager.getLoggedInUsers().contains(username)) {
@@ -757,7 +757,7 @@ class UserManager @Inject constructor(
 
         if (organization != null) {
             planName = organization.planName
-            paidUser = user.isPaidUser && organization.planName.isNotEmpty()
+            paidUser = user.isPaidUser && organization.planName.isNullOrEmpty().not()
         }
         if (!paidUser) {
             return maxLabelsAllowed

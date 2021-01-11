@@ -16,37 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events.payment;
+package ch.protonmail.android.fcm.models
 
-import ch.protonmail.android.events.Status;
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-/**
- * Created by dkadrikj on 7/11/16.
- */
-public class PaymentsStatusEvent {
-    private final Status status;
-    private boolean stripe;
-    private boolean paypal;
-
-    public PaymentsStatusEvent(Status status) {
-        this.status = status;
-    }
-
-    public PaymentsStatusEvent(Status status, boolean stripe, boolean paypal) {
-        this.status = status;
-        this.stripe = stripe;
-        this.paypal = paypal;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public boolean isStripeActive() {
-        return stripe;
-    }
-
-    public boolean isPaypalActive() {
-        return paypal;
-    }
-}
+@Serializable
+data class PushNotificationSender(
+    @SerialName("Address") val senderAddress: String,
+    @SerialName("Name") val senderName: String,
+    @SerialName("Group") val senderGroup: String
+)

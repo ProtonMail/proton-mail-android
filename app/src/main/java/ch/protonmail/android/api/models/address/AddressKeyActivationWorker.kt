@@ -21,12 +21,15 @@ package ch.protonmail.android.api.models.address
 import android.content.Context
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
+import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.Keys
+import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -35,9 +38,13 @@ import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
+import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import ch.protonmail.android.utils.crypto.OpenPGP
+import ch.protonmail.android.utils.extensions.app
 import com.proton.gopenpgp.helper.Helper
+import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.map
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import ch.protonmail.android.api.models.address.Address as OldAddress
 
@@ -52,15 +59,16 @@ class AddressKeyActivationWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,
-    private val api: ProtonMailApiManager
-) : Worker(context, params) {
+    private val api: ProtonMailApiManager,
+    private val dispatchers: DispatcherProvider
+) : CoroutineWorker(context, params) {
 
     private val openPgp: OpenPGP by lazy { userManager.openPgp }
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result = withContext(dispatchers.Io) {
 
-        val username = inputData.getString(KEY_INPUT_DATA_USERNAME) ?: return Result.failure()
-        val mailboxPassword = userManager.getMailboxPassword(username) ?: return Result.failure()
+        val username = inputData.getString(KEY_INPUT_DATA_USERNAME) ?: return@withContext Result.failure()
+        val mailboxPassword = userManager.getMailboxPassword(username) ?: return@withContext Result.failure()
 
         val user = userManager.getUser(username).toNewUser()
         val primaryKeys = user.addresses.addresses.values.map { it.keys.primaryKey }
@@ -68,12 +76,19 @@ class AddressKeyActivationWorker @WorkerInject constructor(
             address.keys.keys.filter { it.activation != null }
         }
 
+        // get orgKeys if existent
+        val orgKeys = if (applicationContext.app.organization != null) {
+            api.fetchOrganizationKeys()
+        } else {
+            null
+        }
+
         val errors = keysToActivate.map {
-            activateKey(it, user.keys, mailboxPassword, it in primaryKeys)
+            activateKey(it, user.keys, mailboxPassword, orgKeys, it in primaryKeys)
         }.filterIsInstance<ActivationResult.Error>()
         val failedCountMessage = "impossible to activate ${errors.size} keys out of ${keysToActivate.size}"
 
-        return when {
+        return@withContext when {
             errors.isEmpty() -> Result.success()
             errors.any { it is ActivationResult.Error.Network } -> {
                 Timber.w("Network error: $failedCountMessage")
@@ -86,10 +101,11 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         }
     }
 
-    private fun activateKey(
+    private suspend fun activateKey(
         addressKey: AddressKey,
         userKeys: UserKeys,
         mailboxPassword: ByteArray,
+        orgKeys: Keys?,
         isPrimary: Boolean
     ): ActivationResult {
         return try {
@@ -119,7 +135,29 @@ class AddressKeyActivationWorker @WorkerInject constructor(
             val signedKeyList = SignedKeyList(keyList, signature)
 
             try {
-                api.activateKey(KeyActivationBody(newPrivateKey, signedKeyList), addressKey.id.s)
+                val username = inputData.getString(KEY_INPUT_DATA_USERNAME)!!
+                val user = userManager.getUser(username)
+                if(user.legacyAccount) {
+                    api.activateKeyLegacy(
+                        KeyActivationBody(
+                            newPrivateKey,
+                            signedKeyList,
+                            null,
+                            null
+                        ),
+                        addressKey.id.s
+                    )
+                } else {
+                    val generatedTokenAndSignature =
+                        GenerateTokenAndSignature(userManager,openPgp).invoke(orgKeys?.toUserKey())
+                    val keyActivationBody = KeyActivationBody(
+                        newPrivateKey,
+                        signedKeyList,
+                        generatedTokenAndSignature.token,
+                        generatedTokenAndSignature.signature
+                    )
+                    api.activateKey(keyActivationBody, addressKey.id.s)
+                }
                 ActivationResult.Success
             } catch (ignored: Exception) {
                 ActivationResult.Error.Network(addressKey.id)

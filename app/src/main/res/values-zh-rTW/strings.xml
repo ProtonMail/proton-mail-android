@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">登入失敗</string>
     <string name="invalid_server_proof">無效伺服器證明</string>
     <string name="invalid_credentials">無效的登入憑證</string>
+    <string name="incorrect_key_parameters">不正確的關鍵參數</string>
     <string name="invalid_mailbox_password">無效的郵箱密碼</string>
     <string name="not_signed_up">您尚未註冊 ProtonMail Android 測試版</string>
     <string name="no_network">無網際網路</string>

@@ -170,6 +170,7 @@ object Constants {
         const val PREF_USER_PRIVATE = "user_private"
         const val PREF_USER_SERVICES = "user_services"
         const val PREF_USING_REGULAR_API = "pref_doh_using_regular_api"
+        const val PREF_USER_LEGACY_ACCOUNT = "user_legacy_account"
 
         // permissions
         const val PREF_PERMISSION_READ_CONTACTS = "pref_permission_contacts"
@@ -282,19 +283,6 @@ object Constants {
         BUSINESS
     }
 
-    enum class VpnPlanType(val vpnPlanTypeValue: String) {
-        BASIC("vpnbasic"),
-        PLUS("vpnplus");
-
-        companion object {
-            fun fromString(vpnPlanTypeValue: String): VpnPlanType {
-                return values().find {
-                    vpnPlanTypeValue == it.vpnPlanTypeValue
-                } ?: BASIC
-            }
-        }
-    }
-
     enum class PlanType(val planTypeValue: String) {
         FREE("free"),
         PLUS("plus"),
@@ -303,7 +291,7 @@ object Constants {
         PROFESSIONAL("professional");
 
         companion object {
-            fun fromString(planTypeValue: String): PlanType {
+            fun fromString(planTypeValue: String?): PlanType {
                 return values().find {
                     planTypeValue == it.planTypeValue
                 } ?: FREE

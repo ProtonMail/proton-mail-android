@@ -31,6 +31,8 @@ import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_10S
+import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_15S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.click
 import ch.protonmail.android.uitests.testsHelper.insert
@@ -218,7 +220,7 @@ class ComposerRobot {
             .body(body)
 
     fun recipients(email: String): ComposerRobot {
-        UIActions.wait.forViewWithId(R.id.to_recipients)
+        UIActions.wait.forViewWithId(R.id.to_recipients, TIMEOUT_15S)
         UIActions.id.typeTextIntoFieldWithIdAndPressImeAction(R.id.to_recipients, email)
         return this
     }

@@ -34,15 +34,18 @@ public class SinglePasswordChange extends PasswordChange {
     private String keySalt;
     @SerializedName(Fields.Auth.KEYS)
     private PrivateKeyBody[] keys;
+    @SerializedName(Fields.Auth.USER_KEYS)
+    private PrivateKeyBody[] userKeys;
     @SerializedName(Fields.Auth.ORGANIZATION_KEY)
     private String organizationKey;
 
     public SinglePasswordChange(
-            String keySalt, PrivateKeyBody[] keys, String organizationKey,
+            String keySalt, PrivateKeyBody[] keys, PrivateKeyBody[] userKeys, String organizationKey,
             String srpSession, String clientEphemeral, String clientProof, String twoFactorCode, @Nullable PasswordVerifier newVerifier) {
         super(srpSession, clientEphemeral, clientProof, twoFactorCode, newVerifier);
         this.keySalt = keySalt;
         this.keys = keys;
+        this.userKeys = userKeys;
         this.organizationKey = organizationKey;
     }
 

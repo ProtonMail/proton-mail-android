@@ -29,11 +29,23 @@ public class AddressPrivateKey {
     private String AddressID;
     private String PrivateKey;
     @Nullable
+    private String Token;
+    @Nullable
+    private String Signature;
+    @Nullable
     private SignedKeyList SignedKeyList;
 
     public AddressPrivateKey(String addressID, String privateKey) {
         AddressID = addressID;
         PrivateKey = privateKey;
+    }
+
+    public void setToken(@Nullable String token) {
+        Token = token;
+    }
+
+    public void setSignature(@Nullable String signature) {
+        Signature = signature;
     }
 
     public void setSignedKeyList(@Nullable SignedKeyList signedKeyList) {

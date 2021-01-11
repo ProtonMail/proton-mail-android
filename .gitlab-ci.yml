@@ -1,23 +1,21 @@
 default:
-  image: gitlab.protontech.ch:4567/android/mail/proton-mail-android:android-mail
+  image: $CI_REGISTRY/protonvpn/android/android-app-new:latest
 
 before_script:
   - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
-  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
+#  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
   - export GRADLE_USER_HOME=`pwd`/.gradle
-  - chmod +x ./gradlew
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - echo "App version name ${VERSION_NAME}"
   - echo "App version name ${VERSION_CODE}"
 cache:
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - .gradle/caches
-    - app/build/
-variables:
-  ANDROID_COMPILE_SDK: "28"
-  ANDROID_BUILD_TOOLS: "28.0.3"
-  ANDROID_SDK_TOOLS:   "26.1.1"
+    - .gradle
+    - '**/build'
+    - '**/**/build'
+    - '**/**/**/build'
 
 stages:
   - manual-release
@@ -30,10 +28,8 @@ stages:
 #####################
 .detekt-analysis-common:
   stage: analyze
-  except:
-    - schedules
   tags:
-    - android
+    - medium
   script:
     - ./gradlew multiModuleDetekt
   artifacts:
@@ -47,26 +43,66 @@ detekt analysis release:
     - release
     - prerelease
     - tags
+  except:
+    - schedules
 
 detekt analysis:
   extends: .detekt-analysis-common
+  only:
+    refs:
+      - merge_requests
+      - branches
+      - schedules
   except:
     - release
     - prerelease
     - tags
-    - schedules
 
-build debug:
+.build-debug-common:
   stage: build
+  only:
+    - merge_requests
+    - branches
+    - schedules
   tags:
-    - android
+    - large
   script:
     - ./gradlew assembleBetaDebug
-    - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
+    - ./gradlew assembleBetaDebugAndroidTest
   artifacts:
     expire_in: 1 week
     paths:
       - app/build/outputs/apk
+  except:
+    - schedules
+
+build debug:
+  extends: .build-debug-common
+  needs:
+    - job: detekt analysis
+  except:
+    - develop
+    - release
+    - prerelease
+    - tags
+
+build debug develop:
+  extends: .build-debug-common
+  needs:
+    - job: detekt analysis
+  only:
+    - develop
+  script:
+    - ./gradlew clean
+    - ./gradlew assembleBetaDebug
+    - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
+
+build debug release:
+  extends: .build-debug-common
+  only:
+    - release
+    - prerelease
+    - tags
 
 build prerelease:
   stage: build
@@ -76,8 +112,9 @@ build prerelease:
     - prerelease
     - tags
   tags:
-    - android
+    - large
   script:
+    - ./gradlew clean
     - ./gradlew assemblePlaystoreReleasePlayStore
   artifacts:
     expire_in: 3 week
@@ -91,8 +128,9 @@ build release:
   only:
     - releases
   tags:
-    - android
+    - large
   script:
+    - ./gradlew clean
     - ./gradlew assemblePlaystoreReleasePlayStore
   artifacts:
     expire_in: 4 week
@@ -100,20 +138,52 @@ build release:
       - app/build/outputs
 
 
-unit tests:
+.unit-tests-common:
   stage: test
+  only:
+    - merge_requests
+    - branches
   except:
     - schedules
   tags:
-    - android
+    - large
   script:
     - ./gradlew -Pci --console=plain allTest
 
+unit tests:
+  extends: .unit-tests-common
+  needs:
+    - job: build debug
+  except:
+    - develop
+    - release
+    - prerelease
+    - tags
 
-firebase tests:
+unit tests develop:
+  extends: .unit-tests-common
+  needs:
+    - job: build debug develop
+  only:
+    - develop
+
+unit tests release:
+  extends: .unit-tests-common
+  only:
+    - release
+    - prerelease
+    - tags
+
+
+.firebase-tests-common:
   stage: test
+  only:
+    - merge_requests
+    - branches
   except:
     - schedules
+  tags:
+    - medium
   script:
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
@@ -134,36 +204,43 @@ firebase tests:
       --num-flaky-test-attempts=2
       --timeout 30m
 
-firebase regression tests:
-  stage: test
-  rules:
-    - if: '$TEST_TYPE == "regression"'
-  script:
-    - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
-    - mkdir -p /opt
-    - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
-    - /opt/google-cloud-sdk/install.sh --quiet
-    - source /opt/google-cloud-sdk/path.bash.inc
-    - gcloud components update
-    - echo $CLOUD_PROJECT_ID_MAIL
-    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
-    - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
-    - gcloud auth activate-service-account --key-file /tmp/service-account.json
-    - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
-    - gcloud beta --quiet firebase test android run
-      --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
-      --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
-      --device model=Pixel2,version=$API_LEVEL
-      --test-targets "class ch.protonmail.android.uitests.tests.suites.RegressionSuite"
-      --use-orchestrator
-      --num-uniform-shards=20
-      --timeout 1h
+firebase tests:
+  extends: .firebase-tests-common
+  needs:
+    - job: build debug
+  except:
+    - develop
+    - release
+    - prerelease
+    - tags
+    - schedules
+
+firebase tests develop:
+  extends: .firebase-tests-common
+  needs:
+    - job: build debug develop
+  only:
+    - develop
+
+firebase tests release:
+  extends: .firebase-tests-common
+  only:
+    - release
+    - prerelease
+    - tags
 
 firebase feature tests:
   stage: test
+  needs:
+    - job: build debug
   rules:
-    - if: '$TEST_TYPE == "feature"'
+    - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
+  tags:
+    - large
+  variables:
+    MODEL: ""
   script:
+    - if [ -z ${DEVICE_MODEL+x} ]; then MODEL="Pixel2"; else MODEL=$DEVICE_MODEL; fi
     - wget --quiet --output-document=/tmp/google-cloud-sdk.tar.gz https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-sdk.tar.gz
     - mkdir -p /opt
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
@@ -178,11 +255,11 @@ firebase feature tests:
     - gcloud --quiet firebase test android run
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
       --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
-      --device model=Pixel2,version=$API_LEVEL
+      --device model=$MODEL,version=$API_LEVEL
       --test-targets "class ch.protonmail.android.uitests.tests.$TEST_CLASS"
       --use-orchestrator
       --num-flaky-test-attempts=1
-      --timeout 1h
+      --timeout 45m
 
 include:
   - project: 'translations/generator'
@@ -223,6 +300,8 @@ release-publish-github:
     RELEASE_SYNC_TO_BRANCH: 'release'
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-commit-shared
+  tags:
+    - small
 
 release-publish-github-tags:
   needs:
@@ -234,7 +313,9 @@ release-publish-github-tags:
     RELEASE_SYNC_TO_BRANCH: 'release'
     RELEASE_SYNC_FROM_BRANCH: 'release'
   extends: .release-sync-tags-shared
-  
+  tags:
+    - small
+
 publish-github:
   stage: bot-release
   needs:
@@ -245,3 +326,14 @@ publish-github:
       RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
       RELEASE_GITHUB_BRANCH: 'release'
   extends: .release-make-release
+  tags:
+    - small
+
+check for fixups:
+  stage: analyze
+  only:
+    - merge_requests
+  script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - git fetch origin "$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - git log --pretty=%s "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME..origin/$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" | awk '$0 ~ /^fixup/ {find = 1}; END { exit find }'

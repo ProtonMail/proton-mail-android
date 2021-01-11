@@ -47,7 +47,7 @@ public class DonateJob extends ProtonMailBaseJob {
             AppUtil.postEventOnUi(new DonateEvent(Status.SUCCESS));
         } else {
             Map<String, String> details = CollectionExtensions.filterValues(response.getDetails(), String.class);
-            AppUtil.postEventOnUi(new DonateEvent(Status.FAILED, response.getError(), ParseUtils.Companion.compileSingleErrorMessage(details)));
+            AppUtil.postEventOnUi(new DonateEvent(Status.FAILED, response.getError(), ParseUtils.INSTANCE.compileSingleErrorMessage(details)));
         }
 
     }

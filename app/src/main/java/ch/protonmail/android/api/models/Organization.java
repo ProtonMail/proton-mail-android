@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.api.models;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 import ch.protonmail.android.api.utils.Fields;
@@ -59,6 +61,7 @@ public class Organization {
         return displayName;
     }
 
+    @Nullable
     public String getPlanName() {
         return planName;
     }

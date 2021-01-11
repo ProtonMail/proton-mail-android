@@ -55,7 +55,7 @@ public class VerifyPaymentJob extends ProtonMailBaseJob {
             AppUtil.postEventOnUi(new VerifyPaymentEvent(Status.SUCCESS, verifyCode));
         } else {
             Map<String, String> details = CollectionExtensions.filterValues(response.getDetails(), String.class);
-            AppUtil.postEventOnUi(new VerifyPaymentEvent(Status.FAILED, response.getError(), ParseUtils.Companion.compileSingleErrorMessage(details)));
+            AppUtil.postEventOnUi(new VerifyPaymentEvent(Status.FAILED, response.getError(), ParseUtils.INSTANCE.compileSingleErrorMessage(details)));
         }
     }
 }

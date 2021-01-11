@@ -23,8 +23,6 @@ import android.util.Base64;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +39,7 @@ import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult;
+import timber.log.Timber;
 
 public class MIMEBuilder {
 
@@ -88,7 +87,7 @@ public class MIMEBuilder {
         return this;
     }
 
-    public String buildString() throws Exception {
+    public String buildString() {
         try {
             MIMEPart multipart = new MIMEPart("mixed");
             multipart.addBodyPart(buildBody());
@@ -102,9 +101,7 @@ public class MIMEBuilder {
             baos.close();
             return baos.toString();
         } catch (Exception e) {
-            // Should never happen
-            StringWriter strOut = new StringWriter();
-            e.printStackTrace(new PrintWriter(strOut));
+            Timber.e(e, "Build string error");
             return "";
         }
     }

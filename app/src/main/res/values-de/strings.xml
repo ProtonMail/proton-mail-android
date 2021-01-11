@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Anmelden fehlgeschlagen</string>
     <string name="invalid_server_proof">Ungültiger Server</string>
     <string name="invalid_credentials">Ungültige Zugangsdaten</string>
+    <string name="incorrect_key_parameters">Unzulässige Schlüsselparameter</string>
     <string name="invalid_mailbox_password">Ungültiges Postfach-Passwort</string>
     <string name="not_signed_up">Sie sind nicht für die Beta-Version von ProtonMail Android angemeldet</string>
     <string name="no_network">Keine Netzwerkverbindung</string>

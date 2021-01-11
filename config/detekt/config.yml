@@ -5,13 +5,17 @@ build:
   maxIssues: 12480
   excludeCorrectable: false
   weights:
-    # complexity: 2
-    # LongParameterList: 1
-    # style: 1
-    # comments: 1
+  # complexity: 2
+  # LongParameterList: 1
+  # style: 1
+  # comments: 1
 
 config:
+  # let the build succeed if there are errors, this is needed since clients can have a rule-set for a newer
+  #  Detekt version
   validation: false
+  # fail the build if any deprecated properties are used
+  warningsAsErrors: true
   # when writing own rules with new properties, exclude the property path e.g.: 'my_rule_set,.*>.*>[my_property]'
   excludes: ''
 
@@ -28,11 +32,11 @@ processors:
 console-reports:
   active: true
   exclude:
-     - 'ProjectStatisticsReport'
-     - 'ComplexityReport'
-     - 'NotificationReport'
-  #  - 'FindingsReport'
-     - 'FileBasedFindingsReport'
+    - 'ProjectStatisticsReport'
+    - 'ComplexityReport'
+    - 'NotificationReport'
+    #  - 'FindingsReport'
+    - 'FileBasedFindingsReport'
 
 # output-reports:
 #   active: true
@@ -117,12 +121,18 @@ complexity:
     ignoreDataClasses: true
     # no annotated elements are ignored
     ignoreAnnotated: []
+  # reports methods which are overloaded often
   MethodOverloading:
+    active: true
+    threshold: 6
+  NamedArguments:
     active: false
     # threshold: 6
   NestedBlockDepth:
     active: true
     threshold: 4
+  ReplaceSafeCallChainWithRun:
+    active: false
   StringLiteralDuplication:
     active: false
     excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
@@ -149,6 +159,8 @@ coroutines:
   GlobalCoroutineUsage:
     active: true
   RedundantSuspendModifier:
+    active: true
+  SuspendFunWithFlowReturnType:
     active: true
 
 # report empty block ( class, function, catch, etc )
@@ -210,10 +222,10 @@ exceptions:
   SwallowedException:
     active: true
     ignoredExceptionTypes:
-     - InterruptedException
-     - NumberFormatException
-     - ParseException
-     - MalformedURLException
+      - InterruptedException
+      - NumberFormatException
+      - ParseException
+      - MalformedURLException
     allowedExceptionNameRegex: '_|(ignore|expected).*'
   ThrowingExceptionFromFinally:
     active: true
@@ -244,16 +256,22 @@ exceptions:
   TooGenericExceptionThrown:
     active: true
     exceptionNames:
-     - Error
-     - Exception
-     - Throwable
-     - RuntimeException
+      - Error
+      - Exception
+      - Throwable
+      - RuntimeException
 
 formatting:
   active: true
   android: true
   autoCorrect: true
   AnnotationOnSeparateLine:
+    active: false
+    # autoCorrect: true
+  AnnotationSpacing:
+    active: false
+    # autoCorrect: true
+  ArgumentListWrapping:
     active: false
     # autoCorrect: true
   ChainWrapping:
@@ -426,6 +444,9 @@ naming:
   MemberNameEqualsClassName:
     active: true
     ignoreOverridden: true
+  NonBooleanPropertyPrefixedWithIs:
+    active: true
+    excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
   ObjectPropertyNaming:
     active: true
     excludes: ['**/test/**', '**/**Test/**', '**/gradle/**', '**/buildSrc/**']
@@ -538,6 +559,7 @@ potential-bugs:
     active: false
   MissingWhenCase:
     active: true
+    allowElseExpression: false
   NullableToStringCall:
     active: true
   RedundantElseInWhen:
@@ -561,6 +583,15 @@ potential-bugs:
 
 style:
   active: true
+  # This rule ensures class contents are ordered as follows as recommended by the Kotlin Coding Conventions
+  #  ( see https://kotlinlang.org/docs/reference/coding-conventions.html#class-layout ):
+  #  Mandatory order
+  #  * Property declarations and initializer blocks
+  #  * Secondary constructors
+  #  * Method declarations
+  #  * Companion object
+  ClassOrdering:
+    active: true
   CollapsibleIfStatements:
     active: false
   DataClassContainsFunctions:
@@ -655,6 +686,47 @@ style:
     active: true
   RedundantExplicitType:
     active: false
+  # Redundant maps add complexity to the code and accomplish nothing. They should be removed or replaced with the proper operator.
+  #
+  #  Non compliant:
+  #  fun foo(list: List<Int>): List<Int> {
+  #      return list
+  #          .filter { it > 5 }
+  #          .map { it }
+  #  }
+  #
+  #  fun bar(list: List<Int>): List<Int> {
+  #      return list
+  #          .filter { it > 5 }
+  #          .map {
+  #              doSomething(it)
+  #              it
+  #          }
+  #  }
+  #
+  #  fun baz(set: Set<Int>): List<Int> {
+  #      return set.map { it }
+  #  }
+  #
+  #  Compliant:
+  # fun foo(list: List<Int>): List<Int> {
+  #      return list
+  #          .filter { it > 5 }
+  #  }
+  #
+  #  fun bar(list: List<Int>): List<Int> {
+  #      return list
+  #          .filter { it > 5 }
+  #          .onEach {
+  #              doSomething(it)
+  #          }
+  #  }
+  #
+  #  fun baz(set: Set<Int>): List<Int> {
+  #      return set.toList()
+  #  }
+  RedundantHigherOrderMapUsage:
+    active: true
   RedundantVisibilityModifierRule:
     active: false
   ReturnCount:
@@ -702,6 +774,9 @@ style:
     allowedNames: "(_|ignored|expected|serialVersionUID)"
   UseArrayLiteralsInAnnotations:
     active: false
+  # flag `check` calls for not-null check that can be replaced with a `checkNotNull` call.
+  UseCheckNotNull:
+    active: true
   UseCheckOrError:
     active: false
   UseDataClass:
@@ -709,12 +784,34 @@ style:
     excludeAnnotatedClasses: []
     allowVars: false
   # Example compliant     `emptyList<String>()`
-  # Example not complient `listOf<String>()`
+  # Example not compliant `listOf<String>()`
   UseEmptyCounterpart:
+    active: true
+  # detects isEmpty or isBlank calls to assign a default value. They can be replaced with ifEmpty or ifBlank calls.
+  #
+  #  Non Compliant:
+  #   fun test(list: List<Int>, s: String) {
+  #       val a = if (list.isEmpty()) listOf(1) else list
+  #       val b = if (list.isNotEmpty()) list else listOf(2)
+  #       val c = if (s.isBlank()) "foo" else s
+  #       val d = if (s.isNotBlank()) s else "bar"
+  #  }
+  #
+  #  Compliant:
+  #  fun test(list: List<Int>, s: String) {
+  #      val a = list.ifEmpty { listOf(1) }
+  #      val b = list.ifEmpty { listOf(2) }
+  #      val c = s.ifBlank { "foo" }
+  #      val d = s.ifBlank { "bar" }
+  #  }
+  UseIfEmptyOrIfBlank:
     active: true
   UseIfInsteadOfWhen:
     active: true
   UseRequire:
+    active: true
+  # flag require calls for not-null check that can be replaced with a requireNotNull call.
+  UseRequireNotNull:
     active: true
   UselessCallOnNotNull:
     active: true

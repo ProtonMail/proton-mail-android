@@ -18,7 +18,9 @@
  */
 package ch.protonmail.android.uitests.tests.composer
 
+import ch.protonmail.android.uitests.robots.device.DeviceRobot
 import ch.protonmail.android.uitests.robots.login.LoginRobot
+import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
@@ -29,8 +31,8 @@ import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailNotTruste
 import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKeys
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
+import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import org.junit.Before
 import org.junit.Test
 import org.junit.experimental.categories.Category
@@ -38,6 +40,8 @@ import org.junit.experimental.categories.Category
 class SendNewMessageTests : BaseTest() {
 
     private val loginRobot = LoginRobot()
+    private val composeRobot = ComposerRobot()
+    private val deviceRobot = DeviceRobot()
     private lateinit var subject: String
     private lateinit var body: String
 
@@ -95,7 +99,7 @@ class SendNewMessageTests : BaseTest() {
     @Category(SmokeTest::class)
     @Test
     fun sendExternalMessageToPGPSignedContact() {
-        val to = externalGmailPGPEncrypted.email
+        val to = externalOutlookPGPSigned.email
         loginRobot
             .loginUser(onePassUser)
             .compose()
@@ -167,45 +171,6 @@ class SendNewMessageTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
-    @Test
-    fun sendMessageToInternalTrustedContactWithCameraCaptureAttachment() {
-        val to = internalEmailTrustedKeys.email
-        loginRobot
-            .loginUser(onePassUser)
-            .compose()
-            .sendMessageCameraCaptureAttachment(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
-    }
-
-    @Test
-    fun sendMessageToInternalNotTrustedContactWithAttachment() {
-        val to = internalEmailNotTrustedKeys.email
-        loginRobot
-            .loginUser(onePassUser)
-            .compose()
-            .sendMessageWithFileAttachment(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
-    }
-
-    @Test
-    fun sendMessageToInternalContactWithTwoAttachments() {
-        val to = internalEmailTrustedKeys.email
-        loginRobot
-            .loginUser(onePassUser)
-            .compose()
-            .sendMessageTwoImageCaptureAttachments(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
-    }
-
     @TestId("1484")
     @Test
     fun sendMessageFromPmMe() {
@@ -216,22 +181,6 @@ class SendNewMessageTests : BaseTest() {
             .compose()
             .changeSenderTo(onePassUserPmMeAddress)
             .sendMessage(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
-    }
-
-    @TestId("1485")
-    @Test
-    fun sendMessageWithAttachmentFromPmMe() {
-        val onePassUserPmMeAddress = onePassUser.pmMe
-        val to = internalEmailTrustedKeys.email
-        loginRobot
-            .loginUser(onePassUser)
-            .compose()
-            .changeSenderTo(onePassUserPmMeAddress)
-            .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
             .sent()
             .refreshMessageList()
@@ -254,37 +203,6 @@ class SendNewMessageTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
-    @TestId("21091")
-    //TODO - enable back after MAILAND-789 is fixed
-    fun sendExternalMessageWithPasswordExpiryTimeAndAttachment() {
-        val to = externalOutlookPGPSigned.email
-        val password = editedPassword
-        val hint = editedPasswordHint
-        loginRobot
-            .loginTwoPasswordUser(twoPassUser)
-            .decryptMailbox(password)
-            .compose()
-            .sendMessageEOAndExpiryTimeWithAttachment(to, subject, body, 1, password, hint)
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
-    }
-
-    @TestId("15539")
-    //TODO - enable back after MAILAND-789 is fixed
-    fun sendExternalMessageWithOneAttachment() {
-        val to = externalOutlookPGPSigned.email
-        loginRobot
-            .loginUser(onePassUser)
-            .compose()
-            .sendMessageCameraCaptureAttachment(to, subject, body)
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
-    }
-
     @TestId("1548")
     //TODO - enable back after MAILAND-789 is fixed
     fun sendExternalMessageWithExpiryTime() {
@@ -293,20 +211,6 @@ class SendNewMessageTests : BaseTest() {
             .loginUser(onePassUser)
             .compose()
             .sendMessageExpiryTimeInDaysWithConfirmation(to, subject, body, 2)
-            .menuDrawer()
-            .sent()
-            .refreshMessageList()
-            .verify { messageWithSubjectExists(subject) }
-    }
-
-    @TestId("15540")
-    //TODO - enable back after MAILAND-789 is fixed
-    fun sendExternalMessageWithTwoAttachments() {
-        val to = externalOutlookPGPSigned.email
-        loginRobot
-            .loginUser(onePassUser)
-            .compose()
-            .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
             .sent()
             .refreshMessageList()

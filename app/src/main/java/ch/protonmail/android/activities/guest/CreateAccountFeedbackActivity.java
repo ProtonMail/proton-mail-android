@@ -195,11 +195,6 @@ public class CreateAccountFeedbackActivity extends BaseActivity implements
     }
 
     @Override
-    public void createSubscriptionForPaymentToken(String paymentToken, int amount, Constants.CurrencyType currency, String couponCode, List<String> planIds, int cycle) {
-        // noop
-    }
-
-    @Override
     public void onPaymentOptionChosen(Constants.CurrencyType currency, int amount, String planId, int cycle) {
         // noop
     }

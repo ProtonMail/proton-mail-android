@@ -114,6 +114,8 @@ public class OpenPGP {
             throw new Exception("passphrase for generating key can't be empty");
         }
 
+        Crypto.setKeyGenerationOffset(-86400);
+
         if (keyType == KeyType.RSA) {
             // Generate some primes as the go library is quite slow. On android we can use SSL + multithreading
             // This reduces the generation time from 3 minutes to 1 second.
@@ -256,15 +258,6 @@ public class OpenPGP {
         try {
             Crypto.newKeyFromArmored(armoredKey).unlock(passphrase);
             return true;
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return false;
-    }
-
-    public boolean checkKeyIsCorrect(@NonNull String armoredKey, @NonNull byte[] passphrase) {
-        try {
-            return Crypto.newKeyFromArmored(armoredKey).unlock(passphrase).check();
         } catch (Exception e) {
             Timber.e(e);
         }

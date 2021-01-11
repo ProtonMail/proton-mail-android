@@ -40,6 +40,9 @@ class UserCrypto(
     override val currentKeys: Collection<UserKey>
         get() = userKeys.keys
 
+    override val primaryKey: UserKey?
+        get() = userKeys.primaryKey
+
     override val passphrase: ByteArray?
         get() = mailboxPassword
 
@@ -57,13 +60,14 @@ class UserCrypto(
     override fun decrypt(message: CipherText): TextDecryptionResult =
         decrypt(message, getVerificationKeys(), openPgp.time)
 
-    fun decryptMessage(message: CipherText): TextDecryptionResult {
+    fun decryptMessage(message: String): TextDecryptionResult {
         val errorMessage = "Error decrypting message, invalid passphrase"
         checkNotNull(mailboxPassword) { errorMessage }
 
         return withCurrentKeys("Error decrypting message") { key ->
+            val cipherText = CipherText(message)
             val unarmored = Armor.unarmor(key.privateKey.string)
-            val decrypted = openPgp.decryptMessageBinKey(message.armored, unarmored, mailboxPassword)
+            val decrypted = openPgp.decryptMessageBinKey(cipherText.armored, unarmored, mailboxPassword)
             TextDecryptionResult(decrypted, false, false)
         }
     }

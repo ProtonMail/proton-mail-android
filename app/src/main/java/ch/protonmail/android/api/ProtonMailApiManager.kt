@@ -170,9 +170,13 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun downloadAttachment(attachmentId: String): ByteArray = api.downloadAttachment(attachmentId)
 
-    override fun uploadAttachmentInline(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachmentInlineBlocking(attachment: Attachment, MessageID: String, contentID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInlineBlocking(attachment, MessageID, contentID, KeyPackage, DataPackage, Signature)
 
-    override fun uploadAttachment(attachment: Attachment, MessageID: String, KeyPackage: RequestBody, DataPackage: RequestBody, Signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, MessageID, KeyPackage, DataPackage, Signature)
+    override fun uploadAttachmentBlocking(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentBlocking(attachment, keyPackage, dataPackage, signature)
+
+    override suspend fun uploadAttachmentInline(attachment: Attachment, messageID: String, contentID: String, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachmentInline(attachment, messageID, contentID, keyPackage, dataPackage, signature)
+
+    override suspend fun uploadAttachment(attachment: Attachment, keyPackage: RequestBody, dataPackage: RequestBody, signature: RequestBody): AttachmentUploadResponse = api.uploadAttachment(attachment, keyPackage, dataPackage, signature)
 
     override fun getAttachmentUrl(attachmentId: String): String = api.getAttachmentUrl(attachmentId)
 
@@ -240,7 +244,15 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun updatePrivateKeys(body: SinglePasswordChange): ResponseBody = api.updatePrivateKeys(body)
 
-    override fun activateKey(keyActivationBody: KeyActivationBody, keyId: String): ResponseBody = api.activateKey(keyActivationBody, keyId)
+    override fun activateKey(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = api.activateKey(keyActivationBody, keyId)
+
+    override suspend fun activateKeyLegacy(
+        keyActivationBody: KeyActivationBody,
+        keyId: String
+    ): ResponseBody = api.activateKeyLegacy(keyActivationBody, keyId)
 
     override fun setupKeys(keysSetupBody: KeysSetupBody): UserInfo = api.setupKeys(keysSetupBody)
 
@@ -315,19 +327,22 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun createOrganization(body: CreateOrganizationBody): OrganizationResponse? = api.createOrganization(body)
 
-    override fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
+    override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 
-    override fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
+    override suspend fun fetchPaymentMethods(): PaymentMethodsResponse = api.fetchPaymentMethods()
 
-    override fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
+    override suspend fun fetchPaymentsStatus(): PaymentsStatusResponse = api.fetchPaymentsStatus()
 
-    override fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse = api.checkSubscription(body)
+    override suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse =
+        api.checkSubscription(body)
 
     override fun donate(body: DonateBody): ResponseBody? = api.donate(body)
 
-    override fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse = api.createUpdateSubscription(body)
+    override suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse =
+        api.createUpdateSubscription(body)
 
-    override fun createUpdatePaymentMethod(body: TokenPaymentBody): Call<PaymentMethodResponse> = api.createUpdatePaymentMethod(body)
+    override suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse =
+        api.createUpdatePaymentMethod(body)
 
     override fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse = api.fetchAvailablePlans(currency, cycle)
 

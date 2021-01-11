@@ -33,9 +33,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.TimeUnit
 
-/**
- * Created by dinokadrikj on 3/5/20.
- */
 class DnsOverHttpsProviderRFC8484(private val baseUrl: String) {
 
     private val api: DnsOverHttpsRetrofitApi
@@ -45,33 +42,36 @@ class DnsOverHttpsProviderRFC8484(private val baseUrl: String) {
 
         val converterFactory = JacksonConverterFactory.create(Json.MAPPER)
         val httpClientBuilder = OkHttpClient.Builder()
-                .connectTimeout(TIMEOUT_S, TimeUnit.SECONDS)
-                .writeTimeout(TIMEOUT_S, TimeUnit.SECONDS)
-                .readTimeout(TIMEOUT_S, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT_S, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_S, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_S, TimeUnit.SECONDS)
         if (BuildConfig.DEBUG) {
-            httpClientBuilder.addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            httpClientBuilder.addInterceptor(
+                HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+            )
         }
 
         val okClient = httpClientBuilder.build()
         api = Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(okClient)
-                .addConverterFactory(converterFactory)
-                .build()
-                .create(DnsOverHttpsRetrofitApi::class.java)
+            .baseUrl(baseUrl)
+            .client(okClient)
+            .addConverterFactory(converterFactory)
+            .build()
+            .create(DnsOverHttpsRetrofitApi::class.java)
     }
 
     suspend fun getAlternativeBaseUrls(): List<String>? {
         val question = Question("dMFYGSLTQOJXXI33ONVQWS3BOMNUA.protonpro.xyz", Record.TYPE.TXT)
         val queryMessage = DnsMessage.builder()
-                .setRecursionDesired(true)
-                .setQuestion(question)
-                .build()
+            .setRecursionDesired(true)
+            .setQuestion(question)
+            .build()
         val queryMessageBase64 = Base64.encodeToString(
-                queryMessage.toArray(),
-                Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+            queryMessage.toArray(),
+            Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP
+        )
 
         val response = api.getServers(baseUrl.removeSuffix("/"), queryMessageBase64)
         if (response.isSuccessful) {
@@ -79,9 +79,9 @@ class DnsOverHttpsProviderRFC8484(private val baseUrl: String) {
             val answerMessage = DnsMessage(answerData)
             val answers = answerMessage.answerSection
             return answers
-                    .mapNotNull { (it.payload as? TXT)?.text }
-                    .map { "https://${it}/" }
-                    .takeIf { it.isNotEmpty() }
+                .mapNotNull { (it.payload as? TXT)?.text }
+                .map { "https://${it}/" }
+                .takeIf { it.isNotEmpty() }
         }
         return null
     }

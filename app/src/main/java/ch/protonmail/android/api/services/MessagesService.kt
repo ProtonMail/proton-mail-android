@@ -30,7 +30,6 @@ import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -40,6 +39,7 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 
 // region constants
@@ -80,9 +80,6 @@ class MessagesService : JobIntentService() {
     internal lateinit var userManager: UserManager
 
     @Inject
-    internal lateinit var mNetworkUtils: QueueNetworkUtil
-
-    @Inject
     internal lateinit var mNetworkResults: NetworkResults
 
     @Inject
@@ -93,11 +90,6 @@ class MessagesService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
 
-        if (!mNetworkUtils.isConnected()) {
-            Logger.doLog(TAG_MESSAGES_SERVICE, "no network to fetch messages")
-            AppUtil.postEventOnUi(MailboxLoadedEvent(Status.NO_NETWORK, null))
-            return
-        }
         val currentUser = userManager.username
         messageDetailsRepository.reloadDependenciesForUser(currentUser)
         when (intent.action) {
@@ -205,7 +197,7 @@ class MessagesService : JobIntentService() {
         try {
             contactEmailsManager.refresh()
         } catch (e: Exception) {
-            // todo inform that contact groups could not be fetched
+            Timber.i(e, "handleFetchContactGroups has failed")
         }
     }
 

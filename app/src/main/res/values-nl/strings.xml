@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Inloggen mislukt</string>
     <string name="invalid_server_proof">Ongeldig server bewijs</string>
     <string name="invalid_credentials">Inloggegevens ongeldig</string>
+    <string name="incorrect_key_parameters">Onjuiste sleutelparameters</string>
     <string name="invalid_mailbox_password">Ongeldig mailbox-wachtwoord</string>
     <string name="not_signed_up">U bent niet aangemeld voor de bètaversie van ProtonMail Android</string>
     <string name="no_network">Geen netwerkverbinding</string>

@@ -52,28 +52,16 @@ abstract class Crypto<K>(
     private val userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
 ) {
 
-    companion object {
-
-        fun forUser(userManager: UserManager, username: Name): UserCrypto =
-            UserCrypto(userManager, userManager.openPgp, username)
-
-        @JvmStatic
-        fun forUser(userManager: UserManager, username: String): UserCrypto =
-            UserCrypto(userManager, userManager.openPgp, Name(username))
-
-        fun forAddress(userManager: UserManager, username: String, addressID: Id): AddressCrypto =
-            AddressCrypto(userManager, userManager.openPgp, Name(username), addressID)
-
-        @JvmStatic
-        fun forAddress(userManager: UserManager, username: String, addressID: String): AddressCrypto =
-            AddressCrypto(userManager, userManager.openPgp, Name(username), Id(addressID))
-    }
-
-    protected val user: User get() =
-        userMapper { userManager.getUser(username.s).toNewUser() }
+    protected val user: User
+        get() =
+            userMapper { userManager.getUser(username.s).toNewUser() }
 
     protected val userKeys
         get() = user.keys
+
+    protected abstract val currentKeys: Collection<K>
+
+    protected abstract val primaryKey: K?
 
     protected val mailboxPassword get() = userManager.getMailboxPassword(username.s)
 
@@ -82,31 +70,37 @@ abstract class Crypto<K>(
      */
     protected abstract val passphrase: ByteArray?
 
-    protected abstract val currentKeys: Collection<K>
+    /**
+     * @return Non null [K]
+     * @throws IllegalStateException if [primaryKey] is actually `null`
+     */
+    protected fun requirePrimaryKey(): K =
+        checkNotNull(primaryKey) { "No primary key found" }
 
     protected abstract fun passphraseFor(key: K): ByteArray?
 
+    protected abstract val K.privateKey: PgpField.PrivateKey
 
     fun sign(data: ByteArray): String = openPgp.signBinDetached(
         data,
-        currentKeys.first().privateKey.string,
+        requirePrimaryKey().privateKey.string,
         passphrase
     )
 
     fun sign(data: String): String = openPgp.signTextDetached(
         data,
-        currentKeys.first().privateKey.string,
+        requirePrimaryKey().privateKey.string,
         passphrase
     )
+
 
     /**
      * Encrypt for Message or Contact
      */
     fun encrypt(text: String, sign: Boolean): CipherText {
-        val publicKey = buildArmoredPublicKey(currentKeys.first().privateKey)
-        val firstKey = currentKeys.first()
-        val privateKey = firstKey.takeIf { sign }?.privateKey?.string
-        val keyPassphrase = passphraseFor(firstKey)
+        val publicKey = buildArmoredPublicKey(requirePrimaryKey().privateKey)
+        val privateKey = requirePrimaryKey().takeIf { sign }?.privateKey?.string
+        val keyPassphrase = passphraseFor(requirePrimaryKey())
         val armored = openPgp.encryptMessage(
             text,
             publicKey,
@@ -116,7 +110,6 @@ abstract class Crypto<K>(
         )
         return CipherText(armored)
     }
-
 
     /**
      * Decrypt Message or Contact Data
@@ -153,14 +146,9 @@ abstract class Crypto<K>(
             .also { newKey.clearPrivateParams() }
     }
 
+
     fun getUnarmoredKeys(): List<ByteArray> =
         currentKeys.map { Armor.unarmor(it.privateKey.string) }
-
-
-    protected val UserKey.isPrimary get() =
-        this == userKeys.primaryKey
-
-    protected abstract val K.privateKey: PgpField.PrivateKey
 
     /**
      * Try to run [block] for every [K] in [currentKeys]
@@ -175,5 +163,23 @@ abstract class Crypto<K>(
         }
         val messagePrefix = errorMessage?.let { "$it. " } ?: EMPTY_STRING
         throw IllegalStateException("${messagePrefix}There is no valid decryption key")
+    }
+
+    companion object {
+
+        @JvmStatic
+        @Deprecated(
+            "Please use injected UserCrypto instead",
+            ReplaceWith(
+                "userCrypto",
+                "ch.protonmail.android.crypto.UserCrypto"
+            )
+        )
+        fun forUser(userManager: UserManager, username: String): UserCrypto =
+            UserCrypto(userManager, userManager.openPgp, Name(username))
+
+        @JvmStatic
+        fun forAddress(userManager: UserManager, username: String, addressID: String): AddressCrypto =
+            AddressCrypto(userManager, userManager.openPgp, Name(username), Id(addressID))
     }
 }

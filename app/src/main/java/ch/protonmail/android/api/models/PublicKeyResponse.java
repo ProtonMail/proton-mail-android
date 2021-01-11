@@ -25,14 +25,14 @@ import ch.protonmail.android.core.Constants;
 
 public class PublicKeyResponse extends ResponseBody {
     @SerializedName(Fields.Keys.RECIPIENT_TYPE)
-    private int recipientType;
+    private int recipientTypeInt;
     @SerializedName(Fields.Keys.MIME_TYPE)
     private String mimeType;
     @SerializedName(Fields.Keys.KEYS)
     private PublicKeyBody[] keys;
 
     public PublicKeyResponse(int recipientType, String mimeType, PublicKeyBody[] keys) {
-        this.recipientType = recipientType;
+        this.recipientTypeInt = recipientType;
         this.mimeType = mimeType;
         this.keys = keys;
     }
@@ -42,7 +42,7 @@ public class PublicKeyResponse extends ResponseBody {
     }
 
     public RecipientType getRecipientType() {
-        return RecipientType.FromInt(recipientType);
+        return RecipientType.FromInt(recipientTypeInt);
     }
 
     public String getMIMEType() {

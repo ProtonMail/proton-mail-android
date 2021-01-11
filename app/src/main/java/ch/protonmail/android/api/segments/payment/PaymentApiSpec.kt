@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.api.segments.payment
 
-import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.models.AvailablePlansResponse
 import ch.protonmail.android.api.models.CheckSubscriptionBody
 import ch.protonmail.android.api.models.CheckSubscriptionResponse
@@ -42,27 +41,20 @@ import java.io.IOException
 
 interface PaymentApiSpec {
 
-    @Throws(IOException::class)
-    fun fetchSubscription(): GetSubscriptionResponse
+    suspend fun fetchSubscription(): GetSubscriptionResponse
 
-    @Throws(IOException::class)
-    fun fetchPaymentMethods(): PaymentMethodsResponse
+    suspend fun fetchPaymentMethods(): PaymentMethodsResponse
 
-    @Throws(IOException::class)
-    fun fetchPaymentsStatus(): PaymentsStatusResponse
+    suspend fun fetchPaymentsStatus(): PaymentsStatusResponse
 
-    @Throws(IOException::class)
-    fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse
+    suspend fun checkSubscription(body: CheckSubscriptionBody): CheckSubscriptionResponse
 
     @Throws(IOException::class)
     fun donate(body: DonateBody): ResponseBody?
 
-    @WorkerThread
-    @Throws(IOException::class)
-    fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
+    suspend fun createUpdateSubscription(body: CreateSubscriptionBody): CreateUpdateSubscriptionResponse
 
-    @Throws(IOException::class)
-    fun createUpdatePaymentMethod(body: TokenPaymentBody): Call<PaymentMethodResponse>
+    suspend fun createUpdatePaymentMethod(body: TokenPaymentBody): PaymentMethodResponse
 
     @Throws(IOException::class)
     fun fetchAvailablePlans(currency: String, cycle: Int): AvailablePlansResponse

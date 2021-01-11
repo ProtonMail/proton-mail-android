@@ -23,7 +23,6 @@ import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.doh.ProxyItem
 import ch.protonmail.android.api.models.doh.ProxyList
 import ch.protonmail.android.core.NetworkConnectivityManager
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.AppCoroutineScope
 import ch.protonmail.android.di.DefaultSharedPreferences
@@ -33,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -86,9 +86,10 @@ class NetworkConfigurator @Inject constructor(
         for (provider in dohProviders) {
             // 0 is quad9, 1 is google, 2 is cloudflare
             val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
-                val result = try {
+                val result: List<String>? = try {
                     provider.getAlternativeBaseUrls()
-                } catch (e: Exception) {
+                } catch (ioException: IOException) {
+                    Timber.w(ioException, "DoH getAlternativeBaseUrls error!")
                     null
                 }
                 if (result != null) {
@@ -133,24 +134,25 @@ class NetworkConfigurator @Inject constructor(
         scope.launch {
 
             // double-check if normal API call works before resorting to use alternative routing url
-            val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
-                val result = try {
-                    networkSwitcher.tryRequest { service ->
-                        service.ping()
+            if (userManager.user.usingDefaultApi) {
+                val success = withTimeoutOrNull(DOH_PROVIDER_TIMEOUT) {
+                    val result = try {
+                        networkSwitcher.tryRequest { service ->
+                            service.ping()
+                        }
+                    } catch (e: Exception) {
+                        Timber.i(e, "Exception while pinging API before using alternative routing")
+                        null
                     }
-                } catch (e: Exception) {
-                    Timber.i(e, "Exception while pinging API before using alternative routing")
-                    null
+                    result != null
                 }
-                result != null
-            }
-            if (success == true) {
-                callback?.stopAutoRetry()
-                networkSwitcher.reconfigureProxy(null)
-                ProtonMailApplication.getApplication().userManager.user.usingDefaultApi = true
-                isRunning = false
-                callback?.stopDohSignal()
-                return@launch
+                if (success == true) {
+                    callback?.stopAutoRetry()
+                    networkSwitcher.reconfigureProxy(null)
+                    isRunning = false
+                    callback?.stopDohSignal()
+                    return@launch
+                }
             }
 
             proxyListReference.forEach {
@@ -172,7 +174,7 @@ class NetworkConfigurator @Inject constructor(
                     proxies.saveCurrentWorkingProxyDomain(proxies.getCurrentActiveProxy().baseUrl)
                     proxies.save()
                     isRunning = false
-                    ProtonMailApplication.getApplication().userManager.user.usingDefaultApi = false
+                    userManager.user.usingDefaultApi = false
                     callback?.startAutoRetry()
                     callback?.stopDohSignal()
                     return@launch
@@ -182,7 +184,7 @@ class NetworkConfigurator @Inject constructor(
             }
             callback?.stopAutoRetry()
             networkSwitcher.reconfigureProxy(null)
-            ProtonMailApplication.getApplication().userManager.user.usingDefaultApi = true
+            userManager.user.usingDefaultApi = true
             isRunning = false
             callback?.stopDohSignal()
         }

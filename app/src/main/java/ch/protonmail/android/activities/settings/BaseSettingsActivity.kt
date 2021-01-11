@@ -31,6 +31,7 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -97,8 +98,7 @@ const val EXTRA_CURRENT_MAILBOX_LABEL_ID = "Extra_Current_Mailbox_Label_ID"
 
 abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
-    @Inject
-    lateinit var viewModel: ConnectivityBaseViewModel
+    val viewModel: ConnectivityBaseViewModel by viewModels()
 
     @Inject
     lateinit var launchInitialDataFetch: LaunchInitialDataFetch

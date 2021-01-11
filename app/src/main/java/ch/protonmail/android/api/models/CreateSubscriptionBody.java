@@ -41,9 +41,22 @@ public class CreateSubscriptionBody {
     @SerializedName(Fields.Payment.CYCLE)
     private int cycle;
 
+    @Deprecated
     public CreateSubscriptionBody(int amount, Constants.CurrencyType currency, PaymentBody payment, String couponCode, List<String> planIds, int cycle) {
         this.amount = amount;
         this.currency = currency.name();
+        this.payment = payment;
+        this.couponCode = couponCode;
+        this.planIds = new HashMap<>();
+        for (String plan: planIds) {
+            this.planIds.put(plan, 1);
+        }
+        this.cycle = cycle;
+    }
+
+    public CreateSubscriptionBody(int amount, String currencyType, PaymentBody payment, String couponCode, List<String> planIds, int cycle) {
+        this.amount = amount;
+        this.currency = currencyType;
         this.payment = payment;
         this.couponCode = couponCode;
         this.planIds = new HashMap<>();

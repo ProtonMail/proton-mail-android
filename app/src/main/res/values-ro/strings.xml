@@ -46,6 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Autentificare eșuată</string>
     <string name="invalid_server_proof">Dovadă server nevalidă</string>
     <string name="invalid_credentials">Date de acreditare nevalide</string>
+    <string name="incorrect_key_parameters">Parametri cheie incorecți</string>
     <string name="invalid_mailbox_password">Parolă mesaje nevalidă</string>
     <string name="not_signed_up">Nu sunteți înscris(ă) pentru versiunea Beta a aplicației ProtonMail pentru Android</string>
     <string name="no_network">Nu există conexiune</string>
