@@ -78,28 +78,13 @@ internal sealed class DrawerUserModel {
 
         data class DrawerUser @JvmOverloads constructor(
             override val id: Id,
-            override val name: String = EMPTY_STRING,
-            override val emailAddress: String = EMPTY_STRING,
-            override val loggedIn: Boolean = false,
-            val notifications: Int = 0,
-            override val notificationsSnoozed: Boolean = false,
-            val displayName: String = EMPTY_STRING
-        ) : BaseUser() {
-
-            @Deprecated(
-                "Use constructor with id",
-                ReplaceWith("DrawerUser(id, name, emailAddress, loggedIn, notifications, " +
-                    "notificationsSnoozed, displayName"),
-                DeprecationLevel.ERROR
-            )
-            constructor(
-                name: String = EMPTY_STRING,
-                emailAddress: String = EMPTY_STRING,
-                loggedIn: Boolean = false,
-                notifications: Int,
-                notificationsSnoozed: Boolean,
-                displayName: String = EMPTY_STRING
-            ): this(TODO(), name, emailAddress, loggedIn, notifications, notificationsSnoozed, displayName)}
+            override val name: String,
+            override val emailAddress: String,
+            override val loggedIn: Boolean,
+            val notifications: Int,
+            override val notificationsSnoozed: Boolean,
+            val displayName: String
+        ) : BaseUser()
     }
 
     /** Divider for Drawer Items */

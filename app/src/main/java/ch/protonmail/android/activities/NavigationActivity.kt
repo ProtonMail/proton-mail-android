@@ -20,22 +20,19 @@ package ch.protonmail.android.activities
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.dialogs.QuickSnoozeDialogFragment
-import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
 import ch.protonmail.android.activities.multiuser.ConnectAccountActivity
 import ch.protonmail.android.activities.multiuser.EXTRA_USERNAME
@@ -51,17 +48,17 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.jobs.FetchMessageCountsJob
 import ch.protonmail.android.mapper.LabelUiModelMapper
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.settings.pin.ValidatePinActivity
 import ch.protonmail.android.uiModel.DrawerItemUiModel
 import ch.protonmail.android.uiModel.DrawerItemUiModel.Primary
@@ -71,15 +68,20 @@ import ch.protonmail.android.uiModel.LabelUiModel
 import ch.protonmail.android.uiModel.setLabels
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
-import ch.protonmail.android.utils.extensions.getColorCompat
-import ch.protonmail.android.utils.extensions.ifNullElse
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.views.DrawerHeaderView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.drawer_header.*
-import java.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import me.proton.core.util.kotlin.unsupported
+import java.util.ArrayList
+import java.util.Calendar
 import javax.inject.Inject
+import ch.protonmail.android.domain.entity.user.User as NewUser
 
 // region constants
 const val EXTRA_FIRST_LOGIN = "EXTRA_FIRST_LOGIN"
@@ -93,14 +95,8 @@ const val REQUEST_CODE_SNOOZED_NOTIFICATIONS = 555
 // endregion
 
 /**
- * Created by dkadrikj on 19.7.15.
  * Base activity that offers methods for the navigation drawer. Extend from this if your activity
  * needs support for the navigation drawer.
- *
- *
- * Note: These methods were all in the [MailboxActivity] class, but since it was
- * approaching 1000 lines of code, I had to split it this way. [MailboxActivity] needs more
- * refactoring because it still has more than 700 lines of code.
  */
 
 abstract class NavigationActivity :
@@ -110,7 +106,7 @@ abstract class NavigationActivity :
 
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
-    private val drawerLayout: DrawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
+    private val drawerLayout: DrawerLayout by lazy { findViewById(R.id.drawer_layout) }
     private val navigationDrawerRecyclerView by lazy { findViewById<RecyclerView>(R.id.left_drawer_navigation) }
     private val navigationDrawerUsersRecyclerView by lazy { findViewById<RecyclerView>(R.id.left_drawer_users) }
     protected var overlayDialog: Dialog? = null
@@ -143,24 +139,16 @@ abstract class NavigationActivity :
 
     val lazyManager = resettableManager()
 
-    private val countersDatabase by resettableLazy(lazyManager) {
-        CountersDatabaseFactory.getInstance(applicationContext).getDatabase()
-    }
-
     val messagesDatabase by resettableLazy(lazyManager) {
         MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
     }
 
     @Inject
+    lateinit var accountManager: AccountManager
+    @Inject
     lateinit var databaseProvider: DatabaseProvider
 
-    private val navigationViewModel by resettableLazy(lazyManager) {
-        ViewModelProviders.of(this@NavigationActivity, navigationViewModelFactory).get(NavigationViewModel::class.java)
-    }
-
-    private val navigationViewModelFactory by resettableLazy(lazyManager) {
-        NavigationViewModel.Factory(databaseProvider)
-    }
+    private val navigationViewModel by viewModels<NavigationViewModel>()
 
     protected abstract val currentMailboxLocation: Constants.MessageLocationType
 
@@ -185,10 +173,10 @@ abstract class NavigationActivity :
                 onDrawerClose = {
 
                     // Static item clicked
-                    if (drawerItem is Primary.Static) selectItem(drawerItem.type)
+                    if (drawerItem is Primary.Static) onDrawerStaticItemSelected(drawerItem.type)
 
                     // Label clicked
-                    else if (drawerItem is Primary.Label) onNavLabelItemClicked(drawerItem.uiModel)
+                    else if (drawerItem is Primary.Label) onDrawerLabelSelected(drawerItem.uiModel)
                 }
                 drawerAdapter.setSelected(drawerItem)
                 drawerLayout.closeDrawer(GravityCompat.START)
@@ -197,14 +185,14 @@ abstract class NavigationActivity :
 
         accountsAdapter.onItemClick = { account ->
             if (account is DrawerUserModel.BaseUser) {
-                val currentActiveAccount = userManager.username
-                if (!AccountManager.getInstance(this).getLoggedInUsers().contains(account.name)) {
+                val currentUser = userManager.currentUserId
+                if (account.id !in accountManager.allLoggedInBlocking()) {
                     val intent = Intent(this, ConnectAccountActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     intent.putExtra(EXTRA_USERNAME, account.name)
                     ContextCompat.startActivity(this, AppUtil.decorInAppIntent(intent), null)
-                } else if (currentActiveAccount != account.name) {
-                    switchAccountProcedure(account.name)
+                } else if (currentUser != account.id) {
+                    switchAccountProcedure(account.id, account.name)
                 }
             }
         }
@@ -233,7 +221,7 @@ abstract class NavigationActivity :
 
     override fun onResume() {
         super.onResume()
-        ProtonMailApplication.getApplication().startJobManager()
+        app.startJobManager()
         mJobManager.addJobInBackground(FetchUpdatesJob())
         val alarmReceiver = AlarmReceiver()
         alarmReceiver.setAlarm(this)
@@ -248,16 +236,34 @@ abstract class NavigationActivity :
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ACCOUNT_MANAGER) {
             onLogout()
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_SNOOZED_NOTIFICATIONS) {
-            refreshDrawerHeader(userManager.user)
+            refreshDrawerHeader(checkNotNull(userManager.getCurrentUserBlocking()))
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
+    // TODO: what? find a proper name!
+    protected fun switchAccountProcedure(userId: Id, username: String) {
+        app.clearPaymentMethods()
+        lifecycleScope.launchWhenCreated {
+            userManager.switchTo(userId)
+            onSwitchedAccounts()
+            DialogUtils.showSignedInSnack(drawerLayout, String.format(getString(R.string.signed_in_with), username))
+        }
+    }
+
+    // TODO: what? find a proper name!
+    protected suspend fun switchAccountProcedure(userId: Id) {
+        switchAccountProcedure(userId, userManager.getUser(userId).name.s)
+    }
+
+    @Deprecated(
+        "Use with user id",
+        ReplaceWith("switchAccountProcedure(userId, accountName)"),
+        DeprecationLevel.ERROR
+    )
     protected fun switchAccountProcedure(accountName: String) {
-        userManager.switchToAccount(accountName)
-        onSwitchedAccounts()
-        DialogUtils.showSignedInSnack(drawerLayout, String.format(getString(R.string.signed_in_with), accountName))
+        unsupported
     }
 
     @JvmOverloads
@@ -282,13 +288,21 @@ abstract class NavigationActivity :
     protected fun setUpDrawer() {
         navigationViewModel.reloadDependencies()
         drawerToggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.open_drawer,
+            R.string.close_drawer
         )
-        drawerLayout.setStatusBarBackgroundColor(UiUtil.scaleColor(getColorCompat(R.color.dark_purple), 0.6f, true))
+        drawerLayout.setStatusBarBackgroundColor(
+            UiUtil.scaleColor(
+                getColor(R.color.dark_purple),
+                0.6f,
+                true
+            )
+        )
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
-
-        setUpInitialDrawerItems(mUserManager.user)
-
+        setUpInitialDrawerItems(checkNotNull(userManager.getCurrentOldUserBlocking()).isUsePin)
         refreshDrawer()
 
         // LayoutManager set from xml
@@ -312,22 +326,21 @@ abstract class NavigationActivity :
 
         navigationViewModel.labelsWithUnreadCounterLiveData().observe(this, CreateLabelsMenuObserver())
         navigationViewModel.locationsUnreadLiveData().observe(this, LocationsMenuObserver())
-        refreshDrawerHeader(mUserManager.user)
 
-        for (username in AccountManager.getInstance(this).getLoggedInUsers()) {
-            val tokenManager = mUserManager.getTokenManager(username)
-            if (tokenManager != null && !tokenManager.scope.toLowerCase().split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().contains(Constants.TOKEN_SCOPE_FULL)) {
-                val nextLoggedInAccount = userManager.nextLoggedInAccountOtherThanCurrent
-                mUserManager.logoutAccount(username)
-                nextLoggedInAccount?.let {
-                    Handler(Looper.getMainLooper()).postDelayed(
-                        {
-                            switchAccountProcedure(it)
-                        },
-                        100
-                    )
+        lifecycleScope.launchWhenCreated {
+            refreshDrawerHeader(checkNotNull(userManager.getCurrentUser()))
+            for (userId in accountManager.allLoggedIn()) {
+                val tokenManager = userManager.getTokenManager(userId)
+                val scopes = tokenManager.scope.toLowerCase().split(" ")
+                if (Constants.TOKEN_SCOPE_FULL !in scopes) {
+                    val nextLoggedIn = userManager.getNextLoggedInUser()
+                    userManager.logout(userId)
+                    nextLoggedIn?.let {
+                        delay(100)
+                        switchAccountProcedure(it)
+                    }
+                    onSwitchedAccounts()
                 }
-                onSwitchedAccounts()
             }
         }
 
@@ -338,108 +351,99 @@ abstract class NavigationActivity :
     protected fun setupAccountsList() {
         navigationViewModel.reloadDependencies()
         navigationViewModel.notificationsCounts()
-        navigationViewModel.notificationsCounterLiveData.observe(
-            this,
-            { map ->
-                val accountsManager = AccountManager.getInstance(this)
-                val currentPrimaryAccount = mUserManager.username
-                val accounts = accountsManager.getLoggedInUsers().sortedByDescending {
-                    it == currentPrimaryAccount
-                }.map {
-                    val userAddresses = userManager.getUser(it).addresses
-                    val primaryAddress = userAddresses.find { address ->
-                        address.type == Constants.ADDRESS_TYPE_PRIMARY
+        navigationViewModel.notificationsCounterLiveData.observe(this, { counters ->
+
+            val currentUser = userManager.currentUserId
+            lifecycleScope.launchWhenCreated {
+
+                val allUsers = accountManager.allLoggedIn().map { it to true } +
+                    accountManager.allLoggedOut().map { it to false }
+
+                val accounts = allUsers
+                    // Current user as first position, then logged in first
+                    .sortedByDescending { it.first == currentUser && it.second }
+                    .map { (id, loggedIn) ->
+                        val user = userManager.getUser(id)
+                        user.toDrawerUser(loggedIn, counters[id] ?: 0)
                     }
-                    val primaryAddressEmail = if (primaryAddress == null) {
-                        it
-                    } else {
-                        primaryAddress.email
-                    }
-                    val displayName = primaryAddress?.displayName ?: ""
-                    DrawerUserModel.BaseUser.DrawerUser(
-                        it,
-                        primaryAddressEmail,
-                        true,
-                        map[it] ?: 0,
-                        areNotificationSnoozed(it),
-                        if (displayName.isNotEmpty()) displayName else it
-                    )
-                } as MutableList<DrawerUserModel>
-                accounts.addAll(
-                    accountsManager.getSavedUsers().map {
-                        DrawerUserModel.BaseUser.DrawerUser(
-                            name = it,
-                            loggedIn = false,
-                            notifications = 0,
-                            notificationsSnoozed = false,
-                            displayName = it
-                        )
-                    } as MutableList<DrawerUserModel>
-                )
-                // todo fetch all user missing data (email, notifications etc)
-                accounts.add(DrawerUserModel.Footer)
-                accountsAdapter.items = accounts
+
+                accountsAdapter.items = accounts + DrawerUserModel.Footer
             }
+        })
+    }
+
+    private fun NewUser.toDrawerUser(loggedIn: Boolean, notificationsCount: Int): DrawerUserModel.BaseUser.DrawerUser {
+        val primaryAddress = addresses.primary
+        val username = name.s
+        val displayName = primaryAddress?.displayName?.s
+        return DrawerUserModel.BaseUser.DrawerUser(
+            id = id,
+            name = displayName ?: username,
+            emailAddress = primaryAddress?.email?.s ?: username,
+            loggedIn = loggedIn,
+            notifications = notificationsCount,
+            notificationsSnoozed = areNotificationSnoozed(id),
+            displayName = displayName ?: username
         )
     }
 
+    private fun areNotificationSnoozed(userId: Id): Boolean {
+        val userPreferences = SecureSharedPreferences.getPrefsForUser(this, userId)
+        with(SnoozeSettings.loadBlocking(userPreferences)) {
+            val shouldShowNotification = !shouldSuppressNotification(Calendar.getInstance())
+            val isQuickSnoozeEnabled = snoozeQuick
+            val isScheduledSnoozeEnabled = getScheduledSnooze(userPreferences)
+            return isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
+        }
+    }
+
+    @Deprecated("User with user Id", ReplaceWith("areNotificationSnoozed(userId)"), DeprecationLevel.ERROR)
     private fun areNotificationSnoozed(username: String): Boolean {
-        val rightNow = Calendar.getInstance()
-        val snoozeSettings = SnoozeSettings.load(username)
-        var areSnoozed = false
-        snoozeSettings.ifNullElse(
-            {},
-            {
-                val shouldShowNotification = !snoozeSettings.shouldSuppressNotification(rightNow)
-                val isQuickSnoozeEnabled = snoozeSettings.snoozeQuick
-                val isScheduledSnoozeEnabled = snoozeSettings.getScheduledSnooze(username)
-                areSnoozed = isQuickSnoozeEnabled || (isScheduledSnoozeEnabled && !shouldShowNotification)
-            }
+        unsupported
+    }
+
+    private fun setUpInitialDrawerItems(isPinEnabled: Boolean) {
+        val hasPin = isPinEnabled && userManager.getMailboxPin() != null
+
+        staticDrawerItems = listOfNotNull(
+            Primary.Static(Type.INBOX, R.string.inbox, R.drawable.inbox),
+            Primary.Static(Type.SENT, R.string.sent, R.drawable.sent),
+            Primary.Static(Type.DRAFTS, R.string.drafts, R.drawable.draft),
+            Primary.Static(Type.STARRED, R.string.starred, R.drawable.starred),
+            Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.archive),
+            Primary.Static(Type.SPAM, R.string.spam, R.drawable.spam),
+            Primary.Static(Type.TRASH, R.string.trash, R.drawable.trash),
+            Primary.Static(Type.ALLMAIL, R.string.all_mail, R.drawable.allmail),
+            DrawerItemUiModel.Divider,
+            Primary.Static(Type.CONTACTS, R.string.contacts, R.drawable.contact),
+            Primary.Static(Type.SETTINGS, R.string.settings, R.drawable.settings),
+            Primary.Static(Type.REPORT_BUGS, R.string.report_bugs, R.drawable.bug),
+            if (hasPin) Primary.Static(Type.LOCK, R.string.lock_the_app, R.drawable.notification_icon)
+            else null,
+            Primary.Static(Type.UPSELLING, R.string.upselling, R.drawable.cubes),
+            Primary.Static(Type.SIGNOUT, R.string.logout, R.drawable.signout)
         )
-        return areSnoozed
     }
 
-    private fun setUpInitialDrawerItems(user: User?) {
-        val hasPin = user != null &&
-            user.isUsePin &&
-            mUserManager.getMailboxPin() != null
+    protected fun refreshDrawerHeader(currentUser: NewUser) {
+        val addresses = currentUser.addresses
 
-        staticDrawerItems = mutableListOf<DrawerItemUiModel>().apply {
-            add(Primary.Static(Type.INBOX, R.string.inbox, R.drawable.inbox))
-            add(Primary.Static(Type.SENT, R.string.sent, R.drawable.sent))
-            add(Primary.Static(Type.DRAFTS, R.string.drafts, R.drawable.draft))
-            add(Primary.Static(Type.STARRED, R.string.starred, R.drawable.starred))
-            add(Primary.Static(Type.ARCHIVE, R.string.archive, R.drawable.archive))
-            add(Primary.Static(Type.SPAM, R.string.spam, R.drawable.spam))
-            add(Primary.Static(Type.TRASH, R.string.trash, R.drawable.trash))
-            add(Primary.Static(Type.ALLMAIL, R.string.all_mail, R.drawable.allmail))
-            add(DrawerItemUiModel.Divider)
-            add(Primary.Static(Type.CONTACTS, R.string.contacts, R.drawable.contact))
-            add(Primary.Static(Type.SETTINGS, R.string.settings, R.drawable.settings))
-            add(Primary.Static(Type.REPORT_BUGS, R.string.report_bugs, R.drawable.bug))
-            if (hasPin) {
-                add(Primary.Static(Type.LOCK, R.string.lock_the_app, R.drawable.notification_icon))
-            }
-            add(Primary.Static(Type.UPSELLING, R.string.upselling, R.drawable.cubes))
-            add(Primary.Static(Type.SIGNOUT, R.string.logout, R.drawable.signout))
-        }.toList()
-    }
+        if (addresses.hasAddresses) {
+            val address = checkNotNull(addresses.primary)
 
-    protected fun refreshDrawerHeader(user: User) {
-        val addresses = user.addresses
+            val isSnoozeOn = areNotificationSnoozed(currentUser.id)
+            val name = address.displayName?.s ?: address.email.s
 
-        if (addresses != null && addresses.size > 0) {
-            val address = addresses[0]
-
-            drawerHeader = DrawerItemUiModel.Header(
-                address.displayName,
-                address.email,
-                areNotificationSnoozed(mUserManager.username)
-            )
-            drawerHeaderView.setUser(address.displayName, address.email)
-            drawerHeaderView.refresh(areNotificationSnoozed(mUserManager.username))
+            drawerHeader = DrawerItemUiModel.Header(name, address.email.s, isSnoozeOn)
+            drawerHeaderView.setUser(name, address.email.s)
+            drawerHeaderView.refresh(isSnoozeOn)
             refreshDrawer()
         }
+    }
+
+    @Deprecated("User with NewUser", ReplaceWith("refreshDrawerHeader(currentUser)"), DeprecationLevel.ERROR)
+    protected fun refreshDrawerHeader(user: User) {
+        unsupported
     }
 
     /** Creates a properly formatted List for the Drawer and deliver to the Adapter  */
@@ -460,73 +464,98 @@ abstract class NavigationActivity :
     }
 
     override fun onQuickSnoozeSet(enabled: Boolean) {
-        drawerHeader = drawerHeader?.copy(snoozeEnabled = enabled)
-        refreshDrawer()
-        refreshDrawerHeader(mUserManager.user)
-        setupAccountsList()
+        lifecycleScope.launchWhenCreated {
+            drawerHeader = drawerHeader?.copy(snoozeEnabled = enabled)
+            refreshDrawer()
+            refreshDrawerHeader(checkNotNull(userManager.getCurrentUser()))
+            setupAccountsList()
+        }
     }
 
     protected fun reloadMessageCounts() {
         mJobManager.addJobInBackground(FetchMessageCountsJob(null))
     }
 
-    private fun selectItem(type: Type) {
-        when (type) {
-            Type.SIGNOUT -> {
-                val clickListener = { dialog: DialogInterface, which: Int ->
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                        val bar = findViewById<View>(R.id.spinner_layout)
-                        if (bar != null) {
-                            bar.visibility = View.VISIBLE
+    private fun onDrawerStaticItemSelected(type: Type) {
+
+        fun onSignOutSelected() {
+
+            fun onLogoutConfirmed(currentUserId: Id, hasNextLoggedInUser: Boolean) {
+                findViewById<View>(R.id.spinner_layout)?.visibility = View.VISIBLE
+
+                if (hasNextLoggedInUser) {
+                    overlayDialog =
+                        Dialog(this@NavigationActivity, android.R.style.Theme_Panel).also {
+                            it.setCancelable(false)
+                            it.show()
                         }
-                        val nextLoggedInAccount = userManager.nextLoggedInAccountOtherThanCurrent
-                        if (nextLoggedInAccount == null) {
-                            overlayDialog = Dialog(this@NavigationActivity, android.R.style.Theme_Panel)
-                            overlayDialog!!.setCancelable(false)
-                            overlayDialog!!.show()
-                            mUserManager.logoutLastActiveAccount()
-                            onLogout()
-                        } else {
-                            mUserManager.logoutAccount(userManager.username)
-                            onSwitchedAccounts()
-                        }
+                    userManager.logoutLastActiveAccount()
+                    onLogout()
+                } else {
+                    userManager.logoutBlocking(currentUserId)
+                    onSwitchedAccounts()
+                }
+
+            }
+
+            lifecycleScope.launch {
+                val nextLoggedInUserId = userManager.getNextLoggedInUser()
+
+                val (title, message) = if (nextLoggedInUserId != null) {
+                    val next = userManager.getUser(nextLoggedInUserId)
+                    getString(R.string.logout) to getString(R.string.logout_question_next_account, next.name.s)
+                } else {
+                    val current = checkNotNull(userManager.getCurrentUser())
+                    getString(R.string.log_out, current.name.s) to getString(R.string.logout_question)
+                }
+
+                AlertDialog.Builder(this@NavigationActivity)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setNegativeButton(R.string.no) { dialog, _ ->
+                        dialog.dismiss()
                     }
-
-                    dialog.dismiss()
-
-                }
-                if (!isFinishing) {
-                    val nextLoggedInAccount = userManager.nextLoggedInAccountOtherThanCurrent
-                    val builder = AlertDialog.Builder(this)
-                    builder.setTitle(if (nextLoggedInAccount != null) getString(R.string.logout) else String.format(getString(R.string.log_out), mUserManager.username))
-                        .setMessage(if (nextLoggedInAccount != null) String.format(getString(R.string.logout_question_next_account), nextLoggedInAccount) else getString(R.string.logout_question))
-                        .setNegativeButton(R.string.no, clickListener)
-                        .setPositiveButton(R.string.yes, clickListener)
-                        .create()
-                        .show()
-                }
-
+                    .setPositiveButton(R.string.yes) { dialog, _ ->
+                        onLogoutConfirmed(
+                            currentUserId = checkNotNull(userManager.currentUserId),
+                            hasNextLoggedInUser = nextLoggedInUserId != null
+                        )
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
             }
-            Type.CONTACTS -> startActivity(AppUtil.decorInAppIntent(Intent(this, ContactsActivity::class.java)))
-            Type.REPORT_BUGS -> startActivity(AppUtil.decorInAppIntent(Intent(this, ReportBugsActivity::class.java)))
-            Type.SETTINGS -> {
-                val settingsIntent = AppUtil.decorInAppIntent(Intent(this@NavigationActivity, SettingsActivity::class.java))
-                settingsIntent.putExtra(EXTRA_CURRENT_MAILBOX_LOCATION, currentMailboxLocation.messageLocationTypeValue)
-                settingsIntent.putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, currentLabelId)
-                startActivity(settingsIntent)
+        }
+
+        when (type) {
+            Type.SIGNOUT -> onSignOutSelected()
+            Type.CONTACTS -> startActivity(
+                AppUtil.decorInAppIntent(Intent(this, ContactsActivity::class.java))
+            )
+            Type.REPORT_BUGS -> startActivity(
+                AppUtil.decorInAppIntent(Intent(this, ReportBugsActivity::class.java))
+            )
+            Type.SETTINGS -> with(AppUtil.decorInAppIntent(Intent(this, SettingsActivity::class.java))) {
+                putExtra(EXTRA_CURRENT_MAILBOX_LOCATION, currentMailboxLocation.messageLocationTypeValue)
+                putExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID, currentLabelId)
+                startActivity(this)
             }
-            Type.ACCOUNT_MANAGER -> {
-                startActivityForResult(AppUtil.decorInAppIntent(Intent(this@NavigationActivity, AccountManagerActivity::class.java)), REQUEST_CODE_ACCOUNT_MANAGER)
-            }
+            Type.ACCOUNT_MANAGER -> startActivityForResult(
+                AppUtil.decorInAppIntent(Intent(this, AccountManagerActivity::class.java)),
+                REQUEST_CODE_ACCOUNT_MANAGER
+            )
             Type.INBOX -> onInbox(type.drawerOptionType)
-            Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL -> onOtherMailBox(type.drawerOptionType)
-            Type.UPSELLING -> startActivity(AppUtil.decorInAppIntent(Intent(this, UpsellingActivity::class.java)))
+            Type.ARCHIVE, Type.STARRED, Type.DRAFTS, Type.SENT, Type.TRASH, Type.SPAM, Type.ALLMAIL ->
+                onOtherMailBox(type.drawerOptionType)
+            Type.UPSELLING -> startActivity(
+                AppUtil.decorInAppIntent(Intent(this, UpsellingActivity::class.java))
+            )
             Type.LOCK -> {
-                val user = mUserManager.user
-                if (user.isUsePin && ProtonMailApplication.getApplication().userManager.getMailboxPin() != null) {
+                val user = userManager.user
+                if (user.isUsePin && userManager.getMailboxPin() != null) {
                     user.setManuallyLocked(true)
                     user.save()
-                    val pinIntent = AppUtil.decorInAppIntent(Intent(this@NavigationActivity, ValidatePinActivity::class.java))
+                    val pinIntent = AppUtil.decorInAppIntent(Intent(this, ValidatePinActivity::class.java))
                     startActivityForResult(pinIntent, REQUEST_CODE_VALIDATE_PIN)
                 }
             }
@@ -535,13 +564,13 @@ abstract class NavigationActivity :
         }
     }
 
-    private fun onNavLabelItemClicked(label: LabelUiModel) {
+    private fun onDrawerLabelSelected(label: LabelUiModel) {
         val exclusive = label.type == LabelUiModel.Type.FOLDERS
         onLabelMailBox(Constants.DrawerOptionType.LABEL, label.labelId, label.name, exclusive)
     }
 
     override fun getUserManager(): UserManager {
-        return mUserManager
+        return userManager
     }
 
     private inner class CreateLabelsMenuObserver : Observer<List<LabelWithUnreadCounter>> {
