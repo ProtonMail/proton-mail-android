@@ -22,19 +22,32 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.core.content.edit
+import ch.protonmail.android.di.DefaultSharedPreferences
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.getStringList
 import ch.protonmail.android.utils.putStringList
-import me.proton.core.util.android.sharedpreferences.minusAssign
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.takeIfNotEmpty
+import javax.inject.Inject
 
 // region constants
-private const val PREF_USERNAMES_LOGGED_IN = "PREF_USERNAMES_LOGGED_IN"
-private const val PREF_USERNAMES_LOGGED_OUT = "PREF_USERNAMES_LOGGED_OUT" // logged out but saved
+// TODO make private after the migration to use Ids instead of usernames, so tests can rely of AccountManager
+//  implementation directly
+const val PREF_ALL_SAVED = "Pref.saved.ids"
+const val PREF_ALL_LOGGED_IN = "Pref.loggedIn.ids"
+const val PREF_USERNAMES_LOGGED_IN = "PREF_USERNAMES_LOGGED_IN"
+const val PREF_USERNAMES_LOGGED_OUT = "PREF_USERNAMES_LOGGED_OUT" // logged out but saved
 // endregion
 
 /**
  * AccountManager stores information about all local users currently logged in or logged out, but saved.
  */
-class AccountManager private constructor(private val sharedPreferences: SharedPreferences) {
+class AccountManager private constructor(
+    @DefaultSharedPreferences
+    private val sharedPreferences: SharedPreferences
+) {
 
     fun onSuccessfulLogin(username: String) {
         if (username.isBlank()) return
@@ -97,14 +110,65 @@ class AccountManager private constructor(private val sharedPreferences: SharedPr
      * Removes all known lists of usernames.
      */
     fun clear() {
-        sharedPreferences.apply {
-            this -= PREF_USERNAMES_LOGGED_IN
-            this -= PREF_USERNAMES_LOGGED_OUT
+        sharedPreferences.edit {
+            // New
+            remove(PREF_ALL_LOGGED_IN)
+            remove(PREF_ALL_SAVED)
         }
+    }
+
+    /**
+     * Migrate [AccountManager] to use Users' [Id] instead of username
+     */
+    class UsernameToIdMigration @Inject constructor(
+        private val dispatchers: DispatcherProvider,
+        private val accountManager: AccountManager,
+        private val secureSharedPreferencesMigration: SecureSharedPreferences.UsernameToIdMigration,
+        @DefaultSharedPreferences
+        private val defaultSharedPreferences: SharedPreferences
+    ) {
+
+        suspend operator fun invoke() = withContext(dispatchers.Io) {
+            // Read directly from SharedPreferences as no function for get usernames will be available from
+            //  AccountManager after the migration
+            val allSavedUsernames = defaultSharedPreferences
+                .getStringList(PREF_USERNAMES_LOGGED_OUT, null)
+                ?.takeIfNotEmpty() ?: return@withContext
+            val allLoggedUsernames = defaultSharedPreferences
+                .getStringList(PREF_USERNAMES_LOGGED_IN, emptyList())!!
+
+            val allUsernamesToIds = secureSharedPreferencesMigration(allSavedUsernames + allLoggedUsernames)
+
+            // TODO: use AccountManager.set after the migration to use Ids instead of usernames
+            defaultSharedPreferences.edit {
+
+                putStringSet(
+                    PREF_ALL_SAVED,
+                    allSavedUsernames
+                        // SecureSharedPreferences.UsernameToIdMigration has already printed to log if some id is not
+                        //   found, so we just ignore it here
+                        .mapNotNull { allUsernamesToIds[it]?.s }
+                        .toMutableSet()
+                )
+                remove(PREF_USERNAMES_LOGGED_OUT)
+
+                putStringSet(
+                    PREF_ALL_LOGGED_IN,
+                    allLoggedUsernames
+                        // SecureSharedPreferences.UsernameToIdMigration has already printed to log if some id is not
+                        //   found, so we just ignore it here
+                        .mapNotNull { allUsernamesToIds[it]?.s }
+                        .toMutableSet()
+                )
+                remove(PREF_USERNAMES_LOGGED_IN)
+            }
+        }
+
     }
 
     companion object {
 
+        @Deprecated("Inject the constructor directly")
         fun getInstance(context: Context): AccountManager =
             AccountManager(PreferenceManager.getDefaultSharedPreferences(context))
     }
