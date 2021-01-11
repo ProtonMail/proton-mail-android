@@ -29,24 +29,24 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.mapper.bridge.AddressKeyBridgeMapper
 import ch.protonmail.android.mapper.bridge.AddressKeysBridgeMapper
 import ch.protonmail.android.mapper.bridge.UserKeyBridgeMapper
+import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.armor.Armor
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
-import javax.mail.internet.InternetHeaders
-import ch.protonmail.android.usecase.crypto.GenerateTokenAndSignature
 import com.proton.gopenpgp.crypto.Crypto.newKeyFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newKeyRing
 import com.proton.gopenpgp.crypto.Crypto.newPGPMessageFromArmored
 import com.proton.gopenpgp.crypto.Crypto.newPGPSignatureFromArmored
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import me.proton.core.domain.arch.map
 import me.proton.core.util.kotlin.invoke
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Ignore
+import org.junit.Test
+import javax.mail.internet.InternetHeaders
 
 @LargeTest
 internal class CryptoTest {
@@ -694,27 +694,32 @@ internal class CryptoTest {
         every { toNewUser() } returns mockk {
             every { addresses } returns mockk {
                 every { findBy(Id(oneAddressKeyAddressId)) } answers { addresses[1] }
-                every { addresses } returns mapOf(1 to mockk {
-                    every { keys } returns mockk {
-                        every { keys } returns oneAddressKeyAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                every { addresses } returns mapOf(
+                    1 to mockk {
+                        every { keys } returns mockk {
+                            every { keys } returns oneAddressKeyAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                        }
                     }
-                })
+                )
             }
             every { keys } returns mockk {
                 every { keys } returns oneAddressKeyUserKeys.map(userKeyMapper) { it.toNewModel() }
             }
         }
     }
+
     private val manyAddressKeysUserMock: User = mockk {
         every { toNewUser() } returns mockk {
             every { addresses } returns mockk {
                 every { findBy(Id(manyAddressKeysAddressId)) } answers { addresses[1] }
-                every { addresses } returns mapOf(1 to mockk {
-                    every { keys } returns mockk {
-                        every { primaryKey } returns addressKeysMapper { manyAddressKeysAddressKeys.toNewModel() }.primaryKey
-                        every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                every { addresses } returns mapOf(
+                    1 to mockk {
+                        every { keys } returns mockk {
+                            every { primaryKey } returns addressKeysMapper { manyAddressKeysAddressKeys.toNewModel() }.primaryKey
+                            every { keys } returns manyAddressKeysAddressKeys.map(addressKeyMapper) { it.toNewModel() }
+                        }
                     }
-                })
+                )
             }
             every { keys } returns mockk {
                 every { keys } returns manyAddressKeysUserKeys.map(userKeyMapper) { it.toNewModel() }
@@ -1707,13 +1712,12 @@ internal class CryptoTest {
         val decryptedTokenString = decryptedTokenPlainMessage.string
         assertEquals(randomTokenString, decryptedTokenString)
         val armoredSignature = newPGPSignatureFromArmored(signature)
-        assertDoesNotThrow {
-            verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
-        }
+
+        verificationKeyRing.verifyDetached(decryptedTokenPlainMessage, armoredSignature, com.proton.gopenpgp.crypto.Crypto.getUnixTime())
     }
 
     @Test
+    @Ignore("Pending implementation")
     fun generate_token_and_signature_org() {
-        // TODO:
     }
 }

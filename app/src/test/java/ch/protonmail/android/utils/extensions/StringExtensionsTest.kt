@@ -18,49 +18,45 @@
  */
 package ch.protonmail.android.utils.extensions
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-/**
- * Test suite for String extensions
- * @author Davide Farella
- */
-internal class StringExtensionsTest {
+class StringExtensionsTest {
 
     @Test
     fun substring() {
         val input = "Hello World what a beautiful day"
 
         val r1 = input.substring(
-                "world",
-                "beautiful",
-                startInclusive = true,
-                endInclusive = true,
-                ignoreCase = true
+            "world",
+            "beautiful",
+            startInclusive = true,
+            endInclusive = true,
+            ignoreCase = true
         )
         assertEquals("World what a beautiful", r1)
 
         val r2 = input.substring(
-                "world",
-                "beautiful",
-                startInclusive = false,
-                endInclusive = false,
-                ignoreCase = true
+            "world",
+            "beautiful",
+            startInclusive = false,
+            endInclusive = false,
+            ignoreCase = true
         )
         assertEquals(" what a ", r2)
 
         val r3 = input.substring(
-                "world",
-                "beautiful",
-                startInclusive = true,
-                endInclusive = true,
-                ignoreCase = false
+            "world",
+            "beautiful",
+            startInclusive = true,
+            endInclusive = true,
+            ignoreCase = false
         )
         assertEquals("Hello World what a beautiful", r3)
 
         val r4 = input.substring(
-                "beautiful",
-                startInclusive = true
+            "beautiful",
+            startInclusive = true
         )
         assertEquals("beautiful day", r4)
     }

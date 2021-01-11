@@ -20,31 +20,37 @@ package ch.protonmail.android.api.local
 
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
-import org.junit.jupiter.api.Test
-import java.util.*
+import org.junit.Test
+import java.util.Calendar
 
-internal class SnoozeSettingsTest {
+class SnoozeSettingsTest {
 
-    private val snoozeSettingsDuringDay = SnoozeSettings(snoozeScheduled = true,
-            snoozeScheduledStartTimeHour = 14,
-            snoozeScheduledStartTimeMinute = 15,
-            snoozeScheduledEndTimeHour = 20,
-            snoozeScheduledEndTimeMinute = 30,
-            snoozeScheduledRepeatingDays = "mo")
+    private val snoozeSettingsDuringDay = SnoozeSettings(
+        snoozeScheduled = true,
+        snoozeScheduledStartTimeHour = 14,
+        snoozeScheduledStartTimeMinute = 15,
+        snoozeScheduledEndTimeHour = 20,
+        snoozeScheduledEndTimeMinute = 30,
+        snoozeScheduledRepeatingDays = "mo"
+    )
 
-    private val snoozeSettingsOverMidnight = SnoozeSettings(snoozeScheduled = true,
-            snoozeScheduledStartTimeHour = 23,
-            snoozeScheduledStartTimeMinute = 0,
-            snoozeScheduledEndTimeHour = 1,
-            snoozeScheduledEndTimeMinute = 20,
-            snoozeScheduledRepeatingDays = "sa")
+    private val snoozeSettingsOverMidnight = SnoozeSettings(
+        snoozeScheduled = true,
+        snoozeScheduledStartTimeHour = 23,
+        snoozeScheduledStartTimeMinute = 0,
+        snoozeScheduledEndTimeHour = 1,
+        snoozeScheduledEndTimeMinute = 20,
+        snoozeScheduledRepeatingDays = "sa"
+    )
 
-    private val snoozeSettingsEveryDay = SnoozeSettings(snoozeScheduled = true,
-            snoozeScheduledStartTimeHour = 14,
-            snoozeScheduledStartTimeMinute = 15,
-            snoozeScheduledEndTimeHour = 20,
-            snoozeScheduledEndTimeMinute = 30,
-            snoozeScheduledRepeatingDays = "mo:tu:we:th:fr:sa:su")
+    private val snoozeSettingsEveryDay = SnoozeSettings(
+        snoozeScheduled = true,
+        snoozeScheduledStartTimeHour = 14,
+        snoozeScheduledStartTimeMinute = 15,
+        snoozeScheduledEndTimeHour = 20,
+        snoozeScheduledEndTimeMinute = 30,
+        snoozeScheduledRepeatingDays = "mo:tu:we:th:fr:sa:su"
+    )
 
     @Test
     fun `show notification before snooze window, during the day`() {

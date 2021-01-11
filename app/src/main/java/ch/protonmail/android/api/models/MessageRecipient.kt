@@ -81,6 +81,11 @@ class MessageRecipient : Serializable, Comparable<MessageRecipient> {
 
     override fun compareTo(other: MessageRecipient) = name.compareTo(other.name)
 
+    override fun equals(other: Any?) = other is MessageRecipient && name == other.name
+
+    override fun hashCode() = name.hashCode()
+
+
     // the code below is Android 6 bug fix
     class MessageRecipientSerializer : JsonSerializer<MessageRecipient> {
         override fun serialize(src: MessageRecipient, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {

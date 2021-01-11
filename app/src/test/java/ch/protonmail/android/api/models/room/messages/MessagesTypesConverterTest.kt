@@ -19,80 +19,76 @@
 package ch.protonmail.android.api.models.room.messages
 
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
-import ch.protonmail.android.api.models.messages.ParsedHeaders
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.EnumSource
+import junit.framework.Assert.assertEquals
+import org.junit.Test
 
-/**
- * Created by Kamil Rajtar on 18.07.18.  */
-internal class MessagesTypesConverterTest {
-	private val messagesTypesConverter = MessagesTypesConverter()
+class MessagesTypesConverterTest {
 
-	@ParameterizedTest
-	@EnumSource(MessageEncryption::class)
-	fun messageEncryptionAll(messageEncryption:MessageEncryption) {
-		val messageEncryptionInt = messagesTypesConverter.messageEncryptionToInt(messageEncryption)
-		val actual = messagesTypesConverter.intToMessageEncryption(messageEncryptionInt)
-		Assertions.assertEquals(messageEncryption, actual)
-	}
+    private val messagesTypesConverter = MessagesTypesConverter()
 
-	@Test
-	fun parsedHeadersNullIn() {
-		val expected = null
-		val actual = messagesTypesConverter.parsedHeadersToString(null)
-		Assertions.assertEquals(expected, actual)
-	}
+    @Test
+    fun messageEncryptionMapsBetweenEnumValueAndOrdinal() {
+        val messageEncryption = MessageEncryption.EXTERNAL_PGP
+        val messageEncryptionInt = messagesTypesConverter.messageEncryptionToInt(messageEncryption)
 
-	@Test
-	fun parsedHeadersNullOut() {
-		val expected = null
-		val actual = messagesTypesConverter.stringToParsedHeaders(null)
-		Assertions.assertEquals(expected, actual)
-	}
+        val actual = messagesTypesConverter.intToMessageEncryption(messageEncryptionInt)
 
-	@Disabled(value="Serialisation uses Base64 - not mocked")
-	@Test
-	fun parsedHeadersSimple() {
-		val encryptionString = "Encryption"
-		val authenticationString = "Authentication"
-		val parsedHeaders = ParsedHeaders(encryptionString, authenticationString)
-		val parsedHeadersString = messagesTypesConverter.parsedHeadersToString(parsedHeaders)
-		val actual = messagesTypesConverter.stringToParsedHeaders(parsedHeadersString)
-				?: throw  RuntimeException("Actual should not be null")
-		Assertions.assertEquals(encryptionString, actual.recipientEncryption)
-		Assertions.assertEquals(authenticationString, actual.recipientAuthentication)
-	}
+        assertEquals(messageEncryption, actual)
+    }
 
-	@Test
-	fun messagesRecipientsArrayNullIn() {
-		val expected = null
-		val actual = messagesTypesConverter.messageRecipientsListToString(null)
-		Assertions.assertEquals(expected, actual)
-	}
+    @Test
+    fun parsedHeadersNullIn() {
+        val expected = null
 
-	@Test
-	fun messagesRecipientsArrayNullOut() {
-		val expected = null
-		val actual = messagesTypesConverter.stringToMessageRecipientsList(null)
-		Assertions.assertEquals(expected, actual)
-	}
+        val actual = messagesTypesConverter.parsedHeadersToString(null)
 
-	@ParameterizedTest
-	@EnumSource(Message.MessageType::class)
-	fun messageType(messageType:Message.MessageType) {
-		val messageTypeInt = messagesTypesConverter.messageTypeToInt(messageType)
-		val actual = messagesTypesConverter.intToMessageType(messageTypeInt)
-		Assertions.assertEquals(messageType, actual)
-	}
+        assertEquals(expected, actual)
+    }
 
-	@Test
-	fun labelIds() {
-		val expected = listOf("Label 1", "Super label", "AA", "Label HMM")
-		val serialised = messagesTypesConverter.labelIdsToString(expected)
-		val actual = messagesTypesConverter.stringToLabelIds(serialised)
-		Assertions.assertEquals(expected, actual)
-	}
+    @Test
+    fun parsedHeadersNullOut() {
+        val expected = null
+
+        val actual = messagesTypesConverter.stringToParsedHeaders(null)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun messagesRecipientsArrayNullIn() {
+        val expected = null
+
+        val actual = messagesTypesConverter.messageRecipientsListToString(null)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun messagesRecipientsArrayNullOut() {
+        val expected = null
+
+        val actual = messagesTypesConverter.stringToMessageRecipientsList(null)
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun messageTypeMapsCorrectlyBetweenEnumAndOrdinal() {
+        val messageType = Message.MessageType.INBOX_AND_SENT
+        val messageTypeInt = messagesTypesConverter.messageTypeToInt(messageType)
+
+        val actual = messagesTypesConverter.intToMessageType(messageTypeInt)
+
+        assertEquals(messageType, actual)
+    }
+
+    @Test
+    fun labelIds() {
+        val expected = listOf("Label 1", "Super label", "AA", "Label HMM")
+        val serialised = messagesTypesConverter.labelIdsToString(expected)
+
+        val actual = messagesTypesConverter.stringToLabelIds(serialised)
+
+        assertEquals(expected, actual)
+    }
 }

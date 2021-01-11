@@ -25,18 +25,17 @@ import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import com.birbit.android.jobqueue.JobManager
+import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.Before
+import org.junit.Test
 
-@ExtendWith(MockKExtension::class)
 class ContactDetailsRepositoryTest {
 
     @RelaxedMockK
@@ -53,8 +52,13 @@ class ContactDetailsRepositoryTest {
 
     @InjectMockKs
     private lateinit var repository: ContactDetailsRepository
-   
+
     private val dispatcherProvider = TestDispatcherProvider
+
+    @Before
+    fun setUp() {
+        MockKAnnotations.init(this)
+    }
 
     @Test
     fun saveContactEmailsSavesAllTheContactEmailsToContactsDb() {

@@ -25,6 +25,7 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
@@ -32,18 +33,15 @@ import io.mockk.coVerifySequence
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import org.junit.Before
 import org.junit.Rule
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.Test
 
-@ExtendWith(MockKExtension::class)
 class UploadAttachmentsTest : CoroutinesTest {
 
     @get:Rule
@@ -64,8 +62,9 @@ class UploadAttachmentsTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var uploadAttachments: UploadAttachments
 
-    @BeforeEach
+    @Before
     fun setUp() {
+        MockKAnnotations.init(this)
         coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success
     }
 

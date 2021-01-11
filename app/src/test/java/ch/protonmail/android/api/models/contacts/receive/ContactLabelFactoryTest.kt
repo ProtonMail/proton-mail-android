@@ -22,15 +22,15 @@ package ch.protonmail.android.api.models.contacts.receive
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import org.junit.Assert.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.Before
+import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 
 class ContactLabelFactoryTest {
 
     private lateinit var contactLabelFactory: ContactLabelFactory
 
-    @BeforeEach
+    @Before
     fun setUp() {
         contactLabelFactory = ContactLabelFactory()
     }

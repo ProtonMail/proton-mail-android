@@ -23,13 +23,13 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.BigContentHolder
-import org.junit.jupiter.api.Test
+import org.junit.Ignore
+import org.junit.Test
 
-internal class IntentExtrasDataTest {
+class IntentExtrasDataTest {
 
-    // FIXME: these tests are not written properly, and not mocked properly, should be fixed.
-    //  disabled temporary.
-//    @Test
+    @Test
+    @Ignore("Ignoring as proper mocking needs to be put in place")
     fun `detect user's email alias when sent to alias`() {
 
         val user = User().apply {
@@ -41,23 +41,24 @@ internal class IntentExtrasDataTest {
         }
 
         val extras = IntentExtrasData.Builder()
-                .user(user)
-                .message(message)
-                .userAddresses()
-                .toRecipientListString(message.toListString)
-                .messageCcList()
-                .senderEmailAddress()
-                .addressEmailAlias()
-                .messageSenderName()
-                .content("")
-                .mBigContentHolder(BigContentHolder())
-                .attachments(arrayListOf(), mutableListOf())
-                .build()
+            .user(user)
+            .message(message)
+            .userAddresses()
+            .toRecipientListString(message.toListString)
+            .messageCcList()
+            .senderEmailAddress()
+            .addressEmailAlias()
+            .messageSenderName()
+            .content("")
+            .mBigContentHolder(BigContentHolder())
+            .attachments(arrayListOf(), mutableListOf())
+            .build()
 
         assert(extras.addressEmailAlias == "user1+alias@protonmail.com")
     }
 
-//    @Test
+    @Test
+    @Ignore("Ignoring as proper mocking needs to be put in place")
     fun `detect user's email alias when sent to alias, preserve case`() {
 
         val user = User().apply {
@@ -69,23 +70,24 @@ internal class IntentExtrasDataTest {
         }
 
         val extras = IntentExtrasData.Builder()
-                .user(user)
-                .message(message)
-                .userAddresses()
-                .toRecipientListString(message.toListString)
-                .messageCcList()
-                .senderEmailAddress()
-                .addressEmailAlias()
-                .messageSenderName()
-                .content("")
-                .mBigContentHolder(BigContentHolder())
-                .attachments(arrayListOf(), mutableListOf())
-                .build()
+            .user(user)
+            .message(message)
+            .userAddresses()
+            .toRecipientListString(message.toListString)
+            .messageCcList()
+            .senderEmailAddress()
+            .addressEmailAlias()
+            .messageSenderName()
+            .content("")
+            .mBigContentHolder(BigContentHolder())
+            .attachments(arrayListOf(), mutableListOf())
+            .build()
 
         assert(extras.addressEmailAlias == "USER1+alias@protonmail.com")
     }
 
-//    @Test
+    @Test
+    @Ignore("Ignoring as proper mocking needs to be put in place")
     fun `don't detect user's email alias when sent to alias of other user`() {
 
         val user = User().apply {
@@ -97,18 +99,18 @@ internal class IntentExtrasDataTest {
         }
 
         val extras = IntentExtrasData.Builder()
-                .user(user)
-                .message(message)
-                .userAddresses()
-                .toRecipientListString(message.toListString)
-                .messageCcList()
-                .senderEmailAddress()
-                .addressEmailAlias()
-                .messageSenderName()
-                .content("")
-                .mBigContentHolder(BigContentHolder())
-                .attachments(arrayListOf(), mutableListOf())
-                .build()
+            .user(user)
+            .message(message)
+            .userAddresses()
+            .toRecipientListString(message.toListString)
+            .messageCcList()
+            .senderEmailAddress()
+            .addressEmailAlias()
+            .messageSenderName()
+            .content("")
+            .mBigContentHolder(BigContentHolder())
+            .attachments(arrayListOf(), mutableListOf())
+            .build()
 
         assert(extras.addressEmailAlias == null)
     }

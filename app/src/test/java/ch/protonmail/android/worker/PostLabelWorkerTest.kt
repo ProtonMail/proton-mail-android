@@ -37,8 +37,8 @@ import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.Before
+import org.junit.Test
 
 class PostLabelWorkerTest {
 
@@ -59,7 +59,7 @@ class PostLabelWorkerTest {
 
     private lateinit var worker: PostLabelWorker
 
-    @BeforeEach
+    @Before
     fun setUp() {
         MockKAnnotations.init(this)
         every { apiManager.createLabel(any()) } returns labelApiResponse
