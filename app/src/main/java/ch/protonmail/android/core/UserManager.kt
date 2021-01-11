@@ -20,6 +20,7 @@ package ch.protonmail.android.core
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.text.TextUtils
 import androidx.annotation.IntDef
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
