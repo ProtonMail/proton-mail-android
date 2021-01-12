@@ -642,7 +642,7 @@ public class LoginService extends ProtonJobIntentService {
                 if (!checkPassphrase) {
                     AppUtil.postEventOnUi(new ConnectAccountMailboxLoginEvent(AuthStatus.INVALID_CREDENTIAL));
                 } else {
-                    userManager.setUsernameAndReload(username);
+                    userManager.setCurrentUserBlocking(userId);
                     UserInfo userInfo = api.fetchUserInfoBlocking();
                     if (!userManager.canConnectAccount() && !userInfo.getUser().isPaidUser()) {
                         userManager.logoutBlocking(userId);
