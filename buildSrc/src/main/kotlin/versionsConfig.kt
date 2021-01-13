@@ -82,7 +82,6 @@ const val `aerogear version` =                  "1.0.0"         // Released: Mar
 const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
-const val `jUnit5 version` =                    "5.5.0"         // Released:
 const val `json-simple version` =               "1.1.1"         // Released: Mar 21, 2012
 const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun 10, 2020
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018

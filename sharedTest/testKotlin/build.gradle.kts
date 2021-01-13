@@ -46,20 +46,9 @@ dependencies {
         `kotlin-test-junit`,
         `coroutines-test`,
 
-        // jUnit 5
-        // (Required) Writing and executing Unit Tests on the JUnit Platform
-        `jUnit5-jupiter-api`,
-        // (Optional) If you need "Parameterized Tests"
-        `jUnit5-jupiter-params`,
-
         // Other
         `assertJ`,
         `mockk`,
         `assert4k`
     )
-
-    // (Required) Writing and executing Unit Tests on the JUnit Platform
-    testRuntimeOnly(`jUnit5-jupiter-engine`)
-    // (Optional) If you also have JUnit 4-based tests
-    testRuntimeOnly(`jUnit5-vintage-engine`)
 }
