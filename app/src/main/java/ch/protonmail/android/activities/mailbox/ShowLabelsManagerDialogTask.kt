@@ -28,29 +28,31 @@ import java.util.HashMap
 import java.util.HashSet
 
 internal class ShowLabelsManagerDialogTask(
-	private val fragmentManager: FragmentManager,
-	private val messageDetailsRepository: MessageDetailsRepository,
-	private val messageIds: List<String>
+    private val fragmentManager: FragmentManager,
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val messageIds: List<String>
 ) : AsyncTask<Void, Void, List<Message>>() {
 
-	override fun doInBackground(vararg voids: Void): List<Message> {
-		return messageIds.filter { it.isNotEmpty() }.mapNotNull(messageDetailsRepository::findMessageByIdBlocking)
-	}
+    override fun doInBackground(vararg voids: Void): List<Message> =
+        messageIds.filter { it.isNotEmpty() }.mapNotNull(messageDetailsRepository::findMessageByIdBlocking)
 
-	override fun onPostExecute(messages: List<Message>) {
-		val attachedLabels = HashSet<String>()
-		val numberOfSelectedMessages = HashMap<String, Int>()
-		messages.forEach { message ->
-			val messageLabelIds = message.labelIDsNotIncludingLocations
-			messageLabelIds.forEach { labelId ->
-				numberOfSelectedMessages[labelId] = numberOfSelectedMessages[labelId]?.let { it + 1 } ?: 1
-			}
-			attachedLabels.addAll(messageLabelIds)
-		}
-		val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(
-			attachedLabels, numberOfSelectedMessages, ArrayList(messageIds))
-		val transaction = fragmentManager.beginTransaction()
-		transaction.add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
-		transaction.commitAllowingStateLoss()
-	}
+    override fun onPostExecute(messages: List<Message>) {
+        val attachedLabels = HashSet<String>()
+        val numberOfSelectedMessages = HashMap<String, Int>()
+        messages.forEach { message ->
+            val messageLabelIds = message.labelIDsNotIncludingLocations
+            messageLabelIds.forEach { labelId ->
+                numberOfSelectedMessages[labelId] = numberOfSelectedMessages[labelId]?.let { it + 1 } ?: 1
+            }
+            attachedLabels.addAll(messageLabelIds)
+        }
+        val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(
+            attachedLabels,
+            numberOfSelectedMessages,
+            ArrayList(messageIds)
+        )
+        val transaction = fragmentManager.beginTransaction()
+        transaction.add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
+        transaction.commitAllowingStateLoss()
+    }
 }

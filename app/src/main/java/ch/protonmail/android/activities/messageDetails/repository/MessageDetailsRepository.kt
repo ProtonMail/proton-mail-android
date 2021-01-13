@@ -72,7 +72,7 @@ class MessageDetailsRepository @Inject constructor(
     @Named("messages_search") var searchDatabaseDao: MessagesDao,
     private var pendingActionsDatabase: PendingActionsDao,
     private val applicationContext: Context,
-    var databaseProvider: DatabaseProvider,
+    val databaseProvider: DatabaseProvider,
     private val dispatchers: DispatcherProvider
 ) {
 
@@ -105,35 +105,40 @@ class MessageDetailsRepository @Inject constructor(
 
     suspend fun findMessageByMessageDbId(dbId: Long, dispatcher: CoroutineDispatcher): Message? =
         withContext(dispatcher) {
-                findMessageByMessageDbId(dbId)
-            }
+            findMessageByMessageDbId(dbId)
+        }
 
     fun findMessageByIdBlocking(messageId: String): Message? =
         messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findSearchMessageById(messageId: String): Message? =
-            searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+        searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findMessageByIdSingle(messageId: String): Single<Message> =
-            messagesDao.findMessageByIdSingle(messageId).map(readMessageBodyFromFileIfNeeded)
+        messagesDao.findMessageByIdSingle(messageId).map(readMessageBodyFromFileIfNeeded)
 
     fun findMessageByIdObservable(messageId: String): Flowable<Message> =
-            messagesDao.findMessageByIdObservable(messageId).map(readMessageBodyFromFileIfNeeded)
+        messagesDao.findMessageByIdObservable(messageId).map(readMessageBodyFromFileIfNeeded)
 
     fun findMessageByMessageDbId(messageDbId: Long): Message? =
-            messagesDao.findMessageByMessageDbId(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+        messagesDao.findMessageByMessageDbId(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): List<Message> =
-            messagesDao.findAllMessageByLastMessageAccessTime(laterThan).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+        messagesDao.findAllMessageByLastMessageAccessTime(laterThan).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
 
     /**
      * Helper function mapping Message with body saved in file to body in memory.
      */
     private val readMessageBodyFromFileIfNeeded: (Message?) -> Message? = { message ->
         message?.apply {
-            if (Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE &&
-                    true == message.messageBody?.startsWith("file://")) {
-                val messageBodyFile = File(applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS, message.messageId?.replace(" ", "_")?.replace("/", ":"))
+            if (
+                Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE &&
+                true == message.messageBody?.startsWith("file://")
+            ) {
+                val messageBodyFile = File(
+                    applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS,
+                    message.messageId?.replace(" ", "_")?.replace("/", ":")
+                )
                 message.messageBody = try {
                     Timber.d("Reading body from file ${messageBodyFile.name}")
                     FileInputStream(messageBodyFile).bufferedReader().use { it.readText() }
@@ -150,14 +155,14 @@ class MessageDetailsRepository @Inject constructor(
     fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>> = messagesDao.getMessagesByLabelIdAsync(label)
 
     fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>> =
-            messagesDao.getMessagesByLocationAsync(location)
+        messagesDao.getMessagesByLocationAsync(location)
 
     fun getAllMessages(): LiveData<List<Message>> = messagesDao.getAllMessages()
 
     fun getAllSearchMessages(): LiveData<List<Message>> = searchDatabaseDao.getAllMessages()
 
     fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message> =
-            messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
+        messagesDao.searchMessages(subject, senderName, senderEmail).mapNotNull { readMessageBodyFromFileIfNeeded(it) }
 
     fun setFolderLocation(message: Message) = message.setFolderLocation(messagesDao)
 
@@ -198,7 +203,7 @@ class MessageDetailsRepository @Inject constructor(
     fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
     fun findPendingSendByOfflineMessageIdAsync(messageId: String) =
-            pendingActionsDatabase.findPendingSendByOfflineMessageIdAsync(messageId)
+        pendingActionsDatabase.findPendingSendByOfflineMessageIdAsync(messageId)
 
     fun findPendingSendByMessageId(messageId: String) = pendingActionsDatabase.findPendingSendByMessageId(messageId)
 
@@ -256,7 +261,7 @@ class MessageDetailsRepository @Inject constructor(
         messages.map(this::saveSearchMessageInDB)
     }
 
-    fun saveSearchMessagesInOneTransaction(messages:List<Message>) {
+    fun saveSearchMessagesInOneTransaction(messages: List<Message>) {
         if (messages.isEmpty()) {
             return
         }
@@ -302,13 +307,13 @@ class MessageDetailsRepository @Inject constructor(
         return null
     }
 
-    fun deleteMessage(message:Message) = messagesDao.deleteMessage(message)
+    fun deleteMessage(message: Message) = messagesDao.deleteMessage(message)
 
     fun deleteMessagesByLocation(location: Constants.MessageLocationType) =
-            messagesDao.deleteMessagesByLocation(location.messageLocationTypeValue)
+        messagesDao.deleteMessagesByLocation(location.messageLocationTypeValue)
 
     fun deleteMessagesByLabel(labelId: String) =
-            messagesDao.deleteMessagesByLabel(labelId)
+        messagesDao.deleteMessagesByLabel(labelId)
 
     fun updateStarred(messageId: String, starred: Boolean) = messagesDao.updateStarred(messageId, starred)
 
@@ -363,82 +368,85 @@ class MessageDetailsRepository @Inject constructor(
         dispatcher: CoroutineDispatcher,
         isTransient: Boolean
     ): IntentExtrasData = withContext(dispatcher) {
-                var toRecipientListString = ""
-                var includeCCList = false
-                val replyToEmailsFiltered = ArrayList<String>()
-                when (messageAction) {
-                    Constants.MessageActionType.REPLY -> {
-                        val replyToEmails = message.replyToEmails
-                        for (replyToEmail in replyToEmails) {
-                            if (user.addresses!!.none { it.email equalsNoCase replyToEmail }) {
-                                replyToEmailsFiltered.add(replyToEmail)
-                            }
-                        }
-                        if (replyToEmailsFiltered.isEmpty()) {
-                            replyToEmailsFiltered.addAll(listOf(message.toListString))
-                        }
-
-                        toRecipientListString = MessageUtils.getListOfStringsAsString(replyToEmailsFiltered)
-                    }
-                    Constants.MessageActionType.REPLY_ALL -> {
-                        val emailSet = HashSet(
-                                Arrays.asList(*message.toListString.split(Constants.EMAIL_DELIMITER.toRegex())
-                                        .dropLastWhile { it.isEmpty() }.toTypedArray())
-                        )
-
-                        val senderEmailAddress = if (message.replyToEmails.isNotEmpty())
-                            message.replyToEmails[0] else message.sender!!.emailAddress
-                        toRecipientListString = if (emailSet.contains(senderEmailAddress)) {
-                            message.toListString
-                        } else {
-                            senderEmailAddress + Constants.EMAIL_DELIMITER + message.toListString
-                        }
-                        includeCCList = true
-                    }
-                    else -> {
-                        //NO OP
+        var toRecipientListString = ""
+        var includeCCList = false
+        val replyToEmailsFiltered = ArrayList<String>()
+        when (messageAction) {
+            Constants.MessageActionType.REPLY -> {
+                val replyToEmails = message.replyToEmails
+                for (replyToEmail in replyToEmails) {
+                    if (user.addresses!!.none { it.email equalsNoCase replyToEmail }) {
+                        replyToEmailsFiltered.add(replyToEmail)
                     }
                 }
-
-                val attachments = withContext(dispatcher) {
-                    ArrayList(LocalAttachment.createLocalAttachmentList(
-                            if (!isTransient) {
-                                message.attachments(messagesDao)
-                            } else {
-                                message.attachments(searchDatabaseDao)
-                            }))
+                if (replyToEmailsFiltered.isEmpty()) {
+                    replyToEmailsFiltered.addAll(listOf(message.toListString))
                 }
 
-                IntentExtrasData.Builder()
-                        .user(user)
-                        .userAddresses()
-                        .message(message)
-                        .toRecipientListString(toRecipientListString)
-                        .messageCcList()
-                        .includeCCList(includeCCList)
-                        .senderEmailAddress()
-                        .messageSenderName()
-                        .newMessageTitle(newMessageTitle)
-                        .content(content)
-                        .mBigContentHolder(mBigContentHolder)
-                        .body()
-                        .messageAction(messageAction)
-                        .imagesDisplayed(mImagesDisplayed) // TODO
-                        .remoteContentDisplayed(remoteContentDisplayed)
-                        .isPGPMime()
-                        .timeMs()
-                        .messageIsEncrypted()
-                        .messageId()
-                        .addressID()
-                        .addressEmailAlias()
-                        .attachments(attachments, embeddedImagesAttachments)
-                        .build()
+                toRecipientListString = MessageUtils.getListOfStringsAsString(replyToEmailsFiltered)
             }
+            Constants.MessageActionType.REPLY_ALL -> {
+                val emailSet = HashSet(
+                    Arrays.asList(*message.toListString.split(Constants.EMAIL_DELIMITER.toRegex())
+                        .dropLastWhile { it.isEmpty() }.toTypedArray())
+                )
+
+                val senderEmailAddress = if (message.replyToEmails.isNotEmpty())
+                    message.replyToEmails[0] else message.sender!!.emailAddress
+                toRecipientListString = if (emailSet.contains(senderEmailAddress)) {
+                    message.toListString
+                } else {
+                    senderEmailAddress + Constants.EMAIL_DELIMITER + message.toListString
+                }
+                includeCCList = true
+            }
+            else -> {
+                //NO OP
+            }
+        }
+
+        val attachments = withContext(dispatcher) {
+            ArrayList(
+                LocalAttachment.createLocalAttachmentList(
+                    if (!isTransient) {
+                        message.attachments(messagesDao)
+                    } else {
+                        message.attachments(searchDatabaseDao)
+                    }
+                )
+            )
+        }
+
+        IntentExtrasData.Builder()
+            .user(user)
+            .userAddresses()
+            .message(message)
+            .toRecipientListString(toRecipientListString)
+            .messageCcList()
+            .includeCCList(includeCCList)
+            .senderEmailAddress()
+            .messageSenderName()
+            .newMessageTitle(newMessageTitle)
+            .content(content)
+            .mBigContentHolder(mBigContentHolder)
+            .body()
+            .messageAction(messageAction)
+            .imagesDisplayed(mImagesDisplayed)
+            .remoteContentDisplayed(remoteContentDisplayed)
+            .isPGPMime()
+            .timeMs()
+            .messageIsEncrypted()
+            .messageId()
+            .addressID()
+            .addressEmailAlias()
+            .attachments(attachments, embeddedImagesAttachments)
+            .build()
+    }
 
     suspend fun checkIfAttHeadersArePresent(message: Message, dispatcher: CoroutineDispatcher): Boolean =
-            withContext(dispatcher) {
-                message.checkIfAttHeadersArePresent(messagesDao)
-            }
+        withContext(dispatcher) {
+            message.checkIfAttHeadersArePresent(messagesDao)
+        }
 
     fun fetchMessageDetails(messageId: String): MessageResponse {
         return try {

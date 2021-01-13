@@ -216,23 +216,22 @@ data class Message @JvmOverloads constructor(
         get() = messageEncryption in listOf(MessageEncryption.MIME_PGP) || Constants.MIME_TYPE_MULTIPART_MIXED == mimeType
 
     val replyToEmails: List<String>
-        get() {
-            return replyTos
-                .asSequence()
-                .filter { it.address.isNotEmpty() }
-                .map { it.address }
-                .toList()
-        }
+        get() = replyTos
+            .asSequence()
+            .filter { it.address.isNotEmpty() }
+            .map { it.address }
+            .toList()
+
     val toListString
         get() = MessageUtils.toContactString(toList)
 
-	val toListStringGroupsAware
-		get() = MessageUtils.toContactsAndGroupsString(toList)
+    val toListStringGroupsAware
+        get() = MessageUtils.toContactsAndGroupsString(toList)
 
-	val ccListString
-		get() = MessageUtils.toContactString(ccList)
+    val ccListString
+        get() = MessageUtils.toContactString(ccList)
 
-	val bccListString:String
+    val bccListString:String
 		get() = MessageUtils.toContactString(bccList)
 
     fun locationFromLabel(): Constants.MessageLocationType =
