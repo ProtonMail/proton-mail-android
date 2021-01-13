@@ -31,11 +31,11 @@ import io.mockk.verify
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ContactGroupsRepositoryTest {
 
@@ -56,7 +56,7 @@ class ContactGroupsRepositoryTest {
     private val label3 = ContactLabel("c", "cc")
     private val label4 = ContactLabel("d", "dd")
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         every { protonMailApi.fetchContactGroupsAsObservable() } answers {

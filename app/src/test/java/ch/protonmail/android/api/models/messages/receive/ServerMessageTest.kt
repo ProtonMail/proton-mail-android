@@ -22,7 +22,7 @@ package ch.protonmail.android.api.models.messages.receive
 import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
 import junit.framework.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class ServerMessageTest {
 

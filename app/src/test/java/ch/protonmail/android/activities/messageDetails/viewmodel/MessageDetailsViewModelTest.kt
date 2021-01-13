@@ -38,8 +38,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.channels.Channel
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
@@ -82,7 +82,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     @InjectMockKs
     private lateinit var viewModel: MessageDetailsViewModel
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

@@ -20,7 +20,7 @@ package ch.protonmail.android.api.models.room.messages
 
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import junit.framework.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class MessagesTypesConverterTest {
 

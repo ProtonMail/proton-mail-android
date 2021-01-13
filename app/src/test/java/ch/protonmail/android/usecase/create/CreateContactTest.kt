@@ -45,10 +45,10 @@ import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import java.util.UUID
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class CreateContactTest : CoroutinesTest {
 
@@ -77,7 +77,7 @@ class CreateContactTest : CoroutinesTest {
         ContactEmail("ID2", "secondary@proton.com", "Mike")
     )
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         coEvery { contactsRepository.saveContactData(any()) } returns 324L

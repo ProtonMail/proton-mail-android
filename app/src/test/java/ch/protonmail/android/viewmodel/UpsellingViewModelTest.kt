@@ -35,8 +35,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UpsellingViewModelTest : CoroutinesTest, ArchTest {
@@ -50,7 +50,7 @@ class UpsellingViewModelTest : CoroutinesTest, ArchTest {
     @InjectMockKs
     private lateinit var viewModel: UpsellingViewModel
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

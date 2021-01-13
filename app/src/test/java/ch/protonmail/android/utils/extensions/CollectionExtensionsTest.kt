@@ -21,7 +21,7 @@ package ch.protonmail.android.utils.extensions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.measureTimeMillis
 

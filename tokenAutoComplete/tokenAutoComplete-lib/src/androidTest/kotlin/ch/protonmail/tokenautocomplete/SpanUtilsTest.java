@@ -21,7 +21,7 @@ package ch.protonmail.tokenautocomplete;
 import android.text.Spanned;
 import android.text.TextPaint;
 
-import org.junit.Test;
+import kotlin.test.Test;
 
 import static org.junit.Assert.assertNull;
 

@@ -33,8 +33,8 @@ import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ContactDetailsRepositoryTest {
 
@@ -55,7 +55,7 @@ class ContactDetailsRepositoryTest {
 
     private val dispatcherProvider = TestDispatcherProvider
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

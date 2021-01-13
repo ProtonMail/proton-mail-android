@@ -47,9 +47,9 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.junit.Before
-import org.junit.Test
 import java.util.concurrent.TimeoutException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class AttachmentsRepositoryTest : CoroutinesTest {
@@ -75,7 +75,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var repository: AttachmentsRepository
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         val successResponse = mockk<AttachmentUploadResponse> {

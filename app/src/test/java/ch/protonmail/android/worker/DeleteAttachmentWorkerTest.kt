@@ -37,8 +37,8 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DeleteAttachmentWorkerTest {
@@ -57,7 +57,7 @@ class DeleteAttachmentWorkerTest {
 
     private lateinit var worker: DeleteAttachmentWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         worker = DeleteAttachmentWorker(context, parameters, api, messagesDb, TestDispatcherProvider)

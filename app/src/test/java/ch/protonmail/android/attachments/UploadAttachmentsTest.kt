@@ -38,9 +38,9 @@ import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class UploadAttachmentsTest : CoroutinesTest {
 
@@ -62,7 +62,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var uploadAttachments: UploadAttachments
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success

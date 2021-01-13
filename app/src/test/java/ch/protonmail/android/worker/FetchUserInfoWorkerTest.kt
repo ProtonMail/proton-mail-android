@@ -43,9 +43,9 @@ import io.mockk.runs
 import io.mockk.spyk
 import kotlinx.coroutines.runBlocking
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
@@ -70,7 +70,7 @@ class FetchUserInfoWorkerTest {
 
     private lateinit var worker: FetchUserInfoWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
 

@@ -31,8 +31,8 @@ import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSign
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.mailer.Mail
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class InboxTests : BaseTest() {
 
@@ -43,7 +43,7 @@ class InboxTests : BaseTest() {
     private lateinit var pgpEncryptedBody: String
     private lateinit var pgpSignedBody: String
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         subject = TestData.messageSubject

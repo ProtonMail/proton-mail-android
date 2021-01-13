@@ -29,8 +29,8 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.util.android.workmanager.toWorkData
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FetchContactsEmailsWorkerTest {
@@ -46,7 +46,7 @@ class FetchContactsEmailsWorkerTest {
 
     private lateinit var worker: FetchContactsEmailsWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         worker = FetchContactsEmailsWorker(context, parameters, contactEmailsManager)

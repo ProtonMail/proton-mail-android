@@ -43,9 +43,9 @@ import io.mockk.slot
 import io.mockk.verify
 import io.mockk.verifySequence
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ManageLabelsDialogViewModelTest {
 
@@ -64,7 +64,7 @@ class ManageLabelsDialogViewModelTest {
     @InjectMockKs
     private lateinit var viewModel: ManageLabelsDialogViewModel
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel.viewState.observeForever(mockObserver)

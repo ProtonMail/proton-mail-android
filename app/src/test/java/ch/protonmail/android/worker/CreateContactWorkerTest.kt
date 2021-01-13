@@ -49,8 +49,8 @@ import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class CreateContactWorkerTest {
 
@@ -77,7 +77,7 @@ class CreateContactWorkerTest {
 
     private var dispatcherProvider = TestDispatcherProvider
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

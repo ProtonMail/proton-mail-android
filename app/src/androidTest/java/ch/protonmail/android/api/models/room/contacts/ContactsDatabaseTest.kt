@@ -25,7 +25,11 @@ import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.Constants
 import org.hamcrest.Matchers.`is`
-import org.junit.*
+import org.junit.Assert
+import org.junit.Ignore
+import org.junit.Rule
+import org.junit.Test
+import kotlin.test.BeforeTest
 
 /**
  * Created by Kamil Rajtar on 06.09.18.  */
@@ -113,39 +117,39 @@ internal class ContactsDatabaseTest {
 	private fun assertDatabaseState(expectedContactData:Iterable<ContactData> =contactData,
 									expectedContactEmails:Iterable<ContactEmail> =contactEmails,
 									expectedFullContactDetails:Iterable<FullContactDetails> =fullContactDetails) {
-		val expectedContactDataSet=expectedContactData.toSet()
-		val expectedContactEmailsSet=expectedContactEmails.toSet()
+		val expectedContactDataSet = expectedContactData.toSet()
+		val expectedContactEmailsSet = expectedContactEmails.toSet()
 		//hack as encrypted data has equals not defined
-		val expectedFullContactDetailsSet=expectedFullContactDetails.map {it.apply {encryptedData=mutableListOf()}}.toSet()
+		val expectedFullContactDetailsSet = expectedFullContactDetails.map { it.apply { encryptedData = mutableListOf() } }.toSet()
 
-		val actualContactDataSet=database.findAllContactDataAsync().testValue!!.toSet()
-		val actualContactEmailsSet=database.findAllContactsEmailsAsync().testValue!!.toSet()
+		val actualContactDataSet = database.findAllContactDataAsync().testValue!!.toSet()
+		val actualContactEmailsSet = database.findAllContactsEmailsAsync().testValue!!.toSet()
 		//hack as encrypted data has equals not defined
-		val actualFullContactDetailsSet=expectedFullContactDetails.map(FullContactDetails::contactId).map(database::findFullContactDetailsById).map{it?.apply {encryptedData=mutableListOf()}}.toSet()
+		val actualFullContactDetailsSet = expectedFullContactDetails.map(FullContactDetails::contactId).map(database::findFullContactDetailsById).map { it?.apply { encryptedData = mutableListOf() } }.toSet()
 
-		Assert.assertEquals(expectedContactDataSet,actualContactDataSet)
-		Assert.assertEquals(expectedContactEmailsSet,actualContactEmailsSet)
-		Assert.assertEquals(expectedFullContactDetailsSet,actualFullContactDetailsSet)
+		Assert.assertEquals(expectedContactDataSet, actualContactDataSet)
+		Assert.assertEquals(expectedContactEmailsSet, actualContactEmailsSet)
+		Assert.assertEquals(expectedFullContactDetailsSet, actualFullContactDetailsSet)
 	}
 
-	@Before
+	@BeforeTest
 	fun setUp() {
 		database.populate()
 	}
 
 	@Test
 	fun findContactDataById() {
-		val expected=contactData[3]
-		val actual=database.findContactDataById(expected.contactId!!)
-		Assert.assertEquals(expected,actual)
+		val expected = contactData[3]
+		val actual = database.findContactDataById(expected.contactId!!)
+		Assert.assertEquals(expected, actual)
 		assertDatabaseState()
 	}
 
 	@Test
 	fun findContactDataByDbId() {
-		val expected=contactData[3]
-		val actual=database.findContactDataByDbId(expected.dbId!!)
-		Assert.assertEquals(expected,actual)
+		val expected = contactData[3]
+		val actual = database.findContactDataByDbId(expected.dbId!!)
+		Assert.assertEquals(expected, actual)
 		assertDatabaseState()
 	}
 

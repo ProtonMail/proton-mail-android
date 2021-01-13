@@ -33,8 +33,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -51,7 +51,7 @@ class DeleteMessageTest {
 
     private lateinit var deleteMessage: DeleteMessage
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         deleteMessage = DeleteMessage(TestDispatcherProvider, repository, db, workScheduler)

@@ -38,9 +38,9 @@ import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /**
  * Test suite for [LabelsManagerViewModel]
@@ -64,7 +64,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
         every { get<Boolean>(EXTRA_MANAGE_FOLDERS) } returns false
     }
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel =

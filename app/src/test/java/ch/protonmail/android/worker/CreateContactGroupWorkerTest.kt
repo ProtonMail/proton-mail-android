@@ -40,8 +40,8 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class CreateContactGroupWorkerTest {
 
@@ -65,7 +65,7 @@ class CreateContactGroupWorkerTest {
     @InjectMockKs
     private lateinit var worker: CreateContactGroupWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         every { apiManager.createLabel(any()) } returns createContactGroupApiResponse

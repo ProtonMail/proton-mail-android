@@ -24,7 +24,7 @@ import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.BigContentHolder
 import org.junit.Ignore
-import org.junit.Test
+import kotlin.test.Test
 
 class IntentExtrasDataTest {
 

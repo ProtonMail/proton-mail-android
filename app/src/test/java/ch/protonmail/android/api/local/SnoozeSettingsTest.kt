@@ -20,7 +20,7 @@ package ch.protonmail.android.api.local
 
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
 import java.util.Calendar
 
 class SnoozeSettingsTest {

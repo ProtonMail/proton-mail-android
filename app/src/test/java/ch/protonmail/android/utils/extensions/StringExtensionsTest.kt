@@ -19,7 +19,7 @@
 package ch.protonmail.android.utils.extensions
 
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import kotlin.test.Test
 
 class StringExtensionsTest {
 

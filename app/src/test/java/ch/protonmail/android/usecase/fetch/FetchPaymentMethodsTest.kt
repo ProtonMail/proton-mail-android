@@ -31,8 +31,8 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FetchPaymentMethodsTest {
@@ -43,7 +43,7 @@ class FetchPaymentMethodsTest {
     @InjectMockKs
     private lateinit var useCase: FetchPaymentMethods
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }
