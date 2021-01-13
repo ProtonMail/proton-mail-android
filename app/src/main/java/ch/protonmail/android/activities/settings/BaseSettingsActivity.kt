@@ -151,7 +151,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onResume() {
         super.onResume()
         user = mUserManager.user
-        settingsAdapter.notifyDataSetChanged()
         viewModel.checkConnectivity()
     }
 
