@@ -27,11 +27,10 @@ import android.widget.TextView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 
 import ch.protonmail.tokenautocomplete.ViewSpan;
+import kotlin.test.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -58,7 +57,7 @@ public class ViewSpanTest {
     public ActivityTestRule<TokenActivity> activityRule = new ActivityTestRule<>(
             TokenActivity.class);
 
-    @Before
+    @BeforeTest
     public void setUp() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         layout = new TestLayout();

@@ -26,8 +26,8 @@ import ch.protonmail.android.testAndroidInstrumented.matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /**
  * Created by Kamil Rajtar on 05.09.18.  */
@@ -49,7 +49,7 @@ internal class NotificationsDatabaseTest {
         notifications.forEach(this::insertNotification)
     }
 
-    @Before
+    @BeforeTest
     fun setUp() {
         database.populate()
     }

@@ -31,8 +31,8 @@ import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -43,7 +43,7 @@ class FetchPublicKeysTest {
 
     private lateinit var fetchPublicKeys: FetchPublicKeys
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         fetchPublicKeys = FetchPublicKeys(api, TestDispatcherProvider)

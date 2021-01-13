@@ -21,11 +21,10 @@ package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
-import org.junit.jupiter.api.Test
+import junit.framework.Assert.assertEquals
+import kotlin.test.Test
 
-import org.junit.jupiter.api.Assertions.assertEquals
-
-internal class ServerMessageTest {
+class ServerMessageTest {
 
     @Test
     fun convertServerMessageToMessagePayload() {

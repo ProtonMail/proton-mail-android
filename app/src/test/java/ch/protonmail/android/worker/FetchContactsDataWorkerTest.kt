@@ -37,8 +37,8 @@ import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.workmanager.toWorkData
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FetchContactsDataWorkerTest {
@@ -57,7 +57,7 @@ class FetchContactsDataWorkerTest {
 
     private lateinit var worker: FetchContactsDataWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         worker = FetchContactsDataWorker(context, parameters, api, contactsDao, TestDispatcherProvider)

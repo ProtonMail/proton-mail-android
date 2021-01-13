@@ -39,8 +39,8 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BaseRequestInterceptorTest {
@@ -72,7 +72,7 @@ class BaseRequestInterceptorTest {
     private val interceptor = ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
 
 
-    @Before
+    @BeforeTest
     fun setup() {
         mockkStatic(AppUtil::class)
         mockkStatic(ProtonMailApplication::class)

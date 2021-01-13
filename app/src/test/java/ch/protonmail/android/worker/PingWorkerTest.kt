@@ -35,9 +35,9 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class PingWorkerTest {
@@ -56,7 +56,7 @@ class PingWorkerTest {
 
     private lateinit var worker: PingWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         worker = PingWorker(context, parameters, api, queueNetworkUtil, TestDispatcherProvider)

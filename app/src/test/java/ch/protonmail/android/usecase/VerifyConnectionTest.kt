@@ -37,8 +37,8 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class VerifyConnectionTest : CoroutinesTest, ArchTest {
@@ -54,7 +54,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
 
     private lateinit var verifyConnectionUseCase: VerifyConnection
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         verifyConnectionUseCase = VerifyConnection(

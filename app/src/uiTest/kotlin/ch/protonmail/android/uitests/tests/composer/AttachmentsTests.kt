@@ -43,8 +43,8 @@ import ch.protonmail.android.uitests.testsHelper.TestData.zipFile
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.intentutils.MimeTypes
 import org.hamcrest.CoreMatchers.not
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class AttachmentsTests : BaseTest() {
 
@@ -55,7 +55,7 @@ class AttachmentsTests : BaseTest() {
     private lateinit var subject: String
     private lateinit var body: String
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         subject = TestData.messageSubject

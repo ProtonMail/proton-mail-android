@@ -24,7 +24,7 @@ import ch.protonmail.android.core.Constants
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.contains
 import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * Created by Kamil Rajtar on 06.09.18.  */

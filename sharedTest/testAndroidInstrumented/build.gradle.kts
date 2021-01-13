@@ -55,8 +55,6 @@ dependencies {
             `assert4k` exclude
             // Exclude MockK since we will use MockK-Android
             `mockk` exclude
-            // Exclude JUnit 5 since we will use JUnit 4 on instrumented tests
-            jUnit5(`any`, `any`) exclude
             // Exclude Robolectric since not needed for instrumented tests
             `robolectric`,
 

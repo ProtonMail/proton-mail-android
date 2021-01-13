@@ -26,7 +26,7 @@ import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
-import org.junit.Test
+import kotlin.test.Test
 import org.junit.experimental.categories.Category
 
 class SwipeGesturesTests : BaseTest() {

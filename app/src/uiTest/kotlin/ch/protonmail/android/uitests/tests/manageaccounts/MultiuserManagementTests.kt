@@ -25,7 +25,7 @@ import ch.protonmail.android.uitests.testsHelper.TestData.onePassUserWith2FA
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUserWith2FA
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
-import org.junit.Test
+import kotlin.test.Test
 import org.junit.experimental.categories.Category
 
 class MultiuserManagementTests : BaseTest() {
