@@ -61,6 +61,7 @@ import ch.protonmail.android.usecase.model.FetchPublicKeysResult
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
@@ -92,6 +93,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val fetchPublicKeys: FetchPublicKeys,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
+    private val stringResourceResolver: StringResourceResolver,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -449,14 +451,13 @@ class ComposeMessageViewModel @Inject constructor(
                     when (saveDraftResult) {
                         is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
                         SaveDraftResult.OnlineDraftCreationFailed -> {
-                            val errorMessage = getStringResource(
+                            val errorMessage = stringResourceResolver(
                                 R.string.failed_saving_draft_online
                             ).format(message.subject)
                             _savingDraftError.postValue(errorMessage)
                         }
                         SaveDraftResult.UploadDraftAttachmentsFailed -> {
-                            val attachmentFailed = R.string.attachment_failed
-                            val errorMessage = getStringResource(attachmentFailed) + message.subject
+                            val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
                             _savingDraftError.postValue(errorMessage)
                         }
                         SaveDraftResult.SendingInProgressError -> {
@@ -471,11 +472,6 @@ class ComposeMessageViewModel @Inject constructor(
 
             _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).isDirty(false).build()
         }
-    }
-
-    private fun getStringResource(stringId: Int): String {
-        val context = ProtonMailApplication.getApplication().applicationContext
-        return context.getString(stringId)
     }
 
     private suspend fun onDraftSaved(savedDraftId: String) {

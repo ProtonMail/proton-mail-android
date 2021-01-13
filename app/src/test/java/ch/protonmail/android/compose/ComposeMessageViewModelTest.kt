@@ -20,6 +20,7 @@
 package ch.protonmail.android.compose
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Message
@@ -34,6 +35,7 @@ import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
 import io.mockk.MockKAnnotations
+import ch.protonmail.android.utils.resources.StringResourceResolver
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -55,6 +57,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @RelaxedMockK
+    private lateinit var stringResourceResolver: StringResourceResolver
 
     @RelaxedMockK
     lateinit var composeMessageRepository: ComposeMessageRepository
@@ -124,7 +129,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val message = Message()
             val createdDraftId = "newDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = "local28348")
-            val testObserver = viewModel.savingDraftComplete.testObserver()
+            val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
@@ -133,7 +138,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             viewModel.saveDraft(message, hasConnectivity = false)
 
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) }
-            assertEquals(createdDraft, testObserver.observedValues[0])
+            assertEquals(createdDraft, savedDraftObserver.observedValues[0])
         }
     }
 
@@ -177,6 +182,48 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 "previousSenderAddressId"
             )
             coVerify { saveDraft(parameters) }
+        }
+    }
+
+    @Test
+    fun saveDraftResolvesLocalisedErrorMessageAndPostsOnLiveDataWhenSaveDraftUseCaseFailsCreatingTheDraft() {
+        runBlockingTest {
+            // Given
+            val messageSubject = "subject"
+            val message = Message(subject = messageSubject)
+            val saveDraftErrorObserver = viewModel.savingDraftError.testObserver()
+            val errorResId = R.string.failed_saving_draft_online
+            givenViewModelPropertiesAreInitialised()
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
+            every { stringResourceResolver.invoke(errorResId) } returns "Error creating draft for message %s"
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = true)
+
+            val expectedError = "Error creating draft for message $messageSubject"
+            coEvery { stringResourceResolver.invoke(errorResId) }
+            assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
+        }
+    }
+
+    @Test
+    fun saveDraftResolvesLocalisedErrorMessageAndPostsOnLiveDataWhenSaveDraftUseCaseFailsUploadingAttachments() {
+        runBlockingTest {
+            // Given
+            val messageSubject = "subject"
+            val message = Message(subject = messageSubject)
+            val saveDraftErrorObserver = viewModel.savingDraftError.testObserver()
+            val errorResId = R.string.attachment_failed
+            givenViewModelPropertiesAreInitialised()
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.UploadDraftAttachmentsFailed)
+            every { stringResourceResolver.invoke(errorResId) } returns "Error uploading attachments for subject "
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = true)
+
+            val expectedError = "Error uploading attachments for subject $messageSubject"
+            coEvery { stringResourceResolver.invoke(errorResId) }
+            assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
         }
     }
 
