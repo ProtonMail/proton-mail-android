@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -20,16 +20,17 @@ package ch.protonmail.android.activities
 
 import android.os.Bundle
 import android.text.TextUtils
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.PREF_CUSTOM_APP_LANGUAGE
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
+import me.proton.core.util.kotlin.EMPTY_STRING
 
 @AndroidEntryPoint
 class SettingsActivity : BaseSettingsActivity() {
@@ -59,14 +60,15 @@ class SettingsActivity : BaseSettingsActivity() {
 
     override fun renderViews() {
 
-        mDisplayName = if (user.getDisplayNameForAddress(user.addressId)?.isEmpty()!!)
-            user.defaultAddress.email else user.getDisplayNameForAddress(user.addressId)!!
+        val primaryAddress = checkNotNull(user.addresses.primary)
+        mDisplayName = primaryAddress.displayName?.s
+            ?: primaryAddress.email.s
         setHeader(SettingsEnum.ACCOUNT, mDisplayName)
 
-        if (null != user.addresses && user.addresses.size > 0) {
-            mSelectedAddress = user.addresses[0]
-            mSignature = mSelectedAddress.signature
-            setValue(SettingsEnum.ACCOUNT, mSelectedAddress.email)
+        if (user.addresses.hasAddresses) {
+            selectedAddress = checkNotNull(user.addresses.primary)
+            mSignature = selectedAddress.signature?.s ?: EMPTY_STRING
+            setValue(SettingsEnum.ACCOUNT, selectedAddress.email.s)
         }
 
         val languageValues = resources.getStringArray(R.array.custom_language_values)
@@ -84,22 +86,22 @@ class SettingsActivity : BaseSettingsActivity() {
             }
         }
 
-        mPinValue = user.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
+        mPinValue = legacyUser.isUsePin && !TextUtils.isEmpty(mUserManager.getMailboxPin())
         val autoLockSettingValue = if (mPinValue) getString(R.string.enabled) else getString(R.string.disabled)
         setValue(SettingsEnum.AUTO_LOCK, autoLockSettingValue)
 
         val allowSecureConnectionsViaThirdPartiesSettingValue =
-            if (user.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(R.string.denied)
+            if (legacyUser.allowSecureConnectionsViaThirdParties) getString(R.string.allowed) else getString(R.string.denied)
         setValue(SettingsEnum.CONNECTIONS_VIA_THIRD_PARTIES, allowSecureConnectionsViaThirdPartiesSettingValue)
 
-        setValue(SettingsEnum.COMBINED_CONTACTS, if (user.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled))
+        setValue(SettingsEnum.COMBINED_CONTACTS, if (legacyUser.combinedContacts) getString(R.string.enabled) else getString(R.string.disabled))
 
         setValue(
             SettingsEnum.APP_VERSION,
             String.format(
                 getString(R.string.app_version_code),
-                AppUtil.getAppVersionName(this),
-                AppUtil.getAppVersionCode(this)
+                BuildConfig.VERSION_NAME,
+                BuildConfig.VERSION_CODE
             )
         )
     }
