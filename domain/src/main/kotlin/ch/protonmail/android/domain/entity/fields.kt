@@ -37,7 +37,14 @@ package ch.protonmail.android.domain.entity
 /**
  * Represent a given number of bytes
  */
-inline class Bytes(val l: ULong)
+inline class Bytes(val l: ULong) {
+
+    fun toKolobytes() =
+        l / 1024uL
+
+    fun toMegabytes() =
+        toKolobytes() / 1024uL
+}
 val Number.bytes get() = Bytes(toLong().toULong())
 
 /**

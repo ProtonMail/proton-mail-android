@@ -50,6 +50,7 @@ internal class AddressesBridgeMapperTest {
             domainId = "domain_id",
             email = "davide@email.com",
             displayName = "Davide",
+            signature = "signature",
             enabled = true,
             type = 5,
             allowedToSend = true,
@@ -63,6 +64,7 @@ internal class AddressesBridgeMapperTest {
             +domainId?.s equals "domain_id"
             +email.s equals "davide@email.com"
             +displayName?.s equals "Davide"
+            +signature?.s equals "signature"
             +enabled equals true
             +type equals Address.Type.EXTERNAL
             +allowedToSend equals true
@@ -126,6 +128,7 @@ internal class AddressesBridgeMapperTest {
         domainId: String = "none",
         email: String = "none@email.com",
         displayName: String = "none",
+        signature: String = "",
         enabled: Boolean = false,
         type: Int = 1,
         allowedToSend: Boolean = false,
@@ -140,7 +143,7 @@ internal class AddressesBridgeMapperTest {
         type,
         order,
         displayName,
-        "none",
+        signature,
         -1,
         listOf()
     )
