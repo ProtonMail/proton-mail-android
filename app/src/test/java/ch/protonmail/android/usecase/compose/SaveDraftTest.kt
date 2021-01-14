@@ -43,12 +43,12 @@ import ch.protonmail.android.worker.drafts.CreateDraftWorker.Enqueuer
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.Flow
@@ -57,11 +57,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import java.util.UUID
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@ExtendWith(MockKExtension::class)
 class SaveDraftTest : CoroutinesTest {
 
     @RelaxedMockK
@@ -83,6 +82,11 @@ class SaveDraftTest : CoroutinesTest {
     lateinit var saveDraft: SaveDraft
 
     private val currentUsername = "username"
+
+    @BeforeTest
+    fun setUp() {
+        MockKAnnotations.init(this)
+    }
 
     @Test
     fun saveDraftSavesEncryptedDraftMessageToDb() {

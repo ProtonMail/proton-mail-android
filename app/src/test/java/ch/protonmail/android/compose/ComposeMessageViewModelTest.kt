@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.compose
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Message
@@ -32,26 +33,28 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
-import ch.protonmail.android.utils.extensions.InstantExecutorExtension
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@ExtendWith(MockKExtension::class, InstantExecutorExtension::class)
 class ComposeMessageViewModelTest : CoroutinesTest {
 
-    @Rule
+    @get:Rule
     val trampolineSchedulerRule = TrampolineScheduler()
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @RelaxedMockK
     lateinit var composeMessageRepository: ComposeMessageRepository
@@ -82,6 +85,15 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
     @InjectMockKs
     lateinit var viewModel: ComposeMessageViewModel
+
+    @BeforeTest
+    fun setUp() {
+        MockKAnnotations.init(this)
+        // To avoid `EmptyList` to be returned by Mockk automatically as that causes
+        // UnsupportedOperationException: Operation is not supported for read-only collection
+        // when trying to add elements (in prod we ArrayList so this doesn't happen)
+        every { userManager.user.senderEmailAddresses } returns mutableListOf()
+    }
 
     @Test
     fun saveDraftCallsSaveDraftUseCaseWhenTheDraftIsNew() {

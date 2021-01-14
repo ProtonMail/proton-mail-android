@@ -61,12 +61,12 @@ import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -75,12 +75,10 @@ import io.mockk.verifySequence
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@ExtendWith(MockKExtension::class)
 class CreateDraftWorkerTest : CoroutinesTest {
 
     @RelaxedMockK
@@ -113,8 +111,9 @@ class CreateDraftWorkerTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var worker: CreateDraftWorker
 
-    @BeforeEach
+    @BeforeTest
     fun setUp() {
+        MockKAnnotations.init(this)
         coEvery { apiManager.createDraft(any()) } returns mockk(relaxed = true)
     }
 
