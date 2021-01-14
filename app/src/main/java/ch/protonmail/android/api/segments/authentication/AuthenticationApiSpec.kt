@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.segments.authentication
 
+import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.models.ModulusResponse
@@ -26,6 +27,7 @@ import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.TwoFABody
 import ch.protonmail.android.api.models.TwoFAResponse
+import retrofit2.Call
 import java.io.IOException
 
 interface AuthenticationApiSpec {
@@ -50,8 +52,7 @@ interface AuthenticationApiSpec {
     @Throws(IOException::class)
     fun randomModulus(): ModulusResponse
 
-    @Throws(IOException::class)
-    fun refreshSync(refreshBody: RefreshBody): RefreshResponse
+    suspend fun refreshAuth(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse
 
     fun twoFactor(twoFABody: TwoFABody): TwoFAResponse
 }

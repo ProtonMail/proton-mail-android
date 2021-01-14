@@ -20,7 +20,6 @@ package ch.protonmail.android.api.interceptors
 
 import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProgressResponseBody
-import ch.protonmail.android.api.ProtonMailPublicService
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
@@ -41,34 +40,6 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
 
     private var progressListener: ProgressListener? = null
     private var semaphore: Semaphore? = null
-
-    companion object {
-        @Volatile
-        private var INSTANCE: ProtonMailAttachmentRequestInterceptor? = null
-
-        fun getInstance(
-            publicService: ProtonMailPublicService,
-            userManager: UserManager,
-            jobManager: JobManager,
-            networkUtil: QueueNetworkUtil
-        ): ProtonMailAttachmentRequestInterceptor =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE
-                    ?: buildInstance(publicService, userManager, jobManager, networkUtil).also { INSTANCE = it }
-            }
-
-        private fun buildInstance(
-            publicService: ProtonMailPublicService,
-            userManager: UserManager,
-            jobManager: JobManager,
-            networkUtil: QueueNetworkUtil
-        ) =
-            ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil).also {
-                it.publicService = publicService
-            }
-
-        val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
-    }
 
     fun nextProgressListener(progressListener: ProgressListener) {
         // If there already is a previous semaphore acquire so we know progressListener has been attached
@@ -95,15 +66,15 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         networkUtils.setCurrentlyHasConnectivity(true)
         AppUtil.postEventOnUi(ConnectivityEvent(true))
 
-        // check if expired token, otherwise just pass the original response on
-        val reAuthResponse = checkIfTokenExpired(chain, request, response)
-        if (reAuthResponse != null) return reAuthResponse
+        // check validity of response (DoH expiration and error codes)
+        checkResponse(response)
 
         // for concurrency
         val progressListener = progressListener
         // otherwise just pass the original response on
         return if (progressListener != null) {
-            val responseWithListener = response.newBuilder().body(ProgressResponseBody(response.body()!!, progressListener)).build()
+            val responseWithListener =
+                response.newBuilder().body(ProgressResponseBody(response.body()!!, progressListener)).build()
             this.semaphore!!.release()
             this.progressListener = null
             this.semaphore = null
@@ -111,5 +82,28 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         } else {
             response
         }
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: ProtonMailAttachmentRequestInterceptor? = null
+
+        val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
+
+        fun getInstance(
+            userManager: UserManager,
+            jobManager: JobManager,
+            networkUtil: QueueNetworkUtil
+        ): ProtonMailAttachmentRequestInterceptor =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE
+                    ?: buildInstance(/* publicService, */ userManager, jobManager, networkUtil).also { INSTANCE = it }
+            }
+
+        private fun buildInstance(
+            userManager: UserManager,
+            jobManager: JobManager,
+            networkUtil: QueueNetworkUtil
+        ) = ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil)
     }
 }

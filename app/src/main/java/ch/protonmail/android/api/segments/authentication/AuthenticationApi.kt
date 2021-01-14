@@ -75,5 +75,7 @@ class AuthenticationApi(
     override fun randomModulus(): ModulusResponse = ParseUtils.parse(pubService.randomModulus().execute())
 
     @Throws(IOException::class)
-    override fun refreshSync(refreshBody: RefreshBody): RefreshResponse = ParseUtils.parse(pubService.refreshSync(refreshBody).execute())
+    override suspend fun refreshAuth(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse =
+        pubService.refreshAuth(refreshBody, retrofitTag)
+
 }

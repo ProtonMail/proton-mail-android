@@ -195,7 +195,10 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun randomModulus(): ModulusResponse = api.randomModulus()
 
-    override fun refreshSync(refreshBody: RefreshBody): RefreshResponse = api.refreshSync(refreshBody)
+    override suspend fun refreshAuth(
+        refreshBody: RefreshBody,
+        retrofitTag: RetrofitTag?
+    ): RefreshResponse = api.refreshAuth(refreshBody, retrofitTag)
 
     override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse = api.twoFactor(twoFABody)
 

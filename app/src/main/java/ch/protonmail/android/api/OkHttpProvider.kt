@@ -21,6 +21,7 @@ package ch.protonmail.android.api
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
+import okhttp3.Authenticator
 import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,6 +43,7 @@ class OkHttpProvider @Inject constructor(
         id: String = endpointUri,
         timeout: Long,
         interceptor: Interceptor?,
+        authenticator: Authenticator,
         loggingLevel: HttpLoggingInterceptor.Level,
         connectionSpecs: List<ConnectionSpec?>,
         serverTimeInterceptor: ServerTimeInterceptor?
@@ -50,9 +52,25 @@ class OkHttpProvider @Inject constructor(
             return okHttpClients[id]!! // we can safely enforce here because we are sure it exists
         }
         okHttpClients[id] = if (endpointUri == Constants.ENDPOINT_URI) {
-            DefaultOkHttpClient(timeout, interceptor, loggingLevel, connectionSpecs, serverTimeInterceptor)
+            DefaultOkHttpClient(
+                timeout,
+                interceptor,
+                authenticator,
+                loggingLevel,
+                connectionSpecs,
+                serverTimeInterceptor
+            )
         } else {
-            ProxyOkHttpClient(timeout, interceptor, loggingLevel, connectionSpecs, serverTimeInterceptor, endpointUri, pinnedKeyHashes)
+            ProxyOkHttpClient(
+                timeout,
+                interceptor,
+                authenticator,
+                loggingLevel,
+                connectionSpecs,
+                serverTimeInterceptor,
+                endpointUri,
+                pinnedKeyHashes
+            )
         }
         return okHttpClients[id]!!
     }
