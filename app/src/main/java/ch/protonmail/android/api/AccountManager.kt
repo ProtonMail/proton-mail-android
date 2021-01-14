@@ -49,10 +49,12 @@ class AccountManager(
     private val sharedPreferences: SharedPreferences
 ) {
 
+    // TODO: make suspended
     fun setLoggedIn(userId: Id) {
         setLoggedIn(setOf(userId))
     }
 
+    // TODO: make suspended
     fun setLoggedIn(userIds: Collection<Id>) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) + userIds.map { it.s }
@@ -60,10 +62,12 @@ class AccountManager(
         setSaved(userIds)
     }
 
+    // TODO: make suspended
     fun setLoggedOut(userId: Id) {
         setLoggedOut(setOf(userId))
     }
 
+    // TODO: make suspended
     fun setLoggedOut(userIds: Collection<Id>) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userIds.map { it.s }
@@ -74,6 +78,7 @@ class AccountManager(
     /**
      * Completely remove the given [userId] from logged in and logged out lists
      */
+    // TODO: make suspended
     fun remove(userId: Id) {
         sharedPreferences[PREF_ALL_LOGGED_IN] =
             sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()) - userId.s
@@ -114,12 +119,15 @@ class AccountManager(
         unsupported
     }
 
+    // TODO: make suspended
     fun allLoggedIn(): Set<Id> =
         sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet())
 
+    // TODO: make suspended
     fun allLoggedOut(): Set<Id> =
         allSaved() - allLoggedIn()
 
+    // TODO: make suspended
     fun allSaved(): Set<Id> =
         sharedPreferences.get(PREF_ALL_SAVED, emptySet())
 
@@ -156,6 +164,7 @@ class AccountManager(
     /**
      * Removes all known lists of usernames.
      */
+    // TODO: make suspended
     fun clear() {
         sharedPreferences.edit {
             // New
