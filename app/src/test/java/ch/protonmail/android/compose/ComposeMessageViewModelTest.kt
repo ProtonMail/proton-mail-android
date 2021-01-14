@@ -86,14 +86,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     @InjectMockKs
     lateinit var viewModel: ComposeMessageViewModel
 
-<<<<<<< HEAD
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-=======
-    @BeforeEach
-    fun setUp() {
->>>>>>> d30d7302 (Fix ComposeMessageViewModel tests)
         // To avoid `EmptyList` to be returned by Mockk automatically as that causes
         // UnsupportedOperationException: Operation is not supported for read-only collection
         // when trying to add elements (in prod we ArrayList so this doesn't happen)

@@ -21,16 +21,15 @@ package ch.protonmail.android.utils.notifier
 
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
+import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
-@ExtendWith(MockKExtension::class)
 class AndroidErrorNotifierTest {
 
     @RelaxedMockK
@@ -41,6 +40,11 @@ class AndroidErrorNotifierTest {
 
     @InjectMockKs
     private lateinit var errorNotifier: AndroidErrorNotifier
+
+    @BeforeTest
+    fun setUp() {
+        MockKAnnotations.init(this)
+    }
 
     @Test
     fun errorNotifierCallsNotificationServerToDisplayErrorInPersistentNotification() {

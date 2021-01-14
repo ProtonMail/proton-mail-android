@@ -40,7 +40,6 @@ import io.mockk.verify
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -67,7 +66,6 @@ class UploadAttachmentsTest : CoroutinesTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success
         coEvery { attachmentsRepository.upload(any(), crypto) } returns AttachmentsRepository.Result.Success("8237423")
         coEvery { messageDetailsRepository.saveMessageLocally(any()) } returns 823L
         every { pendingActionsDao.findPendingUploadByMessageId(any()) } returns null
