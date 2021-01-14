@@ -57,6 +57,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -81,6 +82,7 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
@@ -94,7 +96,6 @@ import ch.protonmail.android.events.PasswordChangeEvent;
 import ch.protonmail.android.events.RequestTimeoutEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
-import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.FcmUtil;
@@ -134,6 +135,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @Inject
     UserManager userManager;
+    @Inject
+    AccountManager accountManager;
     @Inject
     EventManager eventManager;
     @Inject
@@ -320,7 +323,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
         } else {
             startActivity(intent);
         }
-        userManager.logoutOffline();
+        Id currentUserId = userManager.getCurrentUserId();
+        if (currentUserId != null) {
+            userManager.logoutOfflineBlocking(currentUserId);
+        }
     }
 
     @Subscribe
@@ -397,13 +403,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 }
                 TextExtensions.showToast(activity.getApplicationContext(), message);
             }
-        }
-    }
-
-    @Subscribe
-    public void onAvailableDomainsEvent(AvailableDomainsEvent event) {
-        if (event.getStatus() == Status.SUCCESS) {
-            this.mAvailableDomains = event.getDomains();
         }
     }
 
@@ -530,17 +529,16 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     private void checkForUpdateAndClearCache() {
         final SharedPreferences prefs = getDefaultSharedPreferences();
-        int currentAppVersion = AppUtil.getAppVersionCode(this);
         mNetworkUtil.setCurrentlyHasConnectivity();
         //refresh local cache if new app version
         int previousVersion = prefs.getInt(Constants.Prefs.PREF_APP_VERSION, Integer.MIN_VALUE);
-        if (previousVersion != currentAppVersion && previousVersion > 0) {
+        if (previousVersion != BuildConfig.VERSION_CODE && previousVersion > 0) {
             prefs.edit().putInt(Constants.Prefs.PREF_PREVIOUS_APP_VERSION, previousVersion).apply();
-            prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, currentAppVersion).apply();
+            prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             mUpdateOccurred = true;
 
             if (userManager.isLoggedIn()) {
-                userManager.setLoginState(LOGIN_STATE_TO_INBOX);
+                userManager.setCurrentUserLoginState(LOGIN_STATE_TO_INBOX);
             }
 
             if (BuildConfig.DEBUG) {
@@ -560,14 +558,15 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 // and if every single previous version should be force logged out
                 // or any specific previous version should be logged out
 
+                Id currentUserId = userManager.getCurrentUserId();
                 // Removed check for updates where we need to logout as it was always false. See doc ref in method header
-                if (false) {
-                    userManager.logoutOffline();
-                    AppUtil.deleteDatabases(this, userManager.getUsername());
+                if (false) {  // Can we remove this part
+                    userManager.logoutOfflineBlocking(currentUserId);
+                    AppUtil.deleteDatabases(this, currentUserId.getS());
                     AppUtil.deletePrefs();
                 }
                 if (BuildConfig.DEBUG) {
-                    List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
+                    List<String> loggedInUsers = accountManager.getLoggedInUsers();
                     long elapsedTime = SystemClock.elapsedRealtime();
                     for (String userName : loggedInUsers) {
                         User user = userManager.getUser(userName);
@@ -582,8 +581,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     AlarmReceiver alarmReceiver = new AlarmReceiver();
                     alarmReceiver.cancelAlarm(this);
                     startJobManager();
-                    TokenManager.Companion.removeEmptyTokenManagers();
-                    List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
+                    List<String> loggedInUsers = accountManager.getLoggedInUsers();
                     String currentPrimary = userManager.getUsername();
                     jobManager.addJobInBackground(new FetchUserSettingsJob(currentPrimary));
                     for (String loggedInUser : loggedInUsers) {
@@ -596,7 +594,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 }
                 TokenManager tokenManager = userManager.getTokenManager();
                 if (tokenManager != null && TextUtils.isEmpty(tokenManager.getEncPrivateKey())) {
-                    User user = userManager.getUser();
+                    User user = userManager.getCurrentLegacyUserBlocking();
                     for (Keys key : user.getKeys()) {
                         if (key.isPrimary()) {
                             tokenManager.setEncPrivateKey(key.getPrivateKey()); // it's needed for verification later
@@ -604,33 +602,41 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         }
                     }
                 }
-                SharedPreferences secureSharedPreferences = SecureSharedPreferences.Companion.getPrefsForUser(getApplicationContext(), userManager.getCurrentUserId());
-                SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
-                List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
 
-                if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
-                    secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING,
-                            defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)).apply();
-                    defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_WARNING).apply();
+                SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
+                if (currentUserId != null) {
+                    SharedPreferences secureSharedPreferences =
+                            SecureSharedPreferences.Companion.getPrefsForUser(
+                                    getApplicationContext(),
+                                    currentUserId
+                            );
+
+                    if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
+                        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING,
+                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_WARNING).apply();
+                    }
+                    if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_REACHED)) {
+                        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED,
+                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
+                    }
                 }
-                if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_REACHED)) {
-                    secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED,
-                            defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)).apply();
-                    defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
-                }
+
+                Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
                 if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
-                    for (String user : loggedInUsers) {
+                    for (Id user : loggedInUsers) {
                         SharedPreferences secureSharedPreferencesForUser = SecureSharedPreferences.Companion.getPrefsForUser(getApplicationContext(),
                                 user);
                         if (userManager.getMailboxPassword(user) == null) {
-                            userManager.logoutAccount(user);
+                            userManager.logoutBlocking(user);
                         } else {
                             secureSharedPreferencesForUser.edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
                         }
                     }
                     defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
                 }
-                for (String user : loggedInUsers) {
+                for (Id user : loggedInUsers) {
                     SharedPreferences secureSharedPreferencesForUser =
                             SecureSharedPreferences.Companion.getPrefsForUser(
                                     getApplicationContext(),
@@ -644,7 +650,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     FcmUtil.setTokenSent(false);
                 }
                 if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
-                    for (String user : loggedInUsers) {
+                    for (Id user : loggedInUsers) {
                         SharedPreferences secureSharedPreferencesForUser =
                                 SecureSharedPreferences.Companion.getPrefsForUser(
                                         getApplicationContext(),
@@ -659,7 +665,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         } else {
             mUpdateOccurred = false;
             if (previousVersion < 0) {
-                prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, currentAppVersion).apply();
+                prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, BuildConfig.VERSION_CODE).apply();
             }
         }
     }

@@ -20,7 +20,6 @@
 
 package ch.protonmail.android.mapper.bridge
 
-import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString

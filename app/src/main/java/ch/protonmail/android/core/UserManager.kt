@@ -678,6 +678,14 @@ class UserManager @Inject constructor(
         }
     }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("logoutOffline()")
+    )
+    fun logoutOfflineBlocking(userId: Id) = runBlocking {
+        logoutOffline(userId)
+    }
+
     suspend fun logoutCurrentUserOffline() {
         logoutOffline(requireCurrentUserId())
     }
