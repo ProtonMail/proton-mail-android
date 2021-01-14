@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.api.interceptors
 
+import android.content.Context
 import android.content.SharedPreferences
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.RefreshBody
@@ -26,30 +27,25 @@ import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
 import ch.protonmail.android.api.segments.HEADER_AUTH
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
-import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.runs
-import io.mockk.unmockkStatic
 import okhttp3.Request
 import okhttp3.Response
-import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
-const val AUTH_ACCESS_TOKEN = "auth_access_token"
-const val TEST_URL = "https://legit_url"
-const val TEST_USERNAME = "testuser"
-const val NON_NULL_ERROR_MESSAGE = "non null error message"
+private const val AUTH_ACCESS_TOKEN = "auth_access_token"
+private const val TEST_URL = "https://legit_url"
+private const val TEST_USERNAME = "testuser"
+private const val NON_NULL_ERROR_MESSAGE = "non null error message"
 
 class ProtonMailAuthenticatorTest {
 
@@ -82,29 +78,20 @@ class ProtonMailAuthenticatorTest {
 
     private val jobManagerMock = mockk<JobManager> (relaxed = true)
 
+    private val appContextMock = mockk<Context> (relaxed = true)
+
     private val authenticator =
-        ProtonMailAuthenticator(userManagerMock, jobManagerMock)
+        ProtonMailAuthenticator(userManagerMock, jobManagerMock, appContextMock)
 
     @Before
     fun setup() {
-        mockkStatic(AppUtil::class)
-        mockkStatic(ProtonMailApplication::class)
         MockKAnnotations.init(this)
-        every { AppUtil.postEventOnUi(any()) } answers { mockk<Void>() }
-        every { AppUtil.buildUserAgent() } answers { "user agent" }
-
-        every { ProtonMailApplication.getApplication().currentLocale } returns "current locale"
+        every { appContextMock.app.currentLocale } returns "current locale"
         every {
-            ProtonMailApplication.getApplication().defaultSharedPreferences
+            appContextMock.app.defaultSharedPreferences
         } returns prefsMock
 
-        every { ProtonMailApplication.getApplication().notifyLoggedOut(TEST_USERNAME) } just runs
-    }
-
-    @After
-    fun teardown() {
-        unmockkStatic(AppUtil::class)
-        unmockkStatic(ProtonMailApplication::class)
+        every { appContextMock.app.notifyLoggedOut(TEST_USERNAME) } just runs
     }
 
     @Test
@@ -147,7 +134,7 @@ class ProtonMailAuthenticatorTest {
         }
 
         every {
-            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
+            appContextMock.app.api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when
@@ -177,7 +164,7 @@ class ProtonMailAuthenticatorTest {
         }
 
         every {
-            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
+            appContextMock.app.api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when
@@ -207,7 +194,7 @@ class ProtonMailAuthenticatorTest {
         }
 
         every {
-            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
+            appContextMock.app.api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when
@@ -239,7 +226,7 @@ class ProtonMailAuthenticatorTest {
         }
 
         every {
-            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
+            appContextMock.app.api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when
