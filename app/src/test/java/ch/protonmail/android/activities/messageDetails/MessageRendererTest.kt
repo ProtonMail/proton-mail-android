@@ -33,10 +33,10 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /**
  * Test class for [MessageRenderer]
@@ -58,7 +58,7 @@ internal class MessageRendererTest : CoroutinesTest {
         }
     }
 
-    @Before
+    @BeforeTest
     fun before() {
         for (image in mockEmbeddedImages) {
             val file = folder.newFile(image.localFileName)

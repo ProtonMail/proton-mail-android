@@ -35,9 +35,9 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Before
 import org.junit.Ignore
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class CreateSubscriptionTest {
@@ -51,7 +51,7 @@ class CreateSubscriptionTest {
     @InjectMockKs
     private lateinit var useCase: CreateSubscription
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

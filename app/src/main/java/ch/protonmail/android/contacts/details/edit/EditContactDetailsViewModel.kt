@@ -20,6 +20,7 @@ package ch.protonmail.android.contacts.details.edit
 
 import android.annotation.SuppressLint
 import android.text.TextUtils
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -35,12 +36,11 @@ import ch.protonmail.android.contacts.details.ContactDetailsViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
-import ch.protonmail.android.usecase.fetch.FetchContactDetails
 import ch.protonmail.android.usecase.create.CreateContact
+import ch.protonmail.android.usecase.fetch.FetchContactDetails
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.viewmodel.NETWORK_CHECK_DELAY
 import ch.protonmail.android.views.models.LocalContact
-import ch.protonmail.libs.core.utils.ViewModelFactory
 import ezvcard.Ezvcard
 import ezvcard.VCard
 import ezvcard.VCardVersion
@@ -69,7 +69,6 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import java.util.ArrayList
 import java.util.UUID
-import javax.inject.Inject
 
 const val FLOW_NEW_CONTACT = 1
 const val FLOW_EDIT_CONTACT = 2
@@ -85,7 +84,7 @@ const val EXTRA_LOCAL_CONTACT = "extra_local_contact"
 
 private const val VCARD_PROD_ID = "-//ProtonMail//ProtonMail for Android vCard 1.0.0//EN"
 
-class EditContactDetailsViewModel(
+class EditContactDetailsViewModel @ViewModelInject constructor(
     private val dispatchers: DispatcherProvider,
     downloadFile: DownloadFile,
     private val editContactDetailsRepository: EditContactDetailsRepository,
@@ -143,18 +142,73 @@ class EditContactDetailsViewModel(
     private lateinit var _mapEmailGroupsIds: HashMap<ContactEmail, List<ContactLabel>>
 
     // endregion
+    // region default options
+    val defaultEmailOption: String
+        get() = _vCardEmailOptions[0]
+
+    val defaultEmailUIOption: String
+        get() = _vCardEmailUIOptions[0]
+
+    val defaultPhoneOption: String
+        get() = _vCardPhoneOptions[0]
+
+    val defaultPhoneUIOption: String
+        get() = _vCardPhoneUIOptions[0]
+    val defaultAddressOption: String
+        get() = _vCardAddressOptions[0]
+    val defaultAddressUIOption: String
+        get() = _vCardAddressUIOptions[0]
+    val defaultOtherOption: String
+        get() = _vCardOtherOptions[0]
+    // endregion
+    //region options lists
+    val emailOptions: List<String>
+        get() = _vCardEmailOptions
+    val emailUIOptions: List<String>
+        get() = _vCardEmailUIOptions
+    val phoneOptions: List<String>
+        get() = _vCardPhoneOptions
+
+    val phoneUIOptions: List<String>
+        get() = _vCardPhoneUIOptions
+    val addressOptions: List<String>
+        get() = _vCardAddressOptions
+    val addressUIOptions: List<String>
+        get() = _vCardAddressUIOptions
+    val otherOptions: List<String>
+        get() = _vCardOtherOptions
+    // endregion
+    // region others
+    val localContact: LocalContact?
+        get() = _localContact
+    val contactId: String
+        get() = _contactId
+    private fun postSetupFlowEvent() {
+        when (_flow) {
+            FLOW_NEW_CONTACT -> _setupNewContactFlow.postValue(_email)
+            FLOW_EDIT_CONTACT -> _setupEditContactFlow.postValue(EditContactCardsHolder(_vCardType0, _vCardType2, _vCardType3))
+            FLOW_CONVERT_CONTACT -> _setupConvertContactFlow.postValue(null)
+        }
+    }
+
+    // endregion
     // region setup
-    fun setup(flow: Int, contactId: String, localContact: LocalContact?, email: String,
-              vCardPhoneUIOptions: List<String>,
-              vCardPhoneOptions: List<String>,
-              vCardEmailUIOptions: List<String>,
-              vCardEmailOptions: List<String>,
-              vCardAddressUIOptions: List<String>,
-              vCardAddressOptions: List<String>,
-              vCardOtherOptions: List<String>,
-              vCardStringType0: String?,
-              vCardStringType2: String?,
-              vCardStringType3: String?) {
+    fun setup(
+        flow: Int,
+        contactId: String,
+        localContact: LocalContact?,
+        email: String,
+        vCardPhoneUIOptions: List<String>,
+        vCardPhoneOptions: List<String>,
+        vCardEmailUIOptions: List<String>,
+        vCardEmailOptions: List<String>,
+        vCardAddressUIOptions: List<String>,
+        vCardAddressOptions: List<String>,
+        vCardOtherOptions: List<String>,
+        vCardStringType0: String?,
+        vCardStringType2: String?,
+        vCardStringType3: String?
+    ) {
         _flow = flow
         _contactId = contactId
         _localContact = localContact
@@ -174,14 +228,6 @@ class EditContactDetailsViewModel(
         postSetupFlowEvent()
         if (_flow == FLOW_EDIT_CONTACT) {
             fetchContactGroupsAndContactEmails(_contactId)
-        }
-    }
-
-    private fun postSetupFlowEvent() {
-        when (_flow) {
-            FLOW_NEW_CONTACT -> _setupNewContactFlow.postValue(_email)
-            FLOW_EDIT_CONTACT -> _setupEditContactFlow.postValue(EditContactCardsHolder(_vCardType0, _vCardType2, _vCardType3))
-            FLOW_CONVERT_CONTACT -> _setupConvertContactFlow.postValue(null)
         }
     }
 
@@ -222,47 +268,6 @@ class EditContactDetailsViewModel(
         // getting custom properties
         _vCardCustomProperties = _vCardType3.extendedProperties
     }
-
-    // endregion
-    // region default options
-    val defaultEmailOption: String
-        get() = _vCardEmailOptions[0]
-    val defaultEmailUIOption: String
-        get() = _vCardEmailUIOptions[0]
-    val defaultPhoneOption: String
-        get() = _vCardPhoneOptions[0]
-    val defaultPhoneUIOption: String
-        get() = _vCardPhoneUIOptions[0]
-    val defaultAddressOption: String
-        get() = _vCardAddressOptions[0]
-    val defaultAddressUIOption: String
-        get() = _vCardAddressUIOptions[0]
-    val defaultOtherOption: String
-        get() = _vCardOtherOptions[0]
-
-    // endregion
-    //region options lists
-    val emailOptions: List<String>
-        get() = _vCardEmailOptions
-    val emailUIOptions: List<String>
-        get() = _vCardEmailUIOptions
-    val phoneOptions: List<String>
-        get() = _vCardPhoneOptions
-    val phoneUIOptions: List<String>
-        get() = _vCardPhoneUIOptions
-    val addressOptions: List<String>
-        get() = _vCardAddressOptions
-    val addressUIOptions: List<String>
-        get() = _vCardAddressUIOptions
-    val otherOptions: List<String>
-        get() = _vCardOtherOptions
-
-    // endregion
-    // region others
-    val localContact: LocalContact?
-        get() = _localContact
-    val contactId: String
-        get() = _contactId
 
     fun isConvertContactFlow(): Boolean = _flow == FLOW_CONVERT_CONTACT
 
@@ -365,18 +370,20 @@ class EditContactDetailsViewModel(
                         }
                         _mapEmailGroupsIds[email] = groupsForThisEmail
                     }
-            }.subscribeOn(ThreadSchedulers.main())
+            }
+            .subscribeOn(ThreadSchedulers.main())
             .observeOn(ThreadSchedulers.main())
-            .subscribe({
-                val size = _mapEmailGroupsIds.size
-            }, {
-                ParseUtils.doOnError(it)
-            })
+            .subscribe(
+                {
+                    val size = _mapEmailGroupsIds.size
+                },
+                {
+                    ParseUtils.doOnError(it)
+                }
+            )
     }
 
-    private fun validateEmails(emails: List<ContactEmail>): List<ContactEmail> {
-        return emails.distinctBy { it.email }
-    }
+    private fun validateEmails(emails: List<ContactEmail>): List<ContactEmail> = emails.distinctBy { it.email }
 
     fun checkConnectivity() {
         _verifyConnectionTrigger.value = Unit
@@ -393,28 +400,4 @@ class EditContactDetailsViewModel(
     }
 
     class EditContactCardsHolder(val vCardType0: VCard, val vCardType2: VCard, val vCardType3: VCard)
-
-    // TODO: remove when the ViewModel can be injected into a Kotlin class
-    class Factory @Inject constructor(
-        private val dispatcherProvider: DispatcherProvider,
-        private val downloadFile: DownloadFile,
-        private val editContactDetailsRepository: EditContactDetailsRepository,
-        private val userManager: UserManager,
-        private val workManager: WorkManager,
-        private val fetchContactDetails: FetchContactDetails,
-        private val verifyConnection: VerifyConnection,
-        private val createContact: CreateContact
-    ) : ViewModelFactory<EditContactDetailsViewModel>() {
-        override fun create() =
-            EditContactDetailsViewModel(
-                dispatcherProvider,
-                downloadFile,
-                editContactDetailsRepository,
-                userManager,
-                verifyConnection,
-                createContact,
-                workManager,
-                fetchContactDetails
-            )
-    }
 }

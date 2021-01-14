@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.attachments
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
@@ -33,6 +32,7 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.coVerifySequence
@@ -40,7 +40,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -48,18 +47,12 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import org.junit.Rule
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import java.util.concurrent.TimeoutException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@ExtendWith(MockKExtension::class)
 class AttachmentsRepositoryTest : CoroutinesTest {
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @MockK
     private lateinit var userManager: UserManager
@@ -82,8 +75,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var repository: AttachmentsRepository
 
-    @BeforeEach
+    @BeforeTest
     fun setUp() {
+        MockKAnnotations.init(this)
         val successResponse = mockk<AttachmentUploadResponse> {
             every { code } returns Constants.RESPONSE_CODE_OK
             every { attachmentID } returns ""
@@ -327,7 +321,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     @Test
     fun uploadReturnsFailureWhenApiCallFailsBecauseOfTimeout() {
         runBlockingTest {
-            val errorMessage = "Upload attachemt request failed"
+            val errorMessage = "Upload attachment request failed"
             val unarmoredSignedFileContent = byteArrayOf()
             val attachment = mockk<Attachment>(relaxed = true)
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent

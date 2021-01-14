@@ -36,9 +36,9 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import io.reactivex.Completable
 import io.reactivex.Single
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ContactGroupEditCreateRepositoryTest {
 
@@ -63,7 +63,7 @@ class ContactGroupEditCreateRepositoryTest {
     @InjectMockKs
     private lateinit var repository: ContactGroupEditCreateRepository
 
-    @BeforeEach
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

@@ -20,12 +20,8 @@ package ch.protonmail.android.contacts
 
 import android.content.Intent
 import android.view.ActionMode
-import com.birbit.android.jobqueue.JobManager
 
-/**
- * Created by kadrikj on 9/17/18. */
 interface IContactsListFragmentListener {
-    val jobManager: JobManager
 
     fun dataUpdated(position: Int, count: Int)
 

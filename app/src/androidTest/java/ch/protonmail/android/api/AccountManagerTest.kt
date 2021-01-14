@@ -21,15 +21,15 @@ package ch.protonmail.android.api
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import junit.framework.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 @LargeTest
 internal class AccountManagerTest {
 
     private val accountManager = AccountManager.getInstance(InstrumentationRegistry.getInstrumentation().targetContext)
 
-    @Before
+    @BeforeTest
     fun clear() {
         accountManager.clear()
     }

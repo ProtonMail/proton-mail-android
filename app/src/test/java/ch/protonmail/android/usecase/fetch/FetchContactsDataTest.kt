@@ -28,10 +28,10 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import java.util.UUID
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -48,7 +48,7 @@ class FetchContactsDataTest {
 
     private lateinit var useCase: FetchContactsData
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         useCase = FetchContactsData(fetchContactsDataWorker, fetchContactsEmailsWorker)

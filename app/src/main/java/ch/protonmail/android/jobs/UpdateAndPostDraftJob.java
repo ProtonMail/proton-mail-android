@@ -36,7 +36,7 @@ import java.util.Set;
 
 import ch.protonmail.android.api.interceptors.RetrofitTag;
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.NewMessage;
+import ch.protonmail.android.api.models.DraftBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory;
@@ -44,6 +44,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory;
 import ch.protonmail.android.api.models.messages.receive.MessageResponse;
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
+import ch.protonmail.android.api.models.messages.receive.ServerMessageSender;
 import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessageSender;
@@ -110,21 +111,21 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
         MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
         final ServerMessage serverMessage = messageFactory.createServerMessage(message);
-        final NewMessage newMessage = new NewMessage(serverMessage);
+        final DraftBody draftBody = new DraftBody(serverMessage);
         String encryptedMessage = message.getMessageBody();
 
         User user = getUserManager().getUser(mUsername);
         Address senderAddress = user.getAddressById(addressId);
-        newMessage.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
+        draftBody.getMessage().setSender(new ServerMessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
 
-        newMessage.addMessageBody(Fields.Message.SELF, encryptedMessage);
-        updateAttachmentKeyPackets(mNewAttachments, newMessage, mOldSenderAddressID, senderAddress);
+        draftBody.getMessage().setBody(encryptedMessage);
+        updateAttachmentKeyPackets(mNewAttachments, draftBody, mOldSenderAddressID, senderAddress);
         if (message.getSenderEmail().contains("+")) { // it's being sent by alias
-            newMessage.setSender(new MessageSender(message.getSenderName(), message.getSenderEmail()));
+            draftBody.getMessage().setSender(new ServerMessageSender(message.getSenderName(), message.getSenderEmail()));
         }
-        final MessageResponse draftResponse = getApi().updateDraft(newMessage.getMessage().getID(), newMessage, new RetrofitTag(mUsername));
+        final MessageResponse draftResponse = getApi().updateDraft(draftBody.getMessage().getId(), draftBody, new RetrofitTag(mUsername));
         if (draftResponse.getCode() == Constants.RESPONSE_CODE_OK) {
-            getApi().markMessageAsRead(new IDList(Arrays.asList(newMessage.getMessage().getID())));
+            getApi().markMessageAsRead(new IDList(Arrays.asList(draftBody.getMessage().getId())));
         } else {
             pendingActionsDatabase.deletePendingUploadByMessageId(message.getMessageId());
             return;
@@ -171,7 +172,7 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
         getMessageDetailsRepository().saveMessageInDB(message);
     }
 
-    private void updateAttachmentKeyPackets(List<String> attachmentList, NewMessage newMessage, String oldSenderAddress, Address newSenderAddress) throws Exception {
+    private void updateAttachmentKeyPackets(List<String> attachmentList, DraftBody draftBody, String oldSenderAddress, Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
             AddressCrypto oldCrypto = Crypto.forAddress(getUserManager(), mUsername, oldSenderAddress);
             AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
@@ -189,11 +190,11 @@ public class UpdateAndPostDraftJob extends ProtonMailBaseJob {
                     byte[] newKeyPackage = oldCrypto.encryptKeyPacket(sessionKey, newPublicKey);
                     String newKeyPackets = Base64.encodeToString(newKeyPackage, Base64.NO_WRAP);
                     if (!TextUtils.isEmpty(keyPackets)) {
-                        newMessage.addAttachmentKeyPacket(AttachmentID, newKeyPackets);
+                        draftBody.getAttachmentKeyPackets().put(AttachmentID, newKeyPackets);
                     }
                 } catch (Exception e) {
                     if (!TextUtils.isEmpty(keyPackets)) {
-                        newMessage.addAttachmentKeyPacket(AttachmentID, keyPackets);
+                        draftBody.getAttachmentKeyPackets().put(AttachmentID, keyPackets);
                     }
                     Logger.doLogException(e);
                 }

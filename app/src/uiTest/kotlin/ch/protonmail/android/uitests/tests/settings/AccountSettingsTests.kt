@@ -23,23 +23,23 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
-import org.junit.Before
-import org.junit.Test
 import org.junit.experimental.categories.Category
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class AccountSettingsTests : BaseTest() {
 
     private val accountSettingsRobot: AccountSettingsRobot = AccountSettingsRobot()
     private val loginRobot = LoginRobot()
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         loginRobot
             .loginUser(TestData.onePassUser)
             .menuDrawer()
             .settings()
-            .selectItemByValue(TestData.onePassUser.email)
+            .selectSettingsItemByValue(TestData.onePassUser.email)
     }
 
     @Test

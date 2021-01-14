@@ -25,7 +25,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.automation
-import junit.framework.TestCase.fail
 import java.io.File
 import java.io.FileOutputStream
 
@@ -35,10 +34,10 @@ object IntentHelper {
 //        val fileType = mimeType.split("/")[1]
 //        // Check if provided mime type corresponds to the file
 //        if (fileName.contains(fileType)) {
-            automation.executeShellCommand("am start -a android.intent.action.SEND -t $mimeType " +
-                "--eu android.intent.extra.STREAM " +
-                "file:///data/data/ch.protonmail.android.beta/files/$fileName " +
-                " --grant-read-uri-permission")
+        automation.executeShellCommand("am start -a android.intent.action.SEND -t $mimeType " +
+            "--eu android.intent.extra.STREAM " +
+            "file:///data/data/ch.protonmail.android.beta/files/$fileName " +
+            " --grant-read-uri-permission")
 //        } else {
 //            fail("Mime type:\"$mimeType\" doesn't correspond to the file:\"$fileName\"")
 //        }

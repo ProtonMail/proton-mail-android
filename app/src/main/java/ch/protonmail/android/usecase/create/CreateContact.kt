@@ -35,8 +35,9 @@ import ch.protonmail.android.worker.CreateContactWorker.Enqueuer
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_RESULT_ERROR_ENUM
 import ch.protonmail.android.worker.KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID
-import ch.protonmail.libs.core.utils.deserializeList
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -119,7 +120,10 @@ class CreateContact @Inject constructor(
 
         val emailsJson = outputData.getString(KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON)
         emailsJson?.let {
-            val serverEmails = emailsJson.deserializeList<ContactEmail>()
+            val serverEmails = Json.decodeFromString(
+                ListSerializer(ContactEmail.serializer()),
+                emailsJson
+            )
             contactsRepository.updateAllContactEmails(contactData.contactId, serverEmails)
         }
     }

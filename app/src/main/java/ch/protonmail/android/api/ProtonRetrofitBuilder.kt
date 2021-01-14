@@ -20,12 +20,12 @@ package ch.protonmail.android.api
 
 import android.os.Build
 import ch.protonmail.android.api.interceptors.ProtonMailAttachmentRequestInterceptor
+import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.api.models.BugsBody
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MessageRecipient
-import ch.protonmail.android.api.models.NewMessage
 import ch.protonmail.android.api.segments.ATTACH_PATH
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.api.utils.StringConverterFactory
@@ -45,6 +45,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
+import javax.inject.Inject
 import javax.inject.Singleton
 
 enum class RetrofitType {
@@ -52,10 +53,11 @@ enum class RetrofitType {
 }
 
 @Singleton
-class ProtonRetrofitBuilder(
+class ProtonRetrofitBuilder @Inject constructor(
     val userManager: UserManager,
     val jobManager: JobManager,
-    private val networkUtil: QueueNetworkUtil
+    private val networkUtil: QueueNetworkUtil,
+    private val authenticator: ProtonMailAuthenticator
 ) {
     private val cache = HashMap<RetrofitType, Retrofit>()
     private lateinit var endpointUri: String
@@ -67,37 +69,60 @@ class ProtonRetrofitBuilder(
         enumValues<RetrofitType>().forEach { type ->
             cache[type] = when (type) {
                 RetrofitType.PUBLIC -> {
-                    ProtonRetrofitPublic(okHttpProvider, userManager, jobManager, networkUtil).build(endpointUri).build()
+                    ProtonRetrofitPublic(
+                        okHttpProvider,
+                        userManager,
+                        jobManager,
+                        networkUtil,
+                        authenticator
+                    ).build(endpointUri).build()
                 }
                 RetrofitType.PING -> {
-                    val retrofit = ProtonRetrofitPing(okHttpProvider, userManager, jobManager, networkUtil)
-                    retrofit.defaultInterceptor.also {
-                        it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
-                    }
+                    val retrofit = ProtonRetrofitPing(
+                        okHttpProvider,
+                        userManager,
+                        jobManager,
+                        networkUtil,
+                        authenticator
+                    )
                     retrofit.build(endpointUri).build()
                 }
                 RetrofitType.EXTENDED_TIMEOUT -> {
-                    val retrofit = ProtonRetrofitExtended(okHttpProvider, userManager, jobManager, networkUtil)
-                    retrofit.defaultInterceptor.also {
-                        it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
-                    }
+                    val retrofit = ProtonRetrofitExtended(
+                        okHttpProvider,
+                        userManager,
+                        jobManager,
+                        networkUtil,
+                        authenticator
+                    )
                     retrofit.buildExtended(endpointUri).build()
                 }
                 RetrofitType.ATTACHMENTS -> {
-                    val publicRetrofit = ProtonRetrofitPublic(okHttpProvider, userManager, jobManager, networkUtil).build(endpointUri).build()
-                    val publicService = publicRetrofit.create(ProtonMailPublicService::class.java)
-                    attachReqInter = ProtonMailAttachmentRequestInterceptor.getInstance(publicService, userManager, jobManager, networkUtil)
-                    val retrofit = ProtonRetrofitAttachments(okHttpProvider, attachReqInter, userManager, jobManager, networkUtil)
-                    retrofit.defaultInterceptor.also {
-                        it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
-                    }
+                    attachReqInter =
+                        ProtonMailAttachmentRequestInterceptor.getInstance(
+                            userManager,
+                            jobManager,
+                            networkUtil
+                        )
+                    val retrofit = ProtonRetrofitAttachments(
+                        okHttpProvider,
+                        attachReqInter,
+                        userManager,
+                        jobManager,
+                        networkUtil,
+                        authenticator
+                    )
                     retrofit.build(endpointUri).build()
                 }
                 else -> { // secure is default
-                    val retrofit = ProtonRetrofitSecure(okHttpProvider, userManager, jobManager, networkUtil)
-                    retrofit.defaultInterceptor.also {
-                        it.publicService = cache[RetrofitType.PUBLIC]!!.create(ProtonMailPublicService::class.java)
-                    }
+
+                    val retrofit = ProtonRetrofitSecure(
+                        okHttpProvider,
+                        userManager,
+                        jobManager,
+                        networkUtil,
+                        authenticator
+                    )
                     retrofit.build(endpointUri).build()
                 }
             }
@@ -117,20 +142,22 @@ class ProtonRetrofitBuilder(
  * API or with some of the proxy APIs.
  */
 sealed class ProtonRetrofit(
-        val userManager: UserManager,
-        val jobManager: JobManager,
-        val networkUtil: QueueNetworkUtil) {
-
-    val defaultInterceptor = ProtonMailRequestInterceptor.getInstance(userManager, jobManager, networkUtil)
-
+    val userManager: UserManager,
+    val jobManager: JobManager,
+    val networkUtil: QueueNetworkUtil
+) {
+    val defaultInterceptor =
+        ProtonMailRequestInterceptor.getInstance(userManager, jobManager, networkUtil)
     val spec: List<ConnectionSpec?> = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-        listOf(ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+        listOf(
+            ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                 .tlsVersions(TlsVersion.TLS_1_2)
                 .cipherSuites(
-                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
-                .build())
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+                ).build()
+        )
     } else {
         listOf(ConnectionSpec.MODERN_TLS, ConnectionSpec.COMPATIBLE_TLS)
     }
@@ -138,149 +165,177 @@ sealed class ProtonRetrofit(
 
     // region gson specs
     private val gsonUcc: Gson = GsonBuilder()
-            .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
-            .registerTypeAdapter(NewMessage::class.java, NewMessage.NewMessageSerializer())
-            .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientSerializer())// Android 6 bug fix
-            .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientDeserializer())// Android 6 bug fix
-            .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodySerializer())// Android 6 bug fix
-            .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodyDeserializer())// Android 6 bug fix
-            .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodySerializer())// Android 6 bug fix
-            .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodyDeserializer())// Android 6 bug fix
-            .registerTypeAdapter(AttachmentHeaders::class.java, AttachmentHeaders.AttachmentHeadersDeserializer())// Android 6 bug fix
-            .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)// Android 6 bug fix
-            .create()
+        .setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+        .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientSerializer())
+        .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientDeserializer())
+        .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodySerializer())
+        .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodyDeserializer())
+        .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodySerializer())
+        .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodyDeserializer())
+        .registerTypeAdapter(AttachmentHeaders::class.java, AttachmentHeaders.AttachmentHeadersDeserializer())
+        .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
+        .create()
     // endregion
 
-    protected abstract fun configureOkHttp(endpointUri: String, interceptor: ProtonMailRequestInterceptor?): OkHttpClient
+    protected abstract fun configureOkHttp(
+        endpointUri: String,
+        interceptor: ProtonMailRequestInterceptor?
+    ): OkHttpClient
 
     fun build(endpointUri: String): Retrofit.Builder {
         return Retrofit.Builder()
-                .baseUrl(endpointUri)
-                .client(configureOkHttp(endpointUri, defaultInterceptor))
-                .addConverterFactory(GsonConverterFactory.create(gsonUcc))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .baseUrl(endpointUri)
+            .client(configureOkHttp(endpointUri, defaultInterceptor))
+            .addConverterFactory(GsonConverterFactory.create(gsonUcc))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
     }
 
     fun buildExtended(endpointUri: String): Retrofit.Builder {
         return Retrofit.Builder()
-                .baseUrl(endpointUri)
-                .client(configureOkHttp(endpointUri, defaultInterceptor))
-                .addConverterFactory(StringConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gsonUcc))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .baseUrl(endpointUri)
+            .client(configureOkHttp(endpointUri, defaultInterceptor))
+            .addConverterFactory(StringConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gsonUcc))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
     }
 }
 
 class ProtonRetrofitPublic(
-        private val okHttpProvider: OkHttpProvider,
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil)
-    : ProtonRetrofit(userManager, jobManager, networkUtil) {
-    override fun configureOkHttp(endpointUri: String, interceptor: ProtonMailRequestInterceptor?): OkHttpClient {
+    private val okHttpProvider: OkHttpProvider,
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil,
+    private val authenticator: ProtonMailAuthenticator
+) : ProtonRetrofit(userManager, jobManager, networkUtil) {
+    override fun configureOkHttp(
+        endpointUri: String,
+        interceptor: ProtonMailRequestInterceptor?
+    ): OkHttpClient {
         // for the public retrofit client it is not needed to have the interceptor, so we tolerate null
         val okHttpClient = okHttpProvider.provideOkHttpClient(
-                endpointUri,
-                endpointUri,
-                TEN_SECONDS,
-                interceptor,
-                HttpLoggingInterceptor.Level.BASIC,
-                spec,
-                serverTimeInterceptor
+            endpointUri,
+            endpointUri,
+            TEN_SECONDS,
+            interceptor,
+            authenticator,
+            HttpLoggingInterceptor.Level.BODY,
+            spec,
+            serverTimeInterceptor
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
 }
 
 class ProtonRetrofitPing(
-        private val okHttpProvider: OkHttpProvider,
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil)
-    : ProtonRetrofit(userManager, jobManager, networkUtil) {
-    override fun configureOkHttp(endpointUri: String, interceptor: ProtonMailRequestInterceptor?): OkHttpClient {
+    private val okHttpProvider: OkHttpProvider,
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil,
+    private val authenticator: ProtonMailAuthenticator
+) : ProtonRetrofit(userManager, jobManager, networkUtil) {
+    override fun configureOkHttp(
+        endpointUri: String,
+        interceptor: ProtonMailRequestInterceptor?
+    ): OkHttpClient {
         if (interceptor == null) {
             throw RuntimeException("Private OkHttp client is mandatory to be provided with public request interceptor")
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
-                endpointUri,
-                endpointUri,
-                TEN_SECONDS,
-                interceptor,
-                HttpLoggingInterceptor.Level.BASIC,
-                spec,
-                serverTimeInterceptor
+            endpointUri,
+            endpointUri,
+            TEN_SECONDS,
+            interceptor,
+            authenticator,
+            HttpLoggingInterceptor.Level.BODY,
+            spec,
+            serverTimeInterceptor
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
 }
 
 class ProtonRetrofitExtended(
-        private val okHttpProvider: OkHttpProvider,
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil)
-    : ProtonRetrofit(userManager, jobManager, networkUtil) {
-    override fun configureOkHttp(endpointUri: String, interceptor: ProtonMailRequestInterceptor?): OkHttpClient {
+    private val okHttpProvider: OkHttpProvider,
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil,
+    private val authenticator: ProtonMailAuthenticator
+) : ProtonRetrofit(userManager, jobManager, networkUtil) {
+    override fun configureOkHttp(
+        endpointUri: String,
+        interceptor: ProtonMailRequestInterceptor?
+    ): OkHttpClient {
         if (interceptor == null) {
             throw RuntimeException("Private OkHttp client is mandatory to be provided with public request interceptor")
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
-                endpointUri,
-                endpointUri,
-                TEN_SECONDS, // it was 2 minutes
-                interceptor,
-                HttpLoggingInterceptor.Level.BASIC,
-                spec,
-                serverTimeInterceptor
+            endpointUri,
+            endpointUri,
+            TEN_SECONDS, // it was 2 minutes
+            interceptor,
+            authenticator,
+            HttpLoggingInterceptor.Level.BODY,
+            spec,
+            serverTimeInterceptor
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
 }
 
 class ProtonRetrofitAttachments(
-        private val okHttpProvider: OkHttpProvider,
-        private val attachReqInter: ProtonMailAttachmentRequestInterceptor,
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil)
-    : ProtonRetrofit(userManager, jobManager, networkUtil) {
-    override fun configureOkHttp(endpointUri: String, interceptor: ProtonMailRequestInterceptor?): OkHttpClient {
+    private val okHttpProvider: OkHttpProvider,
+    private val attachReqInter: ProtonMailAttachmentRequestInterceptor,
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil,
+    private val authenticator: ProtonMailAuthenticator
+) : ProtonRetrofit(userManager, jobManager, networkUtil) {
+    override fun configureOkHttp(
+        endpointUri: String,
+        interceptor: ProtonMailRequestInterceptor?
+    ): OkHttpClient {
         if (interceptor == null) {
             throw RuntimeException("Private OkHttp client is mandatory to be provided with public request interceptor")
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
-                endpointUri,
-                endpointUri + ATTACH_PATH,
-                TEN_SECONDS, // it was 3 minutes
-                attachReqInter,
-                HttpLoggingInterceptor.Level.BASIC,
-                spec,
-                serverTimeInterceptor
+            endpointUri,
+            endpointUri + ATTACH_PATH,
+            TEN_SECONDS, // it was 3 minutes
+            attachReqInter,
+            authenticator,
+            HttpLoggingInterceptor.Level.BASIC,
+            spec,
+            serverTimeInterceptor
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
 }
 
 class ProtonRetrofitSecure(
-        private val okHttpProvider: OkHttpProvider,
-        userManager: UserManager,
-        jobManager: JobManager,
-        networkUtil: QueueNetworkUtil)
-    : ProtonRetrofit(userManager, jobManager, networkUtil) {
-    override fun configureOkHttp(endpointUri: String, interceptor: ProtonMailRequestInterceptor?): OkHttpClient {
+    private val okHttpProvider: OkHttpProvider,
+    userManager: UserManager,
+    jobManager: JobManager,
+    networkUtil: QueueNetworkUtil,
+    private val authenticator: ProtonMailAuthenticator
+) : ProtonRetrofit(userManager, jobManager, networkUtil) {
+    override fun configureOkHttp(
+        endpointUri: String,
+        interceptor: ProtonMailRequestInterceptor?
+    ): OkHttpClient {
         if (interceptor == null) {
             throw RuntimeException("Private OkHttp client is mandatory to be provided with public request interceptor")
         }
         val okHttpClient = okHttpProvider.provideOkHttpClient(
-                endpointUri,
-                endpointUri,
-                TEN_SECONDS,
-                interceptor,
-                HttpLoggingInterceptor.Level.BASIC,
-                spec,
-                serverTimeInterceptor
+            endpointUri,
+            endpointUri,
+            TEN_SECONDS,
+            interceptor,
+            authenticator,
+            HttpLoggingInterceptor.Level.BASIC,
+            spec,
+            serverTimeInterceptor
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
 }
+

@@ -19,10 +19,10 @@
 package ch.protonmail.android.contacts.groups.list
 
 import android.content.Context
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import android.view.ViewGroup
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.list.ContactsListFragment
@@ -32,7 +32,10 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 private const val COUNT = 2
 // endregion
 
-class ContactsFragmentsPagerAdapter(val context: Context, fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+class ContactsFragmentsPagerAdapter(
+    val context: Context,
+    fragmentManager: FragmentManager
+) : FragmentPagerAdapter(fragmentManager) {
 
     private val fragmentsTags = arrayOf<String?>(null, null)
     private val fragmentCounts = arrayOf(-1, -1)
@@ -57,8 +60,8 @@ class ContactsFragmentsPagerAdapter(val context: Context, fragmentManager: Fragm
     }
 
     override fun getItem(position: Int): Fragment =
-            if (position == 0) ContactsListFragment.newInstance(hasPermission)
-                else ContactGroupsFragment.newInstance()
+        if (position == 0) ContactsListFragment.newInstance(hasPermission)
+        else ContactGroupsFragment.newInstance()
 
 
     override fun getCount(): Int = COUNT

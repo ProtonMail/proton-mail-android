@@ -34,9 +34,9 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 
 class ContactGroupsViewModelTest : CoroutinesTest {
@@ -63,7 +63,7 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     private val label2 = ContactLabel("b", "bb")
     private val label3 = ContactLabel("c", "cc")
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

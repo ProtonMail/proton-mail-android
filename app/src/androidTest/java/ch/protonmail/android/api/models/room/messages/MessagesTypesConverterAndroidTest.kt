@@ -21,7 +21,7 @@ package ch.protonmail.android.api.models.room.messages
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
 import java.net.URLEncoder
 
 /**

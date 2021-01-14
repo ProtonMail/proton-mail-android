@@ -22,7 +22,7 @@ package ch.protonmail.tokenautocomplete.example;
 import androidx.test.rule.ActivityTestRule;
 
 import org.junit.Rule;
-import org.junit.Test;
+import kotlin.test.Test;
 
 import java.util.List;
 

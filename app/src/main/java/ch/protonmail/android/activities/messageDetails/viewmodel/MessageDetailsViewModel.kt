@@ -20,7 +20,6 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
 import android.print.PrintManager
-import android.util.Pair
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -50,7 +49,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
@@ -60,13 +58,17 @@ import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
+import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
+import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.ServerTime
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import org.jsoup.Jsoup
 import timber.log.Timber
+import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -117,14 +119,13 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     var refreshedKeys: Boolean = true
 
     private val _messageSavedInDBResult: MutableLiveData<Boolean> = MutableLiveData()
-    private val _downloadEmbeddedImagesResult: MutableLiveData<Pair<String, String>> = MutableLiveData()
+    private val _downloadEmbeddedImagesResult: MutableLiveData<String> = MutableLiveData()
     private val _prepareEditMessageIntentResult: MutableLiveData<Event<IntentExtrasData>> = MutableLiveData()
     private val _checkStoragePermission: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _reloadRecipientsEvent: MutableLiveData<Event<Boolean>> = MutableLiveData()
     private val _messageDetailsError: MutableLiveData<Event<String>> = MutableLiveData()
 
-    var nonBrokenEmail: String? = null
-    var bodyString: String? = null
+    private var bodyString: String? = null
         set(value) {
             field = value
             messageRenderer.messageBody = value
@@ -156,7 +157,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     val messageDetailsError: LiveData<Event<String>>
         get() = _messageDetailsError
 
-    val downloadEmbeddedImagesResult: LiveData<Pair<String, String>>
+    val downloadEmbeddedImagesResult: LiveData<String>
         get() = _downloadEmbeddedImagesResult
 
     val prepareEditMessageIntent: LiveData<Event<IntentExtrasData>>
@@ -194,7 +195,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
                 // TODO Sending twice the same value, perhaps we could improve this
-                _downloadEmbeddedImagesResult.postValue(Pair(body, body))
+                _downloadEmbeddedImagesResult.postValue(body)
                 mImagesDisplayed = true
             }
         }
@@ -273,7 +274,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     fun onEmbeddedImagesDownloaded(event: DownloadEmbeddedImagesEvent) {
         if (bodyString.isNullOrEmpty()) {
-            _downloadEmbeddedImagesResult.value = Pair(bodyString ?: "", nonBrokenEmail ?: "")
+            _downloadEmbeddedImagesResult.value = bodyString ?: ""
             return
         }
 
@@ -487,7 +488,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun displayRemoteContentClicked() {
-        bodyString = nonBrokenEmail
         webViewContentWithImages.value = bodyString
         remoteContentDisplayed()
         prepareEmbeddedImages()
@@ -531,7 +531,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             message?.let {
                 fetchingPubKeys = true
                 viewModelScope.launch {
-                    val result = fetchVerificationKeys(EmailAddress(message.senderEmail))
+                    val result = fetchVerificationKeys(message.senderEmail)
                     onFetchVerificationKeysEvent(result)
                 }
             }
@@ -574,5 +574,24 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 remoteContentDisplayed
             ).printMessage(it, this.bodyString ?: "")
         }
+    }
+
+    fun getParsedMessage(
+        decryptedMessage: String,
+        windowWidth: Int,
+        css: String,
+        defaultErrorMessage: String
+    ): String? {
+        bodyString = try {
+            val contentTransformer = DefaultTransformer()
+                .pipe(ViewportTransformer(windowWidth, css))
+
+            contentTransformer.transform(Jsoup.parse(decryptedMessage)).toString()
+        } catch (ioException: IOException) {
+            Timber.e(ioException, "Jsoup is unable to parse HTML message details")
+            defaultErrorMessage
+        }
+
+        return bodyString
     }
 }

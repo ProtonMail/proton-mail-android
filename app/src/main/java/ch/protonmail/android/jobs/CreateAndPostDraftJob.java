@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.NewMessage;
+import ch.protonmail.android.api.models.DraftBody;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory;
@@ -42,6 +42,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory;
 import ch.protonmail.android.api.models.messages.receive.MessageResponse;
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
+import ch.protonmail.android.api.models.messages.receive.ServerMessageSender;
 import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessageSender;
@@ -121,7 +122,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
 
         final ServerMessage serverMessage = messageFactory.createServerMessage(message);
-        final NewMessage newDraft = new NewMessage(serverMessage);
+        final DraftBody newDraft = new DraftBody(serverMessage);
         Message parentMessage = null;
         if (mParentId != null) {
             newDraft.setParentID(mParentId);
@@ -142,9 +143,9 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         }
         User user = getUserManager().getUser(mUsername);
         Address senderAddress = user.getAddressById(addressId);
-        newDraft.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
+        newDraft.getMessage().setSender(new ServerMessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
         AddressCrypto crypto = Crypto.forAddress(getUserManager(), mUsername, message.getAddressID());
-        newDraft.addMessageBody(Fields.Message.SELF, encryptedMessage);
+        newDraft.getMessage().setBody(encryptedMessage);
         List<Attachment> parentAttachmentList = null;
         if (parentMessage != null) {
             if(!isTransient) {
@@ -157,7 +158,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
             updateAttachmentKeyPackets(parentAttachmentList, newDraft, mOldSenderAddressID, senderAddress);
         }
         if (message.getSenderEmail().contains("+")) { // it's being sent by alias
-            newDraft.setSender(new MessageSender(message.getSenderName(), message.getSenderEmail()));
+            newDraft.getMessage().setSender(new ServerMessageSender(message.getSenderName(), message.getSenderEmail()));
         }
         final MessageResponse draftResponse = getApi().createDraft(newDraft);
         // on success update draft with messageId
@@ -211,7 +212,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
         }
     }
 
-    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage, String oldSenderAddress, Address newSenderAddress) throws Exception {
+    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, DraftBody draftBody, String oldSenderAddress, Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
             AddressCrypto oldCrypto = Crypto.forAddress(getUserManager(), mUsername, oldSenderAddress);
             AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
@@ -226,7 +227,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
                     byte[] newKeyPackage = oldCrypto.encryptKeyPacket(sessionKey, newPublicKey);
                     String newKeyPackets = Base64.encodeToString(newKeyPackage, Base64.NO_WRAP);
                     if (!TextUtils.isEmpty(keyPackets)) {
-                        newMessage.addAttachmentKeyPacket(AttachmentID, newKeyPackets);
+                        draftBody.getAttachmentKeyPackets().put(AttachmentID, newKeyPackets);
                     }
                 }
             }
@@ -235,7 +236,7 @@ public class CreateAndPostDraftJob extends ProtonMailBaseJob {
                 if (mActionType == Constants.MessageActionType.FORWARD ||
                         ((mActionType == Constants.MessageActionType.REPLY || mActionType == Constants.MessageActionType.REPLY_ALL) && attachment.getInline())) {
                     String AttachmentID = attachment.getAttachmentId();
-                    newMessage.addAttachmentKeyPacket(AttachmentID, attachment.getKeyPackets());
+                    draftBody.getAttachmentKeyPackets().put(AttachmentID, attachment.getKeyPackets());
                 }
             }
         }

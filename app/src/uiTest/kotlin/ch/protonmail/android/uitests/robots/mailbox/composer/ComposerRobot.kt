@@ -31,7 +31,6 @@ import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_10S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_15S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
 import ch.protonmail.android.uitests.testsHelper.click

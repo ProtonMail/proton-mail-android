@@ -19,7 +19,6 @@
 package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import android.content.Intent
-import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasType

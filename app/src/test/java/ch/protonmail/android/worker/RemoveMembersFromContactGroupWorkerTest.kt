@@ -32,8 +32,8 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RemoveMembersFromContactGroupWorkerTest {
@@ -53,7 +53,7 @@ class RemoveMembersFromContactGroupWorkerTest {
 
     private lateinit var worker: RemoveMembersFromContactGroupWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         worker = RemoveMembersFromContactGroupWorker(

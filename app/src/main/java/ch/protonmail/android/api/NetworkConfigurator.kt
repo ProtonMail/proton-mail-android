@@ -67,7 +67,7 @@ class NetworkConfigurator @Inject constructor(
         if (connectivityManager.isInternetConnectionPossible()) {
             val isThirdPartyConnectionsEnabled = userManager.user.allowSecureConnectionsViaThirdParties
             if (isThirdPartyConnectionsEnabled) {
-                Timber.d("Third party connections enabled, attempting DoH...")
+                Timber.i("Third party connections enabled, attempting DoH...")
                 refreshDomainsAsync()
             }
         }

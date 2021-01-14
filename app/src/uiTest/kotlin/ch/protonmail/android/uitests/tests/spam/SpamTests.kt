@@ -26,7 +26,7 @@ import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
-import org.junit.Test
+import kotlin.test.Test
 
 class SpamTests : BaseTest() {
 

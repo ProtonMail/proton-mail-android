@@ -40,7 +40,6 @@ import ch.protonmail.android.fcm.models.PushNotificationData
 import ch.protonmail.android.fcm.models.PushNotificationSender
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
-import me.proton.core.util.kotlin.deserialize
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -58,9 +57,10 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import io.mockk.verifyOrder
 import kotlinx.coroutines.runBlocking
+import me.proton.core.util.kotlin.deserialize
 import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
@@ -94,7 +94,7 @@ class ProcessPushNotificationDataWorkerTest {
     private lateinit var processPushNotificationDataWorker: ProcessPushNotificationDataWorker
     private lateinit var processPushNotificationDataWorkerEnqueuer: ProcessPushNotificationDataWorker.Enqueuer
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this, relaxUnitFun = true)
 
@@ -192,7 +192,7 @@ class ProcessPushNotificationDataWorkerTest {
             processPushNotificationDataWorker.doWork()
 
             // then
-            verify { queueNetworkUtil.setCurrentlyHasConnectivity(true) }
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
         }
     }
 

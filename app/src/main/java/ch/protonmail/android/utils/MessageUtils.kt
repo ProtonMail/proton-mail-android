@@ -155,7 +155,7 @@ object MessageUtils {
             } else {
                 builder.append(Constants.EMAIL_DELIMITER)
             }
-            builder.append(messageRecipient.emailAddress)
+            builder.append(messageRecipient.address)
         }
         return builder.toString()
     }
@@ -166,9 +166,9 @@ object MessageUtils {
         for (messageRecipient in messageRecipients) {
             setOfEmailsIncludingGroups.add(
                 if (!TextUtils.isEmpty(messageRecipient.group)) {
-                    messageRecipient.group
+                    messageRecipient.group!!
                 } else {
-                    messageRecipient.emailAddress
+                    messageRecipient.address
                 }
             )
         }

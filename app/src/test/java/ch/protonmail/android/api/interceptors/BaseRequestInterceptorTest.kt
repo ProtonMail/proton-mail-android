@@ -32,15 +32,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
-import io.mockk.verify
-import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
-import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BaseRequestInterceptorTest {
@@ -69,10 +65,10 @@ class BaseRequestInterceptorTest {
         every { user } returns userMock
     }
 
-    private val interceptor = ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
+    private val interceptor =
+        ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
 
-
-    @Before
+    @BeforeTest
     fun setup() {
         mockkStatic(AppUtil::class)
         mockkStatic(ProtonMailApplication::class)
@@ -100,7 +96,7 @@ class BaseRequestInterceptorTest {
         }
 
         // when
-        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock)
+        val checkIfTokenExpiredResponse = interceptor.checkResponse(responseMock)
 
         // then
         assertNull(checkIfTokenExpiredResponse)
@@ -114,7 +110,7 @@ class BaseRequestInterceptorTest {
         }
 
         // when
-        val checkIfTokenExpired = interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock)
+        val checkIfTokenExpired = interceptor.checkResponse(responseMock)
 
         // then
         assertNull(checkIfTokenExpired)
@@ -132,85 +128,9 @@ class BaseRequestInterceptorTest {
         }
 
         // when
-        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(mockk(), mockk(), responseMock)
+        val checkIfTokenExpiredResponse = interceptor.checkResponse(responseMock)
 
         // then
         assertNull(checkIfTokenExpiredResponse)
-    }
-
-    @Test
-    fun verifyThatUnauthorisedFollowedByTooManyRequestsErrorResponseReturnsNullResponse() {
-        // given
-        val chainMock = mockk<Interceptor.Chain> {
-            every { request() } returns mockk {
-                every { tag(RetrofitTag::class.java) } returns null
-            }
-        }
-        val requestMock = mockk<Request> {
-            every { url() } returns mockk {
-                every { encodedPath() } returns "https://legit_url"
-            }
-        }
-        val responseMock = mockk<Response> {
-            every { code() } answers { 401 } // andThen RESPONSE_CODE_TOO_MANY_REQUESTS
-        }
-
-        interceptor.publicService = mockk {
-            every { refreshSync(any(), any()) } returns mockk {
-                every { execute() } returns mockk {
-                    every { body() } answers { null } // refresh failed
-                    every { code() } answers { RESPONSE_CODE_TOO_MANY_REQUESTS } // because it got 429
-                }
-            }
-        }
-
-        // when
-        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(chainMock, requestMock, responseMock)
-
-        // then
-        assertNull(checkIfTokenExpiredResponse)
-    }
-
-    @Test
-    fun verifyThatAfterReceivingUnauthorisedTokenRetryReturnsNewResponse() {
-
-        // given
-        val newResponse = mockk<Response>()
-        val chainMock = mockk<Interceptor.Chain> {
-            every { request() } returns mockk {
-                every { tag(RetrofitTag::class.java) } returns null
-            }
-            every { proceed(any()) } answers { newResponse }
-        }
-        val requestMock = mockk<Request> {
-            every { url() } returns mockk {
-                every { encodedPath() } returns "https://legit_url"
-            }
-            every { newBuilder() } returns mockk(relaxed = true)
-        }
-        val responseMock = mockk<Response> {
-            every { code() } answers { 401 }
-            every { close() } returns Unit
-        }
-
-        interceptor.publicService = mockk {
-            every { refreshSync(any(), any()) } returns mockk {
-                every { execute() } returns mockk {
-                    every { body() } returns mockk {
-                        // successful token refresh response
-                        every { accessToken } returns "correct_access_token"
-                    }
-                    every { code() } answers { 200 }
-                }
-            }
-        }
-
-        // when
-        val checkIfTokenExpiredResponse = interceptor.checkIfTokenExpired(chainMock, requestMock, responseMock)
-
-        // then
-        verify { responseMock.close() }
-        assertNotNull(checkIfTokenExpiredResponse)
-        assertEquals(newResponse, checkIfTokenExpiredResponse)
     }
 }

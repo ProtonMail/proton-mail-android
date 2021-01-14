@@ -29,6 +29,7 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
+import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.factories.IConverterFactory
@@ -164,7 +165,8 @@ object ApplicationModule {
         jobManager: JobManager,
         networkUtil: QueueNetworkUtil,
         okHttpProvider: OkHttpProvider,
-        @DefaultSharedPreferences prefs: SharedPreferences
+        @DefaultSharedPreferences prefs: SharedPreferences,
+        authenticator: ProtonMailAuthenticator
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
@@ -175,7 +177,7 @@ object ApplicationModule {
 
         // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
 
-        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil)
+        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, authenticator)
             .apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 

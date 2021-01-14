@@ -22,15 +22,14 @@ package ch.protonmail.android.api.models.contacts.receive
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import org.junit.Assert.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ContactLabelFactoryTest {
 
     private lateinit var contactLabelFactory: ContactLabelFactory
 
-    @BeforeEach
+    @BeforeTest
     fun setUp() {
         contactLabelFactory = ContactLabelFactory()
     }
@@ -68,23 +67,29 @@ class ContactLabelFactoryTest {
     @Test
     fun `mapping ContactLabel to ServerLabel fails when name is empty`() {
         val contactLabel = ContactLabel("ID", "", "color", 1, 0, false, 2)
+        var thrownException: Exception? = null
 
-        val thrownException = assertThrows<RuntimeException> {
+        try {
             contactLabelFactory.createServerObjectFromDBObject(contactLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Name is empty", thrownException.message)
+        assertEquals("Name is empty", thrownException?.message)
     }
 
     @Test
     fun `mapping ContactLabel to ServerLabel fails when color is empty`() {
         val contactLabel = ContactLabel("ID", "name", "", 1, 0, false, 2)
+        var thrownException: Exception? = null
 
-        val thrownException = assertThrows<RuntimeException> {
+        try {
             contactLabelFactory.createServerObjectFromDBObject(contactLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Color is empty", thrownException.message)
+        assertEquals("Color is empty", thrownException?.message)
     }
 
     @Test
@@ -100,77 +105,98 @@ class ContactLabelFactoryTest {
     @Test
     fun `mapping ServerLabel to ContactLabel fails when ID is empty`() {
         val serverLabel = ServerLabel("", "name", "color", 1, 0, 0, 2)
+        var thrownException: Exception? = null
 
-        val exception = assertThrows<java.lang.RuntimeException> {
+        try {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("ID is empty", exception.message)
+        assertEquals("ID is empty", thrownException?.message)
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when name is empty`() {
         val serverLabel = ServerLabel("ID", "", "color", 1, 0, 0, 2)
+        var thrownException: Exception? = null
 
-        val exception = assertThrows<java.lang.RuntimeException> {
+        try {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Name is empty", exception.message)
+        assertEquals("Name is empty", thrownException?.message)
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when color is empty`() {
         val serverLabel = ServerLabel("ID", "name", "", 1, 0, 0, 2)
+        var thrownException: Exception? = null
 
-        val exception = assertThrows<java.lang.RuntimeException> {
+        try {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Color is empty", exception.message)
+        assertEquals("Color is empty", thrownException?.message)
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when display is null`() {
         val serverLabel = ServerLabel("ID", "name", "color", null, 0, 0, 2)
+        var thrownException: Exception? = null
 
-        val exception = assertThrows<java.lang.RuntimeException> {
+        try {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Display is null", exception.message)
+        assertEquals("Display is null", thrownException?.message)
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when order is null`() {
         val serverLabel = ServerLabel("ID", "name", "color", 0, null, 0, 2)
+        var thrownException: Exception? = null
 
-        val exception = assertThrows<java.lang.RuntimeException> {
+        try {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Order is null", exception.message)
+        assertEquals("Order is null", thrownException?.message)
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when exclusive is null`() {
         val serverLabel = ServerLabel("ID", "name", "color", 0, 0, null, 2)
+        var thrownException: Exception? = null
 
-        val exception = assertThrows<java.lang.RuntimeException> {
+        try {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Exclusive is null", exception.message)
+        assertEquals("Exclusive is null", thrownException?.message)
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when type is null`() {
         val serverLabel = ServerLabel("ID", "name", "color", 0, 0, 0, null)
+        var thrownException: Exception? = null
 
-        val exception = assertThrows<java.lang.RuntimeException> {
+        try {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+        } catch (e: RuntimeException) {
+            thrownException = e
         }
 
-        assertEquals("Type is null", exception.message)
+        assertEquals("Type is null", thrownException?.message)
     }
 }

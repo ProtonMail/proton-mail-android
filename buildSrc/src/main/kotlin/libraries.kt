@@ -59,25 +59,10 @@ fun DependencyHandler.playServices(moduleSuffix: String, version: String = `play
 // region Test
 val DependencyHandler.`assertJ` get() =                     dependency("org.assertj", module = "assertj-core") version `assertJ version`
 val DependencyHandler.`hamcrest` get() =                    dependency("org.hamcrest", module = "hamcrest-library") version `hamcrest version`
-val DependencyHandler.`jUnit5-jupiter-api` get() =          jUnit5jupiter("api")
-val DependencyHandler.`jUnit5-jupiter-engine` get() =       jUnit5jupiter("engine")
-val DependencyHandler.`jUnit5-jupiter-params` get() =       jUnit5jupiter("params")
-val DependencyHandler.`jUnit5-vintage-engine` get() =       jUnit5vintage("engine")
+// endregion
 
 // testRail
-val DependencyHandler.`jsonsimple` get() =                 dependency("com.googlecode.json-simple", module = "json-simple") version `json-simple version`
-
-// region jUnit 5 groups
-fun DependencyHandler.jUnit5jupiter(moduleSuffix: String, version: String = `jUnit5 version`) =
-    jUnit5("jupiter", "jupiter-$moduleSuffix", version)
-
-fun DependencyHandler.jUnit5vintage(moduleSuffix: String, version: String = `jUnit5 version`) =
-    jUnit5("vintage", "vintage-$moduleSuffix", version)
-
-fun DependencyHandler.jUnit5(groupName: String, moduleSuffix: String, version: String = `jUnit5 version`) =
-    dependency("org.junit", groupName, "junit", moduleSuffix, version)
-// endregion
-// endregion
+val DependencyHandler.`json-simple` get() =                 dependency("com.googlecode.json-simple", module = "json-simple") version `json-simple version`
 
 // region Retrofit
 val DependencyHandler.`retrofit-gson` get() =               squareup("retrofit2", "converter-gson") version `retrofit version`

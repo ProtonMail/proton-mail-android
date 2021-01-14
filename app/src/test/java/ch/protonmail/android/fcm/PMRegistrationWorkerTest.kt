@@ -46,9 +46,9 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Before
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
@@ -79,7 +79,7 @@ class PMRegistrationWorkerTest {
 
     private lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
 
