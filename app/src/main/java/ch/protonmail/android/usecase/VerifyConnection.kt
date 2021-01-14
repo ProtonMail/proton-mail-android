@@ -26,7 +26,6 @@ import androidx.work.WorkInfo
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.worker.PingWorker
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flattenMerge
@@ -36,7 +35,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.time.seconds
 
 /**
  * Use case responsible for scheduling Worker that sends a ping message through [PingWorker], processing the result
@@ -67,7 +65,7 @@ class VerifyConnection @Inject constructor(
             .flattenMerge()
             .filter { !it } // observe only disconnections
             .onEach {
-                delay(5.seconds)
+                Timber.v("connectivityManagerFlow value: $it")
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
             }
 

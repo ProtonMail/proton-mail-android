@@ -86,7 +86,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
             alarmReceiver.setAlarm(applicationContext, true)
         }
 
-        queueNetworkUtil.setCurrentlyHasConnectivity(true)
+        queueNetworkUtil.setCurrentlyHasConnectivity()
 
         val notificationUsername = userManager.getUsernameBySessionId(sessionId)
         if (notificationUsername.isNullOrEmpty()) {

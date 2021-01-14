@@ -54,14 +54,14 @@ class ProtonMailRequestInterceptor private constructor(
         } catch (exception: IOException) {
             Timber.d(exception, "Intercept: IOException with url: " + request.url())
             AppUtil.postEventOnUi(ConnectivityEvent(false))
-            networkUtils.setCurrentlyHasConnectivity(false)
+            networkUtils.setConnectivityHasFailed(exception)
         }
 
         requestCount--
         if (response == null) {
             return chain.proceed(request)
         } else {
-            networkUtils.setCurrentlyHasConnectivity(true)
+            networkUtils.setCurrentlyHasConnectivity()
             AppUtil.postEventOnUi(ConnectivityEvent(true))
         }
 
