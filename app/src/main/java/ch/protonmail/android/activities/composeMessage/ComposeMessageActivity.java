@@ -1108,7 +1108,6 @@ public class ComposeMessageActivity
                     getString(R.string.cancel),
                     unit -> {
                         composeMessageViewModel.deleteDraft();
-                        mComposeBodyEditText.setIsDirty(false);
                         finishActivity();
                         return unit;
                     },
