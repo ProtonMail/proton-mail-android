@@ -750,13 +750,14 @@ public class ComposeMessageActivity
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        public void onTextChanged(CharSequence text, int start, int before, int count) {
             if (skipInitial < 2) {
                 skipInitial++;
                 return;
             }
             skipInitial++;
             composeMessageViewModel.setIsDirty(true);
+            composeMessageViewModel.autoSaveDraft(text.toString());
         }
 
         @Override

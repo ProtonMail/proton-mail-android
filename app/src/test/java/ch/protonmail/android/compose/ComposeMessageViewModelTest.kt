@@ -34,21 +34,26 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
-import io.mockk.MockKAnnotations
+import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 
 class ComposeMessageViewModelTest : CoroutinesTest {
 
@@ -224,6 +229,63 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val expectedError = "Error uploading attachments for subject $messageSubject"
             coEvery { stringResourceResolver.invoke(errorResId) }
             assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
+        }
+    }
+
+    @Test
+    fun autoSaveDraftSchedulesJobToPerformSaveDraftAfterSomeDelay() {
+        runBlockingTest(dispatchers.Io) {
+            // Given
+            val messageBody = "Message body being edited..."
+            val messageId = "draft8237472"
+            val message = Message(messageId, subject = "A subject")
+            val buildMessageObserver = viewModel.buildingMessageCompleted.testObserver()
+            givenViewModelPropertiesAreInitialised()
+            // message was already saved once (we're updating)
+            viewModel.draftId = messageId
+            mockkStatic(UiUtil::class)
+            every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
+            every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
+            coEvery { composeMessageRepository.findMessage(messageId, dispatchers.Io) } returns message
+            coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
+
+            // When
+            viewModel.autoSaveDraft(messageBody)
+            viewModel.autoSaveJob?.join()
+
+            // Then
+            val expectedMessage = message.copy()
+            assertEquals(expectedMessage, buildMessageObserver.observedValues[0]?.peekContent())
+            assertEquals("&lt;html&gt; Message body being edited... &lt;html&gt;", viewModel.messageDataResult.content)
+        }
+    }
+
+    @Test
+    fun autoSaveDraftCancelsExistingJobBeforeSchedulingANewOneWhenCalledTwice() {
+        runBlockingTest(dispatchers.Io) {
+            // Given
+            val messageBody = "Message body being edited again..."
+            val messageId = "draft923823"
+            val message = Message(messageId, subject = "Another subject")
+            viewModel.buildingMessageCompleted.testObserver()
+            givenViewModelPropertiesAreInitialised()
+            // message was already saved once (we're updating)
+            viewModel.draftId = messageId
+            mockkStatic(UiUtil::class)
+            every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
+            every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
+            coEvery { composeMessageRepository.findMessage(messageId, dispatchers.Io) } returns message
+            coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
+
+            // When
+            viewModel.autoSaveDraft(messageBody)
+            assertNotNull(viewModel.autoSaveJob)
+            val firstScheduledJob = viewModel.autoSaveJob
+            viewModel.autoSaveDraft(messageBody)
+
+            // Then
+            assertTrue(firstScheduledJob?.isCancelled ?: false)
+            assertTrue(viewModel.autoSaveJob?.isActive ?: false)
         }
     }
 

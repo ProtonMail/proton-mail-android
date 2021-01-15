@@ -66,8 +66,9 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -78,6 +79,7 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.collections.set
+import kotlin.time.seconds
 
 const val NEW_LINE = "<br>"
 const val LESS_THAN = "&lt;"
@@ -215,6 +217,8 @@ class ComposeMessageViewModel @Inject constructor(
         }
     val parentId: String?
         get() = _parentId
+
+    internal var autoSaveJob: Job? = null
     // endregion
 
     private val loggedInUsernames = if (userManager.user.combinedContacts) {
@@ -434,7 +438,7 @@ class ComposeMessageViewModel @Inject constructor(
                     message.numAttachments = listOfAttachments.size
                     saveMessage(message)
                     newAttachmentIds = filterUploadedAttachments(
-                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO),
+                        composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, dispatchers.Io),
                         uploadAttachments
                     )
                 }
@@ -491,7 +495,7 @@ class ComposeMessageViewModel @Inject constructor(
         // we need to compare them and find out which are new attachments
         if (uploadAttachments && localAttachmentsList.isNotEmpty()) {
             newAttachments = filterUploadedAttachments(
-                composeMessageRepository.createAttachmentList(localAttachmentsList, IO), uploadAttachments
+                composeMessageRepository.createAttachmentList(localAttachmentsList, dispatchers.Io), uploadAttachments
             )
         }
         val currentAttachmentsList = messageDataResult.attachmentList
@@ -570,8 +574,8 @@ class ComposeMessageViewModel @Inject constructor(
     private fun buildMessage() {
         viewModelScope.launch {
             var message: Message? = null
-            if (!TextUtils.isEmpty(draftId)) {
-                message = composeMessageRepository.findMessage(draftId, IO)
+            if (draftId.isNotEmpty()) {
+                message = composeMessageRepository.findMessage(draftId, dispatchers.Io)
             }
             if (message != null) {
                 _draftId.set(message.messageId)
@@ -599,7 +603,10 @@ class ComposeMessageViewModel @Inject constructor(
                     }
                 }
                 _messageDataResult.attachmentList.addAll(listLocalAttachmentsAlreadySavedInDb)
-                val newAttachments = composeMessageRepository.createAttachmentList(_messageDataResult.attachmentList, IO)
+                val newAttachments = composeMessageRepository.createAttachmentList(
+                    _messageDataResult.attachmentList,
+                    dispatchers.Io
+                )
 
                 message.setAttachmentList(newAttachments)
                 // endregion
@@ -650,10 +657,10 @@ class ComposeMessageViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (draftId.isNotEmpty()) {
-                val message = composeMessageRepository.findMessage(draftId, IO)
+                val message = composeMessageRepository.findMessage(draftId, dispatchers.Io)
 
                 if (message != null) {
-                    val messageAttachments = composeMessageRepository.getAttachments(message, _messageDataResult.isTransient, IO)
+                    val messageAttachments = composeMessageRepository.getAttachments(message, _messageDataResult.isTransient, dispatchers.Io)
                     if (oldList.size <= messageAttachments.size) {
                         val attachments = LocalAttachment.createLocalAttachmentList(messageAttachments)
                         _messageDataResult = MessageBuilderData.Builder()
@@ -703,7 +710,7 @@ class ComposeMessageViewModel @Inject constructor(
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!, IO)
+                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!, dispatchers.Io)
                 message.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {
@@ -738,7 +745,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun createLocalAttachments(loadedMessage: Message) {
         viewModelScope.launch {
-            val messageAttachments = composeMessageRepository.getAttachments(loadedMessage, _messageDataResult.isTransient, IO)
+            val messageAttachments = composeMessageRepository.getAttachments(loadedMessage, _messageDataResult.isTransient, dispatchers.Io)
             val localAttachments = LocalAttachment.createLocalAttachmentList(messageAttachments).toMutableList()
             _messageDataResult = MessageBuilderData.Builder()
                 .fromOld(_messageDataResult)
@@ -1133,7 +1140,7 @@ class ComposeMessageViewModel @Inject constructor(
         }
 
         val fromHtmlMobileSignature = UiUtil.fromHtml(_messageDataResult.mobileSignature)
-        if (!TextUtils.isEmpty(fromHtmlMobileSignature)) {
+        if (fromHtmlMobileSignature.isNotEmpty()) {
             content = content.replace(fromHtmlMobileSignature.toString(), _messageDataResult.mobileSignature)
         }
 
@@ -1225,6 +1232,17 @@ class ComposeMessageViewModel @Inject constructor(
             }
         } else {
             setBeforeSaveDraft(false, messageDataResult.content, UserAction.SAVE_DRAFT)
+        }
+    }
+
+    fun autoSaveDraft(messageBody: String) {
+        Timber.v("Draft auto save scheduled!")
+
+        autoSaveJob?.cancel()
+        autoSaveJob = viewModelScope.launch(dispatchers.Io) {
+            delay(1.seconds)
+            Timber.d("Draft auto save triggered")
+            setBeforeSaveDraft(true, messageBody)
         }
     }
 }
