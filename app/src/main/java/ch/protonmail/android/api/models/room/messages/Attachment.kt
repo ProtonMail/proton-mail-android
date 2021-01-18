@@ -27,17 +27,10 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
-import ch.protonmail.android.core.Constants
-import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.utils.AppUtil
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.proton.gopenpgp.armor.Armor
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -154,30 +147,6 @@ data class Attachment @JvmOverloads constructor(
             embeddedMimeTypes.contains(mimeType)
     }
 
-    @Throws(Exception::class)
-    @Deprecated(
-        "To be deleted to avoid logic on Model",
-        ReplaceWith(
-            "attachmentRepository.upload(attachment, crypto)",
-            imports = arrayOf("ch.protonmail.android.attachments.AttachmentRepository")
-        )
-    )
-    fun uploadAndSave(
-        messageDetailsRepository: MessageDetailsRepository,
-        api: ProtonMailApiManager,
-        crypto: AddressCrypto
-    ): String? {
-        val filePath = filePath
-        val fileContent = if (URLUtil.isDataUrl(filePath)) {
-            Base64.decode(filePath!!.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
-                Base64.DEFAULT)
-        } else {
-            val file = File(filePath!!)
-            AppUtil.getByteArray(file)
-        }
-        return uploadAndSave(messageDetailsRepository, fileContent, api, crypto)
-    }
-
     fun deleteLocalFile() {
         if (doesFileExist) {
             File(filePath).delete()
@@ -196,44 +165,6 @@ data class Attachment @JvmOverloads constructor(
                 AppUtil.getByteArray(file)
             }
         } ?: byteArrayOf()
-
-    @Throws(Exception::class)
-    @Deprecated("To be deleted once last usages of the public `uploadAndSave` were removed")
-    private fun uploadAndSave(
-        messageDetailsRepository: MessageDetailsRepository,
-        fileContent: ByteArray,
-        api: ProtonMailApiManager,
-        crypto: AddressCrypto
-    ): String? {
-        val headers = headers
-        val bct = crypto.encrypt(fileContent, fileName!!)
-        val keyPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.keyPacket)
-        val dataPackage = RequestBody.create(MediaType.parse(mimeType!!), bct.dataPacket)
-        val signature = RequestBody.create(MediaType.parse("application/octet-stream"), Armor.unarmor(crypto.sign(fileContent)))
-        val response =
-            if (headers != null && headers.contentDisposition.contains("inline") && headers.contentId != null) {
-                var contentID = headers.contentId
-                val parts = contentID.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
-                if (parts.size > 1) {
-                    contentID = parts[1].replace(">", "")
-                }
-                api.uploadAttachmentInlineBlocking(this, messageId, contentID, keyPackage, dataPackage, signature)
-            } else {
-                api.uploadAttachmentBlocking(this, keyPackage, dataPackage, signature)
-            }
-
-        if (response.code == Constants.RESPONSE_CODE_OK) {
-            attachmentId = response.attachmentID
-            keyPackets = response.attachment.keyPackets
-            this.signature = response.attachment.signature
-            isUploaded = true
-            messageDetailsRepository.saveAttachment(this)
-        } else {
-            throw IOException("Attachment upload failed")
-        }
-
-        return attachmentId
-    }
 
     companion object {
         private fun fromLocalAttachment(

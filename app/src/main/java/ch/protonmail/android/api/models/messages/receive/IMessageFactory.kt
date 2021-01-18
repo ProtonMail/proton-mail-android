@@ -18,11 +18,11 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.room.messages.Message
 
-/**
- * Created by Kamil Rajtar on 18.07.18.  */
 interface IMessageFactory {
-	fun createMessage(serverMessage:ServerMessage):Message
-	fun createServerMessage(message:Message):ServerMessage
+	fun createMessage(serverMessage: ServerMessage): Message
+	fun createServerMessage(message: Message): ServerMessage
+	fun createDraftApiRequest(message: Message): DraftBody
 }

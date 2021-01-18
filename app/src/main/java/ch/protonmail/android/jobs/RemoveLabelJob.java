@@ -51,7 +51,7 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
                 .getDatabase();
         int totalUnread = 0;
         for (String messageId : messageIds) {
-            Message message = getMessageDetailsRepository().findMessageById(messageId);
+            Message message = getMessageDetailsRepository().findMessageByIdBlocking(messageId);
             if (message == null) {
                 continue;
             }
@@ -76,7 +76,7 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
 
         int totalUnread = 0;
         for (String messageId : messageIds) {
-            Message message = getMessageDetailsRepository().findMessageById(messageId);
+            Message message = getMessageDetailsRepository().findMessageByIdBlocking(messageId);
             if (message == null) {
                 continue;
             }

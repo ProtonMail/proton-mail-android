@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.enumerations.MessageFlag
 import ch.protonmail.android.api.models.factories.checkIfSet
 import ch.protonmail.android.api.models.factories.makeInt
@@ -26,11 +27,15 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.extensions.notNull
+import javax.inject.Inject
 
-class MessageFactory(
-        private val attachmentFactory: IAttachmentFactory,
-        private val messageSenderFactory: IMessageSenderFactory
+class MessageFactory @Inject constructor(
+    private val attachmentFactory: IAttachmentFactory,
+    private val messageSenderFactory: IMessageSenderFactory
 ) : IMessageFactory {
+
+    override fun createDraftApiRequest(message: Message): DraftBody =
+        DraftBody(createServerMessage(message))
 
     override fun createServerMessage(message: Message): ServerMessage {
         return message.let {
@@ -125,4 +130,5 @@ class MessageFactory(
             message
         }
     }
+
 }

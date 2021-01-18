@@ -21,15 +21,16 @@ package ch.protonmail.android.api.models.messages.receive
 import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.utils.extensions.notNull
 
-class MessageSenderFactory:IMessageSenderFactory {
-	override fun createServerMessageSender(messageSender:MessageSender):ServerMessageSender {
-		val (name,emailAddress)=messageSender
-		return ServerMessageSender(name,emailAddress)
+class MessageSenderFactory : IMessageSenderFactory {
+
+	override fun createServerMessageSender(messageSender: MessageSender): ServerMessageSender {
+		val (name, emailAddress) = messageSender
+		return ServerMessageSender(name, emailAddress)
 	}
 
-	override fun createMessageSender(serverMessageSender:ServerMessageSender):MessageSender {
-		val name=serverMessageSender.Name
-		val emailAddress=serverMessageSender.Address.notNull("emailAddress")
-		return MessageSender(name,emailAddress)
+	override fun createMessageSender(serverMessageSender: ServerMessageSender): MessageSender {
+		val name = serverMessageSender.Name
+		val emailAddress = serverMessageSender.Address.notNull("emailAddress")
+		return MessageSender(name, emailAddress)
 	}
 }

@@ -22,7 +22,6 @@ import android.os.AsyncTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter
 import ch.protonmail.android.events.ParentEvent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
 internal class OnParentEventTask(private val messageDetailsRepository: MessageDetailsRepository,
@@ -33,7 +32,7 @@ internal class OnParentEventTask(private val messageDetailsRepository: MessageDe
 
         runBlocking {
             val messageId = event.parentId
-            messageDetailsRepository.findMessageById(messageId, Dispatchers.IO)?.apply {
+            messageDetailsRepository.findMessageById(messageId)?.apply {
                 isReplied = event.isReplied == 1
                 isRepliedAll = event.isRepliedAll == 1
                 isForwarded = event.isForwarded == 1

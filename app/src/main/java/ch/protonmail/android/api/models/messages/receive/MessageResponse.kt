@@ -25,20 +25,20 @@ import com.google.gson.annotations.SerializedName
 
 class MessageResponse : ResponseBody() {
 
-	@SerializedName(Fields.Message.MESSAGE)
-	private lateinit var serverMessage: ServerMessage
+    @SerializedName(Fields.Message.MESSAGE)
+    private lateinit var serverMessage: ServerMessage
 
-	val message by lazy {
-		val attachmentFactory = AttachmentFactory()
-		val messageSenderFactory = MessageSenderFactory()
-		val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
-		messageFactory.createMessage(serverMessage)
-	}
+    val message by lazy {
+        val attachmentFactory = AttachmentFactory()
+        val messageSenderFactory = MessageSenderFactory()
+        val messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
+        messageFactory.createMessage(serverMessage)
+    }
 
-	val messageId: String?
-		get() = message.messageId
+    val messageId: String?
+        get() = message.messageId
 
-	val attachments: List<Attachment>
-		get() = message.Attachments
+    val attachments: List<Attachment>
+        get() = message.Attachments
 
 }

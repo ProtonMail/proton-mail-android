@@ -23,33 +23,34 @@ import androidx.fragment.app.FragmentManager
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.HashSet
 
-/**
- * Created by Kamil Rajtar on 24.07.18.
- */
-internal class ShowLabelsManagerDialogTask(private val fragmentManager: FragmentManager,
-                                           private val messageDetailsRepository: MessageDetailsRepository,
-                                           private val messageIds:List<String>):AsyncTask<Void,Void,List<Message>>() {
+internal class ShowLabelsManagerDialogTask(
+	private val fragmentManager: FragmentManager,
+	private val messageDetailsRepository: MessageDetailsRepository,
+	private val messageIds: List<String>
+) : AsyncTask<Void, Void, List<Message>>() {
 
-	override fun doInBackground(vararg voids:Void):List<Message> {
-		return messageIds.filter {!it.isEmpty()}.mapNotNull(messageDetailsRepository::findMessageById)
+	override fun doInBackground(vararg voids: Void): List<Message> {
+		return messageIds.filter { it.isNotEmpty() }.mapNotNull(messageDetailsRepository::findMessageByIdBlocking)
 	}
 
-	override fun onPostExecute(messages:List<Message>) {
-		val attachedLabels=HashSet<String>()
-		val numberOfSelectedMessages=HashMap<String,Int>()
-		messages.forEach {message->
-			val messageLabelIds=message.labelIDsNotIncludingLocations
-			messageLabelIds.forEach {labelId->
-				numberOfSelectedMessages[labelId]=numberOfSelectedMessages[labelId]?.let {it+1}?:1
+	override fun onPostExecute(messages: List<Message>) {
+		val attachedLabels = HashSet<String>()
+		val numberOfSelectedMessages = HashMap<String, Int>()
+		messages.forEach { message ->
+			val messageLabelIds = message.labelIDsNotIncludingLocations
+			messageLabelIds.forEach { labelId ->
+				numberOfSelectedMessages[labelId] = numberOfSelectedMessages[labelId]?.let { it + 1 } ?: 1
 			}
 			attachedLabels.addAll(messageLabelIds)
 		}
-		val manageLabelsDialogFragment=ManageLabelsDialogFragment.newInstance(
-            attachedLabels, numberOfSelectedMessages, ArrayList(messageIds))
-		val transaction=fragmentManager.beginTransaction()
-		transaction.add(manageLabelsDialogFragment,manageLabelsDialogFragment.fragmentKey)
+		val manageLabelsDialogFragment = ManageLabelsDialogFragment.newInstance(
+			attachedLabels, numberOfSelectedMessages, ArrayList(messageIds))
+		val transaction = fragmentManager.beginTransaction()
+		transaction.add(manageLabelsDialogFragment, manageLabelsDialogFragment.fragmentKey)
 		transaction.commitAllowingStateLoss()
 	}
 }

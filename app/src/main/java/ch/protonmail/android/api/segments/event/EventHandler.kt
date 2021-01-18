@@ -360,7 +360,7 @@ class EventHandler @AssistedInject constructor(
         when (type) {
             EventType.CREATE -> {
                 try {
-                    val savedMessage = messageDetailsRepository.findMessageById(messageID)
+                    val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageID)
                     savedMessage.ifNullElse(
                         {
                             messageDetailsRepository.saveMessageInDB(messageFactory.createMessage(event.message))
@@ -375,7 +375,7 @@ class EventHandler @AssistedInject constructor(
             }
 
             EventType.DELETE -> {
-                val message = messageDetailsRepository.findMessageById(messageID)
+                val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
                 if (message != null) {
                     messagesDatabase.deleteMessage(message)
                 }
@@ -383,7 +383,7 @@ class EventHandler @AssistedInject constructor(
 
             EventType.UPDATE -> {
                 // update Message body
-                val message = messageDetailsRepository.findMessageById(messageID)
+                val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
                 stagedMessages[messageID]?.let {
                     val dbTime = message?.time ?: 0
                     val serverTime = it.time
@@ -414,7 +414,7 @@ class EventHandler @AssistedInject constructor(
         messageID: String,
         item: EventResponse.MessageEventBody
     ) {
-        val message = messageDetailsRepository.findMessageById(messageID)
+        val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
         val newMessage = item.message
 
         if (message != null) {

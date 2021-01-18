@@ -87,7 +87,6 @@ import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
-import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.InvalidAccessTokenEvent;
 import ch.protonmail.android.events.Login2FAEvent;
@@ -161,7 +160,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private Snackbar apiOfflineSnackBar;
     @Nullable
     private StorageLimitEvent mLastStorageLimitEvent;
-    private DraftCreatedEvent mLastDraftCreatedEvent;
     private WeakReference<Activity> mCurrentActivity;
     private boolean mUpdateOccurred;
     private AllCurrencyPlans mAllCurrencyPlans;
@@ -300,20 +298,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         final StorageLimitEvent latestEvent = mLastStorageLimitEvent;
         mLastStorageLimitEvent = null;
         return latestEvent;
-    }
-
-    @Produce
-    public DraftCreatedEvent produceDraftCreatedEvent() {
-        return mLastDraftCreatedEvent;
-    }
-
-    @Subscribe
-    public void onDraftCreatedEvent(DraftCreatedEvent event) {
-        mLastDraftCreatedEvent = event;
-    }
-
-    public void resetDraftCreated() {
-        mLastDraftCreatedEvent = null;
     }
 
     @Subscribe

@@ -20,8 +20,6 @@ package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.api.models.room.messages.MessageSender
 
-/**
- * Created by Kamil Rajtar on 25.07.18.  */
 interface IMessageSenderFactory{
 	fun createMessageSender(serverMessageSender:ServerMessageSender):MessageSender
 	fun createServerMessageSender(messageSender:MessageSender):ServerMessageSender

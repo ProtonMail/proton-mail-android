@@ -20,8 +20,6 @@ package ch.protonmail.android.api.models.messages.receive
 
 import ch.protonmail.android.api.models.room.messages.Attachment
 
-/**
- * Created by Kamil Rajtar on 19.07.18.  */
 interface IAttachmentFactory{
 	fun createAttachment(serverAttachment:ServerAttachment):Attachment
 	fun createServerAttachment(attachment:Attachment):ServerAttachment

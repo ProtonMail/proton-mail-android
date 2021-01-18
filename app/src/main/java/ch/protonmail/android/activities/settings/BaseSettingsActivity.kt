@@ -30,7 +30,6 @@ import android.provider.Settings.EXTRA_CHANNEL_ID
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -71,7 +70,6 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
@@ -496,11 +494,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     @Subscribe
     fun onMailSettingsEvent(event: MailSettingsEvent) {
         loadMailSettings()
-    }
-
-    @Subscribe
-    fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
-        showToast(getString(R.string.attachment_failed) + " " + event.messageSubject + " " + event.attachmentName, Toast.LENGTH_SHORT)
     }
 
     open fun onLabelsLoadedEvent(event: FetchLabelsEvent) {

@@ -62,7 +62,7 @@ public class PostTrashJobV2 extends ProtonMailCounterJob {
                 .getDatabase();
         int totalUnread = 0;
         for (String id : mMessageIds) {
-            Message message = getMessageDetailsRepository().findMessageById(id);
+            Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (!message.isRead()) {
                     UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());

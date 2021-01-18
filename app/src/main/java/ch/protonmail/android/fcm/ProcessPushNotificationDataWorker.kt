@@ -167,7 +167,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
         } else {
             fetchMessageMetadata(messageId)
         }
-            ?: messageDetailsRepository.findMessageById(messageId)
+            ?: messageDetailsRepository.findMessageByIdBlocking(messageId)
     }
 
     private fun fetchMessageMetadata(messageId: String): Message? {
@@ -180,7 +180,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
                     message = messages[0]
                 }
                 if (message != null) {
-                    val savedMessage = messageDetailsRepository.findMessageById(message.messageId!!)
+                    val savedMessage = messageDetailsRepository.findMessageByIdBlocking(message.messageId!!)
                     if (savedMessage != null) {
                         message.isInline = savedMessage.isInline
                     }
@@ -188,7 +188,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
                     messageDetailsRepository.saveMessageInDB(message)
                 } else {
                     // check if the message is already in local store
-                    message = messageDetailsRepository.findMessageById(messageId)
+                    message = messageDetailsRepository.findMessageByIdBlocking(messageId)
                 }
             }
         } catch (error: Exception) {
@@ -202,7 +202,7 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
         try {
             val messageResponse: MessageResponse = protonMailApiManager.messageDetail(messageId)
             message = messageResponse.message
-            val savedMessage = messageDetailsRepository.findMessageById(messageId)
+            val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageId)
             if (savedMessage != null) {
                 message.isInline = savedMessage.isInline
             }

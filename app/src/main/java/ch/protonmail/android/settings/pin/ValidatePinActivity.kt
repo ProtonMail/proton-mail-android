@@ -28,7 +28,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.events.DraftCreatedEvent
 import ch.protonmail.android.events.FetchDraftDetailEvent
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.LogoutEvent
@@ -52,7 +51,6 @@ const val EXTRA_ATTACHMENT_IMPORT_EVENT = "extra_attachment_import_event"
 const val EXTRA_TOTAL_COUNT_EVENT = "extra_total_count_event"
 const val EXTRA_MESSAGE_DETAIL_EVENT = "extra_message_details_event"
 const val EXTRA_DRAFT_DETAILS_EVENT = "extra_draft_details_event"
-const val EXTRA_DRAFT_CREATED_EVENT = "extra_draft_created_event"
 // endregion
 
 /*
@@ -68,7 +66,6 @@ class ValidatePinActivity : BaseActivity(),
     private var messageCountsEvent: MessageCountsEvent? = null
     private var messageDetailEvent: FetchMessageDetailEvent? = null
     private var draftDetailEvent: FetchDraftDetailEvent? = null
-    private var draftCreatedEvent: DraftCreatedEvent? = null
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
@@ -124,11 +121,6 @@ class ValidatePinActivity : BaseActivity(),
     @Subscribe
     fun onFetchDraftDetailEvent(event: FetchDraftDetailEvent) {
         draftDetailEvent = event
-    }
-
-    @Subscribe
-    fun onDraftCreatedEvent(event: DraftCreatedEvent) {
-        draftCreatedEvent = event
     }
     // endregion
 
@@ -241,9 +233,6 @@ class ValidatePinActivity : BaseActivity(),
             }
             if (messageDetailEvent != null) {
                 putExtra(EXTRA_MESSAGE_DETAIL_EVENT, messageDetailEvent)
-            }
-            if (draftCreatedEvent != null) {
-                putExtra(EXTRA_DRAFT_CREATED_EVENT, draftCreatedEvent)
             }
         }
     }
