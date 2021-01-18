@@ -200,6 +200,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         retrofitTag: RetrofitTag?
     ): RefreshResponse = api.refreshAuth(refreshBody, retrofitTag)
 
+    override fun refreshAuthBlocking(
+        refreshBody: RefreshBody,
+        retrofitTag: RetrofitTag?
+    ): RefreshResponse = api.refreshAuthBlocking(refreshBody, retrofitTag)
+
     override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse = api.twoFactor(twoFABody)
 
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
