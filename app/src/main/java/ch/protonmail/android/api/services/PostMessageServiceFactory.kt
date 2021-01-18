@@ -24,13 +24,10 @@ import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.Crypto
-import ch.protonmail.android.jobs.UpdateAndPostDraftJob
 import ch.protonmail.android.jobs.messages.PostMessageJob
 import ch.protonmail.android.utils.ServerTime
 import com.birbit.android.jobqueue.JobManager
@@ -46,20 +43,10 @@ import javax.inject.Inject
 class PostMessageServiceFactory @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
-    private val jobManager: JobManager,
-    private val networkUtil: QueueNetworkUtil
+    private val jobManager: JobManager
 ) {
 
     private val bgDispatcher: CoroutineDispatcher = Dispatchers.IO
-
-    fun startUpdateDraftService(messageId: Long, content: String, newAttachments: List<String>, uploadAttachments: Boolean, oldSenderId: String, username: String = userManager.username) {
-        // this is temp fix
-        GlobalScope.launch {
-            val message = handleMessage(messageId, content, username) ?: return@launch
-            handleUpdateDraft(message, uploadAttachments, newAttachments, ProtonMailApplication.getApplication())
-            jobManager.addJobInBackground(UpdateAndPostDraftJob(messageId, newAttachments, uploadAttachments, oldSenderId, username))
-        }
-    }
 
     fun startSendingMessage(messageDbId: Long, content: String, outsidersPassword: String?, outsidersHint: String?, expiresIn: Long, parentId: String?, actionType: Constants.MessageActionType, newAttachments: List<String>,
                             sendPreferences: ArrayList<SendPreference>, oldSenderId: String, username: String = userManager.username) {
@@ -88,17 +75,6 @@ class PostMessageServiceFactory @Inject constructor(
         return message
     }
 
-    private suspend fun handleUpdateDraft(message: Message, uploadAttachments: Boolean, newAttachments: List<String>, context: Context) {
-        if (!networkUtil.isConnected()) {
-            return
-        }
-        message.setLabelIDs(listOf(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString(), Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(), Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()))
-        messageDetailsRepository.saveMessageLocally(message)
-        if (uploadAttachments && newAttachments.isNotEmpty()) {
-            insertPendingUpload(context, message.messageId!!)
-        }
-    }
-
     private suspend fun handleSendMessage(context: Context, message: Message) {
         message.location = Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue
         message.setLabelIDs(listOf(Constants.MessageLocationType.ALL_DRAFT.messageLocationTypeValue.toString(), Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(), Constants.MessageLocationType.DRAFT.messageLocationTypeValue.toString()))
@@ -114,12 +90,6 @@ class PostMessageServiceFactory @Inject constructor(
         messageDetailsRepository.saveMessageLocally(message)
         insertPendingSend(context, message.messageId, message.dbId)
     }
-
-    private suspend fun insertPendingUpload(context: Context, messageId: String) =
-        withContext(bgDispatcher) {
-            val actionsDatabase = PendingActionsDatabaseFactory.getInstance(context).getDatabase()
-            actionsDatabase.insertPendingForUpload(PendingUpload(messageId))
-        }
 
     private suspend fun insertPendingSend(context: Context, messageId: String?, messageDbId: Long?) =
         withContext(bgDispatcher) {

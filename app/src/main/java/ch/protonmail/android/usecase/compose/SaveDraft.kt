@@ -23,7 +23,6 @@ import androidx.work.WorkInfo
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
@@ -33,6 +32,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import kotlinx.coroutines.flow.Flow
@@ -52,7 +52,8 @@ class SaveDraft @Inject constructor(
     private val pendingActionsDao: PendingActionsDao,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
     @CurrentUsername private val username: String,
-    val uploadAttachments: UploadAttachments
+    private val uploadAttachments: UploadAttachments,
+    private val errorNotifier: ErrorNotifier
 ) {
 
     suspend operator fun invoke(
@@ -69,10 +70,6 @@ class SaveDraft @Inject constructor(
 
         message.messageBody = encryptedBody
         setMessageAsDraft(message)
-
-        if (params.newAttachmentIds.isNotEmpty()) {
-            pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
-        }
 
         val messageDbId = messageDetailsRepository.saveMessageLocally(message)
         pendingActionsDao.findPendingSendByDbId(messageDbId)?.let {
@@ -94,9 +91,9 @@ class SaveDraft @Inject constructor(
             params.actionType,
             params.previousSenderAddressId
         )
-            .filter { it.state.isFinished }
+            .filter { it?.state?.isFinished == true }
             .map { workInfo ->
-                if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                if (workInfo?.state == WorkInfo.State.SUCCEEDED) {
                     val createdDraftId = requireNotNull(
                         workInfo.outputData.getString(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID)
                     )
@@ -105,14 +102,14 @@ class SaveDraft @Inject constructor(
                     )
 
                     updatePendingForSendMessage(createdDraftId, localDraftId)
-                    deleteOfflineDraft(localDraftId)
 
                     messageDetailsRepository.findMessageById(createdDraftId)?.let {
                         val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
+
                         if (uploadResult is UploadAttachments.Result.Failure) {
+                            errorNotifier.showPersistentError(uploadResult.error, localDraft.subject)
                             return@map SaveDraftResult.UploadDraftAttachmentsFailed
                         }
-                        pendingActionsDao.deletePendingUploadByMessageId(localDraftId)
                         return@map SaveDraftResult.Success(createdDraftId)
                     }
                 }
@@ -121,13 +118,6 @@ class SaveDraft @Inject constructor(
                 return@map SaveDraftResult.OnlineDraftCreationFailed
             }
             .flowOn(dispatchers.Io)
-    }
-
-    private suspend fun deleteOfflineDraft(localDraftId: String) {
-        val offlineDraft = messageDetailsRepository.findMessageById(localDraftId)
-        offlineDraft?.let {
-            messageDetailsRepository.deleteMessage(offlineDraft)
-        }
     }
 
     private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {

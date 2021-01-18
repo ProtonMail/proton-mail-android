@@ -36,14 +36,11 @@ data class DraftBody(
     @SerializedName(Fields.Message.ACTION)
     var action = 0
 
+    @SerializedName(Fields.Message.UNREAD)
+    var unread: Int? = message.unread
+
     @SerializedName(Fields.Message.Send.ATTACHMENT_KEY_PACKETS)
-    var attachmentKeyPackets: MutableMap<String, String>? = null
-        get() {
-            if (field == null) {
-                field = hashMapOf()
-            }
-            return field
-        }
+    var attachmentKeyPackets: MutableMap<String, String> = hashMapOf()
 
     fun setSender(messageSender: MessageSender) {
         message.sender = ServerMessageSender(messageSender.name, messageSender.emailAddress)

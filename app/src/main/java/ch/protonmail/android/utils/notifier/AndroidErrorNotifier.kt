@@ -17,10 +17,19 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.worker.drafts
+package ch.protonmail.android.utils.notifier
 
-enum class CreateDraftWorkerErrors {
-    MessageNotFound,
-    ServerError,
-    BadResponseCodeError
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.servers.notification.INotificationServer
+import javax.inject.Inject
+
+class AndroidErrorNotifier @Inject constructor(
+    private val notificationServer: INotificationServer,
+    private val userManager: UserManager
+) : ErrorNotifier {
+
+    override fun showPersistentError(errorMessage: String, messageSubject: String?) {
+        notificationServer.notifySaveDraftError(errorMessage, messageSubject, userManager.username)
+    }
+
 }

@@ -26,6 +26,7 @@ import androidx.lifecycle.asFlow
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
@@ -34,6 +35,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
@@ -49,12 +51,14 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
-import java.time.Duration
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_DB_ID = "keySaveDraftMessageDbId"
@@ -77,10 +81,9 @@ class CreateDraftWorker @WorkerInject constructor(
     private val userManager: UserManager,
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val base64: Base64Encoder,
-    val apiManager: ProtonMailApiManager
+    private val apiManager: ProtonMailApiManager,
+    private val errorNotifier: ErrorNotifier
 ) : CoroutineWorker(context, params) {
-
-    internal var retries: Int = 0
 
     override suspend fun doWork(): Result {
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
@@ -105,28 +108,41 @@ class CreateDraftWorker @WorkerInject constructor(
         createDraftRequest.setMessageBody(encryptedMessage)
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
+        val messageId = requireNotNull(message.messageId)
+
         return runCatching {
-            apiManager.createDraft(createDraftRequest)
+            if (MessageUtils.isLocalMessageId(message.messageId)) {
+                apiManager.createDraft(createDraftRequest)
+            } else {
+                apiManager.updateDraft(
+                    messageId,
+                    createDraftRequest,
+                    RetrofitTag(userManager.username)
+                )
+            }
         }.fold(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
-                    return handleFailure(response.error)
+                    Timber.e("Create Draft Worker Failed with bad response code: $response")
+                    errorNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
+                    return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
 
-                val responseDraft = response.message
+                val responseDraft = response.message.copy()
                 updateStoredLocalDraft(responseDraft, message)
+
                 Timber.i("Create Draft Worker API call succeeded")
                 Result.success(
                     workDataOf(KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to response.messageId)
                 )
             },
             onFailure = {
-                handleFailure(it.message)
+                retryOrFail(it.message, createDraftRequest.message.subject)
             }
         )
     }
 
-    private fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
+    private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
         apiDraft.apply {
             dbId = localDraft.dbId
             toList = localDraft.toList
@@ -139,19 +155,20 @@ class CreateDraftWorker @WorkerInject constructor(
             isDownloaded = true
             setIsRead(true)
             numAttachments = localDraft.numAttachments
+            Attachments = localDraft.Attachments
             localId = localDraft.messageId
         }
 
-        messageDetailsRepository.saveMessageInDB(apiDraft)
+        messageDetailsRepository.saveMessageLocally(apiDraft)
     }
 
-    private fun handleFailure(error: String?): Result {
-        if (retries <= SAVE_DRAFT_MAX_RETRIES) {
-            retries++
-            Timber.w("Create Draft Worker API call FAILED with error = $error. Retrying...")
+    private fun retryOrFail(error: String?, messageSubject: String?): Result {
+        if (runAttemptCount <= SAVE_DRAFT_MAX_RETRIES) {
+            Timber.d("Create Draft Worker API call FAILED with error = $error. Retrying...")
             return Result.retry()
         }
         Timber.e("Create Draft Worker API call failed all the retries. error = $error. FAILING")
+        errorNotifier.showPersistentError(error.orEmpty(), messageSubject)
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 
@@ -252,7 +269,7 @@ class CreateDraftWorker @WorkerInject constructor(
             parentId: String?,
             actionType: Constants.MessageActionType,
             previousSenderAddressId: String
-        ): Flow<WorkInfo> {
+        ): Flow<WorkInfo?> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -267,10 +284,14 @@ class CreateDraftWorker @WorkerInject constructor(
                         KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID to previousSenderAddressId
                     )
                 )
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofSeconds(TEN_SECONDS))
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
                 .build()
 
-            workManager.enqueue(createDraftRequest)
+            workManager.enqueueUniqueWork(
+                requireNotNull(message.messageId),
+                ExistingWorkPolicy.REPLACE,
+                createDraftRequest
+            )
             return workManager.getWorkInfoByIdLiveData(createDraftRequest.id).asFlow()
         }
     }

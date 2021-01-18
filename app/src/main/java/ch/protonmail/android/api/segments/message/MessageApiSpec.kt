@@ -97,7 +97,13 @@ interface MessageApiSpec {
     suspend fun createDraft(draftBody: DraftBody): MessageResponse
 
     @Throws(IOException::class)
-    fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse?
+    fun updateDraftBlocking(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse?
+
+    suspend fun updateDraft(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse
 
     fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse>
 

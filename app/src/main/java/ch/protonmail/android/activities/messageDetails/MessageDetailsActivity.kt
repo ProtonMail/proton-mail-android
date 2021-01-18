@@ -70,7 +70,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.LogoutEvent
@@ -707,15 +706,6 @@ internal class MessageDetailsActivity :
         onLabelsChecked(checkedLabelIds.toMutableList(), unchangedLabels, messageIds)
         mJobManager.addJobInBackground(PostArchiveJob(listOf(message!!.messageId)))
         onBackPressed()
-    }
-
-    @Subscribe
-    @Suppress("unused")
-    fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
-        showToast(
-            "${getString(R.string.attachment_failed)} ${event.messageSubject}",
-            Toast.LENGTH_SHORT
-        )
     }
 
     private var showActionButtons = false

@@ -378,10 +378,14 @@ class ComposeMessageViewModel @Inject constructor(
         }
     }
 
+    @SuppressLint("GlobalCoroutineUsage")
     fun saveDraft(message: Message, hasConnectivity: Boolean) {
         val uploadAttachments = _messageDataResult.uploadAttachments
 
-        viewModelScope.launch(dispatchers.Main) {
+        // This coroutine **needs** to be launched in `GlobalScope` to allow the process of saving a
+        // draft to complete without depending on this VM's lifecycle. See MAILAND-1301 for more details
+        // and notes on the plan to remove this GlobalScope usage
+        GlobalScope.launch(dispatchers.Main) {
             if (_dbId == null) {
                 _dbId = saveMessage(message)
                 message.dbId = _dbId
@@ -397,11 +401,16 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                postMessageServiceFactory.startUpdateDraftService(
-                    _dbId!!,
-                    message.decryptedBody ?: "",
-                    newAttachments, uploadAttachments, _oldSenderAddressId
-                )
+                saveDraft(
+                    SaveDraft.SaveDraftParameters(
+                        message,
+                        newAttachments,
+                        parentId,
+                        _actionId,
+                        _oldSenderAddressId
+                    )
+                ).collect()
+
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
                         ?: _messageDataResult.addressId // overwrite "old sender ID" when updating draft
@@ -473,11 +482,6 @@ class ComposeMessageViewModel @Inject constructor(
         val draft = requireNotNull(messageDetailsRepository.findMessageById(savedDraftId))
 
         viewModelScope.launch(dispatchers.Main) {
-            if (_draftId.get().isNotEmpty() && draft.messageId.isNullOrEmpty().not()) {
-                draft.localId?.let {
-                    composeMessageRepository.deleteMessageById(it)
-                }
-            }
             _draftId.set(draft.messageId)
             watchForMessageSent()
         }
