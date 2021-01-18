@@ -146,8 +146,8 @@ class ProtonMailAuthenticatorTest {
             every { error } answers { NON_NULL_ERROR_MESSAGE }
         }
 
-        coEvery {
-            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        every {
+            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when
@@ -176,8 +176,8 @@ class ProtonMailAuthenticatorTest {
             every { error } answers { NON_NULL_ERROR_MESSAGE }
         }
 
-        coEvery {
-            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        every {
+            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when
@@ -206,8 +206,8 @@ class ProtonMailAuthenticatorTest {
             every { error } answers { NON_NULL_ERROR_MESSAGE }
         }
 
-        coEvery {
-            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        every {
+            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when
@@ -238,8 +238,8 @@ class ProtonMailAuthenticatorTest {
             every { accessToken } answers { "correct_access_token" }
         }
 
-        coEvery {
-            ProtonMailApplication.getApplication().api.refreshAuth(any(), any())
+        every {
+            ProtonMailApplication.getApplication().api.refreshAuthBlocking(any(), any())
         } returns authResponseMock
 
         // when

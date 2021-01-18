@@ -78,4 +78,8 @@ class AuthenticationApi(
     override suspend fun refreshAuth(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse =
         pubService.refreshAuth(refreshBody, retrofitTag)
 
+    @Throws(IOException::class)
+    override fun refreshAuthBlocking(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse =
+        ParseUtils.parse(pubService.refreshAuthBlocking(refreshBody, retrofitTag).execute())
+
 }

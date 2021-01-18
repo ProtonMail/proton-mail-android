@@ -33,7 +33,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
-import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
@@ -85,10 +84,8 @@ class ProtonMailAuthenticator @Inject constructor(
 
         if (tokenManager != null && !originalRequest.url().encodedPath().contains(REFRESH_PATH)) {
             val refreshBody = tokenManager.createRefreshBody()
-            val refreshResponse = runBlocking {
-                ProtonMailApplication.getApplication().api
-                    .refreshAuth(refreshBody, RetrofitTag(usernameAuth))
-            }
+            val refreshResponse =
+                ProtonMailApplication.getApplication().api.refreshAuthBlocking(refreshBody, RetrofitTag(usernameAuth))
             if (refreshResponse.error.isNullOrEmpty() && refreshResponse.accessToken != null) {
                 Timber.i(
                     "access token expired: got correct refresh response, handle refresh in token manager"
@@ -154,10 +151,5 @@ class ProtonMailAuthenticator @Inject constructor(
             .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
             .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
             .build()
-    }
-
-    // stub for migrating header application from BaseRequestInterceptor.kt to here
-    private fun applyHeadersToRequest(tokenManager: TokenManager, originalRequest: Request): Request? {
-        return null
     }
 }
