@@ -328,8 +328,8 @@ das Anmeldepasswort zurückzusetzen, sollten Sie es vergessen haben.</string>
     <string name="password_not_valid">Das eingegebene Passwort ist ungültig</string>
     <string name="send_code_wait">Bitte %d Sekunden warten, bevor Sie erneut klicken</string>
     <string name="eo_password_not_completed">Passwort der Nachricht unvollständig.</string>
-    <string name="delinquency_subtitle">Der Zugang zu diesem Konto wurde aufgrund einer unbezahlten Rechnung deaktiviert. Bitte melden Sie sich über protonmail.com an, um Ihre fällige Rechnung zu begleichen.</string>
-    <string name="direct_disabled_subtitle">Mobile Anmeldungen sind vorübergehend deaktiviert. Bitte versuchen Sie es später noch einmal oder melden Sie sich unter <a href="https://protonmail.com">protonmail.com</a> mit einem Desktop-Rechner oder Laptop an.</string>
+    <string name="delinquency_subtitle">Der Zugriff auf dieses Konto ist aufgrund eines Zahlungsverzugs deaktiviert. Bitte melden Sie sich bei protonmail.com an, um Ihre ausstehende Rechnung zu begleichen.</string>
+    <string name="direct_disabled_subtitle">Mobiles Registrieren ist vorübergehend deaktiviert. Bitte versuchen Sie es später noch einmal oder melden Sie sich unter <a href="https://protonmail.com">protonmail.com</a> mit einem Desktop-Rechner oder Laptop an.</string>
     <string name="downloading">Wird heruntergeladen …</string>
     <string name="cant_download_attachment">Anhang kann nicht heruntergeladen werden</string>
     <string-array name="auto_logout_options_array">
