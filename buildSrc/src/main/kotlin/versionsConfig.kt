@@ -94,6 +94,7 @@ const val `sun-mail-android version` =          "1.5.5"         // Released: Mar
 const val `android-biometric version` =         "1.0.1"         // Released: Jan 23, 2020
 const val `android-fragment version` =          "1.2.0-rc01"    // Released: Oct 24, 2019
 const val `android-media version` =             "1.1.0"         // Released: Sep 06, 2019
+const val `android-preference version` =        "1.1.1"         // Released: Apr 15, 2020
 const val `googleServices version` =            "4.3.3"         // Released: Nov 11, 2019
 const val `hilt-androidx-viewmodel version` =   "1.0.0-alpha03" // Released: Mar 10, 2021
 const val `playServices version` =              "17.0.0"        // Released: Jun 19, 2019

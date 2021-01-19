@@ -324,7 +324,7 @@ dependencies {
         `sentry-android`,
         `stetho`,
         `timber`,
-        `trustKit`,
+        `trustKit`, `android-preference`, // Workaround (https://github.com/datatheorem/TrustKit-Android/issues/76).
         `viewStateStore`,
         `viewStateStore-paging`,
         `remark`,
