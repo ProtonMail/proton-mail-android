@@ -33,6 +33,7 @@ val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("
 val DependencyHandler.`Proton-data` get() =                         proton("data") version `Proton-data version`
 val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
 val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
+val DependencyHandler.`Proton-network` get() =                       proton("network") version `Proton-network version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)
