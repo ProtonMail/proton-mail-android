@@ -30,6 +30,9 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.libs.core.utils.takeIfNotEmpty
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
+import me.proton.core.util.kotlin.unsupported
+import me.proton.core.network.domain.session.Session
+import me.proton.core.network.domain.session.SessionId
 
 // region constants
 private const val PREF_ENC_PRIV_KEY = "priv_key"
@@ -70,6 +73,19 @@ class TokenManager private constructor(private val pref: SharedPreferences) {
     val authAccessToken: String?
         get() = accessToken?.takeIfNotEmpty()?.let { "${Constants.TOKEN_TYPE} $it" }
 
+    val session: Session?
+        get() {
+            val tokens = accessToken to refreshToken
+            if (tokens.first == null || tokens.second == null) return null
+            return Session(
+                sessionId = SessionId(uid),
+                accessToken = tokens.first!!,
+                refreshToken = tokens.second!!,
+                headers = null, // TODO: Add HumanVerification headers if exist,
+                scopes = scope.split(" ")
+            )
+        }
+
     private fun load() {
         refreshToken = pref[PREF_REFRESH_TOKEN] ?: ""
         uID = pref[PREF_USER_UID] ?: ""
@@ -97,6 +113,12 @@ class TokenManager private constructor(private val pref: SharedPreferences) {
         }
         accessToken = response.accessToken
         scope = response.scope
+        persist()
+    }
+
+    fun handleRefresh(session: Session) {
+        refreshToken = session.refreshToken
+        accessToken = session.accessToken
         persist()
     }
 

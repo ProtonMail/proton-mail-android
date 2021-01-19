@@ -21,6 +21,7 @@ package ch.protonmail.android.api.interceptors
 import android.content.SharedPreferences
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.models.RefreshBody
+import ch.protonmail.android.api.models.RefreshResponse
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.doh.PREF_DNS_OVER_HTTPS_API_URL_LIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_GATEWAY_TIMEOUT
@@ -40,6 +41,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import junit.framework.Assert.assertNull
+import me.proton.core.network.domain.session.Session
 import okhttp3.Response
 import org.junit.After
 import kotlin.test.BeforeTest
@@ -61,7 +63,8 @@ class BaseRequestInterceptorTest {
 
     private val tokenManagerMock = mockk<TokenManager> {
         every { createRefreshBody() } returns RefreshBody("refresh_token")
-        every { handleRefresh(any()) } just Runs
+        every { handleRefresh(any<RefreshResponse>()) } just Runs
+        every { handleRefresh(any<Session>()) } just Runs
         every { authAccessToken } returns "auth_access_token"
         every { uid } returns "uid"
     }

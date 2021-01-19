@@ -38,6 +38,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import me.proton.core.network.domain.session.Session
 import okhttp3.Request
 import okhttp3.Response
 import org.junit.Assert.assertNotNull
@@ -65,7 +66,8 @@ class ProtonMailAuthenticatorTest {
 
     private val tokenManagerMock = mockk<TokenManager> {
         every { createRefreshBody() } returns RefreshBody("refresh_token")
-        every { handleRefresh(any()) } returns mockk()
+        every { handleRefresh(any<RefreshResponse>()) } returns Unit
+        every { handleRefresh(any<Session>()) } returns Unit
         every { authAccessToken } returns AUTH_ACCESS_TOKEN
         every { uid } returns "uid"
         every { isRefreshTokenBlank() } returns false
