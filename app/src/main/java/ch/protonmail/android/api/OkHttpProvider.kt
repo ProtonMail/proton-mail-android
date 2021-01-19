@@ -46,7 +46,7 @@ class OkHttpProvider @Inject constructor(
         interceptor: Interceptor?,
         authenticator: Authenticator,
         loggingLevel: HttpLoggingInterceptor.Level,
-        connectionSpecs: List<ConnectionSpec?>,
+        connectionSpecs: List<ConnectionSpec>,
         serverTimeInterceptor: ServerTimeInterceptor?,
         cookieStore: ProtonCookieStore?
     ): ProtonOkHttpClient {

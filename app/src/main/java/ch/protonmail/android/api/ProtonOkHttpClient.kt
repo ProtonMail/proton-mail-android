@@ -56,7 +56,7 @@ sealed class ProtonOkHttpClient(
     defaultInterceptor: Interceptor?,
     authenticator: Authenticator,
     loggingLevel: HttpLoggingInterceptor.Level,
-    connectionSpecs: List<ConnectionSpec?>,
+    connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
     endpointUri: String,
     cookieStore: ProtonCookieStore? = null
@@ -108,7 +108,7 @@ class DefaultOkHttpClient(
     interceptor: Interceptor?,
     authenticator: Authenticator,
     loggingLevel: HttpLoggingInterceptor.Level,
-    connectionSpecs: List<ConnectionSpec?>,
+    connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
     cookieStore: ProtonCookieStore?
 ) : ProtonOkHttpClient(
@@ -139,7 +139,7 @@ class ProxyOkHttpClient(
     interceptor: Interceptor?,
     authenticator: Authenticator,
     loggingLevel: HttpLoggingInterceptor.Level,
-    connectionSpecs: List<ConnectionSpec?>,
+    connectionSpecs: List<ConnectionSpec>,
     serverTimeInterceptor: ServerTimeInterceptor?,
     endpointUri: String,
     pinnedKeyHashes: List<String>,

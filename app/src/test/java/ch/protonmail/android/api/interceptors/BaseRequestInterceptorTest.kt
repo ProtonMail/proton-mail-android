@@ -101,7 +101,7 @@ class BaseRequestInterceptorTest {
     fun verifyThatGatewayTimeoutResponseReturnsNullOutput() {
         // given
         val responseMock = mockk<Response> {
-            every { code() } returns RESPONSE_CODE_GATEWAY_TIMEOUT
+            every { code } returns RESPONSE_CODE_GATEWAY_TIMEOUT
         }
 
         // when
@@ -115,7 +115,7 @@ class BaseRequestInterceptorTest {
     fun verifyThatTooManyRequestsResponseReturnsNullOutput() {
         // given
         val responseMock = mockk<Response> {
-            every { code() } returns RESPONSE_CODE_TOO_MANY_REQUESTS
+            every { code } returns RESPONSE_CODE_TOO_MANY_REQUESTS
         }
 
         // when
@@ -133,7 +133,7 @@ class BaseRequestInterceptorTest {
         } returns prefsMock
 
         val responseMock = mockk<Response> {
-            every { code() } returns 200
+            every { code } returns 200
         }
 
         // when
@@ -154,10 +154,10 @@ class BaseRequestInterceptorTest {
 
         val errorMessage = "Error - Reason for 422 response"
         val responseMock = mockk<Response> {
-            every { code() } returns 422
+            every { code } returns 422
             every { peekBody(any()).string() } returns
                 "{ Code: $RESPONSE_CODE_OLD_PASSWORD_INCORRECT, Error: \"$errorMessage\" }"
-            every { message() } returns "HTTP status message"
+            every { message } returns "HTTP status message"
         }
 
         // when
@@ -176,9 +176,9 @@ class BaseRequestInterceptorTest {
 
         val errorMessage = "Error - Reason for 422 response"
         val responseMock = mockk<Response> {
-            every { code() } returns 422
+            every { code } returns 422
             every { peekBody(any()).string() } returns "{ }"
-            every { message() } returns "HTTP status message"
+            every { message } returns "HTTP status message"
         }
 
         // when

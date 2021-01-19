@@ -68,9 +68,9 @@ class ProtonMailAuthenticator @Inject constructor(
 
     @Synchronized
     private fun refreshAuthToken(response: Response): Request? {
-        val originalRequest = response.request()
+        val originalRequest = response.request
 
-        val userId = response.request().tag(UserIdTag::class.java)?.id ?: userManager.currentUserId
+        val userId = response.request.tag(UserIdTag::class.java)?.id ?: userManager.currentUserId
         if (userId == null) {
             Timber.w("No logged in user for refresh auth token")
             return updateRequestHeaders(originalRequest)
@@ -82,7 +82,7 @@ class ProtonMailAuthenticator @Inject constructor(
             // update request with new token
             return updateRequestHeaders(originalRequest, tokenManager)
         } else {
-            if (response.priorResponse() != null) { // NOT NULL -> triggered by automatic retry,
+            if (response.priorResponse != null) { // NOT NULL -> triggered by automatic retry,
                 // requests triggered by auto-retry will be discarded for refreshing tokens
                 return null
             } else {
@@ -90,7 +90,7 @@ class ProtonMailAuthenticator @Inject constructor(
             }
         }
 
-        if (!originalRequest.url().encodedPath().contains(REFRESH_PATH)) {
+        if (!originalRequest.url.encodedPath.contains(REFRESH_PATH)) {
             val refreshBody = tokenManager.createRefreshBody()
             val refreshResponse =
                 appContext.app.api.refreshAuthBlocking(refreshBody, UserIdTag(userId))

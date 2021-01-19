@@ -76,7 +76,7 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
         // otherwise just pass the original response on
         return if (progressListener != null) {
             val responseWithListener =
-                response.newBuilder().body(ProgressResponseBody(response.body()!!, progressListener)).build()
+                response.newBuilder().body(ProgressResponseBody(response.body!!, progressListener)).build()
             this.semaphore!!.release()
             this.progressListener = null
             this.semaphore = null

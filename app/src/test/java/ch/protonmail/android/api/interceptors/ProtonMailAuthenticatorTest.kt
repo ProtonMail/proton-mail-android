@@ -113,8 +113,8 @@ class ProtonMailAuthenticatorTest {
             .build()
         val priorResponse = mockk<Response>(relaxed = true)
         val responseMock = mockk<Response> {
-            every { request() } answers { request }
-            every { priorResponse() } answers { priorResponse }
+            every { this@mockk.request } answers { request }
+            every { this@mockk.priorResponse } answers { priorResponse }
         }
 
         // when
@@ -133,8 +133,8 @@ class ProtonMailAuthenticatorTest {
             .url(TEST_URL)
             .build()
         val responseMock = mockk<Response> {
-            every { request() } answers { request }
-            every { priorResponse() } answers { null }
+            every { this@mockk.request } answers { request }
+            every { this@mockk.priorResponse } answers { null }
         }
 
         val authResponseMock = mockk<RefreshResponse> {
@@ -163,8 +163,8 @@ class ProtonMailAuthenticatorTest {
             .build()
 
         val responseMock = mockk<Response> {
-            every { request() } answers { request }
-            every { priorResponse() } answers { null }
+            every { this@mockk.request } answers { request }
+            every { this@mockk.priorResponse } answers { null }
         }
 
         val authResponseMock = mockk<RefreshResponse> {
@@ -193,8 +193,8 @@ class ProtonMailAuthenticatorTest {
             .build()
 
         val responseMock = mockk<Response> {
-            every { request() } answers { request }
-            every { priorResponse() } answers { null }
+            every { this@mockk.request } answers { request }
+            every { this@mockk.priorResponse } answers { null }
         }
 
         val authResponseMock = mockk<RefreshResponse> {
@@ -224,8 +224,8 @@ class ProtonMailAuthenticatorTest {
             .build()
 
         val responseMock = mockk<Response> {
-            every { request() } answers { request }
-            every { priorResponse() } answers { null }
+            every { this@mockk.request } answers { request }
+            every { this@mockk.priorResponse } answers { null }
         }
 
         val authResponseMock = mockk<RefreshResponse> {

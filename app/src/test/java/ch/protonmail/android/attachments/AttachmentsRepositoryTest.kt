@@ -44,7 +44,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import java.net.SocketTimeoutException
 import kotlin.coroutines.cancellation.CancellationException
@@ -134,9 +134,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                     capture(signatureSlot)
                 )
             }
-            assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), keyPackageSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), dataPackageSlot.captured.contentType())
+            assertEquals("application/octet-stream".toMediaType(), signatureSlot.captured.contentType())
         }
     }
 
@@ -218,9 +218,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                     capture(signatureSlot)
                 )
             }
-            assertEquals(MediaType.parse("image/jpeg"), keyPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("image/jpeg"), dataPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), keyPackageSlot.captured.contentType())
+            assertEquals("image/jpeg".toMediaType(), dataPackageSlot.captured.contentType())
+            assertEquals("application/octet-stream".toMediaType(), signatureSlot.captured.contentType())
         }
     }
 
@@ -324,9 +324,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                     capture(signatureSlot)
                 )
             }
-            assertEquals(MediaType.parse("application/pgp-keys"), keyPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
-            assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
+            assertEquals("application/pgp-keys".toMediaType(), keyPackageSlot.captured.contentType())
+            assertEquals("application/pgp-keys".toMediaType(), dataPackageSlot.captured.contentType())
+            assertEquals("application/octet-stream".toMediaType(), signatureSlot.captured.contentType())
             val expected = AttachmentsRepository.Result.Success("default success attachment ID")
             assertEquals(expected, result)
         }
@@ -398,7 +398,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             every { decryptedData } returns decryptedContent
         }
         every { crypto.decryptAttachment(any(), any()) } returns decryptedResult
-        val testResponseBody = okhttp3.ResponseBody.create(MediaType.parse("image/jpg"), content)
+        val testResponseBody = okhttp3.ResponseBody.create("image/jpg".toMediaType(), content)
         coEvery { apiManager.downloadAttachment(attachmentId) } returns testResponseBody
 
         // when

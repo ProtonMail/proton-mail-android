@@ -50,11 +50,11 @@ class ProtonMailRequestInterceptor private constructor(
         var response: Response? = null
         try {
             requestCount++
-            Timber.d("Intercept: advancing request with url: " + request.url())
+            Timber.d("Intercept: advancing request with url: " + request.url)
             response = chain.proceed(request)
 
         } catch (exception: IOException) {
-            Timber.d(exception, "Intercept: IOException with url: " + request.url())
+            Timber.d(exception, "Intercept: IOException with url: " + request.url)
             AppUtil.postEventOnUi(ConnectivityEvent(false))
             networkUtils.setConnectivityHasFailed(exception)
         }

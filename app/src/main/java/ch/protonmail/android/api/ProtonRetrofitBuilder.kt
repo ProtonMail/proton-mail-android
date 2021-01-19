@@ -164,7 +164,7 @@ sealed class ProtonRetrofit(
 ) {
     val defaultInterceptor =
         ProtonMailRequestInterceptor.getInstance(userManager, jobManager, networkUtil, userNotifier)
-    val spec: List<ConnectionSpec?> = listOf(
+    val spec: List<ConnectionSpec> = listOf(
         ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
             .tlsVersions(TlsVersion.TLS_1_2)
             .cipherSuites(

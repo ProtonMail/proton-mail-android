@@ -140,20 +140,20 @@ abstract class BaseRequestInterceptor(
             return null
         }
 
-        when {
-            response.code() == RESPONSE_CODE_GATEWAY_TIMEOUT -> {
+        when (response.code) {
+            RESPONSE_CODE_GATEWAY_TIMEOUT -> {
                 Timber.d("'gateway timeout' when processing request")
                 AppUtil.postEventOnUi(RequestTimeoutEvent())
             }
-            response.code() == RESPONSE_CODE_TOO_MANY_REQUESTS -> {
+            RESPONSE_CODE_TOO_MANY_REQUESTS -> {
                 Timber.d("'too many requests' when processing request")
             }
-            response.code() == RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
+            RESPONSE_CODE_SERVICE_UNAVAILABLE -> { // 503
                 Timber.d("'service unavailable' when processing request")
             }
-            response.code() == RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
+            RESPONSE_CODE_UNPROCESSABLE_ENTITY -> {
                 Timber.d("'unprocessable entity' when processing request")
-                var responseBodyError = response.message()
+                var responseBodyError: String? = response.message
                 var responseBody: ResponseBody? = null
                 try {
                     responseBody = Gson().fromJson(
@@ -180,7 +180,7 @@ abstract class BaseRequestInterceptor(
                         RESPONSE_CODE_AUTH_AUTH_ACCOUNT_DISABLED
                     )
                 ) {
-                    userNotifier.showError(responseBodyError)
+                    responseBodyError?.let { userNotifier.showError(it) }
                 }
             }
         }
@@ -204,7 +204,7 @@ abstract class BaseRequestInterceptor(
             .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
 
         // we have to remove UID from those requests, because they mess up with server recognizing affected user
-        if (request.url().toString().endsWith(AUTH_PATH) || request.url().toString().contains(AUTH_INFO_PATH)) {
+        if (request.url.toString().endsWith(AUTH_PATH) || request.url.toString().contains(AUTH_INFO_PATH)) {
             requestBuilder.removeHeader(HEADER_AUTH).removeHeader(HEADER_UID)
         }
 
