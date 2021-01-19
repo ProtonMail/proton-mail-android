@@ -151,7 +151,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onResume() {
         super.onResume()
         user = mUserManager.user
-        settingsAdapter.notifyDataSetChanged()
         viewModel.checkConnectivity()
     }
 
@@ -348,8 +347,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 attachmentStorageIntent.putExtra(AttachmentStorageActivity.EXTRA_SETTINGS_ATTACHMENT_STORAGE_VALUE, mAttachmentStorageValue)
                 startActivityForResult(AppUtil.decorInAppIntent(attachmentStorageIntent), SettingsEnum.LOCAL_STORAGE_LIMIT.ordinal)
             }
-
-
             SettingsEnum.PUSH_NOTIFICATION -> {
                 val privateNotificationsIntent = AppUtil.decorInAppIntent(Intent(this, EditSettingsItemActivity::class.java))
                 privateNotificationsIntent.putExtra(EXTRA_SETTINGS_ITEM_TYPE, SettingsItem.PUSH_NOTIFICATIONS)
@@ -404,6 +401,9 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                     }
                 }
             }
+            else -> {
+                Timber.v("Unhandled setting: ${settingsId.toUpperCase(Locale.ENGLISH)} selection")
+            }
         }
     }
 
@@ -435,6 +435,11 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     protected fun setEditTextListener(settingType: SettingsEnum, listener: (View) -> Unit) {
         settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }?.apply { editTextListener = listener }
+    }
+
+    protected fun setEditTextChangeListener(settingType: SettingsEnum, listener: (String) -> Unit) {
+        settingsAdapter.items.find { it.settingId == settingType.name.toLowerCase(Locale.ENGLISH) }
+            ?.apply { editTextChangeListener = listener }
     }
 
     protected fun setValue(settingType: SettingsEnum, settingValueNew: String) {

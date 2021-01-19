@@ -282,11 +282,7 @@ public class User {
         }
 
         if (MobileSignature == null) {
-            if (!isPaidUserSignatureEdit()) {
-                MobileSignature = ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature);
-            } else {
-                MobileSignature = pref.getString(PREF_MOBILE_SIGNATURE, ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature));
-            }
+            MobileSignature = pref.getString(PREF_MOBILE_SIGNATURE, ProtonMailApplication.getApplication().getString(R.string.default_mobile_signature));
         }
 
         ShowSignature = loadShowSignatureSetting();
