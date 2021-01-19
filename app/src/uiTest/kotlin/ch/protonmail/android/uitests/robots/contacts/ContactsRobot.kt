@@ -25,8 +25,8 @@ import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContac
 import ch.protonmail.android.uitests.robots.contacts.ContactsMatchers.withContactNameAndEmail
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
 import com.github.clans.fab.FloatingActionButton
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.instanceOf
@@ -83,15 +83,15 @@ class ContactsRobot {
     fun clickContactByEmail(email: String): ContactDetailsRobot {
         UIActions.wait.forViewWithId(contactsRecyclerView)
         UIActions.recyclerView
-            .waitForBeingPopulated(contactsRecyclerView)
-            .clickContactItemWithRetry(contactsRecyclerView, email)
+            .common.waitForBeingPopulated(contactsRecyclerView)
+            .contacts.clickContactItemWithRetry(contactsRecyclerView, email)
         return ContactDetailsRobot()
     }
 
     inner class ContactsView {
 
         fun clickContact(withEmail: String): ContactDetailsRobot {
-            UIActions.recyclerView.clickContactItem(contactsRecyclerView, withEmail)
+            UIActions.recyclerView.contacts.clickContactItem(contactsRecyclerView, withEmail)
             return ContactDetailsRobot()
         }
 
@@ -103,8 +103,8 @@ class ContactsRobot {
 
         fun clickSendMessageToContact(contactName: String): ComposerRobot {
             UIActions.recyclerView
-                .waitForBeingPopulated(contactsRecyclerView)
-                .clickContactItemView(
+                .common.waitForBeingPopulated(contactsRecyclerView)
+                .contacts.clickContactItemView(
                     contactsRecyclerView,
                     contactName,
                     R.id.writeButton
@@ -123,16 +123,16 @@ class ContactsRobot {
 
         fun clickGroup(withName: String): GroupDetailsRobot {
             UIActions.recyclerView
-                .waitForBeingPopulated(R.id.contactGroupsRecyclerView)
-                .clickContactsGroupItem(R.id.contactGroupsRecyclerView, withName)
+                .common.waitForBeingPopulated(R.id.contactGroupsRecyclerView)
+                .contacts.clickContactsGroupItem(R.id.contactGroupsRecyclerView, withName)
             return GroupDetailsRobot()
         }
 
         fun clickGroupWithMembersCount(name: String, membersCount: String): GroupDetailsRobot {
             UIActions.wait.forViewWithId(contactGroupsRecyclerView)
             UIActions.recyclerView
-                .waitForBeingPopulated(contactGroupsRecyclerView)
-                .clickOnRecyclerViewMatchedItemWithRetry(
+                .common.waitForBeingPopulated(contactGroupsRecyclerView)
+                .common.clickOnRecyclerViewMatchedItemWithRetry(
                     contactGroupsRecyclerView,
                     withContactGroupNameAndMembersCount(name, membersCount)
                 )
@@ -140,7 +140,7 @@ class ContactsRobot {
         }
 
         fun clickSendMessageToGroup(groupName: String): ComposerRobot {
-            UIActions.recyclerView.clickContactsGroupItemView(
+            UIActions.recyclerView.contacts.clickContactsGroupItemView(
                 R.id.contactGroupsRecyclerView,
                 groupName,
                 R.id.writeButton)
@@ -150,8 +150,8 @@ class ContactsRobot {
         class Verify {
             fun groupWithMembersCountExists(name: String, membersCount: String) {
                 UIActions.recyclerView
-                    .waitForBeingPopulated(contactGroupsRecyclerView)
-                    .scrollToRecyclerViewMatchedItem(
+                    .common.waitForBeingPopulated(contactGroupsRecyclerView)
+                    .common.scrollToRecyclerViewMatchedItem(
                         contactGroupsRecyclerView,
                         withContactGroupNameAndMembersCount(name, membersCount)
                     )
@@ -159,8 +159,8 @@ class ContactsRobot {
 
             fun groupDoesNotExists(name: String, membersCount: String) {
                 UIActions.recyclerView
-                    .waitForBeingPopulated(contactGroupsRecyclerView)
-                    .scrollToRecyclerViewMatchedItem(
+                    .common.waitForBeingPopulated(contactGroupsRecyclerView)
+                    .common.scrollToRecyclerViewMatchedItem(
                         contactGroupsRecyclerView,
                         withContactGroupNameAndMembersCount(name, membersCount)
                     )
@@ -189,13 +189,13 @@ class ContactsRobot {
 
         fun contactExists(name: String, email: String) {
             UIActions.recyclerView
-                .scrollToRecyclerViewMatchedItem(contactsRecyclerView, withContactNameAndEmail(name, email))
+                .common.scrollToRecyclerViewMatchedItem(contactsRecyclerView, withContactNameAndEmail(name, email))
         }
 
         fun contactDoesNotExists(name: String, email: String) {
             UIActions.wait.forViewWithId(contactsRecyclerView)
             UIActions.recyclerView
-                .checkDoesNotContainContact(contactsRecyclerView, name, email)
+                .contacts.checkDoesNotContainContact(contactsRecyclerView, name, email)
         }
 
         fun contactsRefreshed() {

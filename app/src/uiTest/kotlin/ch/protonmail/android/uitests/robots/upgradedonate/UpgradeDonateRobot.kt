@@ -19,7 +19,7 @@
 package ch.protonmail.android.uitests.robots.upgradedonate
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [UpgradeDonateRobot] class contains actions and verifications for Upgrade / Donate view.

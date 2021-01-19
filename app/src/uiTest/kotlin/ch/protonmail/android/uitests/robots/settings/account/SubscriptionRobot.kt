@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.uitests.robots.settings.account
 
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * Class represents Subscription view.

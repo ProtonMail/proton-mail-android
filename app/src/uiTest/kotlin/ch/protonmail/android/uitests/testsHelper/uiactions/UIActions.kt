@@ -1,40 +1,39 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.robots.mailbox.messagedetail
+package ch.protonmail.android.uitests.testsHelper.uiactions
 
-import ch.protonmail.android.R
-import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
-import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import android.content.Context
+import androidx.test.platform.app.InstrumentationRegistry
 
-/**
- * [ViewHeadersRobot] class contains actions and verifications for View Headers functionality.
- */
-class ViewHeadersRobot {
+object UIActions {
 
-    /**
-     * Contains all the validations that can be performed by [SentRobot].
-     */
-    class Verify {
-        fun messageHeadersDisplayed() {
-            UIActions.wait.forViewWithId(R.id.viewHeadersText)
-        }
-    }
+    private val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+    val allOf = AllOf
+    val check = Check
+    val contentDescription = ContentDescription
+    val hint = Hint
+    val id = Id
+    val listView = List
+    val recyclerView = Recycler
+    val system = System
+    val tag = Tag
+    val text = Text
+    val wait = Wait
 }

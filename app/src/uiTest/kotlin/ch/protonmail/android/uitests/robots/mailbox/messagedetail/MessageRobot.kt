@@ -24,15 +24,20 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasType
 import androidx.test.espresso.intent.matcher.UriMatchers.hasPath
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.ApplyLabelRobotInterface
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFolderName
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
 import ch.protonmail.android.uitests.robots.mailbox.spam.SpamRobot
-import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
+import ch.protonmail.android.uitests.testsHelper.TestData.pgpEncryptedTextDecrypted
+import ch.protonmail.android.uitests.testsHelper.TestData.pgpSignedTextDecrypted
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.type
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 
@@ -69,9 +74,16 @@ class MessageRobot {
         return InboxRobot()
     }
 
-    fun openFoldersModal(): MessageRobot {
+    fun openFoldersModal(): FoldersDialogRobot {
+        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
         UIActions.wait.forViewWithId(R.id.add_folder).click()
-        return this
+        return FoldersDialogRobot()
+    }
+
+    fun openLabelsModal(): LabelsDialogRobot {
+        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+        UIActions.wait.forViewWithId(R.id.add_label).click()
+        return LabelsDialogRobot()
     }
 
     fun reply(): ComposerRobot {
@@ -109,6 +121,12 @@ class MessageRobot {
         return SentRobot()
     }
 
+    fun navigateUpToInbox(): InboxRobot {
+        UIActions.wait.forViewWithId(R.id.reply_all)
+        UIActions.system.clickHamburgerOrUpButton()
+        return InboxRobot()
+    }
+
     fun clickSendButtonFromDrafts(): DraftsRobot {
         UIActions.id.clickViewWithId(sendMessageId)
         UIActions.wait.forViewWithText(R.string.message_sent)
@@ -117,12 +135,101 @@ class MessageRobot {
 
     fun clickLoadEmbeddedImagesButton(): MessageRobot {
         UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-        UIActions.wait.forViewWithIdAndAncestorId(R.id.loadContentButton, R.id.containerLoadEmbeddedImagesContainer)
+        UIActions.wait
+            .forViewWithIdAndAncestorId(
+                R.id.loadContentButton,
+                R.id.containerLoadEmbeddedImagesContainer
+            )
             .click()
         return this
     }
 
-    inner class MessageMoreOptions {
+    class LabelsDialogRobot : ApplyLabelRobotInterface {
+
+        override fun addLabel(name: String): LabelsDialogRobot {
+            super.addLabel(name)
+            return this
+        }
+
+        override fun selectLabelByName(name: String): LabelsDialogRobot {
+            super.selectLabelByName(name)
+            return this
+        }
+
+        override fun apply(): MessageRobot {
+            super.apply()
+            return MessageRobot()
+        }
+    }
+
+    class FoldersDialogRobot {
+
+        fun clickCreateFolder(): AddFolderRobot {
+            UIActions.wait.forViewWithId(R.id.folders_list_view)
+            UIActions.listView
+                .clickListItemByText(
+                    withFolderName(stringFromResource(R.string.create_new_folder)),
+                    R.id.folders_list_view
+                )
+            return AddFolderRobot()
+        }
+
+        fun moveMessageFromSpamToFolder(folderName: String): SpamRobot {
+            selectFolder(folderName)
+            return SpamRobot()
+        }
+
+        fun moveMessageFromSentToFolder(folderName: String): SentRobot {
+            selectFolder(folderName)
+            return SentRobot()
+        }
+
+        fun moveMessageFromInboxToFolder(folderName: String): InboxRobot {
+            selectFolder(folderName)
+            return InboxRobot()
+        }
+
+        fun moveMessageFromMessageToFolder(folderName: String): MessageRobot {
+            selectFolder(folderName)
+            return MessageRobot()
+        }
+
+        private fun selectFolder(folderName: String) {
+            UIActions.wait.forViewWithId(R.id.folders_list_view)
+            UIActions.listView
+                .clickListItemByText(
+                    withFolderName(folderName),
+                    R.id.folders_list_view
+                )
+        }
+
+        class Verify {
+
+            fun folderExistsInFoldersList(folderName: String) {
+                UIActions.wait.forViewWithId(R.id.folders_list_view)
+                UIActions.listView.checkItemWithTextExists(R.id.folders_list_view, folderName)
+            }
+        }
+
+        inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+    }
+
+    class AddFolderRobot {
+
+        fun addFolderWithName(name: String): FoldersDialogRobot = typeName(name).saveNewFolder()
+
+        private fun saveNewFolder(): FoldersDialogRobot {
+            UIActions.wait.forViewWithId(R.id.save_new_label).click()
+            return FoldersDialogRobot()
+        }
+
+        private fun typeName(folderName: String): AddFolderRobot {
+            UIActions.wait.forViewWithId(R.id.label_name).type(folderName)
+            return this
+        }
+    }
+
+    class MessageMoreOptions {
 
         fun viewHeaders(): ViewHeadersRobot {
             UIActions.allOf.clickViewWithIdAndText(R.id.title, R.string.view_headers)
@@ -152,12 +259,12 @@ class MessageRobot {
         }
 
         fun pgpEncryptedMessageDecrypted() {
-            UIActions.wait.forViewWithTextByUiAutomator(TestData.pgpEncryptedTextDecrypted)
+            UIActions.wait.forViewWithTextByUiAutomator(pgpEncryptedTextDecrypted)
 
         }
 
         fun pgpSignedMessageDecrypted() {
-            UIActions.wait.forViewWithTextByUiAutomator(TestData.pgpSignedTextDecrypted)
+            UIActions.wait.forViewWithTextByUiAutomator(pgpSignedTextDecrypted)
         }
 
         fun messageWebViewContainerShown() {
@@ -170,11 +277,13 @@ class MessageRobot {
         }
 
         fun intentWithActionFileNameAndMimeTypeSent(fileName: String, mimeType: String) {
-            UIActions.wait.forIntent(allOf(
-                hasAction(Intent.ACTION_VIEW),
-                hasData(hasPath(containsString(fileName.split('.')[0]))),
-                hasData(hasPath(containsString(fileName.split('.')[1]))),
-                hasType(mimeType))
+            UIActions.wait.forIntent(
+                allOf(
+                    hasAction(Intent.ACTION_VIEW),
+                    hasData(hasPath(containsString(fileName.split('.')[0]))),
+                    hasData(hasPath(containsString(fileName.split('.')[1]))),
+                    hasType(mimeType)
+                )
             )
         }
     }

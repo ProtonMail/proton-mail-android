@@ -22,10 +22,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.matcher.BoundedMatcher
 import ch.protonmail.android.R
+import ch.protonmail.android.adapters.FoldersAdapter
+import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.adapters.messages.MessagesListViewHolder
 import ch.protonmail.android.views.messagesList.MessagesListItemView
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.TypeSafeMatcher
 
 /**
  * Matchers that are used by Mailbox features like Inbox, Sent, Drafts, Trash, etc.
@@ -158,6 +162,36 @@ object MailboxMatchers {
                     return matched
                 }
                 return false
+            }
+        }
+    }
+
+    fun withFolderName(name: String): TypeSafeMatcher<FoldersAdapter.FolderItem> =
+        withFolderName(equalTo(name))
+
+    fun withFolderName(nameMatcher: Matcher<out Any?>): TypeSafeMatcher<FoldersAdapter.FolderItem> {
+        return object : TypeSafeMatcher<FoldersAdapter.FolderItem>(FoldersAdapter.FolderItem::class.java) {
+            override fun matchesSafely(item: FoldersAdapter.FolderItem): Boolean {
+                return nameMatcher.matches(item.name)
+            }
+
+            override fun describeTo(description: Description) {
+                description.appendText("with item content: ")
+            }
+        }
+    }
+
+    fun withLabelName(name: String): TypeSafeMatcher<LabelsAdapter.LabelItem> =
+        withLabelName(equalTo(name))
+
+    fun withLabelName(nameMatcher: Matcher<out Any?>): TypeSafeMatcher<LabelsAdapter.LabelItem> {
+        return object : TypeSafeMatcher<LabelsAdapter.LabelItem>(LabelsAdapter.LabelItem::class.java) {
+            override fun matchesSafely(item: LabelsAdapter.LabelItem): Boolean {
+                return nameMatcher.matches(item.name)
+            }
+
+            override fun describeTo(description: Description) {
+                description.appendText("with item content: ")
             }
         }
     }
