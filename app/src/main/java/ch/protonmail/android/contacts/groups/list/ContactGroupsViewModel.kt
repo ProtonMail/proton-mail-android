@@ -20,6 +20,7 @@ package ch.protonmail.android.contacts.groups.list
 
 import android.annotation.SuppressLint
 import android.text.TextUtils
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,9 +36,8 @@ import ch.protonmail.android.utils.Event
 import io.reactivex.Scheduler
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-class ContactGroupsViewModel @Inject constructor(
+class ContactGroupsViewModel @ViewModelInject constructor(
     private val contactGroupsRepository: ContactGroupsRepository,
     private val userManager: UserManager,
     private val deleteLabel: DeleteLabel
