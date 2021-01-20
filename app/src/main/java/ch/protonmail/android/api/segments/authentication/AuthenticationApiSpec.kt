@@ -54,5 +54,8 @@ interface AuthenticationApiSpec {
 
     suspend fun refreshAuth(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse
 
+    @Throws(IOException::class)
+    fun refreshAuthBlocking(refreshBody: RefreshBody, retrofitTag: RetrofitTag?): RefreshResponse
+
     fun twoFactor(twoFABody: TwoFABody): TwoFAResponse
 }
