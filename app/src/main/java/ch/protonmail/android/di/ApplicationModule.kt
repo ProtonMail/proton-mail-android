@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.di
 
-import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
@@ -39,7 +38,6 @@ import ch.protonmail.android.api.models.messages.receive.IMessageSenderFactory
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.attachments.Armorer
 import ch.protonmail.android.attachments.OpenPgpArmorer
 import ch.protonmail.android.core.Constants
@@ -86,9 +84,6 @@ object ApplicationModule {
     @Provides
     fun protonMailApplication(context: Context): ProtonMailApplication =
         context.app
-
-    @Provides
-    fun alarmReceiver() = AlarmReceiver()
 
     @Provides
     @AlternativeApiPins
@@ -161,11 +156,6 @@ object ApplicationModule {
     fun mailSettings(
         userManager: UserManager
     ) = userManager.mailSettings
-
-    @Provides
-    @Singleton
-    fun notificationManager(context: Context): NotificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     @Provides
     @Singleton
