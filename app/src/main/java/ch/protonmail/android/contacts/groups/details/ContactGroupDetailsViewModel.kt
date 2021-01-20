@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
@@ -32,6 +33,8 @@ import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
 import com.jakewharton.rxrelay2.PublishRelay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -90,42 +93,40 @@ class ContactGroupDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getData(): ContactLabel? = _contactLabel
+    fun getData(): ContactLabel = _contactLabel
 
-    @SuppressLint("CheckResult")
     private fun watchForContactGroup() {
-        contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.ID)
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
-                    _contactLabel = it
-                    if (::_data.isInitialized) {
-                        _contactGroupEmailsResult.postValue(_data)
+        viewModelScope.launch {
+            runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.ID) }
+                .fold(
+                    onSuccess = { contactLabel ->
+                        Timber.v("ContactLabel: $contactLabel retrieved")
+                        contactLabel?.let {
+                            _contactLabel = it
+                        }
+                    },
+                    onFailure = {
+                        _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
                     }
-                },
-                {
-                    _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
+                )
+        }
 
-                }
-            )
     }
 
-    @SuppressLint("CheckResult")
     private fun getContactGroupEmails(contactLabel: ContactLabel) {
-        contactGroupDetailsRepository.getContactGroupEmails(contactLabel.ID)
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
-                    _data = it
-                    watchForContactGroup()
-                    _contactGroupEmailsResult.postValue(it)
-                },
-                {
-                    _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                }
-            )
+        viewModelScope.launch {
+            runCatching { contactGroupDetailsRepository.getContactGroupEmails(contactLabel.ID) }
+                .fold(
+                    onSuccess = {
+                        _data = it
+                        watchForContactGroup()
+                        _contactGroupEmailsResult.postValue(it)
+                    },
+                    onFailure = {
+                        _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                    }
+                )
+        }
     }
 
     @SuppressLint("CheckResult")

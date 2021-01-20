@@ -669,7 +669,7 @@ class EventHandler @AssistedInject constructor(
                         val label = messagesDatabase.findLabelById(labelId!!)
                         writeMessageLabel(label, item, messagesDatabase)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
-                        val contactLabel = contactsDatabase.findContactGroupById(labelId!!)
+                        val contactLabel = contactsDatabase.findContactGroupByIdBlocking(labelId!!)
                         writeContactGroup(contactLabel, item, contactsDatabase)
                     }
                 }

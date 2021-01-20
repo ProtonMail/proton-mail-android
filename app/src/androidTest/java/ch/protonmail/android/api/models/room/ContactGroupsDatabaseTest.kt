@@ -27,8 +27,8 @@ import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import org.junit.Assert
 import org.junit.Rule
+import java.util.Arrays
 import kotlin.test.Test
-import java.util.*
 
 /**
  * Created by Dino Kadrikj on 13.08.2018.
@@ -51,7 +51,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
 
-        val needed = database.findContactGroupById("b")
+        val needed = database.findContactGroupByIdBlocking("b")
         Assert.assertEquals(label2, needed)
     }
 
@@ -62,7 +62,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label1)
         database.updateFullContactGroup(label2)
 
-        val needed = database.findContactGroupById("a")
+        val needed = database.findContactGroupByIdBlocking("a")
         Assert.assertEquals(needed?.name, "ab")
     }
 
@@ -74,8 +74,8 @@ class ContactGroupsDatabaseTest {
         database.saveAllContactGroups(label1, label2)
         database.updateFullContactGroup(label3)
 
-        val neededUpdated = database.findContactGroupById("a")
-        val neededNotUpdated = database.findContactGroupById("b")
+        val neededUpdated = database.findContactGroupByIdBlocking("a")
+        val neededNotUpdated = database.findContactGroupByIdBlocking("b")
         Assert.assertEquals(neededUpdated?.name, "ab")
         Assert.assertEquals(neededNotUpdated?.name, "bb")
     }
@@ -87,7 +87,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label1)
         database.updatePartially(label2)
 
-        val needed = database.findContactGroupById("a")
+        val needed = database.findContactGroupByIdBlocking("a")
         Assert.assertEquals(needed?.color, "aaa")
         Assert.assertEquals(needed?.name, "ab")
         Assert.assertEquals(needed?.order, 1)
@@ -113,7 +113,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
 
-        val actual = database.findContactGroupById("a")
+        val actual = database.findContactGroupByIdBlocking("a")
         Assert.assertEquals(label3, actual)
     }
 

@@ -72,7 +72,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     private lateinit var contactGroupsAdapter: ContactsGroupsListAdapter
     override var actionMode: ActionMode? = null
         private set
-    
+
     private val listener: IContactsListFragmentListener by lazy {
         requireActivity() as IContactsListFragmentListener
     }
@@ -141,7 +141,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         listener.setTitle(getString(R.string.contacts))
     }
 
-    override fun onContactPermissionChange(hasPermission: Boolean) { }
+    override fun onContactPermissionChange(hasPermission: Boolean) {}
 
     override fun getLayoutResourceId() = R.layout.fragment_contacts_groups
 

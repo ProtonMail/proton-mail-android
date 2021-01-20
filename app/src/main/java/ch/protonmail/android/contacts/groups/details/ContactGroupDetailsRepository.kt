@@ -27,14 +27,12 @@ import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.worker.PostLabelWorker
-import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.io.IOException
 import javax.inject.Inject
 
 class ContactGroupDetailsRepository @Inject constructor(
-    private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
     private val databaseProvider: DatabaseProvider,
     private val workManager: WorkManager
@@ -42,13 +40,21 @@ class ContactGroupDetailsRepository @Inject constructor(
 
     private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupDetailsRepository"); databaseProvider.provideContactsDao() }
 
-    fun findContactGroupDetails(id: String): Single<ContactLabel> {
+    fun findContactGroupDetailsBlocking(id: String): Single<ContactLabel> {
         return contactsDatabase.findContactGroupByIdAsync(id)
     }
 
-    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
+    suspend fun findContactGroupDetails(id: String): ContactLabel? {
+        return contactsDatabase.findContactGroupById(id)
+    }
+
+    fun getContactGroupEmailsBlocking(id: String): Observable<List<ContactEmail>> {
         return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
                 .toObservable()
+    }
+
+    suspend fun getContactGroupEmails(id: String): List<ContactEmail> {
+        return contactsDatabase.findAllContactsEmailsByContactGroupId(id)
     }
 
     fun filterContactGroupEmails(id: String, filter: String): Observable<List<ContactEmail>> {
