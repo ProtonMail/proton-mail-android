@@ -420,11 +420,14 @@ class MailboxActivity :
     }
 
     private fun startObserving() {
-        mailboxViewModel.usedSpaceActionEvent(FLOW_START_ACTIVITY)
-        mailboxViewModel.manageLimitReachedWarning.observe(this, setupUpLimitReachedObserver)
-        mailboxViewModel.manageLimitApproachingWarning.observe(this, setupUpLimitApproachingObserver)
-        mailboxViewModel.manageLimitBelowCritical.observe(this, setupUpLimitBelowCriticalObserver)
-        mailboxViewModel.manageLimitReachedWarningOnTryCompose.observe(this, setupUpLimitReachedTryComposeObserver)
+        val owner = this
+        mailboxViewModel.run {
+            usedSpaceActionEvent(FLOW_START_ACTIVITY)
+            manageLimitReachedWarning.observe(owner, setupUpLimitReachedObserver)
+            manageLimitApproachingWarning.observe(owner, setupUpLimitApproachingObserver)
+            manageLimitBelowCritical.observe(owner, setupUpLimitBelowCriticalObserver)
+            manageLimitReachedWarningOnTryCompose.observe(owner, setupUpLimitReachedTryComposeObserver)
+        }
     }
 
     private fun startObservingUsedSpace() {

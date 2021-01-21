@@ -49,7 +49,7 @@ fun initVersions() {
     // endregion
 
     // region Others
-    `assert4k version` =                        "0.5.7"         // Released: Aug 15, 2020
+    `assert4k version` =                        "0.6"           // Released: Jan 21, 2021
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
     `dagger version` =                          "2.28.3"        // Released: Jul 18, 2020
 

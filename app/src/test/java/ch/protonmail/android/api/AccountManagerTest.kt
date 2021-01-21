@@ -45,49 +45,49 @@ class AccountManagerTest : CoroutinesTest {
     private val accountManager = AccountManager(newMockSharedPreferences, dispatchers)
 
     @Test
-    fun `can set logged in a single user`() = coroutinesTest {
+    fun canSetLoggedInASingleUser() = coroutinesTest {
         accountManager.setLoggedIn(Id("first"))
         assert that accountManager.allLoggedIn() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `can set logged in a list of users`() = coroutinesTest {
+    fun canSetLoggedInAListOfUsers() = coroutinesTest {
         accountManager.setLoggedIn(listOf(Id("first"), Id("second")))
         assert that accountManager.allLoggedIn() equals setOf(Id("first"), Id("second"))
         assert that accountManager.allSaved() equals setOf(Id("first"), Id("second"))
     }
 
     @Test
-    fun `set logged in skips duplicates`() = coroutinesTest {
+    fun setLoggedInSkipsDuplicates() = coroutinesTest {
         accountManager.setLoggedIn(listOf(Id("first"), Id("first")))
         assert that accountManager.allLoggedIn() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `can set logged out a single user`() = coroutinesTest {
+    fun canSetLoggedOutASingleUser() = coroutinesTest {
         accountManager.setLoggedOut(Id("first"))
         assert that accountManager.allLoggedOut() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `can set logged out a list of users`() = coroutinesTest {
+    fun canSetLoggedOutAListOfUsers() = coroutinesTest {
         accountManager.setLoggedOut(listOf(Id("first"), Id("second")))
         assert that accountManager.allLoggedOut() equals setOf(Id("first"), Id("second"))
         assert that accountManager.allSaved() equals setOf(Id("first"), Id("second"))
     }
 
     @Test
-    fun `set logged out skips duplicates`() = coroutinesTest {
+    fun setLoggedOutSkipsDuplicates() = coroutinesTest {
         accountManager.setLoggedOut(listOf(Id("first"), Id("first")))
         assert that accountManager.allLoggedOut() equals setOf(Id("first"))
         assert that accountManager.allSaved() equals setOf(Id("first"))
     }
 
     @Test
-    fun `set logged out works after set logged in`() = coroutinesTest {
+    fun setLoggedOutWorksAfterSetLoggedIn() = coroutinesTest {
         accountManager.setLoggedIn(listOf(Id("first"), Id("second")))
         accountManager.setLoggedOut(Id("first"))
 
@@ -96,7 +96,7 @@ class AccountManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun `set logged in works after set logged out`() = coroutinesTest {
+    fun setLoggedInWorksAfterSetLoggedOut() = coroutinesTest {
         accountManager.setLoggedOut(listOf(Id("first"), Id("second")))
         accountManager.setLoggedIn(Id("first"))
 
@@ -105,7 +105,7 @@ class AccountManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun `remove correctly removes from logged in, logged out and saved`() = coroutinesTest {
+    fun removeCorrectlyRemovesFromLoggedInLoggedOutAndSaved() = coroutinesTest {
         with(accountManager) {
             setLoggedIn(listOf(Id("first"), Id("second")))
             setLoggedOut(Id("third"))
@@ -121,99 +121,7 @@ class AccountManagerTest : CoroutinesTest {
     }
 
     @Test
-    fun `clear correctly removes from logged in, logged out and saved`() = coroutinesTest {
-        with(accountManager) {
-            setLoggedIn(listOf(Id("first"), Id("second")))
-            setLoggedOut(Id("third"))
-
-            clear()
-
-            assert that allSaved() `is` empty
-            assert that allLoggedIn() `is` empty
-            assert that allLoggedOut() `is` empty
-        }
-    }
-
-    private val accountManager = AccountManager(newMockSharedPreferences)
-
-    @Test
-    fun `can set logged in a single user`() {
-        accountManager.setLoggedIn(Id("first"))
-        assert that accountManager.allLoggedIn() equals setOf(Id("first"))
-        assert that accountManager.allSaved() equals setOf(Id("first"))
-    }
-
-    @Test
-    fun `can set logged in a list of users`() {
-        accountManager.setLoggedIn(listOf(Id("first"), Id("second")))
-        assert that accountManager.allLoggedIn() equals setOf(Id("first"), Id("second"))
-        assert that accountManager.allSaved() equals setOf(Id("first"), Id("second"))
-    }
-
-    @Test
-    fun `set logged in skips duplicates`() {
-        accountManager.setLoggedIn(listOf(Id("first"), Id("first")))
-        assert that accountManager.allLoggedIn() equals setOf(Id("first"))
-        assert that accountManager.allSaved() equals setOf(Id("first"))
-    }
-
-    @Test
-    fun `can set logged out a single user`() {
-        accountManager.setLoggedOut(Id("first"))
-        assert that accountManager.allLoggedOut() equals setOf(Id("first"))
-        assert that accountManager.allSaved() equals setOf(Id("first"))
-    }
-
-    @Test
-    fun `can set logged out a list of users`() {
-        accountManager.setLoggedOut(listOf(Id("first"), Id("second")))
-        assert that accountManager.allLoggedOut() equals setOf(Id("first"), Id("second"))
-        assert that accountManager.allSaved() equals setOf(Id("first"), Id("second"))
-    }
-
-    @Test
-    fun `set logged out skips duplicates`() {
-        accountManager.setLoggedOut(listOf(Id("first"), Id("first")))
-        assert that accountManager.allLoggedOut() equals setOf(Id("first"))
-        assert that accountManager.allSaved() equals setOf(Id("first"))
-    }
-
-    @Test
-    fun `set logged out works after set logged in`() {
-        accountManager.setLoggedIn(listOf(Id("first"), Id("second")))
-        accountManager.setLoggedOut(Id("first"))
-
-        assert that accountManager.allLoggedIn() equals setOf(Id("second"))
-        assert that accountManager.allLoggedOut() equals setOf(Id("first"))
-    }
-
-    @Test
-    fun `set logged in works after set logged out`() {
-        accountManager.setLoggedOut(listOf(Id("first"), Id("second")))
-        accountManager.setLoggedIn(Id("first"))
-
-        assert that accountManager.allLoggedOut() equals setOf(Id("second"))
-        assert that accountManager.allLoggedIn() equals setOf(Id("first"))
-    }
-
-    @Test
-    fun `remove correctly removes from logged in, logged out and saved`() {
-        with(accountManager) {
-            setLoggedIn(listOf(Id("first"), Id("second")))
-            setLoggedOut(Id("third"))
-
-            remove(Id("first"))
-            remove(Id("second"))
-            remove(Id("third"))
-
-            assert that allSaved() `is` empty
-            assert that allLoggedIn() `is` empty
-            assert that allLoggedOut() `is` empty
-        }
-    }
-
-    @Test
-    fun `clear correctly removes from logged in, logged out and saved`() {
+    fun clearCorrectlyRemovesFromLoggedInLoggedOutAndSaved() = coroutinesTest {
         with(accountManager) {
             setLoggedIn(listOf(Id("first"), Id("second")))
             setLoggedOut(Id("third"))
@@ -251,7 +159,7 @@ class AccountManagerTest : CoroutinesTest {
         )
 
         @Test
-        fun `does remove old preferences`() = coroutinesTest {
+        fun doesRemoveOldPreferences() = coroutinesTest {
 
             migration()
 
@@ -260,7 +168,7 @@ class AccountManagerTest : CoroutinesTest {
         }
 
         @Test
-        fun `new preferences have all the values`() = coroutinesTest {
+        fun newPreferencesHaveAllTheValues() = coroutinesTest {
 
             migration()
 
@@ -277,7 +185,7 @@ class AccountManagerTest : CoroutinesTest {
         }
 
         @Test
-        fun `correctly skips preferences without an user id`() = coroutinesTest {
+        fun correctlySkipsPreferencesWithoutAnUserId() = coroutinesTest {
             coEvery { secureSharedPreferencesMigration(any()) } returns mapOf(user1, user3)
 
             migration()
