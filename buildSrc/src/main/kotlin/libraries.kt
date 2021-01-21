@@ -102,6 +102,7 @@ val DependencyHandler.`remark` get() =                      dependency("com.over
 val DependencyHandler.aerogear get() =  dependency("org.jboss.aerogear", module = "aerogear-otp-java") version `aerogear version`
 val DependencyHandler.`espresso-contrib` get() =  androidx("test.espresso", module = "espresso-contrib") version `espresso version`
 val DependencyHandler.`espresso-intents` get() =  androidx("test.espresso", module = "espresso-intents") version `espresso version`
+val DependencyHandler.`espresso-web` get() =  androidx("test.espresso", module = "espresso-web") version `espresso version`
 val DependencyHandler.falcon get() = dependency("com.jraska", module = "falcon") version `falcon version`
 val DependencyHandler.`orchestrator` get() =  androidx("test", module = "orchestrator") version `android-test version`
 val DependencyHandler.`browserstack-gradle-plugin` get() =  dependency("gradle.plugin.com.browserstack.gradle", module = "browserstack-gradle-plugin") version `browserstack-plugin version`

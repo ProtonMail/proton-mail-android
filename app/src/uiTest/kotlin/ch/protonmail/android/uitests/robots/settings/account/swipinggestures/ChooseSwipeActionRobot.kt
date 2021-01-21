@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.uitests.robots.settings.account
+package ch.protonmail.android.uitests.robots.settings.account.swipinggestures
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions

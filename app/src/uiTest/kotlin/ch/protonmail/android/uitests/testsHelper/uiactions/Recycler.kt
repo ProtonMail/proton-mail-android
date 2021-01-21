@@ -39,10 +39,10 @@ import ch.protonmail.android.uitests.robots.manageaccounts.ManageAccountsMatcher
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkContactDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.checkMessageDoesNotExist
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.clickOnChildWithId
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.performActionWithRetry
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.saveMessageSubject
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitForAdapterItemWithIdAndText
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.waitUntilRecyclerViewPopulated
+import me.proton.core.test.android.instrumented.uiwaits.UIWaits.performActionWithRetry
+import me.proton.core.test.android.instrumented.uiwaits.UIWaits.waitUntilRecyclerViewPopulated
 import org.hamcrest.Matcher
 
 object Recycler {

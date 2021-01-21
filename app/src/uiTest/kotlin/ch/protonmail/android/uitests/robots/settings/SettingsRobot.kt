@@ -20,10 +20,9 @@ package ch.protonmail.android.uitests.robots.settings
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
-import ch.protonmail.android.uitests.robots.menu.MenuRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsValue
+import ch.protonmail.android.uitests.robots.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.settings.autolock.AutoLockRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.User
@@ -42,11 +41,6 @@ class SettingsRobot {
     fun emptyCache(): SettingsRobot {
         UIActions.allOf.clickVisibleViewWithId(R.id.clearCacheButton)
         return this
-    }
-
-    fun menuDrawer(): MenuRobot {
-        UIActions.system.clickHamburgerOrUpButton()
-        return MenuRobot()
     }
 
     fun openUserAccountSettings(user: User): AccountSettingsRobot {

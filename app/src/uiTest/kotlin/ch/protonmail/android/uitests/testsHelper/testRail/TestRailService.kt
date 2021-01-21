@@ -20,7 +20,7 @@ package ch.protonmail.android.uitests.testsHelper.testRail
 
 import android.util.Log
 import ch.protonmail.android.beta.test.BuildConfig
-import ch.protonmail.android.uitests.tests.BaseTest.Companion.testTag
+import me.proton.core.test.android.instrumented.CoreTest.Companion.testTag
 import org.json.simple.JSONObject
 import java.io.IOException
 import java.util.HashMap

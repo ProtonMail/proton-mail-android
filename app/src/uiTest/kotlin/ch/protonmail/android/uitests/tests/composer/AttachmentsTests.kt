@@ -41,7 +41,7 @@ import ch.protonmail.android.uitests.testsHelper.TestData.pngFile
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.zipFile
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
-import ch.protonmail.android.uitests.testsHelper.intentutils.MimeTypes
+import me.proton.core.test.android.instrumented.intentutils.MimeTypes
 import org.hamcrest.CoreMatchers.not
 import kotlin.test.BeforeTest
 import kotlin.test.Test

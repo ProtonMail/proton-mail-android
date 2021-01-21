@@ -23,7 +23,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import ch.protonmail.android.uitests.testsHelper.intentutils.IntentHelper.sendShareFileIntent
+import me.proton.core.test.android.instrumented.intentutils.IntentHelper.sendShareFileIntent
 
 class DeviceRobot {
 
