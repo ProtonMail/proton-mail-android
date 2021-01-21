@@ -19,6 +19,7 @@
 package ch.protonmail.android.contacts.groups.details
 
 import android.annotation.SuppressLint
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -36,9 +37,8 @@ import com.jakewharton.rxrelay2.PublishRelay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class ContactGroupDetailsViewModel @Inject constructor(
+class ContactGroupDetailsViewModel @ViewModelInject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
     private val deleteLabel: DeleteLabel
 ) : ViewModel() {

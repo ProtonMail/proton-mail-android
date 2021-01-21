@@ -28,7 +28,7 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
@@ -46,18 +46,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_contact_group_details.*
 import kotlinx.android.synthetic.main.content_contact_group_details.*
 import timber.log.Timber
-import javax.inject.Inject
 
 const val EXTRA_CONTACT_GROUP = "extra_contact_group"
 
 @AndroidEntryPoint
 class ContactGroupDetailsActivity : BaseActivity() {
 
-    @Inject
-    lateinit var contactGroupDetailsViewModelFactory: ContactGroupDetailsViewModelFactory
-
-    private lateinit var contactGroupDetailsViewModel: ContactGroupDetailsViewModel
     private lateinit var contactGroupEmailsAdapter: ContactGroupEmailsAdapter
+    private val contactGroupDetailsViewModel: ContactGroupDetailsViewModel by viewModels()
 
     override fun getLayoutId() = R.layout.activity_contact_group_details
 
@@ -68,9 +64,6 @@ class ContactGroupDetailsActivity : BaseActivity() {
         if (supportActionBar != null)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        contactGroupDetailsViewModel =
-                ViewModelProvider(this, contactGroupDetailsViewModelFactory)
-                    .get(ContactGroupDetailsViewModel::class.java)
         initAdapter()
         startObserving()
         val bundle = intent?.getBundleExtra(EXTRA_CONTACT_GROUP)
@@ -192,7 +185,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
                 override fun afterTextChanged(editable: Editable?) {
                     contactGroupDetailsViewModel.doFilter(filterView.text.toString())
                 }
-            })
+            }
+            )
         }
     }
 
@@ -201,8 +195,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
         R.id.action_delete -> consume {
             DialogUtils.showDeleteConfirmationDialog(
                 this, getString(R.string.delete),
-                resources.getQuantityString(R.plurals.are_you_sure_delete_group, 1))
-            {
+                resources.getQuantityString(R.plurals.are_you_sure_delete_group, 1)
+            ) {
                 contactGroupDetailsViewModel.delete()
             }
         }
