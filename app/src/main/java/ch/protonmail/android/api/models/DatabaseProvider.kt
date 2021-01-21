@@ -20,7 +20,6 @@ package ch.protonmail.android.api.models
 
 import android.content.Context
 import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory
@@ -29,6 +28,7 @@ import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.FindUsernameForUserId
 import me.proton.core.util.kotlin.unsupported
@@ -102,14 +102,14 @@ class DatabaseProvider @Inject constructor(
 
     @Deprecated("Get by user Id", ReplaceWith("provideNotificationsDao(userId)"))
     fun provideNotificationsDao(username: String?) =
-        NotificationsDatabaseFactory.getInstance(context, username).getDatabase()
+        NotificationDatabase.getInstance(context, username).getDao()
 
     fun provideNotificationsDatabase(userId: Id? = null) =
         provideNotificationsDatabase(userId?.let { findUsernameForUserId.blocking(it) }?.s)
 
     @Deprecated("Get by user Id", ReplaceWith("provideNotificationsDatabase(userId)"))
     fun provideNotificationsDatabase(username: String?) =
-        NotificationsDatabaseFactory.getInstance(context, username)
+        NotificationDatabase.getInstance(context, username)
 
     fun provideSendingFailedNotificationsDao(userId: Id? = null) =
         provideSendingFailedNotificationsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)

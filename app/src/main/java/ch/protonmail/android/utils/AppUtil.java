@@ -48,8 +48,6 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.api.models.room.counters.CounterDao;
 import ch.protonmail.android.api.models.room.counters.CounterDatabase;
-import ch.protonmail.android.api.models.room.notifications.NotificationsDatabase;
-import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory;
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase;
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabase;
@@ -62,6 +60,8 @@ import ch.protonmail.android.data.local.ContactsDao;
 import ch.protonmail.android.data.local.ContactsDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.NotificationDao;
+import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -171,7 +171,7 @@ public class AppUtil {
                 clearStorage(ContactsDatabase.Companion.getInstance(context, username).getDao(),
                         MessageDatabase.Companion.getInstance(context, username).getDao(),
                         MessageDatabase.Companion.getSearchDatabase(context).getDao(),
-                        NotificationsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
+                        NotificationDatabase.Companion.getInstance(context, username).getDao(),
                         CounterDatabase.Companion.getInstance(context, username).getDao(),
                         AttachmentMetadataDatabase.Companion.getInstance(context, username).getDao(),
                         PendingActionsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
@@ -180,7 +180,7 @@ public class AppUtil {
                 clearStorage(ContactsDatabase.Companion.getInstance(context).getDao(),
                         MessageDatabase.Companion.getInstance(context).getDao(),
                         MessageDatabase.Companion.getSearchDatabase(context).getDao(),
-                        NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase(),
+                        NotificationDatabase.Companion.getInstance(context).getDao(),
                         CounterDatabase.Companion.getInstance(context).getDao(),
                         AttachmentMetadataDatabase.Companion.getInstance(context).getDao(),
                         PendingActionsDatabaseFactory.Companion.getInstance(context).getDatabase(),
@@ -229,15 +229,15 @@ public class AppUtil {
     public static void clearNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-        final NotificationsDatabase notificationsDatabase = NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearNotificationsFromDatabaseTask(notificationsDatabase).execute();
+        final NotificationDao notificationDao = NotificationDatabase.Companion.getInstance(context).getDao();
+        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
     public static void clearNotifications(Context context, Id userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(userId.hashCode());
-        final NotificationsDatabase notificationsDatabase = NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearNotificationsFromDatabaseTask(notificationsDatabase).execute();
+        final NotificationDao notificationDao = NotificationDatabase.Companion.getInstance(context).getDao();
+        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
     @Deprecated
@@ -245,8 +245,8 @@ public class AppUtil {
     public static void clearNotifications(Context context, String username) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(username.hashCode());
-        final NotificationsDatabase notificationsDatabase = NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearNotificationsFromDatabaseTask(notificationsDatabase).execute();
+        final NotificationDao notificationDao = NotificationDatabase.Companion.getInstance(context).getDao();
+        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
     public static void clearNotifications(Context context, int notificationId) {
@@ -323,13 +323,13 @@ public class AppUtil {
             final ContactsDao contactsDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
-            final NotificationsDatabase notificationsDatabase,
+            final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionsDatabase pendingActionsDatabase,
             final boolean clearContacts
     ) {
-        clearStorage(contactsDao, messageDao, searchDatabase, notificationsDatabase, counterDao,
+        clearStorage(contactsDao, messageDao, searchDatabase, notificationDao, counterDao,
                 attachmentMetadataDao, pendingActionsDatabase, null, clearContacts);
     }
 
@@ -337,7 +337,7 @@ public class AppUtil {
             final ContactsDao contactsDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
-            final NotificationsDatabase notificationsDatabase,
+            final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionsDatabase pendingActionsDatabase,
@@ -363,7 +363,7 @@ public class AppUtil {
                 searchDatabase.clearMessagesCache();
                 searchDatabase.clearAttachmentsCache();
                 searchDatabase.clearLabelsCache();
-                notificationsDatabase.clearNotificationCache();
+                notificationDao.clearNotificationCache();
                 counterDao.clearUnreadLocationsTable();
                 counterDao.clearUnreadLabelsTable();
                 counterDao.clearTotalLocationsTable();
@@ -432,16 +432,16 @@ public class AppUtil {
 
     // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
     private static class ClearNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final NotificationsDatabase notificationsDatabase;
+        private final NotificationDao notificationDao;
 
         ClearNotificationsFromDatabaseTask(
-                NotificationsDatabase notificationsDatabase) {
-            this.notificationsDatabase = notificationsDatabase;
+                NotificationDao notificationDao) {
+            this.notificationDao = notificationDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            notificationsDatabase.clearNotificationCache();
+            notificationDao.clearNotificationCache();
             return null;
         }
     }
