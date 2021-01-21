@@ -29,6 +29,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.worker.PostLabelWorker
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 import javax.inject.Inject
 
@@ -51,15 +52,11 @@ class ContactGroupDetailsRepository @Inject constructor(
             .toObservable()
     }
 
-    suspend fun getContactGroupEmails(id: String): List<ContactEmail> {
-        return contactsDatabase.findAllContactsEmailsByContactGroupId(id)
-    }
+    suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
+        contactsDatabase.findAllContactsEmailsByContactGroupId(id)
 
-    fun filterContactGroupEmails(id: String, filter: String): Observable<List<ContactEmail>> {
-        val filterString = "%$filter%"
-        return contactsDatabase.filterContactsEmailsByContactGroupAsyncObservable(id, filterString)
-            .toObservable()
-    }
+    fun filterContactGroupEmails(id: String, filter: String): Flow<List<ContactEmail>> =
+        contactsDatabase.filterContactsEmailsByContactGroup(id, "%$filter%")
 
     fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
         val contactLabelConverterFactory = ContactLabelFactory()

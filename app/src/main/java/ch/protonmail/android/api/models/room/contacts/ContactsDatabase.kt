@@ -122,7 +122,7 @@ interface ContactsDatabase {
      * Make sure you provide @param filter with included % or ?
      */
     @Query("SELECT ${TABLE_CONTACT_EMAILS}.* FROM $TABLE_CONTACT_EMAILS INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN ON ${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_ID} = ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID} WHERE ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID} = :contactGroupId AND ${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_EMAIL} LIKE :filter")
-    fun filterContactsEmailsByContactGroup(contactGroupId: String, filter: String): List<ContactEmail>
+    fun filterContactsEmailsByContactGroup(contactGroupId: String, filter: String): Flow<List<ContactEmail>>
 
     @Query("SELECT ${TABLE_CONTACT_DATA}.${COLUMN_CONTACT_DATA_NAME},${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_EMAIL} FROM $TABLE_CONTACT_DATA JOIN $TABLE_CONTACT_EMAILS ON ${TABLE_CONTACT_DATA}.${COLUMN_CONTACT_DATA_ID}=${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_CONTACT_ID}")
     fun findAllMessageRecipientsLiveData(): LiveData<List<MessageRecipient>>

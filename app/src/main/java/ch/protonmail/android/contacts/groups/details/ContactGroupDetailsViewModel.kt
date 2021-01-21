@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.groups.details
 
-import android.annotation.SuppressLint
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,14 +28,20 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
-import com.jakewharton.rxrelay2.PublishRelay
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
+import kotlin.time.milliseconds
 
 class ContactGroupDetailsViewModel @ViewModelInject constructor(
     private val contactGroupDetailsRepository: ContactGroupDetailsRepository,
@@ -46,7 +51,7 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
     private lateinit var _contactLabel: ContactLabel
     private lateinit var _data: List<ContactEmail>
     private val _contactGroupEmailsResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
-    private val _filteringPublishSubject = PublishRelay.create<String>()
+    private val filteringChannel = BroadcastChannel<String>(1)
     private val _contactGroupEmailsEmpty: MutableLiveData<Event<String>> = MutableLiveData()
     private val _setupUIData = MutableLiveData<ContactLabel>()
     private val _deleteLabelIds: MutableLiveData<List<String>> = MutableLiveData()
@@ -129,26 +134,26 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    @SuppressLint("CheckResult")
     private fun initFiltering() {
-        _filteringPublishSubject
-            .debounce(300, TimeUnit.MILLISECONDS)
+        filteringChannel
+            .asFlow()
+            .debounce(300.milliseconds)
             .distinctUntilChanged()
-            .switchMap { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.ID, it) }
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main())
-            .subscribe(
-                {
-                    _contactGroupEmailsResult.postValue(it)
-                },
-                {
-                    _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
-                }
-            )
+            .flatMapLatest { contactGroupDetailsRepository.filterContactGroupEmails(_contactLabel.ID, it) }
+            .catch {
+                _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
+            }
+            .onEach { list ->
+                Timber.v("Filtered emails list size: ${list.size}")
+                _contactGroupEmailsResult.postValue(list)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun doFilter(filter: String) {
-        _filteringPublishSubject.accept(filter.trim())
+        viewModelScope.launch {
+            filteringChannel.send(filter.trim())
+        }
     }
 
     fun delete() {
