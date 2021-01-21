@@ -195,7 +195,7 @@ class MessagesService : JobIntentService() {
 
     private fun handleFetchContactGroups() {
         try {
-            contactEmailsManager.refresh()
+            contactEmailsManager.refreshBlocking()
         } catch (e: Exception) {
             Timber.i(e, "handleFetchContactGroups has failed")
         }

@@ -24,7 +24,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.test.runBlockingTest
@@ -56,7 +56,7 @@ class FetchContactsEmailsWorkerTest {
     fun verityThatInNormalConditionSuccessResultIsReturned() =
         runBlockingTest {
             // given
-            every { contactEmailsManager.refresh() } returns Unit
+            coEvery { contactEmailsManager.refresh() } returns Unit
             val expected = ListenableWorker.Result.success()
 
             // when
@@ -66,14 +66,13 @@ class FetchContactsEmailsWorkerTest {
             assertEquals(expected, operationResult)
         }
 
-
     @Test
     fun verityThatWhenExceptionIsThrownFalseResultIsReturned() =
         runBlockingTest {
             // given
             val exceptionMessage = "testException"
             val testException = Exception(exceptionMessage)
-            every { contactEmailsManager.refresh() } throws testException
+            coEvery { contactEmailsManager.refresh() } throws testException
             val expected = ListenableWorker.Result.failure(WorkerError(exceptionMessage).toWorkData())
 
             // when
