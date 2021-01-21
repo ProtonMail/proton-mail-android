@@ -43,6 +43,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER
 import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
+import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.api.models.User
@@ -57,7 +58,6 @@ import ch.protonmail.android.utils.buildReplyIntent
 import ch.protonmail.android.utils.buildTrashIntent
 import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.showToast
-import javax.inject.Inject
 import ch.protonmail.android.api.models.room.notifications.Notification as RoomNotification
 
 // region constants
@@ -74,10 +74,10 @@ const val EXTRA_USERNAME = "username"
 // endregion
 
 /**
- * A class that is responsible for creating notification channels, and creating and showing notifications.
+ * Created by Kamil Rajtar on 13.07.18.
  */
 
-class NotificationServer @Inject constructor(
+class NotificationServer(
     private val context: Context,
     private val notificationManager: NotificationManager
 ) : INotificationServer {
@@ -163,13 +163,11 @@ class NotificationServer @Inject constructor(
         return CHANNEL_ID_ONGOING_OPS
     }
 
-    override fun notifyVerificationNeeded(
-        user: User?,
-        messageTitle: String,
-        messageId: String,
-        messageInline: Boolean,
-        messageAddressId: String
-    ) {
+    override fun notifyVerificationNeeded(user: User?,
+                                          messageTitle: String,
+                                          messageId: String,
+                                          messageInline: Boolean,
+                                          messageAddressId: String) {
         val inboxStyle = NotificationCompat.BigTextStyle()
         inboxStyle.setBigContentTitle(context.getString(R.string.verification_needed))
         inboxStyle.bigText(String.format(
@@ -231,8 +229,8 @@ class NotificationServer @Inject constructor(
 
         val channelId = createAccountChannel()
 
-        val mBuilder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.notification_icon)
+        val mBuilder = NotificationCompat.Builder(context,
+            channelId).setSmallIcon(R.drawable.notification_icon)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
             .setStyle(inboxStyle)
             .setLights(ContextCompat.getColor(context, R.color.light_indicator),
@@ -244,12 +242,8 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(3, notification)
     }
 
-    override fun notifyAboutAttachment(
-        filename: String,
-        uri: Uri,
-        mimeType: String?,
-        showNotification: Boolean
-    ) {
+    override fun notifyAboutAttachment(filename: String, uri: Uri,
+                                       mimeType: String?, showNotification: Boolean) {
         val channelId = createAttachmentsChannel()
         val mBuilder = NotificationCompat.Builder(context, channelId)
 
@@ -568,3 +562,4 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 }
+
