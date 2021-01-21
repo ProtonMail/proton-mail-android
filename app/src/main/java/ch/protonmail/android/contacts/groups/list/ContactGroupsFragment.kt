@@ -37,7 +37,6 @@ import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsActivity
@@ -183,7 +182,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     private fun startObserving() {
         contactGroupsViewModel.contactGroupsResult.observe(this) { list ->
-            Timber.v("contactGroupsResult $list")
+            Timber.d("contactGroupsResult size: ${list.size}")
             if (list.isEmpty()) {
                 noResults.visibility = VISIBLE
             } else {
@@ -195,11 +194,12 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
         contactGroupsViewModel.contactGroupsError.observe(this) { event ->
             event?.getContentIfNotHandled()?.let {
+                Timber.i("contactGroupsResult Error: $it")
                 context?.showToast(it.setDefaultIfEmpty(getString(R.string.default_error_message)))
             }
         }
-        contactGroupsViewModel.fetchContactGroups(ThreadSchedulers.main())
-        contactGroupsViewModel.watchForJoins(ThreadSchedulers.main())
+        contactGroupsViewModel.fetchContactGroups()
+        contactGroupsViewModel.watchForJoins()
     }
 
     private fun onContactGroupSelect() {

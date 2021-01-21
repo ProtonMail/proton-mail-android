@@ -18,8 +18,6 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
-import android.annotation.SuppressLint
-import android.text.TextUtils
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,13 +25,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.ErrorEnum
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
-import io.reactivex.Scheduler
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -63,51 +61,50 @@ class ContactGroupsViewModel @ViewModelInject constructor(
     val contactGroupEmailsError: LiveData<Event<String>>
         get() = _contactGroupEmailsError
 
-    @SuppressLint("CheckResult")
-    fun watchForJoins(schedulers: Scheduler) {
-        contactGroupsRepository.getJoins()
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(schedulers)
-            .subscribe {
-                fetchContactGroups(schedulers)
-            }
+    fun watchForJoins() {
+        viewModelScope.launch {
+            contactGroupsRepository.getJoins()
+                .collect {
+                    Timber.v("Received join size: ${it.size}")
+                    fetchContactGroups()
+                }
+        }
     }
 
-    @SuppressLint("CheckResult")
-    fun fetchContactGroups(schedulers: Scheduler) {
+    fun fetchContactGroups() {
         if (_searchPhrase.isEmpty()) {
-            contactGroupsRepository.getContactGroups().subscribeOn(ThreadSchedulers.io())
-                .observeOn(schedulers).subscribe(
-                    {
-                        _contactGroups = it
-                        _contactGroupsResult.postValue(it)
-                    },
-                    {
-                        _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                    }
-                )
+            viewModelScope.launch {
+                runCatching {
+                    contactGroupsRepository.getContactGroups()
+                        .collect { list ->
+                            Timber.v("Contacts groups list received size: ${list.size}")
+                            _contactGroups = list
+                            _contactGroupsResult.postValue(list)
+                        }
+                }
+                    .onFailure { _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name) }
+            }
         } else {
             setSearchPhrase(_searchPhrase)
         }
     }
 
-    @SuppressLint("CheckResult")
     override fun setSearchPhrase(searchPhrase: String?) {
         if (searchPhrase != null) {
             _searchPhrase = searchPhrase
-            if (TextUtils.isEmpty(searchPhrase)) {
-                fetchContactGroups(ThreadSchedulers.main()) // todo move this out of a depedency
+            if (searchPhrase.isEmpty()) {
+                fetchContactGroups()
             }
-            val searchPhraseQuery = "%$searchPhrase%"
-            contactGroupsRepository.getContactGroups(searchPhraseQuery).subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.main()).subscribe(
-                    {
-                        _contactGroupsResult.postValue(it)
-                    },
-                    {
+            viewModelScope.launch {
+                contactGroupsRepository.getContactGroupsFiltered("%$searchPhrase%")
+                    .catch {
                         _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_GROUP_LIST.name)
                     }
-                )
+                    .collect { list ->
+                        Timber.v("Contacts groups filtered list received size: ${list.size}")
+                        _contactGroupsResult.postValue(list)
+                    }
+            }
         }
     }
 
@@ -121,18 +118,19 @@ class ContactGroupsViewModel @ViewModelInject constructor(
         }
     }
 
-    @SuppressLint("CheckResult")
     fun getContactGroupEmails(contactLabel: ContactLabel) {
-        contactGroupsRepository.getContactGroupEmails(contactLabel.ID)
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.main()).subscribe(
-                {
-                    _contactGroupEmailsResult.postValue(Event(it))
-                },
-                {
-                    _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
-                }
-            )
+        viewModelScope.launch {
+            runCatching { contactGroupsRepository.getContactGroupEmails(contactLabel.ID) }
+                .fold(
+                    onSuccess = { list ->
+                        Timber.v("Contacts groups emails list received size: ${list.size}")
+                        _contactGroupEmailsResult.postValue(Event(list))
+                    },
+                    onFailure = {
+                        _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                    }
+                )
+        }
     }
 
     fun isPaidUser(): Boolean = userManager.user?.isPaidUser ?: false

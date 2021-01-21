@@ -24,12 +24,18 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
 import io.reactivex.Flowable
 import io.reactivex.Observable
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import java.io.IOException
@@ -51,6 +57,8 @@ class ContactGroupsRepositoryTest {
     @InjectMockKs
     private lateinit var contactGroupsRepository: ContactGroupsRepository
 
+    private val dispatcherProvider = TestDispatcherProvider
+
     private val label1 = ContactLabel("a", "aa")
     private val label2 = ContactLabel("b", "bb")
     private val label3 = ContactLabel("c", "cc")
@@ -66,38 +74,56 @@ class ContactGroupsRepositoryTest {
     }
 
     @Test
-    fun testDbAndAPIEventsEmitted() {
-        val testObserver = contactGroupsRepository.getContactGroups().test()
+    fun verifyThatDbAndApiContactsAreEmittedInOrder() {
+        runBlockingTest {
+            // given
+            val dbContactsList = listOf(label1)
+            val apiContactsList = listOf(label1, label2)
+            coEvery { contactsDao.findContactGroups() } returns flowOf(dbContactsList)
+            coEvery { protonMailApi.fetchContactGroupsList() } returns apiContactsList
 
-        testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
-        testObserver.awaitTerminalEvent()
-        testObserver.assertNoErrors()
-        testObserver.assertValueCount(2)
+            // when
+            val resultList = contactGroupsRepository.getContactGroups().take(2).toList()
+
+            // then
+            assertEquals(dbContactsList, resultList[0])
+            assertEquals(apiContactsList, resultList[1])
+        }
     }
 
     @Test
-    fun testDbEventBeforeAPIEvent() {
-        val testObserver = contactGroupsRepository.getContactGroups().test()
+    fun verifyThatDbAndApiContactsAreEmittedIn() {
+        runBlockingTest {
+            // given
+            val dbContactsList = listOf(label1)
+            val apiContactsList = listOf(label1, label2)
+            coEvery { contactsDao.findContactGroups() } returns flowOf(dbContactsList)
+            coEvery { protonMailApi.fetchContactGroupsList() } returns apiContactsList
 
-        testObserver.assertValueCount(1)
-        testObserver.assertValue(listOf(label1, label2, label3))
-        testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
-        testObserver.awaitCount(2)
-        testObserver.assertValueCount(2)
-        assertEquals(listOf(label1, label2, label3, label4), testObserver.values()[1])
+            // when
+            val resultList = contactGroupsRepository.getContactGroups().take(2).toList()
+
+            // then
+            assertEquals(dbContactsList, resultList[0])
+            assertEquals(apiContactsList, resultList[1])
+        }
     }
 
     @Test
-    fun testApiErrorEvent() {
-        every { protonMailApi.fetchContactGroupsAsObservable() } answers { Observable.error(IOException(":(")) }
+    fun verifyThatDbContactsAreEmittedAndApiErrorIsSkipped() {
+        runBlockingTest {
+            // given
+            val dbContactsList = listOf(label1)
+            coEvery { contactsDao.findContactGroups() } returns flowOf(dbContactsList)
+            val ioException = IOException(":(")
+            coEvery { protonMailApi.fetchContactGroupsList() } throws ioException
 
-        val testObserver = contactGroupsRepository.getContactGroups().test()
+            // when
+            val resultList = contactGroupsRepository.getContactGroups().take(2).toList()
 
-        testSchedulerRule.schedulerTest.triggerActions()
-        testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
-        testObserver.awaitTerminalEvent()
-        testObserver.assertValue(listOf(label1, label2, label3))
-        testObserver.assertError(IOException::class.java)
+            // then
+            assertEquals(dbContactsList, resultList[0])
+        }
     }
 
     @Test

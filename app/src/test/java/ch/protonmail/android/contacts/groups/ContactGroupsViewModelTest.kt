@@ -24,14 +24,14 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
-import ch.protonmail.android.testAndroid.rx.TrampolineScheduler
 import ch.protonmail.android.usecase.delete.DeleteLabel
+import ch.protonmail.android.utils.Event
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -43,9 +43,6 @@ class ContactGroupsViewModelTest : CoroutinesTest {
 
     @get: Rule
     var instantExecutorRule = InstantTaskExecutorRule()
-
-    @get: Rule
-    val rxSchedulerRule = TrampolineScheduler()
 
     @RelaxedMockK
     private lateinit var userManager: UserManager
@@ -69,27 +66,36 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun `fetch contact groups posts contactLabels on contactGroupResult LiveData when repository succeeds`() {
+    fun verifyThatFetchContactGroupsPostsSucceedsWithDataEmittedInContactGroupsResult() {
+        // given
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()
         val contactLabels = listOf(label1, label2, label3)
-        every { contactGroupsRepository.getContactGroups() } returns Observable.just(contactLabels)
+        coEvery { contactGroupsRepository.getContactGroups() } returns flowOf(contactLabels)
 
-        contactGroupsViewModel.fetchContactGroups(Schedulers.trampoline())
+        // when
+        contactGroupsViewModel.fetchContactGroups()
 
+        // then
         val observedContactLabels = resultLiveData.observedValues[0]
         assertEquals(contactLabels, observedContactLabels)
     }
 
     @Test
-    fun `fetch contact groups posts error on contactGroupsError LiveData when repository fails`() {
-        val resultLiveData = contactGroupsViewModel.contactGroupsError.testObserver()
-        val exception = Exception("test-exception")
-        every { contactGroupsRepository.getContactGroups() } returns Observable.error(exception)
+    fun verifyThatFetchContactGroupsErrorCausesContactGroupsErrorEmission() {
+        // given
+        runBlockingTest {
 
-        contactGroupsViewModel.fetchContactGroups(Schedulers.trampoline())
+            val resultLiveData = contactGroupsViewModel.contactGroupsError.testObserver()
+            val exception = Exception("test-exception")
+            coEvery { contactGroupsRepository.getContactGroups() } throws exception
 
-        val observedError = resultLiveData.observedValues[0]?.getContentIfNotHandled()
-        assertEquals("test-exception", observedError)
+            // when
+            contactGroupsViewModel.fetchContactGroups()
+
+            // then
+            val observedError = resultLiveData.observedValues[0]
+            assertEquals("test-exception", (observedError as Event).getContentIfNotHandled())
+        }
     }
 
 }

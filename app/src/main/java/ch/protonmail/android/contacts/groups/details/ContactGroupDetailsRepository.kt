@@ -40,17 +40,15 @@ class ContactGroupDetailsRepository @Inject constructor(
 
     private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupDetailsRepository"); databaseProvider.provideContactsDao() }
 
-    fun findContactGroupDetailsBlocking(id: String): Single<ContactLabel> {
-        return contactsDatabase.findContactGroupByIdAsync(id)
-    }
+    fun findContactGroupDetailsBlocking(id: String): Single<ContactLabel> =
+        contactsDatabase.findContactGroupByIdAsync(id)
 
-    suspend fun findContactGroupDetails(id: String): ContactLabel? {
-        return contactsDatabase.findContactGroupById(id)
-    }
+    suspend fun findContactGroupDetails(id: String): ContactLabel? =
+        contactsDatabase.findContactGroupById(id)
 
     fun getContactGroupEmailsBlocking(id: String): Observable<List<ContactEmail>> {
         return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
-                .toObservable()
+            .toObservable()
     }
 
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> {
@@ -60,25 +58,25 @@ class ContactGroupDetailsRepository @Inject constructor(
     fun filterContactGroupEmails(id: String, filter: String): Observable<List<ContactEmail>> {
         val filterString = "%$filter%"
         return contactsDatabase.filterContactsEmailsByContactGroupAsyncObservable(id, filterString)
-                .toObservable()
+            .toObservable()
     }
 
     fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
         val contactLabelConverterFactory = ContactLabelFactory()
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
         return api.createLabelCompletable(labelBody.labelBody)
-                .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
-                .doOnError { throwable ->
-                    if (throwable is IOException) {
-                        PostLabelWorker.Enqueuer(workManager).enqueue(
-                            contactLabel.name,
-                            contactLabel.color,
-                            contactLabel.display,
-                            contactLabel.exclusive.makeInt(),
-                            false,
-                            contactLabel.ID
-                        )
-                    }
+            .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
+            .doOnError { throwable ->
+                if (throwable is IOException) {
+                    PostLabelWorker.Enqueuer(workManager).enqueue(
+                        contactLabel.name,
+                        contactLabel.color,
+                        contactLabel.display,
+                        contactLabel.exclusive.makeInt(),
+                        false,
+                        contactLabel.ID
+                    )
                 }
+            }
     }
 }

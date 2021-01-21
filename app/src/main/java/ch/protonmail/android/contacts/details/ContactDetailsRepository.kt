@@ -68,8 +68,8 @@ open class ContactDetailsRepository @Inject constructor(
 
     private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
         return api.fetchContactGroupsAsObservable().doOnNext {
-            contactsDao.clearContactGroupsLabelsTable()
-            contactsDao.saveContactGroupsList(it)
+            contactsDao.clearContactGroupsLabelsTableBlocking()
+            contactsDao.saveContactGroupsListBlocking(it)
         }
     }
 

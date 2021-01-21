@@ -32,6 +32,7 @@ import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_NAME
 import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ORDER
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 // TODO remove when we change name of this class to ContactsDao and *Factory to *Database
 typealias ContactsDao = ContactsDatabase
@@ -176,11 +177,20 @@ interface ContactsDatabase {
     @Query("SELECT * FROM $TABLE_CONTACT_LABEL ORDER BY $COLUMN_LABEL_NAME")
     fun findContactGroupsObservable(): Flowable<List<ContactLabel>>
 
+    @Query("SELECT * FROM $TABLE_CONTACT_LABEL ORDER BY $COLUMN_LABEL_NAME")
+    fun findContactGroups(): Flow<List<ContactLabel>>
+
     @Query("SELECT * FROM $TABLE_CONTACT_LABEL WHERE $COLUMN_LABEL_NAME LIKE :filter ORDER BY $COLUMN_LABEL_NAME")
     fun findContactGroupsObservable(filter: String): Flowable<List<ContactLabel>>
 
+    @Query("SELECT * FROM $TABLE_CONTACT_LABEL WHERE $COLUMN_LABEL_NAME LIKE :filter ORDER BY $COLUMN_LABEL_NAME")
+    fun findContactGroups(filter: String): Flow<List<ContactLabel>>
+
     @Query("DELETE FROM $TABLE_CONTACT_LABEL")
-    fun clearContactGroupsLabelsTable()
+    fun clearContactGroupsLabelsTableBlocking()
+
+    @Query("DELETE FROM $TABLE_CONTACT_LABEL")
+    suspend fun clearContactGroupsLabelsTable()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveContactGroupLabel(contactLabel: ContactLabel): Long
@@ -201,7 +211,10 @@ interface ContactsDatabase {
     fun clearContactGroupsList()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactGroupsList(contactLabels: List<ContactLabel>): List<Long>
+    fun saveContactGroupsListBlocking(contactLabels: List<ContactLabel>): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveContactGroupsList(contactLabels: List<ContactLabel>): List<Long>
 
     @Query("DELETE FROM $TABLE_CONTACT_LABEL WHERE ${COLUMN_LABEL_ID}=:labelId")
     fun deleteByContactGroupLabelId(labelId: String)
@@ -241,7 +254,7 @@ interface ContactsDatabase {
     fun clearContactEmailsLabelsJoin()
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN")
-    fun fetchJoinsObservable(): Flowable<List<ContactEmailContactLabelJoin>>
+    fun fetchJoins(): Flow<List<ContactEmailContactLabelJoin>>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN WHERE ${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID}=:contactGroupId")
     fun fetchJoins(contactGroupId: String): List<ContactEmailContactLabelJoin>

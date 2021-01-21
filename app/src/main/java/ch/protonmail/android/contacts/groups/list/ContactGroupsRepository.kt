@@ -23,71 +23,61 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import me.proton.core.util.kotlin.DispatcherProvider
+import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
     private val api: ProtonMailApiManager,
-    private val contactsDao: ContactsDao
+    private val contactsDao: ContactsDao,
+    private val dispatchers: DispatcherProvider
 ) {
 
-    fun getJoins(): Observable<List<ContactEmailContactLabelJoin>> {
-        return contactsDao.fetchJoinsObservable().toObservable()
-    }
+    suspend fun getContactGroups(): Flow<List<ContactLabel>> =
+        flow {
+            emitAll(getContactGroupsFromDb())
+            emit(getContactGroupsFromApi())
+        }
+            .catch { Timber.w(it, "Fetch contacts groups error") }
+            .flowOn(dispatchers.Io)
 
-    fun getContactGroups(): Observable<List<ContactLabel>> {
-        return Observable.concatArrayDelayError(
-            getContactGroupsFromDB(),
-            getContactGroupsFromApi().debounce(400, TimeUnit.MILLISECONDS)
-        )
-    }
+    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactsDao.fetchJoins()
 
-    fun getContactGroups(filter: String): Observable<List<ContactLabel>> {
-        return getContactGroupsFromDB(filter)
-    }
+    fun getContactGroupsFiltered(filter: String): Flow<List<ContactLabel>> = getContactGroupsFromDb(filter)
+        .flowOn(dispatchers.Io)
 
-    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
-        return contactsDao.findAllContactsEmailsByContactGroupAsyncObservable(id)
-            .toObservable()
-    }
+    suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
+        contactsDao.findAllContactsEmailsByContactGroupId(id)
 
     fun saveContactGroup(contactLabel: ContactLabel) {
         contactsDao.saveContactGroupLabel(contactLabel)
     }
 
-    private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
-        return api.fetchContactGroupsAsObservable().doOnNext {
+    private suspend fun getContactGroupsFromApi(): List<ContactLabel> {
+        return api.fetchContactGroupsList().also {
             contactsDao.clearContactGroupsLabelsTable()
             contactsDao.saveContactGroupsList(it)
         }
     }
 
-    private fun getContactGroupsFromDB(): Observable<List<ContactLabel>> {
-        return contactsDao.findContactGroupsObservable()
-            .flatMap { list ->
-                Observable.fromIterable(list)
-                    .map {
-                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
-                        it
-                    }
-                    .toList()
-                    .toFlowable()
+    private fun getContactGroupsFromDb(filter: String = EMPTY_STRING): Flow<List<ContactLabel>> {
+        return if (filter.isEmpty()) {
+            contactsDao.findContactGroups()
+        } else {
+            contactsDao.findContactGroups(filter)
+        }.map { labels ->
+            labels.map { label ->
+                label.contactEmailsCount = contactsDao.countContactEmailsByLabelId(label.ID)
             }
-            .toObservable()
-    }
-
-    private fun getContactGroupsFromDB(filter: String): Observable<List<ContactLabel>> {
-        return contactsDao.findContactGroupsObservable(filter)
-            .flatMap { list ->
-                Observable.fromIterable(list)
-                    .map {
-                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
-                        it
-                    }
-                    .toList()
-                    .toFlowable()
-            }
-            .toObservable()
+            labels
+        }
+            .flowOn(dispatchers.Io)
     }
 }

@@ -59,7 +59,7 @@ class ContactEmailsManager @Inject constructor(
         contactsDatabase.runInTransaction {
             contactsDao.clearContactEmailsCache()
             contactsDao.clearContactGroupsList()
-            contactsDao.saveContactGroupsList(contactLabelList)
+            contactsDao.saveContactGroupsListBlocking(contactLabelList)
             contactsDao.saveAllContactsEmails(allContactEmails)
             contactsDao.saveContactEmailContactLabel(allJoins)
         }

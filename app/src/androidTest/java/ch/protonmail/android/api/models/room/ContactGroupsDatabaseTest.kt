@@ -125,7 +125,7 @@ class ContactGroupsDatabaseTest {
         database.saveAllContactGroups(label1, label2, label3)
         val sizeAfterInsert = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(sizeAfterInsert, 3)
-        database.clearContactGroupsLabelsTable()
+        database.clearContactGroupsLabelsTableBlocking()
         val sizeAfterClearing = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(sizeAfterClearing, 0)
     }

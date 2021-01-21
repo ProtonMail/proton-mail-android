@@ -127,7 +127,7 @@ class EventHandler @AssistedInject constructor(
         contactsDao.clearContactDataCache()
         contactsDao.clearContactEmailsLabelsJoin()
         contactsDao.clearContactEmailsCache()
-        contactsDao.clearContactGroupsLabelsTable()
+        contactsDao.clearContactGroupsLabelsTableBlocking()
         fetchContactEmails.enqueue()
         fetchContactsData.enqueue()
     }
