@@ -18,10 +18,9 @@
  */
 package ch.protonmail.android.api.models;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Ignore;
-import androidx.annotation.NonNull;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -198,13 +197,5 @@ public class MessageRecipient implements Serializable, Comparable<MessageRecipie
             }
             return messageRecipient;
         }
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        MessageRecipient that = (MessageRecipient) obj;
-        return Name.equals(that.Name) && Address.equals(that.Address);
     }
 }
