@@ -74,6 +74,7 @@ import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import timber.log.Timber
+import javax.inject.Named
 import kotlin.collections.set
 import kotlin.math.max
 
@@ -105,6 +106,9 @@ class EventHandler @AssistedInject constructor(
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
+    private val pendingActionsDao: PendingActionsDao,
+    private val contactsDao: ContactsDao,
+    @Named("messages") private val messagesDao: MessagesDao,
     @Assisted val username: String
 ) {
 
@@ -114,7 +118,6 @@ class EventHandler @AssistedInject constructor(
     }
 
     private val messageFactory: MessageFactory
-    private val contactsDao by lazy { databaseProvider.provideContactsDao(username) }
 
     init {
         val attachmentFactory = AttachmentFactory()
@@ -138,7 +141,6 @@ class EventHandler @AssistedInject constructor(
      * anyway.
      */
     fun handleRefresh() {
-        val messagesDao = databaseProvider.provideMessagesDao(username)
         messagesDao.clearMessagesCache()
         messagesDao.clearAttachmentsCache()
         messagesDao.clearLabelsCache()
@@ -172,7 +174,6 @@ class EventHandler @AssistedInject constructor(
     }
 
     private fun stageMessagesUpdates(events: List<EventResponse.MessageEventBody>): Boolean {
-        val pendingActionsDao = databaseProvider.providePendingActionsDao(username)
         for (event in events) {
             val messageID = event.messageID
             val type = EventType.fromInt(event.type)
@@ -221,11 +222,7 @@ class EventHandler @AssistedInject constructor(
     fun write() {
         databaseProvider.provideContactsDatabase(username).runInTransaction {
             databaseProvider.provideMessagesDatabaseFactory(username).runInTransaction {
-                val messagesDao = databaseProvider.provideMessagesDao(username)
-                databaseProvider.providePendingActionsDatabase(username).runInTransaction {
-                    val pendingActionsDao = databaseProvider.providePendingActionsDao(username)
-                    unsafeWrite(contactsDao, messagesDao, pendingActionsDao)
-                }
+                unsafeWrite(contactsDao, messagesDao, pendingActionsDao)
             }
         }
     }
@@ -541,6 +538,7 @@ class EventHandler @AssistedInject constructor(
 
     private fun writeContactsUpdates(contactsDatabase: ContactsDatabase, events: List<EventResponse.ContactEventBody>) {
         for (event in events) {
+            Timber.v("New contacts event type: ${event.type} id: ${event.contactID}")
             when (EventType.fromInt(event.type)) {
                 EventType.CREATE -> {
                     val contact = event.contact
@@ -587,17 +585,22 @@ class EventHandler @AssistedInject constructor(
         events: List<EventResponse.ContactEmailEventBody>
     ) {
         for (event in events) {
+            Timber.v("New contacts emails event type: ${event.type} id: ${event.contactID}")
             when (EventType.fromInt(event.type)) {
                 EventType.CREATE -> {
                     val contactEmail = event.contactEmail
+                    val contactId = event.contactEmail.contactEmailId
                     // get current contact email saved in local DB
-                    val oldContactEmail = contactsDatabase.findContactEmailById(contactEmail.contactEmailId)
+                    Timber.v("Searching DB for contactId: $contactId")
+                    val oldContactEmail = contactsDatabase.findContactEmailById(contactId)
                     if (oldContactEmail != null) {
+                        Timber.v("Create on top of old email: $oldContactEmail")
                         val contactEmailId = oldContactEmail.contactEmailId
                         val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId) as ArrayList
                         contactsDatabase.saveContactEmail(contactEmail)
                         contactsDatabase.saveContactEmailContactLabel(joins)
                     } else {
+                        Timber.v("Create new email contact: ${contactEmail.email} labels: ${contactEmail.labelIds}")
                         contactsDatabase.saveContactEmail(contactEmail)
                     }
                 }
@@ -606,6 +609,7 @@ class EventHandler @AssistedInject constructor(
                     val contactId = event.contactEmail.contactEmailId
                     // get current contact email saved in local DB
                     val oldContactEmail = contactsDatabase.findContactEmailById(contactId)
+                    Timber.v("Update contact id: $contactId oldContactEmail: ${oldContactEmail?.email}")
                     if (oldContactEmail != null) {
                         val updatedContactEmail = event.contactEmail
                         val labelIds = updatedContactEmail.labelIds ?: ArrayList()
@@ -626,6 +630,7 @@ class EventHandler @AssistedInject constructor(
                 EventType.DELETE -> {
                     val contactId = event.contactID
                     val contactEmail = contactsDatabase.findContactEmailById(contactId)
+                    Timber.v("Delete contact id: $contactId contactEmail: ${contactEmail?.email} labels: ${contactEmail?.labelIds}")
                     if (contactEmail != null) {
                         contactsDatabase.deleteContactEmail(contactEmail)
                     }

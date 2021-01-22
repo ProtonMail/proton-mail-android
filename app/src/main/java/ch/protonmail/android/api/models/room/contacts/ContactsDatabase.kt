@@ -70,19 +70,19 @@ interface ContactsDatabase {
     //endregion
 
     //region Contact email
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE ${COLUMN_CONTACT_EMAILS_ID}=:id")
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_ID=:id")
     fun findContactEmailById(id: String): ContactEmail?
 
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE ${COLUMN_CONTACT_EMAILS_EMAIL}=:email")
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL=:email")
     fun findContactEmailByEmail(email: String): ContactEmail?
 
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE ${COLUMN_CONTACT_EMAILS_EMAIL}=:email")
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL=:email")
     fun findContactEmailByEmailLiveData(email: String): LiveData<ContactEmail>
 
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE ${COLUMN_CONTACT_EMAILS_CONTACT_ID}=:contactId")
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID=:contactId")
     fun findContactEmailsByContactId(contactId: String): List<ContactEmail>
 
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE ${COLUMN_CONTACT_EMAILS_CONTACT_ID}=:contactId")
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_CONTACT_ID=:contactId")
     fun findContactEmailsByContactIdObservable(contactId: String): Flowable<List<ContactEmail>>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
@@ -91,7 +91,7 @@ interface ContactsDatabase {
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmailsAsyncObservable(): Flowable<List<ContactEmail>>
 
-    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE ${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_EMAIL} LIKE :filter ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_EMAIL LIKE :filter ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmailsAsyncObservable(filter: String): Flowable<List<ContactEmail>>
 
     @Query("SELECT ${TABLE_CONTACT_EMAILS}.* FROM $TABLE_CONTACT_EMAILS INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN ON ${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_ID} = ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID} WHERE ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID} = :contactGroupId")
@@ -130,7 +130,7 @@ interface ContactsDatabase {
     @Query("SELECT ${TABLE_CONTACT_DATA}.${COLUMN_CONTACT_DATA_NAME},${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_EMAIL} FROM $TABLE_CONTACT_DATA JOIN $TABLE_CONTACT_EMAILS ON ${TABLE_CONTACT_DATA}.${COLUMN_CONTACT_DATA_ID}=${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_CONTACT_ID}")
     fun findAllMessageRecipients(): Flowable<List<MessageRecipient>>
 
-    @Query("DELETE FROM $TABLE_CONTACT_EMAILS WHERE ${COLUMN_CONTACT_EMAILS_EMAIL}=:email")
+    @Query("DELETE FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_EMAIL=:email")
     fun clearByEmail(email: String)
 
     @Query("DELETE FROM $TABLE_CONTACT_EMAILS")
@@ -216,7 +216,7 @@ interface ContactsDatabase {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveContactGroupsList(contactLabels: List<ContactLabel>): List<Long>
 
-    @Query("DELETE FROM $TABLE_CONTACT_LABEL WHERE ${COLUMN_LABEL_ID}=:labelId")
+    @Query("DELETE FROM $TABLE_CONTACT_LABEL WHERE $COLUMN_LABEL_ID=:labelId")
     fun deleteByContactGroupLabelId(labelId: String)
 
     @Delete
@@ -235,7 +235,7 @@ interface ContactsDatabase {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertFullContactDetails(fullContactDetails: FullContactDetails)
 
-    @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE ${COLUMN_CONTACT_ID}=:id")
+    @Query("SELECT * FROM $TABLE_FULL_CONTACT_DETAILS WHERE $COLUMN_CONTACT_ID=:id")
     fun findFullContactDetailsById(id: String): FullContactDetails?
 
     @Query("DELETE FROM $TABLE_FULL_CONTACT_DETAILS")
