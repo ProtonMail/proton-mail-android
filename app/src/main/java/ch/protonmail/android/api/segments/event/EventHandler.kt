@@ -50,6 +50,9 @@ import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
+import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.MessageCountsEvent
@@ -76,9 +79,6 @@ import kotlin.math.max
 
 // region constants
 private const val TAG_EVENT_HANDLER = "EventHandler"
-private const val RESPONSE_CODE_INVALID_ID = 2061
-private const val RESPONSE_CODE_MESSAGE_READING_RESTRICTED = 2028
-private const val RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST = 15_052
 // endregion
 
 enum class EventType(val eventType: Int) {
