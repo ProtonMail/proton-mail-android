@@ -1218,11 +1218,11 @@ public class ComposeMessageActivity
             public void onTokenAdded(MessageRecipient token) {
                 List<String> emailList = new ArrayList<>();
                 if (TextUtils.isEmpty(token.getGroup())) {
-                    emailList.add(token.getAddress());
+                    emailList.add(token.getEmailAddress());
                 } else {
                     List<MessageRecipient> groupRecipients = token.getGroupRecipients();
                     for (MessageRecipient recipient : groupRecipients) {
-                        emailList.add(recipient.getAddress());
+                        emailList.add(recipient.getEmailAddress());
                     }
                 }
 
@@ -1242,8 +1242,8 @@ public class ComposeMessageActivity
             public void onTokenRemoved(MessageRecipient token) {
 
                 composeMessageViewModel.setIsDirty(true);
-                recipientsView.removeKey(token.getAddress());
-                recipientsView.removeToken(token.getAddress());
+                recipientsView.removeKey(token.getEmailAddress());
+                recipientsView.removeToken(token.getEmailAddress());
             }
         });
     }
@@ -1265,7 +1265,7 @@ public class ComposeMessageActivity
                 continue;
             }
             for (MessageRecipient recipient : recipients) {
-                String email = recipient.getAddress();
+                String email = recipient.getEmailAddress();
                 SendPreference preference = composeMessageViewModel.getMessageDataResult().getSendPreferences().get(email);
                 if (preference != null) {
                     setRecipientIconAndDescription(preference, recipientsView);
@@ -1769,7 +1769,7 @@ public class ComposeMessageActivity
         Map<String, List<MessageRecipient>> groupedRecipients = new HashMap<>();
         for (MessageRecipient recipient : recipients) {
             // loop all recipients
-            if (!CommonExtensionsKt.isValidEmail(recipient.getAddress())) {
+            if (!CommonExtensionsKt.isValidEmail(recipient.getEmailAddress())) {
                 String message = getString(R.string.invalid_email_address_removed, recipient);
                 TextExtensions.showToast(this, message);
                 continue;
@@ -1783,7 +1783,7 @@ public class ComposeMessageActivity
                 groupRecipients.add(recipient);
                 groupedRecipients.put(group, groupRecipients);
             } else {
-                messageRecipientView.addObject(new MessageRecipient("", recipient.getAddress()));
+                messageRecipientView.addObject(new MessageRecipient("", recipient.getEmailAddress()));
             }
         }
         for (Map.Entry<String, List<MessageRecipient>> entry : groupedRecipients.entrySet()) {
@@ -1802,14 +1802,14 @@ public class ComposeMessageActivity
                             MessageRecipient currentMR = (MessageRecipient) groupRecipientsIterator.next();
                             boolean found = false;
                             for (MessageRecipient groupMR : groupRecipientList) {
-                                if (currentMR.getAddress().equals(groupMR.getAddress())) {
+                                if (currentMR.getEmailAddress().equals(groupMR.getEmailAddress())) {
                                     found = true;
                                     break;
                                 }
                             }
                             if (!found) {
                                 groupRecipientsIterator.remove();
-                                messageRecipientView.addObject(new MessageRecipient("", currentMR.getAddress()));
+                                messageRecipientView.addObject(new MessageRecipient("", currentMR.getEmailAddress()));
                             }
                         }
                     }

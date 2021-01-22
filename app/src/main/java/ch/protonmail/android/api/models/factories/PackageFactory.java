@@ -89,13 +89,13 @@ public class PackageFactory {
     private Set<String> getMessageRecipients(Message message) {
         Set<String> set = new HashSet<>();
         for (MessageRecipient recipient : message.getToList()) {
-            set.add(recipient.getAddress());
+            set.add(recipient.getEmailAddress());
         }
         for (MessageRecipient recipient : message.getCcList()) {
-            set.add(recipient.getAddress());
+            set.add(recipient.getEmailAddress());
         }
         for (MessageRecipient recipient : message.getBccList()) {
-            set.add(recipient.getAddress());
+            set.add(recipient.getEmailAddress());
         }
         return set;
     }
