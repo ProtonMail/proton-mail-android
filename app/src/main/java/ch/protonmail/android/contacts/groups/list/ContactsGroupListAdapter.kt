@@ -34,11 +34,11 @@ import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import kotlinx.android.synthetic.main.contacts_v2_list_item.view.*
 
 class ContactsGroupsListAdapter(
-    var items: List<ContactLabel>,
+    private var items: List<ContactLabel>,
     private val onContactGroupClickListener: (ContactLabel) -> Unit,
     private val onWriteToGroupClickListener: (ContactLabel) -> Unit,
     private val onContactGroupSelect: (() -> Unit)?,
-    val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
+    private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?
 ) : RecyclerView.Adapter<ViewHolder>() {
 
     private var selectedItems: MutableSet<ContactLabel>? = null
@@ -46,7 +46,7 @@ class ContactsGroupsListAdapter(
     val getSelectedItems get() = selectedItems
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        (holder).bind(
+        holder.bind(
             items[position],
             onContactGroupClickListener,
             onWriteToGroupClickListener,
@@ -58,7 +58,7 @@ class ContactsGroupsListAdapter(
         selectedItems?.forEach {
             if (items.contains(it)) {
                 items.find { contactLabel -> (contactLabel == it) }?.isSelected =
-                        ContactEmailGroupSelectionState.DEFAULT
+                    ContactEmailGroupSelectionState.DEFAULT
             }
         }
         selectedItems = null

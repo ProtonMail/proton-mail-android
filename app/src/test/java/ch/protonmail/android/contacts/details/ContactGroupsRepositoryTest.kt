@@ -25,21 +25,15 @@ import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
-import io.reactivex.Flowable
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -67,10 +61,6 @@ class ContactGroupsRepositoryTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { protonMailApi.fetchContactGroupsAsObservable() } answers {
-            Observable.just(listOf(label1, label2, label3, label4)).delay(500, TimeUnit.MILLISECONDS)
-        }
-        every { contactsDao.findContactGroupsObservable() } answers { Flowable.just(listOf(label1, label2, label3)) }
     }
 
     @Test
@@ -78,16 +68,15 @@ class ContactGroupsRepositoryTest {
         runBlockingTest {
             // given
             val dbContactsList = listOf(label1)
-            val apiContactsList = listOf(label1, label2)
-            coEvery { contactsDao.findContactGroups() } returns flowOf(dbContactsList)
-            coEvery { protonMailApi.fetchContactGroupsList() } returns apiContactsList
+            val searchTerm = "Rob"
+            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
-            val resultList = contactGroupsRepository.getContactGroups().take(2).toList()
+            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, resultList[0])
-            assertEquals(apiContactsList, resultList[1])
+            assertEquals(dbContactsList, result)
         }
     }
 
@@ -96,33 +85,32 @@ class ContactGroupsRepositoryTest {
         runBlockingTest {
             // given
             val dbContactsList = listOf(label1)
-            val apiContactsList = listOf(label1, label2)
-            coEvery { contactsDao.findContactGroups() } returns flowOf(dbContactsList)
-            coEvery { protonMailApi.fetchContactGroupsList() } returns apiContactsList
+            val searchTerm = "Rob"
+            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
-            val resultList = contactGroupsRepository.getContactGroups().take(2).toList()
+            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, resultList[0])
-            assertEquals(apiContactsList, resultList[1])
+            assertEquals(dbContactsList, result)
         }
     }
 
     @Test
-    fun verifyThatDbContactsAreEmittedAndApiErrorIsSkipped() {
+    fun verifyThatDbContactsAreEmitted() {
         runBlockingTest {
             // given
+            val searchTerm = "search"
             val dbContactsList = listOf(label1)
-            coEvery { contactsDao.findContactGroups() } returns flowOf(dbContactsList)
-            val ioException = IOException(":(")
-            coEvery { protonMailApi.fetchContactGroupsList() } throws ioException
+            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
-            val resultList = contactGroupsRepository.getContactGroups().take(2).toList()
+            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
             // then
-            assertEquals(dbContactsList, resultList[0])
+            assertEquals(dbContactsList, result)
         }
     }
 

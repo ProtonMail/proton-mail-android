@@ -78,7 +78,7 @@ open class ContactDetailsRepository @Inject constructor(
             .flatMap { list ->
                 Observable.fromIterable(list)
                     .map {
-                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
+                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelIdBlocking(it.ID)
                         it
                     }
                     .toList()

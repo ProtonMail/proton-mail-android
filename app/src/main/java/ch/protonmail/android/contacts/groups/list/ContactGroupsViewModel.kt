@@ -30,8 +30,12 @@ import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.delete.DeleteLabel
 import ch.protonmail.android.utils.Event
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -43,11 +47,9 @@ class ContactGroupsViewModel @ViewModelInject constructor(
 
     private val _contactGroupsResult: MutableLiveData<List<ContactLabel>> = MutableLiveData()
     private val _contactGroupsError: MutableLiveData<Event<String>> = MutableLiveData()
-    private var _searchPhrase: String = ""
+    private var searchPhraseFlow = MutableStateFlow("")
     private val _contactGroupEmailsResult: MutableLiveData<Event<List<ContactEmail>>> = MutableLiveData()
     private val _contactGroupEmailsError: MutableLiveData<Event<String>> = MutableLiveData()
-
-    private lateinit var _contactGroups: List<ContactLabel>
 
     val contactGroupsResult: LiveData<List<ContactLabel>>
         get() = _contactGroupsResult
@@ -61,50 +63,25 @@ class ContactGroupsViewModel @ViewModelInject constructor(
     val contactGroupEmailsError: LiveData<Event<String>>
         get() = _contactGroupEmailsError
 
-    fun watchForJoins() {
-        viewModelScope.launch {
-            contactGroupsRepository.getJoins()
-                .collect {
-                    Timber.v("Received join size: ${it.size}")
-                    fetchContactGroups()
-                }
-        }
-    }
-
-    fun fetchContactGroups() {
-        if (_searchPhrase.isEmpty()) {
-            viewModelScope.launch {
-                runCatching {
-                    contactGroupsRepository.getContactGroups()
-                        .collect { list ->
-                            Timber.v("Contacts groups list received size: ${list.size}")
-                            _contactGroups = list
-                            _contactGroupsResult.postValue(list)
-                        }
-                }
-                    .onFailure { _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name) }
+    fun observeContactGroups() {
+        // observe db changes
+        contactGroupsRepository.getJoins()
+            .combine(searchPhraseFlow) { _, searchPhrase -> searchPhrase }
+            .onEach { Timber.v("Search term: $it") }
+            .flatMapLatest { searchPhrase ->
+                contactGroupsRepository.observeContactGroups(searchPhrase)
             }
-        } else {
-            setSearchPhrase(_searchPhrase)
-        }
+            .catch { _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name) }
+            .onEach { labels ->
+                Timber.d("Contacts groups labels received size: ${labels.size}")
+                _contactGroupsResult.value = labels
+            }
+            .launchIn(viewModelScope)
     }
 
     override fun setSearchPhrase(searchPhrase: String?) {
         if (searchPhrase != null) {
-            _searchPhrase = searchPhrase
-            if (searchPhrase.isEmpty()) {
-                fetchContactGroups()
-            }
-            viewModelScope.launch {
-                contactGroupsRepository.getContactGroupsFiltered("%$searchPhrase%")
-                    .catch {
-                        _contactGroupsError.value = Event(it.message ?: ErrorEnum.INVALID_GROUP_LIST.name)
-                    }
-                    .collect { list ->
-                        Timber.v("Contacts groups filtered list received size: ${list.size}")
-                        _contactGroupsResult.postValue(list)
-                    }
-            }
+            searchPhraseFlow.value = searchPhrase
         }
     }
 

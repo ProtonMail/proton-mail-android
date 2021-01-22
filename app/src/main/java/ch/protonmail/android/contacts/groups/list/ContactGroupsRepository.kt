@@ -24,14 +24,9 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJo
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import me.proton.core.util.kotlin.DispatcherProvider
-import me.proton.core.util.kotlin.EMPTY_STRING
-import timber.log.Timber
 import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
@@ -40,18 +35,15 @@ class ContactGroupsRepository @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    suspend fun getContactGroups(): Flow<List<ContactLabel>> =
-        flow {
-            emitAll(getContactGroupsFromDb())
-            emit(getContactGroupsFromApi())
-        }
-            .catch { Timber.w(it, "Fetch contacts groups error") }
-            .flowOn(dispatchers.Io)
-
     fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactsDao.fetchJoins()
 
-    fun getContactGroupsFiltered(filter: String): Flow<List<ContactLabel>> = getContactGroupsFromDb(filter)
-        .flowOn(dispatchers.Io)
+    fun observeContactGroups(filter: String): Flow<List<ContactLabel>> =
+        contactsDao.findContactGroupsFlow("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
+            .map { labels ->
+                labels.map { label -> label.contactEmailsCount = contactsDao.countContactEmailsByLabelId(label.ID) }
+                labels
+            }
+            .flowOn(dispatchers.Io)
 
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
         contactsDao.findAllContactsEmailsByContactGroupId(id)
@@ -60,24 +52,14 @@ class ContactGroupsRepository @Inject constructor(
         contactsDao.saveContactGroupLabel(contactLabel)
     }
 
-    private suspend fun getContactGroupsFromApi(): List<ContactLabel> {
-        return api.fetchContactGroupsList().also {
+    suspend fun getContactGroupsFromApi(): List<ContactLabel> {
+        return api.fetchContactGroupsList().also { labels ->
             contactsDao.clearContactGroupsLabelsTable()
-            contactsDao.saveContactGroupsList(it)
+            contactsDao.saveContactGroupsList(labels)
         }
     }
 
-    private fun getContactGroupsFromDb(filter: String = EMPTY_STRING): Flow<List<ContactLabel>> {
-        return if (filter.isEmpty()) {
-            contactsDao.findContactGroups()
-        } else {
-            contactsDao.findContactGroups(filter)
-        }.map { labels ->
-            labels.map { label ->
-                label.contactEmailsCount = contactsDao.countContactEmailsByLabelId(label.ID)
-            }
-            labels
-        }
-            .flowOn(dispatchers.Io)
+    private companion object {
+        private const val SEARCH_DELIMITER = "%"
     }
 }

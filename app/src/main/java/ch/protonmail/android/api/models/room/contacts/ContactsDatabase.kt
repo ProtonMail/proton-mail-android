@@ -184,7 +184,7 @@ interface ContactsDatabase {
     fun findContactGroupsObservable(filter: String): Flowable<List<ContactLabel>>
 
     @Query("SELECT * FROM $TABLE_CONTACT_LABEL WHERE $COLUMN_LABEL_NAME LIKE :filter ORDER BY $COLUMN_LABEL_NAME")
-    fun findContactGroups(filter: String): Flow<List<ContactLabel>>
+    fun findContactGroupsFlow(filter: String): Flow<List<ContactLabel>>
 
     @Query("DELETE FROM $TABLE_CONTACT_LABEL")
     fun clearContactGroupsLabelsTableBlocking()
@@ -248,7 +248,10 @@ interface ContactsDatabase {
 
     //region contact emails contact label join
     @Query("SELECT count(*) FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN WHERE ${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID}=:contactGroupId")
-    fun countContactEmailsByLabelId(contactGroupId: String): Int
+    fun countContactEmailsByLabelIdBlocking(contactGroupId: String): Int
+
+    @Query("SELECT count(*) FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN WHERE ${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID}=:contactGroupId")
+    suspend fun countContactEmailsByLabelId(contactGroupId: String): Int
 
     @Query("DELETE FROM $TABLE_CONTACT_EMAILS_LABELS_JOIN")
     fun clearContactEmailsLabelsJoin()

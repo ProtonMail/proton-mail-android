@@ -19,6 +19,7 @@
 package ch.protonmail.android.contacts.groups
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModel
@@ -30,6 +31,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -68,12 +70,17 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     @Test
     fun verifyThatFetchContactGroupsPostsSucceedsWithDataEmittedInContactGroupsResult() {
         // given
+        val searchTerm = "searchTerm"
         val resultLiveData = contactGroupsViewModel.contactGroupsResult.testObserver()
         val contactLabels = listOf(label1, label2, label3)
-        coEvery { contactGroupsRepository.getContactGroups() } returns flowOf(contactLabels)
+        coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } returns flowOf(contactLabels)
+        val join1 = mockk<ContactEmailContactLabelJoin>()
+        val joins = listOf(join1)
+        coEvery { contactGroupsRepository.getJoins() } returns flowOf(joins)
 
         // when
-        contactGroupsViewModel.fetchContactGroups()
+        contactGroupsViewModel.setSearchPhrase(searchTerm)
+        contactGroupsViewModel.observeContactGroups()
 
         // then
         val observedContactLabels = resultLiveData.observedValues[0]
@@ -84,13 +91,17 @@ class ContactGroupsViewModelTest : CoroutinesTest {
     fun verifyThatFetchContactGroupsErrorCausesContactGroupsErrorEmission() {
         // given
         runBlockingTest {
-
+            val searchTerm = "searchTerm"
             val resultLiveData = contactGroupsViewModel.contactGroupsError.testObserver()
             val exception = Exception("test-exception")
-            coEvery { contactGroupsRepository.getContactGroups() } throws exception
+            coEvery { contactGroupsRepository.observeContactGroups(searchTerm) } throws exception
+            val join1 = mockk<ContactEmailContactLabelJoin>()
+            val joins = listOf(join1)
+            coEvery { contactGroupsRepository.getJoins() } returns flowOf(joins)
 
             // when
-            contactGroupsViewModel.fetchContactGroups()
+            contactGroupsViewModel.setSearchPhrase(searchTerm)
+            contactGroupsViewModel.observeContactGroups()
 
             // then
             val observedError = resultLiveData.observedValues[0]

@@ -24,6 +24,7 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.annotation.Px
@@ -74,9 +75,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         position: Int,
         id: Long,
         checked: Boolean
-    ) {
-        // NOOP
-    }
+    ) = Unit
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         when (item?.itemId) {
@@ -141,8 +140,8 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     override fun getSearchListener(): ISearchListenerViewModel = contactGroupsViewModel
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initAdapter()
     }
 
@@ -198,8 +197,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
                 context?.showToast(it.setDefaultIfEmpty(getString(R.string.default_error_message)))
             }
         }
-        contactGroupsViewModel.fetchContactGroups()
-        contactGroupsViewModel.watchForJoins()
+        contactGroupsViewModel.observeContactGroups()
     }
 
     private fun onContactGroupSelect() {
