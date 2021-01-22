@@ -18,12 +18,9 @@
  */
 package ch.protonmail.android.fcm.models
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
-data class PushNotificationSender(
-    @SerialName("Address") val senderAddress: String,
-    @SerialName("Name") val senderName: String,
-    @SerialName("Group") val senderGroup: String
+data class NotificationSender(
+        @SerializedName("Address") val senderEmail: String? = null,
+        @SerializedName("Name") val senderName: String? = null
 )

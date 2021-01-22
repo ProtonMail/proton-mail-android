@@ -19,8 +19,10 @@
 
 package ch.protonmail.android.fcm
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ch.protonmail.android.R
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -37,8 +39,6 @@ public class PMFirebaseMessagingService : FirebaseMessagingService() {
 
     @Inject
     lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
-    @Inject
-    lateinit var processPushNotificationData: ProcessPushNotificationDataWorker.Enqueuer
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -60,7 +60,9 @@ public class PMFirebaseMessagingService : FirebaseMessagingService() {
             broadcastIntent.putExtras(bundle)
             broadcastIntent.action = baseContext.getString(R.string.action_notification)
             if (!LocalBroadcastManager.getInstance(baseContext).sendBroadcast(broadcastIntent)) {
-                processPushNotificationData(remoteMessage.data)
+                val serviceIntent = Intent(broadcastIntent)
+                val comp = ComponentName(baseContext.packageName, FcmIntentService::class.java.name)
+                ContextCompat.startForegroundService(baseContext, serviceIntent.setComponent(comp))
             }
         }
     }
