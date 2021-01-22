@@ -221,8 +221,8 @@ data class Message @JvmOverloads constructor(
         get() {
             return replyTos
                     ?.asSequence()
-                    ?.filterNot { TextUtils.isEmpty(it.address) }
-                    ?.map { it.address }
+                    ?.filterNot { TextUtils.isEmpty(it.emailAddress) }
+                    ?.map { it.emailAddress }
                     ?.toList()
                     ?: Arrays.asList(sender?.emailAddress!!)
         }

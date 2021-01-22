@@ -127,8 +127,8 @@ class IntentExtrasData(
             val recipients = message.toList + message.ccList + message.bccList
             var originalAddress: String? = null
             val aliasAddress = recipients.find {
-                if (it.address.contains("+")) {
-                    val nonAliasAddress = "${it.address.substringBefore("+")}@${it.address.substringAfter("@")}"
+                if (it.emailAddress.contains("+")) {
+                    val nonAliasAddress = "${it.emailAddress.substringBefore("+")}@${it.emailAddress.substringAfter("@")}"
                     val address = user.addresses.find { address -> address.email.equals(nonAliasAddress, ignoreCase = true) }
                     if (address != null) {
                         originalAddress = address.email
@@ -142,7 +142,7 @@ class IntentExtrasData(
             }
 
             if (aliasAddress != null) {
-                val aliasPart = aliasAddress.address.substringBefore("@").substringAfter("+")
+                val aliasPart = aliasAddress.emailAddress.substringBefore("@").substringAfter("+")
                 this.addressEmailAlias = "${(originalAddress as String).substringBefore("@")}+$aliasPart@${(originalAddress as String).substringAfter("@")}"
             } else {
                 this.addressEmailAlias = null
