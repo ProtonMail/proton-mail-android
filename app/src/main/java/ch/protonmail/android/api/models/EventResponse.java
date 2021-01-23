@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.api.models;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -60,6 +62,7 @@ public class EventResponse extends ResponseBody {
     @SerializedName(Fields.Events.ADDRESSES)
     private List<AddressEventBody> addresses;
 
+    @Nullable
     public List<MessageEventBody> getMessageUpdates() {
         return messages;
     }
