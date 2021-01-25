@@ -138,8 +138,6 @@ class EventHandler @AssistedInject constructor(
      * @return Whether the staging process was successful or not
      */
     fun stage(messages: MutableList<EventResponse.MessageEventBody>?): Boolean {
-
-        stagedMessages.clear()
         if (!messages.isNullOrEmpty()) {
             return stageMessagesUpdates(messages)
         }
@@ -315,22 +313,22 @@ class EventHandler @AssistedInject constructor(
     private fun writeMessageUpdate(
         event: EventResponse.MessageEventBody,
         pendingActionsDatabase: PendingActionsDatabase,
-        messageID: String,
+        messageId: String,
         messagesDatabase: MessagesDao
     ) {
         val type = EventType.fromInt(event.type)
-        if (type != EventType.DELETE && checkPendingForSending(pendingActionsDatabase, messageID)) {
+        if (type != EventType.DELETE && checkPendingForSending(pendingActionsDatabase, messageId)) {
             return
         }
-        Timber.v("Update message type: $type")
+        Timber.v("Update message type: $type Id: $messageId")
         when (type) {
             EventType.CREATE -> {
                 try {
-                    val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageID)
+                    val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageId)
                     if (savedMessage == null) {
                         messageDetailsRepository.saveMessageInDB(messageFactory.createMessage(event.message))
                     } else {
-                        updateMessageFlags(messagesDatabase, messageID, event)
+                        updateMessageFlags(messagesDatabase, messageId, event)
                     }
 
                 } catch (syntaxException: JsonSyntaxException) {
@@ -339,7 +337,7 @@ class EventHandler @AssistedInject constructor(
             }
 
             EventType.DELETE -> {
-                val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
+                val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
                 if (message != null) {
                     messagesDatabase.deleteMessage(message)
                 }
@@ -347,8 +345,8 @@ class EventHandler @AssistedInject constructor(
 
             EventType.UPDATE -> {
                 // update Message body
-                val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
-                stagedMessages[messageID]?.let { messageUpdate ->
+                val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
+                stagedMessages[messageId]?.let { messageUpdate ->
                     val dbTime = message?.time ?: 0
                     val serverTime = messageUpdate.time
 
@@ -361,13 +359,15 @@ class EventHandler @AssistedInject constructor(
                         messageDetailsRepository.saveMessageInDB(message)
                     }
 
+                    Timber.v("Message Id: $messageId processed, staged size:${stagedMessages.size}")
+                    stagedMessages.remove(messageId)
                 }
 
-                updateMessageFlags(messagesDatabase, messageID, event)
+                updateMessageFlags(messagesDatabase, messageId, event)
             }
 
             EventType.UPDATE_FLAGS -> {
-                updateMessageFlags(messagesDatabase, messageID, event)
+                updateMessageFlags(messagesDatabase, messageId, event)
             }
         }
         return
@@ -375,12 +375,12 @@ class EventHandler @AssistedInject constructor(
 
     private fun updateMessageFlags(
         messagesDatabase: MessagesDao,
-        messageID: String,
+        messageId: String,
         item: EventResponse.MessageEventBody
     ) {
-        val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
+        val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
         val newMessage = item.message
-
+        Timber.v("Update flags message id: $messageId, time: ${message?.time} staged size:${stagedMessages.size}")
         if (message != null) {
 
             if (newMessage.Subject != null) {
@@ -457,10 +457,11 @@ class EventHandler @AssistedInject constructor(
                 messageDetailsRepository.saveMessageInDB(message)
             }
         } else {
-            stagedMessages[messageID]?.let {
+            stagedMessages[messageId]?.let {
                 messageDetailsRepository.saveMessageInDB(it)
             }
         }
+        stagedMessages.remove(messageId)
     }
 
     private fun checkPendingForSending(pendingActionsDao: PendingActionsDao, messageId: String): Boolean {
