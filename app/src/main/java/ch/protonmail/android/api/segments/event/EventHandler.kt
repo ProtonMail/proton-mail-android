@@ -561,7 +561,7 @@ class EventHandler @AssistedInject constructor(
                     val oldContactEmail = contactsDatabase.findContactEmailById(contactId)
                     if (oldContactEmail != null) {
                         val contactEmailId = oldContactEmail.contactEmailId
-                        val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId) as ArrayList
+                        val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId).toMutableList()
                         contactsDatabase.saveContactEmail(contactEmail)
                         contactsDatabase.saveContactEmailContactLabel(joins)
                     } else {
@@ -587,12 +587,14 @@ class EventHandler @AssistedInject constructor(
                         val labelIds = updatedContactEmail.labelIds ?: ArrayList()
                         val contactEmailId = updatedContactEmail.contactEmailId
                         contactEmailId.let {
-                            val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId) as ArrayList
                             contactsDatabase.saveContactEmail(updatedContactEmail)
+                            val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId).toMutableList()
                             for (labelId in labelIds) {
                                 joins.add(ContactEmailContactLabelJoin(contactEmailId, labelId))
                             }
-                            contactsDatabase.saveContactEmailContactLabel(joins)
+                            if (joins.isNotEmpty()) {
+                                contactsDatabase.saveContactEmailContactLabel(joins)
+                            }
                         }
                     } else {
                         contactsDatabase.saveContactEmail(event.contactEmail)
