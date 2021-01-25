@@ -1000,4 +1000,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_settings">Accéder aux paramètres</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Clé API pour Firebase invalide. Les notifications push ne fonctionneront pas.</string>
+    <string name="failed_saving_draft_online">Échec de l\'enregistrement du brouillon en ligne pour le message : \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Impossible d\'ouvrir ce message lors de son envoi</string>
 </resources>

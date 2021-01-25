@@ -1029,4 +1029,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_settings">Přejít do nastavení</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klíč Firebase API není platný. Oznámení nebudou fungovat.</string>
+    <string name="failed_saving_draft_online">Failed saving online draft for message: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
 </resources>

@@ -988,7 +988,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region errors -->
     <string name="error_image_not_found">Imatge no trobada</string>
     <string name="error_image_bad_url">Url de la imatge mal formada</string>
-    <string name="error_saving_try_again">Error while saving message. Try again.</string>
+    <string name="error_saving_try_again">Error en guardar el missatge. Torna a intentar-ho.</string>
     <!-- endregion -->
     <string name="allowed">Permés</string>
     <string name="denied">Denegat</string>
@@ -998,4 +998,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_settings">Anar a configuració</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clau de l\'API de Firebase no és vàlida. Les notificacions Push no funcionaran.</string>
+    <string name="failed_saving_draft_online">Error en guardar un borrador en línia pel missatge: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">No es pot obrir aquest missatge mentre s\'envia</string>
 </resources>
