@@ -54,7 +54,7 @@ object ContactsMatchers {
             override fun matchesSafely(item: RecyclerView.ViewHolder): Boolean {
                 return if (item.itemView is ContactListItemView.ContactView) {
                     val contactItem = item.itemView as ContactListItemView.ContactView
-                    val actualEmail = contactItem.contact_email.text.toString()
+                    val actualEmail = contactItem.contact_subtitle.text.toString()
                     contactsList.add(actualEmail)
                     actualEmail == email
                 } else {
@@ -81,7 +81,7 @@ object ContactsMatchers {
             override fun matchesSafely(item: RecyclerView.ViewHolder): Boolean {
                 return if (item.itemView is ContactListItemView.ContactView) {
                     val contactItem = item.itemView as ContactListItemView.ContactView
-                    contactItem.contact_email.text.toString() == email &&
+                    contactItem.contact_subtitle.text.toString() == email &&
                         contactItem.contact_name.text.toString() == name
                 } else {
                     false
@@ -138,7 +138,7 @@ object ContactsMatchers {
                     .findViewById<LinearLayout>(R.id.contact_data)
                     .findViewById<TextView>(R.id.contact_name).text.toString()
                 val groupMembersCount = contactDataParent
-                    .findViewById<TextView>(R.id.contact_email).text.toString()
+                    .findViewById<TextView>(R.id.contact_subtitle).text.toString()
                 contactGroupsList.add(groupName)
                 return groupName == name && groupMembersCount == membersCount
             }

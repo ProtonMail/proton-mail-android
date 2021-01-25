@@ -76,7 +76,7 @@ class ContactsGroupsListAdapter(
 
         itemView.contact_name.text = contactLabel.name
         val members = contactLabel.contactEmailsCount
-        itemView.contact_email.text = itemView.context.resources.getQuantityString(
+        itemView.contact_subtitle.text = itemView.context.resources.getQuantityString(
             R.plurals.contact_group_members,
             members,
             members
@@ -198,9 +198,7 @@ class ContactsGroupsListAdapter(
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount(): Int = items.size
 }
 
 class ViewHolder(view: View) : RecyclerView.ViewHolder(view)

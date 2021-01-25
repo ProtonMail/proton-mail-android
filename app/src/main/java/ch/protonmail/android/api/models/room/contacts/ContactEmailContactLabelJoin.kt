@@ -57,7 +57,7 @@ const val COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID = "emailId"
 )
 data class ContactEmailContactLabelJoin constructor(
     @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID)
-    var emailId: String,
+    val emailId: String,
     @ColumnInfo(name = COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID)
-    var labelId: String
+    val labelId: String
 )
