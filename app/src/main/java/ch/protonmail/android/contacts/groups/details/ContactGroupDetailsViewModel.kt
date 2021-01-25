@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.contacts.groups.details
 
+import android.database.SQLException
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -94,7 +95,7 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
             _contactLabel = newContact
             getContactGroupEmails(newContact)
             watchForContactGroup()
-            _setupUIData.postValue(newContact)
+            _setupUIData.value = newContact
         }
     }
 
@@ -110,8 +111,11 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
                             _contactLabel = it
                         }
                     },
-                    onFailure = {
-                        _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.DEFAULT_ERROR.name)
+                    onFailure = { throwable ->
+                        if (throwable is SQLException) {
+                            _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
+                        } else
+                            throw throwable
                     }
                 )
         }
@@ -127,8 +131,13 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
                         watchForContactGroup()
                         _contactGroupEmailsResult.postValue(it)
                     },
-                    onFailure = {
-                        _contactGroupEmailsEmpty.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                    onFailure = { throwable ->
+                        if (throwable is SQLException) {
+                            _contactGroupEmailsEmpty.value = Event(
+                                throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
+                            )
+                        } else
+                            throw throwable
                     }
                 )
         }

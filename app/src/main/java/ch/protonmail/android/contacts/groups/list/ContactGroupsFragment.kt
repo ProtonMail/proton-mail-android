@@ -228,10 +228,11 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             return
         }
         contactGroupsViewModel.contactGroupEmailsResult.observe(this) { event ->
-            event?.getContentIfNotHandled()?.let {
+            event?.getContentIfNotHandled()?.let { list ->
+                Timber.v("Contact email list received $list")
                 composeIntent.putExtra(
                     ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS,
-                    it.asSequence().map { email ->
+                    list.asSequence().map { email ->
                         MessageRecipient(email.name, email.email, contactGroup.name)
                     }.toList() as Serializable
                 )

@@ -602,7 +602,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
 
 
     public void onContactDetailsLoadedEvent(FetchContactDetailsResult result) {
-        Timber.v("FetchContactDetailsResult %s", result);
+        Timber.v("FetchContactDetailsResult received");
         if (result instanceof FetchContactDetailsResult.Data) {
             if (mErrorEncryptedView != null) {
                 mErrorEncryptedView.setVisibility(View.GONE);

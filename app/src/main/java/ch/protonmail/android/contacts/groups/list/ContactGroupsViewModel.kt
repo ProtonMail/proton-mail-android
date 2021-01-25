@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.contacts.groups.list
 
+import android.database.SQLException
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -101,14 +102,19 @@ class ContactGroupsViewModel @ViewModelInject constructor(
                 .fold(
                     onSuccess = { list ->
                         Timber.v("Contacts groups emails list received size: ${list.size}")
-                        _contactGroupEmailsResult.postValue(Event(list))
+                        _contactGroupEmailsResult.value = Event(list)
                     },
-                    onFailure = {
-                        _contactGroupEmailsError.value = Event(it.message ?: ErrorEnum.INVALID_EMAIL_LIST.name)
+                    onFailure = { throwable ->
+                        if (throwable is SQLException) {
+                            _contactGroupEmailsError.value = Event(
+                                throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
+                            )
+                        } else
+                            throw throwable
                     }
                 )
         }
     }
 
-    fun isPaidUser(): Boolean = userManager.user?.isPaidUser ?: false
+    fun isPaidUser(): Boolean = userManager.user.isPaidUser
 }
