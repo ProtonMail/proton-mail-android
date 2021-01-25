@@ -558,17 +558,22 @@ class EventHandler @AssistedInject constructor(
                     val contactEmail = event.contactEmail
                     val contactId = event.contactEmail.contactEmailId
                     // get current contact email saved in local DB
-                    Timber.v("Searching DB for contactId: $contactId")
                     val oldContactEmail = contactsDatabase.findContactEmailById(contactId)
                     if (oldContactEmail != null) {
-                        Timber.v("Create on top of old email: $oldContactEmail")
                         val contactEmailId = oldContactEmail.contactEmailId
                         val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId) as ArrayList
                         contactsDatabase.saveContactEmail(contactEmail)
                         contactsDatabase.saveContactEmailContactLabel(joins)
                     } else {
-                        Timber.v("Create new email contact: ${contactEmail.email} labels: ${contactEmail.labelIds}")
                         contactsDatabase.saveContactEmail(contactEmail)
+                        val newJoins = mutableListOf<ContactEmailContactLabelJoin>()
+                        contactEmail.labelIds?.forEach { labelId ->
+                            newJoins.add(ContactEmailContactLabelJoin(contactEmail.contactEmailId, labelId))
+                        }
+                        Timber.v("Create new email contact: ${contactEmail.email} newJoins size: ${newJoins.size}")
+                        if (newJoins.isNotEmpty()) {
+                            contactsDatabase.saveContactEmailContactLabel(newJoins)
+                        }
                     }
                 }
 
@@ -597,8 +602,8 @@ class EventHandler @AssistedInject constructor(
                 EventType.DELETE -> {
                     val contactId = event.contactID
                     val contactEmail = contactsDatabase.findContactEmailById(contactId)
-                    Timber.v("Delete contact id: $contactId contactEmail: ${contactEmail?.email} labels: ${contactEmail?.labelIds}")
                     if (contactEmail != null) {
+                        Timber.v("Delete contact id: $contactId")
                         contactsDatabase.deleteContactEmail(contactEmail)
                     }
                 }
