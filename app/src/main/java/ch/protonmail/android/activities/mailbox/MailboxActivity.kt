@@ -49,6 +49,7 @@ import androidx.core.os.postDelayed
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.switchMap
 import androidx.loader.app.LoaderManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -60,10 +61,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
+import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.EXTRA_LOGOUT
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
 import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
+import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID
+import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_NAME
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
 import ch.protonmail.android.activities.FLOW_START_ACTIVITY
@@ -121,9 +124,12 @@ import ch.protonmail.android.core.Constants.DrawerOptionType
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHOWN
+import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
@@ -166,6 +172,8 @@ import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showUndoSnac
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
+import ch.protonmail.libs.core.utils.contains
+import ch.protonmail.libs.core.utils.get
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -174,6 +182,9 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import me.proton.core.util.android.sharedpreferences.observe
 import me.proton.core.util.android.workmanager.activity.getWorkManager
 import timber.log.Timber
 import java.lang.ref.WeakReference
@@ -408,15 +419,10 @@ class MailboxActivity :
     }
 
     private fun startObservingUsedSpace() {
-        liveSharedPreferences?.removeObservers(this)
-        liveSharedPreferences = LiveSharedPreferences(
-            app.getSecureSharedPreferences(userManager.username) as SecureSharedPreferences,
-            Constants.Prefs.PREF_USED_SPACE
-        )
-        liveSharedPreferences!!.observe(
-            this,
-            { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) }
-        )
+        val preferences = SecureSharedPreferences.getPrefsForUser(this, userManager.requireCurrentUserId())
+        preferences.observe<Long>(PREF_USED_SPACE)
+            .onEach { mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED) }
+            .launchIn(lifecycleScope)
     }
 
     private val setupUpLimitReachedObserver = Observer { limitReached: Event<Boolean> ->
