@@ -61,10 +61,10 @@ class ComposeMessageRepository @Inject constructor(
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
-    @Named("messages") var messagesDatabase: MessagesDatabase,
-    @Named("messages_search") val searchDatabase: MessagesDatabase,
-    val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
-    val dispatchers: DispatcherProvider
+    @Named("messages") private var messagesDatabase: MessagesDatabase,
+    @Named("messages_search") private val searchDatabase: MessagesDatabase,
+    private val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
+    private val dispatchers: DispatcherProvider
 ) {
 
     val lazyManager = resettableManager()

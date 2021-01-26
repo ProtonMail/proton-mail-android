@@ -20,6 +20,7 @@
 package ch.protonmail.android.compose
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Message
@@ -33,6 +34,8 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchPublicKeys
+import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.resources.StringResourceResolver
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -40,13 +43,18 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 
 class ComposeMessageViewModelTest : CoroutinesTest {
 
@@ -55,6 +63,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @RelaxedMockK
+    private lateinit var stringResourceResolver: StringResourceResolver
 
     @RelaxedMockK
     lateinit var composeMessageRepository: ComposeMessageRepository
@@ -124,7 +135,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val message = Message()
             val createdDraftId = "newDraftId"
             val createdDraft = Message(messageId = createdDraftId, localId = "local28348")
-            val testObserver = viewModel.savingDraftComplete.testObserver()
+            val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
             givenViewModelPropertiesAreInitialised()
             coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(createdDraftId))
             coEvery { messageDetailsRepository.findMessageById(createdDraftId) } returns createdDraft
@@ -132,8 +143,8 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
 
-            coEvery { messageDetailsRepository.findMessageById(createdDraftId) }
-            assertEquals(createdDraft, testObserver.observedValues[0])
+            coVerify { messageDetailsRepository.findMessageById(createdDraftId) }
+            assertEquals(createdDraft, savedDraftObserver.observedValues[0])
         }
     }
 
@@ -177,6 +188,107 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 "previousSenderAddressId"
             )
             coVerify { saveDraft(parameters) }
+        }
+    }
+
+    @Test
+    fun saveDraftResolvesLocalisedErrorMessageAndPostsOnLiveDataWhenSaveDraftUseCaseFailsCreatingTheDraft() {
+        runBlockingTest {
+            // Given
+            val messageSubject = "subject"
+            val message = Message(subject = messageSubject)
+            val saveDraftErrorObserver = viewModel.savingDraftError.testObserver()
+            val errorResId = R.string.failed_saving_draft_online
+            givenViewModelPropertiesAreInitialised()
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
+            every { stringResourceResolver.invoke(errorResId) } returns "Error creating draft for message %s"
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = true)
+
+            val expectedError = "Error creating draft for message $messageSubject"
+            coVerify { stringResourceResolver.invoke(errorResId) }
+            assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
+        }
+    }
+
+    @Test
+    fun saveDraftResolvesLocalisedErrorMessageAndPostsOnLiveDataWhenSaveDraftUseCaseFailsUploadingAttachments() {
+        runBlockingTest {
+            // Given
+            val messageSubject = "subject"
+            val message = Message(subject = messageSubject)
+            val saveDraftErrorObserver = viewModel.savingDraftError.testObserver()
+            val errorResId = R.string.attachment_failed
+            givenViewModelPropertiesAreInitialised()
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.UploadDraftAttachmentsFailed)
+            every { stringResourceResolver.invoke(errorResId) } returns "Error uploading attachments for subject "
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = true)
+
+            val expectedError = "Error uploading attachments for subject $messageSubject"
+            coVerify { stringResourceResolver.invoke(errorResId) }
+            assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
+        }
+    }
+
+    @Test
+    fun autoSaveDraftSchedulesJobToPerformSaveDraftAfterSomeDelay() {
+        runBlockingTest(dispatchers.Io) {
+            // Given
+            val messageBody = "Message body being edited..."
+            val messageId = "draft8237472"
+            val message = Message(messageId, subject = "A subject")
+            val buildMessageObserver = viewModel.buildingMessageCompleted.testObserver()
+            givenViewModelPropertiesAreInitialised()
+            // message was already saved once (we're updating)
+            viewModel.draftId = messageId
+            mockkStatic(UiUtil::class)
+            every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
+            every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
+            coEvery { composeMessageRepository.findMessage(messageId, dispatchers.Io) } returns message
+            coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
+
+            // When
+            viewModel.autoSaveDraft(messageBody)
+            viewModel.autoSaveJob?.join()
+
+            // Then
+            val expectedMessage = message.copy()
+            assertEquals(expectedMessage, buildMessageObserver.observedValues[0]?.peekContent())
+            assertEquals("&lt;html&gt; Message body being edited... &lt;html&gt;", viewModel.messageDataResult.content)
+            unmockkStatic(UiUtil::class)
+        }
+    }
+
+    @Test
+    fun autoSaveDraftCancelsExistingJobBeforeSchedulingANewOneWhenCalledTwice() {
+        runBlockingTest(dispatchers.Io) {
+            // Given
+            val messageBody = "Message body being edited again..."
+            val messageId = "draft923823"
+            val message = Message(messageId, subject = "Another subject")
+            viewModel.buildingMessageCompleted.testObserver()
+            givenViewModelPropertiesAreInitialised()
+            // message was already saved once (we're updating)
+            viewModel.draftId = messageId
+            mockkStatic(UiUtil::class)
+            every { UiUtil.toHtml(messageBody) } returns "<html> $messageBody <html>"
+            every { UiUtil.fromHtml(any()) } returns mockk(relaxed = true)
+            coEvery { composeMessageRepository.findMessage(messageId, dispatchers.Io) } returns message
+            coEvery { composeMessageRepository.createAttachmentList(any(), dispatchers.Io) } returns emptyList()
+
+            // When
+            viewModel.autoSaveDraft(messageBody)
+            assertNotNull(viewModel.autoSaveJob)
+            val firstScheduledJob = viewModel.autoSaveJob
+            viewModel.autoSaveDraft(messageBody)
+
+            // Then
+            assertTrue(firstScheduledJob?.isCancelled ?: false)
+            assertTrue(viewModel.autoSaveJob?.isActive ?: false)
+            unmockkStatic(UiUtil::class)
         }
     }
 

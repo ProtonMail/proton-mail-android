@@ -20,20 +20,19 @@ package ch.protonmail.android.api.models.messages.send;
 
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory;
-import ch.protonmail.android.api.models.messages.receive.IMessageFactory;
-import ch.protonmail.android.api.models.messages.receive.IMessageSenderFactory;
 import ch.protonmail.android.api.models.messages.receive.MessageFactory;
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
 import ch.protonmail.android.api.models.room.messages.Message;
+
 public class MessageSendResponse extends ResponseBody {
     private ServerMessage Sent;
     private MessageParent Parent;
 
     public Message getSent() {
         final AttachmentFactory attachmentFactory = new AttachmentFactory();
-        IMessageSenderFactory messageSenderFactory = new MessageSenderFactory();
-        final IMessageFactory messageFactory = new MessageFactory(attachmentFactory,messageSenderFactory);
+        MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
+        final MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
         return messageFactory.createMessage(Sent);
     }
 

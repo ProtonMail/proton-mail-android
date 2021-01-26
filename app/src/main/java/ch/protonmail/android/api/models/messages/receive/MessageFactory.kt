@@ -31,13 +31,13 @@ import javax.inject.Inject
 
 class MessageFactory @Inject constructor(
     private val attachmentFactory: IAttachmentFactory,
-    private val messageSenderFactory: IMessageSenderFactory
-) : IMessageFactory {
+    private val messageSenderFactory: MessageSenderFactory
+) {
 
-    override fun createDraftApiRequest(message: Message): DraftBody =
+    fun createDraftApiRequest(message: Message): DraftBody =
         DraftBody(createServerMessage(message))
 
-    override fun createServerMessage(message: Message): ServerMessage {
+    fun createServerMessage(message: Message): ServerMessage {
         return message.let {
             val serverMessage = ServerMessage()
             serverMessage.ID = it.messageId
@@ -68,7 +68,7 @@ class MessageFactory @Inject constructor(
         }
     }
 
-    override fun createMessage(serverMessage: ServerMessage): Message {
+    fun createMessage(serverMessage: ServerMessage): Message {
         return serverMessage.let {
             val message = Message()
             message.messageId = it.ID
@@ -82,26 +82,34 @@ class MessageFactory @Inject constructor(
             message.time = it.Time.checkIfSet("Time")
             message.totalSize = it.Size.checkIfSet("Size")
             message.location = it.LabelIDs!!
-                    .asSequence()
-                    .filter { it.length <= 2 }
-                    .map { it.toInt() }
-                    .fold(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue) { location, newLocation ->
-                        if (newLocation !in listOf(Constants.MessageLocationType.STARRED.messageLocationTypeValue,
-                                        Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                                        Constants.MessageLocationType.INVALID.messageLocationTypeValue) &&
-                                newLocation < location) {
-                            newLocation
-                        } else if (newLocation in listOf(Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
-                                        Constants.MessageLocationType.SENT.messageLocationTypeValue)) {
-                            newLocation
-                        } else
-                            location
-                    }
+                .asSequence()
+                .filter { it.length <= 2 }
+                .map { it.toInt() }
+                .fold(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue) { location, newLocation ->
+                    if (
+                        newLocation !in listOf(
+                            Constants.MessageLocationType.STARRED.messageLocationTypeValue,
+                            Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                            Constants.MessageLocationType.INVALID.messageLocationTypeValue
+                        ) &&
+                        newLocation < location
+                    ) {
+                        newLocation
+                    } else if (
+                        newLocation in listOf(
+                            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
+                            Constants.MessageLocationType.SENT.messageLocationTypeValue
+                        )
+                    ) {
+                        newLocation
+                    } else
+                        location
+                }
             message.isStarred = it.LabelIDs!!
-                    .asSequence()
-                    .filter { it.length <= 2 }
-                    .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                    .contains(Constants.MessageLocationType.STARRED)
+                .asSequence()
+                .filter { it.length <= 2 }
+                .map { Constants.MessageLocationType.fromInt(it.toInt()) }
+                .contains(Constants.MessageLocationType.STARRED)
             message.folderLocation = it.FolderLocation
             message.numAttachments = it.NumAttachments
             message.messageEncryption = MessageUtils.calculateEncryption(it.Flags)
@@ -126,7 +134,9 @@ class MessageFactory @Inject constructor(
             val numOfAttachments = message.numAttachments
             val attachmentsListSize = message.Attachments.size
             if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)
-                throw RuntimeException("Attachments size does not match expected: $numOfAttachments, actual: $attachmentsListSize ")
+                throw IllegalArgumentException(
+                    "Attachments size does not match expected: $numOfAttachments, actual: $attachmentsListSize "
+                )
             message
         }
     }
