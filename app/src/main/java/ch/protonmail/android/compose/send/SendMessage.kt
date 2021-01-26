@@ -29,17 +29,34 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
+internal const val MISSING_DB_ID = 0L
+
 class SendMessage @Inject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val dispatchers: DispatcherProvider,
-    private val pendingActionsDao: PendingActionsDao
+    private val pendingActionsDao: PendingActionsDao,
+    private val sendMessageScheduler: SendMessageWorker.Enqueuer
 ) {
 
     suspend operator fun invoke(parameters: SendMessageParameters) = withContext(dispatchers.Io) {
         val message = parameters.message
         saveMessageLocally(message)
+        setMessageAsPendingForSend(message)
 
-        val pendingSend = PendingSend(localDatabaseId = message.dbId ?: 0, messageId = message.messageId)
+        sendMessageScheduler.enqueue(
+            parameters.message,
+            parameters.newAttachmentIds,
+            parameters.parentId,
+            parameters.actionType,
+            parameters.previousSenderAddressId
+        )
+    }
+
+    private fun setMessageAsPendingForSend(message: Message) {
+        val pendingSend = PendingSend(
+            localDatabaseId = message.dbId ?: MISSING_DB_ID,
+            messageId = message.messageId
+        )
         pendingActionsDao.insertPendingForSend(pendingSend)
     }
 
@@ -54,6 +71,10 @@ class SendMessage @Inject constructor(
     }
 
     data class SendMessageParameters(
-        val message: Message
+        val message: Message,
+        val newAttachmentIds: List<String>,
+        val parentId: String?,
+        val actionType: Constants.MessageActionType,
+        val previousSenderAddressId: String
     )
 }

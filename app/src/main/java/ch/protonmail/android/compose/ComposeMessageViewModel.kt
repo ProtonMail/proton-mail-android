@@ -736,7 +736,15 @@ class ComposeMessageViewModel @Inject constructor(
                 val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
                 workManager.cancelUniqueWork(saveDraftUniqueWorkId)
 
-                sendMessageUseCase(SendMessage.SendMessageParameters(message))
+                sendMessageUseCase(
+                    SendMessage.SendMessageParameters(
+                        message,
+                        newAttachments,
+                        parentId,
+                        _actionId,
+                        _oldSenderAddressId
+                    )
+                )
             } else {
                 sendingInProcess = false
             }

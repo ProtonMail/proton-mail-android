@@ -23,6 +23,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
+import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.utils.ServerTime
 import io.mockk.MockKAnnotations
@@ -32,12 +33,16 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Test
 
 class SendMessageTest : CoroutinesTest {
+
+    @RelaxedMockK
+    private lateinit var sendMessageScheduler: SendMessageWorker.Enqueuer
 
     @RelaxedMockK
     private lateinit var pendingActionsDao: PendingActionsDao
@@ -62,7 +67,8 @@ class SendMessageTest : CoroutinesTest {
         every { ServerTime.currentTimeMillis() } returns currentTimeMs
 
         // When
-        sendMessage(SendMessage.SendMessageParameters(message))
+        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "")
+        sendMessage(parameters)
 
         // Then
         val currentTimeSeconds = 23847233L
@@ -80,14 +86,50 @@ class SendMessageTest : CoroutinesTest {
         // Given
         val messageId = "82347"
         val messageDbId = 82372L
-        val message = Message(messageId = messageId)
-        message.dbId = messageDbId
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
 
         // When
-        sendMessage(SendMessage.SendMessageParameters(message))
+        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "")
+        sendMessage(parameters)
 
         // Then
         val pendingSend = PendingSend(messageId = messageId, localDatabaseId = messageDbId)
         coVerify { pendingActionsDao.insertPendingForSend(pendingSend) }
+    }
+
+    @Test
+    fun sendMessageSchedulesSendMessageWorkerToPerformOperationInBackground() = runBlockingTest {
+        // Given
+        val message = Message().apply {
+            dbId = 992376L
+            this.messageId = "823742"
+            addressID = "addressId"
+            decryptedBody = "Message body in plain text"
+        }
+
+        // When
+        val attachmentIds = listOf("23364382")
+        val parameters = SendMessage.SendMessageParameters(
+            message,
+            attachmentIds,
+            "parentId82346",
+            NONE,
+            "previousSenderId8372"
+        )
+        sendMessage(parameters)
+
+        // Then
+        verify {
+            sendMessageScheduler.enqueue(
+                message,
+                attachmentIds,
+                "parentId82346",
+                NONE,
+                "previousSenderId8372"
+            )
+        }
     }
 }

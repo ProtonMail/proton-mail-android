@@ -332,7 +332,13 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             viewModel.sendMessage(message)
 
             // Then
-            val params = SendMessage.SendMessageParameters(message)
+            val params = SendMessage.SendMessageParameters(
+                message,
+                listOf(),
+                "parentId823",
+                Constants.MessageActionType.FORWARD,
+                "previousSenderAddressId"
+            )
             coVerify { sendMessage(params) }
         }
     }
