@@ -24,8 +24,7 @@ import ch.protonmail.android.api.utils.Fields
 import com.google.gson.annotations.SerializedName
 
 data class MessagePayload(
-    @SerializedName(Fields.Message.ID)
-    var id: String? = null,
+    var ID: String? = null,
     @SerializedName(Fields.Message.SUBJECT)
     var subject: String? = null,
     @SerializedName(Fields.Message.SENDER)

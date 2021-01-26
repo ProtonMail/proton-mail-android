@@ -23,6 +23,7 @@ import ch.protonmail.android.api.models.MessagePayload
 import ch.protonmail.android.api.models.MessageRecipient
 import junit.framework.Assert.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class ServerMessageTest {
 
@@ -50,6 +51,20 @@ class ServerMessageTest {
             listOf()
         )
 
-        assertEquals(expected, actual)
+        assertMessagePayloadEquality(expected, actual)
+    }
+
+    private fun assertMessagePayloadEquality(expected: MessagePayload, actual: MessagePayload) {
+
+        assertEquals("ID", actual.ID)
+        assertEquals("Subject", actual.subject)
+        assertEquals(expected.sender, actual.sender)
+        assertEquals("Body", actual.body)
+        assertTrue {
+            expected.toList!![0].compareTo(actual.toList!![0]) == 0 &&
+                expected.toList!![1].compareTo(actual.toList!![1]) == 0
+        }
+        assertTrue { expected.ccList!![0].compareTo(actual.ccList!![0]) == 0 }
+        assertEquals(emptyList<MessageRecipient>(), actual.bccList)
     }
 }

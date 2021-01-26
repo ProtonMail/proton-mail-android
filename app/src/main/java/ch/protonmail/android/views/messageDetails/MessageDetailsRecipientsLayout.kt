@@ -110,9 +110,9 @@ class MessageDetailsRecipientsLayout @JvmOverloads constructor(
 		layout.removeAllViews()
 		for(recipient in recipientList) {
 			val recipientName=recipient.name
-			val recipientEmail=recipient.address
-			val recipientEnc:String?=recipientsEncryption[recipient.address] ?: "none"
-			val recipientAuth:String?=recipientsAuthentication[recipient.address] ?: "none"
+			val recipientEmail=recipient.emailAddress
+			val recipientEnc:String?=recipientsEncryption[recipient.emailAddress] ?: "none"
+			val recipientAuth:String?=recipientsAuthentication[recipient.emailAddress] ?: "none"
 			val lockIcon=RecipientLockIcon(recipientEnc,recipientAuth)
 			val onContextMenuListener=contextMenuFactory(recipientEmail)
 
@@ -137,7 +137,7 @@ class MessageDetailsRecipientsLayout @JvmOverloads constructor(
 
 		var firstName: String? = listForShowing[0].name
 		if (firstName.isNullOrEmpty()) {
-			firstName = listForShowing[0].address
+			firstName = listForShowing[0].emailAddress
 		}
 
 		if (firstName!!.length > 40) {

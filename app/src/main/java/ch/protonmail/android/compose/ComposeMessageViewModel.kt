@@ -294,7 +294,7 @@ class ComposeMessageViewModel @Inject constructor(
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
                     val recipients = ArrayList<MessageRecipient>()
                     for (email in emails) {
-                        val recipient = MessageRecipient(email.name!!, email.email)
+                        val recipient = MessageRecipient(email.name, email.email)
                         recipient.group = group.name
                         recipient.groupIcon = R.string.contact_group_groups_icon
                         recipient.groupColor =
@@ -949,7 +949,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     private fun existsAsPMContact(email: String): Boolean {
         for (messageRecipient in _protonMailContacts) {
-            if (messageRecipient.address.equals(email, ignoreCase = true)) {
+            if (messageRecipient.emailAddress.equals(email, ignoreCase = true)) {
                 return true
             }
         }
@@ -958,7 +958,7 @@ class ComposeMessageViewModel @Inject constructor(
 
     fun createMessageRecipient(name: String, email: String): MessageRecipient? {
         val item = MessageRecipient(name, email)
-        if (existsAsPMContact(item.address)) {
+        if (existsAsPMContact(item.emailAddress)) {
             return null
         }
         if (item.name != null) {

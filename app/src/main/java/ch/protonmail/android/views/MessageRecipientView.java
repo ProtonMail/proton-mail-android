@@ -79,10 +79,10 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
 
     @Override
     protected View getViewForObject(MessageRecipient messageRecipient) {
-        removeToken(messageRecipient.getAddress());
+        removeToken(messageRecipient.getEmailAddress());
         LinearLayout view = (LinearLayout) LayoutInflater.from(getContext()).inflate(R.layout.message_recipient_token, (ViewGroup) getParent(), false);
         TextView tokenView = view.findViewById(R.id.tokenText);
-        String name = messageRecipient.getAddress();
+        String name = messageRecipient.getEmailAddress();
         if (!TextUtils.isEmpty(messageRecipient.getGroup())) {
             name = messageRecipient.getName();
         }
@@ -119,7 +119,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
             tokenPgpView.setVisibility(VISIBLE);
             tokenPgpView.setText(getContext().getString(messageRecipient.getIcon()));
         }
-        mMapView.put(messageRecipient.getAddress(), view);
+        mMapView.put(messageRecipient.getEmailAddress(), view);
         return view;
     }
 
@@ -138,7 +138,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         List<MessageRecipient> messageRecipients = getObjects();
         for (MessageRecipient messageRecipient : messageRecipients) {
             if (messageRecipient.isPGP()) {
-                pgpRecipients.add(messageRecipient.getAddress());
+                pgpRecipients.add(messageRecipient.getEmailAddress());
             }
         }
         return pgpRecipients;
@@ -147,11 +147,11 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
     public void setIconAndDescription(String email, int icon, int color, int description, boolean isPgp) {
         List<MessageRecipient> messageRecipients = getObjects();
         for (MessageRecipient messageRecipient : messageRecipients) {
-            if (messageRecipient.getAddress().equals(email)) {
+            if (messageRecipient.getEmailAddress().equals(email)) {
                 messageRecipient.setDescription(description);
                 messageRecipient.setIcon(icon);
                 messageRecipient.setIconColor(color);
-                messageRecipient.setPGP(isPgp);
+                messageRecipient.setIsPGP(isPgp);
 
                 for (Map.Entry<String, View> entry : mMapView.entrySet()) {
                     if (entry.getKey().equals(email)) {
@@ -188,7 +188,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         }
         MessageRecipient recipient = null;
         for (MessageRecipient messageRecipient : objects) {
-            if (key.equals(messageRecipient.getAddress())) {
+            if (key.equals(messageRecipient.getEmailAddress())) {
                 recipient = messageRecipient;
                 break;
             }
@@ -232,7 +232,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         List<MessageRecipient> messageRecipients = getMessageRecipients();
         if (messageRecipients == null) return null;
         for (MessageRecipient messageRecipient : messageRecipients) {
-            String emailAddress = messageRecipient.getAddress();
+            String emailAddress = messageRecipient.getEmailAddress();
             if (TextUtils.isEmpty(emailAddress)) {
                 continue;
             }
@@ -251,7 +251,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
             return missingEmailRecipients;
         }
         for (MessageRecipient messageRecipient : messageRecipients) {
-            String emailAddress = messageRecipient.getAddress();
+            String emailAddress = messageRecipient.getEmailAddress();
             if (TextUtils.isEmpty(emailAddress)) {
                 continue;
             }
@@ -267,7 +267,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         List<MessageRecipient> messageRecipients = getMessageRecipients();
         if (messageRecipients == null) return false;
         for (MessageRecipient messageRecipient : messageRecipients) {
-            String emailAddress = messageRecipient.getAddress();
+            String emailAddress = messageRecipient.getEmailAddress();
             String key = mPublicKeysMap.get(emailAddress);
             if (TextUtils.isEmpty(emailAddress)) {
                 continue;
@@ -284,7 +284,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         if (messageRecipients == null) return false;
         for (MessageRecipient messageRecipient : messageRecipients) {
             boolean isPGPRecipient = messageRecipient.isPGP();
-            String emailAddress = messageRecipient.getAddress();
+            String emailAddress = messageRecipient.getEmailAddress();
             String key = mPublicKeysMap.get(emailAddress);
             if (TextUtils.isEmpty(emailAddress)) {
                 continue;
@@ -304,7 +304,7 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
         }
         for (MessageRecipient messageRecipient : messageRecipients) {
             boolean isPGPRecipient = messageRecipient.isPGP();
-            String emailAddress = messageRecipient.getAddress();
+            String emailAddress = messageRecipient.getEmailAddress();
             String key = mPublicKeysMap.get(emailAddress);
             if (TextUtils.isEmpty(emailAddress)) {
                 continue;
@@ -379,13 +379,13 @@ public class MessageRecipientView extends TokenCompleteTextView<MessageRecipient
             } else if (isGroup) {
                 if (sendPreferenceMap != null) {
                     for (MessageRecipient messageRecipient : groupRecipients) {
-                        if (sendPreferenceMap.containsKey(messageRecipient.getAddress())) {
-                            SendPreference sendPreference = sendPreferenceMap.get(messageRecipient.getAddress());
+                        if (sendPreferenceMap.containsKey(messageRecipient.getEmailAddress())) {
+                            SendPreference sendPreference = sendPreferenceMap.get(messageRecipient.getEmailAddress());
                             ComposerLockIcon lock = new ComposerLockIcon(sendPreference, mEOEnabled);
                             messageRecipient.setDescription(lock.getTooltip());
                             messageRecipient.setIcon(lock.getIcon());
                             messageRecipient.setIconColor(lock.getColor());
-                            messageRecipient.setPGP(sendPreference.isPGP());
+                            messageRecipient.setIsPGP(sendPreference.isPGP());
                         }
                     }
                 }
