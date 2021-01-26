@@ -84,4 +84,11 @@ object DatabaseModule {
     fun provideContactsDatabase(factory: ContactsDatabaseFactory): ContactsDatabase =
         factory.getDatabase()
 
+    @Provides
+    fun provideCountersDatabaseFactory(context: Context, userManager: UserManager): CountersDatabaseFactory =
+        CountersDatabaseFactory.getInstance(context, userManager.username)
+
+    @Provides
+    fun provideCountersDatabase(factory: CountersDatabaseFactory): CountersDatabase =
+        factory.getDatabase()
 }
