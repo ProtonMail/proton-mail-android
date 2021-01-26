@@ -27,6 +27,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withParent
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndFlag
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndRecipient
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
@@ -138,6 +139,36 @@ interface MailboxRobotInterface {
             UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
+        }
+
+        fun messageWithSubjectHasRepliedFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageReplyTextView)
+                )
+        }
+
+        fun messageWithSubjectHasRepliedAllFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageReplyAllTextView)
+                )
+        }
+
+        fun messageWithSubjectHasForwardedFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageForwardTextView)
+                )
         }
 
         fun messageWithSubjectAndRecipientExists(subject: String, to: String) {

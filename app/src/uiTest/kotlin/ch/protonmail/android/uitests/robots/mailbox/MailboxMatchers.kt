@@ -18,8 +18,13 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox
 
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.matcher.BoundedDiagnosingMatcher
 import androidx.test.espresso.matcher.BoundedMatcher
 import ch.protonmail.android.R
 import ch.protonmail.android.adapters.FoldersAdapter
@@ -63,6 +68,43 @@ object MailboxMatchers {
                     messagesList.add(actualSubject)
                     false
                 }
+            }
+        }
+    }
+
+    /**
+     * Matches the Mailbox message represented by [MessagesListItemView] by message subject and Reply, Reply all or
+     * Forward flag. Subject must be unique in a list in order to use this matcher.
+     *
+     * @param subject - message subject
+     * @param id - the view id of Reply, Reply all or Forward [TextView].
+     */
+    fun withMessageSubjectAndFlag(subject: String, @IdRes id: Int): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedDiagnosingMatcher<RecyclerView.ViewHolder,
+            MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
+
+            val messagesList = ArrayList<String>()
+
+            override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder?, mismatchDescription: Description?): Boolean {
+                val messageSubjectView = item!!.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val actualSubject = messageSubjectView.text.toString()
+                val flagView = item.itemView.findViewById<LinearLayout>(R.id.messageTitleContainerLinearLayout)
+                    .findViewById<LinearLayout>(R.id.flow_indicators_container)
+                    .findViewById<TextView>(id)
+                return if (messageSubjectView != null) {
+                    subject == actualSubject && flagView.visibility == View.VISIBLE
+                } else {
+                    messagesList.add(actualSubject)
+                    false
+                }
+            }
+
+            override fun describeMoreTo(description: Description?) {
+                description?.apply {
+                    appendText("Message item with subject: \"$subject\"\n")
+                    appendText("Here is the actual list of messages:\n")
+                }
+                messagesList.forEach { description?.appendText(" - \"$it\"\n") }
             }
         }
     }
