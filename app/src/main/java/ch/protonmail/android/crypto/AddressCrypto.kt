@@ -21,6 +21,7 @@ package ch.protonmail.android.crypto
 import android.util.Base64
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
