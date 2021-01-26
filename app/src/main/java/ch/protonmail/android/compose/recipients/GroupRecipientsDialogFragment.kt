@@ -125,12 +125,12 @@ class GroupRecipientsDialogFragment : AbstractDialogFragment() {
             val allMessageRecipients = ArrayList<MessageRecipient>()
             it?.let {
                 for (email in it) {
-                    val recipient = MessageRecipient(email.name!!, email.email)
+                    val recipient = MessageRecipient(email.name, email.email)
                     recipient.isSelected = email.selected
                     recipient.icon = email.pgpIcon
                     recipient.iconColor = email.pgpIconColor
                     recipient.description = email.pgpDescription
-                    recipient.isPGP = email.isPGP
+                    recipient.setIsPGP(email.isPGP)
                     recipient.group = groupRecipientsViewModel.getGroup()
                     recipient.groupIcon = groupRecipientsViewModel.getGroupIcon()
                     recipient.groupColor = groupRecipientsViewModel.getGroupColor()

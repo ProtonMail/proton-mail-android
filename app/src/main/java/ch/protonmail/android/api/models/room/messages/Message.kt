@@ -216,12 +216,13 @@ data class Message @JvmOverloads constructor(
         get() = messageEncryption in listOf(MessageEncryption.MIME_PGP) || Constants.MIME_TYPE_MULTIPART_MIXED == mimeType
 
     val replyToEmails: List<String>
-        get() = replyTos
-            .asSequence()
-            .filter { it.address.isNotEmpty() }
-            .map { it.address }
-            .toList()
-
+        get() {
+            return replyTos
+                .asSequence()
+                .filter { it.emailAddress.isNotEmpty() }
+                .map { it.emailAddress }
+                .toList()
+        }
     val toListString
         get() = MessageUtils.toContactString(toList)
 
