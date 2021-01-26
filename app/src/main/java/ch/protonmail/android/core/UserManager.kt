@@ -348,6 +348,10 @@ class UserManager @Inject constructor(
     suspend fun getCurrentUserTokenManager(): TokenManager? =
         currentUserId?.let { getTokenManager(it) }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getCurrentUserTokenManager()")
+    )
     fun getCurrentUserTokenManagerBlocking(): TokenManager? =
         runBlocking {
             getCurrentUserTokenManager()

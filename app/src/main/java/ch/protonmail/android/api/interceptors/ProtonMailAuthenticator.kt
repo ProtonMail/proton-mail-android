@@ -66,8 +66,8 @@ class ProtonMailAuthenticator @Inject constructor(
 
     @Synchronized
     private fun refreshAuthToken(response: Response): Request? {
-        val userId = response.request().tag(UserIdTag::class.java)?.id ?: userManager.currentUserId
-        val tokenManager = userManager.getTokenManagerBlocking(userId!!)
+        val userId = response.request().tag(UserIdTag::class.java)?.id ?: userManager.requireCurrentUserId()
+        val tokenManager = userManager.getTokenManagerBlocking(userId)
 
         val originalRequest = response.request()
         if (originalRequest.header(HEADER_AUTH) != tokenManager.authAccessToken) {
