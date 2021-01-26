@@ -90,7 +90,6 @@ import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import ch.protonmail.android.api.models.User as LegacyUser
-import ch.protonmail.android.api.models.address.Address as LegacyAddress
 
 // region constants
 const val EXTRA_CURRENT_MAILBOX_LOCATION = "Extra_Current_Mailbox_Location"
@@ -133,8 +132,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var mPinValue: Boolean = false
     var mRecoveryEmail: String = ""
     var mNotificationOptionValue: Int = 0
-    @Deprecated("Use new Address model", ReplaceWith("address"))
-    lateinit var mSelectedAddress: LegacyAddress
     lateinit var selectedAddress: Address
     var mDisplayName: String = ""
     var mSignature: String = ""
