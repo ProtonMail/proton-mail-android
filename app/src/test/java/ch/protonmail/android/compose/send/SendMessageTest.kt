@@ -21,6 +21,8 @@ package ch.protonmail.android.compose.send
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.utils.ServerTime
 import io.mockk.MockKAnnotations
@@ -38,6 +40,9 @@ import org.junit.Test
 class SendMessageTest : CoroutinesTest {
 
     @RelaxedMockK
+    private lateinit var pendingActionsDao: PendingActionsDao
+
+    @RelaxedMockK
     lateinit var messageDetailsRepository: MessageDetailsRepository
 
     @InjectMockKs
@@ -51,7 +56,7 @@ class SendMessageTest : CoroutinesTest {
     @Test
     fun saveMessageAsNotDownloadedWithAllDraftsLocationAndCurrentTime() = runBlockingTest {
         // Given
-        val message = Message()
+        val message = Message(messageId = "9823472")
         val currentTimeMs = 23847233000L
         mockkStatic(ServerTime::class)
         every { ServerTime.currentTimeMillis() } returns currentTimeMs
@@ -68,5 +73,21 @@ class SendMessageTest : CoroutinesTest {
         )
         coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
         unmockkStatic(ServerTime::class)
+    }
+
+    @Test
+    fun insertMessageAsPendingForSending() = runBlockingTest {
+        // Given
+        val messageId = "82347"
+        val messageDbId = 82372L
+        val message = Message(messageId = messageId)
+        message.dbId = messageDbId
+
+        // When
+        sendMessage(SendMessage.SendMessageParameters(message))
+
+        // Then
+        val pendingSend = PendingSend(messageId = messageId, localDatabaseId = messageDbId)
+        coVerify { pendingActionsDao.insertPendingForSend(pendingSend) }
     }
 }
