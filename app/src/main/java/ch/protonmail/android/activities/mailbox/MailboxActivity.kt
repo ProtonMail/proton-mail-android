@@ -64,7 +64,9 @@ import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.EXTRA_LOGOUT
 import ch.protonmail.android.activities.EXTRA_SETTINGS_ITEM_TYPE
+import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER
 import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID
+import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_NAME
 import ch.protonmail.android.activities.EditSettingsItemActivity
 import ch.protonmail.android.activities.EngagementActivity
 import ch.protonmail.android.activities.FLOW_START_ACTIVITY
@@ -173,6 +175,7 @@ import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.worker.KEY_POST_LABEL_WORKER_RESULT_ERROR
 import ch.protonmail.android.worker.PostLabelWorker
 import ch.protonmail.libs.core.utils.contains
+import ch.protonmail.libs.core.utils.get
 import com.birbit.android.jobqueue.Job
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
