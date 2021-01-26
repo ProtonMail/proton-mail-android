@@ -569,7 +569,7 @@ class NotificationServer @Inject constructor(
      * @param unreadNotifications [List] of [RoomNotification] to show to the user
      */
     @Deprecated("Use with new User model", ReplaceWith(
-        "notifySingleNewEmail(\n" +
+        "notifyMultipleUnreadEmail(\n" +
             "    userManager,\n" +
             "    user.toNewUser(),\n" +
             "    user.notificationSetting,\n" +

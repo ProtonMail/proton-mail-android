@@ -20,11 +20,9 @@ package ch.protonmail.android.crypto
 
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
 import ch.protonmail.android.domain.entity.user.AddressKeys
-import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.domain.entity.user.UserKeys
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
@@ -33,6 +31,7 @@ import ch.protonmail.android.utils.crypto.TextDecryptionResult
 import com.proton.gopenpgp.armor.Armor
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.invoke
+import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 
@@ -48,13 +47,13 @@ import com.proton.gopenpgp.crypto.Crypto as GoOpenPgpCrypto
 abstract class Crypto<K>(
     private val userManager: UserManager,
     protected val openPgp: OpenPGP,
-    private val username: Name,
+    private val userId: Id,
     private val userMapper: UserBridgeMapper = UserBridgeMapper.buildDefault()
 ) {
 
-    protected val user: User
-        get() =
-            userMapper { userManager.getUser(username.s).toNewUser() }
+    protected val user by lazy {
+        userMapper { userManager.getUserBlocking(userId) }
+    }
 
     protected val userKeys
         get() = user.keys
@@ -63,7 +62,7 @@ abstract class Crypto<K>(
 
     protected abstract val primaryKey: K?
 
-    protected val mailboxPassword get() = userManager.getMailboxPassword(username.s)
+    protected val mailboxPassword get() = userManager.getMailboxPassword(userId)
 
     /**
      * Return passphrase for decryption
@@ -177,11 +176,47 @@ abstract class Crypto<K>(
                 "ch.protonmail.android.crypto.UserCrypto"
             )
         )
-        fun forUser(userManager: UserManager, username: String): UserCrypto =
-            UserCrypto(userManager, userManager.openPgp, Name(username))
+        fun forUser(userManager: UserManager, userId: Id): UserCrypto =
+            UserCrypto(userManager, userManager.openPgp, userId)
 
         @JvmStatic
+        @Deprecated(
+            "Get with user Id",
+            ReplaceWith(
+                "forUser(userManager, userId)",
+                "ch.protonmail.android.crypto.UserCrypto"
+            ),
+            DeprecationLevel.ERROR
+        )
+        fun forUser(userManager: UserManager, username: String): UserCrypto =
+            unsupported
+
+        @JvmStatic
+        fun forAddress(userManager: UserManager, userId: Id, addressId: Id): AddressCrypto =
+            AddressCrypto(userManager, userManager.openPgp, userId, addressId)
+
+        @JvmStatic
+        @Deprecated(
+            "Get with user Id",
+            ReplaceWith(
+                "forAddress(userManager, userId, Id(addressID))",
+                "ch.protonmail.android.crypto.UserCrypto"
+            ),
+            DeprecationLevel.ERROR
+        )
         fun forAddress(userManager: UserManager, username: String, addressID: String): AddressCrypto =
-            AddressCrypto(userManager, userManager.openPgp, Name(username), Id(addressID))
+            unsupported
     }
+}
+
+class GetString {
+
+    operator fun invoke(p1: Int): String {
+        TODO("Not yet implemented")
+    }
+}
+
+// EXAMPLE USAGE
+fun test(getString: GetString) {
+    val stirng: String = getString(0)
 }
