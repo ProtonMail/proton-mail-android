@@ -45,6 +45,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
@@ -142,7 +143,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
 
-            coEvery { messageDetailsRepository.findMessageById(createdDraftId) }
+            coVerify { messageDetailsRepository.findMessageById(createdDraftId) }
             assertEquals(createdDraft, savedDraftObserver.observedValues[0])
         }
     }
@@ -206,7 +207,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             viewModel.saveDraft(message, hasConnectivity = true)
 
             val expectedError = "Error creating draft for message $messageSubject"
-            coEvery { stringResourceResolver.invoke(errorResId) }
+            coVerify { stringResourceResolver.invoke(errorResId) }
             assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
         }
     }
@@ -227,7 +228,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             viewModel.saveDraft(message, hasConnectivity = true)
 
             val expectedError = "Error uploading attachments for subject $messageSubject"
-            coEvery { stringResourceResolver.invoke(errorResId) }
+            coVerify { stringResourceResolver.invoke(errorResId) }
             assertEquals(expectedError, saveDraftErrorObserver.observedValues[0])
         }
     }
@@ -257,6 +258,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val expectedMessage = message.copy()
             assertEquals(expectedMessage, buildMessageObserver.observedValues[0]?.peekContent())
             assertEquals("&lt;html&gt; Message body being edited... &lt;html&gt;", viewModel.messageDataResult.content)
+            unmockkStatic(UiUtil::class)
         }
     }
 
@@ -286,6 +288,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // Then
             assertTrue(firstScheduledJob?.isCancelled ?: false)
             assertTrue(viewModel.autoSaveJob?.isActive ?: false)
+            unmockkStatic(UiUtil::class)
         }
     }
 

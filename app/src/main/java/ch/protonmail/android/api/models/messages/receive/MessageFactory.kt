@@ -134,7 +134,7 @@ class MessageFactory @Inject constructor(
             val numOfAttachments = message.numAttachments
             val attachmentsListSize = message.Attachments.size
             if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)
-                throw RuntimeException(
+                throw IllegalArgumentException(
                     "Attachments size does not match expected: $numOfAttachments, actual: $attachmentsListSize "
                 )
             message
