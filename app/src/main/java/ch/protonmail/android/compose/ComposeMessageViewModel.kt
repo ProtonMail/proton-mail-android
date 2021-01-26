@@ -43,8 +43,8 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.api.services.PostMessageServiceFactory
 import ch.protonmail.android.bl.HtmlProcessor
+import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
@@ -92,13 +92,13 @@ class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val postMessageServiceFactory: PostMessageServiceFactory,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver,
     private val workManager: WorkManager,
+    private val sendMessageUseCase: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -736,17 +736,7 @@ class ComposeMessageViewModel @Inject constructor(
                 val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
                 workManager.cancelUniqueWork(saveDraftUniqueWorkId)
 
-                postMessageServiceFactory.startSendingMessage(
-                    _dbId!!,
-                    messageDataResult.message.decryptedBody ?: "",
-                    messageDataResult.messagePassword,
-                    messageDataResult.passwordHint,
-                    messageDataResult.expirationTime!!,
-                    parentId, _actionId,
-                    newAttachments,
-                    ArrayList(messageDataResult.sendPreferences.values),
-                    _oldSenderAddressId
-                )
+                sendMessageUseCase(SendMessage.SendMessageParameters(message))
             } else {
                 sendingInProcess = false
             }

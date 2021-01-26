@@ -26,6 +26,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.services.PostMessageServiceFactory
+import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
@@ -79,6 +80,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
     @RelaxedMockK
     lateinit var saveDraft: SaveDraft
+
+    @RelaxedMockK
+    lateinit var sendMessage: SendMessage
 
     @MockK
     lateinit var postMessageServiceFactory: PostMessageServiceFactory
@@ -314,6 +318,22 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             assertTrue(firstScheduledJob?.isCancelled ?: false)
             assertTrue(viewModel.autoSaveJob?.isActive ?: false)
             unmockkStatic(UiUtil::class)
+        }
+    }
+
+    @Test
+    fun sendMessageCallsSendMessageUseCaseWithMessageParameters() {
+        runBlockingTest {
+            // Given
+            val message = Message()
+            givenViewModelPropertiesAreInitialised()
+
+            // When
+            viewModel.sendMessage(message)
+
+            // Then
+            val params = SendMessage.SendMessageParameters(message)
+            coVerify { sendMessage(params) }
         }
     }
 
