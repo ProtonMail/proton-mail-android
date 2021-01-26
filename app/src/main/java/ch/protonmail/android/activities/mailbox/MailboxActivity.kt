@@ -139,7 +139,6 @@ import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.fcm.PMRegistrationWorker
 import ch.protonmail.android.jobs.EmptyFolderJob
@@ -976,11 +975,6 @@ class MailboxActivity :
             String.format(getString(R.string.signed_in_with_logged_out_from), event.fromAccount, event.toAccount)
         )
         onSwitchedAccounts()
-    }
-
-    @Subscribe
-    fun onMailSettingsEvent(event: MailSettingsEvent?) {
-        loadMailSettings()
     }
 
     override fun onLogout() {

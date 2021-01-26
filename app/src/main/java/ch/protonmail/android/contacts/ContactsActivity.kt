@@ -47,7 +47,6 @@ import ch.protonmail.android.contacts.list.search.SearchViewQueryListener
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.ConnectionState
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.permissions.PermissionHelper
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
@@ -239,12 +238,6 @@ class ContactsActivity :
         searchView.setOnQueryTextListener(SearchViewQueryListener(searchView, searchListeners))
         val closeButton = searchView.findViewById<ImageView>(R.id.search_close_btn)
         closeButton.setOnClickListener(OnSearchClose(searchView, searchListeners))
-    }
-
-    @Subscribe
-    @Suppress("UNUSED_PARAMETER")
-    fun onMailSettingsEvent(event: MailSettingsEvent) {
-        loadMailSettings()
     }
 
     @Subscribe

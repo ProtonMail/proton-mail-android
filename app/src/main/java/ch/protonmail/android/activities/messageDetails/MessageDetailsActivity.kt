@@ -75,7 +75,6 @@ import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.PostArchiveJob
 import ch.protonmail.android.jobs.PostInboxJob
 import ch.protonmail.android.jobs.PostSpamJob
@@ -165,7 +164,6 @@ internal class MessageDetailsActivity :
         if (!mUserManager.isLoggedIn) {
             startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
         }
-        loadMailSettings()
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             title = null
@@ -505,12 +503,6 @@ internal class MessageDetailsActivity :
             else -> throw IllegalStateException("Unknown message status: $status")
         }
         showToast(toastMessageId, Toast.LENGTH_SHORT)
-    }
-
-    @Subscribe
-    @Suppress("UNUSED_PARAMETER")
-    fun onMailSettingsEvent(event: MailSettingsEvent?) {
-        loadMailSettings()
     }
 
     @Subscribe

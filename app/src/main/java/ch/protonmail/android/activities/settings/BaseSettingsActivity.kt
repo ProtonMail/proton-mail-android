@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -71,7 +71,6 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.events.FetchLabelsEvent
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
@@ -188,7 +187,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         mMailboxLocation = Constants.MessageLocationType.fromInt(intent.getIntExtra(EXTRA_CURRENT_MAILBOX_LOCATION, 0))
         mLabelId = intent.getStringExtra(EXTRA_CURRENT_MAILBOX_LABEL_ID)
 
-        loadMailSettings()
         fetchOrganizationData()
 
         user = mUserManager.user
@@ -495,11 +493,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         ).show()
 
         viewModel.checkConnectivityDelayed()
-    }
-
-    @Subscribe
-    fun onMailSettingsEvent(event: MailSettingsEvent) {
-        loadMailSettings()
     }
 
     open fun onLabelsLoadedEvent(event: FetchLabelsEvent) {

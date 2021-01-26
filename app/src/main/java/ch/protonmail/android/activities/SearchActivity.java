@@ -54,7 +54,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.NoResultsEvent;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
 import ch.protonmail.android.utils.AppUtil;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -248,11 +247,6 @@ public class SearchActivity extends BaseActivity {
         MessageLocationType messageLocation = MessageLocationType.Companion.fromInt(message.getLocation());
         return messageLocation == MessageLocationType.ALL_DRAFT ||
                 messageLocation == MessageLocationType.DRAFT;
-    }
-
-    @Subscribe
-    public void onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe

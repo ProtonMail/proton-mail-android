@@ -253,10 +253,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         super.onSaveInstanceState(outState);
     }
 
-    @Deprecated // TODO Must be removed! It does nothing
-    protected final void loadMailSettings() {
-    }
-
     protected boolean isAutoShowRemoteImages() {
         MailSettings mailSettings = mUserManager.getCurrentUserMailSettingsBlocking();
         if (mailSettings != null)

@@ -59,7 +59,6 @@ import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
@@ -289,7 +288,6 @@ class EventHandler @AssistedInject constructor(
         mailSettings.pgpScheme = mSettings.pgpScheme
         mailSettings.setAttachPublicKey(if (mSettings.getAttachPublicKey()) 1 else 0)
         mailSettings.save()
-        AppUtil.postEventOnUi(MailSettingsEvent(mailSettings))
     }
 
     private fun writeUserSettings(uSettings: UserSettings) {

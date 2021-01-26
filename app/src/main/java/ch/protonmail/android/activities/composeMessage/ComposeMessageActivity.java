@@ -145,7 +145,6 @@ import ch.protonmail.android.events.PostLoadContactsEvent;
 import ch.protonmail.android.events.ResignContactEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
@@ -347,7 +346,6 @@ public class ComposeMessageActivity
             return;
         }
         setUpActionBar();
-        loadMailSettings();
         composeMessageViewModel = ViewModelProviders.of(this, composeMessageViewModelFactory).get(ComposeMessageViewModel.class);
         composeMessageViewModel.init(mHtmlProcessor);
         observeSetup();
@@ -969,11 +967,6 @@ public class ComposeMessageActivity
                 }
             });
         }
-    }
-
-    @Subscribe
-    public void onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe

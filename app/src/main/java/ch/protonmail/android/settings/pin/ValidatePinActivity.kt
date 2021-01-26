@@ -33,7 +33,6 @@ import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.PostImportAttachmentEvent
-import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModel
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
@@ -83,7 +82,7 @@ class ValidatePinActivity : BaseActivity(),
         }
         val titleRes = intent.getIntExtra(EXTRA_FRAGMENT_TITLE, 0)
         val validatePinFragment = PinFragment.newInstance(titleRes, PinAction.VALIDATE,
-                null, useFingerprint =  mUserManager.user.isUseFingerprint)
+            null, useFingerprint = mUserManager.user.isUseFingerprint)
         supportFragmentManager.beginTransaction()
             .add(R.id.fragmentContainer, validatePinFragment, validatePinFragment.fragmentKey).commitAllowingStateLoss()
 
@@ -176,25 +175,25 @@ class ValidatePinActivity : BaseActivity(),
     private fun initBiometricPrompt() {
         val executor = Executors.newSingleThreadExecutor()
         biometricPrompt = BiometricPrompt(this, executor,
-                object : BiometricPrompt.AuthenticationCallback() {
-                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                        super.onAuthenticationError(errorCode, errString)
-                        if (!this@ValidatePinActivity.isFinishing) {
-                            biometricPrompt.cancelAuthentication()
-                        }
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    if (!this@ValidatePinActivity.isFinishing) {
+                        biometricPrompt.cancelAuthentication()
                     }
+                }
 
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        super.onAuthenticationSucceeded(result)
-                        onPinSuccess()
-                    }
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    onPinSuccess()
+                }
 
-                })
+            })
         promptInfo = BiometricPrompt.PromptInfo.Builder()
-                .setTitle(getString(R.string.app_locked))
-                .setDescription(getString(R.string.log_in_using_biometric_credential))
-                .setNegativeButtonText(getString(R.string.use_pin_instead))
-                .build()
+            .setTitle(getString(R.string.app_locked))
+            .setDescription(getString(R.string.log_in_using_biometric_credential))
+            .setNegativeButtonText(getString(R.string.use_pin_instead))
+            .build()
         biometricPrompt.authenticate(promptInfo)
     }
 
@@ -222,7 +221,7 @@ class ValidatePinActivity : BaseActivity(),
         }
     }
 
-    private fun buildIntent() : Intent {
+    private fun buildIntent(): Intent {
         return Intent().apply {
             putExtra(EXTRA_PIN_VALID, true)
             if (importAttachmentEvent != null) {
@@ -237,8 +236,4 @@ class ValidatePinActivity : BaseActivity(),
         }
     }
 
-    @Subscribe
-    fun onMailSettingsEvent(event: MailSettingsEvent) {
-        loadMailSettings()
-    }
 }

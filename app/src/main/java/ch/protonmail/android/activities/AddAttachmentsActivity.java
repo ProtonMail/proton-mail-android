@@ -72,7 +72,6 @@ import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.PostImportAttachmentFailureEvent;
 import ch.protonmail.android.events.Status;
-import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.DownloadUtils;
@@ -304,11 +303,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
 
     private boolean isAttachmentsCountAllowed() {
         return mAdapter != null && mAdapter.getCount() < Constants.MAX_ATTACHMENTS;
-    }
-
-    @Subscribe
-    public void onMailSettingsEvent(MailSettingsEvent event) {
-        loadMailSettings();
     }
 
     @Subscribe
