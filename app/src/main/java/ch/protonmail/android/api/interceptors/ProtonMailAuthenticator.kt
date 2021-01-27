@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.api.interceptors
 
+import android.content.Context
 import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.TokenManager
 import ch.protonmail.android.api.segments.HEADER_APP_VERSION
@@ -28,9 +29,9 @@ import ch.protonmail.android.api.segments.HEADER_UID
 import ch.protonmail.android.api.segments.HEADER_USER_AGENT
 import ch.protonmail.android.api.segments.REFRESH_PATH
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
 import com.birbit.android.jobqueue.TagConstraint
 import okhttp3.Authenticator
@@ -45,7 +46,8 @@ import javax.inject.Singleton
 @Singleton
 class ProtonMailAuthenticator @Inject constructor(
     private val userManager: UserManager,
-    private val jobManager: JobManager
+    private val jobManager: JobManager,
+    private val appContext: Context
 ) : Authenticator {
 
     private val appVersionName by lazy {
@@ -56,6 +58,8 @@ class ProtonMailAuthenticator @Inject constructor(
             name
         }
     }
+
+    // api instance cannot be injected, due to a circular dependency
 
     @Throws(IOException::class)
     override fun authenticate(route: Route?, response: Response): Request? = refreshAuthToken(response)
@@ -85,7 +89,7 @@ class ProtonMailAuthenticator @Inject constructor(
         if (tokenManager != null && !originalRequest.url().encodedPath().contains(REFRESH_PATH)) {
             val refreshBody = tokenManager.createRefreshBody()
             val refreshResponse =
-                ProtonMailApplication.getApplication().api.refreshAuthBlocking(refreshBody, RetrofitTag(usernameAuth))
+                appContext.app.api.refreshAuthBlocking(refreshBody, RetrofitTag(usernameAuth))
             if (refreshResponse.error.isNullOrEmpty() && refreshResponse.accessToken != null) {
                 Timber.i(
                     "access token expired: got correct refresh response, handle refresh in token manager"
@@ -104,7 +108,7 @@ class ProtonMailAuthenticator @Inject constructor(
                             "(refresh token blank = ${tokenManager.isRefreshTokenBlank()}, " +
                             "uid blank = ${tokenManager.isUidBlank()}), logging out"
                     )
-                    ProtonMailApplication.getApplication().notifyLoggedOut(usernameAuth)
+                    appContext.app.notifyLoggedOut(usernameAuth)
                     jobManager.stop()
                     jobManager.clear()
                     jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
@@ -128,7 +132,7 @@ class ProtonMailAuthenticator @Inject constructor(
                     .header(HEADER_UID, tokenManager.uid)
                     .header(HEADER_APP_VERSION, appVersionName)
                     .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
-                    .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
+                    .header(HEADER_LOCALE, appContext.app.currentLocale)
                     .build()
             }
         } else { // if received 401 error while refreshing access token, send event to logout user
@@ -137,7 +141,7 @@ class ProtonMailAuthenticator @Inject constructor(
                     "(refresh token blank = ${tokenManager?.isRefreshTokenBlank()}, " +
                     "uid blank = ${tokenManager?.isUidBlank()})"
             )
-            ProtonMailApplication.getApplication().notifyLoggedOut(usernameAuth)
+            appContext.app.notifyLoggedOut(usernameAuth)
             userManager.logoutOffline(usernameAuth)
             return null
         }
@@ -149,7 +153,7 @@ class ProtonMailAuthenticator @Inject constructor(
             .header(HEADER_UID, tokenManager.uid)
             .header(HEADER_APP_VERSION, appVersionName)
             .header(HEADER_USER_AGENT, AppUtil.buildUserAgent())
-            .header(HEADER_LOCALE, ProtonMailApplication.getApplication().currentLocale)
+            .header(HEADER_LOCALE, appContext.app.currentLocale)
             .build()
     }
 }
