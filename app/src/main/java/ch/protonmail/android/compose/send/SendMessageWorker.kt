@@ -38,9 +38,11 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.compose.SaveDraft
+import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -67,7 +69,15 @@ class SendMessageWorker @WorkerInject constructor(
             ?: return failureWithError(SendMessageWorkerError.MessageNotFound)
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
 
-        saveDraft(
+        return when (saveDraft(message, previousSenderAddressId)) {
+            is SaveDraftResult.Success -> Result.failure()
+            else -> return failureWithError(SendMessageWorkerError.DraftCreationFailed)
+        }
+
+    }
+
+    private suspend fun saveDraft(message: Message, previousSenderAddressId: String): SaveDraftResult {
+        return this.saveDraft(
             SaveDraft.SaveDraftParameters(
                 message,
                 getInputAttachmentIds(),
@@ -75,9 +85,7 @@ class SendMessageWorker @WorkerInject constructor(
                 getInputActionType(),
                 previousSenderAddressId
             )
-        )
-
-        return Result.failure()
+        ).first()
     }
 
     private fun failureWithError(error: SendMessageWorkerError): Result {

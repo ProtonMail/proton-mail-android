@@ -32,8 +32,10 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.compose.SaveDraft
+import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.extensions.serialize
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -41,6 +43,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertArrayEquals
@@ -138,6 +141,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             Constants.MessageActionType.NONE,
             "prevSenderAddress"
         )
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
 
         worker.doWork()
@@ -153,7 +157,7 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerFailsWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
+    fun workerFailsReturningErrorWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
         val messageDbId = 2373L
         val messageId = "8322223"
         givenFullValidInput(messageDbId, messageId)
@@ -168,6 +172,28 @@ class SendMessageWorkerTest : CoroutinesTest {
             result
         )
         coVerify(exactly = 0) { saveDraft(any()) }
+    }
+
+    @Test
+    fun workerFailsReturningErrorWhenSaveDraftOperationFails() = runBlockingTest {
+        val messageDbId = 2834L
+        val messageId = "823472"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
+
+        val result = worker.doWork()
+
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "DraftCreationFailed")
+            ),
+            result
+        )
     }
 
     private fun givenFullValidInput(
