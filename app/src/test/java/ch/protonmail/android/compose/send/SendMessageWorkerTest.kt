@@ -22,14 +22,19 @@ package ch.protonmail.android.compose.send
 import android.content.Context
 import androidx.work.BackoffPolicy
 import androidx.work.ExistingWorkPolicy
+import androidx.work.ListenableWorker
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.utils.extensions.serialize
 import io.mockk.MockKAnnotations
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
@@ -52,7 +57,13 @@ class SendMessageWorkerTest : CoroutinesTest {
     private lateinit var parameters: WorkerParameters
 
     @RelaxedMockK
+    private lateinit var messageDetailsRepository: MessageDetailsRepository
+
+    @RelaxedMockK
     private lateinit var workManager: WorkManager
+
+    @RelaxedMockK
+    private lateinit var saveDraft: SaveDraft
 
     @InjectMockKs
     private lateinit var worker: SendMessageWorker
@@ -96,7 +107,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             val actualAttachmentIds = inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS)
             val actualMessageLocalId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID)
             val actualMessageParentId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
-            val actualMessageActionType = inputData.getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_JSON)
+            val actualMessageActionType = inputData.getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED)
             val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
@@ -111,4 +122,71 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun workerSavesDraftPassingGivenParameters() = runBlockingTest {
+        val messageDbId = 2373L
+        val messageId = "8322223"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        givenFullValidInput(
+            messageDbId,
+            messageId,
+            arrayOf("attId8327"),
+            "parentId82384",
+            Constants.MessageActionType.NONE,
+            "prevSenderAddress"
+        )
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+
+        worker.doWork()
+
+        val expectedParameters = SaveDraft.SaveDraftParameters(
+            message,
+            listOf("attId8327"),
+            "parentId82384",
+            Constants.MessageActionType.NONE,
+            "prevSenderAddress"
+        )
+        coVerify { saveDraft(expectedParameters) }
+    }
+
+    @Test
+    fun workerFailsWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
+        val messageDbId = 2373L
+        val messageId = "8322223"
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns null
+
+        val result = worker.doWork()
+
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "MessageNotFound")
+            ),
+            result
+        )
+        coVerify(exactly = 0) { saveDraft(any()) }
+    }
+
+    private fun givenFullValidInput(
+        messageDbId: Long,
+        messageId: String,
+        attachments: Array<String> = arrayOf("attId62364"),
+        parentId: String = "parentId72364",
+        messageActionType: Constants.MessageActionType = Constants.MessageActionType.REPLY,
+        previousSenderAddress: String = "prevSenderAddress923"
+    ) {
+        every { parameters.inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1) } answers { messageDbId }
+        every { parameters.inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS) } answers { attachments }
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID) } answers { messageId }
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID) } answers { parentId }
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED) } answers {
+            messageActionType.serialize()
+        }
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID) } answers {
+            previousSenderAddress
+        }
+    }
 }

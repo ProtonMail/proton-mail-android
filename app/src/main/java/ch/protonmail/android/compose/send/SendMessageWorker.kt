@@ -33,9 +33,12 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.usecase.compose.SaveDraft
+import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.TimeUnit
@@ -45,17 +48,58 @@ internal const val KEY_INPUT_SEND_MESSAGE_MSG_DB_ID = "keySendMessageMessageDbId
 internal const val KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS = "keySendMessageAttachmentIds"
 internal const val KEY_INPUT_SEND_MESSAGE_MESSAGE_ID = "keySendMessageMessageLocalId"
 internal const val KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID = "keySendMessageMessageParentId"
-internal const val KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_JSON = "keySendMessageMessageActionTypeSerialized"
+internal const val KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED = "keySendMessageMessageActionTypeSerialized"
 internal const val KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID = "keySendMessagePreviousSenderAddressId"
+
+internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageErrorResult"
+
+private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
 
 class SendMessageWorker @WorkerInject constructor(
     @Assisted context: Context,
-    @Assisted params: WorkerParameters
+    @Assisted params: WorkerParameters,
+    private val messageDetailsRepository: MessageDetailsRepository,
+    private val saveDraft: SaveDraft
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        TODO("Not yet implemented")
+        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
+            ?: return failureWithError(SendMessageWorkerError.MessageNotFound)
+        val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
+
+        saveDraft(
+            SaveDraft.SaveDraftParameters(
+                message,
+                getInputAttachmentIds(),
+                getInputParentId(),
+                getInputActionType(),
+                previousSenderAddressId
+            )
+        )
+
+        return Result.failure()
     }
+
+    private fun failureWithError(error: SendMessageWorkerError): Result {
+        val errorData = workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to error.name)
+        return Result.failure(errorData)
+    }
+
+    private fun getInputActionType(): Constants.MessageActionType =
+        inputData
+            .getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED)?.deserialize()
+            ?: Constants.MessageActionType.NONE
+
+    private fun getInputPreviousSenderAddressId() =
+        inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID)
+
+    private fun getInputParentId() = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
+
+    private fun getInputMessageDbId() =
+        inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, INPUT_MESSAGE_DB_ID_NOT_FOUND)
+
+    private fun getInputAttachmentIds() =
+        inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS)?.asList().orEmpty()
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
@@ -77,7 +121,7 @@ class SendMessageWorker @WorkerInject constructor(
                         KEY_INPUT_SEND_MESSAGE_MESSAGE_ID to message.messageId,
                         KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS to attachmentIds.toTypedArray(),
                         KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID to parentId,
-                        KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_JSON to actionType.serialize(),
+                        KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED to actionType.serialize(),
                         KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID to previousSenderAddressId
                     )
                 )
