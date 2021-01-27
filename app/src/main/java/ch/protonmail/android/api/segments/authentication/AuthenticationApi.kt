@@ -61,7 +61,6 @@ class AuthenticationApi(
     @Throws(IOException::class)
     override fun loginInfoForAuthentication(username: String): LoginInfoResponse {
         val infoBody = LoginInfoBody(username)
-        // return ParseUtils.parse(pubService.loginInfo(infoBody, RetrofitTag(usernameAuth = null)).execute())
         return ParseUtils.parse(pubService.loginInfo(infoBody, RetrofitTag(usernameAuth = null)).execute())
     }
 
