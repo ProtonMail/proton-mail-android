@@ -91,7 +91,6 @@ build debug develop:
     - job: detekt analysis
   only:
     - develop
-    - schedules
   script:
     - ./gradlew clean
     - ./gradlew assembleBetaDebug
@@ -207,7 +206,7 @@ unit tests release:
       --device model=Pixel2,version=28
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
-      --num-flaky-test-attempts=2
+      --num-flaky-test-attempts=1
       --timeout 30m
 
 firebase tests:
@@ -259,7 +258,7 @@ firebase feature tests:
     - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
     - gcloud auth activate-service-account --key-file /tmp/service-account.json
     - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
-    - gcloud --quiet firebase test android run
+    - gcloud beta --quiet firebase test android run
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
       --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
       --device model=$MODEL,version=$API_LEVEL
@@ -267,6 +266,7 @@ firebase feature tests:
       --use-orchestrator
       --num-flaky-test-attempts=1
       --timeout 45m
+      --client-details testType=$TEST_TYPE,testSuite=$TEST_CLASS,commitBranch=$CI_COMMIT_BRANCH,gitlabJobUrl=$CI_JOB_URL
 
 include:
   - project: 'translations/generator'
