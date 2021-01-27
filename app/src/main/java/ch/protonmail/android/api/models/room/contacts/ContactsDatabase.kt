@@ -25,6 +25,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ID
@@ -134,7 +135,10 @@ interface ContactsDatabase {
     fun clearByEmail(email: String)
 
     @Query("DELETE FROM $TABLE_CONTACT_EMAILS")
-    fun clearContactEmailsCache()
+    fun clearContactEmailsCacheBlocking()
+
+    @Query("DELETE FROM $TABLE_CONTACT_EMAILS")
+    suspend fun clearContactEmailsCache()
 
     @Delete
     fun deleteContactEmail(vararg contactEmail: ContactEmail)
@@ -146,10 +150,13 @@ interface ContactsDatabase {
     fun saveContactEmail(contactEmail: ContactEmail): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAllContactsEmails(vararg emailData: ContactEmail): List<Long>
+    fun saveAllContactsEmailsBlocking(vararg emailData: ContactEmail): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAllContactsEmails(emailData: Collection<ContactEmail>): List<Long>
+    fun saveAllContactsEmailsBlocking(emailData: Collection<ContactEmail>): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveAllContactsEmails(emailData: Collection<ContactEmail>): List<Long>
 
     @Query("SELECT count(*) FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS LIKE :contactGroupId")
     fun countContactEmails(contactGroupId: String): Int
@@ -208,7 +215,7 @@ interface ContactsDatabase {
     fun saveAllContactGroups(vararg contactLabels: ContactLabel): List<Long>
 
     @Query("DELETE FROM $TABLE_CONTACT_LABEL")
-    fun clearContactGroupsList()
+    suspend fun clearContactGroupsList()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveContactGroupsListBlocking(contactLabels: List<ContactLabel>): List<Long>
@@ -269,15 +276,37 @@ interface ContactsDatabase {
     fun deleteJoinByGroupIdAndEmailId(contactEmailIds: List<String>, contactGroupId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabel(contactEmailContactLabelJoin: ContactEmailContactLabelJoin): Long
+    fun saveContactEmailContactLabelBlocking(contactEmailContactLabelJoin: ContactEmailContactLabelJoin): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabel(vararg contactEmailContactLabelJoin: ContactEmailContactLabelJoin): List<Long>
+    fun saveContactEmailContactLabelBlocking(
+        vararg contactEmailContactLabelJoin: ContactEmailContactLabelJoin
+    ): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabel(contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>): List<Long>
+    fun saveContactEmailContactLabelBlocking(
+        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
+    ): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveContactEmailContactLabel(
+        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
+    ): List<Long>
 
     @Delete
     fun deleteContactEmailContactLabel(contactEmailContactLabelJoin: Collection<ContactEmailContactLabelJoin>)
+
+    @Transaction
+    suspend fun insertNewContactsAndLabels(
+        allContactEmails: List<ContactEmail>,
+        contactLabelList: List<ContactLabel>,
+        allJoins: List<ContactEmailContactLabelJoin>
+    ) {
+        clearContactEmailsCache()
+        clearContactGroupsList()
+        saveContactGroupsList(contactLabelList)
+        saveAllContactsEmails(allContactEmails)
+        saveContactEmailContactLabel(allJoins)
+    }
     //endregion
 }

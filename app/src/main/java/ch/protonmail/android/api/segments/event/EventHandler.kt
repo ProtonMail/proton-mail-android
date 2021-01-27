@@ -108,7 +108,7 @@ class EventHandler @AssistedInject constructor(
     fun handleRefreshContacts() {
         contactsDao.clearContactDataCache()
         contactsDao.clearContactEmailsLabelsJoin()
-        contactsDao.clearContactEmailsCache()
+        contactsDao.clearContactEmailsCacheBlocking()
         contactsDao.clearContactGroupsLabelsTableBlocking()
         fetchContactEmails.enqueue()
         fetchContactsData.enqueue()
@@ -564,7 +564,7 @@ class EventHandler @AssistedInject constructor(
                         val contactEmailId = oldContactEmail.contactEmailId
                         val joins = contactsDatabase.fetchJoinsByEmail(contactEmailId).toMutableList()
                         contactsDatabase.saveContactEmail(contactEmail)
-                        contactsDatabase.saveContactEmailContactLabel(joins)
+                        contactsDatabase.saveContactEmailContactLabelBlocking(joins)
                     } else {
                         contactsDatabase.saveContactEmail(contactEmail)
                         val newJoins = mutableListOf<ContactEmailContactLabelJoin>()
@@ -573,7 +573,7 @@ class EventHandler @AssistedInject constructor(
                         }
                         Timber.v("Create new email contact: ${contactEmail.email} newJoins size: ${newJoins.size}")
                         if (newJoins.isNotEmpty()) {
-                            contactsDatabase.saveContactEmailContactLabel(newJoins)
+                            contactsDatabase.saveContactEmailContactLabelBlocking(newJoins)
                         }
                     }
                 }
@@ -594,7 +594,7 @@ class EventHandler @AssistedInject constructor(
                                 joins.add(ContactEmailContactLabelJoin(contactEmailId, labelId))
                             }
                             if (joins.isNotEmpty()) {
-                                contactsDatabase.saveContactEmailContactLabel(joins)
+                                contactsDatabase.saveContactEmailContactLabelBlocking(joins)
                             }
                         }
                     } else {
@@ -689,7 +689,7 @@ class EventHandler @AssistedInject constructor(
             val labelToSave = contactLabelFactory.createDBObjectFromServerObject(updatedGroup)
             val joins = contactsDatabase.fetchJoins(labelToSave.ID)
             contactsDatabase.saveContactGroupLabel(labelToSave)
-            contactsDatabase.saveContactEmailContactLabel(joins)
+            contactsDatabase.saveContactEmailContactLabelBlocking(joins)
         }
     }
 

@@ -34,7 +34,6 @@ import ch.protonmail.android.api.utils.ParseUtils
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import retrofit2.Call
 import java.io.IOException
 
 class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpec {
@@ -52,20 +51,7 @@ class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpe
     override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse =
         service.contacts(page, pageSize)
 
-    @Throws(IOException::class)
-    override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> {
-        val list = ArrayList<ContactEmailsResponseV2?>()
-        val pendingRequests = ArrayList<Call<ContactEmailsResponseV2>>()
-        val firstPage = service.contactsEmailsCall(0, pageSize).execute().body()
-        list.add(firstPage!!)
-        for (i in 1..(firstPage.total + (pageSize - 1)) / pageSize) {
-            pendingRequests.add(service.contactsEmailsCall(i, pageSize))
-        }
-        list.addAll(executeAll(pendingRequests))
-        return list
-    }
-
-    override suspend fun fetchRawContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
+    override suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
         service.contactsEmails(page, pageSize)
 
     override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> =

@@ -328,7 +328,7 @@ public class AppUtil {
                 pendingActionsDatabase.clearPendingUploadCache();
                 if (clearContacts) {
                     contactsDatabase.clearContactEmailsLabelsJoin();
-                    contactsDatabase.clearContactEmailsCache();
+                    contactsDatabase.clearContactEmailsCacheBlocking();
                     contactsDatabase.clearContactDataCache();
                     contactsDatabase.clearContactGroupsLabelsTableBlocking();
                     contactsDatabase.clearFullContactDetailsCache();

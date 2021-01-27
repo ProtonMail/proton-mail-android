@@ -53,7 +53,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
             .doOnComplete {
                 val joins = contactsDao.fetchJoins(contactLabel.ID)
                 contactsDao.saveContactGroupLabel(contactLabel)
-                contactsDao.saveContactEmailContactLabel(joins)
+                contactsDao.saveContactEmailContactLabelBlocking(joins)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -102,7 +102,7 @@ class ContactGroupEditCreateRepository @Inject constructor(
                     list.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
                 getContactGroupEmails(contactGroupId).test().values()
-                contactsDao.saveContactEmailContactLabel(list)
+                contactsDao.saveContactEmailContactLabelBlocking(list)
             }.doOnError { throwable ->
                 if (throwable is IOException) {
                     jobManager.addJobInBackground(SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList))
