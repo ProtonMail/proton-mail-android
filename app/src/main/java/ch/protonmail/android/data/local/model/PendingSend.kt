@@ -30,7 +30,7 @@ const val COLUMN_PENDING_SEND_SENT = "sent"
 const val COLUMN_PENDING_SEND_LOCAL_DB_ID = "local_database_id"
 
 @Entity(tableName = TABLE_PENDING_SEND)
-class PendingSend @JvmOverloads constructor(
+data class PendingSend @JvmOverloads constructor(
 
     @PrimaryKey
     @ColumnInfo(name = COLUMN_PENDING_SEND_ID)

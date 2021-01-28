@@ -54,10 +54,10 @@ import com.google.gson.Gson
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
-import timber.log.Timber
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.takeIfNotEmpty
+import timber.log.Timber
 
 // region constants
 const val EXTRA_SETTINGS_ITEM_TYPE = "EXTRA_SETTINGS_ITEM_TYPE"
@@ -183,8 +183,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             SettingsItem.DISPLAY_NAME_AND_SIGNATURE -> {
 
                 selectedAddress = checkNotNull(user.addresses.primary)
-                val newAddressId = user.addresses.primary?.id
-                val currentSignature = selectedAddress.signature?.s ?: EMPTY_STRING
+                val (newAddressId, currentSignature) = selectedAddress.id to selectedAddress.signature?.s
 
                 if (mDisplayName.isNotEmpty()) {
                     setValue(SettingsEnum.DISPLAY_NAME, mDisplayName)
