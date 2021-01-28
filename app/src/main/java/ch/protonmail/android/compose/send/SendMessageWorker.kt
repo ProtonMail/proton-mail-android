@@ -74,9 +74,13 @@ class SendMessageWorker @WorkerInject constructor(
             ?: return failureWithError(SendMessageWorkerError.MessageNotFound)
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
 
-        return when (saveDraft(message, previousSenderAddressId)) {
+        return when (val result = saveDraft(message, previousSenderAddressId)) {
             is SaveDraftResult.Success -> {
-                requestSendPreferences(message) ?: return retryOrFail(
+                val savedDraftMessage = messageDetailsRepository.findMessageById(result.draftId) ?: return retryOrFail(
+                    SendMessageWorkerError.SavedDraftMessageNotFound
+                )
+
+                requestSendPreferences(savedDraftMessage) ?: return retryOrFail(
                     SendMessageWorkerError.FetchSendPreferencesFailed
                 )
                 Result.failure()

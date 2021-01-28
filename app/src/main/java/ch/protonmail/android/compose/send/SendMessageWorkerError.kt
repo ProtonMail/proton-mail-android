@@ -22,5 +22,6 @@ package ch.protonmail.android.compose.send
 enum class SendMessageWorkerError {
     MessageNotFound,
     DraftCreationFailed,
-    FetchSendPreferencesFailed
+    FetchSendPreferencesFailed,
+    SavedDraftMessageNotFound
 }

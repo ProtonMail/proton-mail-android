@@ -147,8 +147,9 @@ class SendMessageWorkerTest : CoroutinesTest {
             Constants.MessageActionType.NONE,
             "prevSenderAddress"
         )
-        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(any()) } returns Message()
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
 
         worker.doWork()
 
@@ -203,6 +204,51 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerGetsTheUpdatedMessageThatWasSavedAsDraftWhenSavingDraftSucceeds() = runBlockingTest {
+        val messageDbId = 328423L
+        val messageId = "82384203"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        val savedDraftId = "234232"
+        val savedDraftMessage = Message().apply {
+            dbId = messageDbId
+            this.messageId = savedDraftId
+            toList = listOf(MessageRecipient("recipient", "recipientOnSavedDraft@pm.me"))
+        }
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns savedDraftMessage
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftId))
+
+        worker.doWork()
+
+        coVerify { messageDetailsRepository.findMessageById(savedDraftId) }
+        verify { sendPreferencesFactory.fetch(listOf("recipientOnSavedDraft@pm.me")) }
+    }
+
+    @Test
+    fun workerRetriesOrFailsWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDb() = runBlockingTest {
+        val messageDbId = 38472L
+        val messageId = "29837462"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        val savedDraftId = "2836462"
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns null
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftId))
+        every { parameters.runAttemptCount } returns 1
+
+        val result = worker.doWork()
+
+        assertEquals(ListenableWorker.Result.Retry(), result)
+    }
+
+    @Test
     fun workerFetchesSendPreferencesForEachUniqueRecipientWhenSavingDraftSucceeds() = runBlockingTest {
         val messageDbId = 2834L
         val messageId = "823472"
@@ -221,9 +267,12 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.ccList = listOf(MessageRecipient("recipient2", ccRecipientEmail))
             this.bccList = listOf(MessageRecipient("recipient3", bccRecipientEmail))
         }
+        val savedDraftMessageId = "6234723"
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
+        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
 
         worker.doWork()
 
@@ -252,6 +301,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(any()) } returns Message()
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
         every { sendPreferencesFactory.fetch(any()) } throws Exception("test - failed fetching send preferences")
         every { parameters.runAttemptCount } returns 1
@@ -271,6 +321,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(any()) } returns Message()
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
         every { sendPreferencesFactory.fetch(any()) } throws Exception("test - failed fetching send preferences")
         every { parameters.runAttemptCount } returns 6
@@ -297,9 +348,12 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.ccList = emptyList()
             this.bccList = listOf(MessageRecipient("emptyBccRecipient", ""))
         }
+        val savedDraftMessageId = "6234723"
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
+        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
 
         worker.doWork()
 
