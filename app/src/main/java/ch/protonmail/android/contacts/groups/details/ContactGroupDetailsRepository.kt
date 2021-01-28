@@ -27,14 +27,13 @@ import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.worker.PostLabelWorker
-import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import java.io.IOException
 import javax.inject.Inject
 
 class ContactGroupDetailsRepository @Inject constructor(
-    private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
     private val databaseProvider: DatabaseProvider,
     private val workManager: WorkManager
@@ -42,37 +41,39 @@ class ContactGroupDetailsRepository @Inject constructor(
 
     private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupDetailsRepository"); databaseProvider.provideContactsDao() }
 
-    fun findContactGroupDetails(id: String): Single<ContactLabel> {
-        return contactsDatabase.findContactGroupByIdAsync(id)
-    }
+    fun findContactGroupDetailsBlocking(id: String): Single<ContactLabel> =
+        contactsDatabase.findContactGroupByIdAsync(id)
 
-    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
+    suspend fun findContactGroupDetails(id: String): ContactLabel? =
+        contactsDatabase.findContactGroupById(id)
+
+    fun getContactGroupEmailsBlocking(id: String): Observable<List<ContactEmail>> {
         return contactsDatabase.findAllContactsEmailsByContactGroupAsyncObservable(id)
-                .toObservable()
+            .toObservable()
     }
 
-    fun filterContactGroupEmails(id: String, filter: String): Observable<List<ContactEmail>> {
-        val filterString = "%$filter%"
-        return contactsDatabase.filterContactsEmailsByContactGroupAsyncObservable(id, filterString)
-                .toObservable()
-    }
+    suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
+        contactsDatabase.findAllContactsEmailsByContactGroupId(id)
+
+    fun filterContactGroupEmails(id: String, filter: String): Flow<List<ContactEmail>> =
+        contactsDatabase.filterContactsEmailsByContactGroup(id, "%$filter%")
 
     fun createContactGroup(contactLabel: ContactLabel): Single<ContactLabel> {
         val contactLabelConverterFactory = ContactLabelFactory()
         val labelBody = contactLabelConverterFactory.createServerObjectFromDBObject(contactLabel)
         return api.createLabelCompletable(labelBody.labelBody)
-                .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
-                .doOnError { throwable ->
-                    if (throwable is IOException) {
-                        PostLabelWorker.Enqueuer(workManager).enqueue(
-                            contactLabel.name,
-                            contactLabel.color,
-                            contactLabel.display,
-                            contactLabel.exclusive.makeInt(),
-                            false,
-                            contactLabel.ID
-                        )
-                    }
+            .doOnSuccess { label -> contactsDatabase.saveContactGroupLabel(label) }
+            .doOnError { throwable ->
+                if (throwable is IOException) {
+                    PostLabelWorker.Enqueuer(workManager).enqueue(
+                        contactLabel.name,
+                        contactLabel.color,
+                        contactLabel.display,
+                        contactLabel.exclusive.makeInt(),
+                        false,
+                        contactLabel.ID
+                    )
                 }
+            }
     }
 }

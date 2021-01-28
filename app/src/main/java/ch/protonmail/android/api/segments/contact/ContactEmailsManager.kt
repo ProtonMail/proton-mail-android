@@ -22,8 +22,10 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.rx.ThreadSchedulers
+import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.core.Constants
+import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactEmailsManager @Inject constructor(
@@ -31,23 +33,27 @@ class ContactEmailsManager @Inject constructor(
     private val databaseProvider: DatabaseProvider
 ) {
 
-    private var contactApi: ContactApiSpec = apiManager
-
-    fun refresh() {
-        // fetch and prepare data
-        val contactLabelList = apiManager.fetchContactGroups()
-            .map { it.contactGroups }
-            .subscribeOn(ThreadSchedulers.io())
-            .observeOn(ThreadSchedulers.io())
-            .blockingGet()
-        val list = contactApi.fetchContactEmails(Constants.CONTACTS_PAGE_SIZE)
-        val allContactEmails = ArrayList<ContactEmail>()
-        list.forEach {
-            it?.let {
-                allContactEmails.addAll(it.contactEmails)
-            }
+    fun refreshBlocking() {
+        runBlocking {
+            refresh()
         }
-        val allJoins = ArrayList<ContactEmailContactLabelJoin>()
+    }
+
+    suspend fun refresh() {
+        Timber.v("Contacts refresh called")
+        val contactLabelList = apiManager.fetchContactGroupsList()
+        val firstPage = apiManager.fetchRawContactEmails(0, Constants.CONTACTS_PAGE_SIZE)
+        val allResults = mutableListOf(firstPage)
+        for (i in 1..(firstPage.total + (Constants.CONTACTS_PAGE_SIZE - 1)) / Constants.CONTACTS_PAGE_SIZE) {
+            allResults.add(apiManager.fetchRawContactEmails(i, Constants.CONTACTS_PAGE_SIZE))
+        }
+        val allContactEmails = allResults.flatMap { it.contactEmails }
+
+        saveData(allContactEmails, contactLabelList, getJoins(allContactEmails))
+    }
+
+    private fun getJoins(allContactEmails: List<ContactEmail>): MutableList<ContactEmailContactLabelJoin> {
+        val allJoins = mutableListOf<ContactEmailContactLabelJoin>()
         for (contactEmail in allContactEmails) {
             val labelIds = contactEmail.labelIds
             if (labelIds != null) {
@@ -56,12 +62,23 @@ class ContactEmailsManager @Inject constructor(
                 }
             }
         }
+        return allJoins
+    }
+
+    private fun saveData(
+        allContactEmails: List<ContactEmail>,
+        contactLabelList: List<ContactLabel>,
+        allJoins: MutableList<ContactEmailContactLabelJoin>
+    ) {
+        Timber.v(
+            "Saving fresh sizes allContactEmails: ${allContactEmails.size}, contactLabelList: ${contactLabelList.size}, allJoins: ${allJoins.size}"
+        )
         val contactsDatabase = databaseProvider.provideContactsDatabase()
         val contactsDao = databaseProvider.provideContactsDao()
         contactsDatabase.runInTransaction {
             contactsDao.clearContactEmailsCache()
             contactsDao.clearContactGroupsList()
-            contactsDao.saveContactGroupsList(contactLabelList)
+            contactsDao.saveContactGroupsListBlocking(contactLabelList)
             contactsDao.saveAllContactsEmails(allContactEmails)
             contactsDao.saveContactEmailContactLabel(allJoins)
         }

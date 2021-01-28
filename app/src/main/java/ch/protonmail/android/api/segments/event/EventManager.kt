@@ -147,9 +147,9 @@ class EventManager @Inject constructor(
             return
         }
         Timber.d("EventManager handler stage and write")
-        if (handler.stage(response)) {
+        if (handler.stage(response.messageUpdates)) {
             // Write the updates since the staging was completed without any error
-            handler.write()
+            handler.write(response)
             // Update next event id only after writing updates to local cache has finished successfully
             backupNextEventId(handler.username, response.eventID)
         }
@@ -160,18 +160,20 @@ class EventManager @Inject constructor(
     }
 
     private fun recoverNextEventId(username: String): String? {
-        val prefs = sharedPrefs.getOrPut(username, {
-            protonMailApplication.getSecureSharedPreferences(username)
-        })
+        val prefs = sharedPrefs.getOrPut(
+            username,
+            { protonMailApplication.getSecureSharedPreferences(username) }
+        )
         Timber.d("EventManager recoverLastEventId")
         val lastEventId = prefs.getString(PREF_NEXT_EVENT_ID, null)
         return if (lastEventId.isNullOrEmpty()) null else lastEventId
     }
 
     private fun backupNextEventId(username: String, eventId: String) {
-        val prefs = sharedPrefs.getOrPut(username, {
-            protonMailApplication.getSecureSharedPreferences(username)
-        })
+        val prefs = sharedPrefs.getOrPut(
+            username,
+            { protonMailApplication.getSecureSharedPreferences(username) }
+        )
         Timber.d("EventManager backupLastEventId")
         prefs.edit().putString(PREF_NEXT_EVENT_ID, eventId).apply()
     }

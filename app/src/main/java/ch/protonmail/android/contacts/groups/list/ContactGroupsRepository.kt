@@ -23,71 +23,43 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
     private val api: ProtonMailApiManager,
-    private val contactsDao: ContactsDao
+    private val contactsDao: ContactsDao,
+    private val dispatchers: DispatcherProvider
 ) {
 
-    fun getJoins(): Observable<List<ContactEmailContactLabelJoin>> {
-        return contactsDao.fetchJoinsObservable().toObservable()
-    }
+    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactsDao.fetchJoins()
 
-    fun getContactGroups(): Observable<List<ContactLabel>> {
-        return Observable.concatArrayDelayError(
-            getContactGroupsFromDB(),
-            getContactGroupsFromApi().debounce(400, TimeUnit.MILLISECONDS)
-        )
-    }
+    fun observeContactGroups(filter: String): Flow<List<ContactLabel>> =
+        contactsDao.findContactGroupsFlow("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
+            .map { labels ->
+                labels.map { label -> label.contactEmailsCount = contactsDao.countContactEmailsByLabelId(label.ID) }
+                labels
+            }
+            .flowOn(dispatchers.Io)
 
-    fun getContactGroups(filter: String): Observable<List<ContactLabel>> {
-        return getContactGroupsFromDB(filter)
-    }
-
-    fun getContactGroupEmails(id: String): Observable<List<ContactEmail>> {
-        return contactsDao.findAllContactsEmailsByContactGroupAsyncObservable(id)
-            .toObservable()
-    }
+    suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
+        contactsDao.findAllContactsEmailsByContactGroupId(id)
 
     fun saveContactGroup(contactLabel: ContactLabel) {
         contactsDao.saveContactGroupLabel(contactLabel)
     }
 
-    private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
-        return api.fetchContactGroupsAsObservable().doOnNext {
+    suspend fun getContactGroupsFromApi(): List<ContactLabel> {
+        return api.fetchContactGroupsList().also { labels ->
             contactsDao.clearContactGroupsLabelsTable()
-            contactsDao.saveContactGroupsList(it)
+            contactsDao.saveContactGroupsList(labels)
         }
     }
 
-    private fun getContactGroupsFromDB(): Observable<List<ContactLabel>> {
-        return contactsDao.findContactGroupsObservable()
-            .flatMap { list ->
-                Observable.fromIterable(list)
-                    .map {
-                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
-                        it
-                    }
-                    .toList()
-                    .toFlowable()
-            }
-            .toObservable()
-    }
-
-    private fun getContactGroupsFromDB(filter: String): Observable<List<ContactLabel>> {
-        return contactsDao.findContactGroupsObservable(filter)
-            .flatMap { list ->
-                Observable.fromIterable(list)
-                    .map {
-                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
-                        it
-                    }
-                    .toList()
-                    .toFlowable()
-            }
-            .toObservable()
+    private companion object {
+        private const val SEARCH_DELIMITER = "%"
     }
 }

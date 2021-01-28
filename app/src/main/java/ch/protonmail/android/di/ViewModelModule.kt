@@ -28,10 +28,8 @@ import ch.protonmail.android.activities.settings.NotificationSettingsViewModel
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.compose.ComposeMessageViewModelFactory
 import ch.protonmail.android.compose.recipients.GroupRecipientsViewModelFactory
-import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.ContactGroupEditCreateViewModelFactory
 import ch.protonmail.android.contacts.groups.edit.chooser.AddressChooserViewModelFactory
-import ch.protonmail.android.contacts.groups.list.ContactGroupsViewModelFactory
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.settings.pin.viewmodel.PinFragmentViewModelFactory
@@ -54,17 +52,6 @@ internal class ViewModelModule {
     fun provideAddressChooserViewModelFactory(addressChooserViewModelFactory: AddressChooserViewModelFactory):
             ViewModelProvider.NewInstanceFactory {
         return addressChooserViewModelFactory
-    }
-
-    @Provides
-    fun provideContactGroupsViewModelFactory(contactGroupsViewModelFactory: ContactGroupsViewModelFactory):
-            ViewModelProvider.NewInstanceFactory {
-        return contactGroupsViewModelFactory
-    }
-
-    @Provides
-    fun provideContactGroupDetailsViewModelFactory(contactGroupDetailsViewModelFactory: ContactGroupDetailsViewModelFactory): ViewModelProvider.NewInstanceFactory {
-        return contactGroupDetailsViewModelFactory
     }
 
     @Provides

@@ -99,7 +99,7 @@ class ComposeMessageRepository @Inject constructor(
             .flatMap { list ->
                 Observable.fromIterable(list)
                     .map {
-                        it.contactEmailsCount = tempContactsDao.countContactEmailsByLabelId(it.ID)
+                        it.contactEmailsCount = tempContactsDao.countContactEmailsByLabelIdBlocking(it.ID)
                         it
                     }
                     .toList()

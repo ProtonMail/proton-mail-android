@@ -24,6 +24,8 @@ import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetada
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
+import ch.protonmail.android.api.models.room.counters.CountersDatabase
+import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
@@ -80,5 +82,13 @@ object DatabaseModule {
 
     @Provides
     fun provideContactsDatabase(factory: ContactsDatabaseFactory): ContactsDatabase =
+        factory.getDatabase()
+
+    @Provides
+    fun provideCountersDatabaseFactory(context: Context, userManager: UserManager): CountersDatabaseFactory =
+        CountersDatabaseFactory.getInstance(context, userManager.username)
+
+    @Provides
+    fun provideCountersDatabase(factory: CountersDatabaseFactory): CountersDatabase =
         factory.getDatabase()
 }

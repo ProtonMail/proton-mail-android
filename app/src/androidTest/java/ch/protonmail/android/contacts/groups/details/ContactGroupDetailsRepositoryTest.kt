@@ -64,7 +64,7 @@ class ContactGroupDetailsRepositoryTest {
 
     @BeforeTest
     fun setUp() {
-        contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider, workManager)
+        contactGroupDetailsRepository = ContactGroupDetailsRepository(protonMailApi, databaseProvider, workManager)
     }
 
     //region tests
@@ -73,7 +73,7 @@ class ContactGroupDetailsRepositoryTest {
         val label1 = ContactLabel("a", "aa")
         every { database.findContactGroupByIdAsync("") } returns Single.just(label1)
 
-        val testObserver = contactGroupDetailsRepository.findContactGroupDetails("").test()
+        val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         testObserver.assertValue(label1)
     }
@@ -84,7 +84,7 @@ class ContactGroupDetailsRepositoryTest {
         every { database.findContactGroupByIdAsync("a") } returns Single.just(label1)
         every { database.findContactGroupByIdAsync(any()) } returns Single.error(EmptyResultSetException("no such element"))
 
-        val testObserver = contactGroupDetailsRepository.findContactGroupDetails("b").test()
+        val testObserver = contactGroupDetailsRepository.findContactGroupDetailsBlocking("b").test()
         testObserver.awaitTerminalEvent()
         Assert.assertEquals(0, testObserver.valueCount())
         testObserver.assertError(EmptyResultSetException::class.java)
@@ -96,7 +96,7 @@ class ContactGroupDetailsRepositoryTest {
         val email2 = ContactEmail("b", "b@b.b", name = "ce2")
         every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(listOf(email1, email2))
 
-        val testObserver = contactGroupDetailsRepository.getContactGroupEmails("").test()
+        val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         val returnedResult = testObserver.values()[0]
         val first = returnedResult?.get(0)
@@ -111,7 +111,7 @@ class ContactGroupDetailsRepositoryTest {
         val emptyList: List<ContactEmail> = emptyList()
         every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(emptyList)
 
-        val testObserver = contactGroupDetailsRepository.getContactGroupEmails("").test()
+        val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         val returnedResult = testObserver.values()
         Assert.assertEquals(emptyList<ContactEmail>(), returnedResult[0]) //not sure about this
@@ -140,7 +140,6 @@ class ContactGroupDetailsRepositoryTest {
 
         val testObserver = contactGroupDetailsRepository.createContactGroup(toCreateContactGroup).test()
         testObserver.awaitTerminalEvent()
-        verify(exactly = 1) { jobManager.addJobInBackground(any()) }
         verify(exactly = 0) { database.saveContactGroupLabel(any()) }
     }
 
@@ -162,7 +161,7 @@ class ContactGroupDetailsRepositoryTest {
         val email2 = ContactEmail("b", "b@b.b", name = "ce2")
         every { database.findAllContactsEmailsByContactGroupAsyncObservable(any()) } returns Flowable.just(listOf(email1, email2))
 
-        val testObserver = contactGroupDetailsRepository.getContactGroupEmails("").test()
+        val testObserver = contactGroupDetailsRepository.getContactGroupEmailsBlocking("").test()
         testObserver.awaitTerminalEvent()
         val returnedResult = testObserver.values()[0]
         val first = returnedResult?.get(0)

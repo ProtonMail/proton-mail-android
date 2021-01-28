@@ -330,7 +330,7 @@ public class AppUtil {
                     contactsDatabase.clearContactEmailsLabelsJoin();
                     contactsDatabase.clearContactEmailsCache();
                     contactsDatabase.clearContactDataCache();
-                    contactsDatabase.clearContactGroupsLabelsTable();
+                    contactsDatabase.clearContactGroupsLabelsTableBlocking();
                     contactsDatabase.clearFullContactDetailsCache();
                 }
                 messagesDatabase.clearMessagesCache();

@@ -25,10 +25,12 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
 import org.junit.Rule
+import java.util.Arrays
 import kotlin.test.Test
-import java.util.*
 
 /**
  * Created by Dino Kadrikj on 13.08.2018.
@@ -51,7 +53,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
 
-        val needed = database.findContactGroupById("b")
+        val needed = database.findContactGroupByIdBlocking("b")
         Assert.assertEquals(label2, needed)
     }
 
@@ -62,7 +64,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label1)
         database.updateFullContactGroup(label2)
 
-        val needed = database.findContactGroupById("a")
+        val needed = database.findContactGroupByIdBlocking("a")
         Assert.assertEquals(needed?.name, "ab")
     }
 
@@ -74,8 +76,8 @@ class ContactGroupsDatabaseTest {
         database.saveAllContactGroups(label1, label2)
         database.updateFullContactGroup(label3)
 
-        val neededUpdated = database.findContactGroupById("a")
-        val neededNotUpdated = database.findContactGroupById("b")
+        val neededUpdated = database.findContactGroupByIdBlocking("a")
+        val neededNotUpdated = database.findContactGroupByIdBlocking("b")
         Assert.assertEquals(neededUpdated?.name, "ab")
         Assert.assertEquals(neededNotUpdated?.name, "bb")
     }
@@ -87,7 +89,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label1)
         database.updatePartially(label2)
 
-        val needed = database.findContactGroupById("a")
+        val needed = database.findContactGroupByIdBlocking("a")
         Assert.assertEquals(needed?.color, "aaa")
         Assert.assertEquals(needed?.name, "ab")
         Assert.assertEquals(needed?.order, 1)
@@ -113,7 +115,7 @@ class ContactGroupsDatabaseTest {
         database.saveContactGroupLabel(label2)
         database.saveContactGroupLabel(label3)
 
-        val actual = database.findContactGroupById("a")
+        val actual = database.findContactGroupByIdBlocking("a")
         Assert.assertEquals(label3, actual)
     }
 
@@ -125,7 +127,7 @@ class ContactGroupsDatabaseTest {
         database.saveAllContactGroups(label1, label2, label3)
         val sizeAfterInsert = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(sizeAfterInsert, 3)
-        database.clearContactGroupsLabelsTable()
+        database.clearContactGroupsLabelsTableBlocking()
         val sizeAfterClearing = database.findContactGroupsLiveData().testValue?.size
         Assert.assertEquals(sizeAfterClearing, 0)
     }
@@ -179,12 +181,12 @@ class ContactGroupsDatabaseTest {
         val contactEmailContactLabel9 = ContactEmailContactLabelJoin("e6", "ld")
 
         database.saveContactEmailContactLabel(contactEmailContactLabel1, contactEmailContactLabel2, contactEmailContactLabel3,
-                contactEmailContactLabel4, contactEmailContactLabel5, contactEmailContactLabel6, contactEmailContactLabel7,
-                contactEmailContactLabel8, contactEmailContactLabel9)
-        val laCount = database.countContactEmailsByLabelId("la")
-        val lbCount = database.countContactEmailsByLabelId("lb")
-        val lcCount = database.countContactEmailsByLabelId("lc")
-        val ldCount = database.countContactEmailsByLabelId("ld")
+            contactEmailContactLabel4, contactEmailContactLabel5, contactEmailContactLabel6, contactEmailContactLabel7,
+            contactEmailContactLabel8, contactEmailContactLabel9)
+        val laCount = database.countContactEmailsByLabelIdBlocking("la")
+        val lbCount = database.countContactEmailsByLabelIdBlocking("lb")
+        val lcCount = database.countContactEmailsByLabelIdBlocking("lc")
+        val ldCount = database.countContactEmailsByLabelIdBlocking("ld")
         Assert.assertEquals(3, laCount)
         Assert.assertEquals(2, lbCount)
         Assert.assertEquals(3, lcCount)
@@ -212,7 +214,7 @@ class ContactGroupsDatabaseTest {
         val contactEmailContactLabel8 = ContactEmailContactLabelJoin("e5", "la")
 
         database.saveContactEmailContactLabel(contactEmailContactLabel1, contactEmailContactLabel2,
-                contactEmailContactLabel3, contactEmailContactLabel4, contactEmailContactLabel7, contactEmailContactLabel8)
+            contactEmailContactLabel3, contactEmailContactLabel4, contactEmailContactLabel7, contactEmailContactLabel8)
         val laReturnedEmails = database.findAllContactsEmailsByContactGroupAsync("la").testValue
         val lbReturnedEmails = database.findAllContactsEmailsByContactGroupAsync("lb").testValue
         val lcReturnedEmails = database.findAllContactsEmailsByContactGroupAsync("lc").testValue
@@ -244,17 +246,19 @@ class ContactGroupsDatabaseTest {
         val contactEmailContactLabel8 = ContactEmailContactLabelJoin("e4", "la")
 
         database.saveContactEmailContactLabel(contactEmailContactLabel1, contactEmailContactLabel2,
-                contactEmailContactLabel3, contactEmailContactLabel4, contactEmailContactLabel7, contactEmailContactLabel8)
-        var result = database.filterContactsEmailsByContactGroup("la", "%2%")
+            contactEmailContactLabel3, contactEmailContactLabel4, contactEmailContactLabel7, contactEmailContactLabel8)
+        runBlockingTest {
+            val result = database.filterContactsEmailsByContactGroup("la", "%2%").first()
 
-        Assert.assertNotNull(result)
-        Assert.assertEquals(1, result.size)
-        Assert.assertEquals(listOf(email2), result)
+            Assert.assertNotNull(result)
+            Assert.assertEquals(1, result.size)
+            Assert.assertEquals(listOf(email2), result)
 
-        result = database.filterContactsEmailsByContactGroup("lb", "%3%")
-        Assert.assertNotNull(result)
-        Assert.assertEquals(2, result.size)
-        Assert.assertEquals(listOf(email4, email5), result)
+            val result2 = database.filterContactsEmailsByContactGroup("lb", "%3%").first()
+            Assert.assertNotNull(result2)
+            Assert.assertEquals(2, result2.size)
+            Assert.assertEquals(listOf(email4, email5), result2)
+        }
     }
 
     @Test
