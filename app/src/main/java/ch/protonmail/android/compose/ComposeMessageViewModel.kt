@@ -120,7 +120,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val fetchKeyDetailsTrigger = MutableLiveData<List<FetchPublicKeysRequest>>()
 
     private val _androidContacts = java.util.ArrayList<MessageRecipient>()
-    private val _protonMailContacts = java.util.ArrayList<MessageRecipient>()
+    private val _protonMailContacts = mutableSetOf<MessageRecipient>()
     private var _protonMailGroups: List<MessageRecipient> = java.util.ArrayList()
     private var _androidContactsLoaded: Boolean = false
     private var _protonMailContactsLoaded: Boolean = false
@@ -1055,7 +1055,7 @@ class ComposeMessageViewModel @Inject constructor(
         _androidContactsLoaded = true
         if (_androidContacts.size > 0) {
             _protonMailContacts.addAll(_androidContacts)
-            _androidMessageRecipientsResult.postValue(_protonMailContacts)
+            _androidMessageRecipientsResult.postValue(_protonMailContacts.toList())
             _mergedContactsLiveData.removeSource(contactGroupsResult)
             _mergedContactsLiveData.addSource(androidMessageRecipientsResult) { value ->
                 _mergedContactsLiveData.postValue(value)
