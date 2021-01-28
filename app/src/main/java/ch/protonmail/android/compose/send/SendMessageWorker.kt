@@ -34,6 +34,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.SendPreference
+import ch.protonmail.android.api.models.factories.SendPreferencesFactory
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
@@ -61,7 +63,8 @@ class SendMessageWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val saveDraft: SaveDraft
+    private val saveDraft: SaveDraft,
+    private val sendPreferencesFactory: SendPreferencesFactory
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -70,10 +73,34 @@ class SendMessageWorker @WorkerInject constructor(
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
 
         return when (saveDraft(message, previousSenderAddressId)) {
-            is SaveDraftResult.Success -> Result.failure()
-            else -> return failureWithError(SendMessageWorkerError.DraftCreationFailed)
+            is SaveDraftResult.Success -> {
+                fetchMissingSendPreferences(message)
+                Result.failure()
+            }
+            else -> failureWithError(SendMessageWorkerError.DraftCreationFailed)
         }
 
+    }
+
+    private fun fetchMissingSendPreferences(message: Message): List<SendPreference> {
+        val emailSet = mutableSetOf<String>()
+        message.toListString
+            .split(Constants.EMAIL_DELIMITER)
+            .filter { it.isNotBlank() }
+            .map { emailSet.add(it) }
+
+        message.ccListString
+            .split(Constants.EMAIL_DELIMITER)
+            .filter { it.isNotBlank() }
+            .map { emailSet.add(it) }
+
+        message.bccListString
+            .split(Constants.EMAIL_DELIMITER)
+            .filter { it.isNotBlank() }
+            .map { emailSet.add(it) }
+
+        val sendPreferences = sendPreferencesFactory.fetch(emailSet.toList())
+        return sendPreferences.values.toList()
     }
 
     private suspend fun saveDraft(message: Message, previousSenderAddressId: String): SaveDraftResult {

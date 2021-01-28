@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.ContactEncryptedData;
@@ -49,6 +48,7 @@ import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsR
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.di.CurrentUsername;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.domain.entity.user.Addresses;
@@ -74,14 +74,13 @@ public class SendPreferencesFactory {
     public SendPreferencesFactory(
             ProtonMailApiManager api,
             UserManager userManager,
-            @Named("username" /* TODO: use `CURRENT_USERNAME` const, unsupported in Java */) String username,
-            MailSettings mailSettings,
+            @CurrentUsername String username,
             ContactsDatabase contactsDatabase
     ) {
         this.mApi = api;
         this.mUserManager = userManager;
         this.username = username;
-        this.mailSettings = mailSettings;
+        this.mailSettings = userManager.getMailSettings(username);
         this.crypto = Crypto.forUser(userManager, username);
 		this.contactsDatabase=contactsDatabase;
 	}

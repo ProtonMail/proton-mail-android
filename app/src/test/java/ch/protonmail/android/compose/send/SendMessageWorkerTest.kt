@@ -29,6 +29,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.api.models.factories.SendPreferencesFactory
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -48,6 +50,7 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -67,6 +70,9 @@ class SendMessageWorkerTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var saveDraft: SaveDraft
+
+    @RelaxedMockK
+    private lateinit var sendPreferencesFactory: SendPreferencesFactory
 
     @InjectMockKs
     private lateinit var worker: SendMessageWorker
@@ -194,6 +200,67 @@ class SendMessageWorkerTest : CoroutinesTest {
             ),
             result
         )
+    }
+
+    @Test
+    fun workerFetchesSendPreferencesForEachUniqueRecipientWhenSavingDraftSucceeds() = runBlockingTest {
+        val messageDbId = 2834L
+        val messageId = "823472"
+        val toRecipientEmail = "to-recipient@pm.me"
+        val toRecipient1Email = "to-recipient-1@pm.me"
+        val ccRecipientEmail = "cc-recipient@protonmail.com"
+        val bccRecipientEmail = "bcc-recipient@protonmail.ch"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.toList = listOf(
+                MessageRecipient("recipient", toRecipientEmail),
+                MessageRecipient("duplicatedMailRecipient", toRecipientEmail),
+                MessageRecipient("recipient1", toRecipient1Email)
+            )
+            this.ccList = listOf(MessageRecipient("recipient2", ccRecipientEmail))
+            this.bccList = listOf(MessageRecipient("recipient3", bccRecipientEmail))
+        }
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
+
+        worker.doWork()
+
+        val recipientsCaptor = slot<List<String>>()
+        verify { sendPreferencesFactory.fetch(capture(recipientsCaptor)) }
+        assertTrue(
+            recipientsCaptor.captured.containsAll(
+                listOf(
+                    toRecipient1Email,
+                    ccRecipientEmail,
+                    toRecipientEmail,
+                    bccRecipientEmail
+                )
+            )
+        )
+        assertEquals(4, recipientsCaptor.captured.size)
+    }
+
+    @Test
+    fun workerFetchesSendPreferencesOnlyForNonEmptyRecipientListsWhenSavingDraftSucceeds() = runBlockingTest {
+        val messageDbId = 2834L
+        val messageId = "823472"
+        val toRecipientEmail = "to-recipient@pm.me"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.toList = listOf(MessageRecipient("recipient", toRecipientEmail))
+            this.ccList = emptyList()
+            this.bccList = listOf(MessageRecipient("emptyBccRecipient", ""))
+        }
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
+
+        worker.doWork()
+
+        verify { sendPreferencesFactory.fetch(listOf(toRecipientEmail)) }
     }
 
     private fun givenFullValidInput(

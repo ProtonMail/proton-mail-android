@@ -266,7 +266,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         }
 
         try {
-            fetchMissingSendPreferences(contactsDatabase, message, mailSettings);
+            fetchMissingSendPreferences(contactsDatabase, message);
         } catch (Exception e) {
             Timber.e(e, "SendMessage: Failed fetching missing send preferences");
         }
@@ -481,7 +481,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         }
     }
 
-    private void fetchMissingSendPreferences(ContactsDatabase contactsDatabase, Message message, MailSettings mailSettings) {
+    private void fetchMissingSendPreferences(ContactsDatabase contactsDatabase, Message message) {
         Set<String> emailSet = new HashSet<>();
         if (!TextUtils.isEmpty(message.getToListString())) {
             String[] emails = message.getToListString().split(Constants.EMAIL_DELIMITER);
@@ -499,7 +499,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             emailSet.remove(sp.getEmailAddress());
         }
 
-        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), mUsername, mailSettings, contactsDatabase);
+        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), mUsername, contactsDatabase);
         try {
             Map<String, SendPreference> sendPreferenceMap = factory.fetch(Arrays.asList(emailSet.toArray(new String[0])));
             ArrayList<SendPreference> sendPrefs = new ArrayList<>();
