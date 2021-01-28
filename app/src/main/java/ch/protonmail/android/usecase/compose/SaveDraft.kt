@@ -37,7 +37,6 @@ import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -69,12 +68,8 @@ class SaveDraft @Inject constructor(
         val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
 
         message.messageBody = encryptedBody
-        setMessageAsDraft(message)
 
-        val messageDbId = messageDetailsRepository.saveMessageLocally(message)
-        pendingActionsDao.findPendingSendByDbId(messageDbId)?.let {
-            return@withContext flowOf(SaveDraftResult.SendingInProgressError)
-        }
+        saveMessageLocallyAsDraft(message)
 
         return@withContext saveDraftOnline(message, params, messageId, addressCrypto)
     }
@@ -128,7 +123,7 @@ class SaveDraft @Inject constructor(
         }
     }
 
-    private fun setMessageAsDraft(message: Message) {
+    private suspend fun saveMessageLocallyAsDraft(message: Message) {
         message.setLabelIDs(
             listOf(
                 ALL_DRAFT.messageLocationTypeValue.toString(),
@@ -136,6 +131,8 @@ class SaveDraft @Inject constructor(
                 DRAFT.messageLocationTypeValue.toString()
             )
         )
+
+        messageDetailsRepository.saveMessageLocally(message)
     }
 
     data class SaveDraftParameters(

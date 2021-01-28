@@ -476,8 +476,6 @@ class ComposeMessageViewModel @Inject constructor(
                     val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
                     _savingDraftError.postValue(errorMessage)
                 }
-                SaveDraftResult.SendingInProgressError -> {
-                }
             }
         }
     }

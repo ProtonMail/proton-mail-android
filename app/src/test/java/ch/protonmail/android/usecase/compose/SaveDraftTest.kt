@@ -149,33 +149,6 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun sendDraftReturnsSendingInProgressErrorWhenMessageIsAlreadyBeingSent() {
-        runBlockingTest {
-            // Given
-            val messageDbId = 345L
-            val message = Message().apply {
-                dbId = messageDbId
-                this.messageId = "456"
-                addressID = "addressId"
-                decryptedBody = "Message body in plain text"
-            }
-            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
-            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
-            every { pendingActionsDao.findPendingSendByDbId(messageDbId) } returns PendingSend("anyMessageId")
-
-            // When
-            val result = saveDraft.invoke(
-                SaveDraftParameters(message, emptyList(), "parentId123", FORWARD, "previousSenderId1273")
-            )
-
-            // Then
-            val expectedError = SaveDraftResult.SendingInProgressError
-            assertEquals(expectedError, result.first())
-            verify(exactly = 0) { createDraftScheduler.enqueue(any(), any(), any(), any()) }
-        }
-    }
-
-    @Test
     fun saveDraftsSchedulesCreateDraftWorker() {
         runBlockingTest {
             // Given
