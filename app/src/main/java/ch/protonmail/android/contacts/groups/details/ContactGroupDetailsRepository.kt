@@ -52,8 +52,8 @@ class ContactGroupDetailsRepository @Inject constructor(
             .toObservable()
     }
 
-    suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
-        contactsDatabase.findAllContactsEmailsByContactGroupId(id)
+    fun getContactGroupEmails(id: String): Flow<List<ContactEmail>> =
+        contactsDatabase.findAllContactsEmailsByContactGroupIdFlow(id)
 
     fun filterContactGroupEmails(id: String, filter: String): Flow<List<ContactEmail>> =
         contactsDatabase.filterContactsEmailsByContactGroup(id, "%$filter%")

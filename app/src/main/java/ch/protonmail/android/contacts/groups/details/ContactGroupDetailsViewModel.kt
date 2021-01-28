@@ -50,7 +50,6 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     private lateinit var _contactLabel: ContactLabel
-    private lateinit var _data: List<ContactEmail>
     private val _contactGroupEmailsResult: MutableLiveData<List<ContactEmail>> = MutableLiveData()
     private val filteringChannel = BroadcastChannel<String>(1)
     private val _contactGroupEmailsEmpty: MutableLiveData<Event<String>> = MutableLiveData()
@@ -94,53 +93,42 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
         contactLabel?.let { newContact ->
             _contactLabel = newContact
             getContactGroupEmails(newContact)
-            watchForContactGroup()
             _setupUIData.value = newContact
         }
     }
 
     fun getData(): ContactLabel = _contactLabel
 
-    private fun watchForContactGroup() {
-        viewModelScope.launch {
-            runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.ID) }
-                .fold(
-                    onSuccess = { contactLabel ->
-                        Timber.v("ContactLabel: $contactLabel retrieved")
-                        contactLabel?.let {
-                            _contactLabel = it
-                        }
-                    },
-                    onFailure = { throwable ->
-                        if (throwable is SQLException) {
-                            _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
-                        } else
-                            throw throwable
-                    }
+    private fun getContactGroupEmails(contactLabel: ContactLabel) {
+        contactGroupDetailsRepository.getContactGroupEmails(contactLabel.ID)
+            .onEach { list ->
+                updateContactGroup()
+                _contactGroupEmailsResult.postValue(list)
+            }
+            .catch { throwable ->
+                _contactGroupEmailsEmpty.value = Event(
+                    throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
                 )
-        }
-
+            }
+            .launchIn(viewModelScope)
     }
 
-    private fun getContactGroupEmails(contactLabel: ContactLabel) {
-        viewModelScope.launch {
-            runCatching { contactGroupDetailsRepository.getContactGroupEmails(contactLabel.ID) }
-                .fold(
-                    onSuccess = {
-                        _data = it
-                        watchForContactGroup()
-                        _contactGroupEmailsResult.postValue(it)
-                    },
-                    onFailure = { throwable ->
-                        if (throwable is SQLException) {
-                            _contactGroupEmailsEmpty.value = Event(
-                                throwable.message ?: ErrorEnum.INVALID_EMAIL_LIST.name
-                            )
-                        } else
-                            throw throwable
+    private suspend fun updateContactGroup() {
+        runCatching { contactGroupDetailsRepository.findContactGroupDetails(_contactLabel.ID) }
+            .fold(
+                onSuccess = { contactLabel ->
+                    Timber.v("ContactLabel: $contactLabel retrieved")
+                    contactLabel?.let {
+                        _contactLabel = it
                     }
-                )
-        }
+                },
+                onFailure = { throwable ->
+                    if (throwable is SQLException) {
+                        _contactGroupEmailsEmpty.value = Event(throwable.message ?: ErrorEnum.DEFAULT_ERROR.name)
+                    } else
+                        throw throwable
+                }
+            )
     }
 
     private fun initFiltering() {
