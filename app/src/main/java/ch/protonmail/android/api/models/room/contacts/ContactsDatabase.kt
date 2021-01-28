@@ -50,6 +50,9 @@ interface ContactsDatabase {
     @Query("SELECT * FROM $TABLE_CONTACT_DATA ORDER BY $COLUMN_CONTACT_DATA_NAME COLLATE NOCASE ASC")
     fun findAllContactDataAsync(): LiveData<List<ContactData>>
 
+    @Query("SELECT * FROM $TABLE_CONTACT_DATA ORDER BY $COLUMN_CONTACT_DATA_NAME COLLATE NOCASE ASC")
+    fun findAllContactData(): Flow<List<ContactData>>
+
     @Query("DELETE FROM $TABLE_CONTACT_DATA")
     fun clearContactDataCache()
 
@@ -88,6 +91,9 @@ interface ContactsDatabase {
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmailsAsync(): LiveData<List<ContactEmail>>
+
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
+    fun findAllContactsEmails(): Flow<List<ContactEmail>>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmailsAsyncObservable(): Flowable<List<ContactEmail>>

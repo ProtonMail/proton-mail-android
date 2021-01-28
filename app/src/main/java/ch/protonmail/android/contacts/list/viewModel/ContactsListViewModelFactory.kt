@@ -52,8 +52,12 @@ class ContactsListViewModelFactory(
         val androidContactsDetailsRepository =
             AndroidContactDetailsRepository(loaderManager, androidContactsDetailsCallbacksFactory)
 
-		return ContactsListViewModel(
-			contactsDatabase, workManager,
-			androidContactsRepository, androidContactsDetailsRepository) as T
-	}
+        return ContactsListViewModel(
+            contactsDatabase,
+            workManager,
+            androidContactsRepository,
+            androidContactsDetailsRepository,
+            ContactsListMapper()
+        ) as T
+    }
 }
