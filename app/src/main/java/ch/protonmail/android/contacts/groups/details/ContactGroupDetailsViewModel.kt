@@ -118,8 +118,9 @@ class ContactGroupDetailsViewModel @ViewModelInject constructor(
             .fold(
                 onSuccess = { contactLabel ->
                     Timber.v("ContactLabel: $contactLabel retrieved")
-                    contactLabel?.let {
-                        _contactLabel = it
+                    contactLabel?.let { label ->
+                        _contactLabel = label
+                        _setupUIData.value = label
                     }
                 },
                 onFailure = { throwable ->
