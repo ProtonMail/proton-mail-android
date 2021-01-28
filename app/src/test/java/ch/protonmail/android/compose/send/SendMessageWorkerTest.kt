@@ -243,6 +243,49 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
+    fun workerRetriesSendingMessageWhenFetchingSendPreferencesFailsAndMaxRetriesWasNotReached() = runBlockingTest {
+        val messageDbId = 34238L
+        val messageId = "823720"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
+        every { sendPreferencesFactory.fetch(any()) } throws Exception("test - failed fetching send preferences")
+        every { parameters.runAttemptCount } returns 1
+
+        val result = worker.doWork()
+
+        assertEquals(ListenableWorker.Result.Retry(), result)
+    }
+
+    @Test
+    fun workerFailsWhenFetchingSendPreferencesFailsAndMaxRetriesWasReached() = runBlockingTest {
+        val messageDbId = 8435L
+        val messageId = "923482"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
+        every { sendPreferencesFactory.fetch(any()) } throws Exception("test - failed fetching send preferences")
+        every { parameters.runAttemptCount } returns 6
+
+        val result = worker.doWork()
+
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "FetchSendPreferencesFailed")
+            ),
+            result
+        )
+    }
+
+    @Test
     fun workerFetchesSendPreferencesOnlyForNonEmptyRecipientListsWhenSavingDraftSucceeds() = runBlockingTest {
         val messageDbId = 2834L
         val messageId = "823472"

@@ -45,6 +45,7 @@ import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -58,6 +59,7 @@ internal const val KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID = "keySendMessageP
 internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageErrorResult"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
+private const val SEND_MESSAGE_MAX_RETRIES = 5
 
 class SendMessageWorker @WorkerInject constructor(
     @Assisted context: Context,
@@ -74,7 +76,9 @@ class SendMessageWorker @WorkerInject constructor(
 
         return when (saveDraft(message, previousSenderAddressId)) {
             is SaveDraftResult.Success -> {
-                fetchMissingSendPreferences(message)
+                requestSendPreferences(message) ?: return retryOrFail(
+                    SendMessageWorkerError.FetchSendPreferencesFailed
+                )
                 Result.failure()
             }
             else -> failureWithError(SendMessageWorkerError.DraftCreationFailed)
@@ -82,25 +86,27 @@ class SendMessageWorker @WorkerInject constructor(
 
     }
 
-    private fun fetchMissingSendPreferences(message: Message): List<SendPreference> {
-        val emailSet = mutableSetOf<String>()
-        message.toListString
-            .split(Constants.EMAIL_DELIMITER)
-            .filter { it.isNotBlank() }
-            .map { emailSet.add(it) }
+    private fun requestSendPreferences(message: Message): List<SendPreference>? {
+        return runCatching {
+            val emailSet = mutableSetOf<String>()
+            message.toListString
+                .split(Constants.EMAIL_DELIMITER)
+                .filter { it.isNotBlank() }
+                .map { emailSet.add(it) }
 
-        message.ccListString
-            .split(Constants.EMAIL_DELIMITER)
-            .filter { it.isNotBlank() }
-            .map { emailSet.add(it) }
+            message.ccListString
+                .split(Constants.EMAIL_DELIMITER)
+                .filter { it.isNotBlank() }
+                .map { emailSet.add(it) }
 
-        message.bccListString
-            .split(Constants.EMAIL_DELIMITER)
-            .filter { it.isNotBlank() }
-            .map { emailSet.add(it) }
+            message.bccListString
+                .split(Constants.EMAIL_DELIMITER)
+                .filter { it.isNotBlank() }
+                .map { emailSet.add(it) }
 
-        val sendPreferences = sendPreferencesFactory.fetch(emailSet.toList())
-        return sendPreferences.values.toList()
+            val sendPreferences = sendPreferencesFactory.fetch(emailSet.toList())
+            sendPreferences.values.toList()
+        }.getOrNull()
     }
 
     private suspend fun saveDraft(message: Message, previousSenderAddressId: String): SaveDraftResult {
@@ -115,7 +121,16 @@ class SendMessageWorker @WorkerInject constructor(
         ).first()
     }
 
+    private fun retryOrFail(error: SendMessageWorkerError): Result {
+        if (runAttemptCount <= SEND_MESSAGE_MAX_RETRIES) {
+            Timber.d("Send Message Worker FAILED with error = ${error.name}. Retrying...")
+            return Result.retry()
+        }
+        return failureWithError(error)
+    }
+
     private fun failureWithError(error: SendMessageWorkerError): Result {
+        Timber.e("Send Message Worker failed all the retries. error = $error. FAILING")
         val errorData = workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }
