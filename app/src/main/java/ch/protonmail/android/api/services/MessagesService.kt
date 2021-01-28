@@ -91,8 +91,8 @@ class MessagesService : JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
 
-        val currentUserId = userManager.currentUserId!!
-        messageDetailsRepository.reloadDependenciesForUserId(userManager.requireCurrentUserId())
+        val currentUserId = userManager.requireCurrentUserId()
+        messageDetailsRepository.reloadDependenciesForUser(currentUserId)
         when (intent.action) {
             ACTION_FETCH_MESSAGES_BY_PAGE -> {
                 val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
@@ -248,11 +248,11 @@ class MessagesService : JobIntentService() {
         }
         try {
             var unixTime = 0L
-            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUser)
-            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUser)
+            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUserId)
+            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUserId)
             val messagesDb = messagesDbFactory.getDatabase()
             val actionsDb = actionsDbFactory.getDatabase()
-            messageDetailsRepository.reloadDependenciesForUserId(userManager.requireCurrentUserId())
+            messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             messagesDbFactory.runInTransaction {
                 actionsDbFactory.runInTransaction {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
@@ -320,11 +320,11 @@ class MessagesService : JobIntentService() {
         }
         try {
             var unixTime = 0L
-            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUser)
-            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUser)
+            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUserId)
+            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUserId)
             val messagesDb = messagesDbFactory.getDatabase()
             val actionsDb = actionsDbFactory.getDatabase()
-            messageDetailsRepository.reloadDependenciesForUserId(userManager.requireCurrentUserId())
+            messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             messagesDbFactory.runInTransaction {
                 actionsDbFactory.runInTransaction {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
