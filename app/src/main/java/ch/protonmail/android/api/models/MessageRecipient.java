@@ -33,6 +33,7 @@ import com.google.gson.JsonSerializer;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Objects;
 
 import static ch.protonmail.android.api.models.room.contacts.ContactDataKt.COLUMN_CONTACT_DATA_NAME;
 import static ch.protonmail.android.api.models.room.contacts.ContactEmailKt.COLUMN_CONTACT_EMAILS_EMAIL;
@@ -197,5 +198,20 @@ public class MessageRecipient implements Serializable, Comparable<MessageRecipie
             }
             return messageRecipient;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MessageRecipient that = (MessageRecipient) o;
+        return Objects.equals(Name, that.Name) &&
+                Objects.equals(Address, that.Address) &&
+                Objects.equals(Group, that.Group);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Name, Address, Group);
     }
 }
