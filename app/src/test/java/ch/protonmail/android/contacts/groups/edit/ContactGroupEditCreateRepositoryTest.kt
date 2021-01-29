@@ -103,7 +103,7 @@ class ContactGroupEditCreateRepositoryTest {
         verifyOrder {
             contactsDao.fetchJoins(contactGroupId)
             contactsDao.saveContactGroupLabel(contactLabel)
-            contactsDao.saveContactEmailContactLabel(emailLabelJoinedList)
+            contactsDao.saveContactEmailContactLabelBlocking(emailLabelJoinedList)
         }
     }
 

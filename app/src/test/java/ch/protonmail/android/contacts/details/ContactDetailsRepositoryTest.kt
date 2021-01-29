@@ -26,6 +26,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
@@ -70,7 +71,7 @@ class ContactDetailsRepositoryTest {
 
             repository.saveContactEmails(emails)
 
-            verify { contactsDao.saveAllContactsEmails(emails) }
+            coVerify { contactsDao.saveAllContactsEmails(emails) }
         }
     }
 
@@ -108,7 +109,7 @@ class ContactDetailsRepositoryTest {
 
             verify { contactsDao.findContactEmailsByContactId(contactId) }
             verify { contactsDao.deleteAllContactsEmails(localContactEmails) }
-            verify { contactsDao.saveAllContactsEmails(serverEmails) }
+            verify { contactsDao.saveAllContactsEmailsBlocking(serverEmails) }
         }
     }
 

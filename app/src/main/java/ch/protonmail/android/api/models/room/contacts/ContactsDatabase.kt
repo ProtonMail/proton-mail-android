@@ -25,6 +25,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.messages.COLUMN_LABEL_ID
@@ -48,6 +49,9 @@ interface ContactsDatabase {
 
     @Query("SELECT * FROM $TABLE_CONTACT_DATA ORDER BY $COLUMN_CONTACT_DATA_NAME COLLATE NOCASE ASC")
     fun findAllContactDataAsync(): LiveData<List<ContactData>>
+
+    @Query("SELECT * FROM $TABLE_CONTACT_DATA ORDER BY $COLUMN_CONTACT_DATA_NAME COLLATE NOCASE ASC")
+    fun findAllContactData(): Flow<List<ContactData>>
 
     @Query("DELETE FROM $TABLE_CONTACT_DATA")
     fun clearContactDataCache()
@@ -89,6 +93,9 @@ interface ContactsDatabase {
     fun findAllContactsEmailsAsync(): LiveData<List<ContactEmail>>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
+    fun findAllContactsEmails(): Flow<List<ContactEmail>>
+
+    @Query("SELECT * FROM $TABLE_CONTACT_EMAILS ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
     fun findAllContactsEmailsAsyncObservable(): Flowable<List<ContactEmail>>
 
     @Query("SELECT * FROM $TABLE_CONTACT_EMAILS WHERE $TABLE_CONTACT_EMAILS.$COLUMN_CONTACT_EMAILS_EMAIL LIKE :filter ORDER BY $COLUMN_CONTACT_EMAILS_EMAIL")
@@ -102,6 +109,9 @@ interface ContactsDatabase {
 
     @Query("SELECT ${TABLE_CONTACT_EMAILS}.* FROM $TABLE_CONTACT_EMAILS INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN ON ${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_ID} = ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID} WHERE ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID} = :contactGroupId")
     suspend fun findAllContactsEmailsByContactGroupId(contactGroupId: String): List<ContactEmail>
+
+    @Query("SELECT ${TABLE_CONTACT_EMAILS}.* FROM $TABLE_CONTACT_EMAILS INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN ON ${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_ID} = ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID} WHERE ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID} = :contactGroupId")
+    fun findAllContactsEmailsByContactGroupIdFlow(contactGroupId: String): Flow<List<ContactEmail>>
 
     @Query("SELECT ${TABLE_CONTACT_EMAILS}.* FROM $TABLE_CONTACT_EMAILS INNER JOIN $TABLE_CONTACT_EMAILS_LABELS_JOIN ON ${TABLE_CONTACT_EMAILS}.${COLUMN_CONTACT_EMAILS_ID} = ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_EMAIL_ID} WHERE ${TABLE_CONTACT_EMAILS_LABELS_JOIN}.${COLUMN_CONTACT_EMAILS_LABELS_JOIN_LABEL_ID} = :contactGroupId")
     fun findAllContactsEmailsByContactGroupAsyncObservable(contactGroupId: String): Flowable<List<ContactEmail>>
@@ -134,7 +144,10 @@ interface ContactsDatabase {
     fun clearByEmail(email: String)
 
     @Query("DELETE FROM $TABLE_CONTACT_EMAILS")
-    fun clearContactEmailsCache()
+    fun clearContactEmailsCacheBlocking()
+
+    @Query("DELETE FROM $TABLE_CONTACT_EMAILS")
+    suspend fun clearContactEmailsCache()
 
     @Delete
     fun deleteContactEmail(vararg contactEmail: ContactEmail)
@@ -146,10 +159,13 @@ interface ContactsDatabase {
     fun saveContactEmail(contactEmail: ContactEmail): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAllContactsEmails(vararg emailData: ContactEmail): List<Long>
+    fun saveAllContactsEmailsBlocking(vararg emailData: ContactEmail): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAllContactsEmails(emailData: Collection<ContactEmail>): List<Long>
+    fun saveAllContactsEmailsBlocking(emailData: Collection<ContactEmail>): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveAllContactsEmails(emailData: Collection<ContactEmail>): List<Long>
 
     @Query("SELECT count(*) FROM $TABLE_CONTACT_EMAILS WHERE $COLUMN_CONTACT_EMAILS_LABEL_IDS LIKE :contactGroupId")
     fun countContactEmails(contactGroupId: String): Int
@@ -208,7 +224,7 @@ interface ContactsDatabase {
     fun saveAllContactGroups(vararg contactLabels: ContactLabel): List<Long>
 
     @Query("DELETE FROM $TABLE_CONTACT_LABEL")
-    fun clearContactGroupsList()
+    suspend fun clearContactGroupsList()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveContactGroupsListBlocking(contactLabels: List<ContactLabel>): List<Long>
@@ -269,15 +285,37 @@ interface ContactsDatabase {
     fun deleteJoinByGroupIdAndEmailId(contactEmailIds: List<String>, contactGroupId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabel(contactEmailContactLabelJoin: ContactEmailContactLabelJoin): Long
+    fun saveContactEmailContactLabelBlocking(contactEmailContactLabelJoin: ContactEmailContactLabelJoin): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabel(vararg contactEmailContactLabelJoin: ContactEmailContactLabelJoin): List<Long>
+    fun saveContactEmailContactLabelBlocking(
+        vararg contactEmailContactLabelJoin: ContactEmailContactLabelJoin
+    ): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveContactEmailContactLabel(contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>): List<Long>
+    fun saveContactEmailContactLabelBlocking(
+        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
+    ): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveContactEmailContactLabel(
+        contactEmailContactLabelJoin: List<ContactEmailContactLabelJoin>
+    ): List<Long>
 
     @Delete
     fun deleteContactEmailContactLabel(contactEmailContactLabelJoin: Collection<ContactEmailContactLabelJoin>)
+
+    @Transaction
+    suspend fun insertNewContactsAndLabels(
+        allContactEmails: List<ContactEmail>,
+        contactLabelList: List<ContactLabel>,
+        allJoins: List<ContactEmailContactLabelJoin>
+    ) {
+        clearContactEmailsCache()
+        clearContactGroupsList()
+        saveContactGroupsList(contactLabelList)
+        saveAllContactsEmails(allContactEmails)
+        saveContactEmailContactLabel(allJoins)
+    }
     //endregion
 }

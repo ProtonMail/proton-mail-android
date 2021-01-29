@@ -211,10 +211,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse = api.fetchContacts(page, pageSize)
 
-    override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> = api.fetchContactEmails(pageSize)
-
-    override suspend fun fetchRawContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
-        api.fetchRawContactEmails(page, pageSize)
+    override suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
+        api.fetchContactEmails(page, pageSize)
 
     override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> = api.fetchContactsEmailsByLabelId(page, labelId)
 

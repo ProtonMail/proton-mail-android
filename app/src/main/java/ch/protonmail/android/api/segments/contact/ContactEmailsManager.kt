@@ -19,40 +19,42 @@
 package ch.protonmail.android.api.segments.contact
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.DatabaseProvider
+import ch.protonmail.android.api.models.ContactEmailsResponseV2
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.Constants
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
 class ContactEmailsManager @Inject constructor(
-    private var apiManager: ProtonMailApiManager,
-    private val databaseProvider: DatabaseProvider
+    private var api: ProtonMailApiManager,
+    private val contactsDao: ContactsDao
 ) {
 
-    fun refreshBlocking() {
-        runBlocking {
-            refresh()
-        }
-    }
+    suspend fun refresh(pageSize: Int = Constants.CONTACTS_PAGE_SIZE) {
+        val contactLabelList = api.fetchContactGroupsList()
 
-    suspend fun refresh() {
-        Timber.v("Contacts refresh called")
-        val contactLabelList = apiManager.fetchContactGroupsList()
-        val firstPage = apiManager.fetchRawContactEmails(0, Constants.CONTACTS_PAGE_SIZE)
-        val allResults = mutableListOf(firstPage)
-        for (i in 1..(firstPage.total + (Constants.CONTACTS_PAGE_SIZE - 1)) / Constants.CONTACTS_PAGE_SIZE) {
-            allResults.add(apiManager.fetchRawContactEmails(i, Constants.CONTACTS_PAGE_SIZE))
+        var currentPage = 0
+        var hasMorePages = true
+        val allResults = mutableListOf<ContactEmailsResponseV2>()
+        while (hasMorePages) {
+            val result = api.fetchContactEmails(currentPage, pageSize)
+            allResults += result
+            hasMorePages = currentPage < result.total
+            currentPage++
         }
+
         val allContactEmails = allResults.flatMap { it.contactEmails }
-
-        saveData(allContactEmails, contactLabelList, getJoins(allContactEmails))
+        val allJoins = getJoins(allContactEmails)
+        Timber.v(
+            "Refresh emails: ${allContactEmails.size}, labels: ${contactLabelList.size}, allJoins: ${allJoins.size}"
+        )
+        contactsDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, allJoins)
     }
 
-    private fun getJoins(allContactEmails: List<ContactEmail>): MutableList<ContactEmailContactLabelJoin> {
+    private fun getJoins(allContactEmails: List<ContactEmail>): List<ContactEmailContactLabelJoin> {
         val allJoins = mutableListOf<ContactEmailContactLabelJoin>()
         for (contactEmail in allContactEmails) {
             val labelIds = contactEmail.labelIds
@@ -65,22 +67,11 @@ class ContactEmailsManager @Inject constructor(
         return allJoins
     }
 
-    private fun saveData(
-        allContactEmails: List<ContactEmail>,
-        contactLabelList: List<ContactLabel>,
-        allJoins: MutableList<ContactEmailContactLabelJoin>
-    ) {
-        Timber.v(
-            "Saving fresh sizes allContactEmails: ${allContactEmails.size}, contactLabelList: ${contactLabelList.size}, allJoins: ${allJoins.size}"
-        )
-        val contactsDatabase = databaseProvider.provideContactsDatabase()
-        val contactsDao = databaseProvider.provideContactsDao()
-        contactsDatabase.runInTransaction {
-            contactsDao.clearContactEmailsCache()
-            contactsDao.clearContactGroupsList()
-            contactsDao.saveContactGroupsListBlocking(contactLabelList)
-            contactsDao.saveAllContactsEmails(allContactEmails)
-            contactsDao.saveContactEmailContactLabel(allJoins)
-        }
+    @Deprecated(
+        message = "Please use suspended version wherever possible",
+        replaceWith = ReplaceWith("refresh()")
+    )
+    fun refreshBlocking() = runBlocking {
+        refresh()
     }
 }

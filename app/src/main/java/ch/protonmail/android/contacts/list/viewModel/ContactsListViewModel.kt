@@ -21,41 +21,70 @@ package ch.protonmail.android.contacts.list.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.viewModelScope
 import androidx.work.Operation
 import androidx.work.WorkManager
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
+import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.list.listView.ContactItem
-import ch.protonmail.android.contacts.list.listView.ContactsLiveData
-import ch.protonmail.android.contacts.list.listView.ProtonMailContactsLiveData
 import ch.protonmail.android.contacts.list.progress.ProgressLiveData
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.IAndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
 import ch.protonmail.android.worker.DeleteContactWorker
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactsListViewModel @Inject constructor(
-    contactsDatabase: ContactsDatabase,
+    private val contactsDao: ContactsDao,
     private val workManager: WorkManager,
     private val androidContactsRepository: IAndroidContactsRepository<ContactItem>,
-    private val androidContactsDetailsRepository: AndroidContactDetailsRepository
+    private val androidContactsDetailsRepository: AndroidContactDetailsRepository,
+    private val contactsListMapper: ContactsListMapper
 ) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
 
     private val progressMax = MutableLiveData<Int?>()
     private val progress = MutableLiveData<Int?>()
 
-    private val searchPhrase = MutableLiveData<String?>()
-    private val protonmailContactsData = contactsDatabase.findAllContactDataAsync()
-    private val protonmailContactsEmails = contactsDatabase.findAllContactsEmailsAsync()
-    private val protonmailContacts = ProtonMailContactsLiveData(protonmailContactsData, protonmailContactsEmails)
-
+    private val searchPhraseLiveData = MutableLiveData<String?>()
     override val androidContacts = androidContactsRepository.androidContacts
-    override val contactItems = ContactsLiveData(searchPhrase, protonmailContacts, androidContacts)
+    override val contactItems = MutableLiveData<List<ContactItem>>()
     override val uploadProgress = ProgressLiveData(progress, progressMax)
     override val contactToConvert = androidContactsDetailsRepository.contactDetails
 
     var hasPermission: Boolean = false
         private set
+
+    fun fetchContactItems() {
+        contactsDao.findAllContactData()
+            .combine(contactsDao.findAllContactsEmails()) { data, email ->
+                contactsListMapper.mapToContactItems(data, email)
+            }
+            .combine(searchPhraseLiveData.asFlow()) { contacts, searchPhrase ->
+                contacts.filter { contactItem ->
+                    searchPhrase?.isEmpty() ?: true ||
+                        contactItem.getName().contains(searchPhrase ?: EMPTY_STRING, ignoreCase = true) ||
+                        contactItem.getEmail().contains(searchPhrase ?: EMPTY_STRING, ignoreCase = true)
+                }
+            }
+            .combine(androidContacts.asFlow()) { protonContacts, androidContacts ->
+                contactsListMapper.mergeContactItems(protonContacts, androidContacts)
+            }
+            .onEach {
+                contactItems.value = it
+            }
+            .catch { Timber.w(it, "Error Fetching contacts") }
+            .launchIn(viewModelScope)
+
+        if (searchPhraseLiveData.value.isNullOrBlank()) {
+            searchPhraseLiveData.value = EMPTY_STRING
+        }
+    }
 
     override fun startConvertDetails(contactId: String) =
         androidContactsDetailsRepository.makeQuery(contactId)
@@ -66,7 +95,7 @@ class ContactsListViewModel @Inject constructor(
     }
 
     override fun setSearchPhrase(searchPhrase: String?) {
-        this.searchPhrase.value = searchPhrase
+        this.searchPhraseLiveData.value = searchPhrase
         androidContactsRepository.setSearchPhrase(searchPhrase ?: "")
     }
 
