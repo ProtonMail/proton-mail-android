@@ -26,12 +26,15 @@ import org.commonmark.renderer.text.TextContentRenderer;
 
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 public class HTMLToMDConverter {
 
     private Remark remark;
 
+    @Inject
     public HTMLToMDConverter() {
         Options protonMailFlavoredOptions = new Options() {{
             abbreviations = false;

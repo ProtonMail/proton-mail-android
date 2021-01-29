@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.Auth;
 import ch.protonmail.android.api.models.MessageRecipient;
@@ -46,6 +48,9 @@ import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.di.CurrentUsername;
+import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.domain.entity.Name;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.MIME.MIMEBuilder;
 import ch.protonmail.android.utils.crypto.EOToken;
@@ -54,22 +59,33 @@ import kotlin.text.Charsets;
 public class PackageFactory {
 
     private final ProtonMailApiManager mApi;
-    private final AddressCrypto crypto;
+    private final AddressCrypto.Factory addressCryptoFactory;
+    private final String currentUsername;
+    private final HTMLToMDConverter htmlToMDConverter;
+    private AddressCrypto crypto;
 
+    @Inject
     public PackageFactory(
             @NonNull ProtonMailApiManager mApi,
-            @NonNull AddressCrypto crypto
-    ) {
+            @NonNull AddressCrypto.Factory addressCryptoFactory,
+            @CurrentUsername String currentUsername,
+            @NonNull HTMLToMDConverter htmlToMDConverter) {
         this.mApi = mApi;
-        this.crypto = crypto;
+        this.addressCryptoFactory = addressCryptoFactory;
+        this.currentUsername = currentUsername;
+        this.htmlToMDConverter = htmlToMDConverter;
     }
 
     public List<MessageSendPackage> generatePackages(
-            Message message,
-            List<SendPreference> preferences,
-            OutsidersPassword outsidersPassword
+            @NonNull Message message,
+            @NonNull List<SendPreference> preferences,
+            @NonNull OutsidersPassword outsidersPassword
     ) throws Exception {
         final Map<MIMEType, MessageSendPackage> packageMap = new HashMap<>();
+        crypto = addressCryptoFactory.create(
+                new Id(message.getAddressID()),
+                new Name(currentUsername)
+        );
 
         Set<String> recipients = getMessageRecipients(message);
         for (SendPreference sendPref : preferences) {
@@ -152,8 +168,7 @@ public class PackageFactory {
 
     private CipherText generatePlaintextBody(Message message) throws Exception {
         String html = message.getDecryptedHTML();
-        HTMLToMDConverter converter = new HTMLToMDConverter();
-        String plaintext = converter.convert(html);
+        String plaintext = htmlToMDConverter.convert(html);
         return crypto.encrypt(plaintext, true);
     }
 

@@ -84,6 +84,7 @@ import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
 import ch.protonmail.android.receivers.VerificationOnSendReceiver;
 import ch.protonmail.android.utils.AppUtil;
+import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.MessageUtils;
 import ch.protonmail.android.utils.ServerTime;
@@ -366,7 +367,9 @@ public class PostMessageJob extends ProtonMailBaseJob {
         Message draftMessage = draftResponse.getMessage();
         draftMessage.decrypt(getUserManager(), mUsername);
         //region create packages to send to API
-        PackageFactory packageFactory = new PackageFactory(getApi(), crypto);
+        AddressCrypto.Factory cryptoFactory = (addressId1, username) ->
+                Crypto.forAddress(getUserManager(), username.getS(), addressId1.getS());
+        PackageFactory packageFactory = new PackageFactory(getApi(), cryptoFactory, username, new HTMLToMDConverter());
         List<MessageSendPackage> packages = packageFactory.generatePackages(draftMessage, mSendPreferences, new OutsidersPassword(mOutsidersPassword, mOutsidersHint));
 
         MessageSendBody Body = new MessageSendBody(packages, expiresIn <= 0 ? null : expiresIn, getUserManager().getMailSettings(mUsername).getAutoSaveContacts());
