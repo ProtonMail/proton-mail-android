@@ -107,7 +107,9 @@ import ch.protonmail.android.api.segments.reset.ResetApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.api.segments.settings.mail.UserSettingsApiSpec
 import ch.protonmail.android.api.segments.user.UserApiSpec
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.ContactLabel
+import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.domain.entity.Id
 import io.reactivex.Completable
 import io.reactivex.Observable

@@ -19,6 +19,7 @@
 package ch.protonmail.android.api.interceptors
 
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 
 /**
  * Objects of this class can be attached to OkHttp's requests and be read by Interceptors.
@@ -26,6 +27,16 @@ import ch.protonmail.android.domain.entity.Id
 data class UserIdTag(
     val id: Id
 )
+
+/**
+ * This will be used only during login, when user Id is still unknown,
+ * for all the other calls [UserIdTag] must be used instead
+ */
+data class UsernameTag(
+    val username: Name
+) {
+    constructor(username: String): this(Name(username))
+}
 
 @Deprecated("Use 'UserIdTag' instead", ReplaceWith("UserIdTag(userId)"), DeprecationLevel.ERROR)
 data class RetrofitTag(
