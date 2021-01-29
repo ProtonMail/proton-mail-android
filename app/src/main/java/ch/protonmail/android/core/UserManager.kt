@@ -366,6 +366,10 @@ class UserManager @Inject constructor(
             sessionId == getTokenManager(it).uid
         }
 
+    @Deprecated("Use suspend function", ReplaceWith("getUserIdBySessionId(sessionId)"))
+    fun getUserIdBySessionIdBlocking(sessionId: String): Id? =
+        runBlocking { getUserIdBySessionId(sessionId) }
+
     @Deprecated(
         "Username should not be used, get Id instead",
         ReplaceWith("getUserIdBySessionId(sessionId)"),
@@ -599,7 +603,7 @@ class UserManager @Inject constructor(
         val nextLoggedIn = getNextLoggedInUser()
             ?: // fallback to "last user logout"
             return@withContext logoutLastActiveAccount()
-        LogoutService.startLogout(false, username = userId)
+        LogoutService.startLogout(context, userId, false)
         accountManager.setLoggedOut(userId)
         AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
         launch {
@@ -642,7 +646,7 @@ class UserManager @Inject constructor(
         AppUtil.deleteDatabases(app.applicationContext, currentUserUsername, clearDoneListener)
         saveBackupSettings()
         // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
-        LogoutService.startLogout(true, username = currentUserId, fcmRegistrationId = FcmUtil.getFirebaseToken())
+        LogoutService.startLogout(context, requireCurrentUserId(), true, FcmUtil.getFirebaseToken())
         setRememberMailboxLogin(false)
         firstLoginRemove()
         resetReferencesBlocking()
@@ -663,7 +667,7 @@ class UserManager @Inject constructor(
             isLoggedIn = false
             currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
             saveCurrentUserBackupSettings()
-            LogoutService.startLogout(false)
+            LogoutService.startLogout(context, userId, false)
             setRememberMailboxLogin(false)
             AppUtil.deleteSecurePrefs(preferencesFor(userId), true)
             AppUtil.deletePrefs()
