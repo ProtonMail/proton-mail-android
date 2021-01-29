@@ -24,7 +24,6 @@ import androidx.annotation.NonNull;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,16 +53,18 @@ import kotlin.text.Charsets;
 
 public class PackageFactory {
 
-    private ProtonMailApiManager mApi;
-    private AddressCrypto crypto;
-    private String outsidersPassword;
-    private String outsidersHint;
+    private final ProtonMailApiManager mApi;
+    private final AddressCrypto crypto;
+    private final OutsidersPassword outsidersPassword;
 
-    public PackageFactory(ProtonMailApiManager mApi, AddressCrypto crypto, String outsidersPassword, String outsidersHint) {
+    public PackageFactory(
+            @NonNull ProtonMailApiManager mApi,
+            @NonNull AddressCrypto crypto,
+            @NonNull OutsidersPassword outsidersPassword
+    ) {
         this.mApi = mApi;
         this.crypto = crypto;
         this.outsidersPassword = outsidersPassword;
-        this.outsidersHint = outsidersHint;
     }
 
     public List<MessageSendPackage> generatePackages(Message message, List<SendPreference> preferences) throws Exception {
@@ -156,8 +157,8 @@ public class PackageFactory {
     }
 
     private void addAddress(MessageSendPackage packageModel, SendPreference sendPref, Message message) throws Exception {
-        if (!sendPref.isEncryptionEnabled() && outsidersPassword != null && outsidersHint != null) {
-            addEOAddress(packageModel, sendPref, message);
+        if (!sendPref.isEncryptionEnabled() && outsidersPassword.getPassword() != null && outsidersPassword.getHint() != null) {
+            addEOAddress(packageModel, sendPref);
             return;
         }
         if (sendPref.isEncryptionEnabled()) {
@@ -167,16 +168,16 @@ public class PackageFactory {
         addUnencryptedAddress(packageModel, sendPref, message);
     }
 
-    private void addEOAddress(MessageSendPackage packageModel, SendPreference sendPref, Message message) throws Exception {
+    private void addEOAddress(MessageSendPackage packageModel, SendPreference sendPref) throws Exception {
         MessageSendAddressBody messageAddress = new MessageSendAddressBody();
-        Map<String, String> attachmentKeys = symEncryptAttachmentKeys(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getAttachmentKeys());
+        Map<String, String> attachmentKeys = symEncryptAttachmentKeys(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getAttachmentKeys());
         messageAddress.setAttachmentKeyPackets(attachmentKeys);
         messageAddress.setType(PackageType.EO.getValue());
-        messageAddress.setBodyKeyPacket(symEncryptKeyPacket(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getBodyKey()));
-        EOToken token = crypto.generateEOToken(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/);
+        messageAddress.setBodyKeyPacket(symEncryptKeyPacket(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getBodyKey()));
+        EOToken token = crypto.generateEOToken(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/);
         messageAddress.setToken(token.getToken());
         messageAddress.setEncToken(token.getEncryptedToken());
-        messageAddress.setPasswordHint(outsidersHint);
+        messageAddress.setPasswordHint(outsidersPassword.getHint());
         messageAddress.setAuth(generateAuth());
         packageModel.addAddress(sendPref.getEmailAddress(), messageAddress);
     }
@@ -204,9 +205,9 @@ public class PackageFactory {
         packageModel.addAddress(sendPref.getEmailAddress(), messageAddress);
     }
 
-    private Auth generateAuth() throws IOException {
+    private Auth generateAuth() {
         final ModulusResponse modulus = mApi.randomModulus();
-        final PasswordVerifier verifier = PasswordVerifier.calculate(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
+        final PasswordVerifier verifier = PasswordVerifier.calculate(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
         return new Auth(verifier.AuthVersion, verifier.ModulusID, verifier.Salt, verifier.SRPVerifier);
     }
 
@@ -242,7 +243,7 @@ public class PackageFactory {
     private MIMEType getMIMEType(Message message, SendPreference sendPref) {
         MIMEType input = sendPref.getMimeType();
         if ((!sendPref.isEncryptionEnabled() && sendPref.isSignatureEnabled() &&
-                outsidersPassword != null && outsidersHint != null) || input == MIMEType.HTML) {
+                outsidersPassword.getPassword() != null && outsidersPassword.getHint() != null) || input == MIMEType.HTML) {
             return ObjectUtils.firstNonNull(MIMEType.fromString(message.getMimeType()), MIMEType.HTML);
         }
         return input;
