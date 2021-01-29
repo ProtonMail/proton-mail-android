@@ -366,8 +366,8 @@ public class PostMessageJob extends ProtonMailBaseJob {
         Message draftMessage = draftResponse.getMessage();
         draftMessage.decrypt(getUserManager(), mUsername);
         //region create packages to send to API
-        PackageFactory packageFactory = new PackageFactory(getApi(), crypto, new OutsidersPassword(mOutsidersPassword, mOutsidersHint));
-        List<MessageSendPackage> packages = packageFactory.generatePackages(draftMessage, mSendPreferences);
+        PackageFactory packageFactory = new PackageFactory(getApi(), crypto);
+        List<MessageSendPackage> packages = packageFactory.generatePackages(draftMessage, mSendPreferences, new OutsidersPassword(mOutsidersPassword, mOutsidersHint));
 
         MessageSendBody Body = new MessageSendBody(packages, expiresIn <= 0 ? null : expiresIn, getUserManager().getMailSettings(mUsername).getAutoSaveContacts());
         //endregion
