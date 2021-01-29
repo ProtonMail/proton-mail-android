@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.uitests.tests.drafts
 
+import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
@@ -151,5 +152,30 @@ class DraftsTests : BaseTest() {
             .searchMessageText(subject)
             .clickSearchedDraftBySubject(subject)
             .verify { messageWithSubjectOpened(subject) }
+    }
+
+    @Test
+    fun addAttachmentToDraft() {
+        loginRobot
+            .loginUser(onePassUser)
+            .compose()
+            .draftToSubjectBody(to, subject, body)
+            .clickUpButton()
+            .confirmDraftSaving()
+            .menuDrawer()
+            .drafts()
+            .refreshMessageList()
+            .clickDraftBySubject(subject)
+            .attachments()
+            .addFileAttachment(welcomeDrawable)
+            .clickUpButton()
+            .confirmDraftSavingFromDrafts()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .verify { attachmentsAdded() }
+    }
+
+    private companion object {
+        const val welcomeDrawable = R.drawable.welcome
     }
 }
