@@ -37,11 +37,13 @@ const val COLUMN_CONTACT_EMAILS_CONTACT_ID = "ContactID"
 const val COLUMN_CONTACT_EMAILS_LABEL_IDS = "LabelIDs"
 const val COLUMN_CONTACT_EMAILS_DEFAULTS = "Defaults"
 
-@Entity(tableName = TABLE_CONTACT_EMAILS,
-        indices = [
-            Index(COLUMN_CONTACT_EMAILS_ID, unique = true),
-            Index(COLUMN_CONTACT_EMAILS_EMAIL, unique = false)
-        ])
+@Entity(
+    tableName = TABLE_CONTACT_EMAILS,
+    indices = [
+        Index(COLUMN_CONTACT_EMAILS_ID, unique = true),
+        Index(COLUMN_CONTACT_EMAILS_EMAIL, unique = false)
+    ]
+)
 @TypeConverters(value = [ContactEmailConverter::class])
 @kotlinx.serialization.Serializable
 data class ContactEmail @JvmOverloads constructor(

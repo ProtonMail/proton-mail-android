@@ -43,7 +43,6 @@ import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER
 import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
-import ch.protonmail.android.activities.guest.LoginActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.api.models.User
@@ -58,26 +57,23 @@ import ch.protonmail.android.utils.buildReplyIntent
 import ch.protonmail.android.utils.buildTrashIntent
 import ch.protonmail.android.utils.extensions.getColorCompat
 import ch.protonmail.android.utils.extensions.showToast
+import javax.inject.Inject
 import ch.protonmail.android.api.models.room.notifications.Notification as RoomNotification
 
-// region constants
 const val CHANNEL_ID_EMAIL = "emails"
 const val CHANNEL_ID_ONGOING_OPS = "ongoingOperations"
 const val CHANNEL_ID_ACCOUNT = "account"
 const val CHANNEL_ID_ATTACHMENTS = "attachments"
-
 const val NOTIFICATION_GROUP_ID_EMAIL = 99
 const val NOTIFICATION_ID_SENDING_FAILED = 680
-
+const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
 const val EXTRA_USERNAME = "username"
-// endregion
 
 /**
- * Created by Kamil Rajtar on 13.07.18.
+ * A class that is responsible for creating notification channels, and creating and showing notifications.
  */
-
-class NotificationServer(
+class NotificationServer @Inject constructor(
     private val context: Context,
     private val notificationManager: NotificationManager
 ) : INotificationServer {
@@ -163,11 +159,13 @@ class NotificationServer(
         return CHANNEL_ID_ONGOING_OPS
     }
 
-    override fun notifyVerificationNeeded(user: User?,
-                                          messageTitle: String,
-                                          messageId: String,
-                                          messageInline: Boolean,
-                                          messageAddressId: String) {
+    override fun notifyVerificationNeeded(
+        user: User?,
+        messageTitle: String,
+        messageId: String,
+        messageInline: Boolean,
+        messageAddressId: String
+    ) {
         val inboxStyle = NotificationCompat.BigTextStyle()
         inboxStyle.setBigContentTitle(context.getString(R.string.verification_needed))
         inboxStyle.bigText(String.format(
@@ -229,8 +227,8 @@ class NotificationServer(
 
         val channelId = createAccountChannel()
 
-        val mBuilder = NotificationCompat.Builder(context,
-            channelId).setSmallIcon(R.drawable.notification_icon)
+        val mBuilder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.drawable.notification_icon)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
             .setStyle(inboxStyle)
             .setLights(ContextCompat.getColor(context, R.color.light_indicator),
@@ -242,8 +240,12 @@ class NotificationServer(
         notificationManager.notify(3, notification)
     }
 
-    override fun notifyAboutAttachment(filename: String, uri: Uri,
-                                       mimeType: String?, showNotification: Boolean) {
+    override fun notifyAboutAttachment(
+        filename: String,
+        uri: Uri,
+        mimeType: String?,
+        showNotification: Boolean
+    ) {
         val channelId = createAttachmentsChannel()
         val mBuilder = NotificationCompat.Builder(context, channelId)
 
@@ -426,20 +428,20 @@ class NotificationServer(
      * Show a Notification for MORE THAN ONE unread Emails. This will be called ONLY if there are
      * MORE than one unread Notifications
      *
-     * @param user current logged [User]
+     * @param loggedInUser current logged [User]
      * @param unreadNotifications [List] of [RoomNotification] to show to the user
      */
     override fun notifyMultipleUnreadEmail(
         userManager: UserManager,
-        user: User,
+        loggedInUser: User,
         unreadNotifications: List<RoomNotification>
     ) {
         val currentUserUsername = userManager.username
         // Create content Intent for open MailboxActivity
         val contentIntent = Intent(context, MailboxActivity::class.java)
-        if (currentUserUsername != user.username) {
+        if (currentUserUsername != loggedInUser.username) {
             contentIntent.putExtra(EXTRA_SWITCHED_USER, true)
-            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER, user.username)
+            contentIntent.putExtra(EXTRA_SWITCHED_TO_USER, loggedInUser.username)
         }
         val currentTime = System.currentTimeMillis().toInt()
         val contentPendingIntent = PendingIntent.getActivity(context, currentTime, contentIntent, 0)
@@ -450,7 +452,7 @@ class NotificationServer(
         // Create Notification Style
         val inboxStyle = NotificationCompat.InboxStyle()
             .setBigContentTitle(notificationTitle)
-            .setSummaryText(user.username)
+            .setSummaryText(loggedInUser.username)
         unreadNotifications.reversed().forEach { notification ->
             inboxStyle.addLine(createSpannableLine(
                 notification.notificationTitle, notification.notificationBody
@@ -458,7 +460,7 @@ class NotificationServer(
         }
 
         // Create Notification's Builder with the prepared params
-        val builder = createGenericEmailNotification(user)
+        val builder = createGenericEmailNotification(loggedInUser)
             .setContentTitle(notificationTitle)
             .setContentIntent(contentPendingIntent)
             .setStyle(inboxStyle)
@@ -466,7 +468,7 @@ class NotificationServer(
         // Build the Notification
         val notification = builder.build()
 
-        notificationManager.notify(user.username.hashCode(), notification)
+        notificationManager.notify(loggedInUser.username.hashCode(), notification)
     }
 
     /** @return [Spannable] a single line [Spannable] where [title] is [BOLD] */
@@ -477,7 +479,9 @@ class NotificationServer(
         return spannableText
     }
 
-    private fun createSpannableBigText(sendingFailedNotifications: List<SendingFailedNotification>): Spannable {
+    private fun createSpannableBigText(
+        sendingFailedNotifications: List<SendingFailedNotification>
+    ): Spannable {
         val spannableStringBuilder = SpannableStringBuilder()
         sendingFailedNotifications.reversed().forEach { sendingFailedNotification ->
             spannableStringBuilder.append(createSpannableLine(
@@ -489,7 +493,7 @@ class NotificationServer(
     }
 
     private fun createGenericErrorSendingMessageNotification(
-        user: User
+        username: String
     ): NotificationCompat.Builder {
 
         // Create channel and get id
@@ -498,13 +502,13 @@ class NotificationServer(
         // Create content Intent to open Drafts
         val contentIntent = Intent(context, MailboxActivity::class.java)
         contentIntent.putExtra(EXTRA_MAILBOX_LOCATION, Constants.MessageLocationType.DRAFT.messageLocationTypeValue)
-        contentIntent.putExtra(EXTRA_USERNAME, user.username)
+        contentIntent.putExtra(EXTRA_USERNAME, username)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MailboxActivity::class.java)
             .addNextIntent(contentIntent)
 
-        val contentPendingIntent = stackBuilder.getPendingIntent(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentPendingIntent = stackBuilder.getPendingIntent(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Set Notification's colors
         val mainColor = context.getColorCompat(R.color.ocean_blue)
@@ -532,7 +536,7 @@ class NotificationServer(
             .bigText(error)
 
         // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
             .setStyle(bigTextStyle)
 
         // Build and show notification
@@ -554,12 +558,26 @@ class NotificationServer(
             .bigText(createSpannableBigText(unreadSendingFailedNotifications))
 
         // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
             .setStyle(bigTextStyle)
 
         // Build and show notification
         val notification = notificationBuilder.build()
         notificationManager.notify(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
-}
 
+    override fun notifySaveDraftError(errorMessage: String, messageSubject: String?, username: String) {
+        val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
+
+        val bigTextStyle = NotificationCompat.BigTextStyle()
+            .setBigContentTitle(title)
+            .setSummaryText(username)
+            .bigText(errorMessage)
+
+        val notificationBuilder = createGenericErrorSendingMessageNotification(username)
+            .setStyle(bigTextStyle)
+
+        val notification = notificationBuilder.build()
+        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SAVE_DRAFT_ERROR, notification)
+    }
+}

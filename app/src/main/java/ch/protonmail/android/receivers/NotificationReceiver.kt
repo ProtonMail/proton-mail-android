@@ -82,7 +82,7 @@ class NotificationReceiver : BroadcastReceiver() {
         messageId: String
     ) {
         withContext(Dispatchers.Default) {
-            val message = messageDetailsRepository.findMessageById(messageId)
+            val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
             if (message != null) {
                 val job: Job = PostTrashJobV2(listOf(message.messageId), null)
                 jobManager.addJobInBackground(job)

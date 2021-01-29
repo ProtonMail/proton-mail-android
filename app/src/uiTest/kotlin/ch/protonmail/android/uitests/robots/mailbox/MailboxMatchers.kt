@@ -18,14 +18,23 @@
  */
 package ch.protonmail.android.uitests.robots.mailbox
 
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.matcher.BoundedDiagnosingMatcher
 import androidx.test.espresso.matcher.BoundedMatcher
 import ch.protonmail.android.R
+import ch.protonmail.android.adapters.FoldersAdapter
+import ch.protonmail.android.adapters.LabelsAdapter
 import ch.protonmail.android.adapters.messages.MessagesListViewHolder
 import ch.protonmail.android.views.messagesList.MessagesListItemView
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.TypeSafeMatcher
 
 /**
  * Matchers that are used by Mailbox features like Inbox, Sent, Drafts, Trash, etc.
@@ -59,6 +68,43 @@ object MailboxMatchers {
                     messagesList.add(actualSubject)
                     false
                 }
+            }
+        }
+    }
+
+    /**
+     * Matches the Mailbox message represented by [MessagesListItemView] by message subject and Reply, Reply all or
+     * Forward flag. Subject must be unique in a list in order to use this matcher.
+     *
+     * @param subject - message subject
+     * @param id - the view id of Reply, Reply all or Forward [TextView].
+     */
+    fun withMessageSubjectAndFlag(subject: String, @IdRes id: Int): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedDiagnosingMatcher<RecyclerView.ViewHolder,
+            MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
+
+            val messagesList = ArrayList<String>()
+
+            override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder?, mismatchDescription: Description?): Boolean {
+                val messageSubjectView = item!!.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val actualSubject = messageSubjectView.text.toString()
+                val flagView = item.itemView.findViewById<LinearLayout>(R.id.messageTitleContainerLinearLayout)
+                    .findViewById<LinearLayout>(R.id.flow_indicators_container)
+                    .findViewById<TextView>(id)
+                return if (messageSubjectView != null) {
+                    subject == actualSubject && flagView.visibility == View.VISIBLE
+                } else {
+                    messagesList.add(actualSubject)
+                    false
+                }
+            }
+
+            override fun describeMoreTo(description: Description?) {
+                description?.apply {
+                    appendText("Message item with subject: \"$subject\"\n")
+                    appendText("Here is the actual list of messages:\n")
+                }
+                messagesList.forEach { description?.appendText(" - \"$it\"\n") }
             }
         }
     }
@@ -158,6 +204,36 @@ object MailboxMatchers {
                     return matched
                 }
                 return false
+            }
+        }
+    }
+
+    fun withFolderName(name: String): TypeSafeMatcher<FoldersAdapter.FolderItem> =
+        withFolderName(equalTo(name))
+
+    fun withFolderName(nameMatcher: Matcher<out Any?>): TypeSafeMatcher<FoldersAdapter.FolderItem> {
+        return object : TypeSafeMatcher<FoldersAdapter.FolderItem>(FoldersAdapter.FolderItem::class.java) {
+            override fun matchesSafely(item: FoldersAdapter.FolderItem): Boolean {
+                return nameMatcher.matches(item.name)
+            }
+
+            override fun describeTo(description: Description) {
+                description.appendText("with item content: ")
+            }
+        }
+    }
+
+    fun withLabelName(name: String): TypeSafeMatcher<LabelsAdapter.LabelItem> =
+        withLabelName(equalTo(name))
+
+    fun withLabelName(nameMatcher: Matcher<out Any?>): TypeSafeMatcher<LabelsAdapter.LabelItem> {
+        return object : TypeSafeMatcher<LabelsAdapter.LabelItem>(LabelsAdapter.LabelItem::class.java) {
+            override fun matchesSafely(item: LabelsAdapter.LabelItem): Boolean {
+                return nameMatcher.matches(item.name)
+            }
+
+            override fun describeTo(description: Description) {
+                description.appendText("with item content: ")
             }
         }
     }

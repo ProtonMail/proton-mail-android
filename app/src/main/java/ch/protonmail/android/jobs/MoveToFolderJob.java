@@ -58,7 +58,7 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
                 .getDatabase();
         int totalUnread = 0;
         for (String id : mMessageIds) {
-            final Message message = getMessageDetailsRepository().findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (!TextUtils.isEmpty(mLabelId)) {
                     int location = message.getLocation();

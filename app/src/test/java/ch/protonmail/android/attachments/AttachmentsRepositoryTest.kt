@@ -80,7 +80,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
         MockKAnnotations.init(this)
         val successResponse = mockk<AttachmentUploadResponse> {
             every { code } returns Constants.RESPONSE_CODE_OK
-            every { attachmentID } returns ""
+            every { attachmentID } returns "default success attachment ID"
             every { attachment.keyPackets } returns null
             every { attachment.signature } returns null
         }
@@ -248,7 +248,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 attachment.isUploaded = true
                 messageDetailsRepository.saveAttachment(attachment)
             }
-            assertEquals(AttachmentsRepository.Result.Success, result)
+            val expected = AttachmentsRepository.Result.Success(apiAttachmentId)
+            assertEquals(expected, result)
         }
     }
 
@@ -299,7 +300,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 fileName = "publickey - EmailAddress(s=message@email.com) - 0xPUBLICKE.asc",
                 mimeType = "application/pgp-keys",
                 messageId = message.messageId!!,
-                attachmentId = "",
+                attachmentId = "default success attachment ID",
                 isUploaded = true
 
             )
@@ -314,7 +315,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             assertEquals(MediaType.parse("application/pgp-keys"), keyPackageSlot.captured.contentType())
             assertEquals(MediaType.parse("application/pgp-keys"), dataPackageSlot.captured.contentType())
             assertEquals(MediaType.parse("application/octet-stream"), signatureSlot.captured.contentType())
-            assertEquals(AttachmentsRepository.Result.Success, result)
+            val expected = AttachmentsRepository.Result.Success("default success attachment ID")
+            assertEquals(expected, result)
         }
     }
 

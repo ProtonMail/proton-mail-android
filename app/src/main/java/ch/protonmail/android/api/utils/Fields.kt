@@ -135,6 +135,8 @@ object Fields {
         const val SELF = "self"
         const val TOTAL = "Total"
         const val SENDER = "Sender"
+        const val ID = "ID"
+        const val UNREAD = "Unread"
 
         object Send {
             const val EXPIRES_IN = "ExpiresIn"

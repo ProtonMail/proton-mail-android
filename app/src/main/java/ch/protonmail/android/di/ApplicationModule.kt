@@ -32,6 +32,8 @@ import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.factories.IConverterFactory
+import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
+import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.attachments.Armorer
@@ -44,8 +46,13 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.BuildInfo
+import ch.protonmail.android.utils.base64.AndroidBase64Encoder
+import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.notifier.AndroidErrorNotifier
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
@@ -196,6 +203,18 @@ object ApplicationModule {
 
     @Provides
     fun providesArmorer(): Armorer = OpenPgpArmorer()
+
+    @Provides
+    fun attachmentFactory(): IAttachmentFactory = AttachmentFactory()
+
+    @Provides
+    fun base64Encoder(): Base64Encoder = AndroidBase64Encoder()
+
+    @Provides
+    fun errorNotifier(
+        notificationServer: NotificationServer,
+        userManager: UserManager
+    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager)
 }
 
 @Module

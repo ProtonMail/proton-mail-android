@@ -105,7 +105,7 @@ sealed class ContactListItemView(context: Context, attrs: AttributeSet? = null, 
                         ""
                     item.getEmail() + additionalEmailsText
                 }
-            contact_email.text = contactEmails
+            contact_subtitle.text = contactEmails
             writeButton.setOnClickListener {
                 val emailValue = item.getEmail()
                 if (!TextUtils.isEmpty(emailValue)) {

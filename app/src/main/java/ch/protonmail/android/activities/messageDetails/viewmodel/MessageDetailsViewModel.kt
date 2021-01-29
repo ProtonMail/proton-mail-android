@@ -425,7 +425,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                         }
 
                                     } else {
-                                        val savedMessage = findMessageById(messageId, dispatchers.Io)
+                                        val savedMessage = findMessageById(messageId)
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveMessageInDB(savedMessage)

@@ -133,10 +133,8 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
-import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
-import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.events.HumanVerifyOptionsEvent;
@@ -187,7 +185,6 @@ import timber.log.Timber;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_COMPOSER_INSTANCE_ID;
 import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_ATTACHMENT_IMPORT_EVENT;
-import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_CREATED_EVENT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_DRAFT_DETAILS_EVENT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_MESSAGE_DETAIL_EVENT;
 
@@ -467,12 +464,20 @@ public class ComposeMessageActivity
 
         composeMessageViewModel.getDeleteResult().observe(ComposeMessageActivity.this, new CheckLocalMessageObserver());
         composeMessageViewModel.getOpenAttachmentsScreenResult().observe(ComposeMessageActivity.this, new AddAttachmentsObserver());
-        composeMessageViewModel.getMessageDraftResult().observe(ComposeMessageActivity.this, new OnDraftCreatedObserver(TextUtils.isEmpty(mAction)));
+        composeMessageViewModel.getSavingDraftError().observe(this, errorMessage ->
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
-            if (event != null) {
-                DraftCreatedEvent draftEvent = event.getContentIfNotHandled();
-                onDraftCreatedEvent(draftEvent);
+            if (mUpdateDraftPmMeChanged) {
+                composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
+                mUpdateDraftPmMeChanged = false;
             }
+            disableSendButton(false);
+            onMessageLoaded(
+                    event,
+                    false,
+                    TextUtils.isEmpty(mAction) &&
+                            composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty()
+            );
         });
 
         composeMessageViewModel.getDbIdWatcher().observe(ComposeMessageActivity.this, new SendMessageObserver());
@@ -745,13 +750,14 @@ public class ComposeMessageActivity
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        public void onTextChanged(CharSequence text, int start, int before, int count) {
             if (skipInitial < 2) {
                 skipInitial++;
                 return;
             }
             skipInitial++;
             composeMessageViewModel.setIsDirty(true);
+            composeMessageViewModel.autoSaveDraft(text.toString());
         }
 
         @Override
@@ -973,11 +979,6 @@ public class ComposeMessageActivity
     }
 
     @Subscribe
-    public void onAttachmentFailedEvent(AttachmentFailedEvent event) {
-        TextExtensions.showToast(this, getString(R.string.attachment_failed) + " " + event.getMessageSubject() + " " + event.getAttachmentName(), Toast.LENGTH_SHORT);
-    }
-
-    @Subscribe
     public void onPostImportAttachmentEvent(PostImportAttachmentEvent event) {
         if (event == null || event.composerInstanceId == null || !event.composerInstanceId.equals(composerInstanceId)) {
             return;
@@ -995,18 +996,6 @@ public class ComposeMessageActivity
         }
     }
 
-    private void onDraftCreatedEvent(final DraftCreatedEvent event) {
-        String draftId = composeMessageViewModel.getDraftId();
-        if (event == null || !draftId.equals(event.getOldMessageId())) {
-            return;
-        }
-        composeMessageViewModel.onDraftCreated(event);
-        if (mUpdateDraftPmMeChanged) {
-            composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
-            mUpdateDraftPmMeChanged = false;
-        }
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -1017,8 +1006,6 @@ public class ComposeMessageActivity
         if (askForPermission) {
             contactsPermissionHelper.checkPermission();
         }
-        composeMessageViewModel.insertPendingDraft();
-//        mToRecipientsView.invalidateRecipients();
     }
 
     @Override
@@ -1069,7 +1056,6 @@ public class ComposeMessageActivity
     @Override
     protected void onStop() {
         super.onStop();
-        composeMessageViewModel.removePendingDraft();
         askForPermission = true;
         ProtonMailApplication.getApplication().getBus().unregister(this);
         ProtonMailApplication.getApplication().getBus().unregister(composeMessageViewModel);
@@ -1122,11 +1108,7 @@ public class ComposeMessageActivity
                     getString(R.string.yes),
                     getString(R.string.cancel),
                     unit -> {
-                        String draftId = composeMessageViewModel.getDraftId();
-                        if (!TextUtils.isEmpty(draftId)) {
-                            composeMessageViewModel.deleteDraft();
-                        }
-                        mComposeBodyEditText.setIsDirty(false);
+                        composeMessageViewModel.deleteDraft();
                         finishActivity();
                         return unit;
                     },
@@ -1207,13 +1189,11 @@ public class ComposeMessageActivity
                         unit -> {
                             UiUtil.hideKeyboard(this);
                             composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
-                            ProtonMailApplication.getApplication().resetDraftCreated();
                             return unit;
                         }, true);
             } else {
                 UiUtil.hideKeyboard(this);
                 composeMessageViewModel.finishBuildingMessage(mComposeBodyEditText.getText().toString());
-                ProtonMailApplication.getApplication().resetDraftCreated();
             }
         }
     }
@@ -1492,18 +1472,14 @@ public class ComposeMessageActivity
                     onPostImportAttachmentEvent((PostImportAttachmentEvent) attachmentExtra);
                 }
                 composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
-            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT) || data.hasExtra(EXTRA_DRAFT_CREATED_EVENT)) {
+            } else if (data.hasExtra(EXTRA_MESSAGE_DETAIL_EVENT) || data.hasExtra(EXTRA_DRAFT_DETAILS_EVENT)) {
                 FetchMessageDetailEvent messageDetailEvent = (FetchMessageDetailEvent) data.getSerializableExtra(EXTRA_MESSAGE_DETAIL_EVENT);
                 FetchDraftDetailEvent draftDetailEvent = (FetchDraftDetailEvent) data.getSerializableExtra(EXTRA_DRAFT_DETAILS_EVENT);
-                DraftCreatedEvent draftCreatedEvent = (DraftCreatedEvent) data.getSerializableExtra(EXTRA_DRAFT_CREATED_EVENT);
                 if (messageDetailEvent != null) {
                     composeMessageViewModel.onFetchMessageDetailEvent(messageDetailEvent);
                 }
                 if (draftDetailEvent != null) {
                     onFetchDraftDetailEvent(draftDetailEvent);
-                }
-                if (draftCreatedEvent != null) {
-                    onDraftCreatedEvent(draftCreatedEvent);
                 }
             }
             mToRecipientsView.requestFocus();
@@ -2163,26 +2139,13 @@ public class ComposeMessageActivity
         }
     }
 
-    private class OnDraftCreatedObserver implements Observer<Message> {
-        private final boolean updateAttachments;
-
-        OnDraftCreatedObserver(boolean updateAttachments) {
-            this.updateAttachments = updateAttachments;
-        }
-
-        @Override
-        public void onChanged(@Nullable Message message) {
-            onMessageLoaded(message, false, updateAttachments && composeMessageViewModel.getMessageDataResult().getAttachmentList().isEmpty());
-        }
-    }
-
     private class AddAttachmentsObserver implements Observer<List<LocalAttachment>> {
 
         @Override
         public void onChanged(@Nullable List<LocalAttachment> attachments) {
             String draftId = composeMessageViewModel.getDraftId();
             Intent intent = AppUtil.decorInAppIntent(new Intent(ComposeMessageActivity.this, AddAttachmentsActivity.class));
-            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId) && !MessageUtils.INSTANCE.isLocalMessageId(draftId));
+            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId));
             intent.putParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST, new ArrayList<>(attachments));
             intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_ID, draftId);
             startActivityForResult(intent, REQUEST_CODE_ADD_ATTACHMENTS);
@@ -2243,7 +2206,6 @@ public class ComposeMessageActivity
 
             Message localMessage = messageEvent.getContentIfNotHandled();
             if (localMessage != null) {
-                composeMessageViewModel.setOfflineDraftSaved(false);
 
                 String aliasAddress = composeMessageViewModel.getMessageDataResult().getAddressEmailAlias();
                 MessageSender messageSender;
@@ -2273,7 +2235,7 @@ public class ComposeMessageActivity
                 // draft
                 fillMessageFromUserInputs(localMessage, true);
                 localMessage.setExpirationTime(0);
-                composeMessageViewModel.saveDraft(localMessage, composeMessageViewModel.getParentId(), mNetworkUtil.isConnected());
+                composeMessageViewModel.saveDraft(localMessage, mNetworkUtil.isConnected());
                 new Handler(Looper.getMainLooper()).postDelayed(() -> disableSendButton(false), 500);
                 if (userAction == UserAction.SAVE_DRAFT_EXIT) {
                     finishActivity();

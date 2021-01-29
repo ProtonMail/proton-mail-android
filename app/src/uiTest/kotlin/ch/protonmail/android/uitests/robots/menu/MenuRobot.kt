@@ -35,8 +35,8 @@ import ch.protonmail.android.uitests.robots.reportbugs.ReportBugsRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.robots.upgradedonate.UpgradeDonateRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
 
 /**
  * [MenuRobot] class contains actions and verifications for menu functionality.
@@ -111,10 +111,10 @@ class MenuRobot {
     }
 
     private fun selectMenuItem(@IdRes menuItemName: String) = UIActions.recyclerView
-        .clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withMenuItemTag(menuItemName))
+        .common.clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withMenuItemTag(menuItemName))
 
     private fun selectMenuLabelOrFolder(@IdRes labelOrFolderName: String) = UIActions.recyclerView
-        .clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withLabelOrFolderName(labelOrFolderName))
+        .common.clickOnRecyclerViewMatchedItem(leftDrawerNavigationId, withLabelOrFolderName(labelOrFolderName))
 
     /**
      * Contains all the validations that can be performed by [MenuRobot].
@@ -138,12 +138,12 @@ class MenuRobot {
         }
 
         fun switchToAccount(accountPosition: Int): MenuRobot {
-            UIActions.recyclerView.clickOnRecyclerViewItemByPosition(menuDrawerUserList, accountPosition)
+            UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(menuDrawerUserList, accountPosition)
             return MenuRobot()
         }
 
         fun switchToAccount(email: String): MenuRobot {
-            UIActions.recyclerView.clickOnRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
+            UIActions.recyclerView.common.clickOnRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
             return MenuRobot()
         }
 
@@ -154,10 +154,10 @@ class MenuRobot {
             fun accountsListOpened() = UIActions.check.viewWithIdIsDisplayed(menuDrawerUserList)
 
             fun accountAdded(email: String) = UIActions.recyclerView
-                .scrollToRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
+                .common.scrollToRecyclerViewMatchedItem(menuDrawerUserList, withAccountEmailInDrawer(email))
 
             fun accountLoggedOut(email: String) = UIActions.recyclerView
-                .scrollToRecyclerViewMatchedItem(menuDrawerUserList, withLoggedOutAccountNameInDrawer(email))
+                .common.scrollToRecyclerViewMatchedItem(menuDrawerUserList, withLoggedOutAccountNameInDrawer(email))
 
             fun accountRemoved(username: String) = UIActions.check
                 .viewWithIdAndTextDoesNotExist(menuDrawerUsernameId, username)

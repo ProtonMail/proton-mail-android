@@ -263,7 +263,7 @@ public class FcmIntentService extends IntentService {
         }
         if (message == null) {
             // try to find the message in the local storage, maybe it was received from the event
-            message = messageDetailsRepository.findMessageById(messageId);
+            message = messageDetailsRepository.findMessageByIdBlocking(messageId);
         }
 
         return message;
@@ -279,7 +279,7 @@ public class FcmIntentService extends IntentService {
                     message = messages.get(0);
                 }
                 if (message != null) {
-                    Message savedMessage = messageDetailsRepository.findMessageById(message.getMessageId());
+                    Message savedMessage = messageDetailsRepository.findMessageByIdBlocking(message.getMessageId());
                     if (savedMessage != null) {
                         message.setInline(savedMessage.isInline());
                     }
@@ -287,7 +287,7 @@ public class FcmIntentService extends IntentService {
                     messageDetailsRepository.saveMessageInDB(message);
                 } else {
                     // check if the message is already in local store
-                    message = messageDetailsRepository.findMessageById(messageId);
+                    message = messageDetailsRepository.findMessageByIdBlocking(messageId);
                 }
             }
         } catch (Exception error) {
@@ -301,7 +301,7 @@ public class FcmIntentService extends IntentService {
         try {
             MessageResponse messageResponse = mApi.messageDetail(messageId);
             message = messageResponse.getMessage();
-            Message savedMessage = messageDetailsRepository.findMessageById(messageId);
+            Message savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageId);
             if (savedMessage != null) {
                 message.setInline(savedMessage.isInline());
             }

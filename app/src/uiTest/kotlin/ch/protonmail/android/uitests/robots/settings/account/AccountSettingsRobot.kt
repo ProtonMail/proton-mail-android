@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.uitests.actions.settings.account
+package ch.protonmail.android.uitests.robots.settings.account
 
 import androidx.annotation.IdRes
 import androidx.test.espresso.Espresso.onView
@@ -26,15 +26,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
-import ch.protonmail.android.uitests.robots.settings.account.DefaultEmailAddressRobot
-import ch.protonmail.android.uitests.robots.settings.account.DisplayNameAndSignatureRobot
-import ch.protonmail.android.uitests.robots.settings.account.LabelsAndFoldersRobot
-import ch.protonmail.android.uitests.robots.settings.account.PasswordManagementRobot
-import ch.protonmail.android.uitests.robots.settings.account.RecoveryEmailRobot
-import ch.protonmail.android.uitests.robots.settings.account.SubscriptionRobot
-import ch.protonmail.android.uitests.robots.settings.account.SwipingGesturesSettingsRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [AccountSettingsRobot] class contains actions and verifications for

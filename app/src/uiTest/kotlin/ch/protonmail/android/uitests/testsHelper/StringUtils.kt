@@ -35,7 +35,7 @@ object StringUtils {
     }
 
     fun getAlphaNumericStringWithSpecialCharacters(length: Long = 10): String {
-        val source = "aäbcdeëfghijklmnoöpqrstuuüvwxyz1234567890!@+_)(*&^%$#@!"
+        val source = "abcdefghijklmnopqrstuuvwxyz1234567890!@+_)(*&^%$#@!"
         return Random().ints(length, 0, source.length)
             .toArray()
             .map(source::get)

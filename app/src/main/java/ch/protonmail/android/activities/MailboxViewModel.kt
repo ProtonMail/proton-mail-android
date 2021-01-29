@@ -142,7 +142,7 @@ class MailboxViewModel @ViewModelInject constructor(
             withContext(Dispatchers.Default) {
                 while (iterator.hasNext()) {
                     val messageId = iterator.next()
-                    val message = messageDetailsRepository.findMessageById(messageId, Dispatchers.Default)
+                    val message = messageDetailsRepository.findMessageById(messageId)
 
                     if (message != null) {
                         val currentLabelsIds = message.labelIDsNotIncludingLocations

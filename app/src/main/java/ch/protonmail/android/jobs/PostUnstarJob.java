@@ -50,7 +50,7 @@ public class PostUnstarJob extends ProtonMailEndlessJob {
 
             Constants.MessageLocationType messageLocation = Constants.MessageLocationType.INVALID;
             boolean isUnread = false;
-            final Message message = getMessageDetailsRepository().findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 messageLocation = Constants.MessageLocationType.Companion.fromInt(message.getLocation());
                 isUnread = !message.isRead();

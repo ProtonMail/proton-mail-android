@@ -233,7 +233,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="resend_verification_code">Tekrar Gönder</string>
     <string name="enter_verification_code">Doğrulama kodunu girin</string>
     <string name="verify">Doğrula</string>
-    <string name="reply_prefix_on">Açık</string>
+    <string name="reply_prefix_on"/>
     <string name="create_new_account">Yeni bir hesap oluştur</string>
     <string name="setup_new_account">Hesabınızı ayarlayın</string>
     <string name="create_account">Hesap Oluştur</string>
@@ -978,7 +978,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <!-- region errors -->
     <string name="error_image_not_found">Resim bulunamadı</string>
     <string name="error_image_bad_url">Hatalı oluşturulmuş resim bağlantısı</string>
-    <string name="error_saving_try_again">Error while saving message. Try again.</string>
+    <string name="error_saving_try_again">İleti kaydedilirken hata oluştu. Tekrar deneyin.</string>
     <!-- endregion -->
     <string name="allowed">İzin verildi</string>
     <string name="denied">Reddedildi</string>
@@ -988,4 +988,6 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="go_to_settings">Ayarlara git</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Geçersiz Firebase API anahtarı. Anlık bildirimler çalışmayacaktır.</string>
+    <string name="failed_saving_draft_online">İleti taslağı çevrimiçi olarak kaydedilemedi: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Bu ileti gönderilirken açılamaz</string>
 </resources>

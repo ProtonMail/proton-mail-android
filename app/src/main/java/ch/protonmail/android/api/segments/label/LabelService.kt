@@ -58,6 +58,9 @@ interface LabelService {
     @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)
     fun fetchContactGroupsAsObservable(): Observable<ContactGroupsResponse>
 
+    @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)
+    suspend fun fetchContactGroupsList(): ContactGroupsResponse
+
     @POST("labels")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun createLabel(@Body label: LabelBody): Call<LabelResponse>

@@ -28,9 +28,6 @@ import android.widget.EditText;
 
 public class ComposeEditText extends EditText {
 
-    private boolean mIsDirty = false;
-    private boolean isDirty;
-
     public ComposeEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -47,17 +44,8 @@ public class ComposeEditText extends EditText {
             case android.R.id.cut:
             case android.R.id.paste:
             case android.R.id.copy:
-                mIsDirty = true;
                 break;
         }
         return consumed;
-    }
-
-    public boolean isIsDirty() {
-        return mIsDirty;
-    }
-
-    public void setIsDirty(boolean isDirty) {
-        mIsDirty = isDirty;
     }
 }

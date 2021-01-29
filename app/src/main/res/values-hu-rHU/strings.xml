@@ -998,4 +998,6 @@ Svájci székhellyel</string>
     <string name="go_to_settings">Beállítások megnyitása</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
+    <string name="failed_saving_draft_online">Failed saving online draft for message: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
 </resources>

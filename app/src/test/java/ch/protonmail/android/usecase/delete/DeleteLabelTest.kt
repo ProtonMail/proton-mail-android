@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.worker.DeleteLabelWorker
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -82,8 +83,8 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = true
 
-            every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
-            every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
+            coEvery { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
             every { messagesDatabase.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
@@ -117,8 +118,8 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = false
 
-            every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
-            every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
+            coEvery { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
             every { messagesDatabase.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
@@ -151,8 +152,8 @@ class DeleteLabelTest {
             val workerStatusLiveData = MutableLiveData<WorkInfo>()
             workerStatusLiveData.value = workInfo
 
-            every { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
-            every { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
+            coEvery { contactsDatabase.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactsDatabase.deleteContactGroup(contactLabel) } returns Unit
             every { messagesDatabase.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 

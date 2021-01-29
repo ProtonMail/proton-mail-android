@@ -20,7 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox.labelfolder
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [LabelFolderRobot] class implements [MailboxRobotInterface],
@@ -28,12 +28,17 @@ import ch.protonmail.android.uitests.testsHelper.UIActions
  */
 class LabelFolderRobot : MailboxRobotInterface {
 
+    override fun refreshMessageList(): LabelFolderRobot {
+        super.refreshMessageList()
+        return this
+    }
+
     /**
      * Contains all the validations that can be performed by [LabelFolderRobot].
      */
     open class Verify {
 
-        fun messageMoved(messageSubject: String) {
+        fun messageExists(messageSubject: String) {
             UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, messageSubject)
         }
     }

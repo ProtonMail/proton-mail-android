@@ -19,7 +19,11 @@
 package ch.protonmail.android.api.models.room.counters
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
 
 // TODO remove when we change name of this class to CountersDao and *Factory to *Database
 typealias CountersDao = CountersDatabase
@@ -27,93 +31,95 @@ typealias CountersDao = CountersDatabase
 @Dao
 abstract class CountersDatabase {
 
-	//region Unread Labels Counters
-	@Query("SELECT * FROM $TABLE_UNREAD_LABEL_COUNTERS")
-	abstract fun findAllUnreadLabels():LiveData<List<UnreadLabelCounter>>
+    //region Unread Labels Counters
+    @Query("SELECT * FROM $TABLE_UNREAD_LABEL_COUNTERS")
+    abstract fun findAllUnreadLabels(): LiveData<List<UnreadLabelCounter>>
 
-	@Query("SELECT * FROM $TABLE_UNREAD_LABEL_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:labelId")
-	abstract fun findUnreadLabelById(labelId:String):UnreadLabelCounter?
+    @Query("SELECT * FROM $TABLE_UNREAD_LABEL_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:labelId")
+    abstract fun findUnreadLabelById(labelId: String): UnreadLabelCounter?
 
-	@Query("DELETE FROM $TABLE_UNREAD_LABEL_COUNTERS")
-	abstract fun clearUnreadLabelsTable()
+    @Query("DELETE FROM $TABLE_UNREAD_LABEL_COUNTERS")
+    abstract fun clearUnreadLabelsTable()
 
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	abstract fun insertUnreadLabel(unreadLabel:UnreadLabelCounter)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertUnreadLabel(unreadLabel: UnreadLabelCounter)
 
-	@Insert(onConflict=OnConflictStrategy.REPLACE)
-	abstract fun insertAllUnreadLabels(unreadLabels:Collection<UnreadLabelCounter>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertAllUnreadLabels(unreadLabels: Collection<UnreadLabelCounter>)
 
-	//endregion
+    //endregion
 
-	//region Unread Locations Counters
-	@Query("SELECT * FROM $TABLE_UNREAD_LOCATION_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:locationId")
-	abstract fun findUnreadLocationById(locationId:Int):UnreadLocationCounter?
+    //region Unread Locations Counters
+    @Query("SELECT * FROM $TABLE_UNREAD_LOCATION_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:locationId")
+    abstract fun findUnreadLocationById(locationId: Int): UnreadLocationCounter?
 
-	@Query("SELECT * FROM $TABLE_UNREAD_LOCATION_COUNTERS")
-	abstract fun findAllUnreadLocations():LiveData<List<UnreadLocationCounter>>
+    @Query("SELECT * FROM $TABLE_UNREAD_LOCATION_COUNTERS")
+    abstract fun findAllUnreadLocations(): LiveData<List<UnreadLocationCounter>>
 
-	@Query("DELETE FROM $TABLE_UNREAD_LOCATION_COUNTERS")
-	abstract fun clearUnreadLocationsTable()
+    @Query("DELETE FROM $TABLE_UNREAD_LOCATION_COUNTERS")
+    abstract fun clearUnreadLocationsTable()
 
-	@Insert(onConflict=OnConflictStrategy.REPLACE)
-	abstract fun insertUnreadLocation(unreadLocation:UnreadLocationCounter)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertUnreadLocation(unreadLocation: UnreadLocationCounter)
 
-	@Insert(onConflict=OnConflictStrategy.REPLACE)
-	abstract fun insertAllUnreadLocations(unreadLocations:Collection<UnreadLocationCounter>)
-	//endregion
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insertAllUnreadLocations(unreadLocations: Collection<UnreadLocationCounter>)
+    //endregion
 
-	@Transaction
-	open fun updateUnreadCounters(locations:Collection<UnreadLocationCounter>,labels:Collection<UnreadLabelCounter>) {
-		clearUnreadLocationsTable()
-		clearUnreadLabelsTable()
-		insertAllUnreadLocations(locations)
-		insertAllUnreadLabels(labels)
-	}
+    @Transaction
+    open fun updateUnreadCounters(
+        locations: Collection<UnreadLocationCounter>,
+        labels: Collection<UnreadLabelCounter>
+    ) {
+        clearUnreadLocationsTable()
+        clearUnreadLabelsTable()
+        insertAllUnreadLocations(locations)
+        insertAllUnreadLabels(labels)
+    }
 
-	//region Total Label Counters
-	@Query("SELECT * FROM $TABLE_TOTAL_LABEL_COUNTERS")
-	abstract fun findAllTotalLabels():LiveData<List<TotalLabelCounter>>
+    //region Total Label Counters
+    @Query("SELECT * FROM $TABLE_TOTAL_LABEL_COUNTERS")
+    abstract fun findAllTotalLabels(): LiveData<List<TotalLabelCounter>>
 
-	@Query("SELECT * FROM $TABLE_TOTAL_LABEL_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:labelId")
-	abstract fun findTotalLabelById(labelId:String):TotalLabelCounter?
+    @Query("SELECT * FROM $TABLE_TOTAL_LABEL_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:labelId")
+    abstract fun findTotalLabelById(labelId: String): TotalLabelCounter?
 
-	@Query("DELETE FROM $TABLE_TOTAL_LABEL_COUNTERS")
-	abstract fun clearTotalLabelsTable()
+    @Query("DELETE FROM $TABLE_TOTAL_LABEL_COUNTERS")
+    abstract fun clearTotalLabelsTable()
 
-	@Insert(onConflict=OnConflictStrategy.REPLACE)
-	protected abstract fun insertTotalLabels(labels:Collection <TotalLabelCounter>)
-	//endregion
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    protected abstract fun insertTotalLabels(labels: Collection<TotalLabelCounter>)
+    //endregion
 
-	//region Total Location Counters
-	@Query("SELECT * FROM $TABLE_TOTAL_LOCATION_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:locationId")
-	abstract fun findTotalLocationById(locationId:Int):TotalLocationCounter?
+    //region Total Location Counters
+    @Query("SELECT * FROM $TABLE_TOTAL_LOCATION_COUNTERS WHERE ${COLUMN_COUNTER_ID}=:locationId")
+    abstract fun findTotalLocationById(locationId: Int): TotalLocationCounter?
 
-	@Query("SELECT * FROM $TABLE_TOTAL_LOCATION_COUNTERS")
-	abstract fun findAllTotalLocations():LiveData<List<TotalLocationCounter>>
+    @Query("SELECT * FROM $TABLE_TOTAL_LOCATION_COUNTERS")
+    abstract fun findAllTotalLocations(): LiveData<List<TotalLocationCounter>>
 
-	@Query("DELETE FROM $TABLE_TOTAL_LOCATION_COUNTERS")
-	abstract fun clearTotalLocationsTable()
+    @Query("DELETE FROM $TABLE_TOTAL_LOCATION_COUNTERS")
+    abstract fun clearTotalLocationsTable()
 
-	@Insert(onConflict=OnConflictStrategy.REPLACE)
-	protected abstract fun insertTotalLocations(locations:Collection<TotalLocationCounter>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    protected abstract fun insertTotalLocations(locations: Collection<TotalLocationCounter>)
 
-	@Transaction
-	open fun refreshTotalCounters(locations:Collection<TotalLocationCounter>,labels:List<TotalLabelCounter>) {
-		refreshTotalLocationCounters(locations)
-		refreshTotalLabelCounters(labels)
-	}
+    @Transaction
+    open fun refreshTotalCounters(locations: Collection<TotalLocationCounter>, labels: List<TotalLabelCounter>) {
+        refreshTotalLocationCounters(locations)
+        refreshTotalLabelCounters(labels)
+    }
 
-	@Transaction
-	protected open fun refreshTotalLabelCounters(labels:List<TotalLabelCounter>) {
-		clearTotalLabelsTable()
-		insertTotalLabels(labels)
-	}
+    @Transaction
+    protected open fun refreshTotalLabelCounters(labels: List<TotalLabelCounter>) {
+        clearTotalLabelsTable()
+        insertTotalLabels(labels)
+    }
 
-	@Transaction
-	protected open fun refreshTotalLocationCounters(locations:Collection<TotalLocationCounter>) {
-		clearTotalLocationsTable()
-		insertTotalLocations(locations)
-	}
-	//endregion
-
+    @Transaction
+    protected open fun refreshTotalLocationCounters(locations: Collection<TotalLocationCounter>) {
+        clearTotalLocationsTable()
+        insertTotalLocations(locations)
+    }
+    //endregion
 }

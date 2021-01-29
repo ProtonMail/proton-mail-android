@@ -36,5 +36,7 @@ data class MessagePayload(
     @SerializedName(Fields.Message.CC_LIST)
     var ccList: List<MessageRecipient>? = null,
     @SerializedName(Fields.Message.BCC_LIST)
-    var bccList: List<MessageRecipient>? = null
+    var bccList: List<MessageRecipient>? = null,
+    @SerializedName(Fields.Message.UNREAD)
+    var unread: Int? = null
 )

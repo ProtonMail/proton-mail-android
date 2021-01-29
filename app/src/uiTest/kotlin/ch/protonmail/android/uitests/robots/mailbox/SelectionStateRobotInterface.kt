@@ -19,8 +19,8 @@
 package ch.protonmail.android.uitests.robots.mailbox
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
 
 interface SelectionStateRobotInterface {
 
@@ -35,6 +35,7 @@ interface SelectionStateRobotInterface {
     }
 
     fun addLabel(): Any {
+        UIActions.wait.forViewWithId(R.id.add_label).click()
         return Any()
     }
 
@@ -44,7 +45,7 @@ interface SelectionStateRobotInterface {
     }
 
     fun selectMessage(position: Int): Any {
-        UIActions.recyclerView.clickOnRecyclerViewItemByPosition(R.id.messages_list_view, position)
+        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(R.id.messages_list_view, position)
         return Any()
     }
 }

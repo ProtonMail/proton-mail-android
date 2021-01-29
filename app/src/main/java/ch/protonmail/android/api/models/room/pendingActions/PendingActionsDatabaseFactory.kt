@@ -25,7 +25,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ch.protonmail.android.core.ProtonMailApplication
 
-@Database(entities = [PendingSend::class, PendingUpload::class, PendingDraft::class], version = 3)
+@Database(entities = [PendingSend::class, PendingUpload::class], version = 4)
 abstract class PendingActionsDatabaseFactory : RoomDatabase() {
     abstract fun getDatabase(): PendingActionsDatabase
 

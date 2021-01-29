@@ -19,7 +19,6 @@
 package ch.protonmail.android.contacts.list.listView
 
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -134,8 +133,8 @@ class ContactsListAdapter(
         }
     }
 
-    fun setChecked(position:Int,checked:Boolean) {
-        items[position].isChecked=checked
+    fun setChecked(position: Int, checked: Boolean) {
+        items[position].isChecked = checked
         notifyDataSetChanged()
     }
 
@@ -152,14 +151,14 @@ class ContactsListAdapter(
         selectedItems?.forEach {
             if (items.contains(it)) {
                 items.find { contactItem -> (contactItem == it) }?.isChecked =
-                        false
+                    false
             }
         }
         selectedItems = null
         notifyDataSetChanged()
     }
 
-    private fun selectDeselectItems(selectedItems : MutableSet<ContactItem>, contactItem : ContactItem) {
+    private fun selectDeselectItems(selectedItems: MutableSet<ContactItem>, contactItem: ContactItem) {
         if (selectedItems.contains(contactItem)) {
             selectedItems.remove(contactItem)
             contactItem.isChecked = false

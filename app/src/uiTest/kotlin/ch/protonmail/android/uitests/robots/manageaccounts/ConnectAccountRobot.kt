@@ -20,9 +20,9 @@ package ch.protonmail.android.uitests.robots.manageaccounts
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.User
-import ch.protonmail.android.uitests.testsHelper.type
+import ch.protonmail.android.uitests.testsHelper.uiactions.type
 
 /**
  * [ConnectAccountRobot] class contains actions and verifications for Connect Account functionality.

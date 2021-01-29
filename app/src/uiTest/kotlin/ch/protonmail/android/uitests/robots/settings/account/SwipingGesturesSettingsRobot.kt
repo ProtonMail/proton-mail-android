@@ -20,22 +20,21 @@
 package ch.protonmail.android.uitests.robots.settings.account
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.actions.settings.account.AccountSettingsRobot
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 class SwipingGesturesSettingsRobot {
 
     fun selectSwipeRight(): ChooseSwipeActionRobot {
         UIActions.wait.forViewWithId(R.id.settingsRecyclerView)
-        UIActions.recyclerView
+        UIActions.recyclerView.common
             .clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsHeader(R.string.swipe_action_right))
         return ChooseSwipeActionRobot()
     }
 
     fun selectSwipeLeft(): ChooseSwipeActionRobot {
         UIActions.wait.forViewWithId(R.id.settingsRecyclerView)
-        UIActions.recyclerView
+        UIActions.recyclerView.common
             .clickOnRecyclerViewMatchedItem(R.id.settingsRecyclerView, withSettingsHeader(R.string.swipe_action_left))
         return ChooseSwipeActionRobot()
     }
