@@ -230,6 +230,13 @@ class NotificationServer @Inject constructor(
 
         val channelId = createAccountChannel()
 
+        val clickIntent = PendingIntent.getActivity(
+            context,
+            NOTIFICATION_ID_LOGGED_OUT,
+            Intent(), // empty action for now, just to dismiss notification
+            0
+        )
+
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.notification_icon)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
@@ -240,6 +247,7 @@ class NotificationServer @Inject constructor(
                 2000
             )
             .setAutoCancel(true)
+            .setContentIntent(clickIntent)
 
         notificationManager.notify(NOTIFICATION_ID_LOGGED_OUT, builder.build())
     }
