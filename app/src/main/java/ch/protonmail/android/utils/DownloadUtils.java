@@ -36,10 +36,7 @@ import java.io.File;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.servers.notification.INotificationServer;
 import ch.protonmail.android.servers.notification.NotificationServer;
-
-/**
- * Created by dino on 1/19/17.
- */
+import timber.log.Timber;
 
 public class DownloadUtils {
 
@@ -73,7 +70,7 @@ public class DownloadUtils {
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            // NOOP
+            Timber.i(e);
         }
     }
 
@@ -136,7 +133,7 @@ public class DownloadUtils {
         try {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            // NOOP
+            Timber.i(e);
         }
     }
 }

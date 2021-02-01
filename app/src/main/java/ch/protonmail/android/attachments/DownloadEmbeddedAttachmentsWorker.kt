@@ -58,11 +58,12 @@ import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.security.GeneralSecurityException
 import java.util.Date
 
 // region constants
 private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
-private const val NOTIFICATION_ID = 213412
+private const val NOTIFICATION_ID = 213_412
 
 private const val KEY_INPUT_DATA_MESSAGE_ID_STRING = "KEY_INPUT_DATA_MESSAGE_ID_STRING"
 private const val KEY_INPUT_DATA_USERNAME_STRING = "KEY_INPUT_DATA_USERNAME_STRING"
@@ -119,28 +120,30 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)
-        } catch (e: Exception) {
-            Timber.e(e, "Decrypt exception")
+        } catch (exception: GeneralSecurityException) {
+            Timber.e(exception, "Decrypt exception")
         }
         if (message.isPGPMime) {
             attachments = message.Attachments
         }
 
         val embeddedImages = attachments.mapNotNull { EmbeddedImage.fromAttachment(it, message.embeddedImagesArray) }
-        val otherAttachments = attachments.filter { attachment -> embeddedImages.find { attachment.attachmentId == it.attachmentId } == null }
+        val otherAttachments = attachments.filter { attachment ->
+            embeddedImages.find { attachment.attachmentId == it.attachmentId } == null
+        }
         val singleAttachment = otherAttachments.find { it.attachmentId == singleAttachmentId }
 
+        val pathname = applicationContext.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId
+
         return if (singleAttachment != null) {
-            val attachmentDirectoryFile = File(applicationContext.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId + "/" + singleAttachmentId)
+            val attachmentDirectoryFile = File("$pathname/$singleAttachmentId")
             if (!createAttachmentFolderIfNeeded(attachmentDirectoryFile)) {
-                AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.FAILED))
                 return Result.failure()
             }
             handleSingleAttachment(singleAttachment, addressCrypto, attachmentDirectoryFile, messageId)
         } else {
-            val attachmentsDirectoryFile = File(applicationContext.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId)
+            val attachmentsDirectoryFile = File(pathname)
             if (!createAttachmentFolderIfNeeded(attachmentsDirectoryFile)) {
-                AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.FAILED))
                 return Result.failure()
             }
             handleEmbeddedImages(embeddedImages, addressCrypto, attachmentsDirectoryFile, messageId)
@@ -154,7 +157,11 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         messageId: String
     ): Result {
 
-        AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.STARTED, attachment.fileName, attachment.attachmentId, messageId, false))
+        AppUtil.postEventOnUi(
+            DownloadedAttachmentEvent(
+                Status.STARTED, attachment.fileName, attachment.attachmentId, messageId, false
+            )
+        )
 
         val filenameInCache = attachment.fileName!!.replace(" ", "_").replace("/", ":")
         val attachmentFile = File(attachmentsDirectoryFile, filenameInCache)
@@ -168,12 +175,20 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             try {
                 initializeNotificationBuilder(uniqueFilenameInDownloads)
 
-                val decryptedByteArray = getAttachmentData(crypto, attachment.mimeData, attachment.attachmentId!!, attachment.keyPackets, attachment.fileSize)
+                val decryptedByteArray = getAttachmentData(
+                    crypto, attachment.mimeData, attachment.attachmentId!!, attachment.keyPackets, attachment.fileSize
+                )
                 FileOutputStream(attachmentFile).use {
                     it.write(decryptedByteArray)
                 }
 
-                val attachmentMetadata = AttachmentMetadata(attachment.attachmentId!!, attachment.fileName!!, attachment.fileSize, attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache, attachment.messageId, System.currentTimeMillis())
+                val attachmentMetadata = AttachmentMetadata(
+                    attachment.attachmentId!!,
+                    attachment.fileName!!,
+                    attachment.fileSize,
+                    attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache,
+                    attachment.messageId, System.currentTimeMillis()
+                )
                 attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 
                 attachmentFile.copyTo(
@@ -185,10 +200,16 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
 
             } catch (e: Exception) {
                 Timber.e(e, "handleSingleAttachment exception")
-                AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.FAILED, filenameInCache, attachment.attachmentId, messageId, false))
+                AppUtil.postEventOnUi(
+                    DownloadedAttachmentEvent(Status.FAILED, filenameInCache, attachment.attachmentId, messageId, false)
+                )
                 return Result.failure()
             }
-            AppUtil.postEventOnUi(DownloadedAttachmentEvent(Status.SUCCESS, uniqueFilenameInDownloads, attachment.attachmentId, messageId, false))
+            AppUtil.postEventOnUi(
+                DownloadedAttachmentEvent(
+                    Status.SUCCESS, uniqueFilenameInDownloads, attachment.attachmentId, messageId, false
+                )
+            )
         } ?: run {
             Timber.w("Unable to access DIRECTORY_DOWNLOADS to save attachments")
         }
@@ -345,6 +366,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         true
     } catch (exception: SecurityException) {
         Timber.e(exception, "createAttachmentFolderIfNeeded exception")
+        AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.FAILED))
         false
     }
 

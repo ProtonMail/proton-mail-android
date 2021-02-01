@@ -34,8 +34,7 @@ class MessageFactory @Inject constructor(
     private val messageSenderFactory: MessageSenderFactory
 ) {
 
-    fun createDraftApiRequest(message: Message): DraftBody =
-        DraftBody(createServerMessage(message))
+    fun createDraftApiRequest(message: Message): DraftBody = DraftBody(createServerMessage(message))
 
     fun createServerMessage(message: Message): ServerMessage {
         return message.let {
@@ -43,7 +42,6 @@ class MessageFactory @Inject constructor(
             serverMessage.ID = it.messageId
             serverMessage.Subject = it.subject
             serverMessage.Unread = it.Unread.makeInt()
-
             serverMessage.Type = it.Type.ordinal
             serverMessage.Sender = it.sender?.let(messageSenderFactory::createServerMessageSender)
             serverMessage.Time = it.time
@@ -77,7 +75,7 @@ class MessageFactory @Inject constructor(
 
             message.Type = MessageUtils.calculateType(it.Flags)
 
-            val serverMessageSender = it.Sender ?: throw RuntimeException("Sender is not set")
+            val serverMessageSender = it.Sender ?: throw IllegalArgumentException("Sender is not set")
             message.sender = messageSenderFactory.createMessageSender(serverMessageSender)
             message.time = it.Time.checkIfSet("Time")
             message.totalSize = it.Size.checkIfSet("Size")
@@ -86,17 +84,14 @@ class MessageFactory @Inject constructor(
                 .filter { it.length <= 2 }
                 .map { it.toInt() }
                 .fold(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue) { location, newLocation ->
-                    if (
-                        newLocation !in listOf(
+                    if (newLocation !in listOf(
                             Constants.MessageLocationType.STARRED.messageLocationTypeValue,
                             Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
                             Constants.MessageLocationType.INVALID.messageLocationTypeValue
-                        ) &&
-                        newLocation < location
+                        ) && newLocation < location
                     ) {
                         newLocation
-                    } else if (
-                        newLocation in listOf(
+                    } else if (newLocation in listOf(
                             Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
                             Constants.MessageLocationType.SENT.messageLocationTypeValue
                         )
