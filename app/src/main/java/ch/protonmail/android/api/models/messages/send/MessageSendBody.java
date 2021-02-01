@@ -22,14 +22,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import ch.protonmail.android.api.utils.Fields;
 
-/**
- * Created by dino on 3/15/18.
- */
-
 public class MessageSendBody implements Serializable {
+
+    private static final long serialVersionUID = -2606714802157598016L;
 
     @SerializedName(Fields.Message.Send.EXPIRES_IN)
     private Long expiresIn;
@@ -42,5 +41,20 @@ public class MessageSendBody implements Serializable {
         this.packages = packages;
         this.expiresIn = expiresIn;
         this.autoSaveContacts = autoSaveContacts;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MessageSendBody that = (MessageSendBody) o;
+        return autoSaveContacts == that.autoSaveContacts &&
+                Objects.equals(expiresIn, that.expiresIn) &&
+                Objects.equals(packages, that.packages);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(expiresIn, autoSaveContacts, packages);
     }
 }

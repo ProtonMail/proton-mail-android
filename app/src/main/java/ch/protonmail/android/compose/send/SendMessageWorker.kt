@@ -34,17 +34,25 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.SendPreference
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
+import ch.protonmail.android.api.models.factories.PackageFactory
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory
+import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -68,7 +76,11 @@ class SendMessageWorker @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val saveDraft: SaveDraft,
-    private val sendPreferencesFactory: SendPreferencesFactory
+    private val sendPreferencesFactory: SendPreferencesFactory,
+    private val apiManager: ProtonMailApiManager,
+    private val packagesFactory: PackageFactory,
+    @CurrentUsername private val currentUsername: String,
+    private val userManager: UserManager
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -82,14 +94,25 @@ class SendMessageWorker @WorkerInject constructor(
                     SendMessageWorkerError.SavedDraftMessageNotFound
                 )
 
-                requestSendPreferences(savedDraftMessage) ?: return retryOrFail(
+                val sendPreferences = requestSendPreferences(savedDraftMessage) ?: return retryOrFail(
                     SendMessageWorkerError.FetchSendPreferencesFailed
                 )
+
+                val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences)
+                apiManager.sendMessage(result.draftId, requestBody, RetrofitTag(currentUsername))
+
                 Result.failure()
             }
             else -> failureWithError(SendMessageWorkerError.DraftCreationFailed)
         }
 
+    }
+
+    private fun buildSendMessageRequest(savedDraftMessage: Message, sendPreferences: List<SendPreference>): MessageSendBody {
+        val securityOptions = getInputMessageSecurityOptions()!!
+        val packages = packagesFactory.generatePackages(savedDraftMessage, sendPreferences, securityOptions)
+        val autoSaveContacts = userManager.getMailSettings(currentUsername)!!.autoSaveContacts
+        return MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
     }
 
     private fun requestSendPreferences(message: Message): List<SendPreference>? {
@@ -140,6 +163,11 @@ class SendMessageWorker @WorkerInject constructor(
         val errorData = workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }
+
+    private fun getInputMessageSecurityOptions(): MessageSecurityOptions? =
+        inputData
+            .getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED)
+            ?.deserialize(MessageSecurityOptions.serializer())
 
     private fun getInputActionType(): Constants.MessageActionType =
         inputData

@@ -29,10 +29,21 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.MessageRecipient
+import ch.protonmail.android.api.models.SendPreference
+import ch.protonmail.android.api.models.enumerations.MIMEType
+import ch.protonmail.android.api.models.enumerations.PackageType
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
+import ch.protonmail.android.api.models.factories.PackageFactory
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory
+import ch.protonmail.android.api.models.messages.send.MessageSendBody
+import ch.protonmail.android.api.models.messages.send.MessageSendKey
+import ch.protonmail.android.api.models.messages.send.MessageSendPackage
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.extensions.serialize
@@ -49,6 +60,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.util.kotlin.deserialize
+import me.proton.core.util.kotlin.serialize
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -75,8 +87,19 @@ class SendMessageWorkerTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var sendPreferencesFactory: SendPreferencesFactory
 
+    @RelaxedMockK
+    private lateinit var apiManager: ProtonMailApiManager
+
+    @RelaxedMockK
+    private lateinit var userManager: UserManager
+
+    @RelaxedMockK
+    private lateinit var packageFactory: PackageFactory
+
     @InjectMockKs
     private lateinit var worker: SendMessageWorker
+
+    private val currentUsername = "username"
 
     @BeforeTest
     fun setUp() {
@@ -365,13 +388,70 @@ class SendMessageWorkerTest : CoroutinesTest {
         verify { sendPreferencesFactory.fetch(listOf(toRecipientEmail)) }
     }
 
+    @Test
+    fun workerPerformsSendMessageApiCallWhenDraftWasSavedAndSendPreferencesFetchedSuccessfully() = runBlockingTest {
+        val messageDbId = 82321L
+        val messageId = "233472"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        val savedDraftMessageId = "6234723"
+        val messageSendKey = MessageSendKey("algorithm", "key")
+        val packages = listOf(
+            MessageSendPackage(
+                "body",
+                messageSendKey,
+                MIMEType.PLAINTEXT,
+                mapOf("key" to messageSendKey)
+            )
+        )
+        val savedDraftMessage = Message().apply {
+            dbId = messageDbId
+            this.messageId = savedDraftMessageId
+        }
+        val sendPreference = SendPreference(
+            "email",
+            true,
+            true,
+            MIMEType.HTML,
+            "publicKey",
+            PackageType.PGP_MIME,
+            false,
+            false,
+            true,
+            false
+        )
+        val sendPreferences = mapOf(
+            "key" to sendPreference
+        )
+        val securityOptions = MessageSecurityOptions("password", "hint", 172800L)
+        givenFullValidInput(messageDbId, messageId, securityOptions = securityOptions)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraftMessage
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { userManager.getMailSettings(currentUsername)!!.autoSaveContacts } returns 1
+        every { sendPreferencesFactory.fetch(any()) } returns sendPreferences
+        every { packageFactory.generatePackages(savedDraftMessage, listOf(sendPreference), securityOptions) } returns packages
+
+        worker.doWork()
+
+        val expiresAfterSeconds = 172800L
+        val autoSaveContacts = userManager.getMailSettings(currentUsername)!!.autoSaveContacts
+        val requestBody = MessageSendBody(packages, expiresAfterSeconds, autoSaveContacts)
+        val retrofitTag = RetrofitTag(currentUsername)
+        coVerify { apiManager.sendMessage(savedDraftMessageId, requestBody, retrofitTag) }
+    }
+
     private fun givenFullValidInput(
         messageDbId: Long,
         messageId: String,
         attachments: Array<String> = arrayOf("attId62364"),
         parentId: String = "parentId72364",
         messageActionType: Constants.MessageActionType = Constants.MessageActionType.REPLY,
-        previousSenderAddress: String = "prevSenderAddress923"
+        previousSenderAddress: String = "prevSenderAddress923",
+        securityOptions: MessageSecurityOptions? = MessageSecurityOptions(null, null, -1)
     ) {
         every { parameters.inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1) } answers { messageDbId }
         every { parameters.inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS) } answers { attachments }
@@ -382,6 +462,9 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID) } answers {
             previousSenderAddress
+        }
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED) } answers {
+            securityOptions!!.serialize()
         }
     }
 }

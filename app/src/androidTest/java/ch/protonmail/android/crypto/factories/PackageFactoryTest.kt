@@ -93,7 +93,7 @@ class PackageFactoryTest {
                 false
             )
         )
-        val outsidersPassword = MessageSecurityOptions("pwd", "hint", 180000L)
+        val securityOptions = MessageSecurityOptions("pwd", "hint", 180000L)
         val crypto = mockk<AddressCrypto>()
         val bodyPlainText = "html converted to plainText"
         val keyPackage = "cipherTextKeyPacket".toByteArray()
@@ -109,7 +109,7 @@ class PackageFactoryTest {
         every { crypto.encryptKeyPacket(any(), any()) } returns "encryptedKeyPackets".toByteArray()
         every { crypto.getSessionKey(keyPackage) } returns SessionKey("token".toByteArray(), "algorithm")
 
-        packageFactory.generatePackages(message, preferences, outsidersPassword)
+        packageFactory.generatePackages(message, preferences, securityOptions)
 
         verify { crypto.decryptKeyPacket(any()) }
         verify { crypto.getSessionKey(any()) }
