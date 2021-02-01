@@ -25,6 +25,7 @@ import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
+import androidx.work.ForegroundInfo
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -69,6 +70,15 @@ class ProcessPushNotificationDataWorker @WorkerInject constructor(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
+        // start a foreground service because the following operations will take a longer time to finish
+        // and are important to the user
+        setForeground(
+            ForegroundInfo(
+                id.hashCode(),
+                notificationServer.createRetrievingNotificationsNotification()
+            )
+        )
+
         val sessionId = inputData.getString(KEY_PUSH_NOTIFICATION_UID)
         val encryptedMessage = inputData.getString(KEY_PUSH_NOTIFICATION_ENCRYPTED_MESSAGE)
 

@@ -29,7 +29,7 @@ import ch.protonmail.android.api.models.room.notifications.Notification as RoomN
 
 interface INotificationServer {
 
-    fun createCheckingMailboxNotification(): Notification
+    fun createRetrievingNotificationsNotification(): Notification
 
     fun createEmailsChannel(): String
 

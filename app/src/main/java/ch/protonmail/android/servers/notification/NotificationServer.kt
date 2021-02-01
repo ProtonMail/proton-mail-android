@@ -35,7 +35,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_HIGH
-import androidx.core.app.NotificationCompat.PRIORITY_MIN
+import androidx.core.app.NotificationCompat.PRIORITY_LOW
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
@@ -151,7 +151,7 @@ class NotificationServer @Inject constructor(
             }
             val name = context.getString(R.string.channel_name_ongoing_operations)
             val description = context.getString(R.string.channel_description_ongoing_operations)
-            val importance = NotificationManager.IMPORTANCE_MIN
+            val importance = NotificationManager.IMPORTANCE_LOW
 
             channel = NotificationChannel(CHANNEL_ID_ONGOING_OPS, name, importance)
             channel.description = description
@@ -209,11 +209,11 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(NOTIFICATION_ID_VERIFICATION, notification)
     }
 
-    override fun createCheckingMailboxNotification(): Notification {
+    override fun createRetrievingNotificationsNotification(): Notification {
         val channelId = createOngoingOperationChannel()
-        val notificationTitle = context.getString(R.string.checking_mailbox)
+        val notificationTitle = context.getString(R.string.retrieving_notifications)
         return NotificationCompat.Builder(context, channelId)
-            .setPriority(PRIORITY_MIN)
+            .setPriority(PRIORITY_LOW)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle(notificationTitle)
             .build()

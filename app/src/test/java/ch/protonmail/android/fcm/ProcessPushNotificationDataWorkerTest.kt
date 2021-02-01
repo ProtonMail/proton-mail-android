@@ -40,6 +40,7 @@ import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -99,6 +100,7 @@ class ProcessPushNotificationDataWorkerTest {
         mockkConstructor(UserCrypto::class)
         mockkStatic(AppUtil::class)
         mockkStatic("me.proton.core.util.kotlin.SerializationUtilsKt")
+        every { notificationServer.createRetrievingNotificationsNotification() } returns mockk()
 
         processPushNotificationDataWorker = spyk(
             ProcessPushNotificationDataWorker(
@@ -112,7 +114,9 @@ class ProcessPushNotificationDataWorkerTest {
                 messageRepository
             ),
             recordPrivateCalls = true
-        )
+        ) {
+            coEvery { setForeground(any()) } just Runs
+        }
         processPushNotificationDataWorkerEnqueuer = ProcessPushNotificationDataWorker.Enqueuer(
             workManager
         )
