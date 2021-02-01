@@ -988,7 +988,7 @@ Svájci székhellyel</string>
     <!-- region errors -->
     <string name="error_image_not_found">A kép nem található</string>
     <string name="error_image_bad_url">Deformált kép url</string>
-    <string name="error_saving_try_again">Error while saving message. Try again.</string>
+    <string name="error_saving_try_again">Hiba történt az üzenet mentése közben. Próbálja meg újra.</string>
     <!-- endregion -->
     <string name="allowed">Allowed</string>
     <string name="denied">Denied</string>
@@ -998,6 +998,6 @@ Svájci székhellyel</string>
     <string name="go_to_settings">Beállítások megnyitása</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Helytelen Firebase API kulcs. A Push értesítések nem fognak működni.</string>
-    <string name="failed_saving_draft_online">Failed saving online draft for message: \"%s\"</string>
-    <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
+    <string name="failed_saving_draft_online">Hiba történt a piszkozat mentése közben: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Nem nyitható meg az üzenet, miközben elküldés alatt van</string>
 </resources>
