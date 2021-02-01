@@ -38,6 +38,7 @@ import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.LocalAttachment
@@ -740,7 +741,12 @@ class ComposeMessageViewModel @Inject constructor(
                         newAttachments,
                         parentId,
                         _actionId,
-                        _oldSenderAddressId
+                        _oldSenderAddressId,
+                        MessageSecurityOptions(
+                            messageDataResult.messagePassword,
+                            messageDataResult.passwordHint,
+                            messageDataResult.expirationTime!!
+                        )
                     )
                 )
             } else {

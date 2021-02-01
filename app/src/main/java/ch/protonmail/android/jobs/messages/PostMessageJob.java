@@ -46,7 +46,7 @@ import ch.protonmail.android.api.models.DraftBody;
 import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
-import ch.protonmail.android.api.models.factories.OutsidersPassword;
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions;
 import ch.protonmail.android.api.models.factories.PackageFactory;
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory;
 import ch.protonmail.android.api.models.messages.receive.AttachmentFactory;
@@ -370,7 +370,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         AddressCrypto.Factory cryptoFactory = (addressId1, username) ->
                 Crypto.forAddress(getUserManager(), username.getS(), addressId1.getS());
         PackageFactory packageFactory = new PackageFactory(getApi(), cryptoFactory, username, new HTMLToMDConverter());
-        List<MessageSendPackage> packages = packageFactory.generatePackages(draftMessage, mSendPreferences, new OutsidersPassword(mOutsidersPassword, mOutsidersHint));
+        List<MessageSendPackage> packages = packageFactory.generatePackages(draftMessage, mSendPreferences, new MessageSecurityOptions(mOutsidersPassword, mOutsidersHint, expiresIn));
 
         MessageSendBody Body = new MessageSendBody(packages, expiresIn <= 0 ? null : expiresIn, getUserManager().getMailSettings(mUsername).getAutoSaveContacts());
         //endregion

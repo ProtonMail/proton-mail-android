@@ -20,6 +20,7 @@
 package ch.protonmail.android.compose.send
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
@@ -63,11 +64,12 @@ class SendMessageTest : CoroutinesTest {
         // Given
         val message = Message(messageId = "9823472")
         val currentTimeMs = 23847233000L
+        val securityOptions = MessageSecurityOptions("", "", -1L)
         mockkStatic(ServerTime::class)
         every { ServerTime.currentTimeMillis() } returns currentTimeMs
 
         // When
-        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "")
+        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)
         sendMessage(parameters)
 
         // Then
@@ -90,9 +92,10 @@ class SendMessageTest : CoroutinesTest {
             dbId = messageDbId
             this.messageId = messageId
         }
+        val securityOptions = MessageSecurityOptions("", "", -1L)
 
         // When
-        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "")
+        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)
         sendMessage(parameters)
 
         // Then
@@ -109,6 +112,7 @@ class SendMessageTest : CoroutinesTest {
             addressID = "addressId"
             decryptedBody = "Message body in plain text"
         }
+        val securityOptions = MessageSecurityOptions("secretPassword", "hint", 237237L)
 
         // When
         val attachmentIds = listOf("23364382")
@@ -117,7 +121,8 @@ class SendMessageTest : CoroutinesTest {
             attachmentIds,
             "parentId82346",
             NONE,
-            "previousSenderId8372"
+            "previousSenderId8372",
+            securityOptions
         )
         sendMessage(parameters)
 
@@ -128,7 +133,8 @@ class SendMessageTest : CoroutinesTest {
                 attachmentIds,
                 "parentId82346",
                 NONE,
-                "previousSenderId8372"
+                "previousSenderId8372",
+                securityOptions
             )
         }
     }

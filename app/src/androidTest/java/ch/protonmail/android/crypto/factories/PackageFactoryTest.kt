@@ -25,7 +25,7 @@ import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.enumerations.MIMEType
 import ch.protonmail.android.api.models.enumerations.PackageType
-import ch.protonmail.android.api.models.factories.OutsidersPassword
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.factories.PackageFactory
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.crypto.AddressCrypto
@@ -93,7 +93,7 @@ class PackageFactoryTest {
                 false
             )
         )
-        val outsidersPassword = OutsidersPassword("pwd", "hint")
+        val outsidersPassword = MessageSecurityOptions("pwd", "hint", 180000L)
         val crypto = mockk<AddressCrypto>()
         val bodyPlainText = "html converted to plainText"
         val keyPackage = "cipherTextKeyPacket".toByteArray()

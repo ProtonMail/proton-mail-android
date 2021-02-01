@@ -24,6 +24,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.services.PostMessageServiceFactory
 import ch.protonmail.android.compose.send.SendMessage
@@ -327,6 +328,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // Given
             val message = Message()
             givenViewModelPropertiesAreInitialised()
+            viewModel.setMessagePassword("messagePassword", "a hint to discover it", true, 172800L, false)
 
             // When
             viewModel.sendMessage(message)
@@ -337,7 +339,8 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 listOf(),
                 "parentId823",
                 Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId"
+                "previousSenderAddressId",
+                MessageSecurityOptions("messagePassword", "a hint to discover it", 172800L)
             )
             coVerify { sendMessage(params) }
         }

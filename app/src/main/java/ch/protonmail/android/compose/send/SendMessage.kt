@@ -20,6 +20,7 @@
 package ch.protonmail.android.compose.send
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
@@ -48,7 +49,8 @@ class SendMessage @Inject constructor(
             parameters.newAttachmentIds,
             parameters.parentId,
             parameters.actionType,
-            parameters.previousSenderAddressId
+            parameters.previousSenderAddressId,
+            parameters.securityOptions
         )
     }
 
@@ -75,6 +77,7 @@ class SendMessage @Inject constructor(
         val newAttachmentIds: List<String>,
         val parentId: String?,
         val actionType: Constants.MessageActionType,
-        val previousSenderAddressId: String
+        val previousSenderAddressId: String,
+        val securityOptions: MessageSecurityOptions
     )
 }

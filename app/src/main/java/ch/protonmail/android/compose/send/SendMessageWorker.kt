@@ -45,6 +45,7 @@ import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -55,6 +56,7 @@ internal const val KEY_INPUT_SEND_MESSAGE_MESSAGE_ID = "keySendMessageMessageLoc
 internal const val KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID = "keySendMessageMessageParentId"
 internal const val KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED = "keySendMessageMessageActionTypeSerialized"
 internal const val KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID = "keySendMessagePreviousSenderAddressId"
+internal const val KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED = "keySendMessageSecurityOptionsSerialized"
 
 internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageErrorResult"
 
@@ -162,7 +164,8 @@ class SendMessageWorker @WorkerInject constructor(
             attachmentIds: List<String>,
             parentId: String?,
             actionType: Constants.MessageActionType,
-            previousSenderAddressId: String
+            previousSenderAddressId: String,
+            securityOptions: MessageSecurityOptions
         ): Flow<WorkInfo?> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -176,7 +179,8 @@ class SendMessageWorker @WorkerInject constructor(
                         KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS to attachmentIds.toTypedArray(),
                         KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID to parentId,
                         KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED to actionType.serialize(),
-                        KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID to previousSenderAddressId
+                        KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID to previousSenderAddressId,
+                        KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED to securityOptions.serialize()
                     )
                 )
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)

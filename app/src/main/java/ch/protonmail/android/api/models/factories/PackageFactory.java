@@ -79,7 +79,7 @@ public class PackageFactory {
     public List<MessageSendPackage> generatePackages(
             @NonNull Message message,
             @NonNull List<SendPreference> preferences,
-            @NonNull OutsidersPassword outsidersPassword
+            @NonNull MessageSecurityOptions securityOptions
     ) throws Exception {
         final Map<MIMEType, MessageSendPackage> packageMap = new HashMap<>();
         crypto = addressCryptoFactory.create(
@@ -92,13 +92,13 @@ public class PackageFactory {
             if (!recipients.contains(sendPref.getEmailAddress())) {
                 continue;
             }
-            MIMEType mime = getMIMEType(message, sendPref, outsidersPassword);
+            MIMEType mime = getMIMEType(message, sendPref, securityOptions);
             if (!packageMap.containsKey(mime)) {
                 packageMap.put(mime, generateTopLevelPackage(mime, message));
             }
 
             MessageSendPackage packageModel = packageMap.get(mime);
-            addAddress(packageModel, sendPref, message, outsidersPassword);
+            addAddress(packageModel, sendPref, message, securityOptions);
         }
         // This is apparently even faster than filling in an array matching the map size.
         return Arrays.asList(packageMap.values().toArray(new MessageSendPackage[0]));
@@ -176,10 +176,10 @@ public class PackageFactory {
             MessageSendPackage packageModel,
             SendPreference sendPref,
             Message message,
-            OutsidersPassword outsidersPassword
+            MessageSecurityOptions securityOptions
     ) throws Exception {
-        if (!sendPref.isEncryptionEnabled() && outsidersPassword.getPassword() != null && outsidersPassword.getHint() != null) {
-            addEOAddress(packageModel, sendPref, outsidersPassword);
+        if (!sendPref.isEncryptionEnabled() && securityOptions.getPassword() != null && securityOptions.getHint() != null) {
+            addEOAddress(packageModel, sendPref, securityOptions);
             return;
         }
         if (sendPref.isEncryptionEnabled()) {
@@ -192,18 +192,18 @@ public class PackageFactory {
     private void addEOAddress(
             MessageSendPackage packageModel,
             SendPreference sendPref,
-            OutsidersPassword outsidersPassword
+            MessageSecurityOptions securityOptions
     ) throws Exception {
         MessageSendAddressBody messageAddress = new MessageSendAddressBody();
-        Map<String, String> attachmentKeys = symEncryptAttachmentKeys(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getAttachmentKeys());
+        Map<String, String> attachmentKeys = symEncryptAttachmentKeys(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getAttachmentKeys());
         messageAddress.setAttachmentKeyPackets(attachmentKeys);
         messageAddress.setType(PackageType.EO.getValue());
-        messageAddress.setBodyKeyPacket(symEncryptKeyPacket(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getBodyKey()));
-        EOToken token = crypto.generateEOToken(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/);
+        messageAddress.setBodyKeyPacket(symEncryptKeyPacket(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getBodyKey()));
+        EOToken token = crypto.generateEOToken(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/);
         messageAddress.setToken(token.getToken());
         messageAddress.setEncToken(token.getEncryptedToken());
-        messageAddress.setPasswordHint(outsidersPassword.getHint());
-        messageAddress.setAuth(generateAuth(outsidersPassword));
+        messageAddress.setPasswordHint(securityOptions.getHint());
+        messageAddress.setAuth(generateAuth(securityOptions));
         packageModel.addAddress(sendPref.getEmailAddress(), messageAddress);
     }
 
@@ -230,9 +230,9 @@ public class PackageFactory {
         packageModel.addAddress(sendPref.getEmailAddress(), messageAddress);
     }
 
-    private Auth generateAuth(OutsidersPassword outsidersPassword) {
+    private Auth generateAuth(MessageSecurityOptions securityOptions) {
         final ModulusResponse modulus = mApi.randomModulus();
-        final PasswordVerifier verifier = PasswordVerifier.calculate(outsidersPassword.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
+        final PasswordVerifier verifier = PasswordVerifier.calculate(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
         return new Auth(verifier.AuthVersion, verifier.ModulusID, verifier.Salt, verifier.SRPVerifier);
     }
 
@@ -265,10 +265,10 @@ public class PackageFactory {
     }
 
     @NonNull
-    private MIMEType getMIMEType(Message message, SendPreference sendPref, OutsidersPassword outsidersPassword) {
+    private MIMEType getMIMEType(Message message, SendPreference sendPref, MessageSecurityOptions securityOptions) {
         MIMEType input = sendPref.getMimeType();
         if ((!sendPref.isEncryptionEnabled() && sendPref.isSignatureEnabled() &&
-                outsidersPassword.getPassword() != null && outsidersPassword.getHint() != null) || input == MIMEType.HTML) {
+                securityOptions.getPassword() != null && securityOptions.getHint() != null) || input == MIMEType.HTML) {
             return ObjectUtils.firstNonNull(MIMEType.fromString(message.getMimeType()), MIMEType.HTML);
         }
         return input;

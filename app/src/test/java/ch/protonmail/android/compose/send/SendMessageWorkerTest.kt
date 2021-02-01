@@ -48,6 +48,7 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
+import me.proton.core.util.kotlin.deserialize
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -94,6 +95,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             val message = Message(messageId = messageId)
             message.dbId = messageDbId
             val previousSenderAddressId = "previousSenderId82348"
+            val securityOptions = MessageSecurityOptions("password", "hint", 3273727L)
             val requestSlot = slot<OneTimeWorkRequest>()
             every {
                 workManager.enqueueUniqueWork(messageId, ExistingWorkPolicy.REPLACE, capture(requestSlot))
@@ -105,7 +107,8 @@ class SendMessageWorkerTest : CoroutinesTest {
                 attachmentIds,
                 messageParentId,
                 messageActionType,
-                previousSenderAddressId
+                previousSenderAddressId,
+                securityOptions
             )
 
             // Then
@@ -118,12 +121,14 @@ class SendMessageWorkerTest : CoroutinesTest {
             val actualMessageParentId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
             val actualMessageActionType = inputData.getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED)
             val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID)
+            val actualMessageSecurityOptions = inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
             assertArrayEquals(attachmentIds.toTypedArray(), actualAttachmentIds)
             assertEquals(messageParentId, actualMessageParentId)
             assertEquals(messageActionType.serialize(), actualMessageActionType)
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
+            assertEquals(securityOptions, actualMessageSecurityOptions?.deserialize(MessageSecurityOptions.serializer()))
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
             assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
             assertEquals(20000, workSpec.backoffDelayDuration)
