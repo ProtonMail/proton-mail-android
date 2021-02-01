@@ -725,7 +725,7 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     <!-- External message that was encrypted by the BE -->
     <string name="sender_lock_sent_end_to_end">Wysłana przez Ciebie z szyfrowaniem end-to-end</string>
     <!-- External message that was encrypted by the BE -->
-    <string name="sender_lock_sent_autoresponder">Wysłana przez ProtonMail z szyfrowaniem po stronie klienta</string>
+    <string name="sender_lock_sent_autoresponder">Wysłana przez ProtonMaila z szyfrowaniem po stronie klienta</string>
     <string name="sender_lock_verification_failed">Weryfikacja nadawcy nie powiodła się</string>
     <string name="sender_lock_pgp_encrypted">Wiadomość zaszyfrowana PGP</string>
     <string name="sender_lock_pgp_encrypted_verified">Wiadomość zaszyfrowana PGP od zweryfikowanego adresu</string>
