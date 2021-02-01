@@ -173,9 +173,19 @@ class MessageRobot {
             return this
         }
 
+        override fun checkAlsoArchiveCheckBox(): LabelsDialogRobot {
+            super.checkAlsoArchiveCheckBox()
+            return this
+        }
+
         override fun apply(): MessageRobot {
             super.apply()
             return MessageRobot()
+        }
+
+        override fun applyAndArchive(): InboxRobot {
+            super.apply()
+            return InboxRobot()
         }
     }
 

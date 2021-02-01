@@ -136,14 +136,12 @@ interface MailboxRobotInterface {
 
         fun messageWithSubjectExists(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
         }
 
         fun messageWithSubjectHasRepliedFlag(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
@@ -153,7 +151,6 @@ interface MailboxRobotInterface {
 
         fun messageWithSubjectHasRepliedAllFlag(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
@@ -163,7 +160,6 @@ interface MailboxRobotInterface {
 
         fun messageWithSubjectHasForwardedFlag(subject: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
@@ -173,7 +169,6 @@ interface MailboxRobotInterface {
 
         fun messageWithSubjectAndRecipientExists(subject: String, to: String) {
             UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
-            UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectAndRecipient(subject, to))
         }

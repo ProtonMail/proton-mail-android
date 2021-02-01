@@ -22,6 +22,7 @@ package ch.protonmail.android.uitests.tests.labelsfolders
 import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.labelfolder.MessageLocation
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.StringUtils
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
@@ -69,7 +70,7 @@ class LabelsFoldersTests : BaseTest() {
             .moveMessageFromSentToFolder(folderName)
             .menuDrawer()
             .labelOrFolder(folderName)
-            .verify { messageExists(selectedMessageSubject) }
+            .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 
     @Test
@@ -110,7 +111,7 @@ class LabelsFoldersTests : BaseTest() {
             .menuDrawer()
             .labelOrFolder(labelName)
             .refreshMessageList()
-            .verify { messageExists(selectedMessageSubject) }
+            .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 
     // Enable after MAILAND-1280 is fixed
@@ -129,8 +130,27 @@ class LabelsFoldersTests : BaseTest() {
             .labelOrFolder(labelName)
             .refreshMessageList()
             .verify {
-                messageExists(longClickedMessageSubject)
-                messageExists(selectedMessageSubject)
+                messageWithSubjectExists(longClickedMessageSubject)
+                messageWithSubjectExists(selectedMessageSubject)
             }
+    }
+
+    @Test
+    fun applyLabelToMessageAndArchive() {
+        val labelName = "Label 1"
+        loginRobot
+            .loginUser(onePassUser)
+            .clickMessageByPosition(1)
+            .openLabelsModal()
+            .selectLabelByName(labelName)
+            .checkAlsoArchiveCheckBox()
+            .applyAndArchive()
+            .menuDrawer()
+            .labelOrFolder(labelName)
+            .refreshMessageList()
+            .verify { withMessageSubjectAndLocationExists(selectedMessageSubject, MessageLocation.archive) }
+            .menuDrawer()
+            .archive()
+            .verify { messageWithSubjectExists(selectedMessageSubject) }
     }
 }
