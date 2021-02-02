@@ -428,7 +428,6 @@ class SendMessageWorkerTest : CoroutinesTest {
         val securityOptions = MessageSecurityOptions("password", "hint", 172800L)
         givenFullValidInput(messageDbId, messageId, securityOptions = securityOptions)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraftMessage
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         every { userManager.getMailSettings(currentUsername)!!.autoSaveContacts } returns 1
@@ -442,6 +441,68 @@ class SendMessageWorkerTest : CoroutinesTest {
         val requestBody = MessageSendBody(packages, expiresAfterSeconds, autoSaveContacts)
         val retrofitTag = RetrofitTag(currentUsername)
         coVerify { apiManager.sendMessage(savedDraftMessageId, requestBody, retrofitTag) }
+    }
+
+    @Test
+    fun workerReturnsErrorWhenMessageSecurityOptionsParameterWasNotGivenOrInvalid() = runBlockingTest {
+        val messageDbId = 8238423L
+        val messageId = "8234042"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        val savedDraftMessageId = "237684"
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { userManager.getMailSettings(currentUsername)!!.autoSaveContacts } returns 1
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED) } returns null
+
+        val result = worker.doWork()
+
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "InvalidInputMessageSecurityOptions")
+            ),
+            result
+        )
+        coVerify(exactly = 0) { packageFactory.generatePackages(any(), any(), any()) }
+    }
+
+    @Test
+    fun workerDefaultsToNotAutoSavingContactsWhenGettingAutoSaveContactsPreferenceFails() = runBlockingTest {
+        val messageDbId = 823742L
+        val messageId = "923742"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        val messageSendKey = MessageSendKey("algorithm", "key")
+        val packages = listOf(
+            MessageSendPackage(
+                "body",
+                messageSendKey,
+                MIMEType.PLAINTEXT,
+                mapOf("key" to messageSendKey)
+            )
+        )
+        val savedDraftMessageId = "283472"
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { userManager.getMailSettings(currentUsername) } returns null
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        every { packageFactory.generatePackages(any(), any(), any()) } returns packages
+
+        worker.doWork()
+
+        val requestBody = MessageSendBody(packages, -1, 0)
+        coVerify { apiManager.sendMessage(any(), requestBody, any()) }
     }
 
     private fun givenFullValidInput(

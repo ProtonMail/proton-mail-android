@@ -70,6 +70,8 @@ internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageEr
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
 private const val SEND_MESSAGE_MAX_RETRIES = 5
+private const val NO_CONTACTS_AUTO_SAVE = 0
+
 
 class SendMessageWorker @WorkerInject constructor(
     @Assisted context: Context,
@@ -99,6 +101,8 @@ class SendMessageWorker @WorkerInject constructor(
                 )
 
                 val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences)
+                    ?: return failureWithError(SendMessageWorkerError.InvalidInputMessageSecurityOptions)
+
                 apiManager.sendMessage(result.draftId, requestBody, RetrofitTag(currentUsername))
 
                 Result.failure()
@@ -108,10 +112,10 @@ class SendMessageWorker @WorkerInject constructor(
 
     }
 
-    private fun buildSendMessageRequest(savedDraftMessage: Message, sendPreferences: List<SendPreference>): MessageSendBody {
-        val securityOptions = getInputMessageSecurityOptions()!!
+    private fun buildSendMessageRequest(savedDraftMessage: Message, sendPreferences: List<SendPreference>): MessageSendBody? {
+        val securityOptions = getInputMessageSecurityOptions() ?: return null
         val packages = packagesFactory.generatePackages(savedDraftMessage, sendPreferences, securityOptions)
-        val autoSaveContacts = userManager.getMailSettings(currentUsername)!!.autoSaveContacts
+        val autoSaveContacts = userManager.getMailSettings(currentUsername)?.autoSaveContacts ?: NO_CONTACTS_AUTO_SAVE
         return MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
     }
 

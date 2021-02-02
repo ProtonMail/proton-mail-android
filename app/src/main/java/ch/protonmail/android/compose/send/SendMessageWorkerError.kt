@@ -23,5 +23,6 @@ enum class SendMessageWorkerError {
     MessageNotFound,
     DraftCreationFailed,
     FetchSendPreferencesFailed,
-    SavedDraftMessageNotFound
+    SavedDraftMessageNotFound,
+    InvalidInputMessageSecurityOptions
 }
