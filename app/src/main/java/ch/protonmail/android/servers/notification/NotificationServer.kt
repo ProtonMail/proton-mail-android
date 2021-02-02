@@ -547,25 +547,17 @@ class NotificationServer @Inject constructor(
             .setAutoCancel(true)
     }
 
-    override fun notifySingleErrorSendingMessage(
-        message: Message,
-        error: String,
-        user: User
-    ) {
-
-        // Create Notification Style
+    override fun notifySingleErrorSendingMessage(error: String, username: String) {
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .setBigContentTitle(context.getString(R.string.message_failed))
-            .setSummaryText(user.defaultEmail ?: user.username ?: context.getString(R.string.app_name))
+            .setSummaryText(username)
             .bigText(error)
 
-        // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(username)
             .setStyle(bigTextStyle)
 
-        // Build and show notification
         val notification = notificationBuilder.build()
-        notificationManager.notify(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
+        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
     override fun notifyMultipleErrorSendingMessage(

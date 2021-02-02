@@ -24,5 +24,6 @@ enum class SendMessageWorkerError {
     DraftCreationFailed,
     FetchSendPreferencesFailed,
     SavedDraftMessageNotFound,
-    InvalidInputMessageSecurityOptions
+    InvalidInputMessageSecurityOptions,
+    ErrorPerformingApiRequest
 }

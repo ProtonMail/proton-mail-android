@@ -28,6 +28,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
@@ -42,11 +43,13 @@ import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendKey
 import ch.protonmail.android.api.models.messages.send.MessageSendPackage
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.extensions.serialize
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -64,6 +67,7 @@ import me.proton.core.util.kotlin.serialize
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import java.net.SocketTimeoutException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -95,6 +99,12 @@ class SendMessageWorkerTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var packageFactory: PackageFactory
+
+    @RelaxedMockK
+    private lateinit var errorNotifier: ErrorNotifier
+
+    @RelaxedMockK
+    private lateinit var pendingActionsDao: PendingActionsDao
 
     @InjectMockKs
     private lateinit var worker: SendMessageWorker
@@ -503,6 +513,66 @@ class SendMessageWorkerTest : CoroutinesTest {
 
         val requestBody = MessageSendBody(packages, -1, 0)
         coVerify { apiManager.sendMessage(any(), requestBody, any()) }
+    }
+
+    @Test
+    fun workerRetriesWhenSendMessageRequestFailsAndMaxRetriesWereNotReached() = runBlockingTest {
+        val messageDbId = 723743L
+        val messageId = "8237426"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        val savedDraftMessageId = "122748"
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { userManager.getMailSettings(currentUsername) } returns null
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        coEvery { apiManager.sendMessage(any(), any(), any()) } throws SocketTimeoutException("test - timeout")
+
+        val result = worker.doWork()
+
+        assertEquals(ListenableWorker.Result.Retry(), result)
+        verify(exactly = 0) { errorNotifier.showSendMessageError(any(), any()) }
+        verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
+    }
+
+    @Test
+    fun workerFailsRemovingPendingForSendMessageAndShowingErrorWhenSendMessageRequestFailsAndMaxRetriesWereReached() = runBlockingTest {
+        val messageDbId = 823742L
+        val messageId = "122349"
+        val subject = "message subject"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = subject
+        }
+        val savedDraftMessageId = "283472"
+        val savedDraft = message.copy(savedDraftMessageId)
+        val errorMessage = "Sending Message Failed. Message is saved to drafts."
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { userManager.getMailSettings(currentUsername) } returns null
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        every { parameters.runAttemptCount } returns 6
+        coEvery { apiManager.sendMessage(any(), any(), any()) } throws SocketTimeoutException("test - call timed out")
+        every { context.getString(R.string.message_drafted) } returns errorMessage
+
+        val result = worker.doWork()
+
+        verify { errorNotifier.showSendMessageError(errorMessage, subject) }
+        verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ErrorPerformingApiRequest")
+            ),
+            result
+        )
     }
 
     private fun givenFullValidInput(

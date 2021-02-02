@@ -43,4 +43,9 @@ class AndroidErrorNotifier @Inject constructor(
         }
     }
 
+    override fun showSendMessageError(errorMessage: String, messageSubject: String?) {
+        val error = "\"$messageSubject\" - $errorMessage"
+        notificationServer.notifySingleErrorSendingMessage(error, userManager.username)
+    }
+
 }

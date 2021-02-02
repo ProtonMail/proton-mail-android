@@ -33,6 +33,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
@@ -42,7 +43,14 @@ import ch.protonmail.android.api.models.factories.PackageFactory
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.room.messages.Message
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.segments.TEN_SECONDS
+import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFailed
+import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerformingApiRequest
+import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
+import ch.protonmail.android.compose.send.SendMessageWorkerError.InvalidInputMessageSecurityOptions
+import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
+import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.CurrentUsername
@@ -50,6 +58,7 @@ import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
 import ch.protonmail.android.utils.extensions.deserialize
 import ch.protonmail.android.utils.extensions.serialize
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.deserialize
@@ -74,7 +83,7 @@ private const val NO_CONTACTS_AUTO_SAVE = 0
 
 
 class SendMessageWorker @WorkerInject constructor(
-    @Assisted context: Context,
+    @Assisted val context: Context,
     @Assisted params: WorkerParameters,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val saveDraft: SaveDraft,
@@ -82,32 +91,43 @@ class SendMessageWorker @WorkerInject constructor(
     private val apiManager: ProtonMailApiManager,
     private val packagesFactory: PackageFactory,
     @CurrentUsername private val currentUsername: String,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val errorNotifier: ErrorNotifier,
+    private val pendingActionDao: PendingActionsDao
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
-            ?: return failureWithError(SendMessageWorkerError.MessageNotFound)
+            ?: return failureWithError(MessageNotFound)
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
 
         return when (val result = saveDraft(message, previousSenderAddressId)) {
             is SaveDraftResult.Success -> {
                 val savedDraftMessage = messageDetailsRepository.findMessageById(result.draftId) ?: return retryOrFail(
-                    SendMessageWorkerError.SavedDraftMessageNotFound
+                    SavedDraftMessageNotFound,
+                    message
                 )
 
                 val sendPreferences = requestSendPreferences(savedDraftMessage) ?: return retryOrFail(
-                    SendMessageWorkerError.FetchSendPreferencesFailed
+                    FetchSendPreferencesFailed,
+                    savedDraftMessage
                 )
 
                 val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences)
-                    ?: return failureWithError(SendMessageWorkerError.InvalidInputMessageSecurityOptions)
+                    ?: return failureWithError(InvalidInputMessageSecurityOptions)
 
-                apiManager.sendMessage(result.draftId, requestBody, RetrofitTag(currentUsername))
-
-                Result.failure()
+                runCatching {
+                    apiManager.sendMessage(result.draftId, requestBody, RetrofitTag(currentUsername))
+                }.fold(
+                    onSuccess = {
+                        Result.failure()
+                    },
+                    onFailure = { exception ->
+                        retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
+                    }
+                )
             }
-            else -> failureWithError(SendMessageWorkerError.DraftCreationFailed)
+            else -> failureWithError(DraftCreationFailed)
         }
 
     }
@@ -154,16 +174,22 @@ class SendMessageWorker @WorkerInject constructor(
         ).first()
     }
 
-    private fun retryOrFail(error: SendMessageWorkerError): Result {
+    private fun retryOrFail(
+        error: SendMessageWorkerError,
+        message: Message,
+        exception: Throwable? = null
+    ): Result {
         if (runAttemptCount <= SEND_MESSAGE_MAX_RETRIES) {
-            Timber.d("Send Message Worker FAILED with error = ${error.name}. Retrying...")
+            Timber.d("Send Message Worker FAILED with error = ${error.name}, exception = $exception. Retrying...")
             return Result.retry()
         }
-        return failureWithError(error)
+        pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
+        errorNotifier.showSendMessageError(context.getString(R.string.message_drafted), message.subject)
+        return failureWithError(error, exception)
     }
 
-    private fun failureWithError(error: SendMessageWorkerError): Result {
-        Timber.e("Send Message Worker failed all the retries. error = $error. FAILING")
+    private fun failureWithError(error: SendMessageWorkerError, exception: Throwable? = null): Result {
+        Timber.e("Send Message Worker failed all the retries. error = $error, exception = $exception. FAILING")
         val errorData = workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }

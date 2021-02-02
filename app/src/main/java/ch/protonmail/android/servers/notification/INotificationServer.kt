@@ -83,9 +83,8 @@ interface INotificationServer {
     )
 
     fun notifySingleErrorSendingMessage(
-        message: Message,
         error: String,
-        user: User
+        username: String
     )
 
     fun notifyMultipleErrorSendingMessage(

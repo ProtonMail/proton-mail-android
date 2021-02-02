@@ -61,4 +61,16 @@ class AndroidErrorNotifierTest {
 
         verify { notificationServer.notifySaveDraftError(errorMessage, subject, "loggedInUsername") }
     }
+
+    @Test
+    fun errorNotifierCallsNotificationServerToDisplaySendMessageErrorInPersistentNotification() {
+        val errorMessage = "Failed sending message"
+        val subject = "A message subject"
+        every { userManager.username } returns "loggedInUsername"
+
+        errorNotifier.showSendMessageError(errorMessage, subject)
+
+        val errorAndSubject = "\"$subject\" - $errorMessage"
+        verify { notificationServer.notifySingleErrorSendingMessage(errorAndSubject, "loggedInUsername") }
+    }
 }

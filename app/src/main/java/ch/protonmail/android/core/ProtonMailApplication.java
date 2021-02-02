@@ -738,7 +738,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         INotificationServer notificationServer = new NotificationServer(this, notificationManager);
         if (mUserManager != null && mUserManager.isLoggedIn()) {
-            notificationServer.notifySingleErrorSendingMessage(message, error, user);
+            notificationServer.notifySingleErrorSendingMessage(error, user.getUsername());
         }
     }
 
