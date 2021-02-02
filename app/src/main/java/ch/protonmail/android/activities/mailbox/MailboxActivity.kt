@@ -127,7 +127,6 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_SWIPE_GESTURES_DIALOG_SHO
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.ContactsRepository
-import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
@@ -1053,14 +1052,6 @@ class MailboxActivity :
     }
 
     @Subscribe
-    fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
-        showToast(
-            "${getString(R.string.attachment_failed)} ${event.messageSubject} ${event.attachmentName}",
-            Toast.LENGTH_SHORT
-        )
-    }
-
-    @Subscribe
     fun onMailboxLoginEvent(event: MailboxLoginEvent?) {
         if (event == null) {
             return
@@ -1771,7 +1762,7 @@ class MailboxActivity :
     ) : AsyncTask<Unit, Unit, Message>() {
 
         override fun doInBackground(vararg params: Unit): Message? =
-            messageDetailsRepository.findMessageById(message.messageId!!)
+            messageDetailsRepository.findMessageByIdBlocking(message.messageId!!)
 
         public override fun onPostExecute(savedMessage: Message?) {
             val mailboxActivity = mailboxActivity.get()
@@ -1811,20 +1802,17 @@ class MailboxActivity :
     ) : AsyncTask<Unit, Unit, Boolean>() {
 
         override fun doInBackground(vararg params: Unit): Boolean {
-            // return if message is not in sending process and can be opened
-            val pendingUploads = pendingActionsDatabase?.findPendingUploadByMessageId(messageId!!)
+            // return true if message is not in sending process and can be opened
             val pendingForSending = pendingActionsDatabase?.findPendingSendByMessageId(messageId!!)
-            return pendingUploads == null &&
-                (
-                    pendingForSending == null ||
-                        pendingForSending.sent != null && !pendingForSending.sent!!
-                    )
+            return pendingForSending == null ||
+                pendingForSending.sent != null &&
+                !pendingForSending.sent!!
         }
 
         override fun onPostExecute(openMessage: Boolean) {
             val mailboxActivity = mailboxActivity.get()
             if (!openMessage) {
-                mailboxActivity?.showToast(R.string.draft_attachments_uploading, Toast.LENGTH_SHORT)
+                mailboxActivity?.showToast(R.string.cannot_open_message_while_being_sent, Toast.LENGTH_SHORT)
                 return
             }
             val intent = AppUtil.decorInAppIntent(Intent(mailboxActivity, ComposeMessageActivity::class.java))

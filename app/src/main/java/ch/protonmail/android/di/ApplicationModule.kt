@@ -29,12 +29,14 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
+import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.factories.IConverterFactory
+import ch.protonmail.android.api.models.messages.receive.AttachmentFactory
+import ch.protonmail.android.api.models.messages.receive.IAttachmentFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.attachments.Armorer
 import ch.protonmail.android.attachments.OpenPgpArmorer
 import ch.protonmail.android.core.Constants
@@ -45,8 +47,13 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.usecase.DownloadFile
+import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.BuildInfo
+import ch.protonmail.android.utils.base64.AndroidBase64Encoder
+import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.app
+import ch.protonmail.android.utils.notifier.AndroidErrorNotifier
+import ch.protonmail.android.utils.notifier.ErrorNotifier
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
@@ -76,9 +83,6 @@ object ApplicationModule {
     @Provides
     fun protonMailApplication(context: Context): ProtonMailApplication =
         context.app
-
-    @Provides
-    fun alarmReceiver() = AlarmReceiver()
 
     @Provides
     @AlternativeApiPins
@@ -164,7 +168,8 @@ object ApplicationModule {
         jobManager: JobManager,
         networkUtil: QueueNetworkUtil,
         okHttpProvider: OkHttpProvider,
-        @DefaultSharedPreferences prefs: SharedPreferences
+        @DefaultSharedPreferences prefs: SharedPreferences,
+        authenticator: ProtonMailAuthenticator
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
@@ -175,7 +180,7 @@ object ApplicationModule {
 
         // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
 
-        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil)
+        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, authenticator)
             .apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 
@@ -204,6 +209,18 @@ object ApplicationModule {
 
     @Provides
     fun providesArmorer(): Armorer = OpenPgpArmorer()
+
+    @Provides
+    fun attachmentFactory(): IAttachmentFactory = AttachmentFactory()
+
+    @Provides
+    fun base64Encoder(): Base64Encoder = AndroidBase64Encoder()
+
+    @Provides
+    fun errorNotifier(
+        notificationServer: NotificationServer,
+        userManager: UserManager
+    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager)
 }
 
 @Module

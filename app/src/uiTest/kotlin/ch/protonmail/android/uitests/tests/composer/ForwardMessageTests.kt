@@ -26,8 +26,8 @@ import ch.protonmail.android.uitests.testsHelper.TestData.internalEmailTrustedKe
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.reSubject
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ForwardMessageTests : BaseTest() {
 
@@ -35,7 +35,7 @@ class ForwardMessageTests : BaseTest() {
     private lateinit var subject: String
     private lateinit var body: String
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         subject = TestData.messageSubject

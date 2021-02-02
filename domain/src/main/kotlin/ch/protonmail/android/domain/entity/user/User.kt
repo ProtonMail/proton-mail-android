@@ -86,6 +86,10 @@ data class User( // TODO: consider naming UserInfo or similar
         get() = with(addresses.primary?.keys?.primaryKey) {
             this?.signature == null && this?.token == null
         }
+
+    fun findAddressById(addressId: Id): Address? {
+        return addresses.addresses.values.find { it.id == addressId }
+    }
 }
 
 sealed class Delinquent(val i: UInt, val mailRoutesAccessible: Boolean = true) {

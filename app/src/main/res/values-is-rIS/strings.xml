@@ -245,10 +245,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_me_for_new_features">Halda mér upplýstum um nýja eiginleika</string>
     <string name="create_mailbox_password">Útbúa lykilorð</string>
     <string name="password_note">&lt;bAthugaðu:&lt;/b&gt; Þetta er notað til að dulrita og afkóða skilaboðin þín.
-Ekki týna þessu lykilorði - við getum ekki endurheimt það. Ef þú týnir lykilorðinu muntu ekki geta lesið póstinn þinn.</string>
+        Ekki týna þessu lykilorði - við getum ekki endurheimt það. Ef þú týnir lykilorðinu muntu ekki geta lesið póstinn þinn.</string>
     <string name="username_note">&lt;bAthugaðu:&lt;/b&gt; Notandanafnið er líka vistfang þitt hjá ProtonMail</string>
     <string name="terms_and_conditions">Með því að nota ProtonMail, samþykkir þú\n
-<a href="https://protonmail.com/terms-and-conditions">ákvæði okkar og skilyrði</a> auk <a href="https://protonmail.com/privacy-policy">stefnu okkar varðandi gagnaleynd</a></string>
+        <a href="https://protonmail.com/terms-and-conditions">ákvæði okkar og skilyrði</a> auk <a href="https://protonmail.com/privacy-policy">stefnu okkar varðandi gagnaleynd</a></string>
     <string name="human_verification">Mennskupróf</string>
     <string name="human_verification_subtitle">Til að koma í veg fyrir misnotkun á ProtonMail,\nverðum við að ganga úr skugga um að þú sért mannvera.</string>
     <string name="select_options">Veldu einn af eftirfarandi möguleikum:</string>
@@ -306,9 +306,9 @@ Ekki týna þessu lykilorði - við getum ekki endurheimt það. Ef þú týnir 
     <string name="congratulation">Til hamingju!</string>
     <string name="new_account_ready">Nýi öruggi tölvupóst\naðgangurinn þinn er tilbúinn.</string>
     <string name="optional_email_note">Valkvæða endurheimtupóstfangið gerir þér kleift að
-endurstilla innskráningarlykilorðið ef þú gleymir því.</string>
+        endurstilla innskráningarlykilorðið ef þú gleymir því.</string>
     <string name="optional_display_name">Þegar þú sendir tölvupóst, þá er þetta nafnið
-sem birtist í reitnum fyrir sendanda.</string>
+        sem birtist í reitnum fyrir sendanda.</string>
     <string name="error_captcha_not_valid">Ekki gilt</string>
     <string name="close_engagement">loka yfirferð</string>
     <string name="engagement_title_welcome">Velkomin í ProtonMail!</string>
@@ -390,9 +390,9 @@ sem birtist í reitnum fyrir sendanda.</string>
     <string name="upselling_donate_title">Styrkja</string>
     <string name="upselling_upgrade_title">Uppfæra í ProtonMail Plus</string>
     <string name="upselling_donate_subtitle">Styrkurinn frá þér mun hjálpa okkur að bæta við
-nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
-Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
-til fólks um víða veröld.</string>
+    nýjum eiginleikum og halda áfram þróun ProtonMail sem frjáls og opins hugbúnaðar.
+    Það er einungis með hjálp samfélagsins sem við getum haldið áfram að bjóða ProtonMail
+    til fólks um víða veröld.</string>
     <string name="upgrade_donate">Uppfæra/Styrkja</string>
     <string name="upselling_donate_pick_amount">Veldu upphæð styrks eða settu inn einhverja upphæð</string>
     <string name="amount_5">5€</string>
@@ -410,11 +410,11 @@ til fólks um víða veröld.</string>
     <string name="upgrade">Uppfæra</string>
     <string name="payment_options">Valkostir við greiðslu</string>
     <string name="other_plans">Fyrir áskriftarleiðir með meira geymslurými, ættirðu að
-uppfæra í gegnum vefviðmót ProtonMail.</string>
+    uppfæra í gegnum vefviðmót ProtonMail.</string>
     <string name="upgrade_paid_user">Takk fyrir að gerast greiðandi notandi!</string>
     <string name="select_account_type">Veldu tegund notandaaðgangs</string>
     <string name="select_account_type_subtitle">ProtonMail er ókeypis þjónusta
-í almannaþágu. Þú getur sýnt stuðning við gagnaleynd á netinu með því að velja greidda áskrift.</string>
+    í almannaþágu. Þú getur sýnt stuðning við gagnaleynd á netinu með því að velja greidda áskrift.</string>
     <string name="plan_free_with_price">FREE</string>
     <string name="plan_plus_with_price">PLUS %s /mánuði</string>
     <string name="plan_visionary_with_price">VISIONARY %s /mánuði</string>
@@ -436,7 +436,7 @@ uppfæra í gegnum vefviðmót ProtonMail.</string>
     <string name="plan_visio_line2">Engin takmörk á sendingum</string>
     <string name="plan_visio_line3">Snemmbúinn aðgangur að nýjum eiginleikum</string>
     <string name="plan_visio_line6">Hjálpaðu við að velja nýja eiginleika í gegnum skoðanakannanir sem einungis
-eru í Visionary áskriftarleiðinni</string>
+ eru í Visionary áskriftarleiðinni</string>
     <string name="plan_business_line1">það kemur fljótlega að því að félög, stofnanir og fyrirtæki nýti sér dulritaðan tölvupóst!</string>
     <string name="currency_duration">Gjaldmiðill &amp; tímalengd</string>
     <string name="credit_card_name">Nafn á greiðslukorti</string>
@@ -446,7 +446,7 @@ eru í Visionary áskriftarleiðinni</string>
     <string name="country">Land</string>
     <string name="cvc">CVC</string>
     <string name="terms_and_conditions_billing">Með því að smella á \'Senda inn\'
-samþykkir þú\nskilmála og kvaðir <a href="https://protonmail.com/terms-and-conditions">ProtonMail</a></string>
+    samþykkir þú\nskilmála og kvaðir <a href="https://protonmail.com/terms-and-conditions">ProtonMail</a></string>
     <string name="submit">Senda inn</string>
     <string name="currency">Gjaldmiðill</string>
     <string name="plan_duration">Greiðslutímabil</string>
@@ -673,9 +673,7 @@ samþykkir þú\nskilmála og kvaðir <a href="https://protonmail.com/terms-and-
     <string name="close_app">Loka forriti</string>
     <string name="empty_subject">(ekkert viðfangsefni)</string>
     <string name="contacts_unknown">Óþekkt</string>
-    <string name="learn_more">
-        <u>Kanna nánar</u>
-    </string>
+    <string name="learn_more"><u>Kanna nánar</u></string>
     <string name="info">Upplýsingar</string>
     <string name="error_can_not_send_from_this_address">Uppfærðu í greidda áskrift til að senda úr %s tölvupóstfanginu þínu.</string>
     <string name="email_empty">Tölvupóstfang vantar</string>
@@ -744,14 +742,14 @@ samþykkir þú\nskilmála og kvaðir <a href="https://protonmail.com/terms-and-
     <string name="channel_description_account">Staða aðgangs</string>
     <string name="channel_name_ongoing_operations">Aðgerðir í gangi</string>
     <string name="channel_description_ongoing_operations">Sýnir allar aðgerðir í gangi eins og þegar
-náð er í ný skilaboð í bakgrunni</string>
+		náð er í ný skilaboð í bakgrunni</string>
     <string name="checking_mailbox">Athuga pósthólf</string>
     <string name="report_phishing">Tilkynna um veiðipóst (phishing)</string>
     <string name="print">Prenta</string>
     <string name="phishing_dialog_title">Staðfesta skýrslu um veiðipóst</string>
     <string name="phishing_dialog_message">Ef skilaboð eru tilkynnt sem tilraun til gagnaveiði (phishing) verða þau send
-til okkar, svo við getum greint þau og endurbætt síurnar okkar. Það þýðir aftur á móti að við munum
-geta séð allt efni skilaboðana.</string>
+		til okkar, svo við getum greint þau og endurbætt síurnar okkar. Það þýðir aftur á móti að við munum
+		geta séð allt efni skilaboðana.</string>
     <string name="phishing_report_send_message_moved_to_spam">Skýrsla send. Skilaboð færð í ruslpóst.</string>
     <string name="cannot_send_report_send">Get ekki sent skýrslu</string>
     <string name="title_activity_contact_group_details">ContactGroupDetailsActivity</string>
@@ -822,12 +820,12 @@ geta séð allt efni skilaboðana.</string>
     <string name="save_group_validation_error">Settu inn nafn á hópi</string>
     <!-- region Storage Limit Reached -->
     <string name="storage_limit_alert">Takmörkum á geymsluplássi náð. Get hvorki sent né tekið á móti tölvupóstum.
-Ýttu til að kanna nánar.</string>
+        Ýttu til að kanna nánar.</string>
     <string name="storage_limit_warning_title">Aðvörun</string>
     <string name="storage_limit_reached_text">Þú hefur fyllt 100% af geymslurýminu þínu. Þú
-munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverjum tölvupóstum eða kaupir meiri geymslurýmd.</string>
+        munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverjum tölvupóstum eða kaupir meiri geymslurýmd.</string>
     <string name="storage_limit_approaching_text">Þú hefur fyllt 90% af geymslurýminu þínu.
-Íhugaðu að losa eitthvað pláss eða að kaupa meiri geymslurýmd áður en hún klárast.</string>
+        Íhugaðu að losa eitthvað pláss eða að kaupa meiri geymslurýmd áður en hún klárast.</string>
     <!-- endregion -->
     <string name="need_permissions_title">Aðgangsheimildir</string>
     <string name="need_storage_permissions_text">Til að geta bætt við viðhengjum þarftu að leyfa aðgang að gagnageymslu.</string>
@@ -980,17 +978,18 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Algeng tengivandamál og lausnir á þeim</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;Engin internettenging&lt;/i&gt; - Gakktu úr skugga um að nettengingin þín virki.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vandamál hjá internetþjónustuaðila (Internet Service Provider - ISP)&lt;/i&gt; - Reyndu að tengjast Proton frá öðru netkerfi (eða nota &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Lokun á vegum stjórnvalda&lt;/i&gt; - Yfirvöld í landinu þínu gætu verið að hindra aðgang að Proton. Prófaðu að nota &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (eða einhverja VPN-þjónustu) eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; til að tengjast Proton.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflanir vegna vírusvarna&lt;/i&gt; - Gerðu vírusvarnaforritið þitt tímabundið óvirkt.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflanir vegna milliþjóna/eldveggja&lt;/i&gt; - Gerðu alla eldveggi og milliþjóna (proxies) óvirka, eða hafðu samband við kerfisstjórann þinn.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton liggur niðri&lt;/i&gt; - Athugaðu &lt;a href=\"http://protonstatus.com/\"&gt;stöðu Proton&lt;/a&gt; til að sjá ástandið á kerfinu okkar.
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Finnurðu ekki ennþá neina lausn&lt;/i&gt; - Hafðu beint samband við okkur í gegnum &lt;a href=\"https://protonmail.com/support-form\"&gt;aðstoðarsíðuna okkar&lt;/a&gt;, með &lt;a href=\"mailto:support@protonmail.com\"&gt; tölvupósti&lt;/a&gt; (support@protonmail.com), eða á &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
-</string>
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Vandamál hjá internetþjónustuaðila (Internet Service Provider - ISP)&lt;/i&gt; - Reyndu að tengjast Proton frá öðru netkerfi (eða nota &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Lokun á vegum stjórnvalda&lt;/i&gt; - Yfirvöld í landinu þínu gætu verið að hindra aðgang að Proton. Prófaðu að nota &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (eða einhverja VPN-þjónustu) eða &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; til að tengjast Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflanir vegna vírusvarna&lt;/i&gt; - Gerðu vírusvarnaforritið þitt tímabundið óvirkt.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Truflanir vegna milliþjóna/eldveggja&lt;/i&gt; - Gerðu alla eldveggi og milliþjóna (proxies) óvirka, eða hafðu samband við kerfisstjórann þinn.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton liggur niðri&lt;/i&gt; - Athugaðu &lt;a href=\"http://protonstatus.com/\"&gt;stöðu Proton&lt;/a&gt; til að sjá ástandið á kerfinu okkar.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Finnurðu ekki ennþá neina lausn&lt;/i&gt; - Hafðu beint samband við okkur í gegnum &lt;a href=\"https://protonmail.com/support-form\"&gt;aðstoðarsíðuna okkar&lt;/a&gt;, með &lt;a href=\"mailto:support@protonmail.com\"&gt; tölvupósti&lt;/a&gt; (support@protonmail.com), eða á &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Mynd fannst ekki</string>
     <string name="error_image_bad_url">Gölluð slóð á mynd</string>
+    <string name="error_saving_try_again">Villa við að vista skilaboð. Reyndu aftur.</string>
     <!-- endregion -->
     <string name="allowed">Heimilað</string>
     <string name="denied">Hafnað</string>
@@ -1000,4 +999,6 @@ munt því ekki geta tekið við eða sent tölvupóst nema þú eyðir einhverj
     <string name="go_to_settings">Fara í stillingar</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ógildur API-kerfisviðmótslykill fyrir Firebase. Ýtitilkynningar munu ekki virka.</string>
+    <string name="failed_saving_draft_online">Failed saving online draft for message: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
 </resources>

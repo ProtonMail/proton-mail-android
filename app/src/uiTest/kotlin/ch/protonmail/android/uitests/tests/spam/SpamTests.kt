@@ -26,7 +26,7 @@ import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.TestData.twoPassUser
-import org.junit.Test
+import kotlin.test.Test
 
 class SpamTests : BaseTest() {
 
@@ -55,7 +55,7 @@ class SpamTests : BaseTest() {
             .trash()
             .clickMessageBySubject(subject)
             .openFoldersModal()
-            .moveFromSpamToFolder(stringFromResource(R.string.inbox))
+            .moveMessageFromSpamToFolder(stringFromResource(R.string.inbox))
             .menuDrawer()
             .inbox()
             .verify { messageWithSubjectExists(subject) }

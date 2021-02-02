@@ -28,12 +28,10 @@ repositories {
 
 dependencies {
     val android =       "4.0.1"         // Released: Jul 14, 2020
-    val easyGradle =    "1.5-beta-10"   // Released: Jun 27, 2020
-    val protonGradle =  "0.1.11"        // Released: Aug 21, 2020
+    val easyGradle =    "2.7"           // Released: Oct 15, 2020
 
     // Needed for setup Android config
     implementation("com.android.tools.build:gradle:$android")
     // Needed for many utils
     implementation("studio.forface.easygradle:dsl-android:$easyGradle")
-    implementation("me.proton.core:util-gradle:$protonGradle")
 }

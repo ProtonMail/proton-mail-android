@@ -37,6 +37,7 @@ import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DirectEnabledResponse
 import ch.protonmail.android.api.models.DonateBody
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
@@ -51,7 +52,6 @@ import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.MailboxResetBody
 import ch.protonmail.android.api.models.ModulusResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.NewMessage
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.models.PasswordVerifier
 import ch.protonmail.android.api.models.PaymentMethodResponse
@@ -195,7 +195,15 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun randomModulus(): ModulusResponse = api.randomModulus()
 
-    override fun refreshSync(refreshBody: RefreshBody): RefreshResponse = api.refreshSync(refreshBody)
+    override suspend fun refreshAuth(
+        refreshBody: RefreshBody,
+        retrofitTag: RetrofitTag?
+    ): RefreshResponse = api.refreshAuth(refreshBody, retrofitTag)
+
+    override fun refreshAuthBlocking(
+        refreshBody: RefreshBody,
+        retrofitTag: RetrofitTag?
+    ): RefreshResponse = api.refreshAuthBlocking(refreshBody, retrofitTag)
 
     override fun twoFactor(twoFABody: TwoFABody): TwoFAResponse = api.twoFactor(twoFABody)
 
@@ -311,9 +319,21 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
-    override fun createDraft(newMessage: NewMessage): MessageResponse? = api.createDraft(newMessage)
+    override fun createDraftBlocking(draftBody: DraftBody): MessageResponse? = api.createDraftBlocking(draftBody)
 
-    override fun updateDraft(messageId: String, newMessage: NewMessage, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, newMessage, retrofitTag)
+    override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
+
+    override fun updateDraftBlocking(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse? = api.updateDraftBlocking(messageId, draftBody, retrofitTag)
+
+    override suspend fun updateDraft(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse = api.updateDraft(messageId, draftBody, retrofitTag)
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> = api.sendMessage(messageId, message, retrofitTag)
 

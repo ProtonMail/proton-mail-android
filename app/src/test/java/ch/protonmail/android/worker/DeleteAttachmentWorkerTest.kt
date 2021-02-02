@@ -27,6 +27,7 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.MessagesDao
+import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_ATTACHMENT_ID_STRING
 import ch.protonmail.android.core.Constants
 import io.mockk.MockKAnnotations
@@ -35,10 +36,11 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DeleteAttachmentWorkerTest {
@@ -57,7 +59,7 @@ class DeleteAttachmentWorkerTest {
 
     private lateinit var worker: DeleteAttachmentWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         worker = DeleteAttachmentWorker(context, parameters, api, messagesDb, TestDispatcherProvider)
@@ -110,8 +112,10 @@ class DeleteAttachmentWorkerTest {
             // given
             val attachmentId = "id232"
             val randomErrorCode = 11212
+            val errorMessage = "an error occurred"
             val deleteResponse = mockk<ResponseBody> {
                 every { code } returns randomErrorCode
+                every { error } returns errorMessage
             }
             val expected = ListenableWorker.Result.failure(
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $randomErrorCode")
@@ -127,6 +131,34 @@ class DeleteAttachmentWorkerTest {
             val operationResult = worker.doWork()
 
             // then
+            assertEquals(operationResult, expected)
+        }
+    }
+
+    @Test
+    fun verifyThatServerErrorInvalidIdIsIgnoredAndMessageIsRemovedFromDbWithSuccess() {
+        runBlockingTest {
+            // given
+            val attachmentId = "id232"
+            val errorCode = RESPONSE_CODE_INVALID_ID
+            val errorMessage = "Invalid ID"
+            val deleteResponse = mockk<ResponseBody> {
+                every { code } returns errorCode
+                every { error } returns errorMessage
+            }
+            val expected = ListenableWorker.Result.success()
+            val attachment = mockk<Attachment>()
+            every { messagesDb.findAttachmentById(attachmentId) } returns attachment
+            every { messagesDb.deleteAttachment(attachment) } returns mockk()
+            every { parameters.inputData } returns
+                workDataOf(KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId)
+            coEvery { api.deleteAttachment(any()) } returns deleteResponse
+
+            // when
+            val operationResult = worker.doWork()
+
+            // then
+            verify { messagesDb.deleteAttachment(attachment) }
             assertEquals(operationResult, expected)
         }
     }

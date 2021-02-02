@@ -53,7 +53,7 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
         int totalUnread = 0;
         List<String> messageIds = getMessageIds();
         for (String id : messageIds) {
-            final Message message = getMessageDetailsRepository().findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if ( !message.isRead() ) {
                     UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());

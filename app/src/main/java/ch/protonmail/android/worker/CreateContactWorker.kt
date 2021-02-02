@@ -47,8 +47,9 @@ import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.DuplicatedEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.InvalidEmailError
 import ch.protonmail.android.worker.CreateContactWorker.CreateContactWorkerErrors.ServerError
-import ch.protonmail.libs.core.utils.serialize
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
@@ -113,7 +114,10 @@ class CreateContactWorker @WorkerInject constructor(
 
         return workDataOf(
             KEY_OUTPUT_DATA_CREATE_CONTACT_SERVER_ID to apiResponse.contactId,
-            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to contactEmails.serialize()
+            KEY_OUTPUT_DATA_CREATE_CONTACT_EMAILS_JSON to Json.encodeToString(
+                ListSerializer(ContactEmail.serializer()),
+                contactEmails
+            )
         )
     }
 

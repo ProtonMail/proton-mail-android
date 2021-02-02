@@ -45,9 +45,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -67,7 +67,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
 
     lateinit var useCase: FetchVerificationKeys
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         val testUser = mockk<User> {
@@ -101,8 +101,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
     @Test
     fun verifyThatContactsAreFetchedCorrectlyFromRemoteApi() = runBlockingTest {
         // given
-        val testEmail = "testEmail@abc.ch"
-        val testEmailAddress = EmailAddress(testEmail)
+        val testEmail = "testEmail"
         val testContactId = "contactId"
         val testContactEmail = mockk<ContactEmail> {
             every { contactId } returns testContactId
@@ -144,7 +143,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
             )
 
         // when
-        val result = useCase.invoke(testEmailAddress)
+        val result = useCase.invoke(testEmail)
 
         // then
         assertNotNull(result)
@@ -155,7 +154,6 @@ class FetchVerificationKeysTest : CoroutinesTest {
     fun verifyThatContactsAreDerivedLocally() = runBlockingTest {
         // given
         val testEmail = "testemail@asd.com"
-        val testEmailAddress = EmailAddress(testEmail)
         val testContactId = "contactId"
         val testContactEmail = mockk<ContactEmail> {
             every { contactId } returns testContactId
@@ -196,7 +194,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
         every { userCrypto.deriveKeyInfo(any()) } returns keyInformation
 
         // when
-        val result = useCase.invoke(testEmailAddress)
+        val result = useCase.invoke(testEmail)
 
         // then
         assertNotNull(result)

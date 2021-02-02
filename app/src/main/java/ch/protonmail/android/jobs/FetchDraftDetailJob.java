@@ -47,7 +47,7 @@ public class FetchDraftDetailJob extends ProtonMailBaseJob {
 
         try {
             final Message message = getApi().messageDetail(mMessageId).getMessage();
-            Message savedMessage = getMessageDetailsRepository().findMessageById(message.getMessageId());
+            Message savedMessage = getMessageDetailsRepository().findMessageByIdBlocking(message.getMessageId());
             if (savedMessage != null) {
                 message.setInline(savedMessage.isInline());
             }

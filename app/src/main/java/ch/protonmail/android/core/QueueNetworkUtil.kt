@@ -29,8 +29,12 @@ import com.birbit.android.jobqueue.network.NetworkUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import java.security.GeneralSecurityException
 import javax.inject.Inject
 import javax.inject.Singleton
+import javax.net.ssl.SSLException
 
 private const val DISCONNECTION_EMISSION_WINDOW_MS = 20_000
 
@@ -96,8 +100,20 @@ class QueueNetworkUtil @Inject constructor(
 
     fun isConnected(): Boolean = hasConn(false)
 
-    fun setCurrentlyHasConnectivity(currentlyHasConnectivity: Boolean) =
-        updateRealConnectivity(currentlyHasConnectivity)
+    fun setCurrentlyHasConnectivity() = updateRealConnectivity(true)
+
+    fun setConnectivityHasFailed(throwable: Throwable) {
+        // for valid failure types specified below
+        // the connections should be declared as failure which
+        // should be followed by no connection snackbar and DoH setup
+        when (throwable) {
+            is SocketTimeoutException,
+            is UnknownHostException,
+            is GeneralSecurityException, // e.g. CertificateException
+            is SSLException -> updateRealConnectivity(false)
+            else -> Timber.d("connectivityHasFailed ignoring exception: $throwable")
+        }
+    }
 
     override fun setListener(netListener: NetworkEventProvider.Listener) {
         listener = netListener

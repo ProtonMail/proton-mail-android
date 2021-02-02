@@ -28,7 +28,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Pair
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.Menu
@@ -71,7 +70,6 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.LogoutEvent
@@ -89,10 +87,6 @@ import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
-import ch.protonmail.android.utils.HTMLTransformer.AbstractTransformer
-import ch.protonmail.android.utils.HTMLTransformer.DefaultTransformer
-import ch.protonmail.android.utils.HTMLTransformer.Transformer
-import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.UserUtils
@@ -112,8 +106,6 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_message_details.*
 import me.proton.core.util.android.workmanager.activity.getWorkManager
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -546,25 +538,20 @@ internal class MessageDetailsActivity :
     }
 
     private fun filterAndLoad(decryptedMessage: String) {
-        val css = AppUtil.readTxt(this, R.raw.editor)
-        val showImages = isAutoShowRemoteImages
-        val viewportTransformer: Transformer = ViewportTransformer(UiUtil.getRenderWidth(windowManager), css)
-        val contentTransformer: Transformer = DefaultTransformer()
-            .pipe(viewportTransformer)
-            .pipe(object : AbstractTransformer() {
-                override fun transform(doc: Document): Document {
-                    viewModel.nonBrokenEmail = doc.toString()
-                    return doc
-                }
-            })
-        viewModel.nonBrokenEmail = contentTransformer.transform(Jsoup.parse(decryptedMessage)).toString()
-        viewModel.bodyString = viewModel.nonBrokenEmail
-        if (showImages) {
+
+        val parsedMessage = viewModel.getParsedMessage(
+            decryptedMessage,
+            UiUtil.getRenderWidth(windowManager),
+            AppUtil.readTxt(this, R.raw.editor),
+            resources.getString(R.string.request_timeout)
+        )
+
+        if (isAutoShowRemoteImages) {
             viewModel.remoteContentDisplayed()
         }
         messageExpandableAdapter.displayContainerDisplayImages(View.GONE)
-        pmWebViewClient.blockRemoteResources(!showImages)
-        viewModel.webViewContentWithoutImages.value = viewModel.bodyString
+        pmWebViewClient.blockRemoteResources(!isAutoShowRemoteImages)
+        viewModel.webViewContentWithoutImages.value = parsedMessage
     }
 
     override fun onBackPressed() {
@@ -583,17 +570,14 @@ internal class MessageDetailsActivity :
     @Subscribe
     @Suppress("unused")
     fun onDownloadEmbeddedImagesEvent(event: DownloadEmbeddedImagesEvent) {
-        val status = event.status
-        when (status) {
+        when (event.status) {
             Status.SUCCESS -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.VISIBLE)
                 viewModel.downloadEmbeddedImagesResult.observe(
                     this,
-                    Observer { pair: Pair<String, String> ->
-                        Timber.v("downloadEmbeddedImagesResult pair: $pair")
-                        val content = pair.first
-                        viewModel.nonBrokenEmail = pair.second
+                    Observer { content ->
+                        Timber.v("downloadEmbeddedImagesResult pair: $content")
                         messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
                         if (content.isNullOrEmpty()) {
                             return@Observer
@@ -722,15 +706,6 @@ internal class MessageDetailsActivity :
         onLabelsChecked(checkedLabelIds.toMutableList(), unchangedLabels, messageIds)
         mJobManager.addJobInBackground(PostArchiveJob(listOf(message!!.messageId)))
         onBackPressed()
-    }
-
-    @Subscribe
-    @Suppress("unused")
-    fun onAttachmentFailedEvent(event: AttachmentFailedEvent) {
-        showToast(
-            "${getString(R.string.attachment_failed)} ${event.messageSubject} ${event.attachmentName}",
-            Toast.LENGTH_SHORT
-        )
     }
 
     private var showActionButtons = false

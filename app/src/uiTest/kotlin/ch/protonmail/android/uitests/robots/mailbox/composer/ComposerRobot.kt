@@ -30,13 +30,12 @@ import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.testsHelper.TestData
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_10S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.TIMEOUT_15S
 import ch.protonmail.android.uitests.testsHelper.UICustomViewActions.setValueInNumberPicker
-import ch.protonmail.android.uitests.testsHelper.click
-import ch.protonmail.android.uitests.testsHelper.insert
-import ch.protonmail.android.uitests.testsHelper.type
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.insert
+import ch.protonmail.android.uitests.testsHelper.uiactions.type
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 

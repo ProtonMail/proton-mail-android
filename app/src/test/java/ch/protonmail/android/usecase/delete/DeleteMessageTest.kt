@@ -33,8 +33,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -51,7 +51,7 @@ class DeleteMessageTest {
 
     private lateinit var deleteMessage: DeleteMessage
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         deleteMessage = DeleteMessage(TestDispatcherProvider, repository, db, workScheduler)
@@ -66,7 +66,7 @@ class DeleteMessageTest {
             val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns null
-            every { repository.findMessageById(messId) } returns message
+            every { repository.findMessageByIdBlocking(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
             every { repository.findSearchMessageById(messId) } returns null
             every { repository.saveMessagesInOneTransaction(any()) } returns Unit
@@ -93,7 +93,7 @@ class DeleteMessageTest {
             val searchMessage = mockk<Message>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns null
-            every { repository.findMessageById(messId) } returns null
+            every { repository.findMessageByIdBlocking(messId) } returns null
             every { repository.findSearchMessageById(messId) } returns searchMessage
             every { repository.saveSearchMessageInDB(searchMessage) } returns Unit
             every { repository.saveMessagesInOneTransaction(any()) } returns Unit
@@ -121,7 +121,7 @@ class DeleteMessageTest {
             val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns pendingUpload
             every { db.findPendingSendByMessageId(any()) } returns null
-            every { repository.findMessageById(messId) } returns message
+            every { repository.findMessageByIdBlocking(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
             every { repository.findSearchMessageById(messId) } returns null
             every { repository.saveMessagesInOneTransaction(any()) } returns Unit
@@ -151,7 +151,7 @@ class DeleteMessageTest {
             val operation = mockk<Operation>(relaxed = true)
             every { db.findPendingUploadByMessageId(any()) } returns null
             every { db.findPendingSendByMessageId(any()) } returns pendingSend
-            every { repository.findMessageById(messId) } returns null
+            every { repository.findMessageByIdBlocking(messId) } returns null
             every { repository.findSearchMessageById(messId) } returns message
             every { repository.saveMessageInDB(message) } returns 1L
             every { repository.saveSearchMessageInDB(message) } returns Unit

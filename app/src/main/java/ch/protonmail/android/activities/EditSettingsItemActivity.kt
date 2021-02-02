@@ -18,12 +18,10 @@
  */
 package ch.protonmail.android.activities
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -57,6 +55,7 @@ import com.google.gson.Gson
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_edit_settings_item.*
+import timber.log.Timber
 
 // region constants
 const val EXTRA_SETTINGS_ITEM_TYPE = "EXTRA_SETTINGS_ITEM_TYPE"
@@ -106,12 +105,11 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         renderViews()
     }
 
-
     private val isValidNewConfirmEmail: Boolean
         get() {
             val newRecoveryEmail = newRecoveryEmail!!.text.toString().trim()
             val newConfirmRecoveryEmail = newRecoveryEmailConfirm!!.text.toString().trim()
-            return if (TextUtils.isEmpty(newRecoveryEmail) && TextUtils.isEmpty(newConfirmRecoveryEmail)) {
+            return if (newRecoveryEmail.isEmpty() && newConfirmRecoveryEmail.isEmpty()) {
                 true
             } else newRecoveryEmail == newConfirmRecoveryEmail && newRecoveryEmail.isValidEmail()
         }
@@ -145,14 +143,13 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
         }
     }
 
-    @SuppressLint("LogNotTimber")
     override fun renderViews() {
 
         when (settingsItemType) {
             SettingsItem.RECOVERY_EMAIL -> {
                 settingsRecyclerViewParent.visibility = View.GONE
                 recoveryEmailValue = settingsItemValue
-                if (!TextUtils.isEmpty(recoveryEmailValue)) {
+                if (!recoveryEmailValue.isNullOrEmpty()) {
                     (currentRecoveryEmail as TextView).text = recoveryEmailValue
                 } else {
                     (currentRecoveryEmail as TextView).text = getString(R.string.not_set)
@@ -166,9 +163,8 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 mSelectedAddress = user.addresses[0]
                 val newAddressId = user.defaultAddress.id
-                val currentSignature = mSelectedAddress.signature
 
-                if (!TextUtils.isEmpty(mDisplayName)) {
+                if (mDisplayName.isNotEmpty()) {
                     setValue(SettingsEnum.DISPLAY_NAME, mDisplayName)
                 }
 
@@ -191,20 +187,26 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                         mUserManager.user = user
                         mDisplayName = newDisplayName
 
-                        val job = UpdateSettingsJob(displayChanged = displayChanged, newDisplayName = newDisplayName, addressId = newAddressId)
+                        val job = UpdateSettingsJob(
+                            displayChanged = displayChanged,
+                            newDisplayName = newDisplayName,
+                            addressId = newAddressId
+                        )
                         mJobManager.addJobInBackground(job)
                     }
                 }
 
-                if (!TextUtils.isEmpty(currentSignature)) {
-                    setValue(SettingsEnum.SIGNATURE, currentSignature!!)
+                val currentSignature = mSelectedAddress.signature
+                if (!currentSignature.isNullOrEmpty()) {
+                    setValue(SettingsEnum.SIGNATURE, currentSignature)
                 }
                 setEnabled(SettingsEnum.SIGNATURE, user.isShowSignature)
 
 
                 val currentMobileSignature = user.mobileSignature
-                if (!TextUtils.isEmpty(currentMobileSignature)) {
-                    setValue(SettingsEnum.MOBILE_SIGNATURE, currentMobileSignature!!)
+                if (!currentMobileSignature.isNullOrEmpty()) {
+                    Timber.v("set mobileSignature $currentMobileSignature")
+                    setValue(SettingsEnum.MOBILE_SIGNATURE, currentMobileSignature)
                 }
                 if (user.isPaidUserSignatureEdit) {
                     setEnabled(SettingsEnum.MOBILE_SIGNATURE, user.isShowMobileSignature)
@@ -219,13 +221,17 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setEditTextListener(SettingsEnum.SIGNATURE) {
                     val newSignature = (it as CustomFontEditText).text.toString()
-                    val signatureChanged = newSignature != currentSignature
+                    val isSignatureChanged = newSignature != currentSignature
 
                     user.save()
                     mUserManager.user = user
 
-                    if (signatureChanged) {
-                        val job = UpdateSettingsJob(signatureChanged = signatureChanged, newSignature = newSignature, addressId = newAddressId)
+                    if (isSignatureChanged) {
+                        val job = UpdateSettingsJob(
+                            signatureChanged = isSignatureChanged,
+                            newSignature = newSignature,
+                            addressId = newAddressId
+                        )
                         mJobManager.addJobInBackground(job)
                     }
                 }
@@ -239,9 +245,10 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
 
                 setEditTextListener(SettingsEnum.MOBILE_SIGNATURE) {
                     val newMobileSignature = (it as CustomFontEditText).text.toString()
-                    val mobileSignatureChanged = newMobileSignature != currentMobileSignature
+                    val isMobileSignatureChanged = newMobileSignature != currentMobileSignature
 
-                    if (mobileSignatureChanged) {
+                    if (isMobileSignatureChanged) {
+                        Timber.v("save mobileSignature $newMobileSignature")
                         user.mobileSignature = newMobileSignature
 
                         user.save()
@@ -249,6 +256,12 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     }
                 }
 
+                setEditTextChangeListener(SettingsEnum.MOBILE_SIGNATURE) { newMobileSignature ->
+                    Timber.v("text change save mobileSignature $newMobileSignature")
+                    user.mobileSignature = newMobileSignature
+                    user.save()
+                    mUserManager.user = user
+                }
 
                 setToggleListener(SettingsEnum.MOBILE_SIGNATURE) { _: View, isChecked: Boolean ->
                     user.isShowMobileSignature = isChecked
@@ -256,7 +269,6 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
                     user.save()
                     mUserManager.user = user
                 }
-
 
                 actionBarTitle = R.string.display_name_n_signature
             }
@@ -512,7 +524,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             val user = mUserManager.user
             if (settingsItemType == SettingsItem.RECOVERY_EMAIL) {
                 settingsItemValue = recoveryEmailValue
-                if (TextUtils.isEmpty(recoveryEmailValue)) {
+                if (recoveryEmailValue.isNullOrEmpty()) {
                     mUserManager.userSettings!!.notificationEmail = resources.getString(R.string.not_set)
                 } else {
                     mUserManager.userSettings!!.notificationEmail = recoveryEmailValue
@@ -575,7 +587,7 @@ class EditSettingsItemActivity : BaseSettingsActivity() {
             if (hasTwoFactor) {
                 twoFactorString = twoFactorCode.text.toString()
             }
-            if (TextUtils.isEmpty(passString) || TextUtils.isEmpty(twoFactorString) && hasTwoFactor) {
+            if (passString.isEmpty() || twoFactorString.isEmpty() && hasTwoFactor) {
                 showToast(R.string.password_not_valid, Toast.LENGTH_SHORT)
                 newRecoveryEmail.setText("")
                 newRecoveryEmailConfirm.setText("")

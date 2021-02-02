@@ -53,6 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -60,9 +61,10 @@ class ComposeMessageRepository @Inject constructor(
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
-    @Named("messages")var messagesDatabase: MessagesDatabase,
-    @Named("messages_search")val searchDatabase: MessagesDatabase,
-    val messageDetailsRepository: MessageDetailsRepository // FIXME: this should be removed){}
+    @Named("messages") private var messagesDatabase: MessagesDatabase,
+    @Named("messages_search") private val searchDatabase: MessagesDatabase,
+    private val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
+    private val dispatchers: DispatcherProvider
 ) {
 
     val lazyManager = resettableManager()
@@ -148,14 +150,14 @@ class ComposeMessageRepository @Inject constructor(
         withContext(dispatcher) {
             var message: Message? = null
             if (!TextUtils.isEmpty(draftId)) {
-                message = messageDetailsRepository.findMessageById(draftId)
+                message = messageDetailsRepository.findMessageByIdBlocking(draftId)
             }
             message
         }
 
 
-    suspend fun deleteMessageById(messageId: String, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
+    suspend fun deleteMessageById(messageId: String) =
+        withContext(dispatchers.Io) {
             messagesDatabase.deleteMessageById(messageId)
         }
 
@@ -214,7 +216,7 @@ class ComposeMessageRepository @Inject constructor(
 
     fun markMessageRead(messageId: String) {
         GlobalScope.launch(Dispatchers.IO) {
-            messageDetailsRepository.findMessageById(messageId)?.let { savedMessage ->
+            messageDetailsRepository.findMessageByIdBlocking(messageId)?.let { savedMessage ->
                 val read = savedMessage.isRead
                 if (!read) {
                     jobManager.addJobInBackground(PostReadJob(listOf(savedMessage.messageId)))

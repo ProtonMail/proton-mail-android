@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.ActivityProvider.currentActivity
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.views.SettingsDefaultItemView
 
 /**

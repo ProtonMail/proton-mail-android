@@ -3,7 +3,7 @@ default:
 
 before_script:
   - export JAVA_TOOL_OPTIONS="-Dhttp.proxyHost=$( echo ${http_proxy##http://} | cut -d':' -f1 ) -Dhttp.proxyPort=$( echo ${http_proxy##http://} | cut -d':' -f2 ) -Dhttps.proxyHost=$( echo ${https_proxy##http://} | cut -d':' -f1 ) -Dhttps.proxyPort=$( echo ${https_proxy##http://} | cut -d':' -f2 ) -Dhttp.nonProxyHosts=\"$( echo $no_proxy | tr ',' '|' )\""
-#  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
+  #  - echo -e "y\ny\ny\ny\ny\ny\ny\ny\n" | $ANDROID_HOME/tools/bin/sdkmanager --licenses --proxy=http --proxy_host=$( echo ${https_proxy##http://} | cut -d':' -f1 ) --proxy_port=$( echo ${https_proxy##http://} | cut -d':' -f2 )
   - export GRADLE_USER_HOME=`pwd`/.gradle
   - export VERSION_NAME=$(grep -E "versionName " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
   - export VERSION_CODE=$(grep -E "versionCode " buildSrc/src/main/kotlin/ProtonMail.kt | awk '{print $5}' | sed s/\"//g)
@@ -34,7 +34,7 @@ stages:
     - ./gradlew multiModuleDetekt
   artifacts:
     reports:
-        codequality: config/detekt/reports/mergedReport.json
+      codequality: config/detekt/reports/mergedReport.json
 
 detekt analysis release:
   extends: .detekt-analysis-common
@@ -73,8 +73,6 @@ detekt analysis:
     expire_in: 1 week
     paths:
       - app/build/outputs/apk
-  except:
-    - schedules
 
 build debug:
   extends: .build-debug-common
@@ -85,6 +83,7 @@ build debug:
     - release
     - prerelease
     - tags
+    - schedules
 
 build debug develop:
   extends: .build-debug-common
@@ -92,10 +91,16 @@ build debug develop:
     - job: detekt analysis
   only:
     - develop
+    - schedules
   script:
     - ./gradlew clean
     - ./gradlew assembleBetaDebug
-    - ./gradlew assembleBetaDebugAndroidTest -PTEST_USER1="$TEST_USER1" -PTEST_USER2="$TEST_USER2" -PTEST_USER3="$TEST_USER3" -PTEST_USER4="$TEST_USER4" -PTEST_RECIPIENT1="$TEST_RECIPIENT1" -PTEST_RECIPIENT2="$TEST_RECIPIENT2" -PTEST_RECIPIENT3="$TEST_RECIPIENT3" -PTEST_RECIPIENT4="$TEST_RECIPIENT4"
+    - ./gradlew assembleBetaDebugAndroidTest
+
+build debug uitests:
+  extends: .build-debug-common
+  only:
+    - schedules
 
 build debug release:
   extends: .build-debug-common
@@ -159,6 +164,7 @@ unit tests:
     - release
     - prerelease
     - tags
+    - schedules
 
 unit tests develop:
   extends: .unit-tests-common
@@ -229,14 +235,15 @@ firebase tests release:
     - prerelease
     - tags
 
+
 firebase feature tests:
   stage: test
   needs:
-    - job: build debug
+    - job: build debug uitests
   rules:
     - if: '$TEST_TYPE == "feature" || $TEST_TYPE == "regression"'
   tags:
-    - large
+    - medium
   variables:
     MODEL: ""
   script:
@@ -277,7 +284,7 @@ include:
 i18n-sync-crowdin:
   stage: bot-i18n
   variables:
-      I18N_SYNC_CROWDIN_PROJECT: 'android-mail'
+    I18N_SYNC_CROWDIN_PROJECT: 'android-mail'
   extends: .i18n-sync-crowdin-shared
   except:
     variables:
@@ -286,11 +293,11 @@ i18n-sync-crowdin:
 i18n-commit-locales:
   stage: bot-i18n
   variables:
-      I18N_COMMIT_CROWDIN_PROJECT: 'android-mail'
+    I18N_COMMIT_CROWDIN_PROJECT: 'android-mail'
   extends: .i18n-commit-locales-shared
   except:
     variables:
-        - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
+      - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
 
 release-publish-github:
   stage: manual-release
@@ -322,9 +329,9 @@ publish-github:
     - job: build prerelease
       artifacts: true
   variables:
-      RELEASE_APP: android-mail
-      RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
-      RELEASE_GITHUB_BRANCH: 'release'
+    RELEASE_APP: android-mail
+    RELEASE_GITHUB_REPOSITORY: ProtonMail/proton-mail-android
+    RELEASE_GITHUB_BRANCH: 'release'
   extends: .release-make-release
   tags:
     - small

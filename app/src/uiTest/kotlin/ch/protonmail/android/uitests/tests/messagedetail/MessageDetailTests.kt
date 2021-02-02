@@ -23,8 +23,8 @@ import ch.protonmail.android.uitests.robots.login.LoginRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class MessageDetailTests : BaseTest() {
 
@@ -33,7 +33,7 @@ class MessageDetailTests : BaseTest() {
     private lateinit var subject: String
     private lateinit var body: String
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         subject = TestData.messageSubject

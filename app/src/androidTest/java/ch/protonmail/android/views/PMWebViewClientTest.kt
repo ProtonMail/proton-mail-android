@@ -33,9 +33,9 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.slot
 import io.mockk.verify
 import junit.framework.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
 import java.util.Arrays
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
@@ -68,7 +68,7 @@ class PMWebViewClientTest {
     // Injected into webViewClient
     private val loadRemote = false
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         every { userManager.context } returns mockContext

@@ -20,14 +20,18 @@ package ch.protonmail.android.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnPreDraw
+import androidx.core.widget.doAfterTextChanged
 import ch.protonmail.android.R
 import kotlinx.android.synthetic.main.settings_item_layout.view.*
-import ch.protonmail.android.utils.extensions.ifNullElse
 
 // region constants
 private const val TYPE_INFO = 0
@@ -39,7 +43,11 @@ private const val TYPE_EDIT_TEXT = 5
 private const val TYPE_TOGGLE_N_EDIT = 6
 // endregion
 
-class SettingsDefaultItemView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
+class SettingsDefaultItemView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private var mAttrs: AttributeSet? = attrs
     private var mHeading: CharSequence? = ""
@@ -132,11 +140,7 @@ class SettingsDefaultItemView @JvmOverloads constructor(context: Context, attrs:
             }
 
             valueText.visibility = View.VISIBLE
-            description.ifNullElse({
-                mDescription = ""
-            }, {
-                mDescription = description.toString()
-            })
+            mDescription = description ?: ""
             valueText.text = mDescription
         }
     }
@@ -156,6 +160,12 @@ class SettingsDefaultItemView @JvmOverloads constructor(context: Context, attrs:
         editText.setOnFocusChangeListener { view, hasFocus ->
             if (!hasFocus)
                 listener?.invoke(view)
+        }
+    }
+
+    fun setEditTextOnTextChangeListener(listener: ((String) -> Unit)?) {
+        editText.doAfterTextChanged {
+            listener?.invoke(it.toString())
         }
     }
 
@@ -236,7 +246,10 @@ class SettingsDefaultItemView @JvmOverloads constructor(context: Context, attrs:
                     if (v.id == R.id.editText) {
                         v.parent.requestDisallowInterceptTouchEvent(true)
                         when (event.action and MotionEvent.ACTION_MASK) {
-                            MotionEvent.ACTION_UP -> v.parent.requestDisallowInterceptTouchEvent(false)
+                            MotionEvent.ACTION_UP -> {
+                                v.parent.requestDisallowInterceptTouchEvent(false)
+                                v.performClick()
+                            }
                         }
                     }
                     false

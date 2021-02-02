@@ -29,7 +29,7 @@ import ch.protonmail.android.core.UserManager
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * Created by kadrikj on 8/19/18. */

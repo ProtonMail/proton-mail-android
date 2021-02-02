@@ -50,12 +50,12 @@ import ch.protonmail.android.uitests.testsHelper.devicesetup.DeviceSetup.setupDe
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
 import org.hamcrest.CoreMatchers.not
 import org.junit.After
-import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
 import org.junit.runner.RunWith
+import kotlin.test.BeforeTest
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 open class BaseTest {
@@ -70,7 +70,7 @@ open class BaseTest {
         .around(grantPermissionRule)
         .around(activityRule)!!
 
-    @Before
+    @BeforeTest
     open fun setUp() {
         Espresso.setFailureHandler(ProtonFailureHandler(InstrumentationRegistry.getInstrumentation()))
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().clear().apply()

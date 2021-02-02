@@ -39,7 +39,7 @@ public class PostDraftJob extends ProtonMailEndlessJob {
     public void onAdded() {
         //TODO make a bulk operation
         for (String id : mMessageIds) {
-            final Message message = getMessageDetailsRepository().findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 message.setLocation(Constants.MessageLocationType.DRAFT.getMessageLocationTypeValue());
                 getMessageDetailsRepository().saveMessageInDB(message);

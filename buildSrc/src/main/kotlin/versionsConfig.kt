@@ -24,9 +24,9 @@ import studio.forface.easygradle.dsl.android.*
 fun initVersions() {
 
     // region Kotlin
-    `kotlin version` =                          "1.3.72"        // Released: Apr 14, 2020
-    `coroutines version` =                      "1.3.9"         // Released: Aug 14, 2020
-    `serialization version` =                   "0.20.0"        // Released: Mar 04, 2020
+    `kotlin version` =                          "1.4.21"        // Released: Dec 07, 2020
+    `coroutines version` =                      "1.4.2"         // Released: Nov 26, 2020
+    `serialization version` =                   "1.0.1"         // Released: Oct 28, 2020
     // endregion
 
     // region Android
@@ -63,15 +63,15 @@ fun initVersions() {
 
 // Proton Core
 // Common
-const val `Proton-kotlin-util version` =        "0.1.6"         // Released: Aug 30, 2020
-const val `Proton-shared-preferences version` = "0.1.2"         // Released: Aug 30, 2020
-const val `Proton-work-manager version` =       "0.1.1"         // Released: Sep 14, 2020
+const val `Proton-kotlin-util version` =        "0.2.4"         // Released: Nov 19, 2020
+const val `Proton-shared-preferences version` = "0.2.3"         // Released: Dec 18, 2020
+const val `Proton-work-manager version` =       "0.2.2"         // Released: Dec 18, 2020
 // Test
-const val `Proton-android-test version` =       "0.1"           // Released: May 30, 2020
-const val `Proton-android-instr-test version` = "0.1.2"         // Released: Sep 14, 2020
-const val `Proton-kotlin-test version` =        "0.1.1"         // Released: Sep 16, 2020
+const val `Proton-android-test version` =       "0.3.3"         // Released: Dec 18, 2020
+const val `Proton-android-instr-test version` = "0.2.2"         // Released: Dec 18, 2020
+const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct 21, 2020
 
-const val `Proton-domain version` =             "0.1"           // Released: Jul 03, 2020
+const val `Proton-domain version` =             "0.2.4"         // Released: Nov 18, 2020
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
@@ -82,7 +82,6 @@ const val `aerogear version` =                  "1.0.0"         // Released: Mar
 const val `assertJ version` =                   "3.13.2"        // Released: Aug 04, 2019
 const val `falcon version` =                    "2.1.1"         // Released: Sep 24, 2018
 const val `hamcrest version` =                  "1.3"           // Released:
-const val `jUnit5 version` =                    "5.5.0"         // Released:
 const val `json-simple version` =               "1.1.1"         // Released: Mar 21, 2012
 const val `browserstack-plugin version` =       "3.0.1"         // Released: Jun 10, 2020
 const val `uiautomator version` =               "2.2.0"         // Released: Oct 25, 2018
@@ -101,9 +100,9 @@ const val `butterKnife version` =               "10.1.0"        // Released: Feb
 const val `firebase-messaging version` =        "20.2.4"        // Released: Jul 30, 2020
 const val `gson version` =                      "2.8.5"         // Released: May 22, 201
 const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020
-const val `jsoup version` =                     "1.8.3"         // Released: Aug 02, 2015
+const val `jsoup version` =                     "1.13.1"        // Released: Mar 01, 2020
 const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
-const val `okHttp3 version` =                   "3.12.5"        // Released: Sep 11, 2019 TODO: 4.x requires some refactor / 3.13+ requires minSDK 2
+const val `okHttp3 version` =                   "3.14.9"        // Released: May 17, 2020 TODO: 4.x requires some refactor
 const val `rf2 converter version` =             "2.9.0"         // Released: May 20, 2020
 const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201
 const val `rxRelay version` =                   "2.1.1"         // Released: Aug 23, 201

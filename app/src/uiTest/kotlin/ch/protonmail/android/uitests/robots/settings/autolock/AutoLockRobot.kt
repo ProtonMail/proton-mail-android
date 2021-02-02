@@ -23,8 +23,8 @@ import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
 import ch.protonmail.android.uitests.tests.BaseTest.Companion.targetContext
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
 
 class AutoLockRobot {
 

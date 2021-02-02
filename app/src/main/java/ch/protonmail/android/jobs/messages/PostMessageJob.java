@@ -42,8 +42,8 @@ import java.util.Set;
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.interceptors.RetrofitTag;
+import ch.protonmail.android.api.models.DraftBody;
 import ch.protonmail.android.api.models.MailSettings;
-import ch.protonmail.android.api.models.NewMessage;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.factories.PackageFactory;
@@ -53,6 +53,7 @@ import ch.protonmail.android.api.models.messages.receive.MessageFactory;
 import ch.protonmail.android.api.models.messages.receive.MessageResponse;
 import ch.protonmail.android.api.models.messages.receive.MessageSenderFactory;
 import ch.protonmail.android.api.models.messages.receive.ServerMessage;
+import ch.protonmail.android.api.models.messages.receive.ServerMessageSender;
 import ch.protonmail.android.api.models.messages.send.MessageSendBody;
 import ch.protonmail.android.api.models.messages.send.MessageSendPackage;
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse;
@@ -60,7 +61,6 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
-import ch.protonmail.android.api.models.room.messages.MessageSender;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase;
@@ -68,7 +68,6 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabase;
-import ch.protonmail.android.api.utils.Fields;
 import ch.protonmail.android.attachments.AttachmentsRepository;
 import ch.protonmail.android.attachments.OpenPgpArmorer;
 import ch.protonmail.android.attachments.UploadAttachments;
@@ -213,17 +212,13 @@ public class PostMessageJob extends ProtonMailBaseJob {
             Timber.w("Message is null! Can not continue");
             throw new IllegalArgumentException("Message is null! Can not continue");
         }
-
-        String messageBody = message.getMessageBody();
         AddressCrypto crypto = Crypto.forAddress(getUserManager(), mUsername, message.getAddressID());
 
         AttachmentFactory attachmentFactory = new AttachmentFactory();
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
         MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
         final ServerMessage serverMessage = messageFactory.createServerMessage(message);
-        final NewMessage newMessage = new NewMessage(serverMessage);
-
-        newMessage.addMessageBody(Fields.Message.SELF, messageBody);
+        final DraftBody newMessage = new DraftBody(serverMessage);
 
         if (mParentId != null) {
             newMessage.setParentID(mParentId);
@@ -234,13 +229,15 @@ public class PostMessageJob extends ProtonMailBaseJob {
         String addressId = message.getAddressID();
         Address senderAddress1 = user.getAddressById(addressId).toNewAddress();
         String displayName = senderAddress1.getDisplayName() == null ? null : senderAddress1.getDisplayName().getS();
-        newMessage.setSender(new MessageSender(displayName, senderAddress1.getEmail().getS()));
+        newMessage.getMessage().setSender(new ServerMessageSender(displayName, senderAddress1.getEmail().getS()));
 
         if (MessageUtils.INSTANCE.isLocalMessageId(message.getMessageId())) {
             // create the draft if there was no connectivity previously for execution the create and post draft job
             // this however should not happen, because the jobs with the same ID are executed serial,
             // but just in case that there is no any bug on the JobQueue library
-            final MessageResponse draftResponse = getApi().createDraft(newMessage);
+
+            // TODO verify whether this is actually needed or can be done through saveDtaft use case
+            final MessageResponse draftResponse = getApi().createDraftBlocking(newMessage);
             message.setMessageId(draftResponse.getMessageId());
         }
         message.setTime(ServerTime.currentTimeMillis() / 1000);
@@ -248,7 +245,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
-        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase();
+        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase(pendingActionsDatabase);
         UploadAttachments.Result result = uploadAttachments.blocking(mNewAttachments, message, crypto);
 
         if (result instanceof UploadAttachments.Result.Failure) {
@@ -276,7 +273,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
      * TODO Drop this and just inject the use case when migrating this Job to a worker
      */
     @NotNull
-    private UploadAttachments buildUploadAttachmentsUseCase() {
+    private UploadAttachments buildUploadAttachmentsUseCase(PendingActionsDatabase pendingActionsDatabase) {
         DispatcherProvider dispatchers = new DispatcherProvider() {
             @Override
             public @NotNull CoroutineDispatcher getMain() {
@@ -303,6 +300,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         return new UploadAttachments(
                 dispatchers,
                 attachmentsRepository,
+                pendingActionsDatabase,
                 getMessageDetailsRepository(),
                 getUserManager()
         );
@@ -314,9 +312,9 @@ public class PostMessageJob extends ProtonMailBaseJob {
         MessageSenderFactory messageSenderFactory = new MessageSenderFactory();
         MessageFactory messageFactory = new MessageFactory(attachmentFactory, messageSenderFactory);
         final ServerMessage serverMessage = messageFactory.createServerMessage(message);
-        final NewMessage newMessage = new NewMessage(serverMessage);
+        final DraftBody newMessage = new DraftBody(serverMessage);
 
-        newMessage.addMessageBody(Fields.Message.SELF, message.getMessageBody());
+        newMessage.getMessage().setBody(message.getMessageBody());
 
         List<Attachment> parentAttachmentList;
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
@@ -326,13 +324,13 @@ public class PostMessageJob extends ProtonMailBaseJob {
         ch.protonmail.android.api.models.address.Address senderAddress =
                 user.getAddressById(addressId);
         updateAttachmentKeyPackets(parentAttachmentList, newMessage, mOldSenderAddressID, senderAddress);
-        newMessage.setSender(new MessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
+        newMessage.getMessage().setSender(new ServerMessageSender(senderAddress.getDisplayName(), senderAddress.getEmail()));
 
         if (message.getSenderEmail().contains("+")) { // it's being sent by alias
-            newMessage.setSender(new MessageSender(message.getSenderName(), message.getSenderEmail()));
+            newMessage.getMessage().setSender(new ServerMessageSender(message.getSenderName(), message.getSenderEmail()));
         }
 
-        final MessageResponse draftResponse = getApi().updateDraft(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
+        final MessageResponse draftResponse = getApi().updateDraftBlocking(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
         EventBuilder eventBuilder = new EventBuilder()
                 .withTag(SENDING_FAILED_TAG, getAppVersion())
                 .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
@@ -434,7 +432,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         //endregion
     }
 
-    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage, String oldSenderAddress, ch.protonmail.android.api.models.address.Address newSenderAddress) throws Exception {
+    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, DraftBody draftBody, String oldSenderAddress, ch.protonmail.android.api.models.address.Address newSenderAddress) throws Exception {
         if (!TextUtils.isEmpty(oldSenderAddress)) {
             AddressCrypto oldCrypto = Crypto.forAddress(getUserManager(), mUsername, oldSenderAddress);
             AddressKeys newAddressKeys = newSenderAddress.toNewAddress().getKeys();
@@ -451,26 +449,26 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     byte[] newKeyPackage = oldCrypto.encryptKeyPacket(sessionKey, newPublicKey);
                     String newKeyPackets = Base64.encodeToString(newKeyPackage, Base64.NO_WRAP);
                     if (!TextUtils.isEmpty(keyPackets)) {
-                        newMessage.addAttachmentKeyPacket(AttachmentID, newKeyPackets);
+                        draftBody.getAttachmentKeyPackets().put(AttachmentID, newKeyPackets);
                     }
                 } catch (Exception e) {
                     if (!TextUtils.isEmpty(keyPackets)) {
-                        newMessage.addAttachmentKeyPacket(AttachmentID, keyPackets);
+                        draftBody.getAttachmentKeyPackets().put(AttachmentID, keyPackets);
                     }
                     Logger.doLogException(e);
                 }
             }
         } else {
-            updateAttachmentKeyPackets(attachmentList, newMessage);
+            updateAttachmentKeyPackets(attachmentList, draftBody);
         }
     }
 
-    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, NewMessage newMessage) {
+    private void updateAttachmentKeyPackets(List<Attachment> attachmentList, DraftBody draftBody) {
         for (Attachment attachment : attachmentList) {
             String AttachmentID = attachment.getAttachmentId();
             String keyPackets = attachment.getKeyPackets();
             if (!TextUtils.isEmpty(keyPackets)) {
-                newMessage.addAttachmentKeyPacket(AttachmentID, keyPackets);
+                draftBody.getAttachmentKeyPackets().put(AttachmentID, keyPackets);
             }
         }
     }

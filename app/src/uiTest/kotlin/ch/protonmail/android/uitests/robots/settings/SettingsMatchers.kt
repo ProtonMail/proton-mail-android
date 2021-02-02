@@ -19,10 +19,12 @@
 package ch.protonmail.android.uitests.robots.settings
 
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.matcher.BoundedMatcher
 import ch.protonmail.android.R
 import ch.protonmail.android.adapters.SettingsAdapter
+import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.libs.core.ui.adapter.SelectableAdapter
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -31,6 +33,9 @@ import org.hamcrest.Matcher
  * Matchers that are used by Settings robots.
  */
 object SettingsMatchers {
+
+    fun withSettingsHeader(@StringRes valueId: Int): Matcher<RecyclerView.ViewHolder> =
+        withSettingsHeader(stringFromResource(valueId))
 
     fun withSettingsHeader(header: String): Matcher<RecyclerView.ViewHolder> {
         return object : BoundedMatcher<RecyclerView.ViewHolder,
@@ -45,6 +50,9 @@ object SettingsMatchers {
             }
         }
     }
+
+    fun withSettingsValue(@StringRes valueId: Int): Matcher<RecyclerView.ViewHolder> =
+        withSettingsValue(stringFromResource(valueId))
 
     fun withSettingsValue(value: String): Matcher<RecyclerView.ViewHolder> {
         return object : BoundedMatcher<RecyclerView.ViewHolder,

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -22,7 +22,7 @@ import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.NewMessage
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -103,7 +103,11 @@ interface MessageService {
 
     @POST("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createDraft(@Body newMessage: NewMessage): Call<MessageResponse>
+    fun createDraftCall(@Body draftBody: DraftBody): Call<MessageResponse>
+
+    @POST("mail/v4/messages")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun createDraft(@Body draftBody: DraftBody): MessageResponse
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
@@ -111,8 +115,19 @@ interface MessageService {
 
     @PUT("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateDraft(@Path("messageId") messageId: String,
-                    @Body newMessage: NewMessage, @Tag retrofitTag: RetrofitTag): Call<MessageResponse>
+    fun updateDraftCall(
+        @Path("messageId") messageId: String,
+        @Body draftBody: DraftBody,
+        @Tag retrofitTag: RetrofitTag
+    ): Call<MessageResponse>
+
+    @PUT("mail/v4/messages/{messageId}")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun updateDraft(
+        @Path("messageId") messageId: String,
+        @Body draftBody: DraftBody,
+        @Tag retrofitTag: RetrofitTag
+    ): MessageResponse
 
     @POST("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)

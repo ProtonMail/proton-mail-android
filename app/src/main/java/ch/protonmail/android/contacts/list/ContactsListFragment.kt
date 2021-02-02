@@ -61,6 +61,7 @@ import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.libs.core.utils.ViewModelProvider
+import com.birbit.android.jobqueue.JobManager
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts.*
@@ -82,6 +83,9 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     @Inject
     lateinit var workManager: WorkManager
 
+    @Inject
+    lateinit var jobManager: JobManager
+
     override var actionMode: ActionMode? = null
         private set
 
@@ -89,6 +93,16 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         activity as? IContactsListFragmentListener
             ?: throw IllegalStateException("Activity must implement IContactsListFragmentListener")
     }
+
+    private val Int.statusTextId: Int
+        get() = when (this) {
+            ContactEvent.SUCCESS -> R.string.contact_saved
+            ContactEvent.ALREADY_EXIST -> R.string.contact_exist
+            ContactEvent.INVALID_EMAIL -> R.string.invalid_email_some_contacts
+            ContactEvent.DUPLICATE_EMAIL -> R.string.duplicate_email
+            ContactEvent.SAVED -> R.string.contact_saved
+            else -> R.string.contact_saved_offline
+        }
 
     private fun getSelectedContactsIds(): List<String> {
         val selectedContactIds = ArrayList<String>()
@@ -167,7 +181,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
                 if (!allContactsLocal) {
                     requireContext().showToast(R.string.please_select_only_phone_contacts)
                 } else {
-                    LocalContactsConverter(listener.jobManager, viewModel)
+                    LocalContactsConverter(jobManager, viewModel)
                         .startConversion(
                             contactsAdapter.getSelectedItems!!.toList()
                         )
@@ -255,7 +269,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     fun optionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_convert -> {
-                val localContactsConverter = LocalContactsConverter(listener.jobManager, viewModel)
+                val localContactsConverter = LocalContactsConverter(jobManager, viewModel)
 
                 if (viewModel.hasPermission) {
                     val contacts = viewModel.androidContacts.value
@@ -344,27 +358,6 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     }
 
-    private val Int.statusTextId: Int
-        get() = when (this) {
-            ContactEvent.SUCCESS -> R.string.contact_saved
-            ContactEvent.ALREADY_EXIST -> R.string.contact_exist
-            ContactEvent.INVALID_EMAIL -> R.string.invalid_email_some_contacts
-            ContactEvent.DUPLICATE_EMAIL -> R.string.duplicate_email
-            ContactEvent.SAVED -> R.string.contact_saved
-            else -> R.string.contact_saved_offline
-        }
-
-    companion object {
-
-        fun newInstance(hasPermission: Boolean): ContactsListFragment {
-            val fragment = ContactsListFragment()
-            val extras = Bundle()
-            extras.putBoolean(EXTRA_PERMISSION, hasPermission)
-            fragment.arguments = extras
-            return fragment
-        }
-    }
-
     private fun initAdapter() {
         var actionMode: ActionMode? = null
         contactsAdapter = ContactsListAdapter(
@@ -410,6 +403,17 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         } else {
             actionMode?.title =
                 String.format(getString(R.string.contact_group_selected), checkedItemsCount)
+        }
+    }
+
+    companion object {
+
+        fun newInstance(hasPermission: Boolean): ContactsListFragment {
+            val fragment = ContactsListFragment()
+            val extras = Bundle()
+            extras.putBoolean(EXTRA_PERMISSION, hasPermission)
+            fragment.arguments = extras
+            return fragment
         }
     }
 }

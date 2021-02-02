@@ -50,6 +50,9 @@ import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
+import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
+import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.MessageCountsEvent
@@ -76,9 +79,6 @@ import kotlin.math.max
 
 // region constants
 private const val TAG_EVENT_HANDLER = "EventHandler"
-private const val RESPONSE_CODE_INVALID_ID = 2061
-private const val RESPONSE_CODE_MESSAGE_READING_RESTRICTED = 2028
-private const val RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST = 15_052
 // endregion
 
 enum class EventType(val eventType: Int) {
@@ -360,7 +360,7 @@ class EventHandler @AssistedInject constructor(
         when (type) {
             EventType.CREATE -> {
                 try {
-                    val savedMessage = messageDetailsRepository.findMessageById(messageID)
+                    val savedMessage = messageDetailsRepository.findMessageByIdBlocking(messageID)
                     savedMessage.ifNullElse(
                         {
                             messageDetailsRepository.saveMessageInDB(messageFactory.createMessage(event.message))
@@ -375,7 +375,7 @@ class EventHandler @AssistedInject constructor(
             }
 
             EventType.DELETE -> {
-                val message = messageDetailsRepository.findMessageById(messageID)
+                val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
                 if (message != null) {
                     messagesDatabase.deleteMessage(message)
                 }
@@ -383,7 +383,7 @@ class EventHandler @AssistedInject constructor(
 
             EventType.UPDATE -> {
                 // update Message body
-                val message = messageDetailsRepository.findMessageById(messageID)
+                val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
                 stagedMessages[messageID]?.let {
                     val dbTime = message?.time ?: 0
                     val serverTime = it.time
@@ -414,7 +414,7 @@ class EventHandler @AssistedInject constructor(
         messageID: String,
         item: EventResponse.MessageEventBody
     ) {
-        val message = messageDetailsRepository.findMessageById(messageID)
+        val message = messageDetailsRepository.findMessageByIdBlocking(messageID)
         val newMessage = item.message
 
         if (message != null) {

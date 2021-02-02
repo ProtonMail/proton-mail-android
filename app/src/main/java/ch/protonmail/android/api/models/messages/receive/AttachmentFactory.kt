@@ -25,20 +25,34 @@ import ch.protonmail.android.utils.extensions.notNull
 import ch.protonmail.android.utils.extensions.notNullOrEmpty
 
 class AttachmentFactory : IAttachmentFactory {
-    override fun createServerAttachment(attachment: Attachment): ServerAttachment {
-        val (attachmentId, fileName, mimeType, fileSize, keyPackets, messageId, isUploaded, isUploading, signature, headers, _, _, _) = attachment
 
+    override fun createServerAttachment(attachment: Attachment): ServerAttachment {
+        val (
+            attachmentId,
+            fileName,
+            mimeType,
+            fileSize,
+            keyPackets,
+            messageId,
+            isUploaded,
+            isUploading,
+            signature,
+            headers,
+            _,
+            _,
+            _
+        ) = attachment
         return ServerAttachment(
-                attachmentId,
-                fileName,
-                mimeType,
-                fileSize,
-                keyPackets,
-                messageId,
-                isUploaded.makeInt(),
-                isUploading.makeInt(),
-                signature,
-                headers)
+            attachmentId,
+            fileName,
+            mimeType,
+            fileSize,
+            keyPackets,
+            messageId,
+            isUploaded.makeInt(),
+            isUploading.makeInt(),
+            signature,
+            headers)
     }
 
     override fun createAttachment(serverAttachment: ServerAttachment): Attachment {

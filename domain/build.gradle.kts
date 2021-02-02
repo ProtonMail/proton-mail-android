@@ -34,7 +34,7 @@ dependencies {
         // Kotlin
         `kotlin-jdk8`,
         `coroutines-core`,
-        `serialization`,
+        `serialization-json`,
 
         // DI
         `dagger`

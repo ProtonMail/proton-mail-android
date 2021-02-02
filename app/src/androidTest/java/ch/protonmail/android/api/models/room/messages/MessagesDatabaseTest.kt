@@ -22,7 +22,7 @@ import androidx.room.Room
 import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import org.junit.Assert
-import org.junit.Test
+import kotlin.test.Test
 
 
 

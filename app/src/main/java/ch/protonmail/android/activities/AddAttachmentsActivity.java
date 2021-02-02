@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
@@ -49,7 +48,6 @@ import com.squareup.otto.Subscribe;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -61,16 +59,13 @@ import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.adapters.AttachmentListAdapter;
-import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.LocalAttachment;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
-import ch.protonmail.android.events.DraftCreatedEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
 import ch.protonmail.android.events.PostImportAttachmentFailureEvent;
@@ -83,7 +78,6 @@ import ch.protonmail.android.utils.Logger;
 import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils;
 import dagger.hilt.android.AndroidEntryPoint;
-import kotlin.Unit;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import timber.log.Timber;
@@ -102,8 +96,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     private static final int REQUEST_CODE_ATTACH_FILE = 1;
     private static final int REQUEST_CODE_TAKE_PHOTO = 2;
     private static final String STATE_PHOTO_PATH = "STATE_PATH_TO_PHOTO";
-
-    private MessagesDatabase messagesDatabase;
 
     private AttachmentListAdapter mAdapter;
     @BindView(R.id.progress_layout)
@@ -199,7 +191,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
+        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
                 getApplicationContext()).getDatabase();
 
         ActionBar actionBar = getSupportActionBar();
@@ -348,31 +340,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     public void onPostImportAttachmentFailureEvent(PostImportAttachmentFailureEvent event) {
         mProcessingAttachmentLayout.setVisibility(View.GONE);
         TextExtensions.showToast(this, R.string.problem_selecting_file);
-    }
-
-    @Subscribe
-    public void onDraftCreatedEvent(DraftCreatedEvent event) {
-        if (event == null) {
-            return;
-        }
-        if (mDraftId == null || !mDraftId.equals(event.getOldMessageId())) {
-            return;
-        }
-        mDraftCreated = true;
-        invalidateOptionsMenu();
-        mProgressLayout.setVisibility(View.GONE);
-        String newMessageId = event.getMessageId();
-        if (event.getStatus() != Status.NO_NETWORK) {
-            if (!TextUtils.isEmpty(mDraftId) && !TextUtils.isEmpty(newMessageId)) {
-                new DeleteMessageByIdTask(messagesDatabase, mDraftId).execute();
-            }
-        }
-        mDraftId = event.getMessageId();
-        if (event.getStatus() == Status.SUCCESS) {
-            final Message eventMessage = event.getMessage();
-            new UpdateAttachmentsAdapterTask(new WeakReference<>(this), eventMessage,
-                    AddAttachmentsActivity.this.messagesDatabase, mAdapter).execute();
-        }
     }
 
     @Override
@@ -569,60 +536,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
             }
         }
         return embeddedImages;
-    }
-
-    private static class DeleteMessageByIdTask extends AsyncTask<Unit, Unit, Unit> {
-
-        private final MessagesDatabase messagesDatabase;
-        private final String draftId;
-
-        private DeleteMessageByIdTask(MessagesDatabase messagesDatabase, String draftId) {
-            this.messagesDatabase = messagesDatabase;
-            this.draftId = draftId;
-        }
-
-        @Override
-        protected Unit doInBackground(Unit... units) {
-            messagesDatabase.deleteMessageById(draftId);
-            return Unit.INSTANCE;
-        }
-    }
-
-    private static class UpdateAttachmentsAdapterTask extends AsyncTask<Unit, Unit, List<Attachment>> {
-        private final WeakReference<AddAttachmentsActivity> addAttachmentsActivityWeakReference;
-        private final MessagesDatabase messagesDatabase;
-        private final AttachmentListAdapter adapter;
-        private final Message eventMessage;
-
-        UpdateAttachmentsAdapterTask(
-                WeakReference<AddAttachmentsActivity> addAttachmentsActivityWeakReference, Message eventMessage, MessagesDatabase messagesDatabase,
-                AttachmentListAdapter adapter) {
-            this.addAttachmentsActivityWeakReference = addAttachmentsActivityWeakReference;
-            this.messagesDatabase = messagesDatabase;
-            this.adapter = adapter;
-            this.eventMessage = eventMessage;
-        }
-
-        @Override
-        protected List<Attachment> doInBackground(Unit... units) {
-            return eventMessage.attachments(messagesDatabase);
-        }
-
-        @Override
-        protected void onPostExecute(List<Attachment> messageAttachments) {
-            AddAttachmentsActivity addAttachmentsActivity = addAttachmentsActivityWeakReference.get();
-            if (addAttachmentsActivity == null) {
-                return;
-            }
-            int attachmentsCount = messageAttachments.size();
-            if (adapter.getData().size() <= attachmentsCount) {
-
-                ArrayList<LocalAttachment> attachments = new ArrayList<>(LocalAttachment.Companion.createLocalAttachmentList(messageAttachments));
-                int totalEmbeddedImages = addAttachmentsActivity.countEmbeddedImages(attachments);
-                addAttachmentsActivity.updateAttachmentsCount(attachmentsCount, totalEmbeddedImages);
-                adapter.updateData(attachments, totalEmbeddedImages);
-            }
-        }
     }
 
     private boolean openGallery() {
