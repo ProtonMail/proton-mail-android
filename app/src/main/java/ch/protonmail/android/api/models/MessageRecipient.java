@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.api.models;
 
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Ignore;
@@ -61,6 +63,7 @@ public class MessageRecipient implements Serializable, Comparable<MessageRecipie
     List<MessageRecipient> groupRecipients;
     @Ignore
     boolean selected;
+    private static final long serialVersionUID = -110723370017912622L;
 
     public MessageRecipient(String Name, String Address, String Group) {
         this.Name = Name;
