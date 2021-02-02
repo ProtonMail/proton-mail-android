@@ -64,7 +64,7 @@ import javax.inject.Inject
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_DB_ID = "keySaveDraftMessageDbId"
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID = "keySaveDraftMessageLocalId"
 internal const val KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID = "keySaveDraftMessageParentId"
-internal const val KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON = "keySaveDraftMessageActionTypeSerialized"
+internal const val KEY_INPUT_SAVE_DRAFT_ACTION_TYPE = "keySaveDraftMessageActionType"
 internal const val KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID = "keySaveDraftPreviousSenderAddressId"
 
 internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM = "keySaveDraftErrorResult"
@@ -249,9 +249,7 @@ class CreateDraftWorker @WorkerInject constructor(
     }
 
     private fun getInputActionType(): Constants.MessageActionType =
-        inputData
-            .getString(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON)?.deserialize()
-            ?: NONE
+        Constants.MessageActionType.fromInt(inputData.getInt(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE, -1))
 
     private fun getInputPreviousSenderAddressId() =
         inputData.getString(KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID)
@@ -280,7 +278,7 @@ class CreateDraftWorker @WorkerInject constructor(
                         KEY_INPUT_SAVE_DRAFT_MSG_DB_ID to message.dbId,
                         KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID to message.messageId,
                         KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID to parentId,
-                        KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON to actionType.serialize(),
+                        KEY_INPUT_SAVE_DRAFT_ACTION_TYPE to actionType.messageActionTypeValue,
                         KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID to previousSenderAddressId
                     )
                 )
