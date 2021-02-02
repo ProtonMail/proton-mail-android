@@ -137,11 +137,23 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     ): MessageResponse = service.updateDraft(messageId, draftBody, retrofitTag)
 
     @Throws(IOException::class)
-    override fun updateDraftBlocking(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? =
-        ParseUtils.parse(service.updateDraftCall(messageId, draftBody, retrofitTag).execute())
+    override fun updateDraftBlocking(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse? = ParseUtils.parse(service.updateDraftCall(messageId, draftBody, retrofitTag).execute())
 
-    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> =
-        service.sendMessage(messageId, message, retrofitTag)
+    override fun sendMessageBlocking(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): Call<MessageSendResponse> = service.sendMessageCall(messageId, message, retrofitTag)
+
+    override suspend fun sendMessage(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): MessageSendResponse = service.sendMessage(messageId, message, retrofitTag)
 
     @Throws(IOException::class)
     override fun unlabelMessages(idList: IDList) {
@@ -150,5 +162,5 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     @Throws(IOException::class)
     override fun labelMessages(body: IDList): MoveToFolderResponse? =
-            ParseUtils.parse(service.labelMessages(body).execute())
+        ParseUtils.parse(service.labelMessages(body).execute())
 }

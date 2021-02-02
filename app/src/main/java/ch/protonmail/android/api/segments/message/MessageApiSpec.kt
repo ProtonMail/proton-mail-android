@@ -21,9 +21,9 @@ package ch.protonmail.android.api.segments.message
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -105,7 +105,17 @@ interface MessageApiSpec {
         retrofitTag: RetrofitTag
     ): MessageResponse
 
-    fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse>
+    fun sendMessageBlocking(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): Call<MessageSendResponse>
+
+    suspend fun sendMessage(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): MessageSendResponse
 
     @Throws(IOException::class)
     fun unlabelMessages(idList: IDList)

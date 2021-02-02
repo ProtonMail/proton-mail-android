@@ -20,9 +20,9 @@ package ch.protonmail.android.api.segments.message
 
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
@@ -131,8 +131,19 @@ interface MessageService {
 
     @POST("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun sendMessage(@Path("messageId") messageId: String,
-                    @Body message: MessageSendBody, @Tag retrofitTag: RetrofitTag): Call<MessageSendResponse>
+    fun sendMessageCall(
+        @Path("messageId") messageId: String,
+        @Body message: MessageSendBody,
+        @Tag retrofitTag: RetrofitTag
+    ): Call<MessageSendResponse>
+
+    @POST("mail/v4/messages/{messageId}")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun sendMessage(
+        @Path("messageId") messageId: String,
+        @Body message: MessageSendBody,
+        @Tag retrofitTag: RetrofitTag
+    ): MessageSendResponse
 
     @GET("mail/v4/messages/{messageId}")
     @Headers(ACCEPT_HEADER_V1)

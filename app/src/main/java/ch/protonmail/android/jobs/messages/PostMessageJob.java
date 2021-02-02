@@ -377,7 +377,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
         //region sending the message
         MessageSendResponse messageSendResponse;
-        Call<MessageSendResponse> responseCall = getApi().sendMessage(message.getMessageId(), Body, new RetrofitTag(mUsername));
+        Call<MessageSendResponse> responseCall = getApi().sendMessageBlocking(message.getMessageId(), Body, new RetrofitTag(mUsername));
         Response<MessageSendResponse> response = responseCall.execute();
 
         StringBuilder builder = new StringBuilder("HTTP CODE " + response.code());
