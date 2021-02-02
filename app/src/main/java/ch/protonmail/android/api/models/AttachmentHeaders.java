@@ -77,6 +77,7 @@ public class AttachmentHeaders implements Serializable {
         return contentDisposition;
     }
 
+    @Nullable
     public String getContentId() {
         if (contentId != null && !contentId.isEmpty()) {
             return contentId.get(0);

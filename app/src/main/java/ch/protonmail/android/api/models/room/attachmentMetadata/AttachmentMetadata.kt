@@ -33,22 +33,19 @@ const val COLUMN_ATTACHMENT_FOLDER_LOCATION = "folder_location"
 const val COLUMN_ATTACHMENT_DOWNLOAD_TIMESTAMP = "download_timestamp"
 // endregion
 
-/**
- * Created by dino on 4/20/18.
- */
-
 @Entity(tableName = TABLE_ATTACHMENT_METADATA)
 class AttachmentMetadata constructor(
-        @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
-        @PrimaryKey
-        val id: String,
-        @ColumnInfo(name = COLUMN_ATTACHMENT_NAME)
-        val name: String,
-        @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE)
-        val size: Long,
-        @ColumnInfo(name = COLUMN_ATTACHMENT_LOCAL_LOCATION)
-        val localLocation: String,
-        @ColumnInfo(name = COLUMN_ATTACHMENT_FOLDER_LOCATION)
-        val folderLocation: String,
-        @ColumnInfo(name = COLUMN_ATTACHMENT_DOWNLOAD_TIMESTAMP)
-        val downloadTimestamp: Long): Serializable
+    @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
+    @PrimaryKey
+    val id: String,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_NAME)
+    val name: String,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE)
+    val size: Long,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_LOCAL_LOCATION)
+    val localLocation: String,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_FOLDER_LOCATION)
+    val folderLocation: String,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_DOWNLOAD_TIMESTAMP)
+    val downloadTimestamp: Long
+) : Serializable

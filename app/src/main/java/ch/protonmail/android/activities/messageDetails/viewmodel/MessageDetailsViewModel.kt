@@ -43,6 +43,7 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
+import ch.protonmail.android.attachments.AttachmentsHelper
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
@@ -87,6 +88,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val fetchVerificationKeys: FetchVerificationKeys,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
     private val dispatchers: DispatcherProvider,
+    private val attachmentsHelper: AttachmentsHelper,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -253,20 +255,22 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
-                EmbeddedImage.fromAttachment(
+                attachmentsHelper.fromAttachmentToEmbededImage(
                     it, decryptedMessageData.value!!.embeddedImagesArray.toList()
                 )
             }
-
+            val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->
                 attachmentMetadataList.find { it.id == embeddedImage.attachmentId }?.let {
-                    embeddedImage.localFileName = it.localLocation.substringAfterLast("/")
+                    embeddedImagesWithLocalFiles.add(
+                        embeddedImage.copy(localFileName = it.localLocation.substringAfterLast("/"))
+                    )
                 }
             }
 
             // don't download embedded images, if we already have them in local storage
-            if (embeddedImages.all { it.localFileName != null }) {
-                AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImages))
+            if (embeddedImagesWithLocalFiles.all { it.localFileName != null }) {
+                AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
                 messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.username)
             }
@@ -510,8 +514,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
             val embeddedImagesAttachments = ArrayList<Attachment>()
             for (attachment in attachments) {
-                val embeddedImage = EmbeddedImage
-                    .fromAttachment(attachment, message.embeddedImagesArray.toList()) ?: continue
+                val embeddedImage = attachmentsHelper
+                    .fromAttachmentToEmbededImage(attachment, message.embeddedImagesArray.toList()) ?: continue
                 embeddedImagesToFetch.add(embeddedImage)
                 embeddedImagesAttachments.add(attachment)
             }

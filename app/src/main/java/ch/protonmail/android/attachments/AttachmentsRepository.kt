@@ -136,7 +136,7 @@ class AttachmentsRepository @Inject constructor(
         }
 
     private fun contentIdFormatted(headers: AttachmentHeaders): String {
-        val contentId = headers.contentId
+        val contentId = requireNotNull(headers.contentId)
         val parts = contentId.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
         if (parts.size > 1) {
             return parts[1].replace(">", "")

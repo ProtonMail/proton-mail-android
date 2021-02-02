@@ -22,7 +22,7 @@ package ch.protonmail.android.attachments
 import org.junit.Before
 import org.junit.Test
 
-class DownloadAttachmentsHelperTest {
+class AttachmentsHelperTest {
 
     @Before
     fun setUp() {

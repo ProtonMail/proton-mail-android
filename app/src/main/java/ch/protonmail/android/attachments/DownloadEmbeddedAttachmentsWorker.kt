@@ -76,7 +76,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-    private val downloadHelper: DownloadAttachmentsHelper
+    private val downloadHelper: AttachmentsHelper
 ) : Worker(context, params) {
 
     override fun doWork(): Result {
@@ -111,7 +111,9 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             attachments = message.Attachments
         }
 
-        val embeddedImages = attachments.mapNotNull { EmbeddedImage.fromAttachment(it, message.embeddedImagesArray) }
+        val embeddedImages = attachments.mapNotNull {
+            downloadHelper.fromAttachmentToEmbededImage(it, message.embeddedImagesArray)
+        }
         val otherAttachments = attachments.filter { attachment ->
             embeddedImages.find { attachment.attachmentId == it.attachmentId } == null
         }
@@ -232,7 +234,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         var failure = false
         embeddedImages.forEachIndexed { index, embeddedImage ->
 
-            val filename = downloadHelper.calculateFilename(embeddedImage.fileName!!, index)
+            val filename = downloadHelper.calculateFilename(embeddedImage.fileNameFormatted!!, index)
             val attachmentFile = File(attachmentsDirectoryFile, filename)
 
             try {
@@ -247,12 +249,12 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
                     it.write(decryptedByteArray)
                 }
 
-                embeddedImage.localFileName = filename
+                val embeddedImageWithFile = embeddedImage.copy(localFileName = filename)
                 val attachmentMetadata = AttachmentMetadata(
-                    embeddedImage.attachmentId,
-                    embeddedImage.fileName!!, embeddedImage.size,
-                    embeddedImage.messageId + "/" + filename,
-                    embeddedImage.messageId, System.currentTimeMillis()
+                    embeddedImageWithFile.attachmentId,
+                    embeddedImageWithFile.fileNameFormatted!!, embeddedImageWithFile.size,
+                    embeddedImageWithFile.messageId + "/" + filename,
+                    embeddedImageWithFile.messageId, System.currentTimeMillis()
                 )
                 attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 

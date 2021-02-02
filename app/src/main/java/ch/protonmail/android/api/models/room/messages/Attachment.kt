@@ -126,13 +126,12 @@ data class Attachment @JvmOverloads constructor(
     private fun isInline(embeddedImagesArray: List<String>): Boolean {
         val headers = headers ?: return false
         val contentDisposition = headers.contentDisposition
-        var contentId = headers.contentId
-        if (TextUtils.isEmpty(contentId)) {
-            contentId = headers.contentLocation
+        var contentId = if (headers.contentId.isNullOrEmpty()) {
+            headers.contentLocation
+        } else {
+            headers.contentId
         }
-        if (contentId.isNotEmpty()) {
-            contentId = contentId.removeSurrounding("<", ">")
-        }
+        contentId = contentId?.removeSurrounding("<", ">")
         val embeddedMimeTypes = listOf("image/gif", "image/jpeg", "image/png", "image/bmp")
         var containsInline = false
         for (element in contentDisposition) {
@@ -143,7 +142,7 @@ data class Attachment @JvmOverloads constructor(
         }
 
         return contentDisposition != null &&
-            (containsInline || embeddedImagesArray.contains(contentId.removeSurrounding("<", ">"))) &&
+            (containsInline || embeddedImagesArray.contains(contentId?.removeSurrounding("<", ">"))) &&
             embeddedMimeTypes.contains(mimeType)
     }
 

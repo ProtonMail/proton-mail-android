@@ -28,6 +28,7 @@ import ch.protonmail.android.R
 import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
+import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
@@ -39,12 +40,14 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 private const val NOTIFICATION_ID = 213_412
 private const val FULL_PROGRESS = 100
+private const val BASE_64 = "base64"
 
-class DownloadAttachmentsHelper @Inject constructor(
+class AttachmentsHelper @Inject constructor(
     private val context: Context,
     private val api: ProtonMailApiManager,
     private val notificationManager: NotificationManager
@@ -63,14 +66,17 @@ class DownloadAttachmentsHelper @Inject constructor(
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
             attachmentMetadataList.size
 
+            val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->
                 attachmentMetadataList.find { it.id == embeddedImage.attachmentId }?.let {
-                    embeddedImage.localFileName = it.localLocation.substringAfterLast("/")
+                    embeddedImagesWithLocalFiles.add(
+                        embeddedImage.copy(localFileName = it.localLocation.substringAfterLast("/"))
+                    )
                 }
             }
 
             // all embedded images are in the local filestorage already
-            if (embeddedImages.all { it.localFileName != null }) return true
+            if (embeddedImagesWithLocalFiles.all { it.localFileName != null }) return true
         }
 
         return false
@@ -194,5 +200,66 @@ class DownloadAttachmentsHelper @Inject constructor(
                 notificationManager.notify(NOTIFICATION_ID, builder.build())
             }
         }
+    }
+
+    fun fromAttachmentToEmbededImage(
+        attachment: Attachment,
+        embeddedImagesArray: List<String>
+    ): EmbeddedImage? {
+        val headers = attachment.headers ?: return null
+        val contentDisposition = headers.contentDisposition
+        var contentId = if (headers.contentId.isNullOrEmpty()) {
+            headers.contentLocation
+        } else {
+            headers.contentId
+        }
+        contentId = contentId?.removeSurrounding("<", ">")
+        if (contentDisposition != null) {
+            if (contentDisposition.isEmpty()) {
+                return null
+            } else {
+                var containsInlineMarker = false
+
+                for (element in contentDisposition) {
+                    if (!element.isNullOrEmpty() && element.contains("inline")) {
+                        containsInlineMarker = true
+                        break
+                    }
+                }
+                if (!containsInlineMarker && !embeddedImagesArray.contains(contentId)) {
+                    return null
+                }
+            }
+        }
+
+        if (attachment.attachmentId.isNullOrEmpty()) {
+            return null
+        }
+        val fileName = attachment.fileName
+        if (fileName.isNullOrEmpty()) {
+            return null
+        }
+        val encoding = headers.contentTransferEncoding
+        val contentType = headers.contentType
+        val mimeData = attachment.mimeData
+        val embeddedMimeTypes = listOf("image/gif", "image/jpeg", "image/png", "image/bmp")
+        return if (!embeddedMimeTypes.contains(attachment.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH))) {
+            null
+        } else EmbeddedImage(
+            attachment.attachmentId ?: "",
+            fileName,
+            attachment.keyPackets ?: "",
+            if (contentType.isEmpty()) {
+                attachment.mimeType ?: ""
+            } else {
+                contentType
+            },
+            if (encoding.isEmpty()) BASE_64 else encoding,
+            contentId ?: headers.contentLocation,
+            mimeData,
+            attachment.fileSize,
+            attachment.messageId,
+            null
+        )
     }
 }
