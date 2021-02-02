@@ -200,14 +200,14 @@ unit tests release:
     - gcloud config set project $CLOUD_PROJECT_ID_MAIL
     - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
     - gcloud auth activate-service-account --key-file /tmp/service-account.json
-    - gcloud firebase test android run
+    - gcloud --quiet firebase test android run
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
       --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
       --device model=Pixel2,version=28
       --test-targets "class ch.protonmail.android.uitests.tests.suites.SmokeSuite"
       --use-orchestrator
       --num-flaky-test-attempts=1
-      --timeout 30m
+      --timeout 45m
 
 firebase tests:
   extends: .firebase-tests-common
@@ -252,13 +252,14 @@ firebase feature tests:
     - tar zxf /tmp/google-cloud-sdk.tar.gz --directory /opt
     - /opt/google-cloud-sdk/install.sh --quiet
     - source /opt/google-cloud-sdk/path.bash.inc
-    - gcloud components update
+    - gcloud components update --quiet
     - echo $CLOUD_PROJECT_ID_MAIL
-    - gcloud config set project $CLOUD_PROJECT_ID_MAIL
+    - gcloud config set project $CLOUD_PROJECT_ID_MAIL --quiet
     - echo $SERVICE_ACCOUNT_MAIL > /tmp/service-account.json
-    - gcloud auth activate-service-account --key-file /tmp/service-account.json
+    - gcloud auth activate-service-account --key-file /tmp/service-account.json --quiet
     - export CLOUDSDK_CORE_DISABLE_PROMPTS=1
-    - gcloud beta --quiet firebase test android run
+    - gcloud beta firebase test android run
+      --quiet
       --app app/build/outputs/apk/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug.apk
       --test app/build/outputs/apk/androidTest/beta/debug/ProtonMail-Android-${VERSION_NAME}-beta-debug-androidTest.apk
       --device model=$MODEL,version=$API_LEVEL

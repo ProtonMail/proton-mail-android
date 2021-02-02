@@ -48,7 +48,7 @@ class DnsOverHttpsProviderRFC8484(private val baseUrl: String) {
         if (BuildConfig.DEBUG) {
             httpClientBuilder.addInterceptor(
                 HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
+                    level = HttpLoggingInterceptor.Level.HEADERS
                 }
             )
         }
