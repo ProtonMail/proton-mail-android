@@ -73,7 +73,8 @@ class MessageDetailsRepository @Inject constructor(
     private var pendingActionsDatabase: PendingActionsDao,
     private val applicationContext: Context,
     val databaseProvider: DatabaseProvider,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 ) {
 
     private var messagesDao: MessagesDao = databaseProvider.provideMessagesDao()
@@ -463,7 +464,7 @@ class MessageDetailsRepository @Inject constructor(
         api.messageDetail(messageId) // try to fetch the message details from the API
 
     fun startDownloadEmbeddedImages(messageId: String, username: String) {
-        DownloadEmbeddedAttachmentsWorker.enqueue(messageId, username, "")
+        attachmentsWorker.enqueue(messageId, username, "")
     }
 
     fun markRead(messageId: String) {

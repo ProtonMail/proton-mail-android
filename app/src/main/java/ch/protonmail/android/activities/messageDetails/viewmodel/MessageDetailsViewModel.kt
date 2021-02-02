@@ -83,10 +83,11 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-    messageRendererFactory: MessageRenderer.Factory,
     private val deleteMessageUseCase: DeleteMessage,
     private val fetchVerificationKeys: FetchVerificationKeys,
+    private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
     private val dispatchers: DispatcherProvider,
+    messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -473,12 +474,12 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             if (metadata != null) {
                 if (metadata.localLocation.endsWith("==")) { // migration for deprecated saving attachments as files with name <attachmentId>
                     attachmentMetadataDatabase.deleteAttachmentMetadata(metadata)
-                    DownloadEmbeddedAttachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                    attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
                 } else {
                     DownloadUtils.viewCachedAttachmentFile(context, metadata.name, metadata.localLocation)
                 }
             } else {
-                DownloadEmbeddedAttachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
             }
         }
     }

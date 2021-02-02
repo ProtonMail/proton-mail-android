@@ -27,7 +27,6 @@ import androidx.core.app.NotificationCompat
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
-import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -35,6 +34,7 @@ import androidx.work.Operation
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProgressListener
@@ -60,6 +60,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.util.Date
+import javax.inject.Inject
 
 // region constants
 private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
@@ -134,6 +135,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         val singleAttachment = otherAttachments.find { it.attachmentId == singleAttachmentId }
 
         val pathname = applicationContext.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId
+        Timber.v("Attachment path: $pathname")
 
         return if (singleAttachment != null) {
             val attachmentDirectoryFile = File("$pathname/$singleAttachmentId")
@@ -163,8 +165,9 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             )
         )
 
-        val filenameInCache = attachment.fileName!!.replace(" ", "_").replace("/", ":")
+        val filenameInCache = attachment.fileName?.replace(" ", "_")?.replace("/", ":")
         val attachmentFile = File(attachmentsDirectoryFile, filenameInCache)
+        Timber.v("handleSingleAttachment filenameInCache:$filenameInCache attachmentsDirectoryFile:${attachmentsDirectoryFile}")
 
         applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.let { externalDirectory ->
             val uniqueFilenameInDownloads = createUniqueFilename(
@@ -225,6 +228,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         messageId: String
     ): Result {
 
+        Timber.v("handleEmbeddedImages embeddedImages:$embeddedImages attachmentsDirectoryFile:${attachmentsDirectoryFile}")
         // short-circuit if all attachments are already downloaded
         if (areAllAttachmentsAlreadyDownloaded(attachmentsDirectoryFile, messageId, embeddedImages)) {
             AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImages))
@@ -305,22 +309,22 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
                 object : ProgressListener {
 
                     var currentBytesRead = 0
-                    var mNotificationProgressStartTime: Long = 0
-                    var mNotificationProgressElapsedTime = 0L
+                    var notificationProgressStartTime: Long = 0
+                    var notificationProgressElapsedTime = 0L
 
                     override fun update(bytesRead: Long, contentLength: Long, done: Boolean) {
                         val br = (bytesRead.toFloat() / fileSize * 100).toInt()
                         if (br > currentBytesRead) {
                             currentBytesRead = br
                         }
-                        if (mNotificationProgressElapsedTime > 500) {
+                        if (notificationProgressElapsedTime > 500) {
                             if (fileSize != -1L) {
                                 notifyOfProgress(currentBytesRead)
                             }
-                            mNotificationProgressStartTime = System.currentTimeMillis()
-                            mNotificationProgressElapsedTime = 0L
+                            notificationProgressStartTime = System.currentTimeMillis()
+                            notificationProgressElapsedTime = 0L
                         } else {
-                            mNotificationProgressElapsedTime = Date().time - mNotificationProgressStartTime
+                            notificationProgressElapsedTime = Date().time - notificationProgressStartTime
                         }
                     }
                 }
@@ -412,9 +416,9 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         }
     }
 
-    companion object {
+    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
-        private const val UNIQUE_WORK_ID_PREFIX = "downloadEmbeddedAttachmentsWork"
+        private val uniqueWorkIdPrefix = "downloadEmbeddedAttachmentsWork"
 
         fun enqueue(
             messageId: String,
@@ -426,22 +430,22 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val data = Data.Builder()
-                .putString(KEY_INPUT_DATA_MESSAGE_ID_STRING, messageId)
-                .putString(KEY_INPUT_DATA_USERNAME_STRING, username)
-                .putString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING, attachmentId)
-                .build()
-
-            val downloadEmbeddedAttachmentsWork =
+            val attachmentsWorkRequest =
                 OneTimeWorkRequest.Builder(DownloadEmbeddedAttachmentsWorker::class.java)
                     .setConstraints(constraints)
-                    .setInputData(data)
+                    .setInputData(
+                        workDataOf(
+                            KEY_INPUT_DATA_MESSAGE_ID_STRING to messageId,
+                            KEY_INPUT_DATA_USERNAME_STRING to username,
+                            KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId
+                        )
+                    )
                     .build()
 
-            return WorkManager.getInstance().enqueueUniqueWork(
-                "$UNIQUE_WORK_ID_PREFIX-$attachmentId",
+            return workManager.enqueueUniqueWork(
+                "$uniqueWorkIdPrefix-$attachmentId",
                 ExistingWorkPolicy.KEEP,
-                downloadEmbeddedAttachmentsWork
+                attachmentsWorkRequest
             )
         }
     }

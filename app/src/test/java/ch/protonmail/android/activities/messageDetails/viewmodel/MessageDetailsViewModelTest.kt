@@ -25,6 +25,7 @@ import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
+import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.usecase.VerifyConnection
@@ -78,6 +79,9 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var networkConfigurator: NetworkConfigurator
+
+    @RelaxedMockK
+    private lateinit var attachemntsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 
     @InjectMockKs
     private lateinit var viewModel: MessageDetailsViewModel
