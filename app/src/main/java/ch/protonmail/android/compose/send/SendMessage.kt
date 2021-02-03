@@ -49,6 +49,7 @@ class SendMessage @Inject constructor(
 
         sendMessageScheduler.enqueue(
             parameters.message,
+            parameters.message.decryptedBody ?: "",
             parameters.newAttachmentIds,
             parameters.parentId,
             parameters.actionType,

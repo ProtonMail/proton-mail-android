@@ -127,14 +127,18 @@ class SendMessageWorkerTest : CoroutinesTest {
             val messageId = "2834"
             val messageDbId = 534L
             val messageActionType = Constants.MessageActionType.REPLY_ALL
-            val message = Message(messageId = messageId)
-            message.dbId = messageDbId
+            val decryptedBody = "Message decrypted body in plain text"
+            val message = Message(messageId = messageId).apply {
+                this.dbId = messageDbId
+                this.decryptedBody = decryptedBody
+            }
             val previousSenderAddressId = "previousSenderId82348"
             val securityOptions = MessageSecurityOptions("password", "hint", 3273727L)
 
             // When
             SendMessageWorker.Enqueuer(workManager).enqueue(
                 message,
+                message.decryptedBody ?: "",
                 attachmentIds,
                 messageParentId,
                 messageActionType,
@@ -156,12 +160,14 @@ class SendMessageWorkerTest : CoroutinesTest {
             val actualMessageDbId = inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1)
             val actualAttachmentIds = inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS)
             val actualMessageLocalId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID)
+            val actualMessageDecryptedBody = inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_DECRYPTED_BODY)
             val actualMessageParentId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
             val actualMessageActionType = inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1)
             val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID)
             val actualMessageSecurityOptions = inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
+            assertEquals(decryptedBody, actualMessageDecryptedBody)
             assertArrayEquals(attachmentIds.toTypedArray(), actualAttachmentIds)
             assertEquals(messageParentId, actualMessageParentId)
             assertEquals(messageActionType.messageActionTypeValue, actualMessageActionType)
@@ -175,20 +181,22 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerSavesDraftPassingGivenParameters() = runBlockingTest {
+    fun workerSavesDraftPassingAMessageAndTheNeededParameters() = runBlockingTest {
         val messageDbId = 2373L
         val messageId = "8322223"
         val message = Message().apply {
             dbId = messageDbId
             this.messageId = messageId
         }
+        val decryptedBody = "Decrypted, plain text message body"
         givenFullValidInput(
             messageDbId,
             messageId,
             arrayOf("attId8327"),
             "parentId82384",
             Constants.MessageActionType.NONE,
-            "prevSenderAddress"
+            "prevSenderAddress",
+            decryptedBody = decryptedBody
         )
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { messageDetailsRepository.findMessageById(any()) } returns Message()
@@ -204,6 +212,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             "prevSenderAddress"
         )
         coVerify { saveDraft(expectedParameters) }
+        assertEquals("Decrypted message body was not assigned to the message!", decryptedBody, message.decryptedBody)
     }
 
     @Test
@@ -659,12 +668,14 @@ class SendMessageWorkerTest : CoroutinesTest {
         parentId: String = "parentId72364",
         messageActionType: Constants.MessageActionType = Constants.MessageActionType.REPLY,
         previousSenderAddress: String = "prevSenderAddress923",
-        securityOptions: MessageSecurityOptions? = MessageSecurityOptions(null, null, -1)
+        securityOptions: MessageSecurityOptions? = MessageSecurityOptions(null, null, -1),
+        decryptedBody: String = "Decrypted message body"
     ) {
         every { parameters.inputData.getLong(KEY_INPUT_SEND_MESSAGE_MSG_DB_ID, -1) } answers { messageDbId }
         every { parameters.inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS) } answers { attachments }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID) } answers { messageId }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID) } answers { parentId }
+        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_DECRYPTED_BODY) } answers { decryptedBody }
         every { parameters.inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1) } answers {
             messageActionType.messageActionTypeValue
         }

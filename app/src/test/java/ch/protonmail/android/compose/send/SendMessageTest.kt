@@ -106,11 +106,12 @@ class SendMessageTest : CoroutinesTest {
     @Test
     fun sendMessageSchedulesSendMessageWorkerToPerformOperationInBackground() = runBlockingTest {
         // Given
+        val decryptedMessageBody = "Message body in plain text"
         val message = Message().apply {
             dbId = 992376L
             this.messageId = "823742"
             addressID = "addressId"
-            decryptedBody = "Message body in plain text"
+            decryptedBody = decryptedMessageBody
         }
         val securityOptions = MessageSecurityOptions("secretPassword", "hint", 237237L)
 
@@ -130,6 +131,7 @@ class SendMessageTest : CoroutinesTest {
         verify {
             sendMessageScheduler.enqueue(
                 message,
+                decryptedMessageBody,
                 attachmentIds,
                 "parentId82346",
                 NONE,

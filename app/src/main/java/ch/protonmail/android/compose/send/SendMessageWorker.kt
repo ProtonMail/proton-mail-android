@@ -71,6 +71,7 @@ import javax.inject.Inject
 internal const val KEY_INPUT_SEND_MESSAGE_MSG_DB_ID = "keySendMessageMessageDbId"
 internal const val KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS = "keySendMessageAttachmentIds"
 internal const val KEY_INPUT_SEND_MESSAGE_MESSAGE_ID = "keySendMessageMessageLocalId"
+internal const val KEY_INPUT_SEND_MESSAGE_MESSAGE_DECRYPTED_BODY = "keySendMessageMessageDecryptedBody"
 internal const val KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID = "keySendMessageMessageParentId"
 internal const val KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL = "keySendMessageMessageActionTypeEnumValue"
 internal const val KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID = "keySendMessagePreviousSenderAddressId"
@@ -102,6 +103,7 @@ class SendMessageWorker @WorkerInject constructor(
         Timber.d("Send Message Worker executing with messageDbId ${getInputMessageDbId()}")
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
             ?: return failureWithError(MessageNotFound)
+        message.decryptedBody = getInputDecryptedBody()
 
         Timber.d("Send Message Worker read local message with messageId ${message.messageId}")
 
@@ -213,6 +215,9 @@ class SendMessageWorker @WorkerInject constructor(
         return Result.failure(errorData)
     }
 
+    private fun getInputDecryptedBody() =
+        inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_DECRYPTED_BODY)
+
     private fun getInputMessageSecurityOptions(): MessageSecurityOptions? =
         inputData
             .getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED)
@@ -236,6 +241,7 @@ class SendMessageWorker @WorkerInject constructor(
 
         fun enqueue(
             message: Message,
+            decryptedMessageBody: String,
             attachmentIds: List<String>,
             parentId: String?,
             actionType: Constants.MessageActionType,
@@ -251,6 +257,7 @@ class SendMessageWorker @WorkerInject constructor(
                     workDataOf(
                         KEY_INPUT_SEND_MESSAGE_MSG_DB_ID to message.dbId,
                         KEY_INPUT_SEND_MESSAGE_MESSAGE_ID to message.messageId,
+                        KEY_INPUT_SEND_MESSAGE_MESSAGE_DECRYPTED_BODY to decryptedMessageBody,
                         KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS to attachmentIds.toTypedArray(),
                         KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID to parentId,
                         KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL to actionType.messageActionTypeValue,
