@@ -58,7 +58,7 @@ import ch.protonmail.android.utils.extensions.serialize
 import ch.protonmail.android.utils.notifier.ErrorNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
-import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON
+import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_ACTION_TYPE
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_DB_ID
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID
@@ -157,12 +157,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val actualMessageDbId = inputData.getLong(KEY_INPUT_SAVE_DRAFT_MSG_DB_ID, -1)
             val actualMessageLocalId = inputData.getString(KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID)
             val actualMessageParentId = inputData.getString(KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID)
-            val actualMessageActionType = inputData.getString(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON)
+            val actualMessageActionType = inputData.getInt(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE, -1)
             val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
             assertEquals(messageParentId, actualMessageParentId)
-            assertEquals(messageActionType.serialize(), actualMessageActionType)
+            assertEquals(messageActionType.messageActionTypeValue, actualMessageActionType)
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
             assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
@@ -806,9 +806,9 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
     private fun givenActionTypeInput(actionType: Constants.MessageActionType = NONE) {
         every {
-            parameters.inputData.getString(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE_JSON)
+            parameters.inputData.getInt(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE, -1)
         } answers {
-            actionType.serialize()
+            actionType.messageActionTypeValue
         }
     }
 

@@ -85,37 +85,43 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     @Test
     fun verifyThatCanFetchAndUpdateDbWithFreshContactsDataWithJustTwoPages() = runBlockingTest {
         // given
-        val pageSize = 5
+        val pageSize = 2
         val labelId1 = "labelId1"
         val contactLabel = ContactLabel(labelId1)
         val contactLabelList = listOf(contactLabel)
         val contactEmailId1 = "emailId1"
         val contactEmailId2 = "emailId2"
         val contactEmailId3 = "emailId3"
+        val contactEmailId4 = "emailId4"
+        val contactEmailId5 = "emailId5"
         val labelIds = listOf(labelId1)
         val contactEmail1 = ContactEmail(contactEmailId1, "test1@abc.com", "name1", labelIds = labelIds)
         val contactEmail2 = ContactEmail(contactEmailId2, "test2@abc.com", "name2", labelIds = labelIds)
         val contactEmail3 = ContactEmail(contactEmailId3, "test3@abc.com", "name3", labelIds = labelIds)
-        val newContactEmails1 = listOf(contactEmail1)
-        val newContactEmails2 = listOf(contactEmail2)
-        val newContactEmails3 = listOf(contactEmail3)
+        val contactEmail4 = ContactEmail(contactEmailId4, "test4@abc.com", "name4", labelIds = labelIds)
+        val contactEmail5 = ContactEmail(contactEmailId5, "test5@abc.com", "name5", labelIds = labelIds)
+        val newContactEmails1 = listOf(contactEmail1, contactEmail2)
+        val newContactEmails2 = listOf(contactEmail3, contactEmail4)
+        val newContactEmails3 = listOf(contactEmail5)
         val join1 = ContactEmailContactLabelJoin(contactEmailId1, labelId1)
         val join2 = ContactEmailContactLabelJoin(contactEmailId2, labelId1)
         val join3 = ContactEmailContactLabelJoin(contactEmailId3, labelId1)
-        val allContactEmails = listOf(contactEmail1, contactEmail2, contactEmail3)
-        val newJoins = listOf(join1, join2, join3)
+        val join4 = ContactEmailContactLabelJoin(contactEmailId4, labelId1)
+        val join5 = ContactEmailContactLabelJoin(contactEmailId5, labelId1)
+        val allContactEmails = listOf(contactEmail1, contactEmail2, contactEmail3, contactEmail4, contactEmail5)
+        val newJoins = listOf(join1, join2, join3, join4, join5)
         coEvery { api.fetchContactGroupsList() } returns contactLabelList
         val emailsResponse1 = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails1
-            every { total } returns 2
+            every { total } returns allContactEmails.size
         }
         val emailsResponse2 = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails2
-            every { total } returns 2
+            every { total } returns allContactEmails.size
         }
         val emailsResponse3 = mockk<ContactEmailsResponseV2> {
             every { contactEmails } returns newContactEmails3
-            every { total } returns 2
+            every { total } returns allContactEmails.size
         }
         coEvery { api.fetchContactEmails(0, pageSize) } returns emailsResponse1
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
