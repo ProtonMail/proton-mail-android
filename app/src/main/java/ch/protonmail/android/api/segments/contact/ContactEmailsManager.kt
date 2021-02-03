@@ -42,7 +42,7 @@ class ContactEmailsManager @Inject constructor(
         while (hasMorePages) {
             val result = api.fetchContactEmails(currentPage, pageSize)
             allResults += result
-            hasMorePages = currentPage < result.total
+            hasMorePages = currentPage < result.total / pageSize
             currentPage++
         }
 
