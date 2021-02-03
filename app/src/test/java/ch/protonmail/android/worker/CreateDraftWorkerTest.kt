@@ -136,14 +136,6 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val message = Message(messageId = messageId)
             message.dbId = messageDbId
             val previousSenderAddressId = "previousSenderId82348"
-            val requestSlot = slot<OneTimeWorkRequest>()
-            every {
-                workManager.enqueueUniqueWork(
-                    "saveDraftUniqueWork-$messageId",
-                    ExistingWorkPolicy.REPLACE,
-                    capture(requestSlot)
-                )
-            } answers { mockk() }
 
             // When
             CreateDraftWorker.Enqueuer(workManager).enqueue(
@@ -154,6 +146,14 @@ class CreateDraftWorkerTest : CoroutinesTest {
             )
 
             // Then
+            val requestSlot = slot<OneTimeWorkRequest>()
+            verify {
+                workManager.enqueueUniqueWork(
+                    "saveDraftUniqueWorkName-$messageId",
+                    ExistingWorkPolicy.REPLACE,
+                    capture(requestSlot)
+                )
+            }
             val workSpec = requestSlot.captured.workSpec
             val constraints = workSpec.constraints
             val inputData = workSpec.input

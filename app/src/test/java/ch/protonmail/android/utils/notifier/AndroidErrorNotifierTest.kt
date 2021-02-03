@@ -20,19 +20,27 @@
 package ch.protonmail.android.utils.notifier
 
 import android.content.Context
+import ch.protonmail.android.R
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
+import ch.protonmail.android.utils.extensions.showToast
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.just
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 @Suppress("unused")
-class AndroidErrorNotifierTest {
+class AndroidErrorNotifierTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var notificationServer: INotificationServer
@@ -72,5 +80,16 @@ class AndroidErrorNotifierTest {
 
         val errorAndSubject = "\"$subject\" - $errorMessage"
         verify { notificationServer.notifySingleErrorSendingMessage(errorAndSubject, "loggedInUsername") }
+    }
+
+    @Test
+    fun showMessageSentShowsAToastOnMainThread() = runBlockingTest {
+        mockkStatic("ch.protonmail.android.utils.extensions.TextExtensions")
+        every { context.showToast(any<Int>()) } just Runs
+
+        errorNotifier.showMessageSent()
+
+        verify { context.showToast(R.string.message_sent) }
+        unmockkStatic("ch.protonmail.android.utils.extensions.TextExtensions")
     }
 }

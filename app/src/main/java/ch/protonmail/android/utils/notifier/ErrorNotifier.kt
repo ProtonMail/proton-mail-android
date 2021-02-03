@@ -23,4 +23,5 @@ interface ErrorNotifier {
     fun showPersistentError(errorMessage: String, messageSubject: String?)
     fun showError(errorMessage: String)
     fun showSendMessageError(errorMessage: String, messageSubject: String?)
+    suspend fun showMessageSent()
 }

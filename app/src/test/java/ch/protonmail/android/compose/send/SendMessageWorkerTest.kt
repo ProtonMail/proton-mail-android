@@ -45,6 +45,9 @@ import ch.protonmail.android.api.models.messages.send.MessageSendPackage
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
+import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -129,10 +132,6 @@ class SendMessageWorkerTest : CoroutinesTest {
             message.dbId = messageDbId
             val previousSenderAddressId = "previousSenderId82348"
             val securityOptions = MessageSecurityOptions("password", "hint", 3273727L)
-            val requestSlot = slot<OneTimeWorkRequest>()
-            every {
-                workManager.enqueueUniqueWork(messageId, ExistingWorkPolicy.REPLACE, capture(requestSlot))
-            } answers { mockk() }
 
             // When
             SendMessageWorker.Enqueuer(workManager).enqueue(
@@ -145,6 +144,13 @@ class SendMessageWorkerTest : CoroutinesTest {
             )
 
             // Then
+            val requestSlot = slot<OneTimeWorkRequest>()
+            verify {
+                workManager.enqueueUniqueWork(
+                    "sendMessageUniqueWorkName-$messageId",
+                    ExistingWorkPolicy.REPLACE,
+                    capture(requestSlot))
+            }
             val workSpec = requestSlot.captured.workSpec
             val constraints = workSpec.constraints
             val inputData = workSpec.input
@@ -573,6 +579,78 @@ class SendMessageWorkerTest : CoroutinesTest {
             ),
             result
         )
+    }
+
+    @Test
+    fun workerRemovesPendingForSendAndMovesMessageToSentFolderWhenSendingSucceeds() = runBlockingTest {
+        val messageDbId = 234827L
+        val messageId = "9282384"
+        val subject = "message subject"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = subject
+        }
+        val savedDraftMessageId = "283472"
+        val savedDraft = message.copy(savedDraftMessageId)
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
+            every { code } returns 1000
+            every { sent } returns Message(
+                messageBody = "this is the body of the message that was sent",
+                replyTos = listOf(MessageRecipient("recipient", "address@pm.me")),
+                numAttachments = 3
+            )
+        }
+
+        val result = worker.doWork()
+
+        val expectedMessage = savedDraft.copy(
+            messageBody = "this is the body of the message that was sent",
+            replyTos = listOf(MessageRecipient("recipient", "address@pm.me")),
+            numAttachments = 3,
+            location = SENT.messageLocationTypeValue,
+            allLabelIDs = listOf(
+                ALL_SENT.messageLocationTypeValue.toString(),
+                ALL_MAIL.messageLocationTypeValue.toString(),
+                SENT.messageLocationTypeValue.toString()
+            )
+        )
+        coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+        verify { pendingActionsDao.deletePendingSendByMessageId(expectedMessage.messageId!!) }
+        assertEquals(ListenableWorker.Result.success(), result)
+    }
+
+    @Test
+    fun workerNotifiesUserWhenSendingSucceeds() = runBlockingTest {
+        val messageDbId = 9282384L
+        val messageId = "982349"
+        val subject = "message subject"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = subject
+        }
+        val savedDraftMessageId = "283472"
+        val savedDraft = message.copy(savedDraftMessageId)
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
+            every { code } returns 1000
+            every { sent } returns savedDraft
+        }
+
+        val result = worker.doWork()
+
+        coVerify { errorNotifier.showMessageSent() }
+        assertEquals(ListenableWorker.Result.success(), result)
     }
 
     private fun givenFullValidInput(

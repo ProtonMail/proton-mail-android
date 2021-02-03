@@ -52,6 +52,9 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.InvalidInputMes
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
+import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
+import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -93,17 +96,22 @@ class SendMessageWorker @WorkerInject constructor(
     @CurrentUsername private val currentUsername: String,
     private val userManager: UserManager,
     private val errorNotifier: ErrorNotifier,
-    private val pendingActionDao: PendingActionsDao
+    private val pendingActionsDao: PendingActionsDao
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        Timber.d("Send Message Worker executing with messageDbId ${getInputMessageDbId()}")
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
             ?: return failureWithError(MessageNotFound)
+
+        Timber.d("Send Message Worker read local message with messageId ${message.messageId}")
+
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
 
         return when (val result = saveDraft(message, previousSenderAddressId)) {
             is SaveDraftResult.Success -> {
-                val savedDraftMessage = messageDetailsRepository.findMessageById(result.draftId) ?: return retryOrFail(
+                val messageId = result.draftId
+                val savedDraftMessage = messageDetailsRepository.findMessageById(messageId) ?: return retryOrFail(
                     SavedDraftMessageNotFound,
                     message
                 )
@@ -117,10 +125,22 @@ class SendMessageWorker @WorkerInject constructor(
                     ?: return failureWithError(InvalidInputMessageSecurityOptions)
 
                 runCatching {
-                    apiManager.sendMessage(result.draftId, requestBody, RetrofitTag(currentUsername))
+                    apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
                 }.fold(
-                    onSuccess = {
-                        Result.failure()
+                    onSuccess = { messageSendResponse ->
+                        messageSendResponse.sent.writeTo(savedDraftMessage)
+                        savedDraftMessage.location = SENT.messageLocationTypeValue
+                        savedDraftMessage.setLabelIDs(
+                            listOf(
+                                ALL_SENT.messageLocationTypeValue.toString(),
+                                ALL_MAIL.messageLocationTypeValue.toString(),
+                                SENT.messageLocationTypeValue.toString()
+                            )
+                        )
+                        messageDetailsRepository.saveMessageLocally(savedDraftMessage)
+                        pendingActionsDao.deletePendingSendByMessageId(messageId)
+                        errorNotifier.showMessageSent()
+                        Result.success()
                     },
                     onFailure = { exception ->
                         retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
@@ -183,7 +203,7 @@ class SendMessageWorker @WorkerInject constructor(
             Timber.d("Send Message Worker FAILED with error = ${error.name}, exception = $exception. Retrying...")
             return Result.retry()
         }
-        pendingActionDao.deletePendingSendByMessageId(message.messageId ?: "")
+        pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
         errorNotifier.showSendMessageError(context.getString(R.string.message_drafted), message.subject)
         return failureWithError(error, exception)
     }
@@ -217,6 +237,8 @@ class SendMessageWorker @WorkerInject constructor(
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
 
+        private val sendMessageWorkName = "sendMessageWorker-%s"
+
         fun enqueue(
             message: Message,
             attachmentIds: List<String>,
@@ -245,7 +267,7 @@ class SendMessageWorker @WorkerInject constructor(
                 .build()
 
             workManager.enqueueUniqueWork(
-                requireNotNull(message.messageId),
+                sendMessageWorkName.format(requireNotNull(message.messageId)),
                 ExistingWorkPolicy.REPLACE,
                 sendMessageRequest
             )

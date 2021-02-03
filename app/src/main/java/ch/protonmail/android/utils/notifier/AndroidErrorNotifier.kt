@@ -25,12 +25,16 @@ import android.os.Looper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
 import ch.protonmail.android.utils.extensions.showToast
+import ch.protonmail.android.R
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
 class AndroidErrorNotifier @Inject constructor(
     private val notificationServer: INotificationServer,
     private val userManager: UserManager,
-    private val context: Context
+    private val context: Context,
+    private val dispatchers: DispatcherProvider
 ) : ErrorNotifier {
 
     override fun showPersistentError(errorMessage: String, messageSubject: String?) {
@@ -46,6 +50,12 @@ class AndroidErrorNotifier @Inject constructor(
     override fun showSendMessageError(errorMessage: String, messageSubject: String?) {
         val error = "\"$messageSubject\" - $errorMessage"
         notificationServer.notifySingleErrorSendingMessage(error, userManager.username)
+    }
+
+    override suspend fun showMessageSent() {
+        withContext(dispatchers.Main) {
+            context.showToast(R.string.message_sent)
+        }
     }
 
 }

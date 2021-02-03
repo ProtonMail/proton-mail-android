@@ -227,7 +227,7 @@ object ApplicationModule {
         notificationServer: NotificationServer,
         userManager: UserManager,
         context: Context
-    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager, context)
+    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager, context, dispatcherProvider())
 }
 
 @Module

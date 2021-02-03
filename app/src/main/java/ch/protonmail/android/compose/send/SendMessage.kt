@@ -28,6 +28,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.utils.ServerTime
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import timber.log.Timber
 import javax.inject.Inject
 
 internal const val MISSING_DB_ID = 0L
@@ -41,6 +42,8 @@ class SendMessage @Inject constructor(
 
     suspend operator fun invoke(parameters: SendMessageParameters) = withContext(dispatchers.Io) {
         val message = parameters.message
+        Timber.d("Send Message use case called with messageId ${message.messageId}")
+
         saveMessageLocally(message)
         setMessageAsPendingForSend(message)
 
