@@ -51,7 +51,6 @@ import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
-import ch.protonmail.android.utils.extensions.serialize
 import ch.protonmail.android.utils.notifier.ErrorNotifier
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -158,14 +157,14 @@ class SendMessageWorkerTest : CoroutinesTest {
             val actualAttachmentIds = inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS)
             val actualMessageLocalId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID)
             val actualMessageParentId = inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID)
-            val actualMessageActionType = inputData.getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED)
+            val actualMessageActionType = inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1)
             val actualPreviousSenderAddress = inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID)
             val actualMessageSecurityOptions = inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED)
             assertEquals(message.dbId, actualMessageDbId)
             assertEquals(message.messageId, actualMessageLocalId)
             assertArrayEquals(attachmentIds.toTypedArray(), actualAttachmentIds)
             assertEquals(messageParentId, actualMessageParentId)
-            assertEquals(messageActionType.serialize(), actualMessageActionType)
+            assertEquals(messageActionType.messageActionTypeValue, actualMessageActionType)
             assertEquals(previousSenderAddressId, actualPreviousSenderAddress)
             assertEquals(securityOptions, actualMessageSecurityOptions?.deserialize(MessageSecurityOptions.serializer()))
             assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
@@ -666,8 +665,8 @@ class SendMessageWorkerTest : CoroutinesTest {
         every { parameters.inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS) } answers { attachments }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MESSAGE_ID) } answers { messageId }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID) } answers { parentId }
-        every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED) } answers {
-            messageActionType.serialize()
+        every { parameters.inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1) } answers {
+            messageActionType.messageActionTypeValue
         }
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID) } answers {
             previousSenderAddress

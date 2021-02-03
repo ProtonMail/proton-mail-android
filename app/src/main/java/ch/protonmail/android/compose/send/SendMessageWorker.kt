@@ -59,8 +59,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
-import ch.protonmail.android.utils.extensions.deserialize
-import ch.protonmail.android.utils.extensions.serialize
 import ch.protonmail.android.utils.notifier.ErrorNotifier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -74,7 +72,7 @@ internal const val KEY_INPUT_SEND_MESSAGE_MSG_DB_ID = "keySendMessageMessageDbId
 internal const val KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS = "keySendMessageAttachmentIds"
 internal const val KEY_INPUT_SEND_MESSAGE_MESSAGE_ID = "keySendMessageMessageLocalId"
 internal const val KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID = "keySendMessageMessageParentId"
-internal const val KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED = "keySendMessageMessageActionTypeSerialized"
+internal const val KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL = "keySendMessageMessageActionTypeEnumValue"
 internal const val KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID = "keySendMessagePreviousSenderAddressId"
 internal const val KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED = "keySendMessageSecurityOptionsSerialized"
 
@@ -83,6 +81,7 @@ internal const val KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM = "keySendMessageEr
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
 private const val SEND_MESSAGE_MAX_RETRIES = 5
 private const val NO_CONTACTS_AUTO_SAVE = 0
+private const val SEND_MESSAGE_WORK_NAME_PREFIX = "sendMessageUniqueWorkName"
 
 
 class SendMessageWorker @WorkerInject constructor(
@@ -220,9 +219,7 @@ class SendMessageWorker @WorkerInject constructor(
             ?.deserialize(MessageSecurityOptions.serializer())
 
     private fun getInputActionType(): Constants.MessageActionType =
-        inputData
-            .getString(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED)?.deserialize()
-            ?: Constants.MessageActionType.NONE
+        Constants.MessageActionType.fromInt(inputData.getInt(KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL, -1))
 
     private fun getInputPreviousSenderAddressId() =
         inputData.getString(KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID)
@@ -236,8 +233,6 @@ class SendMessageWorker @WorkerInject constructor(
         inputData.getStringArray(KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS)?.asList().orEmpty()
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
-
-        private val sendMessageWorkName = "sendMessageWorker-%s"
 
         fun enqueue(
             message: Message,
@@ -258,7 +253,7 @@ class SendMessageWorker @WorkerInject constructor(
                         KEY_INPUT_SEND_MESSAGE_MESSAGE_ID to message.messageId,
                         KEY_INPUT_SEND_MESSAGE_ATTACHMENT_IDS to attachmentIds.toTypedArray(),
                         KEY_INPUT_SEND_MESSAGE_MSG_PARENT_ID to parentId,
-                        KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_SERIALIZED to actionType.serialize(),
+                        KEY_INPUT_SEND_MESSAGE_ACTION_TYPE_ENUM_VAL to actionType.messageActionTypeValue,
                         KEY_INPUT_SEND_MESSAGE_PREV_SENDER_ADDR_ID to previousSenderAddressId,
                         KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED to securityOptions.serialize()
                     )
@@ -267,7 +262,7 @@ class SendMessageWorker @WorkerInject constructor(
                 .build()
 
             workManager.enqueueUniqueWork(
-                sendMessageWorkName.format(requireNotNull(message.messageId)),
+                "${SEND_MESSAGE_WORK_NAME_PREFIX}-${requireNotNull(message.messageId)}",
                 ExistingWorkPolicy.REPLACE,
                 sendMessageRequest
             )
