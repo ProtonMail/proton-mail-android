@@ -321,7 +321,8 @@ dependencies {
         `trustKit`,
         `viewStateStore`,
         `viewStateStore-paging`,
-        `remark`
+        `remark`,
+        `okio`
     )
 
     kapt(
