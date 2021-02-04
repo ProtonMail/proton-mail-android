@@ -281,8 +281,9 @@ class ComposerRobot {
         return this
     }
 
-    private fun attachments(): MessageAttachmentsRobot {
-        UIActions.id.clickViewWithId(R.id.add_attachments)
+    fun attachments(): MessageAttachmentsRobot {
+        UIActions.wait.forViewWithId(R.id.message_body)
+        UIActions.wait.forViewWithId(R.id.add_attachments).click()
         return MessageAttachmentsRobot()
     }
 
