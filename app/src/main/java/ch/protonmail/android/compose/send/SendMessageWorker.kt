@@ -44,6 +44,7 @@ import ch.protonmail.android.api.models.factories.SendPreferencesFactory
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFailed
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerformingApiRequest
@@ -51,10 +52,12 @@ import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPrefer
 import ch.protonmail.android.compose.send.SendMessageWorkerError.InvalidInputMessageSecurityOptions
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
+import ch.protonmail.android.compose.send.SendMessageWorkerError.UserVerificationNeeded
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
 import ch.protonmail.android.core.Constants.MessageLocationType.SENT
+import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.usecase.compose.SaveDraft
@@ -129,19 +132,18 @@ class SendMessageWorker @WorkerInject constructor(
                     apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
                 }.fold(
                     onSuccess = { messageSendResponse ->
-                        messageSendResponse.sent.writeTo(savedDraftMessage)
-                        savedDraftMessage.location = SENT.messageLocationTypeValue
-                        savedDraftMessage.setLabelIDs(
-                            listOf(
-                                ALL_SENT.messageLocationTypeValue.toString(),
-                                ALL_MAIL.messageLocationTypeValue.toString(),
-                                SENT.messageLocationTypeValue.toString()
-                            )
-                        )
-                        messageDetailsRepository.saveMessageLocally(savedDraftMessage)
-                        pendingActionsDao.deletePendingSendByMessageId(messageId)
-                        userNotifier.showMessageSent()
-                        Result.success()
+                        return when (messageSendResponse.code) {
+                            RESPONSE_CODE_OK -> {
+                                handleMessageSentSuccess(messageSendResponse.sent, savedDraftMessage, messageId)
+                            }
+                            RESPONSE_CODE_ERROR_VERIFICATION_NEEDED -> {
+                                userNotifier.showHumanVerificationNeeded(savedDraftMessage)
+                                failureWithError(UserVerificationNeeded)
+                            }
+                            else -> {
+                                Result.failure()
+                            }
+                        }
                     },
                     onFailure = { exception ->
                         retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
@@ -151,6 +153,26 @@ class SendMessageWorker @WorkerInject constructor(
             else -> failureWithError(DraftCreationFailed)
         }
 
+    }
+
+    private suspend fun handleMessageSentSuccess(
+        responseMessage: Message,
+        savedDraftMessage: Message,
+        savedDraftId: String
+    ): Result {
+        responseMessage.writeTo(savedDraftMessage)
+        savedDraftMessage.location = SENT.messageLocationTypeValue
+        savedDraftMessage.setLabelIDs(
+            listOf(
+                ALL_SENT.messageLocationTypeValue.toString(),
+                ALL_MAIL.messageLocationTypeValue.toString(),
+                SENT.messageLocationTypeValue.toString()
+            )
+        )
+        messageDetailsRepository.saveMessageLocally(savedDraftMessage)
+        pendingActionsDao.deletePendingSendByMessageId(savedDraftId)
+        userNotifier.showMessageSent()
+        return Result.success()
     }
 
     private fun buildSendMessageRequest(savedDraftMessage: Message, sendPreferences: List<SendPreference>): MessageSendBody? {

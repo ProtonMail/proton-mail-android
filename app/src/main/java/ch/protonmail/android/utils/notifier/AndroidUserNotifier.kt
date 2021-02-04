@@ -22,6 +22,8 @@ package ch.protonmail.android.utils.notifier
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import ch.protonmail.android.R
+import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
 import ch.protonmail.android.utils.extensions.showToast
@@ -56,6 +58,16 @@ class AndroidUserNotifier @Inject constructor(
         withContext(dispatchers.Main) {
             context.showToast(R.string.message_sent)
         }
+    }
+
+    override fun showHumanVerificationNeeded(message: Message) {
+        notificationServer.notifyVerificationNeeded(
+            userManager.username,
+            message.subject,
+            message.messageId,
+            message.isInline,
+            message.addressID
+        )
     }
 
 }

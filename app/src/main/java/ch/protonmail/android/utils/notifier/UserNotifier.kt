@@ -24,4 +24,5 @@ interface UserNotifier {
     fun showError(errorMessage: String)
     fun showSendMessageError(errorMessage: String, messageSubject: String?)
     suspend fun showMessageSent()
+    fun showHumanVerificationNeeded(message: ch.protonmail.android.api.models.room.messages.Message)
 }

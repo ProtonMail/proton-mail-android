@@ -21,6 +21,7 @@ package ch.protonmail.android.utils.notifier
 
 import android.content.Context
 import ch.protonmail.android.R
+import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
 import ch.protonmail.android.utils.extensions.showToast
@@ -91,4 +92,32 @@ class AndroidUserNotifierTest : CoroutinesTest {
         verify { context.showToast(R.string.message_sent) }
         unmockkStatic("ch.protonmail.android.utils.extensions.TextExtensions")
     }
+
+    @Test
+    fun errorNotifierCallsNotificationServerToDisplayHumanVerificationNeededNotification() {
+        val subject = "A message subject 123"
+        val messageId = "8234728348"
+        val isMessageInline = false
+        val messageAddressId = "addressId092384"
+        val message = Message().apply {
+            this.messageId = messageId
+            this.subject = subject
+            this.isInline = isMessageInline
+            this.addressID = messageAddressId
+        }
+        every { userManager.username } returns "loggedInUsername"
+
+        errorNotifier.showHumanVerificationNeeded(message)
+
+        verify {
+            notificationServer.notifyVerificationNeeded(
+                "loggedInUsername",
+                subject,
+                messageId,
+                isMessageInline,
+                messageAddressId
+            )
+        }
+    }
+
 }

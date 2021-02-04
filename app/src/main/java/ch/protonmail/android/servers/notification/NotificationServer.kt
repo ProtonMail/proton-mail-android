@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -163,23 +163,22 @@ class NotificationServer @Inject constructor(
     }
 
     override fun notifyVerificationNeeded(
-        user: User?,
-        messageTitle: String,
-        messageId: String,
+        username: String,
+        messageSubject: String?,
+        messageId: String?,
         messageInline: Boolean,
-        messageAddressId: String
+        messageAddressId: String?
     ) {
         val inboxStyle = NotificationCompat.BigTextStyle()
         inboxStyle.setBigContentTitle(context.getString(R.string.verification_needed))
         inboxStyle.bigText(
             String.format(
                 context.getString(R.string.verification_needed_description_notification),
-                messageTitle
+                messageSubject
             )
         )
-        val summaryText = user?.defaultEmail ?: user?.username ?: context.getString(R.string.app_name)
 
-        inboxStyle.setSummaryText(summaryText)
+        inboxStyle.setSummaryText(username)
         val composeIntent = Intent(context, ComposeMessageActivity::class.java)
         composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, messageId)
         composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, messageInline)
@@ -199,9 +198,7 @@ class NotificationServer @Inject constructor(
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.notification_icon)
             .setContentTitle(context.getString(R.string.verification_needed))
-            .setContentText(
-                context.getString(R.string.verification_needed_description_notification, messageTitle)
-            )
+            .setContentText(String.format(context.getString(R.string.verification_needed_description_notification), messageSubject))
             .setContentIntent(contentIntent)
             .setColor(ContextCompat.getColor(context, R.color.ocean_blue))
             .setStyle(inboxStyle)

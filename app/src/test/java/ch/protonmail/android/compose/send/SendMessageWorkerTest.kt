@@ -661,6 +661,40 @@ class SendMessageWorkerTest : CoroutinesTest {
         assertEquals(ListenableWorker.Result.success(), result)
     }
 
+    @Test
+    fun workerBroadcastsVerificationNeededIntentAndFailsWhenResponseContainsVerificationNeededBodyCode() = runBlockingTest {
+        val messageDbId = 8237423L
+        val messageId = "812374"
+        val subject = "message subject 1"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = subject
+        }
+        val savedDraftMessageId = "82384"
+        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
+            every { code } returns 9001
+            every { sent } returns null
+        }
+        every { context.getString(R.string.message_drafted_verification_needed) } returns "verification needed"
+
+        val result = worker.doWork()
+
+        verify { userNotifier.showHumanVerificationNeeded(savedDraft) }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "UserVerificationNeeded")
+            ),
+            result
+        )
+    }
+
     private fun givenFullValidInput(
         messageDbId: Long,
         messageId: String,
