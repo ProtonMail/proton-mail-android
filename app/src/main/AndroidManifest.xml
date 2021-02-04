@@ -129,11 +129,6 @@
                 <action android:name="protonmail_notif_action_trash" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receivers.VerificationOnSendReceiver">
-            <intent-filter android:priority="1">
-                <action android:name="protonmail_notif_action_verify" />
-            </intent-filter>
-        </receiver>
         <receiver android:name=".receivers.TimeChangedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.TIME_SET" />

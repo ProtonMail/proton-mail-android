@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,7 +27,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +50,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ch.protonmail.android.R;
-import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.adapters.swipe.SwipeProcessor;
 import ch.protonmail.android.api.NetworkConfigurator;
@@ -65,7 +62,6 @@ import ch.protonmail.android.bl.HtmlDivHandler;
 import ch.protonmail.android.bl.HtmlProcessor;
 import ch.protonmail.android.bl.XHtmlHandler;
 import ch.protonmail.android.core.BigContentHolder;
-import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.NetworkResults;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.QueueNetworkUtil;
@@ -86,9 +82,6 @@ import ch.protonmail.android.worker.FetchUserInfoWorker;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
-import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID;
-import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_ID;
-import static ch.protonmail.android.receivers.VerificationOnSendReceiver.EXTRA_MESSAGE_INLINE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
@@ -454,46 +447,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             ProtonMailApplication.getApplication().setOrganization(null);
         }
     }
-
-    protected final BroadcastReceiver humanVerificationBroadcastReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(final Context context, Intent intent) {
-            Bundle extras = intent.getExtras();
-            String errorText = getString(R.string.message_drafted);
-            if (intent.hasExtra(Constants.ERROR)) {
-                String extraText = intent.getStringExtra(Constants.ERROR);
-                if (!TextUtils.isEmpty(extraText)) {
-                    errorText = extraText;
-                }
-            }
-            final String messageId = extras.getString(EXTRA_MESSAGE_ID);
-            final boolean messageInline = extras.getBoolean(EXTRA_MESSAGE_INLINE);
-            final String messageAddressId = extras.getString(EXTRA_MESSAGE_ADDRESS_ID);
-
-            if (mConnectivitySnackLayout == null) {
-                return;
-            }
-            mDraftedMessageSnack = Snackbar.make(mConnectivitySnackLayout, errorText, Snackbar.LENGTH_INDEFINITE);
-            View view = mDraftedMessageSnack.getView();
-            TextView tv = view.findViewById(com.google.android.material.R.id.snackbar_text);
-            tv.setTextColor(Color.WHITE);
-            mDraftedMessageSnack.setAction(getString(R.string.verify), v -> {
-                mDraftedMessageSnack.dismiss();
-                final Intent composeIntent = new Intent(BaseActivity.this, ComposeMessageActivity.class);
-                composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ID, messageId);
-                composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_RESPONSE_INLINE, messageInline);
-                composeIntent.putExtra(ComposeMessageActivity.EXTRA_MESSAGE_ADDRESS_ID, messageAddressId);
-                composeIntent.putExtra(ComposeMessageActivity.EXTRA_VERIFY, true);
-                startActivity(composeIntent);
-            });
-            mDraftedMessageSnack.setActionTextColor(getResources().getColor(R.color.icon_purple));
-            mDraftedMessageSnack.show();
-
-            setResultCode(Activity.RESULT_OK);
-            abortBroadcast();
-        }
-    };
 
     @Subscribe
     public void onMessageSentEvent(MessageSentEvent event){

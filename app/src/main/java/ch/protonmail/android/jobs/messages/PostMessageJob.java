@@ -82,7 +82,6 @@ import ch.protonmail.android.events.MessageSentEvent;
 import ch.protonmail.android.events.ParentEvent;
 import ch.protonmail.android.jobs.Priority;
 import ch.protonmail.android.jobs.ProtonMailBaseJob;
-import ch.protonmail.android.receivers.VerificationOnSendReceiver;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.Logger;
@@ -404,9 +403,9 @@ public class PostMessageJob extends ProtonMailBaseJob {
                     builder.append("response SUCCESS response error ERROR_VERIFICATION_NEEDED \n");
                     Intent verifyIntent = new Intent(getApplicationContext().getString(R.string.notification_action_verify));
                     verifyIntent.putExtra(Constants.ERROR, getApplicationContext().getString(R.string.message_drafted_verification_needed));
-                    verifyIntent.putExtra(VerificationOnSendReceiver.EXTRA_MESSAGE_ID, message.getMessageId());
-                    verifyIntent.putExtra(VerificationOnSendReceiver.EXTRA_MESSAGE_INLINE, message.isInline());
-                    verifyIntent.putExtra(VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID, message.getAddressID());
+//                    verifyIntent.putExtra(VerificationOnSendReceiver.EXTRA_MESSAGE_ID, message.getMessageId());
+//                    verifyIntent.putExtra(VerificationOnSendReceiver.EXTRA_MESSAGE_INLINE, message.isInline());
+//                    verifyIntent.putExtra(VerificationOnSendReceiver.EXTRA_MESSAGE_ADDRESS_ID, message.getAddressID());
                     ProtonMailApplication.getApplication().sendOrderedBroadcast(verifyIntent, null);
                 } else {
                     if (!BuildConfig.DEBUG) {

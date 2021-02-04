@@ -703,12 +703,6 @@ class MailboxActivity :
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmBroadcastReceiver, filter)
     }
 
-    private fun registerHumanVerificationReceiver() {
-        val filter = IntentFilter(getString(R.string.notification_action_verify))
-        filter.priority = 10
-        registerReceiver(humanVerificationBroadcastReceiver, filter)
-    }
-
     private fun onConnectivityCheckRetry() {
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
@@ -835,7 +829,6 @@ class MailboxActivity :
         }
         reloadMessageCounts()
         registerFcmReceiver()
-        registerHumanVerificationReceiver()
         checkDelinquency()
         no_messages_layout.visibility = View.GONE
         mailboxViewModel.checkConnectivity()
@@ -859,7 +852,6 @@ class MailboxActivity :
         runCatching {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmBroadcastReceiver)
             unregisterReceiver(showDraftedSnackBroadcastReceiver)
-            unregisterReceiver(humanVerificationBroadcastReceiver)
         }
         networkSnackBarUtil.hideAllSnackBars()
         super.onPause()
