@@ -39,8 +39,7 @@ import me.proton.core.test.kotlin.CoroutinesTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-@Suppress("unused")
-class AndroidErrorNotifierTest : CoroutinesTest {
+class AndroidUserNotifierTest : CoroutinesTest {
 
     @RelaxedMockK
     private lateinit var notificationServer: INotificationServer
@@ -52,7 +51,7 @@ class AndroidErrorNotifierTest : CoroutinesTest {
     private lateinit var userManager: UserManager
 
     @InjectMockKs
-    private lateinit var errorNotifier: AndroidErrorNotifier
+    private lateinit var errorNotifier: AndroidUserNotifier
 
     @BeforeTest
     fun setUp() {

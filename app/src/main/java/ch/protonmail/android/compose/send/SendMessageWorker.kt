@@ -59,7 +59,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.CurrentUsername
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.deserialize
@@ -95,7 +95,7 @@ class SendMessageWorker @WorkerInject constructor(
     private val packagesFactory: PackageFactory,
     @CurrentUsername private val currentUsername: String,
     private val userManager: UserManager,
-    private val errorNotifier: ErrorNotifier,
+    private val userNotifier: UserNotifier,
     private val pendingActionsDao: PendingActionsDao
 ) : CoroutineWorker(context, params) {
 
@@ -140,7 +140,7 @@ class SendMessageWorker @WorkerInject constructor(
                         )
                         messageDetailsRepository.saveMessageLocally(savedDraftMessage)
                         pendingActionsDao.deletePendingSendByMessageId(messageId)
-                        errorNotifier.showMessageSent()
+                        userNotifier.showMessageSent()
                         Result.success()
                     },
                     onFailure = { exception ->
@@ -205,7 +205,7 @@ class SendMessageWorker @WorkerInject constructor(
             return Result.retry()
         }
         pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
-        errorNotifier.showSendMessageError(context.getString(R.string.message_drafted), message.subject)
+        userNotifier.showSendMessageError(context.getString(R.string.message_drafted), message.subject)
         return failureWithError(error, exception)
     }
 

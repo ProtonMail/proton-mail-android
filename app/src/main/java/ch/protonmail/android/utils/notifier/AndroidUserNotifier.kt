@@ -30,12 +30,12 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject
 
-class AndroidErrorNotifier @Inject constructor(
+class AndroidUserNotifier @Inject constructor(
     private val notificationServer: INotificationServer,
     private val userManager: UserManager,
     private val context: Context,
     private val dispatchers: DispatcherProvider
-) : ErrorNotifier {
+) : UserNotifier {
 
     override fun showPersistentError(errorMessage: String, messageSubject: String?) {
         notificationServer.notifySaveDraftError(errorMessage, messageSubject, userManager.username)

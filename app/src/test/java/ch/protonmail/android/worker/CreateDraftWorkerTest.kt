@@ -54,7 +54,7 @@ import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.utils.base64.Base64Encoder
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_ACTION_TYPE
@@ -84,7 +84,7 @@ import kotlin.test.Test
 class CreateDraftWorkerTest : CoroutinesTest {
 
     @RelaxedMockK
-    private lateinit var errorNotifier: ErrorNotifier
+    private lateinit var userNotifier: UserNotifier
 
     @RelaxedMockK
     private lateinit var context: Context
@@ -692,7 +692,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             // When
             val result = worker.doWork()
 
-            verify { errorNotifier.showPersistentError(errorMessage, "Subject002") }
+            verify { userNotifier.showPersistentError(errorMessage, "Subject002") }
             val expected = ListenableWorker.Result.failure(
                 Data.Builder().putString(
                     KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -776,7 +776,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val result = worker.doWork()
 
             // Then
-            verify { errorNotifier.showPersistentError(errorMessage, "Subject001") }
+            verify { userNotifier.showPersistentError(errorMessage, "Subject001") }
             val expected = ListenableWorker.Result.failure(
                 Data.Builder().putString(
                     KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM,
@@ -834,8 +834,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             coVerify { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) }
-            val expectedMessage = Message().apply {
-                this.dbId = messageDbId
+            val expectedMessage = Message().apply { this.dbId = messageDbId
                 this.messageId = "created_draft_id"
                 this.toList = listOf()
                 this.ccList = listOf()

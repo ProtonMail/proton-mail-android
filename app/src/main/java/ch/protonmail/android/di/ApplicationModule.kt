@@ -53,8 +53,8 @@ import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.base64.AndroidBase64Encoder
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.notifier.AndroidErrorNotifier
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.AndroidUserNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
@@ -227,7 +227,7 @@ object ApplicationModule {
         notificationServer: NotificationServer,
         userManager: UserManager,
         context: Context
-    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager, context, dispatcherProvider())
+    ): UserNotifier = AndroidUserNotifier(notificationServer, userManager, context, dispatcherProvider())
 }
 
 @Module

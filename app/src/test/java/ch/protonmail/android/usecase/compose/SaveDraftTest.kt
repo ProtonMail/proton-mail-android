@@ -38,7 +38,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker.Enqueuer
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
@@ -65,7 +65,7 @@ import kotlin.test.Test
 class SaveDraftTest : CoroutinesTest {
 
     @RelaxedMockK
-    private lateinit var errorNotifier: ErrorNotifier
+    private lateinit var userNotifier: UserNotifier
 
     @RelaxedMockK
     private lateinit var uploadAttachments: UploadAttachments
@@ -367,7 +367,7 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            verify { errorNotifier.showPersistentError(errorMessage, "Message Subject") }
+            verify { userNotifier.showPersistentError(errorMessage, "Message Subject") }
             assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
         }
     }

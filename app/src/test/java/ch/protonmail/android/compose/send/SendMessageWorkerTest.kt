@@ -51,7 +51,7 @@ import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -103,7 +103,7 @@ class SendMessageWorkerTest : CoroutinesTest {
     private lateinit var packageFactory: PackageFactory
 
     @RelaxedMockK
-    private lateinit var errorNotifier: ErrorNotifier
+    private lateinit var userNotifier: UserNotifier
 
     @RelaxedMockK
     private lateinit var pendingActionsDao: PendingActionsDao
@@ -550,7 +550,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.Retry(), result)
-        verify(exactly = 0) { errorNotifier.showSendMessageError(any(), any()) }
+        verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
     }
 
@@ -579,7 +579,7 @@ class SendMessageWorkerTest : CoroutinesTest {
 
         val result = worker.doWork()
 
-        verify { errorNotifier.showSendMessageError(errorMessage, subject) }
+        verify { userNotifier.showSendMessageError(errorMessage, subject) }
         verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
         assertEquals(
             ListenableWorker.Result.failure(
@@ -657,7 +657,7 @@ class SendMessageWorkerTest : CoroutinesTest {
 
         val result = worker.doWork()
 
-        coVerify { errorNotifier.showMessageSent() }
+        coVerify { userNotifier.showMessageSent() }
         assertEquals(ListenableWorker.Result.success(), result)
     }
 

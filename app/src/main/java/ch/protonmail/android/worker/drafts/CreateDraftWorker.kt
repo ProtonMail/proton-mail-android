@@ -52,7 +52,7 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -81,7 +81,7 @@ class CreateDraftWorker @WorkerInject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val base64: Base64Encoder,
     private val apiManager: ProtonMailApiManager,
-    private val errorNotifier: ErrorNotifier
+    private val userNotifier: UserNotifier
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -123,7 +123,7 @@ class CreateDraftWorker @WorkerInject constructor(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
                     Timber.e("Create Draft Worker Failed with bad response code: $response")
-                    errorNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
+                    userNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
                     return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
 
@@ -166,7 +166,7 @@ class CreateDraftWorker @WorkerInject constructor(
             return Result.retry()
         }
         Timber.e("Create Draft Worker API call failed all the retries. error = $error. FAILING")
-        errorNotifier.showPersistentError(error.orEmpty(), messageSubject)
+        userNotifier.showPersistentError(error.orEmpty(), messageSubject)
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 
