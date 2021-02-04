@@ -331,7 +331,7 @@ data class Message @JvmOverloads constructor(
         if (messageId == null || messageId.isEmpty()) {
             return emptyList()
         }
-        val result = messagesDatabase.findAttachmentsByMessageId(messageId)
+        val result = messagesDatabase.findAttachmentsByMessageIdBlocking(messageId)
         for (att in result) {
             val oldInline = att.inline
             if (!att.inline) {

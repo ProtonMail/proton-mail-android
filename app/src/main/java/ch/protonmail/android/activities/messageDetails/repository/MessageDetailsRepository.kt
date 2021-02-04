@@ -93,26 +93,21 @@ class MessageDetailsRepository @Inject constructor(
     fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> =
         searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
-    suspend fun findMessageById(messageId: String) =
-        withContext(dispatchers.Io) {
-            findMessageByIdBlocking(messageId)
-        }
-
-    suspend fun findSearchMessageById(messageId: String, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
-            searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
-        }
-
-
     suspend fun findMessageByMessageDbId(dbId: Long, dispatcher: CoroutineDispatcher): Message? =
         withContext(dispatcher) {
             findMessageByMessageDbId(dbId)
         }
 
     fun findMessageByIdBlocking(messageId: String): Message? =
+        messagesDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+
+    suspend fun findMessageById(messageId: String): Message? =
         messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    fun findSearchMessageById(messageId: String): Message? =
+    fun findSearchMessageByIdBlocking(messageId: String): Message? =
+        searchDatabaseDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+
+    suspend fun findSearchMessageById(messageId: String): Message? =
         searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findMessageByIdSingle(messageId: String): Single<Message> =
@@ -197,9 +192,10 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    fun findAttachmentsByMessageId(messageId: String) = messagesDao.findAttachmentsByMessageId(messageId)
+    suspend fun findAttachmentsByMessageId(messageId: String) = messagesDao.findAttachmentsByMessageId(messageId)
 
-    fun findSearchAttachmentsByMessageId(messageId: String) = searchDatabaseDao.findAttachmentsByMessageId(messageId)
+    suspend fun findSearchAttachmentsByMessageId(messageId: String) =
+        searchDatabaseDao.findAttachmentsByMessageId(messageId)
 
     fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 

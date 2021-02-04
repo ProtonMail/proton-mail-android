@@ -74,7 +74,11 @@ abstract class MessagesDatabase {
     @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
     abstract fun getMessagesByLabelId(label: String): List<Message>
 
-    fun findMessageById(messageId: String) = findMessageInfoById(messageId)?.also {
+    fun findMessageByIdBlocking(messageId: String) = findMessageInfoByIdBlocking(messageId)?.also {
+        it.Attachments = it.attachments(this)
+    }
+
+    suspend fun findMessageById(messageId: String) = findMessageInfoById(messageId)?.also {
         it.Attachments = it.attachments(this)
     }
 
@@ -96,7 +100,10 @@ abstract class MessagesDatabase {
     }
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
-    protected abstract fun findMessageInfoById(messageId: String): Message?
+    protected abstract fun findMessageInfoByIdBlocking(messageId: String): Message?
+
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
+    protected abstract suspend fun findMessageInfoById(messageId: String): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     protected abstract fun findMessageInfoByIdSingle(messageId: String): Single<Message>
@@ -123,7 +130,7 @@ abstract class MessagesDatabase {
         val messageId = message.messageId
         var localAttachments: List<Attachment> = ArrayList()
         messageId?.let {
-            localAttachments = findAttachmentsByMessageId(messageId)
+            localAttachments = findAttachmentsByMessageIdBlocking(messageId)
         }
 
         var preservedAttachments = message.Attachments.map {
@@ -237,7 +244,10 @@ abstract class MessagesDatabase {
     abstract fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId")
-    abstract fun findAttachmentsByMessageId(messageId: String): List<Attachment>
+    abstract fun findAttachmentsByMessageIdBlocking(messageId: String): List<Attachment>
+
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId")
+    abstract suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment>
 
     @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId AND $COLUMN_ATTACHMENT_FILE_NAME=:fileName AND $COLUMN_ATTACHMENT_FILE_PATH=:filePath")
     abstract fun findAttachmentsByMessageIdFileNameAndPath(messageId: String, fileName: String, filePath: String): Attachment
@@ -269,7 +279,7 @@ abstract class MessagesDatabase {
             if (parts.size != 4) {
                 return null
             }
-            findMessageInfoById(parts[1]) ?: return null
+            findMessageInfoByIdBlocking(parts[1]) ?: return null
         }
         return findAttachmentByIdCorrectId(attachmentId)
     }
