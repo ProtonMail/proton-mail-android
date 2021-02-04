@@ -116,16 +116,11 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         }
         val singleAttachment = otherAttachments.find { it.attachmentId == singleAttachmentId }
 
-        val pathname = applicationContext.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId
-        Timber.v("Attachment path: $pathname singleAttachment file: ${singleAttachment?.fileName}")
-
         return if (singleAttachment != null) {
-            val attachmentDirectoryFile = File("$pathname/$singleAttachmentId")
-            if (!downloadHelper.createAttachmentFolderIfNeeded(attachmentDirectoryFile)) {
-                return Result.failure()
-            }
-            handleSingleAttachment(singleAttachment, addressCrypto, attachmentDirectoryFile, messageId)
+            handleSingleAttachment(singleAttachment, addressCrypto, messageId)
         } else {
+            val pathname = applicationContext.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId
+            Timber.v("Attachment path: $pathname singleAttachment file: ${singleAttachment?.fileName}")
             val attachmentsDirectoryFile = File(pathname)
             if (!downloadHelper.createAttachmentFolderIfNeeded(attachmentsDirectoryFile)) {
                 return Result.failure()

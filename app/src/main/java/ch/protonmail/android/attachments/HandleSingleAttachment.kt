@@ -61,12 +61,11 @@ class HandleSingleAttachment @Inject constructor(
     suspend operator fun invoke(
         attachment: Attachment,
         crypto: AddressCrypto,
-        attachmentsDirectoryFile: File,
         messageId: String
     ): ListenableWorker.Result {
 
         val filenameInCache = attachment.fileName?.replace(" ", "_")?.replace("/", ":") ?: ATTACHMENT_UNKNOWN_FILE_NAME
-        Timber.v("handleSingleAttachment filename:$filenameInCache DirectoryFile:$attachmentsDirectoryFile")
+        Timber.v("handleSingleAttachment filename:$filenameInCache messageId: $messageId")
 
         AppUtil.postEventOnUi(
             DownloadedAttachmentEvent(
