@@ -18,14 +18,7 @@
  */
 package ch.protonmail.android.attachments
 
-import android.annotation.TargetApi
-import android.content.ContentValues
 import android.content.Context
-import android.media.MediaScannerConnection
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
@@ -40,23 +33,16 @@ import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
-import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
-import ch.protonmail.android.storage.AttachmentClearingService
+import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import okio.buffer
-import okio.sink
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -64,7 +50,6 @@ import java.security.GeneralSecurityException
 import javax.inject.Inject
 
 // region constants
-private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
 private const val KEY_INPUT_DATA_MESSAGE_ID_STRING = "KEY_INPUT_DATA_MESSAGE_ID_STRING"
 private const val KEY_INPUT_DATA_USERNAME_STRING = "KEY_INPUT_DATA_USERNAME_STRING"
 internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHMENT_ID_STRING"
@@ -87,7 +72,9 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-    private val downloadHelper: AttachmentsHelper
+    private val downloadHelper: AttachmentsHelper,
+    private val handleSingleAttachment: HandleSingleAttachment,
+    private val clearingServiceHelper: AttachmentClearingServiceHelper
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -145,159 +132,6 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             }
             handleEmbeddedImages(embeddedImages, addressCrypto, attachmentsDirectoryFile, messageId)
         }
-    }
-
-    private suspend fun handleSingleAttachment(
-        attachment: Attachment,
-        crypto: AddressCrypto,
-        attachmentsDirectoryFile: File,
-        messageId: String
-    ): Result {
-
-        val filenameInCache = attachment.fileName?.replace(" ", "_")?.replace("/", ":") ?: ATTACHMENT_UNKNOWN_FILE_NAME
-        Timber.v("handleSingleAttachment filename:$filenameInCache DirectoryFile:$attachmentsDirectoryFile")
-
-        AppUtil.postEventOnUi(
-            DownloadedAttachmentEvent(
-                Status.STARTED, filenameInCache, null, attachment.attachmentId, messageId, false
-            )
-        )
-
-        val attachmentUri = downloadAttachment(attachment, filenameInCache, crypto)
-
-        if (attachmentUri != null) {
-            val attachmentMetadata = AttachmentMetadata(
-                attachment.attachmentId!!,
-                attachment.fileName!!,
-                attachment.fileSize,
-                attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache,
-                attachment.messageId, System.currentTimeMillis()
-            )
-
-            attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
-
-            AppUtil.postEventOnUi(
-                DownloadedAttachmentEvent(
-                    Status.SUCCESS, filenameInCache, attachmentUri, attachment.attachmentId, messageId, false
-                )
-            )
-        } else {
-            Timber.w("handleSingleAttachment failure")
-            AppUtil.postEventOnUi(
-                DownloadedAttachmentEvent(
-                    Status.FAILED, filenameInCache, null, attachment.attachmentId, messageId, false
-                )
-            )
-            return Result.failure()
-        }
-
-        AttachmentClearingService.startRegularClearUpService() // TODO don't call it every time we download attachments
-        return Result.success()
-    }
-
-    private suspend fun downloadAttachment(attachment: Attachment, filename: String, crypto: AddressCrypto): Uri? =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            downloadAttachmentForAndroidQ(attachment, filename, crypto)
-        } else {
-            downloadAttachmentBeforeQ(attachment, filename, crypto)
-        }
-
-    @TargetApi(Build.VERSION_CODES.Q)
-    private suspend fun downloadAttachmentForAndroidQ(
-        attachment: Attachment,
-        filename: String,
-        crypto: AddressCrypto
-    ) =
-        withContext(Dispatchers.IO) {
-            val decryptedByteArray = downloadHelper.getAttachmentData(
-                crypto,
-                attachment.mimeData,
-                attachment.attachmentId!!,
-                attachment.keyPackets,
-                attachment.fileSize,
-                filename
-            )
-
-            val values = ContentValues().apply {
-                put(MediaStore.Downloads.DISPLAY_NAME, filename)
-                put(MediaStore.Downloads.MIME_TYPE, attachment.mimeType)
-                put(MediaStore.Downloads.IS_PENDING, 1)
-            }
-
-            val resolver = applicationContext.contentResolver
-            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-
-            uri?.let {
-                resolver.openOutputStream(uri)?.use { outputStream ->
-                    val sink = outputStream.sink().buffer()
-                    decryptedByteArray?.let {
-                        sink.write(it)
-                    }
-                    sink.close()
-                    Timber.v("Stored Q file: $filename type: ${attachment.mimeType} uri: $uri")
-                }
-
-                values.clear()
-                values.put(MediaStore.Downloads.IS_PENDING, 0)
-                resolver.update(uri, values, null, null)
-            } ?: throw IllegalStateException("MediaStore insert has failed")
-
-            return@withContext uri
-        }
-
-    private suspend fun downloadAttachmentBeforeQ(
-        attachment: Attachment,
-        filename: String,
-        crypto: AddressCrypto
-    ) =
-        withContext(Dispatchers.IO) {
-
-            val file = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                filename
-            )
-            val decryptedByteArray = downloadHelper.getAttachmentData(
-                crypto,
-                attachment.mimeData,
-                attachment.attachmentId!!,
-                attachment.keyPackets,
-                attachment.fileSize,
-                filename
-            )
-
-            val sink = file.sink().buffer()
-            decryptedByteArray?.let {
-                sink.write(it)
-            }
-            sink.close()
-
-            val result = awaitUriFromMediaScanned(
-                applicationContext,
-                file,
-                attachment.mimeType
-            )
-            val uri = result.second
-            Timber.v("Stored file: $filename path: ${result.first} uri: $uri")
-
-            return@withContext uri
-        }
-
-    private suspend fun awaitUriFromMediaScanned(
-        context: Context,
-        file: File,
-        mimeType: String?
-    ): Pair<String?, Uri?> = suspendCancellableCoroutine { continuation ->
-        val callback = MediaScannerConnection.OnScanCompletedListener { path, uri ->
-            continuation.resume(path to uri, null)
-        }
-        // Register callback with an API
-        MediaScannerConnection.scanFile(
-            context,
-            arrayOf(file.absolutePath),
-            arrayOf(mimeType),
-            callback
-        )
-        continuation.invokeOnCancellation { Timber.w("Attachment Uri resolution cancelled") }
     }
 
     private fun handleEmbeddedImages(
@@ -359,7 +193,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.FAILED))
             Result.failure()
         } else {
-            AttachmentClearingService.startRegularClearUpService() // TODO don't call it every time we download attachments
+            clearingServiceHelper.startRegularClearUpService() // TODO don't call it every time we download attachments
             AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImages))
             Result.success()
         }
