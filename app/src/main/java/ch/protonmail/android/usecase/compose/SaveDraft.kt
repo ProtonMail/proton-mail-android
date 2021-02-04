@@ -59,7 +59,7 @@ class SaveDraft @Inject constructor(
     suspend operator fun invoke(
         params: SaveDraftParameters
     ): Flow<SaveDraftResult> = withContext(dispatchers.Io) {
-        Timber.i("Saving Draft for messageId ${params.message.messageId}")
+        Timber.i("Save Draft for messageId ${params.message.messageId}")
 
         val message = params.message
         val messageId = requireNotNull(message.messageId)
@@ -114,7 +114,7 @@ class SaveDraft @Inject constructor(
                     }
                 }
 
-                Timber.e("Saving Draft to API for messageId $localDraftId FAILED.")
+                Timber.e("Save Draft to API for messageId $localDraftId FAILED.")
                 return@map SaveDraftResult.OnlineDraftCreationFailed
             }
             .flowOn(dispatchers.Io)

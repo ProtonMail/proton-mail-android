@@ -407,15 +407,7 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                saveDraft(
-                    SaveDraft.SaveDraftParameters(
-                        message,
-                        newAttachments,
-                        parentId,
-                        _actionId,
-                        _oldSenderAddressId
-                    )
-                ).collect()
+                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId)
 
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
@@ -442,32 +434,7 @@ class ComposeMessageViewModel @Inject constructor(
                         uploadAttachments
                     )
                 }
-
-                saveDraft(
-                    SaveDraft.SaveDraftParameters(
-                        message,
-                        newAttachmentIds,
-                        parentId,
-                        _actionId,
-                        _oldSenderAddressId
-                    )
-                ).collect { saveDraftResult ->
-                    when (saveDraftResult) {
-                        is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
-                        SaveDraftResult.OnlineDraftCreationFailed -> {
-                            val errorMessage = stringResourceResolver(
-                                R.string.failed_saving_draft_online
-                            ).format(message.subject)
-                            _savingDraftError.postValue(errorMessage)
-                        }
-                        SaveDraftResult.UploadDraftAttachmentsFailed -> {
-                            val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
-                            _savingDraftError.postValue(errorMessage)
-                        }
-                        SaveDraftResult.SendingInProgressError -> {
-                        }
-                    }
-                }
+                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId)
 
                 _oldSenderAddressId = ""
                 setIsDirty(false)
@@ -475,6 +442,40 @@ class ComposeMessageViewModel @Inject constructor(
             }
 
             _messageDataResult = MessageBuilderData.Builder().fromOld(_messageDataResult).isDirty(false).build()
+        }
+    }
+
+    private suspend fun invokeSaveDraftUseCase(
+        message: Message,
+        newAttachments: List<String>,
+        parentId: String?,
+        messageActionType: Constants.MessageActionType,
+        oldSenderAddress: String
+    ) {
+        saveDraft(
+            SaveDraft.SaveDraftParameters(
+                message,
+                newAttachments,
+                parentId,
+                messageActionType,
+                oldSenderAddress
+            )
+        ).collect { saveDraftResult ->
+            when (saveDraftResult) {
+                is SaveDraftResult.Success -> onDraftSaved(saveDraftResult.draftId)
+                SaveDraftResult.OnlineDraftCreationFailed -> {
+                    val errorMessage = stringResourceResolver(
+                        R.string.failed_saving_draft_online
+                    ).format(message.subject)
+                    _savingDraftError.postValue(errorMessage)
+                }
+                SaveDraftResult.UploadDraftAttachmentsFailed -> {
+                    val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
+                    _savingDraftError.postValue(errorMessage)
+                }
+                SaveDraftResult.SendingInProgressError -> {
+                }
+            }
         }
     }
 
