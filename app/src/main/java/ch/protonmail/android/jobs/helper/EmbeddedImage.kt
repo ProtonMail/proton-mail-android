@@ -30,5 +30,5 @@ data class EmbeddedImage constructor(
     val messageId: String,
     val localFileName: String?
 ) {
-    var fileNameFormatted: String? = fileName.replace(" ", "_")
+    val fileNameFormatted: String = fileName.replace(" ", "_")
 }

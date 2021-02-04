@@ -574,17 +574,15 @@ internal class MessageDetailsActivity :
             Status.SUCCESS -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.VISIBLE)
-                viewModel.downloadEmbeddedImagesResult.observe(
-                    this,
-                    Observer { content ->
-                        Timber.v("downloadEmbeddedImagesResult pair: $content")
-                        messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
-                        if (content.isNullOrEmpty()) {
-                            return@Observer
-                        }
-                        viewModel.webViewContentWithImages.setValue(content)
+                viewModel.downloadEmbeddedImagesResult.observe(this) { content ->
+                    Timber.v("downloadEmbeddedImagesResult content size: ${content.length}")
+                    messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
+                    if (content.isNullOrEmpty()) {
+                        return@observe
                     }
-                )
+                    viewModel.webViewContentWithImages.setValue(content)
+                }
+
                 viewModel.onEmbeddedImagesDownloaded(event)
             }
             Status.NO_NETWORK -> {

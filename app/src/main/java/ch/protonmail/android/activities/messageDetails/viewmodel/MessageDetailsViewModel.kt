@@ -269,7 +269,10 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             }
 
             // don't download embedded images, if we already have them in local storage
-            if (embeddedImagesWithLocalFiles.all { it.localFileName != null }) {
+            if (
+                embeddedImagesWithLocalFiles.isNotEmpty() &&
+                embeddedImagesWithLocalFiles.all { it.localFileName != null }
+            ) {
                 AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
                 messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.username)
@@ -278,12 +281,15 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun onEmbeddedImagesDownloaded(event: DownloadEmbeddedImagesEvent) {
+        Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
         if (bodyString.isNullOrEmpty()) {
             _downloadEmbeddedImagesResult.value = bodyString ?: ""
             return
         }
 
-        messageRenderer.images.offer(event.images)
+        if (event.status == Status.SUCCESS) {
+            messageRenderer.images.offer(event.images)
+        }
     }
 
     fun prepareEditMessageIntent(

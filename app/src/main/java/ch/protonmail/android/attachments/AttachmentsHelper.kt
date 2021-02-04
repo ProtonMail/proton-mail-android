@@ -21,21 +21,16 @@ package ch.protonmail.android.attachments
 
 import android.app.NotificationManager
 import android.content.Context
-import android.text.TextUtils
 import android.util.Base64
 import androidx.core.app.NotificationCompat
 import ch.protonmail.android.R
 import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
-import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
-import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.servers.notification.NotificationServer
-import ch.protonmail.android.utils.AppUtil
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -53,45 +48,6 @@ class AttachmentsHelper @Inject constructor(
     private val notificationManager: NotificationManager
 ) {
     private var notificationBuilder: NotificationCompat.Builder? = null
-
-    fun areAllAttachmentsAlreadyDownloaded(
-        attachmentsDirectoryFile: File,
-        messageId: String,
-        embeddedImages: List<EmbeddedImage>,
-        attachmentMetadataDatabase: AttachmentMetadataDatabase
-    ): Boolean {
-
-        if (attachmentsDirectoryFile.exists()) {
-
-            val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
-            attachmentMetadataList.size
-
-            val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
-            embeddedImages.forEach { embeddedImage ->
-                attachmentMetadataList.find { it.id == embeddedImage.attachmentId }?.let {
-                    embeddedImagesWithLocalFiles.add(
-                        embeddedImage.copy(localFileName = it.localLocation.substringAfterLast("/"))
-                    )
-                }
-            }
-
-            // all embedded images are in the local filestorage already
-            if (embeddedImagesWithLocalFiles.all { it.localFileName != null }) return true
-        }
-
-        return false
-    }
-
-    fun createAttachmentFolderIfNeeded(path: File): Boolean = try {
-        if (!path.exists()) {
-            path.mkdirs()
-        }
-        true
-    } catch (exception: SecurityException) {
-        Timber.e(exception, "createAttachmentFolderIfNeeded exception")
-        AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.FAILED))
-        false
-    }
 
     /**
      * Creates unique filename from original one in given directory.
@@ -126,14 +82,6 @@ class AttachmentsHelper @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentText(context.getString(R.string.download_in_progress))
             .setProgress(FULL_PROGRESS, 0, false)
-    }
-
-    fun calculateFilename(originalFilename: String, position: Int): String {
-        var filename = originalFilename.replace(" ", "_").replace("/", ":")
-        val filenameArray = filename.split(".").toTypedArray()
-        filenameArray[0] = filenameArray[0] + "(" + position + ")"
-        filename = TextUtils.join(".", filenameArray).replace(" ", "_").replace("/", ":")
-        return filename
     }
 
     /**

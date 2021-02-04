@@ -25,80 +25,78 @@ import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Assert
 import kotlin.test.Test
 
-/**
- * Created by Kamil Rajtar on 05.09.18.  */
-class AttachmentMetadataDatabaseTest{
-	private val context=InstrumentationRegistry.getTargetContext()
-	private var databaseFactory=Room.inMemoryDatabaseBuilder(context,
-			AttachmentMetadataDatabaseFactory::class.java).build()
-	private var database=databaseFactory.getDatabase()
+class AttachmentMetadataDatabaseTest {
+    private val context = InstrumentationRegistry.getTargetContext()
+    private var databaseFactory = Room.inMemoryDatabaseBuilder(
+        context,
+        AttachmentMetadataDatabaseFactory::class.java
+    ).build()
+    private var database = databaseFactory.getDatabase()
 
-	private val first=AttachmentMetadata("a","b",3,"c","d",10)
-	private val second=AttachmentMetadata("e","f",5,"g","h",11)
-	private val third=AttachmentMetadata("i","j",7,"k","l",8)
-	private val standardTest=listOf(first,second,third)
-	private fun AttachmentMetadataDatabase.insert(attachments:Iterable<AttachmentMetadata>){
-		attachments.forEach(this::insertAttachmentMetadata)
-	}
+    private val first = AttachmentMetadata("a", "b", 3, "c", "d", 10)
+    private val second = AttachmentMetadata("e", "f", 5, "g", "h", 11)
+    private val third = AttachmentMetadata("i", "j", 7, "k", "l", 8)
+    private val standardTest = listOf(first, second, third)
+    private fun AttachmentMetadataDatabase.insert(attachments: Iterable<AttachmentMetadata>) {
+        attachments.forEach(this::insertAttachmentMetadataBlocking)
+    }
 
-	@Test
-	fun insertGetAll() {
-		val inserted=standardTest
-		val expected=standardTest.map { ReflectivePropertiesMatcher(it) }
-		database.insert(inserted)
-		val actual=database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
-		Assert.assertThat(actual,containsInAnyOrder(expected))
-	}
+    @Test
+    fun insertGetAll() {
+        val inserted = standardTest
+        val expected = standardTest.map { ReflectivePropertiesMatcher(it) }
+        database.insert(inserted)
+        val actual = database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
+        Assert.assertThat(actual, containsInAnyOrder(expected))
+    }
 
-	@Test
-	fun insertDeleteGetAll() {
-		val inserted=standardTest
-		val expected=listOf(first,third)
-		val expectedMatchers=expected.map{ReflectivePropertiesMatcher(it)}
-		database.insert(inserted)
-		database.deleteAttachmentMetadata(second)
-		val actual=database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
-		Assert.assertThat(actual,containsInAnyOrder(expectedMatchers))
-	}
+    @Test
+    fun insertDeleteGetAll() {
+        val inserted = standardTest
+        val expected = listOf(first, third)
+        val expectedMatchers = expected.map { ReflectivePropertiesMatcher(it) }
+        database.insert(inserted)
+        database.deleteAttachmentMetadata(second)
+        val actual = database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
+        Assert.assertThat(actual, containsInAnyOrder(expectedMatchers))
+    }
 
-	@Test
-	fun insertClearCacheGetAll() {
-		val inserted=standardTest
-		val expected=emptyList<AttachmentMetadata>()
-		database.insert(inserted)
-		database.clearAttachmentMetadataCache()
-		val actual=database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
-		Assert.assertEquals(expected,actual)
-	}
+    @Test
+    fun insertClearCacheGetAll() {
+        val inserted = standardTest
+        val expected = emptyList<AttachmentMetadata>()
+        database.insert(inserted)
+        database.clearAttachmentMetadataCache()
+        val actual = database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
+        Assert.assertEquals(expected, actual)
+    }
 
-	@Test
-	fun insertGetAllAttachmentsSizeUsed() {
-		val inserted=standardTest
-		val expected=15L
-		database.insert(inserted)
-		val actual=database.getAllAttachmentsSizeUsed()
-		Assert.assertEquals(expected,actual)
-	}
+    @Test
+    fun insertGetAllAttachmentsSizeUsed() {
+        val inserted = standardTest
+        val expected = 15L
+        database.insert(inserted)
+        val actual = database.getAllAttachmentsSizeUsed()
+        Assert.assertEquals(expected, actual)
+    }
 
-	@Test
-	fun insertGetAllAttachmentsForMessage() {
-		val inserted=standardTest
-		val expected=listOf(second).map {ReflectivePropertiesMatcher(it)}
-		database.insert(inserted)
-		val actual=database.getAllAttachmentsForMessage("h")
-		Assert.assertThat(actual,containsInAnyOrder(expected))
-	}
+    @Test
+    fun insertGetAllAttachmentsForMessage() {
+        val inserted = standardTest
+        val expected = listOf(second).map { ReflectivePropertiesMatcher(it) }
+        database.insert(inserted)
+        val actual = database.getAllAttachmentsForMessage("h")
+        Assert.assertThat(actual, containsInAnyOrder(expected))
+    }
 
-	@Test
-	fun insertReplaceGetAll() {
-		val inserted=standardTest
-		val replacement=AttachmentMetadata("e","eee",18,"eee","eee",123)
-		val expected=listOf(first,replacement,third).map {ReflectivePropertiesMatcher(it)}
-		database.insert(inserted)
-		database.insertAttachmentMetadata(replacement)
-		val actual=database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
-		Assert.assertThat(actual,containsInAnyOrder(expected))
-	}
-
-
+    @Test
+    fun insertReplaceGetAll() {
+        val inserted = standardTest
+        val replacement = AttachmentMetadata("e", "eee", 18, "eee", "eee", 123)
+        val expected = listOf(first, replacement, third).map { ReflectivePropertiesMatcher(it) }
+        database.insert(inserted)
+        database.insertAttachmentMetadataBlocking(replacement)
+        val actual = database.getAllAttachmentsMetadata().sortedBy(AttachmentMetadata::id)
+        Assert.assertThat(actual, containsInAnyOrder(expected))
+    }
 }

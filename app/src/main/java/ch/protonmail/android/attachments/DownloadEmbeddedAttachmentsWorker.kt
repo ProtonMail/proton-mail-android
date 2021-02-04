@@ -31,21 +31,11 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
-import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
-import ch.protonmail.android.events.Status
-import ch.protonmail.android.jobs.helper.EmbeddedImage
-import ch.protonmail.android.storage.AttachmentClearingServiceHelper
-import ch.protonmail.android.utils.AppUtil
 import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
 import java.security.GeneralSecurityException
 import javax.inject.Inject
 
@@ -59,6 +49,9 @@ internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHM
  * Represents one unit of work downloading embedded attachments for
  * [Message][ch.protonmail.android.api.models.room.messages.Message] and saving them to local app storage.
  *
+ * Downloading of files on Android Q is based on the information from
+ * https://commonsware.com/blog/2020/01/11/scoped-storage-stories-diabolical-details-downloads.html
+ *
  * InputData has to contain non-null values for:
  * - messageId
  *
@@ -71,10 +64,9 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     private val downloadHelper: AttachmentsHelper,
     private val handleSingleAttachment: HandleSingleAttachment,
-    private val clearingServiceHelper: AttachmentClearingServiceHelper
+    private val handleEmbeddedImages: HandleEmbeddedImageAttachments
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -119,78 +111,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         return if (singleAttachment != null) {
             handleSingleAttachment(singleAttachment, addressCrypto, messageId)
         } else {
-            val pathname = applicationContext.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId
-            Timber.v("Attachment path: $pathname singleAttachment file: ${singleAttachment?.fileName}")
-            val attachmentsDirectoryFile = File(pathname)
-            if (!downloadHelper.createAttachmentFolderIfNeeded(attachmentsDirectoryFile)) {
-                return Result.failure()
-            }
-            handleEmbeddedImages(embeddedImages, addressCrypto, attachmentsDirectoryFile, messageId)
-        }
-    }
-
-    private fun handleEmbeddedImages(
-        embeddedImages: List<EmbeddedImage>,
-        crypto: AddressCrypto,
-        attachmentsDirectoryFile: File,
-        messageId: String
-    ): Result {
-
-        Timber.v("handleEmbeddedImages images:$embeddedImages DirectoryFile:$attachmentsDirectoryFile")
-        // short-circuit if all attachments are already downloaded
-        if (downloadHelper.areAllAttachmentsAlreadyDownloaded(
-                attachmentsDirectoryFile,
-                messageId,
-                embeddedImages,
-                attachmentMetadataDatabase
-            )
-        ) {
-            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImages))
-            return Result.success()
-        }
-
-        AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.STARTED))
-
-        var failure = false
-        embeddedImages.forEachIndexed { index, embeddedImage ->
-
-            val filename = downloadHelper.calculateFilename(embeddedImage.fileNameFormatted!!, index)
-            val attachmentFile = File(attachmentsDirectoryFile, filename)
-
-            try {
-
-                val decryptedByteArray = downloadHelper.getAttachmentData(
-                    crypto,
-                    embeddedImage.mimeData,
-                    embeddedImage.attachmentId,
-                    embeddedImage.key
-                )
-                FileOutputStream(attachmentFile).use {
-                    it.write(decryptedByteArray)
-                }
-
-                val embeddedImageWithFile = embeddedImage.copy(localFileName = filename)
-                val attachmentMetadata = AttachmentMetadata(
-                    embeddedImageWithFile.attachmentId,
-                    embeddedImageWithFile.fileNameFormatted!!, embeddedImageWithFile.size,
-                    embeddedImageWithFile.messageId + "/" + filename,
-                    embeddedImageWithFile.messageId, System.currentTimeMillis()
-                )
-                attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
-
-            } catch (e: Exception) {
-                Timber.e(e, "handleEmbeddedImages exception")
-                failure = true
-            }
-        }
-
-        return if (failure) {
-            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.FAILED))
-            Result.failure()
-        } else {
-            clearingServiceHelper.startRegularClearUpService() // TODO don't call it every time we download attachments
-            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImages))
-            Result.success()
+            handleEmbeddedImages(embeddedImages, addressCrypto, messageId)
         }
     }
 
