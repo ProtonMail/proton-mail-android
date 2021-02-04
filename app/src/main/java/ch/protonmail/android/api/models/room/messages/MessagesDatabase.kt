@@ -37,16 +37,18 @@ typealias MessagesDao = MessagesDatabase
 abstract class MessagesDatabase {
 
     //region Messages
-    @Query("""SELECT *
+    @Query(
+        """SELECT *
 		FROM $TABLE_MESSAGES
 		WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
 		OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
 		OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
 	ORDER BY $COLUMN_MESSAGE_TIME DESC
-		""")
+		"""
+    )
     abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
 
-    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_IS_STARRED}=1""")
+    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED=1""")
     abstract fun getStarredMessagesAsync(): LiveData<List<Message>>
 
     @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
@@ -56,11 +58,13 @@ abstract class MessagesDatabase {
     @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
     abstract fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>>
 
-    @Query("""SELECT COUNT(${COLUMN_MESSAGE_ID}) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location """)
+    @Query("""SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location """)
     abstract fun getMessagesCountByLocation(location: Int): Int
 
-    @Query("""SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES 
-		WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  """)
+    @Query(
+        """SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES 
+		WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  """
+    )
     abstract fun getMessagesCountByByLabelId(labelId: String): Int
 
     @Transaction
@@ -91,22 +95,22 @@ abstract class MessagesDatabase {
         }
     }
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_ID}=:messageId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     protected abstract fun findMessageInfoById(messageId: String): Message?
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_ID}=:messageId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     protected abstract fun findMessageInfoByIdSingle(messageId: String): Single<Message>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_ID}=:messageId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     protected abstract fun findMessageInfoByIdObservable(messageId: String): Flowable<Message>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_ID}=:messageId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     protected abstract fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
     protected abstract fun findMessageInfoByDbId(messageDbId: Long): Message?
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_ACCESS_TIME}>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>
 
     @Transaction
@@ -135,7 +139,8 @@ abstract class MessagesDatabase {
                 filePath = it.filePath,
                 attachmentId = it.attachmentId,
                 headers = it.headers,
-                inline = it.inline)
+                inline = it.inline
+            )
         }
 
         if (message.embeddedImagesArray.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()) {
@@ -165,7 +170,7 @@ abstract class MessagesDatabase {
             }
         }
 
-        val attachmentsToDelete = message.attachments(this) //.filter { it.messageId != message.messageId }
+        val attachmentsToDelete = message.attachments(this) // .filter { it.messageId != message.messageId }
         if (attachmentsToDelete.isNotEmpty() && preservedAttachments.isEmpty()) {
             preservedAttachments = localAttachments
         }
@@ -192,13 +197,13 @@ abstract class MessagesDatabase {
         messages.map(this::saveMessage)
     }
 
-    @Query("""DELETE FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_LOCATION}=:location""")
+    @Query("""DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION=:location""")
     abstract fun deleteMessagesByLocation(location: Int)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
     abstract fun deleteMessagesByLabel(labelId: String)
 
-    @Query("DELETE FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_EXPIRATION_TIME}<>0 AND $COLUMN_MESSAGE_EXPIRATION_TIME  < :currentTime")
+    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_EXPIRATION_TIME<>0 AND $COLUMN_MESSAGE_EXPIRATION_TIME  < :currentTime")
     abstract fun deleteExpiredMessages(currentTime: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -213,7 +218,7 @@ abstract class MessagesDatabase {
     @Query("DELETE FROM $TABLE_MESSAGES")
     abstract fun clearMessagesCache()
 
-    @Query("DELETE FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_ID}=:messageId")
+    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     abstract fun deleteMessageById(messageId: String)
 
     @Delete
@@ -228,13 +233,13 @@ abstract class MessagesDatabase {
 
     //region Attachments
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE ${COLUMN_ATTACHMENT_MESSAGE_ID}=:messageId")
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId")
     abstract fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE ${COLUMN_ATTACHMENT_MESSAGE_ID}=:messageId")
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId")
     abstract fun findAttachmentsByMessageId(messageId: String): List<Attachment>
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE ${COLUMN_ATTACHMENT_MESSAGE_ID}=:messageId AND ${COLUMN_ATTACHMENT_FILE_NAME}=:fileName AND ${COLUMN_ATTACHMENT_FILE_PATH}=:filePath")
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId AND $COLUMN_ATTACHMENT_FILE_NAME=:fileName AND $COLUMN_ATTACHMENT_FILE_PATH=:filePath")
     abstract fun findAttachmentsByMessageIdFileNameAndPath(messageId: String, fileName: String, filePath: String): Attachment
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -252,10 +257,10 @@ abstract class MessagesDatabase {
     @Delete
     abstract fun deleteAttachment(vararg attachment: Attachment)
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE ${COLUMN_ATTACHMENT_ID}=:correctId ")
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_ID=:correctId ")
     abstract fun findAttachmentByIdCorrectId(correctId: String): Attachment?
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE ${COLUMN_ATTACHMENT_ID}=:correctId ")
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_ID=:correctId ")
     abstract fun findAttachmentByIdCorrectIdSingle(correctId: String): Single<Attachment>
 
     fun findAttachmentById(attachmentId: String): Attachment? {
@@ -301,7 +306,7 @@ abstract class MessagesDatabase {
     @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID IN (:labelIds)")
     abstract fun findAllLabelsWithIdsAsync(labelIds: List<String>): LiveData<List<Label>>
 
-    @Query("SELECT * FROM $TABLE_LABELS WHERE ${COLUMN_LABEL_ID}=:labelId")
+    @Query("SELECT * FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
     abstract fun findLabelById(labelId: String): Label?
 
     @Query("DELETE FROM $TABLE_LABELS")
@@ -313,7 +318,7 @@ abstract class MessagesDatabase {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveAllLabels(labels: List<Label>): List<Long>
 
-    @Query("DELETE FROM $TABLE_LABELS WHERE ${COLUMN_LABEL_ID}=:labelId")
+    @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
     abstract fun deleteLabelById(labelId: String)
 
 

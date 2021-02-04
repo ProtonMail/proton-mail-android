@@ -300,7 +300,7 @@ class MessageDetailsRepository @Inject constructor(
                 Log.d("PMTAG", "returning path to message body ${messageBodyFile.absolutePath}")
                 "file://${messageBodyFile.absolutePath}"
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.i(e, "saveBodyToFileIfNeeded error")
                 null
             }
         }
@@ -388,8 +388,10 @@ class MessageDetailsRepository @Inject constructor(
             }
             Constants.MessageActionType.REPLY_ALL -> {
                 val emailSet = HashSet(
-                    Arrays.asList(*message.toListString.split(Constants.EMAIL_DELIMITER.toRegex())
-                        .dropLastWhile { it.isEmpty() }.toTypedArray())
+                    Arrays.asList(
+                        *message.toListString.split(Constants.EMAIL_DELIMITER.toRegex())
+                            .dropLastWhile { it.isEmpty() }.toTypedArray()
+                    )
                 )
 
                 val senderEmailAddress = if (message.replyToEmails.isNotEmpty())
@@ -402,7 +404,7 @@ class MessageDetailsRepository @Inject constructor(
                 includeCCList = true
             }
             else -> {
-                //NO OP
+                // NO OP
             }
         }
 
@@ -471,11 +473,8 @@ class MessageDetailsRepository @Inject constructor(
         jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
     }
 
-    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> {
-        return pendingActionsDatabase.findAllPendingSendsAsync()
-    }
+    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> = pendingActionsDatabase.findAllPendingSendsAsync()
 
-    fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> {
-        return pendingActionsDatabase.findAllPendingUploadsAsync()
-    }
+    fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
+        pendingActionsDatabase.findAllPendingUploadsAsync()
 }
