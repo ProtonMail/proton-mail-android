@@ -59,7 +59,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.slot
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
@@ -69,6 +71,7 @@ import me.proton.core.util.kotlin.serialize
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import timber.log.Timber
 import java.net.SocketTimeoutException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -629,7 +632,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             )
         )
         coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
-        verify { pendingActionsDao.deletePendingSendByMessageId(expectedMessage.messageId!!) }
+        verify(exactly = 1) { pendingActionsDao.deletePendingSendByMessageId(expectedMessage.messageId!!) }
         assertEquals(ListenableWorker.Result.success(), result)
     }
 
@@ -662,7 +665,7 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerBroadcastsVerificationNeededIntentAndFailsWhenResponseContainsVerificationNeededBodyCode() = runBlockingTest {
+    fun workerNotifiesUserThatHumanVerificationIsNeededAndRemovesPendingForSendWhenResponseContainsVerificationNeededBodyCode() = runBlockingTest {
         val messageDbId = 8237423L
         val messageId = "812374"
         val subject = "message subject 1"
@@ -683,16 +686,65 @@ class SendMessageWorkerTest : CoroutinesTest {
             every { sent } returns null
         }
         every { context.getString(R.string.message_drafted_verification_needed) } returns "verification needed"
+        mockkStatic(Timber::class)
 
         val result = worker.doWork()
 
         verify { userNotifier.showHumanVerificationNeeded(savedDraft) }
+        verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
+        verify {
+            Timber.i("Send Message API call failed, human verification required for messageId $savedDraftMessageId")
+        }
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "UserVerificationNeeded")
             ),
             result
         )
+        unmockkStatic(Timber::class)
+    }
+
+    @Test
+    fun workerNotifiesUserOfTheSendingFailureAndRemovesPendingForSendWhenAPICallsReturnsFailureBodyCode() = runBlockingTest {
+        val messageDbId = 2132372L
+        val messageId = "8232832"
+        val subject = "message subject 2"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = subject
+        }
+        val savedDraftMessageId = "923842"
+        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        val apiError = "Detailed API error explanation"
+        val userErrorMessage = "Sending Message Failed! Message is saved to drafts."
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
+            every { code } returns 8237
+            every { sent } returns null
+            every { error } returns apiError
+        }
+        every { context.getString(R.string.message_drafted) } returns userErrorMessage
+        mockkStatic(Timber::class)
+
+        val result = worker.doWork()
+
+        verify { userNotifier.showSendMessageError(userErrorMessage, subject) }
+        verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
+        verify {
+            Timber.e("Send Message API call failed for messageId $savedDraftMessageId with error $apiError")
+        }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "ApiRequestReturnedBadBodyCode")
+            ),
+            result
+        )
+        unmockkStatic(Timber::class)
     }
 
     private fun givenFullValidInput(

@@ -46,6 +46,7 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED
 import ch.protonmail.android.api.segments.TEN_SECONDS
+import ch.protonmail.android.compose.send.SendMessageWorkerError.ApiRequestReturnedBadBodyCode
 import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFailed
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerformingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
@@ -131,17 +132,29 @@ class SendMessageWorker @WorkerInject constructor(
                 runCatching {
                     apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
                 }.fold(
-                    onSuccess = { messageSendResponse ->
-                        return when (messageSendResponse.code) {
+                    onSuccess = { response ->
+                        pendingActionsDao.deletePendingSendByMessageId(messageId)
+
+                        return when (response.code) {
                             RESPONSE_CODE_OK -> {
-                                handleMessageSentSuccess(messageSendResponse.sent, savedDraftMessage, messageId)
+                                handleMessageSentSuccess(response.sent, savedDraftMessage)
                             }
                             RESPONSE_CODE_ERROR_VERIFICATION_NEEDED -> {
+                                Timber.i(
+                                    "Send Message API call failed, human verification required for messageId $messageId"
+                                )
                                 userNotifier.showHumanVerificationNeeded(savedDraftMessage)
                                 failureWithError(UserVerificationNeeded)
                             }
                             else -> {
-                                Result.failure()
+                                Timber.e(
+                                    "Send Message API call failed for messageId $messageId with error ${response.error}"
+                                )
+                                userNotifier.showSendMessageError(
+                                    context.getString(R.string.message_drafted),
+                                    message.subject
+                                )
+                                failureWithError(ApiRequestReturnedBadBodyCode)
                             }
                         }
                     },
@@ -157,8 +170,7 @@ class SendMessageWorker @WorkerInject constructor(
 
     private suspend fun handleMessageSentSuccess(
         responseMessage: Message,
-        savedDraftMessage: Message,
-        savedDraftId: String
+        savedDraftMessage: Message
     ): Result {
         responseMessage.writeTo(savedDraftMessage)
         savedDraftMessage.location = SENT.messageLocationTypeValue
@@ -170,7 +182,6 @@ class SendMessageWorker @WorkerInject constructor(
             )
         )
         messageDetailsRepository.saveMessageLocally(savedDraftMessage)
-        pendingActionsDao.deletePendingSendByMessageId(savedDraftId)
         userNotifier.showMessageSent()
         return Result.success()
     }
