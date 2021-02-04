@@ -284,7 +284,7 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerRetriesOrFailsWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDb() = runBlockingTest {
+    fun workerRetriesWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDbAndMaxRetriesWasNotReached() = runBlockingTest {
         val messageDbId = 38472L
         val messageId = "29837462"
         val message = Message().apply {
@@ -300,7 +300,38 @@ class SendMessageWorkerTest : CoroutinesTest {
 
         val result = worker.doWork()
 
+        verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
+        verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         assertEquals(ListenableWorker.Result.Retry(), result)
+    }
+
+    @Test
+    fun workerFailsWhenTheUpdatedMessageThatWasSavedAsDraftIsNotFoundInTheDbAndMaxRetriesWasReached() = runBlockingTest {
+        val messageDbId = 82384L
+        val messageId = "82384823"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 002"
+        }
+        val savedDraftId = "2836463"
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns null
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftId))
+        every { parameters.runAttemptCount } returns 6
+        every { context.getString(R.string.message_drafted) } returns "error message 9213"
+
+        val result = worker.doWork()
+
+        verify { pendingActionsDao.deletePendingSendByMessageId("82384823") }
+        verify { userNotifier.showSendMessageError("error message 9213", "Subject 002") }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "SavedDraftMessageNotFound")
+            ),
+            result
+        )
     }
 
     @Test
@@ -363,6 +394,8 @@ class SendMessageWorkerTest : CoroutinesTest {
 
         val result = worker.doWork()
 
+        verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
+        verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         assertEquals(ListenableWorker.Result.Retry(), result)
     }
 
@@ -373,16 +406,20 @@ class SendMessageWorkerTest : CoroutinesTest {
         val message = Message().apply {
             dbId = messageDbId
             this.messageId = messageId
+            this.subject = "Subject 001"
         }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        coEvery { messageDetailsRepository.findMessageById(any()) } returns Message()
+        coEvery { messageDetailsRepository.findMessageById(any()) } returns message
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
         every { sendPreferencesFactory.fetch(any()) } throws Exception("test - failed fetching send preferences")
         every { parameters.runAttemptCount } returns 6
+        every { context.getString(R.string.message_drafted) } returns "error message"
 
         val result = worker.doWork()
 
+        verify { pendingActionsDao.deletePendingSendByMessageId("923482") }
+        verify { userNotifier.showSendMessageError("error message", "Subject 001") }
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "FetchSendPreferencesFailed")
