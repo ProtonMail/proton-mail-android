@@ -234,6 +234,27 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     }
 
     @Test
+    fun saveDraftReadsNewlyCreatedDraftFromRepositoryAndPostsItToLiveDataWhenUpdatingDraftAndSaveDraftUseCaseSucceeds() {
+        runBlockingTest {
+            // Given
+            val message = Message()
+            val updatedDraftId = "updatedDraftId"
+            val updatedDraft = Message(messageId = updatedDraftId, localId = "local82347")
+            val savedDraftObserver = viewModel.savingDraftComplete.testObserver()
+            givenViewModelPropertiesAreInitialised()
+            viewModel.draftId = "non-empty draftId triggers update draft"
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(updatedDraftId))
+            coEvery { messageDetailsRepository.findMessageById(updatedDraftId) } returns updatedDraft
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = false)
+
+            coVerify { messageDetailsRepository.findMessageById(updatedDraftId) }
+            assertEquals(updatedDraft, savedDraftObserver.observedValues[0])
+        }
+    }
+
+    @Test
     fun autoSaveDraftSchedulesJobToPerformSaveDraftAfterSomeDelay() {
         runBlockingTest(dispatchers.Io) {
             // Given
