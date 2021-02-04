@@ -1455,14 +1455,8 @@ public class ComposeMessageActivity
             ArrayList<LocalAttachment> listToSet = resultAttachmentList != null ? resultAttachmentList : new ArrayList<>();
             composeMessageViewModel.setAttachmentList(listToSet);
             composeMessageViewModel.setIsDirty(true);
-            String draftId = data.getStringExtra(AddAttachmentsActivity.EXTRA_DRAFT_ID);
             String oldDraftId = composeMessageViewModel.getDraftId();
-            if (!TextUtils.isEmpty(draftId) && !draftId.equals(oldDraftId)) {
-                composeMessageViewModel.setDraftId(draftId);
-                afterAttachmentsAdded();
-            } else if (!TextUtils.isEmpty(oldDraftId)) {
-                afterAttachmentsAdded();
-            }
+            afterAttachmentsAdded();
             composeMessageViewModel.setIsDirty(true);
         } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_VALIDATE_PIN) {
             // region pin results
