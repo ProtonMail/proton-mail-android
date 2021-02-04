@@ -18,32 +18,33 @@
  */
 package ch.protonmail.android.api.models.room.attachmentMetadata
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 
-/**
- * Created by Kamil Rajtar on 14.07.18.
- */
 @Dao
-abstract class AttachmentMetadataDatabase {
+interface AttachmentMetadataDatabase {
 
-	@Insert(onConflict=OnConflictStrategy.REPLACE)
-	abstract fun insertAttachmentMetadata(attachmentMetadata:AttachmentMetadata)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertAttachmentMetadata(attachmentMetadata: AttachmentMetadata)
 
-	@Delete
-	abstract fun deleteAttachmentMetadata(attachmentMetadata:AttachmentMetadata)
+    @Delete
+    fun deleteAttachmentMetadata(attachmentMetadata: AttachmentMetadata)
 
-	@Query("DELETE FROM $TABLE_ATTACHMENT_METADATA")
-	abstract fun clearAttachmentMetadataCache()
+    @Query("DELETE FROM $TABLE_ATTACHMENT_METADATA")
+    fun clearAttachmentMetadataCache()
 
-	@Query("SELECT SUM(${COLUMN_ATTACHMENT_FILE_SIZE}) size FROM $TABLE_ATTACHMENT_METADATA")
-	abstract fun getAllAttachmentsSizeUsed():Long
+    @Query("SELECT SUM($COLUMN_ATTACHMENT_FILE_SIZE) size FROM $TABLE_ATTACHMENT_METADATA")
+    fun getAllAttachmentsSizeUsed(): Long
 
-	@Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE ${COLUMN_ATTACHMENT_FOLDER_LOCATION}=:messageId")
-	abstract fun getAllAttachmentsForMessage(messageId:String):List<AttachmentMetadata>
+    @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE ${COLUMN_ATTACHMENT_FOLDER_LOCATION}=:messageId")
+    fun getAllAttachmentsForMessage(messageId: String): List<AttachmentMetadata>
 
-	@Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE ${COLUMN_ATTACHMENT_FOLDER_LOCATION}=:messageId AND ${COLUMN_ATTACHMENT_ID}=:attachmentId")
-	abstract fun getAttachmentMetadataForMessageAndAttachmentId(messageId: String, attachmentId: String): AttachmentMetadata?
+    @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE ${COLUMN_ATTACHMENT_FOLDER_LOCATION}=:messageId AND ${COLUMN_ATTACHMENT_ID}=:attachmentId")
+    fun getAttachmentMetadataForMessageAndAttachmentId(messageId: String, attachmentId: String): AttachmentMetadata?
 
-	@Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA")
-	abstract fun getAllAttachmentsMetadata():List<AttachmentMetadata>
+    @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA")
+    fun getAllAttachmentsMetadata(): List<AttachmentMetadata>
 }

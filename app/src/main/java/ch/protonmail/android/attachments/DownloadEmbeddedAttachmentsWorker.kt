@@ -154,98 +154,56 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         messageId: String
     ): Result {
 
-
         val filenameInCache = attachment.fileName?.replace(" ", "_")?.replace("/", ":") ?: ATTACHMENT_UNKNOWN_FILE_NAME
         Timber.v("handleSingleAttachment filename:$filenameInCache DirectoryFile:$attachmentsDirectoryFile")
 
         AppUtil.postEventOnUi(
             DownloadedAttachmentEvent(
-                Status.STARTED, filenameInCache, attachment.attachmentId, messageId, false
+                Status.STARTED, filenameInCache, null, attachment.attachmentId, messageId, false
             )
         )
 
-        download(attachment, filenameInCache, crypto)
-//        val attachmentFile = File(attachmentsDirectoryFile, filenameInCache)
+        val attachmentUri = downloadAttachment(attachment, filenameInCache, crypto)
 
-//        applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.let { externalDirectory ->
-//            val uniqueFilenameInDownloads = downloadHelper.createUniqueFilename(
-//                attachment.fileName ?: ATTACHMENT_UNKNOWN_FILE_NAME,
-//                externalDirectory
-//            )
-//
-//            try {
-//                val decryptedByteArray = downloadHelper.getAttachmentData(
-//                    crypto,
-//                    attachment.mimeData,
-//                    attachment.attachmentId!!,
-//                    attachment.keyPackets,
-//                    attachment.fileSize,
-//                    uniqueFilenameInDownloads
-//                )
-//                FileOutputStream(attachmentFile).use {
-//                    it.write(decryptedByteArray)
-//                }
-//
-//                val attachmentMetadata = AttachmentMetadata(
-//                    attachment.attachmentId!!,
-//                    attachment.fileName!!,
-//                    attachment.fileSize,
-//                    attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache,
-//                    attachment.messageId, System.currentTimeMillis()
-//                )
-//                attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
-//
-//                attachmentFile.copyTo(
-//                    File(
-//                        externalDirectory,
-//                        uniqueFilenameInDownloads
-//                    )
-//                )
-//
-//            } catch (e: Exception) {
-//                Timber.e(e, "handleSingleAttachment exception")
-//                AppUtil.postEventOnUi(
-//                    DownloadedAttachmentEvent(Status.FAILED, filenameInCache, attachment.attachmentId, messageId, false)
-//                )
-//                return Result.failure()
-//            }
-//            AppUtil.postEventOnUi(
-//                DownloadedAttachmentEvent(
-//                    Status.SUCCESS, uniqueFilenameInDownloads, attachment.attachmentId, messageId, false
-//                )
-//            )
-//        } ?: run {
-//            Timber.w("Unable to access DIRECTORY_DOWNLOADS to save attachments")
-//        }
-
-        AppUtil.postEventOnUi(
-            DownloadedAttachmentEvent(
-                Status.SUCCESS, filenameInCache, attachment.attachmentId, messageId, false
+        if (attachmentUri != null) {
+            val attachmentMetadata = AttachmentMetadata(
+                attachment.attachmentId!!,
+                attachment.fileName!!,
+                attachment.fileSize,
+                attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache,
+                attachment.messageId, System.currentTimeMillis()
             )
-        )
+
+            attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
+
+            AppUtil.postEventOnUi(
+                DownloadedAttachmentEvent(
+                    Status.SUCCESS, filenameInCache, attachmentUri, attachment.attachmentId, messageId, false
+                )
+            )
+        } else {
+            Timber.w("handleSingleAttachment failure")
+            AppUtil.postEventOnUi(
+                DownloadedAttachmentEvent(
+                    Status.FAILED, filenameInCache, null, attachment.attachmentId, messageId, false
+                )
+            )
+            return Result.failure()
+        }
+
         AttachmentClearingService.startRegularClearUpService() // TODO don't call it every time we download attachments
         return Result.success()
     }
 
-    suspend fun download(attachment: Attachment, filename: String, crypto: AddressCrypto) {
+    private suspend fun downloadAttachment(attachment: Attachment, filename: String, crypto: AddressCrypto): Uri? =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            downloadQ(attachment, filename, crypto)
+            downloadAttachmentForAndroidQ(attachment, filename, crypto)
         } else {
-            downloadLegacy(attachment, filename, crypto)
+            downloadAttachmentBeforeQ(attachment, filename, crypto)
         }
 
-        val attachmentMetadata = AttachmentMetadata(
-            attachment.attachmentId!!,
-            attachment.fileName!!,
-            attachment.fileSize,
-            attachment.messageId + "/" + attachment.attachmentId + "/" + filename,
-            attachment.messageId, System.currentTimeMillis()
-        )
-        attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
-    }
-
     @TargetApi(Build.VERSION_CODES.Q)
-    private suspend fun downloadQ(
+    private suspend fun downloadAttachmentForAndroidQ(
         attachment: Attachment,
         filename: String,
         crypto: AddressCrypto
@@ -287,7 +245,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             return@withContext uri
         }
 
-    private suspend fun downloadLegacy(
+    private suspend fun downloadAttachmentBeforeQ(
         attachment: Attachment,
         filename: String,
         crypto: AddressCrypto

@@ -411,7 +411,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void onDownloadAttachmentEvent(DownloadedAttachmentEvent event) {
         final Status status = event.getStatus();
         if (status != Status.FAILED) {
-            DownloadUtils.viewAttachment(this, event.getFilename(), !event.isOfflineLoaded());
+            DownloadUtils.viewAttachment(this, event.getFilename(), event.getAttachmentUri(), !event.isOfflineLoaded());
         }
     }
 

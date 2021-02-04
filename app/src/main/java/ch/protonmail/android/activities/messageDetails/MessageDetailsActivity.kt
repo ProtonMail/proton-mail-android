@@ -621,7 +621,7 @@ internal class MessageDetailsActivity :
                 attachmentsListAdapter.setIsPgpEncrypted(viewModel.isPgpEncrypted())
                 attachmentsListAdapter.setDownloaded(eventAttachmentId, isDownloaded)
                 if (isDownloaded) {
-                    DownloadUtils.viewAttachment(this, event.filename)
+                    DownloadUtils.viewAttachment(this, event.filename, event.attachmentUri)
                 } else {
                     showToast(R.string.downloading)
                 }

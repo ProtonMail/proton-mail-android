@@ -400,7 +400,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     public void onDownloadAttachmentEvent(DownloadedAttachmentEvent event) {
         //once attachment has been downloaded
         if (event.getStatus().equals(Status.SUCCESS)) {
-            DownloadUtils.viewAttachment(this, event.getFilename());
+            DownloadUtils.viewAttachment(this, event.getFilename(), event.getAttachmentUri());
             TextExtensions.showToast(this, String.format(getString(R.string.attachment_download_success), event.getFilename()), Toast.LENGTH_SHORT);
         } else {
             TextExtensions.showToast(this, String.format(getString(R.string.attachment_download_failed), event.getFilename()), Toast.LENGTH_SHORT);
