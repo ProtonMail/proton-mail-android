@@ -66,6 +66,9 @@ class SaveDraft @Inject constructor(
 
         val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(username))
         val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
+        if (message.decryptedBody == null) {
+            Timber.w("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")
+        }
 
         message.messageBody = encryptedBody
 

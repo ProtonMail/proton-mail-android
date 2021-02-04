@@ -50,6 +50,9 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.slot
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,6 +61,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Assert.assertEquals
+import timber.log.Timber
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -123,6 +127,39 @@ class SaveDraftTest : CoroutinesTest {
                 )
             )
             coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+        }
+    }
+
+    @Test
+    fun saveDraftLogsAWarningAndSavesEncryptedDraftMessageToDbIfDecryptedMessageBodyIsNull() {
+        runBlockingTest {
+            // Given
+            val message = Message().apply {
+                dbId = 7237L
+                this.messageId = "456"
+                addressID = "addressId"
+                decryptedBody = null
+            }
+            val addressCrypto = mockk<AddressCrypto> {
+                every { encrypt("", true).armored } returns "encrypted empty message body"
+            }
+            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 7237L
+            mockkStatic(Timber::class)
+
+            // When
+            saveDraft(
+                SaveDraftParameters(message, emptyList(), null, FORWARD, "previousSenderId1273")
+            )
+
+            // Then
+            val messageCaptor = slot<Message>()
+            verify {
+                Timber.w("Save Draft for messageId 456 - Decrypted Body was null, proceeding...")
+            }
+            coVerify { messageDetailsRepository.saveMessageLocally(capture(messageCaptor)) }
+            assertEquals("encrypted empty message body", messageCaptor.captured.messageBody)
+            unmockkStatic(Timber::class)
         }
     }
 
