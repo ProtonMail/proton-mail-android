@@ -50,8 +50,8 @@ import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ApiRequestReturnedBadBodyCode
 import ch.protonmail.android.compose.send.SendMessageWorkerError.DraftCreationFailed
 import ch.protonmail.android.compose.send.SendMessageWorkerError.ErrorPerformingApiRequest
+import ch.protonmail.android.compose.send.SendMessageWorkerError.FailureBuildingApiRequest
 import ch.protonmail.android.compose.send.SendMessageWorkerError.FetchSendPreferencesFailed
-import ch.protonmail.android.compose.send.SendMessageWorkerError.InvalidInputMessageSecurityOptions
 import ch.protonmail.android.compose.send.SendMessageWorkerError.MessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.SavedDraftMessageNotFound
 import ch.protonmail.android.compose.send.SendMessageWorkerError.UserVerificationNeeded
@@ -126,16 +126,17 @@ class SendMessageWorker @WorkerInject constructor(
                     message
                 )
 
+                Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
                 val sendPreferences = requestSendPreferences(savedDraftMessage) ?: return retryOrFail(
                     FetchSendPreferencesFailed,
                     savedDraftMessage
                 )
 
-                val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences)
-                if (requestBody == null) {
-                    showSendMessageError(savedDraftMessage.subject)
-                    return failureWithError(InvalidInputMessageSecurityOptions)
-                }
+                Timber.d("Send Message Worker building request for messageId $messageId")
+                val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences) ?: return retryOrFail(
+                    FailureBuildingApiRequest,
+                    savedDraftMessage
+                )
 
                 runCatching {
                     apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
@@ -197,10 +198,13 @@ class SendMessageWorker @WorkerInject constructor(
     }
 
     private fun buildSendMessageRequest(savedDraftMessage: Message, sendPreferences: List<SendPreference>): MessageSendBody? {
-        val securityOptions = getInputMessageSecurityOptions() ?: return null
-        val packages = packagesFactory.generatePackages(savedDraftMessage, sendPreferences, securityOptions)
-        val autoSaveContacts = userManager.getMailSettings(currentUsername)?.autoSaveContacts ?: NO_CONTACTS_AUTO_SAVE
-        return MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
+        return runCatching {
+            val securityOptions = getInputMessageSecurityOptions() ?: return null
+            val packages = packagesFactory.generatePackages(savedDraftMessage, sendPreferences, securityOptions)
+            val autoSaveContacts = userManager.getMailSettings(currentUsername)?.autoSaveContacts
+                ?: NO_CONTACTS_AUTO_SAVE
+            MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
+        }.getOrNull()
     }
 
     private fun requestSendPreferences(message: Message): List<SendPreference>? {

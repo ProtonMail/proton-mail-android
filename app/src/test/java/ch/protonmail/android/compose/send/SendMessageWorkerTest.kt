@@ -554,13 +554,14 @@ class SendMessageWorkerTest : CoroutinesTest {
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED) } returns null
         every { context.getString(R.string.message_drafted) } returns "error message 9215"
+        every { parameters.runAttemptCount } returns 6
 
         val result = worker.doWork()
 
         verify { userNotifier.showSendMessageError("error message 9215", "Subject 002") }
         assertEquals(
             ListenableWorker.Result.failure(
-                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "InvalidInputMessageSecurityOptions")
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "FailureBuildingApiRequest")
             ),
             result
         )
@@ -598,6 +599,64 @@ class SendMessageWorkerTest : CoroutinesTest {
 
         val requestBody = MessageSendBody(packages, -1, 0)
         coVerify { apiManager.sendMessage(any(), requestBody, any()) }
+    }
+
+    @Test
+    fun workerRetriesWhenPackageFactoryFailsThrowingAnExceptionAnMaxRetriesWereNotReached() = runBlockingTest {
+        val messageDbId = 2376472L
+        val messageId = "823742"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 008"
+        }
+        val savedDraftMessageId = "9238427"
+        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        every { packageFactory.generatePackages(any(), any(), any()) } throws Exception("TEST - Failure creating packages")
+        every { parameters.runAttemptCount } returns 2
+
+        val result = worker.doWork()
+
+        assertEquals(ListenableWorker.Result.Retry(), result)
+        verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
+        verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
+    }
+
+    @Test
+    fun workerFailsWhenPackageFactoryFailsThrowingAnExceptionAndMaxRetriesWereReached() = runBlockingTest {
+        val messageDbId = 8234723L
+        val messageId = "7237723"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 005"
+        }
+        val savedDraftMessageId = "7236438"
+        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        every { packageFactory.generatePackages(any(), any(), any()) } throws Exception("TEST - Failure creating packages")
+        every { parameters.runAttemptCount } returns 6
+        every { context.getString(R.string.message_drafted) } returns "Error sending message"
+
+        val result = worker.doWork()
+
+        verify { userNotifier.showSendMessageError("Error sending message", "Subject 005") }
+        verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
+        assertEquals(
+            ListenableWorker.Result.failure(
+                workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "FailureBuildingApiRequest")
+            ),
+            result
+        )
     }
 
     @Test
