@@ -26,7 +26,6 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.services.PostMessageServiceFactory
 import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
@@ -84,9 +83,6 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
     @RelaxedMockK
     lateinit var sendMessage: SendMessage
-
-    @MockK
-    lateinit var postMessageServiceFactory: PostMessageServiceFactory
 
     @MockK
     lateinit var deleteMessage: DeleteMessage
