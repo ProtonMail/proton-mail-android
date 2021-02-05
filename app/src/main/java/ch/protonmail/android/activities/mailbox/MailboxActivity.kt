@@ -1155,7 +1155,6 @@ class MailboxActivity :
                 showNoConnSnackAndScheduleRetry()
             } else {
                 hideNoConnSnack()
-                fetchUpdates(false)
             }
         } else {
             Timber.d("DoH ongoing, not showing UI")
