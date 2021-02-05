@@ -136,7 +136,6 @@ import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxLoginEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.MessageCountsEvent
-import ch.protonmail.android.events.MessageSentEvent
 import ch.protonmail.android.events.ParentEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
@@ -1196,12 +1195,6 @@ class MailboxActivity :
     @Subscribe
     fun onParentEvent(event: ParentEvent?) {
         OnParentEventTask(messageDetailsRepository, messagesAdapter, event!!).execute()
-    }
-
-    @Subscribe
-    override fun onMessageSentEvent(event: MessageSentEvent) {
-        super.onMessageSentEvent(event)
-        syncUUID = UUID.randomUUID().toString()
     }
 
     @Subscribe

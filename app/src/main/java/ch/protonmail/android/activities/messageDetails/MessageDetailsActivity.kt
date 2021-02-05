@@ -73,7 +73,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.MessageSentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
@@ -519,11 +518,6 @@ internal class MessageDetailsActivity :
     fun onLogoutEvent(event: LogoutEvent?) {
         startActivity(AppUtil.decorInAppIntent(Intent(this, LoginActivity::class.java)))
         finish()
-    }
-
-    @Subscribe
-    override fun onMessageSentEvent(event: MessageSentEvent) {
-        super.onMessageSentEvent(event)
     }
 
     private fun getDecryptedBody(decryptedHtml: String?): String {

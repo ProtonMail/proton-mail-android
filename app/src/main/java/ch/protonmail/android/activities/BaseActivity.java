@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,7 +42,6 @@ import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.google.android.material.snackbar.Snackbar;
-import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
 
@@ -56,7 +54,6 @@ import ch.protonmail.android.api.NetworkConfigurator;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.User;
-import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.bl.Html5Handler;
 import ch.protonmail.android.bl.HtmlDivHandler;
 import ch.protonmail.android.bl.HtmlProcessor;
@@ -68,7 +65,6 @@ import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier;
 import ch.protonmail.android.events.LogoutEvent;
-import ch.protonmail.android.events.MessageSentEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.settings.pin.ValidatePinActivity;
@@ -76,7 +72,6 @@ import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
 import ch.protonmail.android.utils.UiUtil;
-import ch.protonmail.android.utils.extensions.TextExtensions;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
 import ch.protonmail.android.worker.FetchUserInfoWorker;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -445,20 +440,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             mJobManager.addJobInBackground(getOrganizationJob);
         } else {
             ProtonMailApplication.getApplication().setOrganization(null);
-        }
-    }
-
-    @Subscribe
-    public void onMessageSentEvent(MessageSentEvent event){
-        switch (event.getStatus()) {
-            case SUCCESS:
-                TextExtensions.showToast(this, R.string.message_sent, Toast.LENGTH_SHORT);
-                AlarmReceiver alarmReceiver = new AlarmReceiver();
-                alarmReceiver.setAlarm(this, true);
-                break;
-            case FAILED:
-                TextExtensions.showToast(this, R.string.message_failed, Toast.LENGTH_SHORT);
-                break;
         }
     }
 
