@@ -136,7 +136,6 @@ import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxLoginEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.MessageCountsEvent
-import ch.protonmail.android.events.ParentEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
@@ -1190,11 +1189,6 @@ class MailboxActivity :
                 return
             }
         }
-    }
-
-    @Subscribe
-    fun onParentEvent(event: ParentEvent?) {
-        OnParentEventTask(messageDetailsRepository, messagesAdapter, event!!).execute()
     }
 
     @Subscribe
