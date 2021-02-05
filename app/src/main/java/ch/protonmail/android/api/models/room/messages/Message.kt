@@ -88,8 +88,10 @@ const val COLUMN_MESSAGE_ACCESS_TIME = "AccessTime"
 const val COLUMN_MESSAGE_DELETED = "Deleted"
 // endregion
 
-@Entity(tableName = TABLE_MESSAGES,
-        indices = [Index(value = [COLUMN_MESSAGE_ID], unique = true), Index(value = [COLUMN_MESSAGE_LOCATION])])
+@Entity(
+    tableName = TABLE_MESSAGES,
+    indices = [Index(value = [COLUMN_MESSAGE_ID], unique = true), Index(value = [COLUMN_MESSAGE_LOCATION])]
+)
 data class Message @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_MESSAGE_ID)
     var messageId: String? = null,
@@ -111,7 +113,7 @@ data class Message @JvmOverloads constructor(
     var isStarred: Boolean? = null,
     @ColumnInfo(name = COLUMN_MESSAGE_NUM_ATTACHMENTS)
     var numAttachments: Int = 0,
-    //TODO merge methods
+    // TODO merge methods
     @ColumnInfo(name = COLUMN_MESSAGE_IS_ENCRYPTED)
     var messageEncryption: MessageEncryption? = null,
     @ColumnInfo(name = COLUMN_MESSAGE_EXPIRATION_TIME)
@@ -200,8 +202,9 @@ data class Message @JvmOverloads constructor(
         get() = sender?.name
         set(senderName) {
             sender = sender?.copy(name = senderName) ?: MessageSender(
-                    senderName,
-                    null)
+                senderName,
+                null
+            )
         }
 
     @Ignore
@@ -232,27 +235,33 @@ data class Message @JvmOverloads constructor(
     val ccListString
         get() = MessageUtils.toContactString(ccList)
 
-    val bccListString:String
-		get() = MessageUtils.toContactString(bccList)
+    val bccListString: String
+        get() = MessageUtils.toContactString(bccList)
 
     fun locationFromLabel(): Constants.MessageLocationType =
-            allLabelIDs
-                    .asSequence()
-                    .filter { it.length <= 2 }
-                    .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                    .fold(Constants.MessageLocationType.STARRED) { location, newLocation ->
-                        if (newLocation !in listOf(Constants.MessageLocationType.STARRED,
-                                        Constants.MessageLocationType.ALL_MAIL,
-                                        Constants.MessageLocationType.INVALID) &&
-                                newLocation.messageLocationTypeValue < location.messageLocationTypeValue) {
-                            newLocation
-                        } else if (newLocation in listOf(Constants.MessageLocationType.DRAFT,
-                                        Constants.MessageLocationType.SENT)) {
-                            newLocation
-                        } else {
-                            location
-                        }
-                    }
+        allLabelIDs
+            .asSequence()
+            .filter { it.length <= 2 }
+            .map { Constants.MessageLocationType.fromInt(it.toInt()) }
+            .fold(Constants.MessageLocationType.STARRED) { location, newLocation ->
+                if (newLocation !in listOf(
+                        Constants.MessageLocationType.STARRED,
+                        Constants.MessageLocationType.ALL_MAIL,
+                        Constants.MessageLocationType.INVALID
+                    ) &&
+                    newLocation.messageLocationTypeValue < location.messageLocationTypeValue
+                ) {
+                    newLocation
+                } else if (newLocation in listOf(
+                        Constants.MessageLocationType.DRAFT,
+                        Constants.MessageLocationType.SENT
+                    )
+                ) {
+                    newLocation
+                } else {
+                    location
+                }
+            }
 
     @Ignore
     var isBeingSent: Boolean = false
@@ -479,10 +488,10 @@ data class Message @JvmOverloads constructor(
     }
 
     fun searchForLocation(location: Int) = allLabelIDs
-            .asSequence()
-            .filter { it.length <= 2 }
-            .map { Integer.valueOf(it) }
-            .contains(location)
+        .asSequence()
+        .filter { it.length <= 2 }
+        .map { Integer.valueOf(it) }
+        .contains(location)
 
     fun setAttachmentList(attachmentList: List<Attachment>) {
         Attachments = attachmentList
@@ -512,10 +521,10 @@ data class Message @JvmOverloads constructor(
     fun calculateLocation() {
         location = locationFromLabel().messageLocationTypeValue
         isStarred = allLabelIDs
-                .asSequence()
-                .filter { it.length <= 2 }
-                .map { Constants.MessageLocationType.fromInt(it.toInt()) }
-                .contains(Constants.MessageLocationType.STARRED)
+            .asSequence()
+            .filter { it.length <= 2 }
+            .map { Constants.MessageLocationType.fromInt(it.toInt()) }
+            .contains(Constants.MessageLocationType.STARRED)
     }
 
     @WorkerThread

@@ -61,8 +61,10 @@ const val COLUMN_ATTACHMENT_MIME_DATA = "mime_data"
 const val COLUMN_ATTACHMENT_IS_INLINE = "is_inline"
 const val FIELD_ATTACHMENT_HEADERS = "Headers"
 
-@Entity(tableName = TABLE_ATTACHMENTS,
-    indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)])
+@Entity(
+    tableName = TABLE_ATTACHMENTS,
+    indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)]
+)
 data class Attachment @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
     var attachmentId: String? = null,

@@ -55,7 +55,8 @@ class AttachmentApi(
 
     @Throws(IOException::class)
     override fun uploadAttachmentInlineBlocking(
-        attachment: Attachment, MessageID: String,
+        attachment: Attachment,
+        MessageID: String,
         contentID: String,
         KeyPackage: RequestBody,
         DataPackage: RequestBody,
@@ -63,7 +64,12 @@ class AttachmentApi(
     ): AttachmentUploadResponse {
         val filename = attachment.fileName!!
         val mimeType = attachment.mimeType!!
-        return ParseUtils.parse(uploadService.uploadAttachmentBlocking(filename, MessageID, contentID, mimeType, KeyPackage, DataPackage, Signature).execute())
+        return ParseUtils.parse(
+            uploadService.uploadAttachmentBlocking(
+                filename, MessageID, contentID, mimeType, KeyPackage, DataPackage, Signature
+            )
+                .execute()
+        )
     }
 
     @Throws(IOException::class)
@@ -84,7 +90,8 @@ class AttachmentApi(
                 keyPackage,
                 dataPackage,
                 signature
-            ).execute())
+            ).execute()
+        )
     }
 
     override suspend fun uploadAttachmentInline(
@@ -131,7 +138,7 @@ class AttachmentApi(
         // return Constants.ENDPOINT_URI + "/attachments/" + attachmentId
         val prefs = ProtonMailApplication.getApplication().defaultSharedPreferences
         val apiUrl = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
-        return apiUrl + "/mail/v4/attachments/" + attachmentId
+        return "$apiUrl/mail/v4/attachments/$attachmentId"
     }
 
 }

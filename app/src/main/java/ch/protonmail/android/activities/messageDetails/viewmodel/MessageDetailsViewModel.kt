@@ -480,9 +480,12 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun tryDownloadingAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
         viewModelScope.launch(dispatchers.Io) {
-            val metadata = attachmentMetadataDatabase.getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
+            val metadata = attachmentMetadataDatabase
+                .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
+            Timber.v("tryDownloadingAttachment attId: $attachmentToDownloadId metadataId: ${metadata?.id}")
             if (metadata != null) {
-                if (metadata.localLocation.endsWith("==")) { // migration for deprecated saving attachments as files with name <attachmentId>
+                // migration for deprecated saving attachments as files with name <attachmentId>
+                if (metadata.localLocation.endsWith("==")) {
                     attachmentMetadataDatabase.deleteAttachmentMetadata(metadata)
                     attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
                 } else {

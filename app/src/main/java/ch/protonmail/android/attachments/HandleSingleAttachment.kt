@@ -77,8 +77,8 @@ class HandleSingleAttachment @Inject constructor(
 
         if (attachmentUri != null) {
             val attachmentMetadata = AttachmentMetadata(
-                attachment.attachmentId!!,
-                attachment.fileName!!,
+                requireNotNull(attachment.attachmentId),
+                requireNotNull(attachment.fileName),
                 attachment.fileSize,
                 attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache,
                 attachment.messageId, System.currentTimeMillis()
