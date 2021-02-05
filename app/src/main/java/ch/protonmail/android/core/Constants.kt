@@ -43,7 +43,6 @@ object Constants {
     const val END_PGP = "-----END PGP MESSAGE-----"
 
     const val DIR_EMB_ATTACHMENT_DOWNLOADS = "/ProtonMail/emb_att/"
-    const val DIR_ATTACHMENT_DOWNLOADS = "/"
     const val DIR_MESSAGE_BODY_DOWNLOADS = "/ProtonMail/messages/"
 
     const val FONTS_FOLDER = "fonts/"

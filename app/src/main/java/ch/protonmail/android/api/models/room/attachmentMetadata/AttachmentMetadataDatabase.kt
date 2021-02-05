@@ -42,10 +42,10 @@ interface AttachmentMetadataDatabase {
     @Query("SELECT SUM($COLUMN_ATTACHMENT_FILE_SIZE) size FROM $TABLE_ATTACHMENT_METADATA")
     fun getAllAttachmentsSizeUsed(): Long
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE ${COLUMN_ATTACHMENT_FOLDER_LOCATION}=:messageId")
+    @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION=:messageId")
     fun getAllAttachmentsForMessage(messageId: String): List<AttachmentMetadata>
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE ${COLUMN_ATTACHMENT_FOLDER_LOCATION}=:messageId AND ${COLUMN_ATTACHMENT_ID}=:attachmentId")
+    @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION=:messageId AND $COLUMN_ATTACHMENT_ID=:attachmentId")
     fun getAttachmentMetadataForMessageAndAttachmentId(messageId: String, attachmentId: String): AttachmentMetadata?
 
     @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA")

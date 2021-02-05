@@ -489,7 +489,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     attachmentMetadataDatabase.deleteAttachmentMetadata(metadata)
                     attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
                 } else {
-                    DownloadUtils.viewCachedAttachmentFile(context, metadata.name, metadata.localLocation)
+                    DownloadUtils.viewAttachment(context, metadata.name, metadata.uri)
                 }
             } else {
                 attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)

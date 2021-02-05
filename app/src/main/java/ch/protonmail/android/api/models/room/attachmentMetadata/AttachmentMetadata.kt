@@ -18,9 +18,11 @@
  */
 package ch.protonmail.android.api.models.room.attachmentMetadata
 
+import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import java.io.Serializable
 
 // region constants
@@ -31,9 +33,11 @@ const val COLUMN_ATTACHMENT_FILE_SIZE = "file_size"
 const val COLUMN_ATTACHMENT_LOCAL_LOCATION = "location"
 const val COLUMN_ATTACHMENT_FOLDER_LOCATION = "folder_location"
 const val COLUMN_ATTACHMENT_DOWNLOAD_TIMESTAMP = "download_timestamp"
+const val COLUMN_ATTACHMENT_UIR = "attachment_uri"
 // endregion
 
 @Entity(tableName = TABLE_ATTACHMENT_METADATA)
+@TypeConverters(value = [AttachmentsMetadataTypeConverter::class])
 class AttachmentMetadata constructor(
     @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
     @PrimaryKey
@@ -47,5 +51,7 @@ class AttachmentMetadata constructor(
     @ColumnInfo(name = COLUMN_ATTACHMENT_FOLDER_LOCATION)
     val folderLocation: String,
     @ColumnInfo(name = COLUMN_ATTACHMENT_DOWNLOAD_TIMESTAMP)
-    val downloadTimestamp: Long
+    val downloadTimestamp: Long,
+    @ColumnInfo(name = COLUMN_ATTACHMENT_UIR)
+    val uri: Uri?
 ) : Serializable

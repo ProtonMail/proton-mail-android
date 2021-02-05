@@ -29,9 +29,6 @@ import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
-
-import java.io.File;
 
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.servers.notification.INotificationServer;
@@ -94,39 +91,6 @@ public class DownloadUtils {
                     Context.NOTIFICATION_SERVICE);
             INotificationServer notificationServer = new NotificationServer(context, notifyManager);
             notificationServer.notifyAboutAttachment(fileName, uri, mimeType, showNotification);
-        }
-    }
-
-    public static void viewCachedAttachmentFile(Context context, String filename, String localLocation) {
-        String extension = filename.substring(filename.lastIndexOf(".") + 1);
-
-        File file = new File(context.getApplicationContext().getFilesDir().toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS, localLocation);
-        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
-
-        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
-
-        if (mimeType == null) {
-            ContentResolver resolver = context.getContentResolver();
-            mimeType = resolver.getType(uri);
-            Cursor cursor = resolver.query(uri, null, null, null, null);
-            cursor.close();
-        }
-
-        if (mimeType == null) {
-            mimeType = Constants.MIME_TYPE_UNKNOWN_FILE;
-        }
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setType(mimeType);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setDataAndType(uri, mimeType);
-
-        try {
-            context.startActivity(intent);
-        } catch (ActivityNotFoundException notFoundException) {
-            Timber.i(notFoundException, "Unable to view the file");
         }
     }
 }

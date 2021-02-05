@@ -21,6 +21,7 @@ package ch.protonmail.android.attachments
 
 import android.content.Context
 import android.text.TextUtils
+import androidx.core.content.FileProvider
 import androidx.work.ListenableWorker
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
@@ -105,13 +106,20 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                 val embeddedImageWithFile = embeddedImage.copy(localFileName = filename)
                 embeddedImagesWithLocalFile.add(embeddedImageWithFile)
 
+                val uri = FileProvider.getUriForFile(
+                    context, context.applicationContext.packageName + ".provider", attachmentFile
+                )
+
                 val attachmentMetadata = AttachmentMetadata(
                     embeddedImageWithFile.attachmentId,
-                    embeddedImageWithFile.fileNameFormatted, embeddedImageWithFile.size,
+                    embeddedImageWithFile.fileNameFormatted,
+                    embeddedImageWithFile.size,
                     embeddedImageWithFile.messageId + "/" + filename,
-                    embeddedImageWithFile.messageId, System.currentTimeMillis()
+                    embeddedImageWithFile.messageId,
+                    System.currentTimeMillis(),
+                    uri
                 )
-                attachmentMetadataDatabase.insertAttachmentMetadataBlocking(attachmentMetadata)
+                attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 
             } catch (e: Exception) {
                 Timber.e(e, "handleEmbeddedImages exception")

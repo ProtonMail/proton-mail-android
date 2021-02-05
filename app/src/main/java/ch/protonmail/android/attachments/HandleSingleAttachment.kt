@@ -81,7 +81,9 @@ class HandleSingleAttachment @Inject constructor(
                 requireNotNull(attachment.fileName),
                 attachment.fileSize,
                 attachment.messageId + "/" + attachment.attachmentId + "/" + filenameInCache,
-                attachment.messageId, System.currentTimeMillis()
+                attachment.messageId,
+                System.currentTimeMillis(),
+                attachmentUri
             )
 
             attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
