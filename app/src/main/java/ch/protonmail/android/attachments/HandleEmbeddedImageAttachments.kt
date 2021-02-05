@@ -32,11 +32,11 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
-import me.proton.core.util.kotlin.DispatcherProvider
 import okio.buffer
 import okio.sink
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 /**
@@ -46,8 +46,7 @@ class HandleEmbeddedImageAttachments @Inject constructor(
     private val context: Context,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     private val downloadHelper: AttachmentsHelper,
-    private val clearingServiceHelper: AttachmentClearingServiceHelper,
-    private val dispatchers: DispatcherProvider
+    private val clearingServiceHelper: AttachmentClearingServiceHelper
 ) {
 
     suspend operator fun invoke(
@@ -92,7 +91,6 @@ class HandleEmbeddedImageAttachments @Inject constructor(
 
                 val decryptedByteArray = downloadHelper.getAttachmentData(
                     crypto,
-                    embeddedImage.mimeData,
                     embeddedImage.attachmentId,
                     embeddedImage.key
                 )
@@ -121,8 +119,8 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                 )
                 attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 
-            } catch (e: Exception) {
-                Timber.e(e, "handleEmbeddedImages exception")
+            } catch (ioException: IOException) {
+                Timber.e(ioException, "handleEmbeddedImages exception")
                 hasFailed = true
             }
         }

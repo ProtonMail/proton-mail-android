@@ -19,118 +19,42 @@
 
 package ch.protonmail.android.attachments
 
-import android.app.NotificationManager
-import android.content.Context
 import android.util.Base64
-import androidx.core.app.NotificationCompat
-import ch.protonmail.android.R
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.jobs.helper.EmbeddedImage
-import ch.protonmail.android.servers.notification.NotificationServer
 import okio.buffer
 import okio.source
 import timber.log.Timber
-import java.io.File
 import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 
-private const val NOTIFICATION_ID = 213_412
-private const val FULL_PROGRESS = 100
 private const val BASE_64 = "base64"
 
 class AttachmentsHelper @Inject constructor(
-    private val context: Context,
-    private val api: ProtonMailApiManager,
-    private val notificationManager: NotificationManager
+    private val api: ProtonMailApiManager
 ) {
-    private var notificationBuilder: NotificationCompat.Builder? = null
 
-    /**
-     * Creates unique filename from original one in given directory.
-     */
-    fun createUniqueFilename(originalFilename: String, folder: File): String {
-
-        val sanitizedOriginalFilename = originalFilename.replace(" ", "_").replace("/", ":")
-
-        if (!File(folder, sanitizedOriginalFilename).exists()) return sanitizedOriginalFilename
-
-        val name = sanitizedOriginalFilename.substringBeforeLast('.', "")
-        val extension = sanitizedOriginalFilename.substringAfterLast('.', "")
-        var counter = 0
-        do {
-            counter++
-        } while (File(folder, "$name($counter).$extension").exists())
-
-        return "$name($counter).$extension"
-    }
-
-    private fun initializeNotificationBuilder(
-        filename: String
-    ): NotificationCompat.Builder {
-        val channelId = NotificationServer(context, notificationManager).createAttachmentsChannel()
-
-        return NotificationCompat.Builder(context, channelId)
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setAutoCancel(true)
-            .setSmallIcon(android.R.drawable.stat_sys_download)
-            .setContentTitle(filename)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentText(context.getString(R.string.download_in_progress))
-            .setProgress(FULL_PROGRESS, 0, false)
-    }
-
-    /**
-     * If fileSize is provided, progress notification will be shown.
-     */
     suspend fun getAttachmentData(
         crypto: AddressCrypto,
-        mimeData: ByteArray?,
         attachmentId: String,
-        key: String?,
-        fileSize: Long = -1L,
-        uniqueFileName: String? = null
-    ): ByteArray? {
-        if (mimeData != null) {
-            return mimeData
-        }
+        key: String?
+    ): ByteArray? = try {
+        val responseBody = api.downloadAttachment(attachmentId)
 
-        uniqueFileName?.let {
-            notificationBuilder = initializeNotificationBuilder(it)
+        responseBody?.byteStream()?.source()?.buffer()?.use { bufferedSource ->
+            val byteArray = bufferedSource.readByteArray()
+            val keyBytes = Base64.decode(key, Base64.DEFAULT)
+            crypto.decryptAttachment(CipherText(keyBytes, byteArray)).decryptedData
         }
-
-        return try {
-            val response = api.downloadAttachment(
-                attachmentId
-            )
-
-            response?.byteStream()?.source()?.buffer()?.use { bufferedSource ->
-                val byteArray = bufferedSource.readByteArray()
-                val keyBytes = Base64.decode(key, Base64.DEFAULT)
-                crypto.decryptAttachment(CipherText(keyBytes, byteArray)).decryptedData
-            }
-        } catch (exception: IOException) {
-            Timber.w(exception, "getAttachmentData exception")
-            null
-        } finally {
-            notifyOfProgress(FULL_PROGRESS)
-        }
+    } catch (exception: IOException) {
+        Timber.w(exception, "getAttachmentData exception")
+        null
     }
 
-    private fun notifyOfProgress(progress: Int) {
-        if (progress == FULL_PROGRESS) {
-            notificationManager.cancel(NOTIFICATION_ID)
-        } else {
-            notificationBuilder?.let { builder ->
-                builder.setProgress(FULL_PROGRESS, progress, false)
-                notificationManager.notify(NOTIFICATION_ID, builder.build())
-            }
-        }
-    }
 
     fun fromAttachmentToEmbededImage(
         attachment: Attachment,
