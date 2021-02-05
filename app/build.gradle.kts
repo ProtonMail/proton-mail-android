@@ -340,8 +340,10 @@ dependencies {
         `falcon`,
         `espresso-contrib`,
         `espresso-intents`,
+        `espresso-web`,
         `uiautomator`,
-        `android-activation`
+        `android-activation`,
+        `Proton-android-instrumented-test`
     )
 }
 

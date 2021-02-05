@@ -25,18 +25,8 @@ import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.AmbiguousViewMatcherException
-import androidx.test.espresso.AppNotIdleException
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.NoMatchingRootException
-import androidx.test.espresso.NoMatchingViewException
-import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.ViewAssertion
-import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.PositionableRecyclerViewAction
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
@@ -44,10 +34,11 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.R
 import ch.protonmail.android.contacts.list.listView.ContactsListAdapter
-import ch.protonmail.android.uitests.testsHelper.ActivityProvider.currentActivity
 import junit.framework.AssertionFailedError
+import me.proton.core.test.android.instrumented.uiwaits.UIWaits.waitUntilLoaded
+import me.proton.core.test.android.instrumented.utils.ActivityProvider.currentActivity
+import me.proton.core.test.android.instrumented.watchers.ProtonWatcher
 import org.hamcrest.CoreMatchers.allOf
-import org.hamcrest.CoreMatchers.not
 import org.hamcrest.Matcher
 import org.jetbrains.annotations.Contract
 import kotlin.test.assertFalse
@@ -59,102 +50,12 @@ object UICustomViewActions {
     private const val TIMEOUT_5S = 5_000L
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-    fun waitUntilViewAppears(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
-        val errorDescription = "UICustomViewActions.waitUntilViewAppears"
-        return waitUntilMatcherFulfilled(
-            interaction,
-            assertion = matches(isDisplayed()),
-            timeout = timeout,
-            errorDescription = errorDescription
-        )
-    }
-
-    fun waitUntilViewIsGone(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
-        val errorDescription = "UICustomViewActions.waitUntilViewIsGone"
-        return waitUntilMatcherFulfilled(
-            interaction,
-            assertion = doesNotExist(),
-            timeout = timeout,
-            errorDescription = errorDescription
-        )
-    }
-
-    fun waitUntilViewIsNotDisplayed(interaction: ViewInteraction, timeout: Long = TIMEOUT_10S): ViewInteraction {
-        val errorDescription = "UICustomViewActions.waitUntilViewIsGone"
-        return waitUntilMatcherFulfilled(
-            interaction,
-            assertion = matches(not(isDisplayed())),
-            timeout = timeout,
-            errorDescription = errorDescription
-        )
-    }
-
-    fun waitUntilMatcherFulfilled(
-        interaction: ViewInteraction,
-        assertion: ViewAssertion,
-        timeout: Long = TIMEOUT_10S,
-        errorDescription: String = ""
-    ): ViewInteraction {
-        ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-            var errorMessage = ""
-
-            override fun getDescription() = "UICustomViewActions.waitUntilMatcherFulfilled $errorMessage"
-
-            override fun checkCondition(): Boolean {
-                return try {
-                    interaction.check(assertion)
-                    true
-                } catch (e: PerformException) {
-                    errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: NoMatchingViewException) {
-                    errorMessage = e.viewMatcherDescription
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: NoMatchingRootException) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: AppNotIdleException) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: AmbiguousViewMatcherException) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: AssertionFailedError) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                }
-            }
-        })
-        return interaction
-    }
-
     fun waitUntilIntentMatcherFulfilled(
         matcher: Matcher<Intent>,
         timeout: Long = TIMEOUT_5S
     ) {
         ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition {
             var errorMessage = ""
 
             override fun getDescription() = "UICustomViewActions.waitUntilIntentMatcherFulfilled $errorMessage"
@@ -174,90 +75,6 @@ object UICustomViewActions {
         })
     }
 
-    fun performActionWithRetry(
-        interaction: ViewInteraction,
-        action: ViewAction,
-        timeout: Long = TIMEOUT_10S
-    ): ViewInteraction {
-        ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-            var errorMessage = ""
-
-            override fun getDescription() = "UICustomViewActions.waitUntilMatcherFulfilled $errorMessage"
-
-            override fun checkCondition(): Boolean {
-                return try {
-                    interaction.perform(action)
-                    true
-                } catch (e: PerformException) {
-                    errorMessage = "${e.viewDescription}, Action: ${e.actionDescription}"
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: NoMatchingViewException) {
-                    errorMessage = e.viewMatcherDescription
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: NoMatchingRootException) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: AppNotIdleException) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: AmbiguousViewMatcherException) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                } catch (e: AssertionFailedError) {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw e
-                    } else {
-                        false
-                    }
-                }
-            }
-        })
-        return interaction
-    }
-
-    fun waitUntilRecyclerViewPopulated(@IdRes id: Int, timeout: Long = TIMEOUT_10S) {
-        ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
-
-            override fun getDescription() =
-                "RecyclerView: ${targetContext.resources.getResourceName(id)} was not populated with items"
-
-            override fun checkCondition() = try {
-                val rv = currentActivity!!.findViewById<RecyclerView>(id)
-                if (rv != null) {
-                    waitUntilLoaded { rv }
-                    rv.adapter!!.itemCount > 0
-                } else {
-                    if (ProtonWatcher.status == ProtonWatcher.TIMEOUT) {
-                        throw Exception(getDescription())
-                    } else {
-                        false
-                    }
-                }
-            } catch (e: Throwable) {
-                throw e
-            }
-        })
-    }
-
     fun waitForAdapterItemWithIdAndText(
         @IdRes recyclerViewId: Int,
         @IdRes viewId: Int,
@@ -265,7 +82,7 @@ object UICustomViewActions {
         timeout: Long = 5000L
     ) {
         ProtonWatcher.setTimeout(timeout)
-        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition() {
+        ProtonWatcher.waitForCondition(object : ProtonWatcher.Condition {
 
             override fun getDescription() =
                 "RecyclerView: ${targetContext.resources.getResourceName(recyclerViewId)} was not populated with items"
@@ -292,24 +109,6 @@ object UICustomViewActions {
                 return false
             }
         })
-    }
-
-    /**
-     * Stop the test until RecyclerView's data gets loaded.
-     * Passed [recyclerProvider] will be activated in UI thread, allowing you to retrieve the View.
-     * Workaround for https://issuetracker.google.com/issues/123653014.
-     */
-    inline fun waitUntilLoaded(crossinline recyclerProvider: () -> RecyclerView) {
-        Espresso.onIdle()
-        lateinit var recycler: RecyclerView
-
-        InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            recycler = recyclerProvider()
-        }
-
-        while (recycler.hasPendingAdapterUpdates()) {
-            Thread.sleep(10)
-        }
     }
 
     @Contract(value = "_ -> new", pure = true)

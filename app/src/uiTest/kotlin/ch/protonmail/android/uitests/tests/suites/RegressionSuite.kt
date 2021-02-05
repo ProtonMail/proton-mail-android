@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.uitests.tests.suites
 
+import ch.protonmail.android.uitests.tests.composer.AttachmentsTests
 import ch.protonmail.android.uitests.tests.composer.ForwardMessageTests
 import ch.protonmail.android.uitests.tests.composer.ReplyToMessageTests
 import ch.protonmail.android.uitests.tests.composer.SendNewMessageTests
@@ -25,19 +26,22 @@ import ch.protonmail.android.uitests.tests.contacts.ContactsTests
 import ch.protonmail.android.uitests.tests.drafts.DraftsTests
 import ch.protonmail.android.uitests.tests.inbox.InboxTests
 import ch.protonmail.android.uitests.tests.inbox.SearchTests
+import ch.protonmail.android.uitests.tests.labelsfolders.LabelsFoldersTests
 import ch.protonmail.android.uitests.tests.login.LoginTests
 import ch.protonmail.android.uitests.tests.manageaccounts.MultiuserManagementTests
 import ch.protonmail.android.uitests.tests.menu.MenuTests
+import ch.protonmail.android.uitests.tests.messagedetail.MessageDetailTests
 import ch.protonmail.android.uitests.tests.settings.AccountSettingsTests
+import ch.protonmail.android.uitests.tests.settings.PrivacyAccountSettingsTests
 import ch.protonmail.android.uitests.tests.settings.SettingsTests
+import ch.protonmail.android.uitests.tests.settings.SwipeGesturesTests
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
-    // Account settings tests
-    AccountSettingsTests::class,
     // Composer tests
+    AttachmentsTests::class,
     SendNewMessageTests::class,
     ForwardMessageTests::class,
     ReplyToMessageTests::class,
@@ -47,15 +51,22 @@ import org.junit.runners.Suite
     DraftsTests::class,
     // Inbox tests
     InboxTests::class,
+    // Labels and folders tests
+    LabelsFoldersTests::class,
     // Login tests
     LoginTests::class,
     // Multi-user management tests
     MultiuserManagementTests::class,
     // Menu tests
     MenuTests::class,
-    //Search tests
+    // Message detail tests
+    MessageDetailTests::class,
+    // Search tests
     SearchTests::class,
     // Settings tests
-    SettingsTests::class
+    AccountSettingsTests::class,
+    PrivacyAccountSettingsTests::class,
+    SettingsTests::class,
+    SwipeGesturesTests::class
 )
 class RegressionSuite

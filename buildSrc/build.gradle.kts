@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright (c) 2020 Proton Technologies AG
  *
@@ -18,12 +20,14 @@
  */
 plugins {
     `kotlin-dsl`
+    kotlin("jvm") version "1.4.30-RC"
 }
 
 repositories {
     google()
     jcenter()
     maven(url = "https://dl.bintray.com/proton/Core-publishing")
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
 dependencies {
@@ -34,4 +38,13 @@ dependencies {
     implementation("com.android.tools.build:gradle:$android")
     // Needed for many utils
     implementation("studio.forface.easygradle:dsl-android:$easyGradle")
+    implementation(kotlin("stdlib-jdk8"))
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
 }
