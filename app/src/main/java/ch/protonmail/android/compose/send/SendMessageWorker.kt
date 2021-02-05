@@ -42,6 +42,7 @@ import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.factories.PackageFactory
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
+import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_VERIFICATION_NEEDED
@@ -87,7 +88,7 @@ private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
 private const val SEND_MESSAGE_MAX_RETRIES = 5
 private const val NO_CONTACTS_AUTO_SAVE = 0
 private const val SEND_MESSAGE_WORK_NAME_PREFIX = "sendMessageUniqueWorkName"
-
+private const val NO_SUBJECT = ""
 
 class SendMessageWorker @WorkerInject constructor(
     @Assisted val context: Context,
@@ -104,10 +105,10 @@ class SendMessageWorker @WorkerInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        Timber.d("Send Message Worker executing with messageDbId ${getInputMessageDbId()}")
+        Timber.i("Send Message Worker executing with messageDbId ${getInputMessageDbId()}")
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
         if (message == null) {
-            userNotifier.showSendMessageError(context.getString(R.string.message_drafted), "")
+            showSendMessageError(NO_SUBJECT)
             return failureWithError(MessageNotFound)
         }
         message.decryptedBody = getInputDecryptedBody()
@@ -119,6 +120,7 @@ class SendMessageWorker @WorkerInject constructor(
         return when (val result = saveDraft(message, previousSenderAddressId)) {
             is SaveDraftResult.Success -> {
                 val messageId = result.draftId
+                Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
                 val savedDraftMessage = messageDetailsRepository.findMessageById(messageId) ?: return retryOrFail(
                     SavedDraftMessageNotFound,
                     message
@@ -131,10 +133,7 @@ class SendMessageWorker @WorkerInject constructor(
 
                 val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences)
                 if (requestBody == null) {
-                    userNotifier.showSendMessageError(
-                        context.getString(R.string.message_drafted),
-                        savedDraftMessage.subject
-                    )
+                    showSendMessageError(savedDraftMessage.subject)
                     return failureWithError(InvalidInputMessageSecurityOptions)
                 }
 
@@ -142,30 +141,7 @@ class SendMessageWorker @WorkerInject constructor(
                     apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
                 }.fold(
                     onSuccess = { response ->
-                        pendingActionsDao.deletePendingSendByMessageId(messageId)
-
-                        return when (response.code) {
-                            RESPONSE_CODE_OK -> {
-                                handleMessageSentSuccess(response.sent, savedDraftMessage)
-                            }
-                            RESPONSE_CODE_ERROR_VERIFICATION_NEEDED -> {
-                                Timber.i(
-                                    "Send Message API call failed, human verification required for messageId $messageId"
-                                )
-                                userNotifier.showHumanVerificationNeeded(savedDraftMessage)
-                                failureWithError(UserVerificationNeeded)
-                            }
-                            else -> {
-                                Timber.e(
-                                    "Send Message API call failed for messageId $messageId with error ${response.error}"
-                                )
-                                userNotifier.showSendMessageError(
-                                    context.getString(R.string.message_drafted),
-                                    message.subject
-                                )
-                                failureWithError(ApiRequestReturnedBadBodyCode)
-                            }
-                        }
+                        handleSendMessageResponse(messageId, response, savedDraftMessage)
                     },
                     onFailure = { exception ->
                         retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
@@ -175,6 +151,31 @@ class SendMessageWorker @WorkerInject constructor(
             else -> retryOrFail(DraftCreationFailed, message)
         }
 
+    }
+
+    private suspend fun handleSendMessageResponse(
+        messageId: String,
+        response: MessageSendResponse,
+        savedDraftMessage: Message
+    ): Result {
+        pendingActionsDao.deletePendingSendByMessageId(messageId)
+
+        return when (response.code) {
+            RESPONSE_CODE_OK -> {
+                Timber.i("Send Message API call succeeded for messageId $messageId, Message Sent.")
+                handleMessageSentSuccess(response.sent, savedDraftMessage)
+            }
+            RESPONSE_CODE_ERROR_VERIFICATION_NEEDED -> {
+                Timber.w("Send Message API call failed, human verification required for messageId $messageId")
+                userNotifier.showHumanVerificationNeeded(savedDraftMessage)
+                failureWithError(UserVerificationNeeded)
+            }
+            else -> {
+                Timber.e("Send Message API call failed for messageId $messageId with error ${response.error}")
+                showSendMessageError(savedDraftMessage.subject)
+                failureWithError(ApiRequestReturnedBadBodyCode)
+            }
+        }
     }
 
     private suspend fun handleMessageSentSuccess(
@@ -247,8 +248,15 @@ class SendMessageWorker @WorkerInject constructor(
             return Result.retry()
         }
         pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
-        userNotifier.showSendMessageError(context.getString(R.string.message_drafted), message.subject)
+        showSendMessageError(message.subject)
         return failureWithError(error, exception)
+    }
+
+    private fun showSendMessageError(messageSubject: String?) {
+        userNotifier.showSendMessageError(
+            context.getString(R.string.message_drafted),
+            messageSubject
+        )
     }
 
     private fun failureWithError(error: SendMessageWorkerError, exception: Throwable? = null): Result {

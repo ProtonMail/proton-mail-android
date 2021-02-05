@@ -761,7 +761,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         verify { userNotifier.showHumanVerificationNeeded(savedDraft) }
         verify { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
         verify {
-            Timber.i("Send Message API call failed, human verification required for messageId $savedDraftMessageId")
+            Timber.w("Send Message API call failed, human verification required for messageId $savedDraftMessageId")
         }
         assertEquals(
             ListenableWorker.Result.failure(
