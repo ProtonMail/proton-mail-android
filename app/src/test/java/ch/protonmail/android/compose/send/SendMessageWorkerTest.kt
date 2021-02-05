@@ -271,7 +271,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
-        every { parameters.runAttemptCount } returns 6
+        every { parameters.runAttemptCount } returns 4
         every { context.getString(R.string.message_drafted) } returns "error message 9216"
 
         val result = worker.doWork()
@@ -347,7 +347,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { messageDetailsRepository.findMessageById(savedDraftId) } returns null
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftId))
-        every { parameters.runAttemptCount } returns 6
+        every { parameters.runAttemptCount } returns 4
         every { context.getString(R.string.message_drafted) } returns "error message 9213"
 
         val result = worker.doWork()
@@ -441,7 +441,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         coEvery { messageDetailsRepository.findMessageById(any()) } returns message
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
         every { sendPreferencesFactory.fetch(any()) } throws Exception("test - failed fetching send preferences")
-        every { parameters.runAttemptCount } returns 6
+        every { parameters.runAttemptCount } returns 4
         every { context.getString(R.string.message_drafted) } returns "error message"
 
         val result = worker.doWork()
@@ -554,7 +554,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED) } returns null
         every { context.getString(R.string.message_drafted) } returns "error message 9215"
-        every { parameters.runAttemptCount } returns 6
+        every { parameters.runAttemptCount } returns 4
 
         val result = worker.doWork()
 
@@ -644,7 +644,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
         every { packageFactory.generatePackages(any(), any(), any()) } throws Exception("TEST - Failure creating packages")
-        every { parameters.runAttemptCount } returns 6
+        every { parameters.runAttemptCount } returns 4
         every { context.getString(R.string.message_drafted) } returns "Error sending message"
 
         val result = worker.doWork()
@@ -703,7 +703,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         every { userManager.getMailSettings(currentUsername) } returns null
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        every { parameters.runAttemptCount } returns 6
+        every { parameters.runAttemptCount } returns 4
         coEvery { apiManager.sendMessage(any(), any(), any()) } throws SocketTimeoutException("test - call timed out")
         every { context.getString(R.string.message_drafted) } returns errorMessage
 
