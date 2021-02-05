@@ -49,7 +49,7 @@ class HandleEmbeddedImageAttachments @Inject constructor(
     private val dispatchers: DispatcherProvider
 ) {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         embeddedImages: List<EmbeddedImage>,
         crypto: AddressCrypto,
         messageId: String
@@ -80,7 +80,7 @@ class HandleEmbeddedImageAttachments @Inject constructor(
 
         var hasFailed = false
 
-        val embedeedImagesWithLocalFile = mutableListOf<EmbeddedImage>()
+        val embeddedImagesWithLocalFile = mutableListOf<EmbeddedImage>()
         embeddedImages.forEachIndexed { index, embeddedImage ->
 
             val filename = calculateFilename(embeddedImage.fileNameFormatted, index)
@@ -102,12 +102,8 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                 }
                 sink.close()
 
-//                FileOutputStream(attachmentFile).use {
-//                    it.write(decryptedByteArray)
-//                }
-
                 val embeddedImageWithFile = embeddedImage.copy(localFileName = filename)
-                embedeedImagesWithLocalFile.add(embeddedImageWithFile)
+                embeddedImagesWithLocalFile.add(embeddedImageWithFile)
 
                 val attachmentMetadata = AttachmentMetadata(
                     embeddedImageWithFile.attachmentId,
@@ -128,7 +124,7 @@ class HandleEmbeddedImageAttachments @Inject constructor(
             ListenableWorker.Result.failure()
         } else {
             clearingServiceHelper.startRegularClearUpService() // TODO don't call it every time we download attachments
-            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embedeedImagesWithLocalFile))
+            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFile))
             ListenableWorker.Result.success()
         }
     }

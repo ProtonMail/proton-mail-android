@@ -75,7 +75,7 @@ abstract class MessagesDatabase {
     abstract fun getMessagesByLabelId(label: String): List<Message>
 
     fun findMessageByIdBlocking(messageId: String) = findMessageInfoByIdBlocking(messageId)?.also {
-        it.Attachments = it.attachments(this)
+        it.Attachments = it.attachmentsBlocking(this)
     }
 
     suspend fun findMessageById(messageId: String) = findMessageInfoById(messageId)?.also {
@@ -89,13 +89,13 @@ abstract class MessagesDatabase {
     fun findMessageByIdObservable(messageId: String) = findMessageInfoByIdObservable(messageId)
 
     fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbId(messageDbId)?.also {
-        it.Attachments = it.attachments(this)
+        it.Attachments = it.attachmentsBlocking(this)
     }
 
     @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0) = findAllMessageInfoByLastMessageAccessTime(laterThan).also {
         it.forEach { message ->
-            message.Attachments = message.attachments(this)
+            message.Attachments = message.attachmentsBlocking(this)
         }
     }
 
@@ -177,7 +177,7 @@ abstract class MessagesDatabase {
             }
         }
 
-        val attachmentsToDelete = message.attachments(this) // .filter { it.messageId != message.messageId }
+        val attachmentsToDelete = message.attachmentsBlocking(this) // .filter { it.messageId != message.messageId }
         if (attachmentsToDelete.isNotEmpty() && preservedAttachments.isEmpty()) {
             preservedAttachments = localAttachments
         }
@@ -253,10 +253,13 @@ abstract class MessagesDatabase {
     abstract fun findAttachmentsByMessageIdFileNameAndPath(messageId: String, fileName: String, filePath: String): Attachment
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachment(attachment: Attachment): Long
+    abstract fun saveAttachmentBlocking(attachment: Attachment): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachment(vararg attachments: Attachment): List<Long>
+    abstract suspend fun saveAttachment(attachment: Attachment): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun saveAttachment(vararg attachments: Attachment): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveAllAttachments(attachments: List<Attachment>): List<Long>

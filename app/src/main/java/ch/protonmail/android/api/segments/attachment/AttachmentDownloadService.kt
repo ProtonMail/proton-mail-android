@@ -18,14 +18,15 @@
  */
 package ch.protonmail.android.api.segments.attachment
 
-import okhttp3.ResponseBody
-import retrofit2.http.Headers
-import retrofit2.http.Path
-import retrofit2.http.GET
-
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Path
+import retrofit2.http.Streaming
 
 /**
  * ProtonMailServices
@@ -35,5 +36,10 @@ interface AttachmentDownloadService {
 
     @GET("mail/v4/attachments/{attachmentId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun downloadAttachment(@Path("attachmentId") attachmentId: String): Call<ResponseBody>
+    fun downloadAttachmentBlocking(@Path("attachmentId") attachmentId: String): Call<ResponseBody>
+
+    @Streaming
+    @GET("mail/v4/attachments/{attachmentId}")
+    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
+    suspend fun downloadAttachment(@Path("attachmentId") attachmentId: String): Response<ResponseBody>
 }

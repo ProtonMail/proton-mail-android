@@ -42,15 +42,18 @@ class AttachmentApi(
     override fun deleteAttachment(attachmentId: String): ResponseBody =
         ParseUtils.parse(basicService.deleteAttachment(attachmentId).execute())
 
-    @Throws(IOException::class)
-    override fun downloadAttachment(attachmentId: String): ByteArray =
-        downloadAttachment(attachmentId, DeafProgressListener())
+    override suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody? =
+        downloadService.downloadAttachment(attachmentId).body()
 
     @Throws(IOException::class)
-    override fun downloadAttachment(attachmentId: String, progressListener: ProgressListener): ByteArray {
+    override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
+        downloadAttachmentBlocking(attachmentId, DeafProgressListener())
+
+    @Throws(IOException::class)
+    override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray {
         // This works concurrently: nextProgressListener will block if the last one hasn't been consumed yet
         requestInterceptor.nextProgressListener(progressListener)
-        return downloadService.downloadAttachment(attachmentId).execute().body()!!.bytes()
+        return downloadService.downloadAttachmentBlocking(attachmentId).execute().body()!!.bytes()
     }
 
     @Throws(IOException::class)

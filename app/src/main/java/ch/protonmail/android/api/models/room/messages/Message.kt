@@ -43,6 +43,7 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.StringEscapeUtils
 import java.io.Serializable
 import java.util.ArrayList
@@ -322,17 +323,17 @@ data class Message @JvmOverloads constructor(
         location = locationFromLabel().messageLocationTypeValue
     }
 
-    fun getIsEncrypted(): MessageEncryption? {
-        return messageEncryption
-    }
+    fun getIsEncrypted(): MessageEncryption? = messageEncryption
 
     @Deprecated("Use getMessageEncryption()")
-    fun isEncrypted(): Boolean {
-        return messageEncryption!!.isEndToEndEncrypted
-    }
+    fun isEncrypted(): Boolean = messageEncryption!!.isEndToEndEncrypted
 
     @WorkerThread
-    fun attachments(messagesDatabase: MessagesDatabase): List<Attachment> {
+    fun attachmentsBlocking(messagesDatabase: MessagesDatabase): List<Attachment> = runBlocking {
+        attachments(messagesDatabase)
+    }
+
+    suspend fun attachments(messagesDatabase: MessagesDatabase): List<Attachment> {
         if (isPGPMime) {
             return this.Attachments
         }
@@ -340,7 +341,7 @@ data class Message @JvmOverloads constructor(
         if (messageId == null || messageId.isEmpty()) {
             return emptyList()
         }
-        val result = messagesDatabase.findAttachmentsByMessageIdBlocking(messageId)
+        val result = messagesDatabase.findAttachmentsByMessageId(messageId)
         for (att in result) {
             val oldInline = att.inline
             if (!att.inline) {
@@ -528,9 +529,8 @@ data class Message @JvmOverloads constructor(
     }
 
     @WorkerThread
-    fun checkIfAttHeadersArePresent(messagesDatabase: MessagesDatabase): Boolean {
-        return attachments(messagesDatabase).asSequence().map(Attachment::headers).any { it == null }
-    }
+    fun checkIfAttHeadersArePresent(messagesDatabase: MessagesDatabase): Boolean =
+        attachmentsBlocking(messagesDatabase).asSequence().map(Attachment::headers).any { it == null }
 
     fun getList(recipientType: RecipientType): List<MessageRecipient> {
         return when (recipientType) {

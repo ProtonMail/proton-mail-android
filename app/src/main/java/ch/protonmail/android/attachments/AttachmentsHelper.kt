@@ -24,17 +24,17 @@ import android.content.Context
 import android.util.Base64
 import androidx.core.app.NotificationCompat
 import ch.protonmail.android.R
-import ch.protonmail.android.api.ProgressListener
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.servers.notification.NotificationServer
+import okio.buffer
+import okio.source
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
@@ -87,7 +87,7 @@ class AttachmentsHelper @Inject constructor(
     /**
      * If fileSize is provided, progress notification will be shown.
      */
-    fun getAttachmentData(
+    suspend fun getAttachmentData(
         crypto: AddressCrypto,
         mimeData: ByteArray?,
         attachmentId: String,
@@ -104,33 +104,15 @@ class AttachmentsHelper @Inject constructor(
         }
 
         return try {
-            val byteArray = api.downloadAttachment(
-                attachmentId,
-                object : ProgressListener {
-
-                    var currentBytesRead = 0
-                    var notificationProgressStartTime: Long = 0
-                    var notificationProgressElapsedTime = 0L
-
-                    override fun update(bytesRead: Long, contentLength: Long, done: Boolean) {
-                        val br = (bytesRead.toFloat() / fileSize * FULL_PROGRESS).toInt()
-                        if (br > currentBytesRead) {
-                            currentBytesRead = br
-                        }
-                        if (notificationProgressElapsedTime > 500) {
-                            if (fileSize != -1L) {
-                                notifyOfProgress(currentBytesRead)
-                            }
-                            notificationProgressStartTime = System.currentTimeMillis()
-                            notificationProgressElapsedTime = 0L
-                        } else {
-                            notificationProgressElapsedTime = Date().time - notificationProgressStartTime
-                        }
-                    }
-                }
+            val response = api.downloadAttachment(
+                attachmentId
             )
-            val keyBytes = Base64.decode(key, Base64.DEFAULT)
-            crypto.decryptAttachment(CipherText(keyBytes, byteArray)).decryptedData
+
+            response?.byteStream()?.source()?.buffer()?.use { bufferedSource ->
+                val byteArray = bufferedSource.readByteArray()
+                val keyBytes = Base64.decode(key, Base64.DEFAULT)
+                crypto.decryptAttachment(CipherText(keyBytes, byteArray)).decryptedData
+            }
         } catch (exception: IOException) {
             Timber.w(exception, "getAttachmentData exception")
             null

@@ -246,7 +246,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 attachment.keyPackets = apiKeyPackets
                 attachment.signature = apiSignature
                 attachment.isUploaded = true
-                messageDetailsRepository.saveAttachment(attachment)
+                messageDetailsRepository.saveAttachmentBlocking(attachment)
             }
             val expected = AttachmentsRepository.Result.Success(apiAttachmentId)
             assertEquals(expected, result)
@@ -268,7 +268,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
             val result = repository.upload(attachment, crypto)
 
-            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+            verify(exactly = 0) { messageDetailsRepository.saveAttachmentBlocking(any()) }
             val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
             assertEquals(expectedResult, result)
         }
@@ -331,7 +331,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
             val result = repository.upload(attachment, crypto)
 
-            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+            verify(exactly = 0) { messageDetailsRepository.saveAttachmentBlocking(any()) }
             val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
             assertEquals(expectedResult, result)
         }

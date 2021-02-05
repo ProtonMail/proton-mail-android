@@ -130,9 +130,9 @@ class ComposeMessageRepository @Inject constructor(
         }
 
     fun getAttachments2(message: Message, isTransient: Boolean): List<Attachment> = if (!isTransient) {
-        message.attachments(messagesDatabase)
+        message.attachmentsBlocking(messagesDatabase)
     } else {
-        message.attachments(searchDatabase)
+        message.attachmentsBlocking(searchDatabase)
     }
 
     fun findMessageByIdSingle(id: String): Single<Message> {
@@ -186,8 +186,11 @@ class ComposeMessageRepository @Inject constructor(
             Attachment.createAttachmentList(messagesDatabase, attachmentList, false)
         }
 
-    fun prepareMessageData(currentObject: MessageBuilderData, messageTitle: String,
-                           attachments: ArrayList<LocalAttachment>): MessageBuilderData {
+    fun prepareMessageData(
+        currentObject: MessageBuilderData,
+        messageTitle: String,
+        attachments: ArrayList<LocalAttachment>
+    ): MessageBuilderData {
         return MessageBuilderData.Builder()
             .fromOld(currentObject)
             .message(Message())

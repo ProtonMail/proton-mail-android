@@ -197,7 +197,9 @@ class MessageDetailsRepository @Inject constructor(
     suspend fun findSearchAttachmentsByMessageId(messageId: String) =
         searchDatabaseDao.findAttachmentsByMessageId(messageId)
 
-    fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
+    fun saveAttachmentBlocking(attachment: Attachment) = messagesDao.saveAttachmentBlocking(attachment)
+
+    suspend fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
     fun findPendingSendByOfflineMessageIdAsync(messageId: String) =
         pendingActionsDatabase.findPendingSendByOfflineMessageIdAsync(messageId)

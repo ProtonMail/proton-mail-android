@@ -126,7 +126,7 @@ class AttachmentsRepository @Inject constructor(
                 attachment.keyPackets = response.attachment.keyPackets
                 attachment.signature = response.attachment.signature
                 attachment.isUploaded = true
-                messageDetailsRepository.saveAttachment(attachment)
+                messageDetailsRepository.saveAttachmentBlocking(attachment)
                 Timber.i("Upload attachment successful. attachmentId: ${response.attachmentID}")
                 return@withContext Result.Success(response.attachmentID)
             }
