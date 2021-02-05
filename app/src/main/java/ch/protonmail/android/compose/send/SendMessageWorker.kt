@@ -106,7 +106,10 @@ class SendMessageWorker @WorkerInject constructor(
     override suspend fun doWork(): Result {
         Timber.d("Send Message Worker executing with messageDbId ${getInputMessageDbId()}")
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
-            ?: return failureWithError(MessageNotFound)
+        if (message == null) {
+            userNotifier.showSendMessageError(context.getString(R.string.message_drafted), "")
+            return failureWithError(MessageNotFound)
+        }
         message.decryptedBody = getInputDecryptedBody()
 
         Timber.d("Send Message Worker read local message with messageId ${message.messageId}")
@@ -127,7 +130,13 @@ class SendMessageWorker @WorkerInject constructor(
                 )
 
                 val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences)
-                    ?: return failureWithError(InvalidInputMessageSecurityOptions)
+                if (requestBody == null) {
+                    userNotifier.showSendMessageError(
+                        context.getString(R.string.message_drafted),
+                        savedDraftMessage.subject
+                    )
+                    return failureWithError(InvalidInputMessageSecurityOptions)
+                }
 
                 runCatching {
                     apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
@@ -163,7 +172,7 @@ class SendMessageWorker @WorkerInject constructor(
                     }
                 )
             }
-            else -> failureWithError(DraftCreationFailed)
+            else -> retryOrFail(DraftCreationFailed, message)
         }
 
     }
@@ -234,7 +243,7 @@ class SendMessageWorker @WorkerInject constructor(
         exception: Throwable? = null
     ): Result {
         if (runAttemptCount <= SEND_MESSAGE_MAX_RETRIES) {
-            Timber.d("Send Message Worker FAILED with error = ${error.name}, exception = $exception. Retrying...")
+            Timber.d("Send Message Worker failed with error = ${error.name}, exception = $exception. Retrying...")
             return Result.retry()
         }
         pendingActionsDao.deletePendingSendByMessageId(message.messageId ?: "")
@@ -243,7 +252,7 @@ class SendMessageWorker @WorkerInject constructor(
     }
 
     private fun failureWithError(error: SendMessageWorkerError, exception: Throwable? = null): Result {
-        Timber.e("Send Message Worker failed all the retries. error = $error, exception = $exception. FAILING")
+        Timber.e("Send Message Worker failed permanently. error = $error, exception = $exception. FAILING")
         val errorData = workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to error.name)
         return Result.failure(errorData)
     }

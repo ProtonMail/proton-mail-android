@@ -219,14 +219,16 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerFailsReturningErrorWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
+    fun workerNotifiesUserAndFailsWhenMessageIsNotFoundInTheDatabase() = runBlockingTest {
         val messageDbId = 2373L
         val messageId = "8322223"
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns null
+        every { context.getString(R.string.message_drafted) } returns "error message 9214"
 
         val result = worker.doWork()
 
+        verify { userNotifier.showSendMessageError("error message 9214", "") }
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "MessageNotFound")
@@ -237,19 +239,45 @@ class SendMessageWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerFailsReturningErrorWhenSaveDraftOperationFails() = runBlockingTest {
+    fun workerRetriesWhenSaveDraftOperationFailsAndMaxRetriesWereNotReached() = runBlockingTest {
+        val messageDbId = 82478L
+        val messageId = "823742"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+            this.subject = "Subject 004"
+        }
+        givenFullValidInput(messageDbId, messageId)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
+        every { parameters.runAttemptCount } returns 3
+
+        val result = worker.doWork()
+
+        verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
+        verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
+        assertEquals(ListenableWorker.Result.Retry(), result)
+    }
+
+    @Test
+    fun workerFailsReturningErrorWhenSaveDraftOperationFailsAndMaxRetriesWereReached() = runBlockingTest {
         val messageDbId = 2834L
         val messageId = "823472"
         val message = Message().apply {
             dbId = messageDbId
             this.messageId = messageId
+            this.subject = "Subject 003"
         }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.OnlineDraftCreationFailed)
+        every { parameters.runAttemptCount } returns 6
+        every { context.getString(R.string.message_drafted) } returns "error message 9216"
 
         val result = worker.doWork()
 
+        verify { pendingActionsDao.deletePendingSendByMessageId("823472") }
+        verify { userNotifier.showSendMessageError("error message 9216", "Subject 003") }
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "DraftCreationFailed")
@@ -514,6 +542,7 @@ class SendMessageWorkerTest : CoroutinesTest {
         val message = Message().apply {
             dbId = messageDbId
             this.messageId = messageId
+            this.subject = "Subject 002"
         }
         val savedDraftMessageId = "237684"
         givenFullValidInput(messageDbId, messageId)
@@ -524,9 +553,11 @@ class SendMessageWorkerTest : CoroutinesTest {
         every { userManager.getMailSettings(currentUsername)!!.autoSaveContacts } returns 1
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
         every { parameters.inputData.getString(KEY_INPUT_SEND_MESSAGE_SECURITY_OPTIONS_SERIALIZED) } returns null
+        every { context.getString(R.string.message_drafted) } returns "error message 9215"
 
         val result = worker.doWork()
 
+        verify { userNotifier.showSendMessageError("error message 9215", "Subject 002") }
         assertEquals(
             ListenableWorker.Result.failure(
                 workDataOf(KEY_OUTPUT_RESULT_SEND_MESSAGE_ERROR_ENUM to "InvalidInputMessageSecurityOptions")
