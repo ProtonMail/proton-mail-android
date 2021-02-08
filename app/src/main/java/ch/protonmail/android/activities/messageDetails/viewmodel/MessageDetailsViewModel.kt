@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -498,7 +499,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             if (metadata != null) {
                 val uri = metadata.uri
                 if (uri?.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
-                    // explicitly copy embedded attachment to downloads and display it
                     copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
                 } else {
                     viewAttachment(context, metadata.name, uri)
@@ -509,31 +509,50 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
     }
 
+    /**
+     * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
+     */
     private fun copyAttachmentToDownloadsAndDisplay(
         context: Context,
         filename: String,
         uri: Uri
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            TODO("Not yet implemented")
+        val newUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getCopiedUriFromQ(filename, uri, context)
         } else {
-            val fileInDownloads = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                filename
-            )
-
-            Timber.v("Copying file from ${uri.path} to ${fileInDownloads.absolutePath}")
-            context.contentResolver.openInputStream(uri)?.use {
-                val sink = fileInDownloads.sink().buffer()
-                sink.writeAll(it.source())
-                sink.close()
-            }
-
-            val newUri = FileProvider.getUriForFile(
-                context, context.applicationContext.packageName + ".provider", fileInDownloads
-            )
-            viewAttachment(context, filename, newUri)
+            getCopiedUriBeforeQ(filename, uri, context)
         }
+
+        Timber.v("Copied attachment file from ${uri.path} to ${newUri?.path}")
+        viewAttachment(context, filename, newUri)
+    }
+
+    @TargetApi(Build.VERSION_CODES.Q)
+    private fun getCopiedUriFromQ(filename: String, uri: Uri, context: Context): Uri? {
+        val contentResolver = context.contentResolver
+
+        return contentResolver.openInputStream(uri)?.let {
+            attachmentsHelper.saveAttachmentInMediaStore(
+                contentResolver, filename, contentResolver.getType(uri), it
+            )
+        }
+    }
+
+    private fun getCopiedUriBeforeQ(filename: String, uri: Uri, context: Context): Uri {
+        val fileInDownloads = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            filename
+        )
+
+        context.contentResolver.openInputStream(uri)?.use {
+            val sink = fileInDownloads.sink().buffer()
+            sink.writeAll(it.source())
+            sink.close()
+        }
+
+        return FileProvider.getUriForFile(
+            context, context.applicationContext.packageName + ".provider", fileInDownloads
+        )
     }
 
     fun viewAttachment(context: Context, filename: String?, uri: Uri?) =

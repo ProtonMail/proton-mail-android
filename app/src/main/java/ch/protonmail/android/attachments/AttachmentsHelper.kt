@@ -19,6 +19,12 @@
 
 package ch.protonmail.android.attachments
 
+import android.annotation.TargetApi
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Base64
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.messages.Attachment
@@ -26,9 +32,11 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import okio.buffer
+import okio.sink
 import okio.source
 import timber.log.Timber
 import java.io.IOException
+import java.io.InputStream
 import java.util.Locale
 import javax.inject.Inject
 
@@ -115,5 +123,36 @@ class AttachmentsHelper @Inject constructor(
             attachment.messageId,
             null
         )
+    }
+
+    @TargetApi(Build.VERSION_CODES.Q)
+    fun saveAttachmentInMediaStore(
+        contentResolver: ContentResolver,
+        filename: String,
+        attachmentMimeType: String?,
+        inputStream: InputStream
+    ): Uri {
+        val values = ContentValues().apply {
+            put(MediaStore.Downloads.DISPLAY_NAME, filename)
+            put(MediaStore.Downloads.MIME_TYPE, attachmentMimeType)
+            put(MediaStore.Downloads.IS_PENDING, 1)
+        }
+
+        val newUri = contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+
+        newUri?.let {
+            contentResolver.openOutputStream(newUri)?.use { outputStream ->
+                outputStream.sink().buffer().apply {
+                    writeAll(inputStream.source())
+                    close()
+                }
+                Timber.v("Stored Q file: $filename type: $attachmentMimeType uri: $newUri")
+            }
+
+            values.clear()
+            values.put(MediaStore.Downloads.IS_PENDING, 0)
+            contentResolver.update(newUri, values, null, null)
+        } ?: throw IllegalStateException("MediaStore insert has failed")
+        return newUri
     }
 }

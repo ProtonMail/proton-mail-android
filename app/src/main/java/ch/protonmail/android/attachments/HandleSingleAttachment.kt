@@ -20,13 +20,11 @@
 package ch.protonmail.android.attachments
 
 import android.annotation.TargetApi
-import android.content.ContentValues
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
 import androidx.work.ListenableWorker
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
@@ -53,7 +51,7 @@ private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
 class HandleSingleAttachment @Inject constructor(
     private val context: Context,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-    private val downloadHelper: AttachmentsHelper,
+    private val attachmentsHelper: AttachmentsHelper,
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
     private val dispatchers: DispatcherProvider
 ) {
@@ -119,38 +117,18 @@ class HandleSingleAttachment @Inject constructor(
         attachment: Attachment,
         filename: String,
         crypto: AddressCrypto
-    ) = withContext(dispatchers.Io) {
-        val decryptedByteArray = downloadHelper.getAttachmentData(
+    ) : Uri? {
+        val decryptedByteArray = attachmentsHelper.getAttachmentData(
             crypto,
             requireNotNull(attachment.attachmentId),
             attachment.keyPackets
         )
 
-        val values = ContentValues().apply {
-            put(MediaStore.Downloads.DISPLAY_NAME, filename)
-            put(MediaStore.Downloads.MIME_TYPE, attachment.mimeType)
-            put(MediaStore.Downloads.IS_PENDING, 1)
+        return decryptedByteArray?.inputStream()?.let {
+            attachmentsHelper.saveAttachmentInMediaStore(
+                context.contentResolver, filename, attachment.mimeType, it
+            )
         }
-
-        val resolver = context.contentResolver
-        val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-
-        uri?.let {
-            resolver.openOutputStream(uri)?.use { outputStream ->
-                val sink = outputStream.sink().buffer()
-                decryptedByteArray?.let {
-                    sink.write(it)
-                }
-                sink.close()
-                Timber.v("Stored Q file: $filename type: ${attachment.mimeType} uri: $uri")
-            }
-
-            values.clear()
-            values.put(MediaStore.Downloads.IS_PENDING, 0)
-            resolver.update(uri, values, null, null)
-        } ?: throw IllegalStateException("MediaStore insert has failed")
-
-        return@withContext uri
     }
 
     private suspend fun downloadAttachmentBeforeQ(
@@ -163,7 +141,7 @@ class HandleSingleAttachment @Inject constructor(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             filename
         )
-        val decryptedByteArray = downloadHelper.getAttachmentData(
+        val decryptedByteArray = attachmentsHelper.getAttachmentData(
             crypto,
             attachment.attachmentId!!,
             attachment.keyPackets
