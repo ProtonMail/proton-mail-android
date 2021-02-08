@@ -30,7 +30,6 @@ import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import io.reactivex.Observable
-import retrofit2.Call
 import java.io.IOException
 
 interface MessageApiSpec {
@@ -104,12 +103,6 @@ interface MessageApiSpec {
         draftBody: DraftBody,
         retrofitTag: RetrofitTag
     ): MessageResponse
-
-    fun sendMessageBlocking(
-        messageId: String,
-        message: MessageSendBody,
-        retrofitTag: RetrofitTag
-    ): Call<MessageSendResponse>
 
     suspend fun sendMessage(
         messageId: String,

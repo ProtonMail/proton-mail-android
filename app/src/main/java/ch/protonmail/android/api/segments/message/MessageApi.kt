@@ -32,7 +32,6 @@ import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import io.reactivex.Observable
-import retrofit2.Call
 import timber.log.Timber
 import java.io.IOException
 
@@ -142,12 +141,6 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         draftBody: DraftBody,
         retrofitTag: RetrofitTag
     ): MessageResponse? = ParseUtils.parse(service.updateDraftCall(messageId, draftBody, retrofitTag).execute())
-
-    override fun sendMessageBlocking(
-        messageId: String,
-        message: MessageSendBody,
-        retrofitTag: RetrofitTag
-    ): Call<MessageSendResponse> = service.sendMessageCall(messageId, message, retrofitTag)
 
     override suspend fun sendMessage(
         messageId: String,

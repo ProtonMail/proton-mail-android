@@ -131,14 +131,6 @@ interface MessageService {
 
     @POST("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun sendMessageCall(
-        @Path("messageId") messageId: String,
-        @Body message: MessageSendBody,
-        @Tag retrofitTag: RetrofitTag
-    ): Call<MessageSendResponse>
-
-    @POST("mail/v4/messages/{messageId}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun sendMessage(
         @Path("messageId") messageId: String,
         @Body message: MessageSendBody,

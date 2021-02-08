@@ -56,7 +56,6 @@ import com.squareup.otto.Subscribe;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -77,10 +76,8 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
@@ -716,10 +713,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         mOrganization = organization;
     }
 
-    public List<String> getAvailableDomains() {
-        return mAvailableDomains == null ? new ArrayList<String>() : mAvailableDomains;
-    }
-
     public void fetchOrganization() {
         GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
         jobManager.addJobInBackground(getOrganizationJob);
@@ -731,22 +724,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         INotificationServer notificationServer = new NotificationServer(this, notificationManager);
         if (mUserManager != null && mUserManager.isLoggedIn()) {
             notificationServer.notifyUserLoggedOut(mUserManager.getUser(username));
-        }
-    }
-
-    public void notifySingleErrorSendingMessage(Message message, String error, User user) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn()) {
-            notificationServer.notifySingleErrorSendingMessage(error, user.getUsername());
-        }
-    }
-
-    public void notifyMultipleErrorSendingMessage(List<SendingFailedNotification> sendingFailedNotifications, User user) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn()) {
-            notificationServer.notifyMultipleErrorSendingMessage(sendingFailedNotifications, user);
         }
     }
 

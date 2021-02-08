@@ -130,7 +130,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     private boolean inApp = false;
     private boolean checkForPin = true;
     private String mCurrentLocale;
-    protected Snackbar mDraftedMessageSnack;
     protected Snackbar mRequestTimeoutSnack;
 
     private AlertDialog alertDelinquency;
