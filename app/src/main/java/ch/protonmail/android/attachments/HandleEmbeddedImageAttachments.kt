@@ -95,11 +95,11 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                     embeddedImage.key
                 )
 
-                val sink = attachmentFile.sink().buffer()
-                decryptedByteArray?.let {
-                    sink.write(it)
+                attachmentFile.sink().buffer().use { sink ->
+                    decryptedByteArray?.let { bytes ->
+                        sink.write(bytes)
+                    }
                 }
-                sink.close()
 
                 val embeddedImageWithFile = embeddedImage.copy(localFileName = filename)
                 embeddedImagesWithLocalFile.add(embeddedImageWithFile)

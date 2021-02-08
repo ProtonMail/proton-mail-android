@@ -35,7 +35,6 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import okio.buffer
 import okio.sink
@@ -117,7 +116,7 @@ class HandleSingleAttachment @Inject constructor(
         attachment: Attachment,
         filename: String,
         crypto: AddressCrypto
-    ) : Uri? {
+    ): Uri? {
         val decryptedByteArray = attachmentsHelper.getAttachmentData(
             crypto,
             requireNotNull(attachment.attachmentId),
@@ -135,23 +134,14 @@ class HandleSingleAttachment @Inject constructor(
         attachment: Attachment,
         filename: String,
         crypto: AddressCrypto
-    ) = withContext(dispatchers.Io) {
+    ): Uri? {
 
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            filename
-        )
         val decryptedByteArray = attachmentsHelper.getAttachmentData(
             crypto,
-            attachment.attachmentId!!,
+            requireNotNull(attachment.attachmentId),
             attachment.keyPackets
         )
-
-        val sink = file.sink().buffer()
-        decryptedByteArray?.let {
-            sink.write(it)
-        }
-        sink.close()
+        val file = saveBytesToFile(filename, decryptedByteArray)
 
         val result = awaitUriFromMediaScanned(
             context,
@@ -161,7 +151,21 @@ class HandleSingleAttachment @Inject constructor(
         val uri = result.second
         Timber.v("Stored file: $filename path: ${result.first} uri: $uri")
 
-        return@withContext uri
+        return uri
+    }
+
+    private fun saveBytesToFile(filename: String, decryptedByteArray: ByteArray?): File {
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            filename
+        )
+
+        file.sink().buffer().use { sink ->
+            decryptedByteArray?.let {
+                sink.write(it)
+            }
+        }
+        return file
     }
 
 

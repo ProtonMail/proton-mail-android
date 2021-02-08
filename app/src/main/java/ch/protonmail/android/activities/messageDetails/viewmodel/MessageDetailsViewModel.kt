@@ -544,10 +544,10 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             filename
         )
 
-        context.contentResolver.openInputStream(uri)?.use {
-            val sink = fileInDownloads.sink().buffer()
-            sink.writeAll(it.source())
-            sink.close()
+        context.contentResolver.openInputStream(uri)?.use { stream ->
+            fileInDownloads.sink().buffer().use { sink ->
+                sink.writeAll(stream.source())
+            }
         }
 
         return FileProvider.getUriForFile(
