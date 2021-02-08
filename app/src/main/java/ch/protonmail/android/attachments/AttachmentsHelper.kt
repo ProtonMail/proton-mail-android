@@ -64,11 +64,19 @@ class AttachmentsHelper @Inject constructor(
     }
 
 
-    fun fromAttachmentToEmbededImage(
+    fun fromAttachmentToEmbeddedImage(
         attachment: Attachment,
-        embeddedImagesArray: List<String>
+        embeddedImages: List<String>
     ): EmbeddedImage? {
-        val headers = attachment.headers ?: return null
+        if (
+            attachment.headers == null ||
+            attachment.attachmentId.isNullOrEmpty() ||
+            attachment.fileName.isNullOrEmpty()
+        ) {
+            return null
+        }
+
+        val headers = requireNotNull(attachment.headers)
         val contentDisposition = headers.contentDisposition
         var contentId = if (headers.contentId.isNullOrEmpty()) {
             headers.contentLocation
@@ -88,41 +96,32 @@ class AttachmentsHelper @Inject constructor(
                         break
                     }
                 }
-                if (!containsInlineMarker && !embeddedImagesArray.contains(contentId)) {
+                if (!containsInlineMarker && !embeddedImages.contains(contentId)) {
                     return null
                 }
             }
         }
 
-        if (attachment.attachmentId.isNullOrEmpty()) {
-            return null
-        }
-        val fileName = attachment.fileName
-        if (fileName.isNullOrEmpty()) {
-            return null
-        }
-        val encoding = headers.contentTransferEncoding
-        val contentType = headers.contentType
-        val mimeData = attachment.mimeData
         val embeddedMimeTypes = listOf("image/gif", "image/jpeg", "image/png", "image/bmp")
         return if (!embeddedMimeTypes.contains(attachment.mimeTypeFirstValue?.toLowerCase(Locale.ENGLISH))) {
             null
-        } else EmbeddedImage(
-            attachment.attachmentId ?: "",
-            fileName,
-            attachment.keyPackets ?: "",
-            if (contentType.isEmpty()) {
-                attachment.mimeType ?: ""
-            } else {
-                contentType
-            },
-            if (encoding.isEmpty()) BASE_64 else encoding,
-            contentId ?: headers.contentLocation,
-            mimeData,
-            attachment.fileSize,
-            attachment.messageId,
-            null
-        )
+        } else
+            EmbeddedImage(
+                attachment.attachmentId ?: "",
+                requireNotNull(attachment.fileName),
+                attachment.keyPackets ?: "",
+                if (headers.contentType.isEmpty()) {
+                    attachment.mimeType ?: ""
+                } else {
+                    headers.contentType
+                },
+                if (headers.contentTransferEncoding.isEmpty()) BASE_64 else headers.contentTransferEncoding,
+                contentId ?: headers.contentLocation,
+                attachment.mimeData,
+                attachment.fileSize,
+                attachment.messageId,
+                null
+            )
     }
 
     @TargetApi(Build.VERSION_CODES.Q)

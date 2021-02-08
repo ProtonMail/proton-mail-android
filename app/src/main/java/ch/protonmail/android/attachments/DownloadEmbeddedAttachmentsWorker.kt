@@ -101,7 +101,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         }
 
         val embeddedImages = attachments.mapNotNull {
-            downloadHelper.fromAttachmentToEmbededImage(it, message.embeddedImagesArray)
+            downloadHelper.fromAttachmentToEmbeddedImage(it, message.embeddedImagesArray)
         }
         val otherAttachments = attachments.filter { attachment ->
             embeddedImages.find { attachment.attachmentId == it.attachmentId } == null

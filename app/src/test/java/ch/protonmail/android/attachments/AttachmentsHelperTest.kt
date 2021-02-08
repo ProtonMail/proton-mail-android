@@ -19,32 +19,76 @@
 
 package ch.protonmail.android.attachments
 
-import org.junit.Before
-import org.junit.Test
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.AttachmentHeaders
+import ch.protonmail.android.api.models.room.messages.Attachment
+import ch.protonmail.android.jobs.helper.EmbeddedImage
+import io.mockk.MockKAnnotations
+import io.mockk.impl.annotations.RelaxedMockK
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class AttachmentsHelperTest {
 
-    @Before
+    private lateinit var helper: AttachmentsHelper
+
+    @RelaxedMockK
+    private lateinit var api: ProtonMailApiManager
+
+    @BeforeTest
     fun setUp() {
+        MockKAnnotations.init(this)
+        helper = AttachmentsHelper(api)
     }
 
     @Test
-    fun areAllAttachmentsAlreadyDownloaded() {
-    }
+    fun verifyOrdinaryMappingToEmbeddedImages() {
+        // given
+        val fileNamePic1 = "pic.jpg"
+        val attachmentId = "attachment1"
+        val mimeType = "image/jpeg"
+        val contentId = "contentId"
+        val key1 = "key1"
+        val size = 3L
+        val contentEncoding1 = "contentEncoding1"
+        val messageId1 = "messageId1"
+        val headers = AttachmentHeaders(
+            mimeType,
+            contentEncoding1,
+            listOf("inline"),
+            listOf(contentId),
+            "contentLocation",
+            "contentEncryption"
+        )
+        val attachment = Attachment(
+            attachmentId,
+            fileNamePic1,
+            mimeType,
+            size,
+            key1,
+            messageId1,
+            inline = true,
+            headers = headers
+        )
+        val embeddedImages = listOf(fileNamePic1)
+        val expected = EmbeddedImage(
+            attachmentId,
+            fileNamePic1,
+            key1,
+            mimeType,
+            contentEncoding1,
+            contentId,
+            null,
+            size,
+            messageId1,
+            null
+        )
 
-    @Test
-    fun createAttachmentFolderIfNeeded() {
-    }
+        // when
+        val actual = helper.fromAttachmentToEmbeddedImage(attachment, embeddedImages)
 
-    @Test
-    fun createUniqueFilename() {
-    }
-
-    @Test
-    fun calculateFilename() {
-    }
-
-    @Test
-    fun getAttachmentData() {
+        // then
+        assertEquals(expected, actual)
     }
 }
