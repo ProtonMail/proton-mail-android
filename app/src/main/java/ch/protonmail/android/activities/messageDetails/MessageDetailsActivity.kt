@@ -140,7 +140,7 @@ internal class MessageDetailsActivity :
     override fun storagePermissionGranted() {
         val attachmentToDownloadIdAux = attachmentToDownloadId.getAndSet(null)
         if (!attachmentToDownloadIdAux.isNullOrEmpty()) {
-            viewModel.tryDownloadingAttachment(this, attachmentToDownloadIdAux, messageId)
+            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux, messageId)
         }
     }
 

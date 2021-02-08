@@ -20,7 +20,10 @@ package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.print.PrintManager
+import androidx.core.content.FileProvider
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -48,6 +51,7 @@ import ch.protonmail.android.attachments.AttachmentsHelper
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.DIR_EMB_ATTACHMENT_DOWNLOADS
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
@@ -68,8 +72,12 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import okio.buffer
+import okio.sink
+import okio.source
 import org.jsoup.Jsoup
 import timber.log.Timber
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -192,6 +200,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             value = contentWithImages ?: contentWithoutImages
         }
     }
+
+    private var mImagesDisplayed: Boolean = false
 
     init {
         tryFindMessage()
@@ -479,23 +489,50 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         message.location = location.messageLocationTypeValue
     }
 
-    fun tryDownloadingAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
+    fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
         viewModelScope.launch(dispatchers.Io) {
             val metadata = attachmentMetadataDatabase
                 .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
-            Timber.v("tryDownloadingAttachment attId: $attachmentToDownloadId metadataId: ${metadata?.id}")
+            Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
             if (metadata != null) {
-                // migration for deprecated saving attachments as files with name <attachmentId>
-                if (metadata.localLocation.endsWith("==")) {
-                    attachmentMetadataDatabase.deleteAttachmentMetadata(metadata)
-                    attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                val uri = metadata.uri
+                if (uri?.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true) {
+                    // explicitly copy embedded attachment to downloads and display it
+                    copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
                 } else {
-                    viewAttachment(context, metadata.name, metadata.uri)
+                    viewAttachment(context, metadata.name, uri)
                 }
             } else {
                 attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
             }
+        }
+    }
+
+    private fun copyAttachmentToDownloadsAndDisplay(
+        context: Context,
+        filename: String,
+        uri: Uri
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            TODO("Not yet implemented")
+        } else {
+            val fileInDownloads = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                filename
+            )
+
+            Timber.v("Copying file from ${uri.path} to ${fileInDownloads.absolutePath}")
+            context.contentResolver.openInputStream(uri)?.use {
+                val sink = fileInDownloads.sink().buffer()
+                sink.writeAll(it.source())
+                sink.close()
+            }
+
+            val newUri = FileProvider.getUriForFile(
+                context, context.applicationContext.packageName + ".provider", fileInDownloads
+            )
+            viewAttachment(context, filename, newUri)
         }
     }
 
@@ -518,8 +555,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         mImagesDisplayed = true // this will be passed to edit intent
         startDownloadEmbeddedImagesJob()
     }
-
-    private var mImagesDisplayed: Boolean = false
 
     fun prepareEmbeddedImages(): Boolean {
         val message = decryptedMessageData.value
