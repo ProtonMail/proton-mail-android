@@ -351,7 +351,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     </string-array>
     <string name="delete_label_confirmation_title">Opravdu chcete smazat vybrané štítky?</string>
     <string name="delete_folder_confirmation_title">Opravdu chcete smazat vybrané složky?</string>
-    <string name="delete_label_confirmation_message">The emails contained here will be found in <b>All Mails</b></string>
+    <string name="delete_label_confirmation_message">Zde uvedené e-maily najdete v části <b>Všechny e-maily</b></string>
     <string name="enter_pin">Zadejte svůj PIN k odemčení složky Doručená pošta</string>
     <string name="enter_pin_message_details">Zadejte svůj PIN k odemčení zprávy</string>
     <string name="enter_current_pin">Zadejte svůj aktuální PIN</string>
@@ -1029,6 +1029,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_settings">Přejít do nastavení</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klíč Firebase API není platný. Oznámení nebudou fungovat.</string>
-    <string name="failed_saving_draft_online">Failed saving online draft for message: \"%s\"</string>
+    <string name="failed_saving_draft_online">Nepodařilo se uložit koncept zprávy: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
 </resources>
