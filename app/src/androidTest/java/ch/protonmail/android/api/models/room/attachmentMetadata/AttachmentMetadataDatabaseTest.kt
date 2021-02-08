@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.models.room.attachmentMetadata
 
+import android.net.Uri
 import androidx.room.Room
 import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
@@ -33,9 +34,9 @@ class AttachmentMetadataDatabaseTest {
     ).build()
     private var database = databaseFactory.getDatabase()
 
-    private val first = AttachmentMetadata("a", "b", 3, "c", "d", 10)
-    private val second = AttachmentMetadata("e", "f", 5, "g", "h", 11)
-    private val third = AttachmentMetadata("i", "j", 7, "k", "l", 8)
+    private val first = AttachmentMetadata("a", "b", 3, "c", "d", 10, Uri.parse("a"))
+    private val second = AttachmentMetadata("e", "f", 5, "g", "h", 11, Uri.parse("e"))
+    private val third = AttachmentMetadata("i", "j", 7, "k", "l", 8, Uri.parse("i"))
     private val standardTest = listOf(first, second, third)
     private fun AttachmentMetadataDatabase.insert(attachments: Iterable<AttachmentMetadata>) {
         attachments.forEach(this::insertAttachmentMetadataBlocking)
@@ -92,7 +93,7 @@ class AttachmentMetadataDatabaseTest {
     @Test
     fun insertReplaceGetAll() {
         val inserted = standardTest
-        val replacement = AttachmentMetadata("e", "eee", 18, "eee", "eee", 123)
+        val replacement = AttachmentMetadata("e", "eee", 18, "eee", "eee", 123, Uri.parse("e"))
         val expected = listOf(first, replacement, third).map { ReflectivePropertiesMatcher(it) }
         database.insert(inserted)
         database.insertAttachmentMetadataBlocking(replacement)
