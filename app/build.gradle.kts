@@ -252,6 +252,7 @@ dependencies {
         `Proton-shared-preferences`,
         `Proton-domain`,
         `Proton-work-manager`,
+        `Proton-presentation`,
 
         // Modules
         project(Module.domain),
