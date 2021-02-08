@@ -127,8 +127,7 @@ class CreateDraftWorker @WorkerInject constructor(
                     return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
 
-                val responseDraft = response.message
-                updateStoredLocalDraft(responseDraft, message)
+                updateStoredLocalDraft(response.message, message)
 
                 Timber.i("Create Draft Worker API call succeeded")
                 Result.success(
@@ -142,6 +141,7 @@ class CreateDraftWorker @WorkerInject constructor(
     }
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
+        val localAttachments = localDraft.Attachments.filterNot { it.isUploaded }
         apiDraft.apply {
             dbId = localDraft.dbId
             toList = localDraft.toList
@@ -154,6 +154,7 @@ class CreateDraftWorker @WorkerInject constructor(
             isDownloaded = true
             setIsRead(true)
             numAttachments = localDraft.numAttachments
+            Attachments = localAttachments.plus(Attachments)
             localId = localDraft.messageId
         }
 
