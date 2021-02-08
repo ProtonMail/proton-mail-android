@@ -85,7 +85,6 @@ import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
-import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -619,7 +618,7 @@ internal class MessageDetailsActivity :
                 attachmentsListAdapter.setIsPgpEncrypted(viewModel.isPgpEncrypted())
                 attachmentsListAdapter.setDownloaded(eventAttachmentId, isDownloaded)
                 if (isDownloaded) {
-                    DownloadUtils.viewAttachment(this, event.filename, event.attachmentUri)
+                    viewModel.viewAttachment(this, event.filename, event.attachmentUri)
                 } else {
                     showToast(R.string.downloading)
                 }

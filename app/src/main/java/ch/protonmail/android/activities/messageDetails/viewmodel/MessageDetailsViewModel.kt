@@ -19,6 +19,7 @@
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
 import android.content.Context
+import android.net.Uri
 import android.print.PrintManager
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
@@ -89,6 +90,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
     private val dispatchers: DispatcherProvider,
     private val attachmentsHelper: AttachmentsHelper,
+    private val downloadUtils: DownloadUtils,
     messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
@@ -489,13 +491,16 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     attachmentMetadataDatabase.deleteAttachmentMetadata(metadata)
                     attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
                 } else {
-                    DownloadUtils.viewAttachment(context, metadata.name, metadata.uri)
+                    viewAttachment(context, metadata.name, metadata.uri)
                 }
             } else {
                 attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
             }
         }
     }
+
+    fun viewAttachment(context: Context, filename: String?, uri: Uri?) =
+        downloadUtils.viewAttachment(context, filename, uri)
 
     fun remoteContentDisplayed() {
         remoteContentDisplayed = true
