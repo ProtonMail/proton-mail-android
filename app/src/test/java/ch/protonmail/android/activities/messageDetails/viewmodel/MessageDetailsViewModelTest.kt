@@ -32,6 +32,7 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
+import ch.protonmail.android.utils.DownloadUtils
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -50,6 +51,8 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
         every { get<String>(MessageDetailsActivity.EXTRA_MESSAGE_ID) } returns "id1"
         every { get<Boolean>(MessageDetailsActivity.EXTRA_TRANSIENT_MESSAGE) } returns false
     }
+
+    private val downloadUtils = DownloadUtils()
 
     @RelaxedMockK
     private lateinit var messageDetailsRepository: MessageDetailsRepository
@@ -96,12 +99,12 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     }
 
     @Test
-    fun getParsedMessage() {
+    fun verifyThatMessageIsParsedProperly() {
+        // given
         val decryptedMessage = "decrypted message content"
         val windowWidth = 500
         val defaultErrorMessage = "errorHappened"
         val cssContent = "css"
-        // given
         val expected = "<html>\n <head>\n  <style>$cssContent</style>\n  <meta name=\"viewport\" content=\"width=$windowWidth, maximum-scale=2\"> \n </head>\n <body>\n  <div id=\"pm-body\" class=\"inbox-body\">   $decryptedMessage  \n  </div>\n </body>\n</html>"
 
         // when
