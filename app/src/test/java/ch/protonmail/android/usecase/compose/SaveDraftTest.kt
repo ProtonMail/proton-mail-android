@@ -196,7 +196,6 @@ class SaveDraftTest : CoroutinesTest {
                 decryptedBody = "Message body in plain text"
             }
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
 
             // When
             saveDraft.invoke(
@@ -221,7 +220,6 @@ class SaveDraftTest : CoroutinesTest {
                 decryptedBody = "Message body in plain text"
             }
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every {
                 createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273")
             } answers { flowOf(null) }
@@ -240,20 +238,18 @@ class SaveDraftTest : CoroutinesTest {
     fun saveDraftsUpdatesPendingForSendingMessageIdWithNewApiDraftIdWhenWorkerSucceedsAndMessageIsPendingForSending() {
         runBlockingTest {
             // Given
-            val localDraftId = "8345"
+            val localMessageId = "45623"
             val message = Message().apply {
                 dbId = 123L
-                this.messageId = "45623"
+                this.messageId = localMessageId
                 addressID = "addressId"
                 decryptedBody = "Message body in plain text"
-                localId = localDraftId
             }
             coEvery { messageDetailsRepository.findMessageById(any()) } returns null
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
-            every { pendingActionsDao.findPendingSendByOfflineMessageId("45623") } answers {
+            every { pendingActionsDao.findPendingSendByMessageId("45623") } answers {
                 PendingSend(
-                    "234234", localDraftId, "offlineId", false, 834L
+                    "234234", localMessageId, null, false, 834L
                 )
             }
             coEvery { uploadAttachments(any(), any(), any(), false) } returns UploadAttachments.Result.Success
@@ -276,7 +272,7 @@ class SaveDraftTest : CoroutinesTest {
             ).first()
 
             // Then
-            val expected = PendingSend("234234", "createdDraftMessageId", "offlineId", false, 834L)
+            val expected = PendingSend("234234", "createdDraftMessageId", null, false, 834L)
             verify { pendingActionsDao.insertPendingForSend(expected) }
         }
     }
@@ -302,9 +298,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
             coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
-            every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
-            coEvery { uploadAttachments(any(), apiDraft, any(), false) } returns UploadAttachments.Result.Success
+            coEvery { uploadAttachments(any(), apiDraft, any()) } returns UploadAttachments.Result.Success
             every {
                 createDraftScheduler.enqueue(
                     message,
@@ -344,7 +338,6 @@ class SaveDraftTest : CoroutinesTest {
             val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.FAILED, workOutputData)
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
             every {
                 createDraftScheduler.enqueue(
                     message,
@@ -387,8 +380,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns message.copy(messageId = "newDraftId")
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
-            coEvery { uploadAttachments(newAttachmentIds, any(), any(), false) } returns Failure(errorMessage)
+            coEvery { uploadAttachments(newAttachmentIds, any(), any()) } returns Failure(errorMessage)
             every {
                 createDraftScheduler.enqueue(
                     message,
@@ -430,9 +422,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
             coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
-            every { pendingActionsDao.findPendingSendByDbId(9833L) } returns null
-            every { pendingActionsDao.findPendingSendByOfflineMessageId(localDraftId) } returns PendingSend()
-            coEvery { uploadAttachments(any(), apiDraft, any(), false) } returns UploadAttachments.Result.Success
+            coEvery { uploadAttachments(any(), apiDraft, any()) } returns UploadAttachments.Result.Success
             every {
                 createDraftScheduler.enqueue(
                     message,
