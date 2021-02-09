@@ -35,6 +35,7 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.worker.failure
 import timber.log.Timber
 import java.security.GeneralSecurityException
 import javax.inject.Inject
@@ -94,6 +95,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
             message.decrypt(addressCrypto)
         } catch (exception: GeneralSecurityException) {
             Timber.e(exception, "Decrypt exception")
+            failure(exception)
         }
 
         if (message.isPGPMime) {

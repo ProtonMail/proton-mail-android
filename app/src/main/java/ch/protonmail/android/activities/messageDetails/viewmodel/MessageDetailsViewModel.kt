@@ -504,6 +504,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     viewAttachment(context, metadata.name, uri)
                 }
             } else {
+                Timber.v("No metadata found for attachment id: $attachmentToDownloadId")
                 attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
             }
         }

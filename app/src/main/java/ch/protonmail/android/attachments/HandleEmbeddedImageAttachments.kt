@@ -117,6 +117,9 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                     System.currentTimeMillis(),
                     uri
                 )
+                Timber.v(
+                    "Insert embd attachment id: ${embeddedImageWithFile.attachmentId} messageId: ${embeddedImageWithFile.messageId}"
+                )
                 attachmentMetadataDatabase.insertAttachmentMetadata(attachmentMetadata)
 
             } catch (ioException: IOException) {
@@ -163,14 +166,13 @@ class HandleEmbeddedImageAttachments @Inject constructor(
                     embeddedImagesWithLocalFiles.add(
                         embeddedImage.copy(localFileName = it.localLocation.substringAfterLast("/"))
                     )
-                }
+                } ?: return false // a file is not downloaded
             }
 
-            // all embedded images are in the local filestorage already
             if (
                 embeddedImagesWithLocalFiles.isNotEmpty() &&
                 embeddedImagesWithLocalFiles.all { it.localFileName != null }
-            ) return true
+            ) return true // all embedded images are in the local file storage already
         }
 
         return false
