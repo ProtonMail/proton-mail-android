@@ -35,11 +35,11 @@ import ch.protonmail.android.events.Status
 import ch.protonmail.android.storage.AttachmentClearingServiceHelper
 import ch.protonmail.android.utils.AppUtil
 import kotlinx.coroutines.suspendCancellableCoroutine
-import me.proton.core.util.kotlin.DispatcherProvider
 import okio.buffer
 import okio.sink
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 private const val ATTACHMENT_UNKNOWN_FILE_NAME = "attachment"
@@ -52,7 +52,7 @@ class HandleSingleAttachment @Inject constructor(
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
     private val attachmentsHelper: AttachmentsHelper,
     private val clearingServiceHelper: AttachmentClearingServiceHelper,
-    private val dispatchers: DispatcherProvider
+    private val attachmentsRepository: AttachmentsRepository
 ) {
 
     suspend operator fun invoke(
@@ -105,10 +105,15 @@ class HandleSingleAttachment @Inject constructor(
     }
 
     private suspend fun downloadAttachment(attachment: Attachment, filename: String, crypto: AddressCrypto): Uri? =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            downloadAttachmentForAndroidQ(attachment, filename, crypto)
-        } else {
-            downloadAttachmentBeforeQ(attachment, filename, crypto)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                downloadAttachmentForAndroidQ(attachment, filename, crypto)
+            } else {
+                downloadAttachmentBeforeQ(attachment, filename, crypto)
+            }
+        } catch (exception: IOException) {
+            Timber.w(exception, "Unable to download attachment file $filename")
+            null
         }
 
     @TargetApi(Build.VERSION_CODES.Q)
@@ -117,10 +122,10 @@ class HandleSingleAttachment @Inject constructor(
         filename: String,
         crypto: AddressCrypto
     ): Uri? {
-        val decryptedByteArray = attachmentsHelper.getAttachmentData(
+        val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
             crypto,
             requireNotNull(attachment.attachmentId),
-            attachment.keyPackets
+            requireNotNull(attachment.keyPackets)
         )
 
         return decryptedByteArray?.inputStream()?.let {
@@ -136,34 +141,33 @@ class HandleSingleAttachment @Inject constructor(
         crypto: AddressCrypto
     ): Uri? {
 
-        val decryptedByteArray = attachmentsHelper.getAttachmentData(
+        val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
             crypto,
             requireNotNull(attachment.attachmentId),
-            attachment.keyPackets
+            requireNotNull(attachment.keyPackets)
         )
-        val file = saveBytesToFile(filename, decryptedByteArray)
 
-        val result = awaitUriFromMediaScanned(
-            context,
-            file,
-            attachment.mimeType
-        )
-        val uri = result.second
-        Timber.v("Stored file: $filename path: ${result.first} uri: $uri")
-
-        return uri
+        return decryptedByteArray?.let { bytes ->
+            val file = saveBytesToFile(filename, bytes)
+            val result = awaitUriFromMediaScanned(
+                context,
+                file,
+                attachment.mimeType
+            )
+            val uri = result.second
+            Timber.v("Stored file: $filename path: ${result.first} uri: $uri")
+            uri
+        }
     }
 
-    private fun saveBytesToFile(filename: String, decryptedByteArray: ByteArray?): File {
+    private fun saveBytesToFile(filename: String, bytes: ByteArray): File {
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             filename
         )
 
         file.sink().buffer().use { sink ->
-            decryptedByteArray?.let {
-                sink.write(it)
-            }
+            sink.write(bytes)
         }
         return file
     }

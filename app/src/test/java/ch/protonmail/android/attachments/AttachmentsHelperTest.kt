@@ -19,12 +19,10 @@
 
 package ch.protonmail.android.attachments
 
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import io.mockk.MockKAnnotations
-import io.mockk.impl.annotations.RelaxedMockK
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,13 +31,10 @@ class AttachmentsHelperTest {
 
     private lateinit var helper: AttachmentsHelper
 
-    @RelaxedMockK
-    private lateinit var api: ProtonMailApiManager
-
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        helper = AttachmentsHelper(api)
+        helper = AttachmentsHelper()
     }
 
     @Test

@@ -25,44 +25,23 @@ import android.content.ContentValues
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Base64
-import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.crypto.AddressCrypto
-import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import okio.buffer
 import okio.sink
 import okio.source
 import timber.log.Timber
-import java.io.IOException
 import java.io.InputStream
 import java.util.Locale
 import javax.inject.Inject
 
 private const val BASE_64 = "base64"
 
-class AttachmentsHelper @Inject constructor(
-    private val api: ProtonMailApiManager
-) {
-
-    suspend fun getAttachmentData(
-        crypto: AddressCrypto,
-        attachmentId: String,
-        key: String?
-    ): ByteArray? = try {
-        val responseBody = api.downloadAttachment(attachmentId)
-
-        responseBody?.byteStream()?.source()?.buffer()?.use { bufferedSource ->
-            val byteArray = bufferedSource.readByteArray()
-            val keyBytes = Base64.decode(key, Base64.DEFAULT)
-            crypto.decryptAttachment(CipherText(keyBytes, byteArray)).decryptedData
-        }
-    } catch (exception: IOException) {
-        Timber.w(exception, "getAttachmentData exception")
-        null
-    }
-
+/**
+ * Common methods used by Download attachments components.
+ * TODO: Move to new AttachmentsRepository
+ */
+class AttachmentsHelper @Inject constructor() {
 
     fun fromAttachmentToEmbeddedImage(
         attachment: Attachment,

@@ -166,6 +166,9 @@ class AddressCrypto @AssistedInject constructor(
         }
     }
 
+    fun decryptAttachment(keyPacket: ByteArray, dataPacket: ByteArray): BinaryDecryptionResult =
+        decryptAttachment(CipherText(keyPacket, dataPacket))
+
     /**
      * Decrypt Message or Contact Data
      */

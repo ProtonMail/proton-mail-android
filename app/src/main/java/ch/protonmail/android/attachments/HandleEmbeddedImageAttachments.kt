@@ -45,8 +45,8 @@ import javax.inject.Inject
 class HandleEmbeddedImageAttachments @Inject constructor(
     private val context: Context,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-    private val downloadHelper: AttachmentsHelper,
-    private val clearingServiceHelper: AttachmentClearingServiceHelper
+    private val clearingServiceHelper: AttachmentClearingServiceHelper,
+    private val attachmentsRepository: AttachmentsRepository
 ) {
 
     suspend operator fun invoke(
@@ -89,14 +89,14 @@ class HandleEmbeddedImageAttachments @Inject constructor(
 
             try {
 
-                val decryptedByteArray = downloadHelper.getAttachmentData(
+                val decryptedByteArray = attachmentsRepository.getAttachmentDataOrNull(
                     crypto,
                     embeddedImage.attachmentId,
                     embeddedImage.key
                 )
 
-                attachmentFile.sink().buffer().use { sink ->
-                    decryptedByteArray?.let { bytes ->
+                decryptedByteArray?.let { bytes ->
+                    attachmentFile.sink().buffer().use { sink ->
                         sink.write(bytes)
                     }
                 }
@@ -156,7 +156,6 @@ class HandleEmbeddedImageAttachments @Inject constructor(
         if (attachmentsDirectoryFile.exists()) {
 
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
-            attachmentMetadataList.size
 
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->

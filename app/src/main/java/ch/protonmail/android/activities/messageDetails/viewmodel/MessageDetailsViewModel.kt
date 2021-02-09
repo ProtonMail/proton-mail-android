@@ -202,7 +202,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
     }
 
-    private var mImagesDisplayed: Boolean = false
+    private var areImagesDisplayed: Boolean = false
 
     init {
         tryFindMessage()
@@ -212,7 +212,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             for (body in messageRenderer.renderedBody) {
                 // TODO Sending twice the same value, perhaps we could improve this
                 _downloadEmbeddedImagesResult.postValue(body)
-                mImagesDisplayed = true
+                areImagesDisplayed = true
             }
         }
     }
@@ -321,7 +321,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 newMessageTitle,
                 content,
                 mBigContentHolder,
-                mImagesDisplayed,
+                areImagesDisplayed,
                 remoteContentDisplayed,
                 _embeddedImagesAttachments,
                 dispatchers.Io,
@@ -568,10 +568,10 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         prepareEmbeddedImages()
     }
 
-    fun isEmbeddedImagesDisplayed() = mImagesDisplayed
+    fun isEmbeddedImagesDisplayed() = areImagesDisplayed
 
     fun displayEmbeddedImages() {
-        mImagesDisplayed = true // this will be passed to edit intent
+        areImagesDisplayed = true // this will be passed to edit intent
         startDownloadEmbeddedImagesJob()
     }
 

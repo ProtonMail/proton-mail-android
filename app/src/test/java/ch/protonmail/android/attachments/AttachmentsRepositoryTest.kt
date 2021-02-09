@@ -32,6 +32,7 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.utils.crypto.BinaryDecryptionResult
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -351,5 +352,27 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val expectedResult = AttachmentsRepository.Result.Failure("This attachment name / type is invalid. Please retry")
             assertEquals(expectedResult, result)
         }
+    }
+
+
+    @Test
+    fun verifyThatAttachmentsBytesCanBeDownloadedSuccessfully() = runBlockingTest {
+        // given
+        val attachmentId = "Ida1"
+        val key = "zeKey1"
+        val content = "content1234"
+        val decryptedContent = "decryptedContent1234".encodeToByteArray()
+        val decryptedResult = mockk<BinaryDecryptionResult> {
+            every { decryptedData } returns decryptedContent
+        }
+        every { crypto.decryptAttachment(any(), any()) } returns decryptedResult
+        val testResponseBody = okhttp3.ResponseBody.create(MediaType.parse("image/jpg"), content)
+        coEvery { apiManager.downloadAttachment(attachmentId) } returns testResponseBody
+
+        // when
+        val result = repository.getAttachmentDataOrNull(crypto, attachmentId, key)
+
+        // then
+        assertEquals(decryptedContent, result)
     }
 }
