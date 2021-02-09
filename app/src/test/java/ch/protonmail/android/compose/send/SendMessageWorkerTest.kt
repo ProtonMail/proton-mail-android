@@ -155,7 +155,8 @@ class SendMessageWorkerTest : CoroutinesTest {
                 workManager.enqueueUniqueWork(
                     "sendMessageUniqueWorkName-$messageId",
                     ExistingWorkPolicy.REPLACE,
-                    capture(requestSlot))
+                    capture(requestSlot)
+                )
             }
             val workSpec = requestSlot.captured.workSpec
             val constraints = workSpec.constraints

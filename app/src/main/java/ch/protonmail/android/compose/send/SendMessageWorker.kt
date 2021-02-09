@@ -116,40 +116,40 @@ class SendMessageWorker @WorkerInject constructor(
         Timber.d("Send Message Worker read local message with messageId ${message.messageId}")
 
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
+       
+        val result = saveDraft(message, previousSenderAddressId)
+        return if (result is SaveDraftResult.Success) {
+            val messageId = result.draftId
+            Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
+            val savedDraftMessage = messageDetailsRepository.findMessageById(messageId) ?: return retryOrFail(
+                SavedDraftMessageNotFound,
+                message
+            )
 
-        return when (val result = saveDraft(message, previousSenderAddressId)) {
-            is SaveDraftResult.Success -> {
-                val messageId = result.draftId
-                Timber.i("Send Message Worker saved draft successfully for messageId $messageId")
-                val savedDraftMessage = messageDetailsRepository.findMessageById(messageId) ?: return retryOrFail(
-                    SavedDraftMessageNotFound,
-                    message
-                )
+            Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
+            val sendPreferences = requestSendPreferences(savedDraftMessage) ?: return retryOrFail(
+                FetchSendPreferencesFailed,
+                savedDraftMessage
+            )
 
-                Timber.d("Send Message Worker fetching send preferences for messageId $messageId")
-                val sendPreferences = requestSendPreferences(savedDraftMessage) ?: return retryOrFail(
-                    FetchSendPreferencesFailed,
-                    savedDraftMessage
-                )
+            Timber.d("Send Message Worker building request for messageId $messageId")
+            val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences) ?: return retryOrFail(
+                FailureBuildingApiRequest,
+                savedDraftMessage
+            )
 
-                Timber.d("Send Message Worker building request for messageId $messageId")
-                val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences) ?: return retryOrFail(
-                    FailureBuildingApiRequest,
-                    savedDraftMessage
-                )
-
-                runCatching {
-                    apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
-                }.fold(
-                    onSuccess = { response ->
-                        handleSendMessageResponse(messageId, response, savedDraftMessage)
-                    },
-                    onFailure = { exception ->
-                        retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
-                    }
-                )
-            }
-            else -> retryOrFail(DraftCreationFailed, message)
+            runCatching {
+                apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
+            }.fold(
+                onSuccess = { response ->
+                    handleSendMessageResponse(messageId, response, savedDraftMessage)
+                },
+                onFailure = { exception ->
+                    retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
+                }
+            )
+        } else {
+            retryOrFail(DraftCreationFailed, message)
         }
 
     }
