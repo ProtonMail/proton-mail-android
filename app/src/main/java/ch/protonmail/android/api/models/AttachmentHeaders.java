@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -63,6 +63,7 @@ public class AttachmentHeaders implements Serializable {
     private String contentLocation;
     @SerializedName(Fields.Attachment.CONTENT_ENCRYPTION)
     private String contentEncryption;
+    private Long serialVersionUID = -8741548902749037534L;
 
     // region getters
     public String getContentType() {
@@ -89,7 +90,9 @@ public class AttachmentHeaders implements Serializable {
         return contentLocation;
     }
 
-    public String getContentEncryption() { return contentEncryption; }
+    public String getContentEncryption() {
+        return contentEncryption;
+    }
     // endregion
 
     public AttachmentHeaders() {
@@ -112,11 +115,11 @@ public class AttachmentHeaders implements Serializable {
             Logger.doLogException(TAG_ATTACHMENT_HEADERS, "Serialization of att headers failed ", e);
         }
 
-        return Base64.encodeToString(out.toByteArray(),Base64.DEFAULT);
+        return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT);
     }
 
     public static AttachmentHeaders fromString(String value) {
-        ByteArrayInputStream in = new ByteArrayInputStream(Base64.decode(value,Base64.DEFAULT));
+        ByteArrayInputStream in = new ByteArrayInputStream(Base64.decode(value, Base64.DEFAULT));
         AttachmentHeaders result = null;
         try {
             result = (AttachmentHeaders) new ObjectInputStream(in).readObject();
@@ -155,24 +158,20 @@ public class AttachmentHeaders implements Serializable {
             String contentType = "";
             JsonElement contentTypeElement = jsonObject.get(Fields.Attachment.CONTENT_TYPE);
             if (contentTypeElement != null) {
-                contentType = contentTypeElement.getAsString();
+                if (contentTypeElement.isJsonArray()) {
+                    contentType = contentTypeElement.getAsJsonArray().get(0).getAsString();
+                } else {
+                    contentType = contentTypeElement.getAsString();
+                }
             }
 
             String contentTransferEncoding = "";
             JsonElement contentTransferEncodingElement = jsonObject.get(Fields.Attachment.CONTENT_TRANSFER_ENCODING);
             if (contentTransferEncodingElement != null) {
-                try {
+                if (contentTransferEncodingElement.isJsonArray()) {
+                    contentTransferEncoding = contentTransferEncodingElement.getAsJsonArray().get(0).getAsString();
+                } else {
                     contentTransferEncoding = contentTransferEncodingElement.getAsString();
-                } catch (Exception e) {
-                    // noop
-                }
-                if (TextUtils.isEmpty(contentTransferEncoding)) {
-                    try {
-                        JsonArray contentTransferEncodingArray = contentTransferEncodingElement.getAsJsonArray();
-                        contentTransferEncoding = contentTransferEncodingArray.get(0).getAsString();
-                    } catch (Exception e) {
-                        // noop
-                    }
                 }
             }
 
@@ -194,7 +193,11 @@ public class AttachmentHeaders implements Serializable {
             String contentLocation = "";
             JsonElement contentLocationElement = jsonObject.get(Fields.Attachment.CONTENT_LOCATION);
             if (contentLocationElement != null) {
-                contentLocation = contentLocationElement.getAsString();
+                if (contentLocationElement.isJsonArray()) {
+                    contentLocation = contentLocationElement.getAsJsonArray().get(0).getAsString();
+                } else {
+                    contentLocation = contentLocationElement.getAsString();
+                }
             }
 
             List<String> contentDisposition = new ArrayList<>();
@@ -222,7 +225,11 @@ public class AttachmentHeaders implements Serializable {
             String contentEncryption = "";
             JsonElement contentEncryptionElement = jsonObject.get(Fields.Attachment.CONTENT_ENCRYPTION);
             if (contentEncryptionElement != null) {
-                contentEncryption = contentEncryptionElement.getAsString();
+                if (contentEncryptionElement.isJsonArray()) {
+                    contentEncryption = contentEncryptionElement.getAsJsonArray().get(0).getAsString();
+                } else {
+                    contentEncryption = contentEncryptionElement.getAsString();
+                }
             }
 
             return new AttachmentHeaders(contentType, contentTransferEncoding, contentDisposition, contentId, contentLocation, contentEncryption);
