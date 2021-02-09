@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api
 
+import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.di.AlternativeApiPins
 import ch.protonmail.android.utils.crypto.ServerTimeInterceptor
@@ -46,7 +47,8 @@ class OkHttpProvider @Inject constructor(
         authenticator: Authenticator,
         loggingLevel: HttpLoggingInterceptor.Level,
         connectionSpecs: List<ConnectionSpec?>,
-        serverTimeInterceptor: ServerTimeInterceptor?
+        serverTimeInterceptor: ServerTimeInterceptor?,
+        cookieStore: ProtonCookieStore?
     ): ProtonOkHttpClient {
         if (okHttpClients.containsKey(id)) {
             return okHttpClients[id]!! // we can safely enforce here because we are sure it exists
@@ -58,7 +60,8 @@ class OkHttpProvider @Inject constructor(
                 authenticator,
                 loggingLevel,
                 connectionSpecs,
-                serverTimeInterceptor
+                serverTimeInterceptor,
+                cookieStore
             )
         } else {
             ProxyOkHttpClient(
@@ -69,7 +72,8 @@ class OkHttpProvider @Inject constructor(
                 connectionSpecs,
                 serverTimeInterceptor,
                 endpointUri,
-                pinnedKeyHashes
+                pinnedKeyHashes,
+                cookieStore
             )
         }
         return okHttpClients[id]!!

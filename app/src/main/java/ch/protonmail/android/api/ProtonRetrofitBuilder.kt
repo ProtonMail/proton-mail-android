@@ -19,6 +19,7 @@
 package ch.protonmail.android.api
 
 import android.os.Build
+import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.interceptors.ProtonMailAttachmentRequestInterceptor
 import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
@@ -57,7 +58,8 @@ class ProtonRetrofitBuilder @Inject constructor(
     val userManager: UserManager,
     val jobManager: JobManager,
     private val networkUtil: QueueNetworkUtil,
-    private val authenticator: ProtonMailAuthenticator
+    private val authenticator: ProtonMailAuthenticator,
+    private val cookieStore: ProtonCookieStore?
 ) {
     private val cache = HashMap<RetrofitType, Retrofit>()
     private lateinit var endpointUri: String
@@ -74,7 +76,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         userManager,
                         jobManager,
                         networkUtil,
-                        authenticator
+                        authenticator,
+                        cookieStore
                     ).build(endpointUri).build()
                 }
                 RetrofitType.PING -> {
@@ -83,7 +86,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         userManager,
                         jobManager,
                         networkUtil,
-                        authenticator
+                        authenticator,
+                        cookieStore
                     )
                     retrofit.build(endpointUri).build()
                 }
@@ -93,7 +97,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         userManager,
                         jobManager,
                         networkUtil,
-                        authenticator
+                        authenticator,
+                        cookieStore
                     )
                     retrofit.buildExtended(endpointUri).build()
                 }
@@ -110,7 +115,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         userManager,
                         jobManager,
                         networkUtil,
-                        authenticator
+                        authenticator,
+                        cookieStore
                     )
                     retrofit.build(endpointUri).build()
                 }
@@ -121,7 +127,8 @@ class ProtonRetrofitBuilder @Inject constructor(
                         userManager,
                         jobManager,
                         networkUtil,
-                        authenticator
+                        authenticator,
+                        cookieStore
                     )
                     retrofit.build(endpointUri).build()
                 }
@@ -144,7 +151,7 @@ class ProtonRetrofitBuilder @Inject constructor(
 sealed class ProtonRetrofit(
     val userManager: UserManager,
     val jobManager: JobManager,
-    val networkUtil: QueueNetworkUtil
+    networkUtil: QueueNetworkUtil
 ) {
     val defaultInterceptor =
         ProtonMailRequestInterceptor.getInstance(userManager, jobManager, networkUtil)
@@ -205,7 +212,8 @@ class ProtonRetrofitPublic(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    private val authenticator: ProtonMailAuthenticator
+    private val authenticator: ProtonMailAuthenticator,
+    private val cookieStore: ProtonCookieStore?
 ) : ProtonRetrofit(userManager, jobManager, networkUtil) {
     override fun configureOkHttp(
         endpointUri: String,
@@ -220,7 +228,8 @@ class ProtonRetrofitPublic(
             authenticator,
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
-            serverTimeInterceptor
+            serverTimeInterceptor,
+            cookieStore
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
@@ -231,7 +240,8 @@ class ProtonRetrofitPing(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    private val authenticator: ProtonMailAuthenticator
+    private val authenticator: ProtonMailAuthenticator,
+    private val cookieStore: ProtonCookieStore?
 ) : ProtonRetrofit(userManager, jobManager, networkUtil) {
     override fun configureOkHttp(
         endpointUri: String,
@@ -248,7 +258,8 @@ class ProtonRetrofitPing(
             authenticator,
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
-            serverTimeInterceptor
+            serverTimeInterceptor,
+            cookieStore
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
@@ -259,7 +270,8 @@ class ProtonRetrofitExtended(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    private val authenticator: ProtonMailAuthenticator
+    private val authenticator: ProtonMailAuthenticator,
+    private val cookieStore: ProtonCookieStore?
 ) : ProtonRetrofit(userManager, jobManager, networkUtil) {
     override fun configureOkHttp(
         endpointUri: String,
@@ -276,7 +288,8 @@ class ProtonRetrofitExtended(
             authenticator,
             HttpLoggingInterceptor.Level.HEADERS,
             spec,
-            serverTimeInterceptor
+            serverTimeInterceptor,
+            cookieStore
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
@@ -288,7 +301,8 @@ class ProtonRetrofitAttachments(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    private val authenticator: ProtonMailAuthenticator
+    private val authenticator: ProtonMailAuthenticator,
+    private val cookieStore: ProtonCookieStore?
 ) : ProtonRetrofit(userManager, jobManager, networkUtil) {
     override fun configureOkHttp(
         endpointUri: String,
@@ -305,7 +319,8 @@ class ProtonRetrofitAttachments(
             authenticator,
             HttpLoggingInterceptor.Level.BASIC,
             spec,
-            serverTimeInterceptor
+            serverTimeInterceptor,
+            cookieStore
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
@@ -316,7 +331,8 @@ class ProtonRetrofitSecure(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    private val authenticator: ProtonMailAuthenticator
+    private val authenticator: ProtonMailAuthenticator,
+    private val cookieStore: ProtonCookieStore?
 ) : ProtonRetrofit(userManager, jobManager, networkUtil) {
     override fun configureOkHttp(
         endpointUri: String,
@@ -333,7 +349,8 @@ class ProtonRetrofitSecure(
             authenticator,
             HttpLoggingInterceptor.Level.BASIC,
             spec,
-            serverTimeInterceptor
+            serverTimeInterceptor,
+            cookieStore
         )
         return okHttpClient.timeout(TEN_SECONDS).build()
     }
