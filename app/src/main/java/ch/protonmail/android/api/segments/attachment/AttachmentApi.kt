@@ -25,7 +25,6 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.api.utils.DeafProgressListener
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.ProtonMailApplication
 import okhttp3.RequestBody
@@ -47,7 +46,7 @@ class AttachmentApi(
 
     @Throws(IOException::class)
     override fun downloadAttachmentBlocking(attachmentId: String): ByteArray =
-        downloadAttachmentBlocking(attachmentId, DeafProgressListener())
+        downloadService.downloadAttachmentBlocking(attachmentId).execute().body()!!.bytes()
 
     @Throws(IOException::class)
     override fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray {
