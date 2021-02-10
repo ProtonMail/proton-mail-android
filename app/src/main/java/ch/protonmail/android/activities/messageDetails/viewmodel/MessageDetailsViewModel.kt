@@ -269,7 +269,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
-                    it, decryptedMessageData.value!!.embeddedImagesArray.toList()
+                    it, decryptedMessageData.value!!.embeddedImageIds.toList()
                 )
             }
             val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
@@ -584,7 +584,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             val embeddedImagesAttachments = ArrayList<Attachment>()
             for (attachment in attachments) {
                 val embeddedImage = attachmentsHelper
-                    .fromAttachmentToEmbeddedImage(attachment, message.embeddedImagesArray.toList()) ?: continue
+                    .fromAttachmentToEmbeddedImage(attachment, message.embeddedImageIds) ?: continue
                 embeddedImagesToFetch.add(embeddedImage)
                 embeddedImagesAttachments.add(attachment)
             }

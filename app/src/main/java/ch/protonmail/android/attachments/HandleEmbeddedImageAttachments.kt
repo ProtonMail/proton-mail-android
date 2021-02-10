@@ -55,6 +55,12 @@ class HandleEmbeddedImageAttachments @Inject constructor(
         messageId: String
     ): ListenableWorker.Result {
 
+        if (embeddedImages.isEmpty()) {
+            Timber.i("Cannot download empty embedded attachments list")
+            AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.FAILED))
+            return ListenableWorker.Result.failure()
+        }
+
         val pathname = context.filesDir.toString() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS + messageId
         Timber.v("Embedded attachments path: $pathname")
         val attachmentsDirectoryFile = File(pathname)

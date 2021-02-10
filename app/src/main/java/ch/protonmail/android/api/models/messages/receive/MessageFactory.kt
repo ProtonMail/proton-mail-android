@@ -125,7 +125,7 @@ class MessageFactory @Inject constructor(
             message.header = it.Header
             message.parsedHeaders = it.parsedHeaders
             message.Attachments = it.Attachments.map(attachmentFactory::createAttachment)
-            message.embeddedImagesArray = it.embeddedImagesArray.toMutableList()
+            message.embeddedImageIds = it.embeddedImagesArray.toMutableList()
             val numOfAttachments = message.numAttachments
             val attachmentsListSize = message.Attachments.size
             if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)

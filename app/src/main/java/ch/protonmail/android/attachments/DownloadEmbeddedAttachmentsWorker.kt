@@ -35,14 +35,15 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import ch.protonmail.android.worker.failure
 import timber.log.Timber
 import java.security.GeneralSecurityException
 import javax.inject.Inject
 
 // region constants
-private const val KEY_INPUT_DATA_MESSAGE_ID_STRING = "KEY_INPUT_DATA_MESSAGE_ID_STRING"
-private const val KEY_INPUT_DATA_USERNAME_STRING = "KEY_INPUT_DATA_USERNAME_STRING"
+internal const val KEY_INPUT_DATA_MESSAGE_ID_STRING = "KEY_INPUT_DATA_MESSAGE_ID_STRING"
+internal const val KEY_INPUT_DATA_USERNAME_STRING = "KEY_INPUT_DATA_USERNAME_STRING"
 internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHMENT_ID_STRING"
 // endregion
 
@@ -65,7 +66,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val downloadHelper: AttachmentsHelper,
+    private val attachmentsHelper: AttachmentsHelper,
     private val handleSingleAttachment: HandleSingleAttachment,
     private val handleEmbeddedImages: HandleEmbeddedImageAttachments
 ) : CoroutineWorker(context, params) {
@@ -76,6 +77,12 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         val messageId = requireNotNull(inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING))
         val username = requireNotNull(inputData.getString(KEY_INPUT_DATA_USERNAME_STRING))
         val singleAttachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING)
+
+        if (messageId.isEmpty() || username.isEmpty()) {
+            return Result.failure(
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messageId or username")
+            )
+        }
 
         var message = messageDetailsRepository.findSearchMessageById(messageId)
         var attachments = if (message != null) {
@@ -103,7 +110,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         }
 
         val embeddedImages = attachments.mapNotNull {
-            downloadHelper.fromAttachmentToEmbeddedImage(it, message.embeddedImagesArray)
+            attachmentsHelper.fromAttachmentToEmbeddedImage(it, message.embeddedImageIds)
         }
         val otherAttachments = attachments.filter { attachment ->
             embeddedImages.find { attachment.attachmentId == it.attachmentId } == null

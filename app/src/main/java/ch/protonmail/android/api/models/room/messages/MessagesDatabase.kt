@@ -150,7 +150,7 @@ abstract class MessagesDatabase {
             )
         }
 
-        if (message.embeddedImagesArray.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()) {
+        if (message.embeddedImageIds.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()) {
             localAttachments.forEach { localAttachment ->
                 localAttachment.setMessage(message)
                 preservedAttachments = localAttachments
@@ -162,7 +162,7 @@ abstract class MessagesDatabase {
                         if (it.inline) {
                             preservedAtt.inline = it.inline
                         } else {
-                            if (message.embeddedImagesArray.isNotEmpty()) {
+                            if (message.embeddedImageIds.isNotEmpty()) {
                                 preservedAtt.setMessage(message)
                             }
                         }
@@ -170,7 +170,7 @@ abstract class MessagesDatabase {
                         preservedAtt.isUploading = it.isUploading
                     }
                 } else {
-                    if (message.embeddedImagesArray.isNotEmpty()) {
+                    if (message.embeddedImageIds.isNotEmpty()) {
                         preservedAtt.setMessage(message)
                     }
                 }

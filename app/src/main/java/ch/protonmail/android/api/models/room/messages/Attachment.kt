@@ -121,7 +121,7 @@ data class Attachment @JvmOverloads constructor(
     fun setMessage(message: Message?) {
         if (message != null) {
             this.messageId = message.messageId ?: ""
-            this.inline = isInline(message.embeddedImagesArray)
+            this.inline = isInline(message.embeddedImageIds)
         }
     }
 

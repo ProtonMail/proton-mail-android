@@ -183,7 +183,7 @@ data class Message @JvmOverloads constructor(
     var hasInvalidSignature: Boolean = false
 
     @Ignore
-    var embeddedImagesArray = listOf<String>()
+    var embeddedImageIds = listOf<String>()
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = BaseColumns._ID)
@@ -283,7 +283,7 @@ data class Message @JvmOverloads constructor(
 
     fun writeTo(message: Message) {
         message.messageBody = messageBody
-        message.embeddedImagesArray = embeddedImagesArray
+        message.embeddedImageIds = embeddedImageIds
         message.numAttachments = numAttachments
         val attachments = Attachments
         attachments.forEach { attachment ->
@@ -313,7 +313,7 @@ data class Message @JvmOverloads constructor(
             val match = matcher.group()
             embedded.add(match.removePrefix("cid:"))
         }
-        embeddedImagesArray = embedded
+        embeddedImageIds = embedded
 
     }
 
