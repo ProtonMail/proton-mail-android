@@ -24,7 +24,6 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -50,33 +49,8 @@ class UploadAttachments @Inject constructor(
 
             pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
 
-            attachmentIds.forEach { attachmentId ->
-                val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
-
-                if (attachment?.filePath == null || attachment.isUploaded || attachment.doesFileExist.not()) {
-                    Timber.d(
-                        "Skipping attachment ${attachment?.attachmentId}: " +
-                            "not found, invalid or was already uploaded = ${attachment?.isUploaded}"
-                    )
-                    return@forEach
-                }
-                attachment.setMessage(message)
-
-                val result = attachmentsRepository.upload(attachment, crypto)
-
-                when (result) {
-                    is AttachmentsRepository.Result.Success -> {
-                        Timber.d("UploadAttachment $attachmentId to API for messageId $messageId Succeeded.")
-                        updateMessageWithUploadedAttachment(message, result.uploadedAttachmentId)
-                    }
-                    is AttachmentsRepository.Result.Failure -> {
-                        Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
-                        pendingActionsDao.deletePendingUploadByMessageId(messageId)
-                        return@withContext Result.Failure(result.error)
-                    }
-                }
-
-                attachment.deleteLocalFile()
+            performAttachmentsUpload(attachmentIds, message, crypto, messageId)?.let { failure ->
+                return@withContext failure
             }
 
             val isAttachPublicKey = userManager.getMailSettings(userManager.username)?.getAttachPublicKey() ?: false
@@ -93,6 +67,43 @@ class UploadAttachments @Inject constructor(
             pendingActionsDao.deletePendingUploadByMessageId(messageId)
             return@withContext Result.Success
         }
+
+    private suspend fun performAttachmentsUpload(
+        attachmentIds: List<String>,
+        message: Message,
+        crypto: AddressCrypto,
+        messageId: String
+    ): Result.Failure? {
+        attachmentIds.forEach { attachmentId ->
+            val attachment = messageDetailsRepository.findAttachmentById(attachmentId)
+
+            if (attachment?.filePath == null || attachment.isUploaded || attachment.doesFileExist.not()) {
+                Timber.d(
+                    "Skipping attachment ${attachment?.attachmentId}: " +
+                        "not found, invalid or was already uploaded = ${attachment?.isUploaded}"
+                )
+                return@forEach
+            }
+            attachment.setMessage(message)
+
+            val result = attachmentsRepository.upload(attachment, crypto)
+
+            when (result) {
+                is AttachmentsRepository.Result.Success -> {
+                    Timber.d("UploadAttachment $attachmentId to API for messageId $messageId Succeeded.")
+                    updateMessageWithUploadedAttachment(message, result.uploadedAttachmentId)
+                }
+                is AttachmentsRepository.Result.Failure -> {
+                    Timber.e("UploadAttachment $attachmentId to API for messageId $messageId FAILED.")
+                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
+                    return Result.Failure(result.error)
+                }
+            }
+
+            attachment.deleteLocalFile()
+        }
+        return null
+    }
 
     private suspend fun updateMessageWithUploadedAttachment(
         message: Message,
