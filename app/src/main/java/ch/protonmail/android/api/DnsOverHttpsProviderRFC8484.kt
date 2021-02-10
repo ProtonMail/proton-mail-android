@@ -39,7 +39,8 @@ import java.util.concurrent.TimeUnit
 
 class DnsOverHttpsProviderRFC8484(
     private val baseUrl: String,
-    cookieStore: ProtonCookieStore? = null) {
+    cookieStore: ProtonCookieStore? = null
+) {
 
     private val api: DnsOverHttpsRetrofitApi
 
