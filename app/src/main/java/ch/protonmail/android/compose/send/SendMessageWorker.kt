@@ -201,15 +201,20 @@ class SendMessageWorker @WorkerInject constructor(
     private fun buildSendMessageRequest(
         savedDraftMessage: Message,
         sendPreferences: List<SendPreference>
-    ): MessageSendBody? {
-        return runCatching {
+    ): MessageSendBody? =
+        runCatching {
             val securityOptions = getInputMessageSecurityOptions() ?: return null
             val packages = packagesFactory.generatePackages(savedDraftMessage, sendPreferences, securityOptions)
             val autoSaveContacts = userManager.getMailSettings(currentUsername)?.autoSaveContacts
                 ?: NO_CONTACTS_AUTO_SAVE
             MessageSendBody(packages, securityOptions.expiresAfterInSeconds, autoSaveContacts)
-        }.getOrNull()
-    }
+        }.fold(
+            onSuccess = { return it },
+            onFailure = {
+                Timber.w("Failed building MessageSendBody for API request, exception $it")
+                return null
+            }
+        )
 
     private fun requestSendPreferences(message: Message): List<SendPreference>? {
         return runCatching {

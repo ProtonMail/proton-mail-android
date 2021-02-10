@@ -620,19 +620,23 @@ class SendMessageWorkerTest : CoroutinesTest {
         }
         val savedDraftMessageId = "9238427"
         val savedDraft = message.copy(messageId = savedDraftMessageId)
+        val exception = Exception("TEST - Failure creating packages")
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
-        every { packageFactory.generatePackages(any(), any(), any()) } throws Exception("TEST - Failure creating packages")
+        every { packageFactory.generatePackages(any(), any(), any()) } throws exception
         every { parameters.runAttemptCount } returns 2
+        mockkStatic(Timber::class)
 
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.Retry(), result)
         verify(exactly = 0) { userNotifier.showSendMessageError(any(), any()) }
         verify(exactly = 0) { pendingActionsDao.deletePendingSendByMessageId(any()) }
+        verify { Timber.w("Failed building MessageSendBody for API request, exception $exception") }
+        unmockkStatic(Timber::class)
     }
 
     @Test
