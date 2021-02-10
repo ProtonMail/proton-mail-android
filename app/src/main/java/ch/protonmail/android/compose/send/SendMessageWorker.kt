@@ -70,6 +70,7 @@ import kotlinx.coroutines.flow.first
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.serialize
 import timber.log.Timber
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -138,16 +139,16 @@ class SendMessageWorker @WorkerInject constructor(
                 savedDraftMessage
             )
 
-            runCatching {
-                apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
-            }.fold(
-                onSuccess = { response ->
-                    handleSendMessageResponse(messageId, response, savedDraftMessage)
-                },
-                onFailure = { exception ->
-                    retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
-                }
-            )
+            return try {
+                val response = apiManager.sendMessage(messageId, requestBody, RetrofitTag(currentUsername))
+                handleSendMessageResponse(messageId, response, savedDraftMessage)
+            } catch (exception: IOException) {
+                retryOrFail(ErrorPerformingApiRequest, savedDraftMessage, exception)
+            } catch (exception: Exception) {
+                pendingActionsDao.deletePendingSendByMessageId(messageId)
+                showSendMessageError(message.subject)
+                throw exception
+            }
         } else {
             retryOrFail(DraftCreationFailed, message)
         }
@@ -197,7 +198,10 @@ class SendMessageWorker @WorkerInject constructor(
         return Result.success()
     }
 
-    private fun buildSendMessageRequest(savedDraftMessage: Message, sendPreferences: List<SendPreference>): MessageSendBody? {
+    private fun buildSendMessageRequest(
+        savedDraftMessage: Message,
+        sendPreferences: List<SendPreference>
+    ): MessageSendBody? {
         return runCatching {
             val securityOptions = getInputMessageSecurityOptions() ?: return null
             val packages = packagesFactory.generatePackages(savedDraftMessage, sendPreferences, securityOptions)
