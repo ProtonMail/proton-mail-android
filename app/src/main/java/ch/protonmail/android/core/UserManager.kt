@@ -38,6 +38,7 @@ import ch.protonmail.android.api.services.LogoutService
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
@@ -47,6 +48,7 @@ import ch.protonmail.android.events.SwitchUserEvent
 import ch.protonmail.android.fcm.FcmUtil
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
+import ch.protonmail.android.usecase.FindUserIdForUsername
 import ch.protonmail.android.usecase.LoadLegacyUser
 import ch.protonmail.android.usecase.LoadUser
 import ch.protonmail.android.utils.AppUtil
@@ -58,9 +60,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
+import me.proton.core.util.android.sharedpreferences.minusAssign
 import me.proton.core.util.android.sharedpreferences.set
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.invoke
+import me.proton.core.util.kotlin.takeIfNotBlank
 import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Inject
@@ -1187,4 +1191,22 @@ class UserManager @Inject constructor(
 
     private fun preferencesFor(userId: Id) =
         SecureSharedPreferences.getPrefsForUser(context, userId)
+
+    class UsernameToIdMigration @Inject constructor(
+        @DefaultSharedPreferences private val prefs: SharedPreferences,
+        private val findUserIdForUsername: FindUserIdForUsername,
+        private val dispatchers: DispatcherProvider
+    ) {
+
+        suspend operator fun invoke() {
+            withContext(dispatchers.Io) {
+                val currentUsername = prefs.get<String?>(PREF_USERNAME)?.takeIfNotBlank()
+                    ?: return@withContext
+                prefs -= PREF_USERNAME
+
+                val currentUserId = findUserIdForUsername(Name(currentUsername))
+                prefs[PREF_CURRENT_USER_ID] = currentUserId
+            }
+        }
+    }
 }

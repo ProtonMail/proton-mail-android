@@ -22,6 +22,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import androidx.core.content.edit
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.di.ApplicationModule
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
@@ -208,6 +209,7 @@ class AccountManager(
         private val dispatchers: DispatcherProvider,
         private val accountManager: AccountManager,
         private val secureSharedPreferencesMigration: SecureSharedPreferences.UsernameToIdMigration,
+        private val userManagerMigration: UserManager.UsernameToIdMigration,
         @DefaultSharedPreferences
         private val defaultSharedPreferences: SharedPreferences
     ) {
@@ -230,9 +232,12 @@ class AccountManager(
                 setLoggedIn(allLoggedUsernames.mapNotNull { allUsernamesToIds[it] })
             }
 
-            defaultSharedPreferences.edit {
-                remove(PREF_USERNAMES_LOGGED_OUT)
-                remove(PREF_USERNAMES_LOGGED_IN)
+                defaultSharedPreferences.edit {
+                    remove(PREF_USERNAMES_LOGGED_OUT)
+                    remove(PREF_USERNAMES_LOGGED_IN)
+                }
+
+                userManagerMigration()
             }
         }
 
