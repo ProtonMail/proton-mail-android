@@ -17,8 +17,6 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import studio.forface.easygradle.dsl.*
-import studio.forface.easygradle.dsl.android.*
 
 // region Proton
 // Common

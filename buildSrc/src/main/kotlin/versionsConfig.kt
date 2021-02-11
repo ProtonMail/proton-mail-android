@@ -19,9 +19,6 @@
 import studio.forface.easygradle.dsl.*
 import studio.forface.easygradle.dsl.android.*
 
-import studio.forface.easygradle.dsl.*
-import studio.forface.easygradle.dsl.android.*
-
 /** Initialize Easy Gradle versions */
 fun initVersions() {
 
@@ -76,6 +73,7 @@ const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct
 
 const val `Proton-domain version` =             "0.2.4"         // Released: Nov 18, 2020
 const val `Proton-presentation version` =       "0.5.4"         // Released: Feb 01, 2021
+const val `Proton-data version` =               "0.3.1"         // Released: Nov 02, 2020
 
 @Suppress("unused") const val `composer version` =              "1.0-beta-3"    // Released: Feb 12, 2020
 
