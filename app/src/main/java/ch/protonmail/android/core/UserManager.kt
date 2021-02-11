@@ -38,6 +38,7 @@ import ch.protonmail.android.api.services.LogoutService
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent

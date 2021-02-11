@@ -21,7 +21,6 @@ package ch.protonmail.android.api.segments.event
 import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.models.MailSettings
@@ -101,8 +100,6 @@ class EventHandler @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        @Deprecated("Create with User Id", ReplaceWith("create(userId)"), DeprecationLevel.ERROR)
-        fun create(username: String): EventHandler
         fun create(userId: Id): EventHandler
     }
 
@@ -114,7 +111,7 @@ class EventHandler @AssistedInject constructor(
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
-        messageDetailsRepository.reloadDependenciesForUser(username)
+        messageDetailsRepository.reloadDependenciesForUser(userId.s)
     }
 
     fun handleRefreshContacts() {
@@ -134,13 +131,17 @@ class EventHandler @AssistedInject constructor(
      * anyway.
      */
     fun handleRefresh() {
-        messagesDao.clearMessagesCache()
-        messagesDao.clearAttachmentsCache()
-        messagesDao.clearLabelsCache()
-        countersDao.clearUnreadLocationsTable()
-        countersDao.clearUnreadLabelsTable()
-        countersDao.clearTotalLocationsTable()
-        countersDao.clearTotalLabelsTable()
+        messageDao.run {
+            clearMessagesCache()
+            clearAttachmentsCache()
+            clearLabelsCache()
+        }
+        counterDao.run {
+            clearUnreadLocationsTable()
+            clearUnreadLabelsTable()
+            clearTotalLocationsTable()
+            clearTotalLabelsTable()
+        }
         launchInitialDataFetch(
             shouldRefreshDetails = false,
             shouldRefreshContacts = false
@@ -258,7 +259,7 @@ class EventHandler @AssistedInject constructor(
         }
 
         if (user != null) {
-            user.username = username
+            user.username = userId.s
             if (addresses != null && addresses.size > 0) {
                 writeAddressUpdates(addresses, ArrayList(savedUser.addresses!!), user)
             } else {
@@ -286,7 +287,7 @@ class EventHandler @AssistedInject constructor(
         if (mailSettings == null) {
             mailSettings = MailSettings()
         }
-        mailSettings.username = username
+        mailSettings.username = userId.s
         mailSettings.showImagesFrom = mSettings.showImagesFrom
         mailSettings.autoSaveContacts = mSettings.autoSaveContacts
         mailSettings.sign = mSettings.sign
@@ -300,7 +301,7 @@ class EventHandler @AssistedInject constructor(
         if (userSettings == null) {
             userSettings = UserSettings()
         }
-        userSettings.username = username
+        userSettings.username = userId.s
         userSettings.notificationEmail
         userSettings.save()
         userManager.userSettings = userSettings
@@ -514,7 +515,7 @@ class EventHandler @AssistedInject constructor(
         }
 
         val mapper = AddressBridgeMapper.buildDefault()
-        AddressKeyActivationWorker.runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, Name(username))
+        AddressKeyActivationWorker.runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, Name(userId.s))
         user.setAddresses(addresses)
     }
 
