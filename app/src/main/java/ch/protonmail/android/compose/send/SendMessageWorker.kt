@@ -110,6 +110,7 @@ class SendMessageWorker @WorkerInject constructor(
         val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
         if (message == null) {
             showSendMessageError(NO_SUBJECT)
+            pendingActionsDao.deletePendingSendByDbId(getInputMessageDbId())
             return failureWithError(MessageNotFound)
         }
         message.decryptedBody = getInputDecryptedBody()

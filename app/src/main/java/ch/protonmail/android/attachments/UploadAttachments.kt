@@ -81,7 +81,7 @@ class UploadAttachments @WorkerInject constructor(
                 is Result.Failure -> retryOrFail(result.error)
                 is Result.UploadInProgress -> {
                     pendingActionsDao.deletePendingUploadByMessageId(messageId)
-                    retryOrFail("Upload in progress")
+                    retryOrFail("Failed uploading attachments")
                 }
             }
 

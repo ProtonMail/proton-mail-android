@@ -101,16 +101,7 @@ class SaveDraft @Inject constructor(
 
                     updatePendingForSendMessage(createdDraftId, localDraftId)
 
-                    return@map uploadAttachments.enqueue(params.newAttachmentIds, createdDraftId)
-                        .filter { it?.state?.isFinished == true }
-                        .map {
-                            if (it?.state == WorkInfo.State.FAILED) {
-                                userNotifier.showPersistentError("error", localDraft.subject)
-                                return@map SaveDraftResult.UploadDraftAttachmentsFailed
-                            }
-
-                            return@map SaveDraftResult.Success(createdDraftId)
-                        }.first()
+                    return@map uploadAttachments(params, createdDraftId, localDraft)
                 } else {
                     Timber.e("Save Draft to API for messageId $localDraftId FAILED.")
                     return@map SaveDraftResult.OnlineDraftCreationFailed
@@ -118,6 +109,18 @@ class SaveDraft @Inject constructor(
             }
             .flowOn(dispatchers.Io)
     }
+
+    private suspend fun uploadAttachments(params: SaveDraftParameters, createdDraftId: String, localDraft: Message) =
+        uploadAttachments.enqueue(params.newAttachmentIds, createdDraftId)
+            .filter { it?.state?.isFinished == true }
+            .map {
+                if (it?.state == WorkInfo.State.FAILED) {
+                    userNotifier.showPersistentError("error", localDraft.subject)
+                    return@map SaveDraftResult.UploadDraftAttachmentsFailed
+                }
+
+                return@map SaveDraftResult.Success(createdDraftId)
+            }.first()
 
     private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {
         val pendingForSending = pendingActionsDao.findPendingSendByMessageId(messageId)

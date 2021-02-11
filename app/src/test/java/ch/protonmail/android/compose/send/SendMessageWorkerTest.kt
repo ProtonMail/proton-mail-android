@@ -239,6 +239,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             result
         )
         coVerify(exactly = 0) { saveDraft(any()) }
+        verify { pendingActionsDao.deletePendingSendByDbId(messageDbId) }
     }
 
     @Test
