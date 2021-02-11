@@ -22,6 +22,7 @@ import android.content.Context
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MessageCount
@@ -54,6 +55,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
@@ -69,6 +71,7 @@ import ch.protonmail.android.worker.FetchContactsEmailsWorker
 import com.google.gson.JsonSyntaxException
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Named
 import kotlin.collections.set
@@ -82,16 +85,21 @@ class EventHandler @AssistedInject constructor(
     private val fetchContactEmails: FetchContactsEmailsWorker.Enqueuer,
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
-    private val pendingActionsDao: PendingActionsDao,
-    private val contactsDao: ContactsDao,
-    private val countersDao: CountersDao,
-    @Named("messages") private val messagesDao: MessagesDao,
-    @Assisted val username: String
+    private val pendingActionDao: PendingActionDao,
+    private val contactDao: ContactDao,
+    private val counterDao: CounterDao,
+    @Named("messages") private var messageDao: MessageDao,
+    @Assisted val userId: Id
 ) {
+
+    @Deprecated("Use User Id", ReplaceWith("userId"), DeprecationLevel.ERROR)
+    val username: String = unsupported
 
     @AssistedInject.Factory
     interface AssistedFactory {
+        @Deprecated("Create with User Id", ReplaceWith("create(userId)"), DeprecationLevel.ERROR)
         fun create(username: String): EventHandler
+        fun create(userId: Id): EventHandler
     }
 
     private val messageFactory: MessageFactory
@@ -106,10 +114,12 @@ class EventHandler @AssistedInject constructor(
     }
 
     fun handleRefreshContacts() {
-        contactsDao.clearContactDataCache()
-        contactsDao.clearContactEmailsLabelsJoin()
-        contactsDao.clearContactEmailsCacheBlocking()
-        contactsDao.clearContactGroupsLabelsTableBlocking()
+        contactDao.run {
+            clearContactDataCache()
+            clearContactEmailsLabelsJoin()
+            clearContactEmailsCacheBlocking()
+            clearContactGroupsLabelsTableBlocking()
+        }
         fetchContactEmails.enqueue()
         fetchContactsData.enqueue()
     }

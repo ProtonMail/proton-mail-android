@@ -121,6 +121,13 @@ class AccountManager(
         sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet())
     }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("allLoggedIn()")
+    )
+    fun allLoggedInBlocking(): Set<Id> =
+        runBlocking { allLoggedIn() }
+
     /**
      * @return all the users that are saved, EXCLUDING the logged in ones
      */

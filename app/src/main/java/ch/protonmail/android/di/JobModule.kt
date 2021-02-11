@@ -20,6 +20,7 @@
 package ch.protonmail.android.di
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.QueueNetworkUtil
@@ -88,6 +89,7 @@ object JobModule {
 @InstallIn(SingletonComponent::class)
 interface JobEntryPoint {
 
+    fun accountManager(): AccountManager
     fun apiManager(): ProtonMailApiManager
     fun fetchContactsEmailsWorkerEnqueuer(): FetchContactsEmailsWorker.Enqueuer
     fun fetchContactsDataWorkerEnqueuer(): FetchContactsDataWorker.Enqueuer

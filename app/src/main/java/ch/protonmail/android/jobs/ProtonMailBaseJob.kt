@@ -35,6 +35,7 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     protected val entryPoint get() =
         EntryPoints.get(ProtonMailApplication.getApplication(), JobEntryPoint::class.java)
 
+    protected fun getAccountManager() = entryPoint.accountManager()
     protected fun getApi() = entryPoint.apiManager()
     protected fun getJobManager() = entryPoint.jobManager()
     protected fun getMessageDetailsRepository() = entryPoint.messageDetailsRepository()

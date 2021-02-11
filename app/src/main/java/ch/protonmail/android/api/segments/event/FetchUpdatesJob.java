@@ -23,13 +23,13 @@ import androidx.annotation.Nullable;
 import com.birbit.android.jobqueue.Params;
 
 import java.net.ConnectException;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import ch.protonmail.android.api.AccountManager;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.FetchUpdatesEvent;
 import ch.protonmail.android.events.Status;
@@ -65,8 +65,8 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
         long currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
         messagesDatabase.deleteExpiredMessages(currentTime);
         try {
-            List<String> loggedInUsers = AccountManager.Companion.getInstance(ProtonMailApplication.getApplication()).getLoggedInUsers();
-            eventManager.start(loggedInUsers);
+            Set<Id> loggedInUsers = getAccountManager().allLoggedInBlocking();
+            eventManager.consumeEventsForBlocking(loggedInUsers);
             AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.SUCCESS));
         } catch (Exception e) {
             if (e.getCause() instanceof ConnectException) {
