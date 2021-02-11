@@ -82,10 +82,7 @@ class MessageRepository @Inject constructor(
             }.map { messageResponse ->
                 saveMessage(messageResponse.message)
                 return@map messageResponse.message
-            }.fold(
-                onSuccess = { it },
-                onFailure = { null }
-            )
+            }.getOrNull()
         }
 
     private suspend fun getMessageMetadata(messageId: String, username: String): Message? =
@@ -103,10 +100,7 @@ class MessageRepository @Inject constructor(
                     saveMessage(message)
                     return@let message
                 }
-            }.fold(
-                onSuccess = { it },
-                onFailure = { null }
-            )
+            }.getOrNull()
         }
 
     /**

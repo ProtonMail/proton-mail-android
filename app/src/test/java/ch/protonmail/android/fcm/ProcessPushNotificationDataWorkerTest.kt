@@ -33,9 +33,9 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.fcm.models.PushNotification
-import ch.protonmail.android.fcm.models.PushNotificationData
-import ch.protonmail.android.fcm.models.PushNotificationSender
+import ch.protonmail.android.fcm.model.PushNotification
+import ch.protonmail.android.fcm.model.PushNotificationData
+import ch.protonmail.android.fcm.model.PushNotificationSender
 import ch.protonmail.android.repository.MessageRepository
 import ch.protonmail.android.servers.notification.NotificationServer
 import ch.protonmail.android.utils.AppUtil

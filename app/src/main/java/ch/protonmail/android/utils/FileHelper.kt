@@ -46,20 +46,14 @@ class FileHelper @Inject constructor(
             FileInputStream(file)
                 .bufferedReader()
                 .use { it.readText() }
-        }.fold(
-            onSuccess = { it },
-            onFailure = { null }
-        )
+        }.getOrNull()
     }
 
     suspend fun writeToFile(file: File, text: String): Boolean = withContext(dispatcherProvider.Io) {
         return@withContext runCatching {
             FileOutputStream(file)
                 .use { it.write(text.toByteArray()) }
-        }.fold(
-            onSuccess = { true },
-            onFailure = { false }
-        )
+        }.isSuccess
     }
 
 }
