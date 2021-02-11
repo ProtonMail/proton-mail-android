@@ -37,6 +37,7 @@ import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -51,7 +52,7 @@ class SaveDraft @Inject constructor(
     private val pendingActionsDao: PendingActionsDao,
     private val createDraftWorker: CreateDraftWorker.Enqueuer,
     @CurrentUsername private val username: String,
-    private val uploadAttachments: UploadAttachments,
+    private val uploadAttachments: UploadAttachments.Enqueuer,
     private val userNotifier: UserNotifier
 ) {
 
@@ -74,14 +75,13 @@ class SaveDraft @Inject constructor(
 
         saveMessageLocallyAsDraft(message)
 
-        return@withContext saveDraftOnline(message, params, messageId, addressCrypto)
+        return@withContext saveDraftOnline(message, params, messageId)
     }
 
-    private suspend fun saveDraftOnline(
+    private fun saveDraftOnline(
         localDraft: Message,
         params: SaveDraftParameters,
-        localDraftId: String,
-        addressCrypto: AddressCrypto
+        localDraftId: String
     ): Flow<SaveDraftResult> {
         return createDraftWorker.enqueue(
             localDraft,
@@ -101,19 +101,20 @@ class SaveDraft @Inject constructor(
 
                     updatePendingForSendMessage(createdDraftId, localDraftId)
 
-                    messageDetailsRepository.findMessageById(createdDraftId)?.let {
-                        val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto, false)
+                    return@map uploadAttachments.enqueue(params.newAttachmentIds, createdDraftId)
+                        .filter { it?.state?.isFinished == true }
+                        .map {
+                            if (it?.state == WorkInfo.State.FAILED) {
+                                userNotifier.showPersistentError("error", localDraft.subject)
+                                return@map SaveDraftResult.UploadDraftAttachmentsFailed
+                            }
 
-                        if (uploadResult is UploadAttachments.Result.Failure) {
-                            userNotifier.showPersistentError(uploadResult.error, localDraft.subject)
-                            return@map SaveDraftResult.UploadDraftAttachmentsFailed
-                        }
-                        return@map SaveDraftResult.Success(createdDraftId)
-                    }
+                            return@map SaveDraftResult.Success(createdDraftId)
+                        }.first()
+                } else {
+                    Timber.e("Save Draft to API for messageId $localDraftId FAILED.")
+                    return@map SaveDraftResult.OnlineDraftCreationFailed
                 }
-
-                Timber.e("Save Draft to API for messageId $localDraftId FAILED.")
-                return@map SaveDraftResult.OnlineDraftCreationFailed
             }
             .flowOn(dispatchers.Io)
     }

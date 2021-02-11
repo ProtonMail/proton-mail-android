@@ -18,24 +18,77 @@
  */
 package ch.protonmail.android.attachments
 
+import android.content.Context
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
+import androidx.lifecycle.asFlow
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingWorkPolicy
+import androidx.work.ListenableWorker
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class UploadAttachments @Inject constructor(
+internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS = "keyUploadAttachmentAttachmentIds"
+internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID = "keyUploadAttachmentMessageId"
+internal const val KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR = "keyUploadAttachmentResultError"
+
+private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueWorkName"
+private const val UPLOAD_ATTACHMENTS_MAX_RETRIES = 3
+
+class UploadAttachments @WorkerInject constructor(
+    @Assisted context: Context,
+    @Assisted params: WorkerParameters,
     private val dispatchers: DispatcherProvider,
     private val attachmentsRepository: AttachmentsRepository,
     private val pendingActionsDao: PendingActionsDao,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val userManager: UserManager
-) {
+    private val userManager: UserManager,
+    private val addressCryptoFactory: AddressCrypto.Factory
+) : CoroutineWorker(context, params) {
+
+    override suspend fun doWork(): ListenableWorker.Result = withContext(dispatchers.Io) {
+        val newAttachments = inputData
+            .getStringArray(KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS)?.toList().orEmpty()
+        val messageId = inputData.getString(KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID).orEmpty()
+
+        messageDetailsRepository.findMessageById(messageId)?.let { message ->
+            val addressId = requireNotNull(message.addressID)
+            val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(userManager.username))
+
+            return@withContext when (val result = invoke(newAttachments, message, addressCrypto)) {
+                is Result.Success -> ListenableWorker.Result.success()
+                is Result.Failure -> retryOrFail(result.error)
+                is Result.UploadInProgress -> {
+                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
+                    retryOrFail("Upload in progress")
+                }
+            }
+
+        }
+
+        return@withContext failureWithError("Message not found")
+    }
 
     suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto): Result =
         withContext(dispatchers.Io) {
@@ -123,9 +176,55 @@ class UploadAttachments @Inject constructor(
         }
     }
 
+    private fun retryOrFail(
+        error: String,
+        exception: Throwable? = null
+    ): ListenableWorker.Result {
+        if (runAttemptCount <= UPLOAD_ATTACHMENTS_MAX_RETRIES) {
+            Timber.d("UploadAttachments Worker failed with error = $error, exception = $exception. Retrying...")
+            return ListenableWorker.Result.retry()
+        }
+        return failureWithError(error, exception)
+    }
+
+    private fun failureWithError(error: String, exception: Throwable? = null): ListenableWorker.Result {
+        Timber.e("UploadAttachments Worker failed permanently. error = $error, exception = $exception. FAILING")
+        val errorData = workDataOf(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to error)
+        return ListenableWorker.Result.failure(errorData)
+    }
+
     sealed class Result {
         object Success : Result()
         object UploadInProgress : Result()
         data class Failure(val error: String) : Result()
+    }
+
+    class Enqueuer @Inject constructor(private val workManager: WorkManager) {
+
+        fun enqueue(
+            attachmentIds: List<String>,
+            messageId: String
+        ): Flow<WorkInfo?> {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+            val uploadAttachmentsRequest = OneTimeWorkRequestBuilder<UploadAttachments>()
+                .setConstraints(constraints)
+                .setInputData(
+                    workDataOf(
+                        KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS to attachmentIds.toTypedArray(),
+                        KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID to messageId
+                    )
+                )
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)
+                .build()
+
+            workManager.enqueueUniqueWork(
+                "$UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX-$messageId",
+                ExistingWorkPolicy.REPLACE,
+                uploadAttachmentsRequest
+            )
+            return workManager.getWorkInfoByIdLiveData(uploadAttachmentsRequest.id).asFlow()
+        }
     }
 }
