@@ -92,6 +92,7 @@ class EventHandler @AssistedInject constructor(
     @Named("messages") var messageDao: MessageDao,
     private val pendingActionDao: PendingActionDao,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
+    private val mapper: AddressBridgeMapper,
     @Assisted val userId: Id
 ) {
 
@@ -514,7 +515,6 @@ class EventHandler @AssistedInject constructor(
             }
         }
 
-        val mapper = AddressBridgeMapper.buildDefault()
         AddressKeyActivationWorker.runIfNeeded(workManager, addresses.map(mapper) { it.toNewModel() }, Name(userId.s))
         user.setAddresses(addresses)
     }
