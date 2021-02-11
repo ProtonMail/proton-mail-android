@@ -103,8 +103,8 @@ import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
-import ch.protonmail.android.api.models.room.counters.CountersDatabase
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
+import ch.protonmail.android.api.models.room.counters.CounterDao
+import ch.protonmail.android.api.models.room.counters.CounterDatabase
 import ch.protonmail.android.api.models.room.counters.TotalLabelCounter
 import ch.protonmail.android.api.models.room.counters.TotalLocationCounter
 import ch.protonmail.android.api.models.room.messages.Label
@@ -219,7 +219,7 @@ class MailboxActivity :
     IMoveMessagesListener,
     DialogInterface.OnDismissListener {
 
-    private lateinit var countersDatabase: CountersDatabase
+    private lateinit var counterDao: CounterDao
     private lateinit var pendingActionsDatabase: PendingActionsDatabase
 
     @Inject
@@ -256,8 +256,8 @@ class MailboxActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        countersDatabase = CountersDatabaseFactory.getInstance(this, userManager.requireCurrentUserId())
-            .getDatabase()
+        counterDao = CounterDatabase.getInstance(this, userManager.requireCurrentUserId())
+            .getDao()
         pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
 
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
@@ -577,7 +577,7 @@ class MailboxActivity :
         val currentUserId = userManager.requireCurrentUserId()
 
         mJobManager.start()
-        countersDatabase = CountersDatabaseFactory.getInstance(this, currentUserId).getDatabase()
+        counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
         pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
         messageDetailsRepository.reloadDependenciesForUser(currentUserId)
 
@@ -1165,9 +1165,9 @@ class MailboxActivity :
         }
         val response = event.unreadMessagesResponse ?: return
         val messageCountsList = response.counts ?: emptyList()
-        countersDatabase = CountersDatabaseFactory
-            .getInstance(applicationContext, userManager.requireCurrentUserId()).getDatabase()
-        OnMessageCountsListTask(WeakReference(this), countersDatabase, messageCountsList).execute()
+        counterDao = CounterDatabase
+            .getInstance(applicationContext, userManager.requireCurrentUserId()).getDao()
+        OnMessageCountsListTask(WeakReference(this), counterDao, messageCountsList).execute()
         refreshDrawer()
         //endregion
     }
@@ -1536,7 +1536,7 @@ class MailboxActivity :
         }
         RefreshEmptyViewTask(
             WeakReference(this),
-            countersDatabase,
+            counterDao,
             messagesDatabase,
             newMessageLocationType,
             mailboxLabelId
@@ -1781,7 +1781,7 @@ class MailboxActivity :
             startFetchFirstPageByLabel(fromInt(newLocation), labelId, false)
             RefreshEmptyViewTask(
                 this.mailboxActivity,
-                mailboxActivity.countersDatabase,
+                mailboxActivity.counterDao,
                 mailboxActivity.messagesDatabase,
                 locationToSet,
                 labelId
@@ -1939,12 +1939,12 @@ class MailboxActivity :
 
     private class OnMessageCountsListTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val countersDatabase: CountersDatabase,
+        private val counterDao: CounterDao,
         private val messageCountsList: List<MessageCount>
     ) : AsyncTask<Unit, Unit, Int>() {
 
         override fun doInBackground(vararg params: Unit): Int {
-            val totalInbox = countersDatabase.findTotalLocationById(MessageLocationType.INBOX.messageLocationTypeValue)
+            val totalInbox = counterDao.findTotalLocationById(MessageLocationType.INBOX.messageLocationTypeValue)
             return totalInbox?.count ?: -1
         }
 
@@ -1982,7 +1982,7 @@ class MailboxActivity :
                 }
             }
             mailboxActivity.setRefreshing(false)
-            RefreshTotalCountersTask(countersDatabase, locationCounters, labelCounters).execute()
+            RefreshTotalCountersTask(counterDao, locationCounters, labelCounters).execute()
         }
     }
 }

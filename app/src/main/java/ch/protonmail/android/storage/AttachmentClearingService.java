@@ -36,7 +36,7 @@ import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetada
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase;
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
+import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory;
@@ -118,7 +118,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
                 ContactsDatabaseFactory.Companion.deleteDb(context, username);
                 MessagesDatabaseFactory.Companion.deleteDb(context, username);
                 NotificationsDatabaseFactory.Companion.deleteDb(context, username);
-                CountersDatabaseFactory.Companion.deleteDb(context, username);
+                CounterDatabase.Companion.deleteDb(context, username);
                 AttachmentMetadataDatabaseFactory.Companion.deleteDb(context, username);
                 PendingActionsDatabaseFactory.Companion.deleteDb(context, username);
             }

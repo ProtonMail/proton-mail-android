@@ -50,8 +50,8 @@ import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetada
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.counters.CountersDatabase;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
+import ch.protonmail.android.api.models.room.counters.CounterDao;
+import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabase;
@@ -172,7 +172,7 @@ public class AppUtil {
                         MessagesDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
                         NotificationsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        CountersDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
+                        CounterDatabase.Companion.getInstance(context, username).getDao(),
                         AttachmentMetadataDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         PendingActionsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         clearDoneListener, clearContacts);
@@ -181,7 +181,7 @@ public class AppUtil {
                         MessagesDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
                         NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        CountersDatabaseFactory.Companion.getInstance(context).getDatabase(),
+                        CounterDatabase.Companion.getInstance(context).getDao(),
                         AttachmentMetadataDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         PendingActionsDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         clearDoneListener, clearContacts);
@@ -324,12 +324,12 @@ public class AppUtil {
             final MessagesDatabase messagesDatabase,
             final MessagesDatabase searchDatabase,
             final NotificationsDatabase notificationsDatabase,
-            final CountersDatabase countersDatabase,
+            final CounterDao counterDao,
             final AttachmentMetadataDatabase attachmentMetadataDatabase,
             final PendingActionsDatabase pendingActionsDatabase,
             final boolean clearContacts
     ) {
-        clearStorage(contactsDatabase, messagesDatabase, searchDatabase, notificationsDatabase, countersDatabase,
+        clearStorage(contactsDatabase, messagesDatabase, searchDatabase, notificationsDatabase, counterDao,
                 attachmentMetadataDatabase, pendingActionsDatabase, null, clearContacts);
     }
 
@@ -338,7 +338,7 @@ public class AppUtil {
             final MessagesDatabase messagesDatabase,
             final MessagesDatabase searchDatabase,
             final NotificationsDatabase notificationsDatabase,
-            final CountersDatabase countersDatabase,
+            final CounterDao counterDao,
             final AttachmentMetadataDatabase attachmentMetadataDatabase,
             final PendingActionsDatabase pendingActionsDatabase,
             final IDBClearDone clearDone,
@@ -364,10 +364,10 @@ public class AppUtil {
                 searchDatabase.clearAttachmentsCache();
                 searchDatabase.clearLabelsCache();
                 notificationsDatabase.clearNotificationCache();
-                countersDatabase.clearUnreadLocationsTable();
-                countersDatabase.clearUnreadLabelsTable();
-                countersDatabase.clearTotalLocationsTable();
-                countersDatabase.clearTotalLabelsTable();
+                counterDao.clearUnreadLocationsTable();
+                counterDao.clearUnreadLabelsTable();
+                counterDao.clearTotalLocationsTable();
+                counterDao.clearTotalLabelsTable();
                 attachmentMetadataDatabase.clearAttachmentMetadataCache();
                 return null;
             }

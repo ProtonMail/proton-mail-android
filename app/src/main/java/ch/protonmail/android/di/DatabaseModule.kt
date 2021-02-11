@@ -24,8 +24,8 @@ import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetada
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
-import ch.protonmail.android.api.models.room.counters.CountersDatabase
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
+import ch.protonmail.android.api.models.room.counters.CounterDao
+import ch.protonmail.android.api.models.room.counters.CounterDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
@@ -42,6 +42,29 @@ import javax.inject.Named
 object DatabaseModule {
 
     @Provides
+    fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDatabase =
+        AttachmentMetadataDatabaseFactory.getInstance(context, userManager.username).getDatabase()
+
+
+    @Provides
+    fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactsDatabaseFactory =
+        ContactsDatabaseFactory.getInstance(context, userManager.username)
+
+    @Provides
+    fun provideContactsDatabase(factory: ContactsDatabaseFactory): ContactsDatabase =
+        factory.getDatabase()
+
+
+    @Provides
+    fun provideCounterDatabase(context: Context, userManager: UserManager): CounterDatabase =
+        CounterDatabase.getInstance(context, userManager.requireCurrentUserId())
+
+    @Provides
+    fun provideCounterDao(database: CounterDatabase): CounterDao =
+        database.getDao()
+
+
+    @Provides
     @Named("messages_factory")
     fun provideMessagesDatabaseFactory(context: Context, userManager: UserManager): MessagesDatabaseFactory =
         MessagesDatabaseFactory.getInstance(context, userManager.username)
@@ -52,11 +75,16 @@ object DatabaseModule {
         @Named("messages_factory") messagesDatabaseFactory: MessagesDatabaseFactory
     ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
 
+
     @Provides
-    @Named("messages_search")
-    fun provideSearchMessagesDatabase(
-        @Named("messages_search_factory") messagesDatabaseFactory: MessagesDatabaseFactory
-    ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
+    fun providePendingActionsDatabaseFactory(context: Context, userManager: UserManager) =
+        PendingActionsDatabaseFactory.getInstance(context, userManager.username)
+
+    @Provides
+    fun providePendingActionsDatabase(
+        pendingActionsDatabaseFactory: PendingActionsDatabaseFactory
+    ): PendingActionsDatabase = pendingActionsDatabaseFactory.getDatabase()
+
 
     @Provides
     @Named("messages_search_factory")
@@ -64,24 +92,9 @@ object DatabaseModule {
         MessagesDatabaseFactory.getSearchDatabase(context)
 
     @Provides
-    fun providePendingActionsDatabase(
-        pendingActionsDatabaseFactory: PendingActionsDatabaseFactory
-    ): PendingActionsDatabase = pendingActionsDatabaseFactory.getDatabase()
-
-    @Provides
-    fun providePendingActionsDatabaseFactory(context: Context, userManager: UserManager) =
-        PendingActionsDatabaseFactory.getInstance(context, userManager.username)
-
-    @Provides
-    fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDatabase =
-        AttachmentMetadataDatabaseFactory.getInstance(context, userManager.username).getDatabase()
-
-    @Provides
-    fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactsDatabaseFactory =
-        ContactsDatabaseFactory.getInstance(context, userManager.username)
-
-    @Provides
-    fun provideContactsDatabase(factory: ContactsDatabaseFactory): ContactsDatabase =
-        factory.getDatabase()
+    @Named("messages_search")
+    fun provideSearchMessagesDatabase(
+        @Named("messages_search_factory") messagesDatabaseFactory: MessagesDatabaseFactory
+    ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
 
 }

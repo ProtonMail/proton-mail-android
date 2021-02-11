@@ -27,8 +27,8 @@ import java.util.Collections;
 import java.util.List;
 
 import ch.protonmail.android.api.models.IDList;
-import ch.protonmail.android.api.models.room.counters.CountersDatabase;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
+import ch.protonmail.android.api.models.room.counters.CounterDao;
+import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
@@ -53,9 +53,9 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
 
     @Override
     public void onAdded() {
-        final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion
+        final CounterDao counterDao = CounterDatabase.Companion
                 .getInstance(getApplicationContext())
-                .getDatabase();
+                .getDao();
         int totalUnread = 0;
         for (String id : mMessageIds) {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
@@ -65,19 +65,19 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
                     message.addLabels(Arrays.asList(mLabelId));
                     message.removeLabels(Arrays.asList(String.valueOf(location)));
                 }
-                if (markMessageLocally(countersDatabase, message)) {
+                if (markMessageLocally(counterDao, message)) {
                     totalUnread++;
                 }
                 getMessageDetailsRepository().saveMessageInDB(message);
             }
         }
 
-        UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(Constants.MessageLocationType.SPAM.getMessageLocationTypeValue());
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.increment(totalUnread);
-        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocation(unreadLocationCounter);
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 
@@ -87,13 +87,13 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         getApi().labelMessages(body);
     }
 
-    private boolean markMessageLocally(CountersDatabase countersDatabase, Message message) {
+    private boolean markMessageLocally(CounterDao counterDao, Message message) {
         boolean unreadIncrease = false;
         if (!message.isRead()) {
-            UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());
+            UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
             if (unreadLocationCounter != null) {
                 unreadLocationCounter.decrement();
-                countersDatabase.insertUnreadLocation(unreadLocationCounter);
+                counterDao.insertUnreadLocation(unreadLocationCounter);
             }
             unreadIncrease = true;
         }

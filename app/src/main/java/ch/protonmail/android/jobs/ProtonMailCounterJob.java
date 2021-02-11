@@ -24,8 +24,8 @@ import com.birbit.android.jobqueue.Params;
 
 import java.util.List;
 
-import ch.protonmail.android.api.models.room.counters.CountersDatabase;
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory;
+import ch.protonmail.android.api.models.room.counters.CounterDao;
+import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.core.Constants;
@@ -47,8 +47,8 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
 
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
-        final CountersDatabase countersDatabase = CountersDatabaseFactory.Companion.getInstance(
-                getApplicationContext()).getDatabase();
+        final CounterDao counterDao = CounterDatabase.Companion.getInstance(
+                getApplicationContext()).getDao();
 
         int totalUnread = 0;
         List<String> messageIds = getMessageIds();
@@ -56,22 +56,22 @@ public abstract class ProtonMailCounterJob extends ProtonMailEndlessJob {
             final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if ( !message.isRead() ) {
-                    UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(message.getLocation());
+                    UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(message.getLocation());
                     if (unreadLocationCounter != null) {
                         unreadLocationCounter.increment();
-                        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+                        counterDao.insertUnreadLocation(unreadLocationCounter);
                     }
                     totalUnread++;
                 }
             }
         }
-        UnreadLocationCounter unreadLocationCounter = countersDatabase.findUnreadLocationById(getMessageLocation().getMessageLocationTypeValue());
+        UnreadLocationCounter unreadLocationCounter = counterDao.findUnreadLocationById(getMessageLocation().getMessageLocationTypeValue());
 
         if (unreadLocationCounter == null) {
             return;
         }
         unreadLocationCounter.decrement(totalUnread);
-        countersDatabase.insertUnreadLocation(unreadLocationCounter);
+        counterDao.insertUnreadLocation(unreadLocationCounter);
         AppUtil.postEventOnUi(new RefreshDrawerEvent());
     }
 }

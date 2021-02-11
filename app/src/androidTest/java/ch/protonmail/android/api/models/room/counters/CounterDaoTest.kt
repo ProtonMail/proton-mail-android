@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -34,11 +34,11 @@ import kotlin.test.Test
 
 /**
  * Created by Kamil Rajtar on 05.09.18.  */
-internal class CountersDatabaseTest {
+internal class CounterDaoTest {
 
     private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
-    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, CountersDatabaseFactory::class.java).build()
-    private var database = databaseFactory.getDatabase()
+    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, CounterDatabase::class.java).build()
+    private var database = databaseFactory.getDao()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -92,7 +92,7 @@ internal class CountersDatabaseTest {
         Assert.assertThat(actualTotalLabelsSet, containsInAnyOrder(expectedTotalLabelsMatcher))
     }
 
-    private fun CountersDatabase.populate() {
+    private fun CounterDao.populate() {
         insertAllUnreadLocations(unreadLocations)
         insertAllUnreadLabels(unreadLabels)
         refreshTotalCounters(totalLocations, totalLabels)

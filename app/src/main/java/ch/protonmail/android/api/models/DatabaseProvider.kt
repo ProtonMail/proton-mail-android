@@ -21,8 +21,8 @@ package ch.protonmail.android.api.models
 import android.content.Context
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
-import ch.protonmail.android.api.models.room.counters.CountersDao
-import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
+import ch.protonmail.android.api.models.room.counters.CounterDao
+import ch.protonmail.android.api.models.room.counters.CounterDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory
@@ -73,12 +73,8 @@ class DatabaseProvider @Inject constructor(
     fun provideMessagesDatabaseFactory(username: String?) =
         MessagesDatabaseFactory.getInstance(context, username)
 
-    fun provideCountersDao(userId: Id? = null): CountersDao =
-        provideCountersDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
-
-    @Deprecated("Get by user Id", ReplaceWith("provideCountersDao(userId)"))
-    fun provideCountersDao(username: String?): CountersDao =
-        CountersDatabaseFactory.getInstance(context, username).getDatabase()
+    fun provideCountersDao(userId: Id): CounterDao =
+        CounterDatabase.getInstance(context, userId).getDao()
 
     fun providePendingActionsDao(userId: Id? = null): PendingActionsDao =
         providePendingActionsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
