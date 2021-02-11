@@ -22,6 +22,7 @@ package ch.protonmail.android.attachments
 import android.annotation.TargetApi
 import android.content.ContentResolver
 import android.content.ContentValues
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -31,6 +32,7 @@ import okio.buffer
 import okio.sink
 import okio.source
 import timber.log.Timber
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.util.Locale
 import javax.inject.Inject
@@ -134,4 +136,21 @@ class AttachmentsHelper @Inject constructor() {
         } ?: throw IllegalStateException("MediaStore insert has failed")
         return newUri
     }
+
+    fun isFileAvailable(
+        context: Context,
+        uri: Uri?
+    ) = uri?.let {
+        val doesFileExist = try {
+            context.contentResolver.openInputStream(uri)?.use {
+                it.close()
+                true
+            } ?: false
+        } catch (fileException: FileNotFoundException) {
+            Timber.v(fileException, "Uri not found")
+            false
+        }
+        Timber.d("doesFileExist: $doesFileExist")
+        return doesFileExist
+    } ?: false
 }
