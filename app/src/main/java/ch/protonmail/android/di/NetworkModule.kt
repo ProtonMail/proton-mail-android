@@ -54,8 +54,15 @@ object NetworkModule {
         sessionProvider: SessionProvider,
         sessionListener: SessionListener
     ): ApiFactory = ApiFactory(
-        Constants.ENDPOINT_URI, apiClient, logger, networkManager, networkPrefs, sessionProvider, sessionListener,
-        cookieStore = null, CoroutineScope(Job() + Dispatchers.Default)
+        Constants.ENDPOINT_URI,
+        apiClient,
+        logger,
+        networkManager,
+        networkPrefs,
+        sessionProvider,
+        sessionListener,
+        cookieStore = null,
+        scope = CoroutineScope(Job() + Dispatchers.Default)
     )
 
     @Provides

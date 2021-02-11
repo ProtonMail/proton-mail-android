@@ -232,7 +232,14 @@ object ApplicationModule {
     fun contactLabelFactory(): IConverterFactory<ServerLabel, ContactLabel> = ContactLabelFactory()
 
     @Provides
-    fun buildInfo() = BuildInfo(Build.MODEL, Build.VERSION.SDK_INT, BuildConfig.VERSION_NAME)
+    fun buildInfo() = BuildInfo(
+        Build.MODEL,
+        Build.BRAND,
+        BuildConfig.DEBUG,
+        Build.VERSION.SDK_INT,
+        BuildConfig.VERSION_NAME,
+        Build.VERSION.RELEASE
+    )
 
     @Provides
     fun provideUserCrypto(userManager: UserManager): UserCrypto =

@@ -19,21 +19,21 @@
 
 package ch.protonmail.android.api
 
-import android.content.Context
-import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.events.ForceUpgradeEvent
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.BuildInfo
 import me.proton.core.network.domain.ApiClient
 import javax.inject.Inject
 
 class ProtonMailApiClient @Inject constructor(
-    context: Context
+    buildInfo: BuildInfo
 ) : ApiClient {
 
-    override val appVersionHeader: String = "Android_" + AppUtil.getAppVersionName(context)
-    override val enableDebugLogging: Boolean = BuildConfig.DEBUG
+    override val appVersionHeader: String = "Android_${buildInfo.versionName}"
+    override val enableDebugLogging: Boolean = buildInfo.isDebugVersion
     override val shouldUseDoh: Boolean = true
-    override val userAgent: String = AppUtil.buildUserAgent()
+    override val userAgent = "ProtonMail/${buildInfo.versionName} (Android ${buildInfo.releaseVersion};" +
+        " ${buildInfo.brand} ${buildInfo.model})"
 
     /**
      * Tells client to force update (this client will no longer be accepted by the API).

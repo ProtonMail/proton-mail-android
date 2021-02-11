@@ -61,7 +61,10 @@ class TokenSessionManager @Inject constructor(
         // TODO: Properly logout user.
     }
 
-    override suspend fun onHumanVerificationNeeded(session: Session, details: HumanVerificationDetails): SessionListener.HumanVerificationResult {
+    override suspend fun onHumanVerificationNeeded(
+        session: Session,
+        details: HumanVerificationDetails
+    ): SessionListener.HumanVerificationResult {
         TODO("Show HumanVerification UI, and block until success or failure")
     }
 }

@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.utils
 
+import me.proton.core.network.data.LogTag
 import me.proton.core.util.kotlin.Logger
 import me.proton.core.util.kotlin.LoggerLogTag
 import org.jetbrains.annotations.NonNls
@@ -50,8 +51,8 @@ class CoreLogger : Logger {
         Timber.tag(tag).v(e, message)
 
     override fun log(tag: LoggerLogTag, message: String) = when (tag) {
-        me.proton.core.network.data.LogTag.API_CALL -> Timber.tag(tag.name).d(message)
-        me.proton.core.network.data.LogTag.REFRESH_TOKEN -> Timber.tag(tag.name).d(message)
+        LogTag.API_CALL -> Timber.tag(tag.name).d(message)
+        LogTag.REFRESH_TOKEN -> Timber.tag(tag.name).d(message)
         else -> Timber.tag(tag.name).d(message)
     }
 }
