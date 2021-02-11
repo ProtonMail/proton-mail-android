@@ -39,6 +39,7 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -83,9 +84,17 @@ class MessageDetailsRepository @Inject constructor(
     /**
      * Reloads all statically required dependencies when currently active user changes.
      */
+    @Deprecated("Use new function for User Id",
+        ReplaceWith("reloadDependenciesForUserId(userId: Id)")
+    )
     fun reloadDependenciesForUser(username: String?) {
         pendingActionsDatabase = databaseProvider.providePendingActionsDao(username)
         messagesDao = databaseProvider.provideMessagesDao(username)
+    }
+
+    fun reloadDependenciesForUserId(userId: Id) {
+        pendingActionsDatabase = databaseProvider.providePendingActionsDao(userId)
+        messagesDao = databaseProvider.provideMessagesDao(userId)
     }
 
     fun findMessageByIdAsync(messageId: String): LiveData<Message> =

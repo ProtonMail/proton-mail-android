@@ -897,6 +897,10 @@ class UserManager @Inject constructor(
                 .also { cachedUsers[userId] = userMapper { it.toNewModel() } }
         }
 
+    @Deprecated("Suspended function should be used instead", ReplaceWith("getLegacyUser(userId)"))
+    fun getLegacyUserBlocking(userId: Id): User =
+        runBlocking { getLegacyUser(userId) }
+
     /**
      * Use this method to get User's settings for other users than currently active.
      *

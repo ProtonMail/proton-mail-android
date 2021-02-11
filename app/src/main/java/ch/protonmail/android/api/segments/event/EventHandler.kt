@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.api.segments.event
 
+import android.content.Context
 import androidx.work.WorkManager
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
@@ -62,6 +63,7 @@ import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.UserSettingsEvent
 import ch.protonmail.android.mapper.bridge.AddressBridgeMapper
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.MessageUtils
@@ -112,7 +114,7 @@ class EventHandler @AssistedInject constructor(
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
-        messageDetailsRepository.reloadDependenciesForUser(userId.s)
+        messageDetailsRepository.reloadDependenciesForUserId(userId)
     }
 
     fun handleRefreshContacts() {
@@ -215,6 +217,7 @@ class EventHandler @AssistedInject constructor(
      * NOTE we should not do api requests here because we are in a transaction
      */
     private fun unsafeWrite(
+        context: Context,
         contactsDao: ContactsDao,
         messagesDao: MessagesDao,
         pendingActionsDao: PendingActionsDao,
@@ -256,7 +259,7 @@ class EventHandler @AssistedInject constructor(
             writeMailSettings(mailSettings)
         }
         if (userSettings != null) {
-            writeUserSettings(userSettings)
+            writeUserSettings(context, userSettings)
         }
 
         if (user != null) {
@@ -288,7 +291,6 @@ class EventHandler @AssistedInject constructor(
         if (mailSettings == null) {
             mailSettings = MailSettings()
         }
-        mailSettings.username = userId.s
         mailSettings.showImagesFrom = mSettings.showImagesFrom
         mailSettings.autoSaveContacts = mSettings.autoSaveContacts
         mailSettings.sign = mSettings.sign
@@ -297,14 +299,9 @@ class EventHandler @AssistedInject constructor(
         mailSettings.save()
     }
 
-    private fun writeUserSettings(uSettings: UserSettings) {
-        var userSettings: UserSettings? = uSettings
-        if (userSettings == null) {
-            userSettings = UserSettings()
-        }
-        userSettings.username = userId.s
-        userSettings.notificationEmail
-        userSettings.save()
+    private fun writeUserSettings(context: Context, userSettings: UserSettings) {
+        val prefs = SecureSharedPreferences.getPrefsForUser(context, userId)
+        userSettings.save(prefs)
         userManager.userSettings = userSettings
         AppUtil.postEventOnUi(UserSettingsEvent(userSettings))
     }
