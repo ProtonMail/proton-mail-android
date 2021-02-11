@@ -20,14 +20,6 @@ package ch.protonmail.android.utils.extensions
 
 import android.text.Editable
 import me.proton.core.util.kotlin.EMPTY_STRING
-import me.proton.core.util.kotlin.takeIfNotEmpty
-
-@Deprecated(
-    "Should not use this",
-    ReplaceWith("takeIfNotEmpty() ?: defaultString", "me.proton.core.util.kotlin.takeIfNotEmpty")
-)
-fun String.setDefaultIfEmpty(defaultString: String) =
-    takeIfNotEmpty() ?: defaultString
 
 @Deprecated(
     "Should use regular Kotlin syntax",
