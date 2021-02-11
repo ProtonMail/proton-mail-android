@@ -464,7 +464,7 @@ class NotificationServer @Inject constructor(
 
         // Build the Notification
         val notification = builder.build()
-        notificationManager.notify(user.name.hashCode(), notification)
+        notificationManager.notify(user.id.hashCode(), notification)
     }
 
     /**
@@ -558,7 +558,7 @@ class NotificationServer @Inject constructor(
         // Build the Notification
         val notification = builder.build()
 
-        notificationManager.notify(loggedInUser.id.hashCode(), notification)
+        notificationManager.notify(user.id.hashCode(), notification)
     }
 
     /**
@@ -644,7 +644,10 @@ class NotificationServer @Inject constructor(
             .addParentStack(MailboxActivity::class.java)
             .addNextIntent(contentIntent)
 
-        val contentPendingIntent = stackBuilder.getPendingIntent(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentPendingIntent = stackBuilder.getPendingIntent(
+            userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         // Set Notification's colors
         val mainColor = context.getColorCompat(R.color.ocean_blue)
