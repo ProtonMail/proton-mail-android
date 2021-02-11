@@ -206,7 +206,6 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     init {
         tryFindMessage()
-        messageDetailsRepository.reloadDependenciesForUser(userManager.username)
 
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
@@ -218,6 +217,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun tryFindMessage() {
+        messageDetailsRepository.reloadDependenciesForUser(userManager.username)
         message = if (isTransientMessage) {
             messageDetailsRepository.findSearchMessageByIdAsync(messageId)
         } else {
