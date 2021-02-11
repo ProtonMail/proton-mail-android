@@ -24,6 +24,7 @@ import android.os.Parcelable
 import android.util.Base64
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.utils.extensions.deserialize
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 class LocalAttachment @JvmOverloads constructor(
@@ -102,9 +103,9 @@ class LocalAttachment @JvmOverloads constructor(
 				val isUploading = parcel.readInt() == 1
 				val keyPackets = parcel.readString()
 				val serializedHeaders = parcel.readString() ?: EMPTY_STRING
-				val headers =
+				val headers : AttachmentHeaders? =
 					if (serializedHeaders.isEmpty()) null
-					else AttachmentHeaders.fromString(serializedHeaders)
+					else serializedHeaders.deserialize()
 				val isUploaded = parcel.readInt() == 1
 
 				return LocalAttachment(

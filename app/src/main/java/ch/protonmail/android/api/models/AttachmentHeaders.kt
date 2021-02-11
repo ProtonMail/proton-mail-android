@@ -16,223 +16,123 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
+package ch.protonmail.android.api.models
 
-import android.text.TextUtils;
-import android.util.Base64;
-
-import androidx.annotation.Nullable;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.annotations.SerializedName;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import ch.protonmail.android.api.utils.Fields;
-import ch.protonmail.android.utils.Logger;
-import ch.protonmail.android.utils.extensions.StringExtensionsKt;
+import android.util.Base64
+import ch.protonmail.android.api.utils.Fields
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
+import com.google.gson.annotations.SerializedName
+import me.proton.core.util.kotlin.EMPTY_STRING
+import timber.log.Timber
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
+import java.lang.reflect.Type
 
 /**
- * Created by dkadrikj on 7/16/16.
+ * [AttachmentHeaders] model to hold the headers for attachment.
+ * All fields in this class can be sent from server either as String or as Array, it was confirmed that
+ * it's ok to always parse them as String and if they are sent as an Array in that case get the first element.
  */
-public class AttachmentHeaders implements Serializable {
-    private static final String TAG_ATTACHMENT_HEADERS = "AttachmentHeaders";
+class AttachmentHeaders(
     @SerializedName(Fields.Attachment.CONTENT_TYPE)
-    private String contentType;
+    var contentType: String = EMPTY_STRING,
     @SerializedName(Fields.Attachment.CONTENT_TRANSFER_ENCODING)
-    private String contentTransferEncoding;
+    var contentTransferEncoding: String = EMPTY_STRING,
     @SerializedName(Fields.Attachment.CONTENT_DISPOSITION)
-    private List<String> contentDisposition;
+    var contentDisposition: List<String> = listOf(),
     @SerializedName(Fields.Attachment.CONTENT_ID)
-    private List<String> contentId;
+    var contentId: String = EMPTY_STRING,
     @SerializedName(Fields.Attachment.CONTENT_LOCATION)
-    private String contentLocation;
+    var contentLocation: String = EMPTY_STRING,
     @SerializedName(Fields.Attachment.CONTENT_ENCRYPTION)
-    private String contentEncryption;
-    private Long serialVersionUID = -8741548902749037534L;
+    var contentEncryption: String = EMPTY_STRING
+) : Serializable {
 
-    // region getters
-    public String getContentType() {
-        return contentType;
-    }
-
-    public String getContentTransferEncoding() {
-        return contentTransferEncoding;
-    }
-
-    public List<String> getContentDisposition() {
-        return contentDisposition;
-    }
-
-    @Nullable
-    public String getContentId() {
-        if (contentId != null && !contentId.isEmpty()) {
-            return contentId.get(0);
-        }
-        return null;
-    }
-
-    public String getContentLocation() {
-        return contentLocation;
-    }
-
-    public String getContentEncryption() {
-        return contentEncryption;
-    }
-    // endregion
-
-    public AttachmentHeaders() {
-    }
-
-    public AttachmentHeaders(String contentType, String contentTransferEncoding, List<String> contentDisposition, List<String> contentId, String contentLocation, String contentEncryption) {
-        this.contentType = contentType;
-        this.contentTransferEncoding = contentTransferEncoding;
-        this.contentDisposition = contentDisposition;
-        this.contentId = contentId;
-        this.contentLocation = contentLocation;
-        this.contentEncryption = contentEncryption;
-    }
-
-    public String toString() {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    override fun toString(): String {
+        val out = ByteArrayOutputStream()
         try {
-            new ObjectOutputStream(out).writeObject(this);
-        } catch (IOException e) {
-            Logger.doLogException(TAG_ATTACHMENT_HEADERS, "Serialization of att headers failed ", e);
+            ObjectOutputStream(out).writeObject(this)
+        } catch (e: IOException) {
+            Timber.d(e, "Serialization of att headers failed")
         }
-
-        return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT);
+        return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT)
     }
 
-    public static AttachmentHeaders fromString(String value) {
-        ByteArrayInputStream in = new ByteArrayInputStream(Base64.decode(value, Base64.DEFAULT));
-        AttachmentHeaders result = null;
+    fun fromString(value: String?): AttachmentHeaders? {
+        val input = ByteArrayInputStream(Base64.decode(value, Base64.DEFAULT))
+        var result: AttachmentHeaders? = null
         try {
-            result = (AttachmentHeaders) new ObjectInputStream(in).readObject();
-        } catch (Exception e) {
-            Logger.doLogException(TAG_ATTACHMENT_HEADERS, "DeSerialization of recipients failed", e);
+            result = ObjectInputStream(input).readObject() as AttachmentHeaders
+        } catch (e: IOException) {
+            Timber.d(e, "DeSerialization of recipients failed")
         }
-        return result;
+        return result
     }
 
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        // If the object is compared with itself then return true
-        if (obj == this) {
-            return true;
+    class AttachmentHeadersDeserializer : JsonDeserializer<AttachmentHeaders> {
+        @Throws(JsonParseException::class)
+        override fun deserialize(
+            json: JsonElement,
+            typeOfT: Type,
+            context: JsonDeserializationContext
+        ): AttachmentHeaders {
+            val jsonObject = json.asJsonObject
+            val contentType = getAsString(jsonObject[Fields.Attachment.CONTENT_TYPE])
+            val contentTransferEncoding = getAsString(jsonObject[Fields.Attachment.CONTENT_TRANSFER_ENCODING])
+
+            val contentId = getAsString(jsonObject[Fields.Attachment.CONTENT_ID])
+            val contentLocation = getAsString(jsonObject[Fields.Attachment.CONTENT_LOCATION])
+
+            val contentDisposition = getAsArray(jsonObject[Fields.Attachment.CONTENT_DISPOSITION]) as List<String>
+            val contentEncryption = getAsString(jsonObject[Fields.Attachment.CONTENT_ENCRYPTION])
+
+            return AttachmentHeaders(
+                contentType,
+                contentTransferEncoding,
+                contentDisposition,
+                contentId,
+                contentLocation,
+                contentEncryption
+            )
         }
-
-        if (!(obj instanceof AttachmentHeaders)) {
-            return false;
-        }
-
-        AttachmentHeaders attachmentHeaders = (AttachmentHeaders) obj;
-
-        return StringExtensionsKt.compare(contentType, attachmentHeaders.contentType) &&
-                StringExtensionsKt.compare(contentTransferEncoding, attachmentHeaders.contentTransferEncoding) &&
-                StringExtensionsKt.compare(contentLocation, attachmentHeaders.contentLocation) &&
-                StringExtensionsKt.compare(contentEncryption, attachmentHeaders.contentEncryption) &&
-                (contentId != null && contentId.equals(attachmentHeaders.contentId)) &&
-                (contentDisposition != null && contentDisposition.equals(attachmentHeaders.contentDisposition));
     }
 
-    public static class AttachmentHeadersDeserializer implements JsonDeserializer<AttachmentHeaders> {
+    companion object {
+        private const val serialVersionUID = -8741548902749037534L
 
-        @Override
-        public AttachmentHeaders deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            JsonObject jsonObject = json.getAsJsonObject();
-            String contentType = "";
-            JsonElement contentTypeElement = jsonObject.get(Fields.Attachment.CONTENT_TYPE);
-            if (contentTypeElement != null) {
-                if (contentTypeElement.isJsonArray()) {
-                    contentType = contentTypeElement.getAsJsonArray().get(0).getAsString();
+        fun getAsString(jsonElement: JsonElement?): String {
+            return if (jsonElement != null) {
+                if (jsonElement.isJsonArray) {
+                    jsonElement.asJsonArray[0].asString
                 } else {
-                    contentType = contentTypeElement.getAsString();
+                    jsonElement.asString
                 }
-            }
+            } else ""
+        }
 
-            String contentTransferEncoding = "";
-            JsonElement contentTransferEncodingElement = jsonObject.get(Fields.Attachment.CONTENT_TRANSFER_ENCODING);
-            if (contentTransferEncodingElement != null) {
-                if (contentTransferEncodingElement.isJsonArray()) {
-                    contentTransferEncoding = contentTransferEncodingElement.getAsJsonArray().get(0).getAsString();
-                } else {
-                    contentTransferEncoding = contentTransferEncodingElement.getAsString();
-                }
-            }
-
-            List<String> contentId = new ArrayList<>();
-            JsonElement contentIdElement = jsonObject.get(Fields.Attachment.CONTENT_ID);
-            if (contentIdElement != null) {
-                if (contentIdElement.isJsonArray()) {
-                    JsonArray jsonArray = jsonObject.get(Fields.Attachment.CONTENT_ID).getAsJsonArray();
-                    Iterator<JsonElement> iterator = jsonArray.iterator();
-                    while (iterator.hasNext()) {
-                        contentId.add(iterator.next().getAsString());
-                    }
-                } else {
-                    String contentIdString = jsonObject.get(Fields.Attachment.CONTENT_ID).getAsString();
-                    contentId.add(contentIdString);
-                }
-            }
-
-            String contentLocation = "";
-            JsonElement contentLocationElement = jsonObject.get(Fields.Attachment.CONTENT_LOCATION);
-            if (contentLocationElement != null) {
-                if (contentLocationElement.isJsonArray()) {
-                    contentLocation = contentLocationElement.getAsJsonArray().get(0).getAsString();
-                } else {
-                    contentLocation = contentLocationElement.getAsString();
-                }
-            }
-
-            List<String> contentDisposition = new ArrayList<>();
-            JsonElement contentDispositionElement = jsonObject.get(Fields.Attachment.CONTENT_DISPOSITION);
-            if (contentDispositionElement != null) {
-                if (contentDispositionElement.isJsonArray()) {
-                    JsonArray jsonArray = jsonObject.get(Fields.Attachment.CONTENT_DISPOSITION).getAsJsonArray();
-                    Iterator<JsonElement> iterator = jsonArray.iterator();
-                    while (iterator.hasNext()) {
-                        String disposition = iterator.next().getAsString();
-                        // apparently sometimes null objects are received from the api
-                        if (disposition != null) {
-                            contentDisposition.add(disposition);
-                        }
-                    }
-                } else {
-                    String contentDispositionString = jsonObject.get(Fields.Attachment.CONTENT_DISPOSITION).getAsString();
+        fun getAsArray(jsonElement: JsonElement?): Any {
+            val listOfHeaders = arrayListOf<String>()
+            if (jsonElement == null) return listOfHeaders
+            if (jsonElement.isJsonArray) {
+                val iterator: Iterator<JsonElement> = jsonElement.asJsonArray.iterator()
+                while (iterator.hasNext()) {
+                    val header = iterator.next().asString
                     // apparently sometimes null objects are received from the api
-                    if (contentDispositionString != null) {
-                        contentDisposition.add(contentDispositionString);
+                    if (header != null) {
+                        listOfHeaders.add(header)
                     }
                 }
+            } else {
+                listOfHeaders.add(jsonElement.asString)
             }
-
-            String contentEncryption = "";
-            JsonElement contentEncryptionElement = jsonObject.get(Fields.Attachment.CONTENT_ENCRYPTION);
-            if (contentEncryptionElement != null) {
-                if (contentEncryptionElement.isJsonArray()) {
-                    contentEncryption = contentEncryptionElement.getAsJsonArray().get(0).getAsString();
-                } else {
-                    contentEncryption = contentEncryptionElement.getAsString();
-                }
-            }
-
-            return new AttachmentHeaders(contentType, contentTransferEncoding, contentDisposition, contentId, contentLocation, contentEncryption);
+            return listOfHeaders
         }
     }
 }

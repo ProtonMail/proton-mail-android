@@ -103,7 +103,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 mimeType,
                 "contentTransferEncoding",
                 listOf("inline"),
-                listOf(contentId),
+                contentId,
                 "contentLocation",
                 "contentEncryption"
             )
@@ -153,7 +153,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 mimeType,
                 "contentTransferEncoding",
                 listOf("inline"),
-                listOf(contentId),
+                contentId,
                 "contentLocation",
                 "contentEncryption"
             )
