@@ -306,6 +306,7 @@ public class User {
         ShowMobileSignature = loadShowMobileSignatureSetting();
 
         pref.edit()
+                .putString(PREF_USER_NAME, name)
                 .putLong(PREF_USED_SPACE, usedSpace)
                 .putString(PREF_SIGNATURE, Signature)
                 .putString(PREF_MOBILE_SIGNATURE, MobileSignature)

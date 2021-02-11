@@ -91,8 +91,8 @@ import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.user.UserSettingsEvent;
-import ch.protonmail.android.usecase.LoadUser;
 import ch.protonmail.android.usecase.FindUserIdForUsername;
+import ch.protonmail.android.usecase.LoadUser;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.ConstantTime;
@@ -191,7 +191,8 @@ public class LoginService extends ProtonJobIntentService {
             final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
             handleLogin(username, password.getBytes(Charsets.UTF_8), infoResponse, fallbackAuthVersion, signUp);
         } else if (ACTION_2FA.equals(action)) {
-            final Id userId = new Id (intent.getStringExtra(EXTRA_USER_ID));
+            final Id userId = new Id(intent.getStringExtra(EXTRA_USER_ID));
+            final Name username = new Name(intent.getStringExtra(EXTRA_USERNAME));
             final String password = intent.getStringExtra(EXTRA_PASSWORD);
             final String twoFactor = intent.getStringExtra(EXTRA_TWO_FACTOR);
             final LoginInfoResponse infoResponse = intent.getParcelableExtra(EXTRA_LOGIN_INFO_RESPONSE);
@@ -199,7 +200,7 @@ public class LoginService extends ProtonJobIntentService {
             final int fallbackAuthVersion = intent.getIntExtra(EXTRA_FALLBACK_AUTH_VERSION, 2);
             final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
             final boolean isConnecting = intent.getBooleanExtra(EXTRA_CONNECTING, false);
-            handle2FA(userId, password.getBytes(Charsets.UTF_8), twoFactor, infoResponse, loginResponse, fallbackAuthVersion, signUp, isConnecting);
+            handle2FA(userId, username, password.getBytes(Charsets.UTF_8), twoFactor, infoResponse, loginResponse, fallbackAuthVersion, signUp, isConnecting);
         } else if (ACTION_LOGIN_INFO.equals(action)) {
             final String username = intent.getStringExtra(EXTRA_USERNAME);
             final String password = intent.getStringExtra(EXTRA_PASSWORD);
@@ -480,7 +481,7 @@ public class LoginService extends ProtonJobIntentService {
                         // handling valid login response
                         Id userId = new Id(loginResponse.getUserID());
                         userManager.setCurrentUserBlocking(userId); // all calls after this do not have to rely on username
-                        tokenManager = userManager.getTokenManagerBlocking(userId);
+                        tokenManager = TokenManager.Companion.getInstance(getApplicationContext(), userId);
                         tokenManager.handleLogin(loginResponse);
                         if (loginResponse.getTwoFA().getEnabled() == 0) {
                             loginHelperData = handleSuccessLogin(loginResponse, userId, password, infoResponse, signUp, false, null);
@@ -505,9 +506,17 @@ public class LoginService extends ProtonJobIntentService {
         handleAfterLogin(infoResponse, loginHelperData, username, password, fallbackAuthVersion);
     }
 
-    private void handle2FA(final Id userId, final byte[] password, final String twoFactor,
-                           final LoginInfoResponse infoResponse, final LoginResponse loginResponse,
-                           final int fallbackAuthVersion, final boolean signUp, final boolean isConnecting) {
+    private void handle2FA(
+            final Id userId,
+            final Name username,
+            final byte[] password,
+            final String twoFactor,
+            final LoginInfoResponse infoResponse,
+            final LoginResponse loginResponse,
+            final int fallbackAuthVersion,
+            final boolean signUp,
+            final boolean isConnecting
+    ) {
         TwoFAResponse response = api.twoFactor(new TwoFABody(twoFactor));
         if (response.getCode() == 1000) {
             userManager.setCurrentUserBlocking(userId);
@@ -516,16 +525,38 @@ public class LoginService extends ProtonJobIntentService {
             tokenManager.setScope(response.getScope());
 
             if (isConnecting) {
-                LoginHelperData loginHelperData = handleSuccessLogin(loginResponse, userId, password, infoResponse, false, true, null);
+                LoginHelperData loginHelperData = handleSuccessLogin(
+                        loginResponse,
+                        userId,
+                        password,
+                        infoResponse,
+                        false,
+                        true,
+                        null
+                );
                 handleAfterConnect(infoResponse, loginHelperData, userId, password, 4);
             } else {
-                LoginHelperData loginHelperData = handleSuccessLogin(loginResponse, userId, password, infoResponse, signUp, false, null);
-                // need to fetch the username here, since handleAfterLogin calls startInfo which as an API call that uses the username
-                String username = loadUser.blocking(userId).getName().getS();
-                handleAfterLogin(infoResponse, loginHelperData, username, password, 4);
+                LoginHelperData loginHelperData = handleSuccessLogin(
+                        loginResponse,
+                        userId,
+                        password,
+                        infoResponse,
+                        signUp,
+                        false,
+                        null
+                );
+                handleAfterLogin(infoResponse, loginHelperData, username.getS(), password, 4);
             }
         } else {
-            AppUtil.postEventOnUi(new Login2FAEvent(AuthStatus.FAILED, infoResponse, userId, password, loginResponse, fallbackAuthVersion));
+            Login2FAEvent event = new Login2FAEvent(
+                    AuthStatus.FAILED,
+                    infoResponse,
+                    userId,
+                    password,
+                    loginResponse,
+                    fallbackAuthVersion
+            );
+            AppUtil.postEventOnUi(event);
         }
     }
 
@@ -616,7 +647,7 @@ public class LoginService extends ProtonJobIntentService {
                 loginHelperData.status = AuthStatus.NO_NETWORK;
             }
         } catch (Exception e) {
-            Logger.doLogException(TAG_LOGIN_SERVICE, "error while login", e);
+            Timber.e("Error while logging in", e);
             loginHelperData.status = AuthStatus.FAILED;
         }
 
@@ -758,9 +789,13 @@ public class LoginService extends ProtonJobIntentService {
         }
     }
 
-    private LoginHelperData handleSuccessLogin(LoginResponse loginResponse, final Id userId,
-                                               final byte[] password, final LoginInfoResponse infoResponse,
-                                               final boolean signUp, final boolean isConnecting, final Id currentPrimaryUserId) {
+    private LoginHelperData handleSuccessLogin(
+            LoginResponse loginResponse,
+            final Id userId,
+            final byte[] password,
+            final LoginInfoResponse infoResponse,
+            final boolean signUp, final boolean isConnecting, final Id currentPrimaryUserId
+    ) {
         AuthStatus status;
         boolean redirectToSetup = false;
         User user = null;
@@ -846,7 +881,7 @@ public class LoginService extends ProtonJobIntentService {
 
             // endregion
         } catch (Exception e) {
-            Logger.doLogException(TAG_LOGIN_SERVICE, "error while login", e);
+            Timber.e("Error wile logging in", e);
             status = AuthStatus.FAILED;
         }
 

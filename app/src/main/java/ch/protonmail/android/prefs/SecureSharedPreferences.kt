@@ -31,6 +31,7 @@ import android.security.keystore.KeyProperties
 import android.text.TextUtils
 import android.util.Base64
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
+import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.obfuscate
@@ -467,6 +468,7 @@ class SecureSharedPreferences(
                 val newPrefs = getPrefsForUser(context, userId)
                 for ((key, value) in oldPrefs.all) {
                     newPrefs[key] = value
+                    newPrefs[PREF_USERNAME] = username
                 }
                 username to userId
 

@@ -278,9 +278,10 @@ class UserManager @Inject constructor(
      *   `null` if there is no current user set
      *   @see currentUserId
      */
-    var currentUserLoginState: Int?
+    var currentUserLoginState: Int
         @LoginState
         get() = withCurrentUserPreferences { it[PREF_LOGIN_STATE] ?: LOGIN_STATE_NOT_INITIALIZED }
+            ?: LOGIN_STATE_NOT_INITIALIZED
         set(@LoginState value) {
             withCurrentUserPreferences {
                 it[PREF_LOGIN_STATE] = value
@@ -299,7 +300,13 @@ class UserManager @Inject constructor(
         checkNotNull(currentUserId)
 
     suspend fun getCurrentUser(): NewUser? =
-        currentUserId?.let { getUser(it) }
+        currentUserId?.let {
+            runCatching { getUser(it) }
+                .getOrElse {
+                    Timber.d("Cannot load user", it)
+                    null
+                }
+        }
 
     suspend fun requireCurrentUser(): NewUser =
         getUser(requireCurrentUserId())
@@ -319,7 +326,13 @@ class UserManager @Inject constructor(
         runBlocking { getUserBlocking(requireCurrentUserId()) }
 
     suspend fun getCurrentLegacyUser(): User? =
-        currentUserId?.let { getLegacyUser(it) }
+        currentUserId?.let {
+            runCatching { getLegacyUser(it) }
+                .getOrElse {
+                    Timber.d("Cannot load user", it)
+                    null
+                }
+        }
 
     suspend fun requireCurrentLegacyUser(): User =
         getLegacyUser(requireCurrentUserId())
@@ -937,6 +950,7 @@ class UserManager @Inject constructor(
         mailSettings: MailSettings,
         userSettings: UserSettings
     ) = runBlocking {
+        currentUserId = Id(user.id)
         setUserDetails(user, addresses, mailSettings, userSettings)
     }
 
@@ -1024,7 +1038,8 @@ class UserManager @Inject constructor(
         val tokenManager = TokenManager.getInstance(context, userId)
         // make sure the private key is here
         if (tokenManager.encPrivateKey.isNullOrBlank()) {
-            val user = getUser(userId)
+            val user = runCatching { getUser(userId) }
+                .getOrElse { return tokenManager }
             // it's needed for verification later
             tokenManager.encPrivateKey = user.keys.primaryKey?.privateKey?.string
         }
@@ -1142,14 +1157,14 @@ class UserManager @Inject constructor(
         runBlocking { setSnoozeQuick(isOn, minutesFromNow) }
     }
 
-    private suspend fun loadSettings(userId: Id) = withContext(dispatchers.Io) {
-        val preferences = preferencesFor(userId)
-        userSettings = UserSettings.load(preferences)
-        mailSettings = MailSettings.load(preferences)
-        snoozeSettings = SnoozeSettings.load(preferences)
-        // Reload autoLockPINPeriod
-        user.autoLockPINPeriod
-        Unit
+    private suspend fun loadSettings(userId: Id) {
+        withContext(dispatchers.Io) {
+            val preferences = preferencesFor(userId)
+            userSettings = UserSettings.load(preferences)
+            mailSettings = MailSettings.load(preferences)snoozeSettings = SnoozeSettings.load(preferences)
+            // Reload autoLockPINPeriod
+            user.autoLockPINPeriod
+        }
     }
 
     @Deprecated("Use with User Id", ReplaceWith("loadSettings(userId)"), DeprecationLevel.ERROR)
@@ -1205,7 +1220,7 @@ class UserManager @Inject constructor(
                 prefs -= PREF_USERNAME
 
                 val currentUserId = findUserIdForUsername(Name(currentUsername))
-                prefs[PREF_CURRENT_USER_ID] = currentUserId
+                prefs[PREF_CURRENT_USER_ID] = currentUserId.s
             }
         }
     }

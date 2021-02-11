@@ -356,7 +356,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         super.onStop();
         // Enable secure mode for hide content from recent if pin is enabled, else disable it so
         // content will be visible in recent
-        if (mUserManager.requireCurrentLegacyUserBlocking().isUsePin())
+        User currentUser = mUserManager.getCurrentLegacyUserBlocking();
+        if (currentUser != null && currentUser.isUsePin())
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
@@ -376,7 +377,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void activateScreenProtector() {
-        if (mUserManager.requireCurrentLegacyUserBlocking().isUsePin()) {
+        User currentUser = mUserManager.getCurrentLegacyUserBlocking();
+        if (currentUser != null && currentUser.isUsePin()) {
             if (mScreenProtectorLayout != null) {
                 mScreenProtectorLayout.setVisibility(View.VISIBLE);
             }

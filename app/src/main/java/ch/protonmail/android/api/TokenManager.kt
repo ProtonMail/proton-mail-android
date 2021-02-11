@@ -47,10 +47,6 @@ private const val PREF_TOKEN_SCOPE = "access_token_scope"
 
 class TokenManager private constructor(private val pref: SharedPreferences) {
 
-    @Deprecated("This should not be used. No Replacement", level = DeprecationLevel.ERROR)
-    val username: String =
-        unsupported
-
     private var accessToken: String? = null
     private var refreshToken: String? = null
     private var uID: String? = null
@@ -73,7 +69,7 @@ class TokenManager private constructor(private val pref: SharedPreferences) {
         get() = uID ?: ""
 
     val authAccessToken: String?
-        get() = authAccessToken?.takeIfNotEmpty()?.let { "${Constants.TOKEN_TYPE} $it" }
+        get() = accessToken?.takeIfNotEmpty()?.let { "${Constants.TOKEN_TYPE} $it" }
 
     private fun load() {
         refreshToken = pref[PREF_REFRESH_TOKEN] ?: ""
