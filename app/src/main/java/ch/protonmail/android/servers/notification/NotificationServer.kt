@@ -707,7 +707,7 @@ class NotificationServer @Inject constructor(
 
         // Build and show notification
         val notification = notificationBuilder.build()
-        notificationManager.notify(user.name.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
+        notificationManager.notify(user.id.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
     @Deprecated("Use with new user model")
