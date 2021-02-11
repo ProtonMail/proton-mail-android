@@ -45,10 +45,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.os.postDelayed
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.switchMap
 import androidx.loader.app.LoaderManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -102,7 +102,6 @@ import ch.protonmail.android.adapters.swipe.SwipeAction
 import ch.protonmail.android.adapters.swipe.TrashSwipeHandler
 import ch.protonmail.android.api.models.MessageCount
 import ch.protonmail.android.api.models.SimpleMessage
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.counters.CountersDatabase
 import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
 import ch.protonmail.android.api.models.room.counters.TotalLabelCounter
@@ -111,8 +110,6 @@ import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.services.MessagesService.Companion.getLastMessageTime
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchFirstPage
@@ -130,7 +127,6 @@ import ch.protonmail.android.data.ContactsRepository
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.FetchUpdatesEvent
-import ch.protonmail.android.events.ForceSwitchedAccountEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxLoginEvent
@@ -253,7 +249,7 @@ class MailboxActivity :
 
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
-            messageDetailsRepository.reloadDependenciesForUserId(userManager.requireCurrentUserId())
+            messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
             FcmUtil.setTokenSent(false) // force FCM to re-register
         }
         val extras = intent.extras
@@ -272,84 +268,48 @@ class MailboxActivity :
             setupNewMessageLocation(extras.getInt(EXTRA_MAILBOX_LOCATION))
         }
         startObserving()
-        mailboxViewModel.toastMessageMaxLabelsReached.observe(
-            this,
-            { event: Event<MaxLabelsReached?> ->
-                val maxLabelsReached = event.getContentIfNotHandled()
-                if (maxLabelsReached != null) {
-                    val message =
-                        String.format(
-                            getString(R.string.max_labels_exceeded),
-                            maxLabelsReached.subject,
-                            maxLabelsReached.maxAllowedLabels
-                        )
-                    showToast(message, Toast.LENGTH_SHORT)
-                }
+        mailboxViewModel.toastMessageMaxLabelsReached.observe(this) { event: Event<MaxLabelsReached?> ->
+            val maxLabelsReached = event.getContentIfNotHandled()
+            if (maxLabelsReached != null) {
+                val message =
+                    String.format(
+                        getString(R.string.max_labels_exceeded),
+                        maxLabelsReached.subject,
+                        maxLabelsReached.maxAllowedLabels
+                    )
+                showToast(message, Toast.LENGTH_SHORT)
             }
-        )
-        mailboxViewModel.hasConnectivity.observe(
-            this,
-            { onConnectivityEvent(it) }
-        )
+        }
+
+        mailboxViewModel.hasConnectivity.observe(this, ::onConnectivityEvent)
 
         startObservingUsedSpace()
 
-        messagesAdapter = MessagesRecyclerViewAdapter(
-            this,
-            object : Function1<SelectionModeEnum, Unit> {
-                var actionModeAux: ActionMode? = null
-                override fun invoke(selectionModeEvent: SelectionModeEnum) {
-                    when (selectionModeEvent) {
-                        SelectionModeEnum.STARTED -> actionModeAux = startActionMode(this@MailboxActivity)
-                        SelectionModeEnum.ENDED -> {
-                            val actionModeEnd = actionModeAux
-                            if (actionModeEnd != null) {
-                                actionModeEnd.finish()
-                                this.actionModeAux = null
-                            }
-                        }
+        var actionModeAux: ActionMode? = null
+        messagesAdapter = MessagesRecyclerViewAdapter(this) { selectionModeEvent ->
+            when (selectionModeEvent) {
+                SelectionModeEnum.STARTED -> actionModeAux = startActionMode(this@MailboxActivity)
+                SelectionModeEnum.ENDED -> {
+                    val actionModeEnd = actionModeAux
+                    if (actionModeEnd != null) {
+                        actionModeEnd.finish()
+                        actionModeAux = null
                     }
                 }
             }
-        )
+        }
 
-        contactsRepository.findAllContactsEmailsAsync().observe(
-            this,
-            { contactEmails: List<ContactEmail> ->
-                messagesAdapter.setContactsList(contactEmails)
-            }
-        )
+        contactsRepository.findAllContactsEmailsAsync().observe(this, messagesAdapter::setContactsList)
+        mailboxViewModel.pendingSendsLiveData.observe(this, messagesAdapter::setPendingForSendingList)
+        mailboxViewModel.pendingUploadsLiveData.observe(this, messagesAdapter::setPendingUploadsList)
+        messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
 
-        mailboxViewModel.pendingSendsLiveData.observe(
-            this,
-            { pendingSendList: List<PendingSend> ->
-                messagesAdapter.setPendingForSendingList(pendingSendList)
+        mailboxViewModel.hasSuccessfullyDeletedMessages.observe(this) { isSuccess ->
+            Timber.v("Delete message status is success $isSuccess")
+            if (!isSuccess) {
+                showToast(R.string.message_deleted_error)
             }
-        )
-
-        mailboxViewModel.pendingUploadsLiveData.observe(
-            this,
-            { pendingUploadList: List<PendingUpload> ->
-                messagesAdapter.setPendingUploadsList(pendingUploadList)
-            }
-        )
-
-        messageDetailsRepository.getAllLabels().observe(
-            this,
-            { labels: List<Label> ->
-                messagesAdapter.setLabels(labels)
-            }
-        )
-
-        mailboxViewModel.hasSuccessfullyDeletedMessages.observe(
-            this,
-            { isSuccess ->
-                Timber.v("Delete message status is success $isSuccess")
-                if (!isSuccess) {
-                    showToast(R.string.message_deleted_error)
-                }
-            }
-        )
+        }
 
         checkUserAndFetchNews()
 
@@ -411,17 +371,11 @@ class MailboxActivity :
 
         fetchOrganizationData()
 
-        val messagesLiveData: LiveData<List<Message>> =
-            Transformations.switchMap(mailboxLocationMain) { location: MessageLocationType? ->
-                getLiveDataByLocation(messageDetailsRepository, location!!)
-            }
+        val messagesLiveData = mailboxLocationMain.switchMap { location: MessageLocationType ->
+            getLiveDataByLocation(messageDetailsRepository, location)
+        }
 
-        mailboxLocationMain.observe(
-            this,
-            { newLocation: MessageLocationType? ->
-                messagesAdapter.setNewLocation(newLocation!!)
-            }
-        )
+        mailboxLocationMain.observe(this, messagesAdapter::setNewLocation)
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
         ItemTouchHelper(SwipeController()).attachToRecyclerView(messages_list_view)
 
@@ -517,7 +471,6 @@ class MailboxActivity :
     }
 
     private val setupUpLimitApproachingObserver = Observer { limitApproaching: Event<Boolean> ->
-        // val _limitApproaching = limitApproaching.getContentIfNotHandled()
 
         if (limitApproaching.getContentIfNotHandled() == true /* _limitApproaching != null */) {
             if (userManager.canShowStorageLimitWarning()) {
@@ -535,7 +488,6 @@ class MailboxActivity :
     }
 
     private val setupUpLimitBelowCriticalObserver = Observer { limitReached: Event<Boolean> ->
-        // val _limitReached = limitReached.getContentIfNotHandled()
         if (limitReached.getContentIfNotHandled() == true /* _limitReached != null */) {
             userManager.setShowStorageLimitWarning(true)
             userManager.setShowStorageLimitReached(true)
@@ -544,7 +496,6 @@ class MailboxActivity :
     }
 
     private val setupUpLimitReachedTryComposeObserver = Observer { limitReached: Event<Boolean> ->
-        // val _limitReached = limitReached.getContentIfNotHandled()
         if (limitReached.getContentIfNotHandled() == true /* _limitReached != null && _limitReached */) {
             showInfoDialogWithTwoButtons(
                 this@MailboxActivity,
@@ -669,23 +620,15 @@ class MailboxActivity :
         setUpDrawer()
         setupAccountsList()
         checkRegistration()
-        handler.postDelayed(
-            {
-                mJobManager.addJobInBackground(FetchLabelsJob())
-                setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
-            },
-            500
-        )
+        handler.postDelayed(500) {
+            mJobManager.addJobInBackground(FetchLabelsJob())
+            setupNewMessageLocation(DrawerOptionType.INBOX.drawerOptionTypeValue)
+        }
 
         val messagesLiveData =
             mailboxLocationMain.switchMap { getLiveDataByLocation(messageDetailsRepository, it) }
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
-        messageDetailsRepository.getAllLabels().observe(
-            this,
-            { labels: List<Label> ->
-                messagesAdapter.setLabels(labels)
-            }
-        )
+        messageDetailsRepository.getAllLabels().observe(this, messagesAdapter::setLabels)
         // Account has been switched, so used space changed as well
         mailboxViewModel.usedSpaceActionEvent(FLOW_USED_SPACE_CHANGED)
         // Observe used space for current account
@@ -1016,7 +959,7 @@ class MailboxActivity :
     fun onSwitchedAccountEvent(event: ForceSwitchedAccountEvent) {
         showSignedInSnack(
             messages_list_view,
-            String.format(getString(R.string.signed_in_with_logged_out_from), event.fromAccount, event.toAccount)
+            getString(R.string.signed_in_with_logged_out_from, event.fromAccount, event.toAccount)
         )
         onSwitchedAccounts()
     }
@@ -1490,23 +1433,20 @@ class MailboxActivity :
 
     override fun onLabelCreated(labelName: String, color: String) {
         val postLabelResult = PostLabelWorker.Enqueuer(getWorkManager()).enqueue(labelName, color)
-        postLabelResult.observe(
-            this,
-            {
-                val state: WorkInfo.State = it.state
+        postLabelResult.observe(this) {
+            val state: WorkInfo.State = it.state
 
-                if (state == WorkInfo.State.SUCCEEDED) {
-                    showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
-                    return@observe
-                }
-
-                if (state == WorkInfo.State.FAILED) {
-                    val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
-                        ?: getString(R.string.label_invalid)
-                    showToast(errorMessage, Toast.LENGTH_SHORT)
-                }
+            if (state == WorkInfo.State.SUCCEEDED) {
+                showToast(getString(R.string.label_created), Toast.LENGTH_SHORT)
+                return@observe
             }
-        )
+
+            if (state == WorkInfo.State.FAILED) {
+                val errorMessage = it.outputData.getString(KEY_POST_LABEL_WORKER_RESULT_ERROR)
+                    ?: getString(R.string.label_invalid)
+                showToast(errorMessage, Toast.LENGTH_SHORT)
+            }
+        }
     }
 
     override fun onLabelsDeleted(checkedLabelIds: List<String>) {
@@ -1647,11 +1587,13 @@ class MailboxActivity :
 
     private var undoSnack: Snackbar? = null
     private fun buildSwipeProcessor() {
-        mSwipeProcessor.addHandler(SwipeAction.TRASH, TrashSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.SPAM, SpamSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.STAR, StarSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.ARCHIVE, ArchiveSwipeHandler())
-        mSwipeProcessor.addHandler(SwipeAction.MARK_READ, MarkReadSwipeHandler())
+        mSwipeProcessor.apply {
+            addHandler(SwipeAction.TRASH, TrashSwipeHandler())
+            addHandler(SwipeAction.SPAM, SpamSwipeHandler())
+            addHandler(SwipeAction.STAR, StarSwipeHandler())
+            addHandler(SwipeAction.ARCHIVE, ArchiveSwipeHandler())
+            addHandler(SwipeAction.MARK_READ, MarkReadSwipeHandler())
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1875,22 +1817,19 @@ class MailboxActivity :
                 syncUUID = UUID.randomUUID().toString()
                 checkUserAndFetchNews()
                 if ((messages_list_view.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {
-                    handler.postDelayed(
-                        {
-                            val newMessageSnack =
-                                Snackbar.make(
-                                    findViewById(R.id.drawer_layout),
-                                    getString(R.string.new_message_arrived),
-                                    Snackbar.LENGTH_LONG
-                                )
-                            val view = newMessageSnack.view
-                            val tv =
-                                view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-                            tv.setTextColor(Color.WHITE)
-                            newMessageSnack.show()
-                        },
-                        750
-                    )
+                    handler.postDelayed(750) {
+                        val newMessageSnack =
+                            Snackbar.make(
+                                findViewById(R.id.drawer_layout),
+                                getString(R.string.new_message_arrived),
+                                Snackbar.LENGTH_LONG
+                            )
+                        val view = newMessageSnack.view
+                        val tv =
+                            view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+                        tv.setTextColor(Color.WHITE)
+                        newMessageSnack.show()
+                    }
                 }
                 messagesAdapter.notifyDataSetChanged()
             }
@@ -1968,13 +1907,11 @@ class MailboxActivity :
                 undoSnack!!.show()
             }
             if (swipeCustomizeSnack != null && !customizeSwipeSnackShown) {
-                handler.postDelayed(
-                    {
-                        swipeCustomizeSnack!!.show()
-                        customizeSwipeSnackShown = true
-                    },
-                    2750
-                )
+                handler.postDelayed(2750) {
+                    swipeCustomizeSnack!!.show()
+                    customizeSwipeSnackShown = true
+                }
+
             }
             messagesAdapter.notifyDataSetChanged()
         }

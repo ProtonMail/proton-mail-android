@@ -92,7 +92,7 @@ class MessageDetailsRepository @Inject constructor(
         messagesDao = databaseProvider.provideMessagesDao(username)
     }
 
-    fun reloadDependenciesForUserId(userId: Id) {
+    fun reloadDependenciesForUser(userId: Id) {
         pendingActionsDatabase = databaseProvider.providePendingActionsDao(userId)
         messagesDao = databaseProvider.provideMessagesDao(userId)
     }

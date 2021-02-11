@@ -77,6 +77,7 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
 import me.proton.core.util.kotlin.unsupported
 import me.proton.core.domain.arch.map
+import me.proton.core.util.kotlin.unsupported
 import timber.log.Timber
 import javax.inject.Named
 import kotlin.collections.set
@@ -114,7 +115,7 @@ class EventHandler @AssistedInject constructor(
         val attachmentFactory = AttachmentFactory()
         val messageSenderFactory = MessageSenderFactory()
         messageFactory = MessageFactory(attachmentFactory, messageSenderFactory)
-        messageDetailsRepository.reloadDependenciesForUserId(userId)
+        messageDetailsRepository.reloadDependenciesForUser(userId)
     }
 
     fun handleRefreshContacts() {
