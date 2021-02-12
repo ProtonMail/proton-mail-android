@@ -52,7 +52,7 @@ class AttachmentsHelperTest {
             mimeType,
             contentEncoding1,
             listOf("inline"),
-            listOf(contentId),
+            contentId,
             "contentLocation",
             "contentEncryption"
         )

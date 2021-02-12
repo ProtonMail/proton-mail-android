@@ -149,8 +149,7 @@ class AttachmentsRepository @Inject constructor(
 
     private fun isAttachmentInline(headers: AttachmentHeaders?) =
         headers != null &&
-            headers.contentDisposition.contains("inline") &&
-            headers.contentId != null
+            headers.contentDisposition.contains("inline")
 
     suspend fun getAttachmentDataOrNull(
         crypto: AddressCrypto,
@@ -159,11 +158,13 @@ class AttachmentsRepository @Inject constructor(
     ): ByteArray? {
         val responseBody = apiManager.downloadAttachment(attachmentId)
 
-        return withContext(dispatchers.Io) {
-            responseBody?.byteStream()?.source()?.buffer()?.use { bufferedSource ->
-                val byteArray = bufferedSource.readByteArray()
-                val keyBytes = requireNotNull(key.decodeBase64()?.toByteArray())
-                crypto.decryptAttachment(keyBytes, byteArray).decryptedData
+        return responseBody?.let { body ->
+            withContext(dispatchers.Io) {
+                body.byteStream().source().buffer().use { bufferedSource ->
+                    val byteArray = bufferedSource.readByteArray()
+                    val keyBytes = requireNotNull(key.decodeBase64()?.toByteArray())
+                    crypto.decryptAttachment(keyBytes, byteArray).decryptedData
+                }
             }
         }
     }
