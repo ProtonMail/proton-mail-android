@@ -44,12 +44,12 @@ class UploadAttachments @Inject constructor(
      * Use #UploadAttachments.invoke instead
      */
     @Deprecated("Needed to replace existing logic in legacy java jobs", ReplaceWith("invoke()", ""))
-    fun blocking(attachmentIds: List<String>, message: Message, crypto: AddressCrypto) =
+    fun blocking(attachmentIds: List<String>, message: Message, crypto: AddressCrypto, isMessageSending: Boolean) =
         runBlocking {
-            invoke(attachmentIds, message, crypto)
+            invoke(attachmentIds, message, crypto, isMessageSending)
         }
 
-    suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto): Result =
+    suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto, isMessageSending: Boolean): Result =
         withContext(dispatchers.Io) {
             val messageId = requireNotNull(message.messageId)
             Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
@@ -91,7 +91,7 @@ class UploadAttachments @Inject constructor(
             }
 
             val isAttachPublicKey = userManager.getMailSettings(userManager.username)?.getAttachPublicKey() ?: false
-            if (isAttachPublicKey) {
+            if (isAttachPublicKey && isMessageSending) {
                 Timber.i("UploadAttachments attaching publicKey for messageId $messageId")
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
 
