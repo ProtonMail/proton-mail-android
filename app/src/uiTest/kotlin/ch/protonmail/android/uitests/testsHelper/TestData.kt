@@ -40,6 +40,8 @@ object TestData {
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
     var twoPassUserWith2FA =
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
+    var autoAttachPublicKeyUser =
+        User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
 
     /** Message recipients **/
     var internalEmailTrustedKeys =

@@ -119,6 +119,7 @@ open class BaseTest : CoreTest() {
             TestData.twoPassUser = setUser(BuildConfig.TEST_USER2)
             TestData.onePassUserWith2FA = setUser(BuildConfig.TEST_USER3)
             TestData.twoPassUserWith2FA = setUser(BuildConfig.TEST_USER4)
+            TestData.autoAttachPublicKeyUser = setUser(BuildConfig.TEST_USER5)
 
             TestData.externalGmailPGPEncrypted = setUser(BuildConfig.TEST_RECIPIENT1)
             TestData.externalOutlookPGPSigned = setUser(BuildConfig.TEST_RECIPIENT2)
