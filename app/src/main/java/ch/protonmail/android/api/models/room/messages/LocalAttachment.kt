@@ -103,9 +103,9 @@ class LocalAttachment @JvmOverloads constructor(
 				val isUploading = parcel.readInt() == 1
 				val keyPackets = parcel.readString()
 				val serializedHeaders = parcel.readString() ?: EMPTY_STRING
-				val headers : AttachmentHeaders? =
+				val headers =
 					if (serializedHeaders.isEmpty()) null
-					else serializedHeaders.deserialize()
+					else AttachmentHeaders.fromString(serializedHeaders)
 				val isUploaded = parcel.readInt() == 1
 
 				return LocalAttachment(

@@ -65,17 +65,6 @@ class AttachmentHeaders(
         return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT)
     }
 
-    fun fromString(value: String?): AttachmentHeaders? {
-        val input = ByteArrayInputStream(Base64.decode(value, Base64.DEFAULT))
-        var result: AttachmentHeaders? = null
-        try {
-            result = ObjectInputStream(input).readObject() as AttachmentHeaders
-        } catch (e: IOException) {
-            Timber.d(e, "DeSerialization of recipients failed")
-        }
-        return result
-    }
-
     class AttachmentHeadersDeserializer : JsonDeserializer<AttachmentHeaders> {
         @Throws(JsonParseException::class)
         override fun deserialize(
@@ -133,6 +122,17 @@ class AttachmentHeaders(
                 listOfHeaders.add(jsonElement.asString)
             }
             return listOfHeaders
+        }
+
+        fun fromString(value: String?): AttachmentHeaders? {
+            val input = ByteArrayInputStream(Base64.decode(value, Base64.DEFAULT))
+            var result: AttachmentHeaders? = null
+            try {
+                result = ObjectInputStream(input).readObject() as AttachmentHeaders
+            } catch (e: IOException) {
+                Timber.d(e, "DeSerialization of recipients failed")
+            }
+            return result
         }
     }
 }
