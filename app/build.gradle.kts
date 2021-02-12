@@ -130,12 +130,13 @@ android(appIdSuffix = "android") {
     }
 
     productFlavors {
-        register("playstore") {
+        register("production") {
             applicationId = "ch.protonmail.android"
         }
         register("beta") {
             applicationId = "ch.protonmail.android.beta"
         }
+        register("v4")
     }
 
     buildTypes {
@@ -147,12 +148,7 @@ android(appIdSuffix = "android") {
             isMinifyEnabled = false
             isTestCoverageEnabled = true
         }
-        getByName("releasePlayStore") {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), File("proguard-rules.pro"))
-            signingConfig = signingConfigs["release"]
-        }
-        getByName("releaseBeta") {
+        getByName("release") {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), File("proguard-rules.pro"))
             signingConfig = signingConfigs["release"]
