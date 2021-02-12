@@ -18,8 +18,13 @@
  */
 package ch.protonmail.android.activities.messageDetails.viewmodel
 
+import android.annotation.TargetApi
 import android.content.Context
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.print.PrintManager
+import androidx.core.content.FileProvider
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -43,9 +48,11 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
+import ch.protonmail.android.attachments.AttachmentsHelper
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.DIR_EMB_ATTACHMENT_DOWNLOADS
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
@@ -66,8 +73,12 @@ import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
+import okio.buffer
+import okio.sink
+import okio.source
 import org.jsoup.Jsoup
 import timber.log.Timber
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -83,10 +94,13 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
     private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
-    messageRendererFactory: MessageRenderer.Factory,
     private val deleteMessageUseCase: DeleteMessage,
     private val fetchVerificationKeys: FetchVerificationKeys,
+    private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
     private val dispatchers: DispatcherProvider,
+    private val attachmentsHelper: AttachmentsHelper,
+    private val downloadUtils: DownloadUtils,
+    messageRendererFactory: MessageRenderer.Factory,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -188,6 +202,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         }
     }
 
+    private var areImagesDisplayed: Boolean = false
+
     init {
         tryFindMessage()
         messageDetailsRepository.reloadDependenciesForUser(userManager.username)
@@ -196,7 +212,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             for (body in messageRenderer.renderedBody) {
                 // TODO Sending twice the same value, perhaps we could improve this
                 _downloadEmbeddedImagesResult.postValue(body)
-                mImagesDisplayed = true
+                areImagesDisplayed = true
             }
         }
     }
@@ -252,20 +268,25 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
             val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
-                EmbeddedImage.fromAttachment(
-                    it, decryptedMessageData.value!!.embeddedImagesArray.toList()
+                attachmentsHelper.fromAttachmentToEmbeddedImage(
+                    it, decryptedMessageData.value!!.embeddedImageIds.toList()
                 )
             }
-
+            val embeddedImagesWithLocalFiles = mutableListOf<EmbeddedImage>()
             embeddedImages.forEach { embeddedImage ->
                 attachmentMetadataList.find { it.id == embeddedImage.attachmentId }?.let {
-                    embeddedImage.localFileName = it.localLocation.substringAfterLast("/")
+                    embeddedImagesWithLocalFiles.add(
+                        embeddedImage.copy(localFileName = it.localLocation.substringAfterLast("/"))
+                    )
                 }
             }
 
             // don't download embedded images, if we already have them in local storage
-            if (embeddedImages.all { it.localFileName != null }) {
-                AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImages))
+            if (
+                embeddedImagesWithLocalFiles.isNotEmpty() &&
+                embeddedImagesWithLocalFiles.all { it.localFileName != null }
+            ) {
+                AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
                 messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.username)
             }
@@ -273,12 +294,15 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun onEmbeddedImagesDownloaded(event: DownloadEmbeddedImagesEvent) {
+        Timber.v("onEmbeddedImagesDownloaded status: ${event.status} images size: ${event.images.size}")
         if (bodyString.isNullOrEmpty()) {
             _downloadEmbeddedImagesResult.value = bodyString ?: ""
             return
         }
 
-        messageRenderer.images.offer(event.images)
+        if (event.status == Status.SUCCESS) {
+            messageRenderer.images.offer(event.images)
+        }
     }
 
     fun prepareEditMessageIntent(
@@ -297,7 +321,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 newMessageTitle,
                 content,
                 mBigContentHolder,
-                mImagesDisplayed,
+                areImagesDisplayed,
                 remoteContentDisplayed,
                 _embeddedImagesAttachments,
                 dispatchers.Io,
@@ -416,7 +440,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                                 with(messageDetailsRepository) {
 
                                     if (isTransientMessage) {
-                                        val savedMessage = findSearchMessageById(messageId, dispatchers.Io)
+                                        val savedMessage = findSearchMessageById(messageId)
                                         if (savedMessage != null) {
                                             messageResponse.message.writeTo(savedMessage)
                                             saveSearchMessageInDB(savedMessage)
@@ -466,22 +490,82 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         message.location = location.messageLocationTypeValue
     }
 
-    fun tryDownloadingAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
+    fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
         viewModelScope.launch(dispatchers.Io) {
-            val metadata = attachmentMetadataDatabase.getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
+            val metadata = attachmentMetadataDatabase
+                .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
+            Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
             if (metadata != null) {
-                if (metadata.localLocation.endsWith("==")) { // migration for deprecated saving attachments as files with name <attachmentId>
-                    attachmentMetadataDatabase.deleteAttachmentMetadata(metadata)
-                    DownloadEmbeddedAttachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
-                } else {
-                    DownloadUtils.viewCachedAttachmentFile(context, metadata.name, metadata.localLocation)
+                val uri = metadata.uri
+                when {
+                    uri?.path?.contains(DIR_EMB_ATTACHMENT_DOWNLOADS) == true -> {
+                        copyAttachmentToDownloadsAndDisplay(context, metadata.name, uri)
+                    }
+                    // extra check if user has not deleted the file
+                    attachmentsHelper.isFileAvailable(context, uri) -> {
+                        viewAttachment(context, metadata.name, uri)
+                    }
+                    else -> {
+                        Timber.v("No file attachment id: $attachmentToDownloadId downloading again")
+                        attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                    }
                 }
             } else {
-                DownloadEmbeddedAttachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                Timber.v("No metadata found for attachment id: $attachmentToDownloadId")
+                attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
             }
         }
     }
+
+    /**
+     * Explicitly make a copy of embedded attachment to downloads and display it (product requirement)
+     */
+    private fun copyAttachmentToDownloadsAndDisplay(
+        context: Context,
+        filename: String,
+        uri: Uri
+    ) {
+        val newUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getCopiedUriFromQ(filename, uri, context)
+        } else {
+            getCopiedUriBeforeQ(filename, uri, context)
+        }
+
+        Timber.v("Copied attachment file from ${uri.path} to ${newUri?.path}")
+        viewAttachment(context, filename, newUri)
+    }
+
+    @TargetApi(Build.VERSION_CODES.Q)
+    private fun getCopiedUriFromQ(filename: String, uri: Uri, context: Context): Uri? {
+        val contentResolver = context.contentResolver
+
+        return contentResolver.openInputStream(uri)?.let {
+            attachmentsHelper.saveAttachmentInMediaStore(
+                contentResolver, filename, contentResolver.getType(uri), it
+            )
+        }
+    }
+
+    private fun getCopiedUriBeforeQ(filename: String, uri: Uri, context: Context): Uri {
+        val fileInDownloads = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            filename
+        )
+
+        context.contentResolver.openInputStream(uri)?.use { stream ->
+            fileInDownloads.sink().buffer().use { sink ->
+                sink.writeAll(stream.source())
+            }
+        }
+
+        return FileProvider.getUriForFile(
+            context, context.applicationContext.packageName + ".provider", fileInDownloads
+        )
+    }
+
+    fun viewAttachment(context: Context, filename: String?, uri: Uri?) =
+        downloadUtils.viewAttachment(context, filename, uri)
 
     fun remoteContentDisplayed() {
         remoteContentDisplayed = true
@@ -493,14 +577,12 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
         prepareEmbeddedImages()
     }
 
-    fun isEmbeddedImagesDisplayed() = mImagesDisplayed
+    fun isEmbeddedImagesDisplayed() = areImagesDisplayed
 
     fun displayEmbeddedImages() {
-        mImagesDisplayed = true // this will be passed to edit intent
+        areImagesDisplayed = true // this will be passed to edit intent
         startDownloadEmbeddedImagesJob()
     }
-
-    private var mImagesDisplayed: Boolean = false
 
     fun prepareEmbeddedImages(): Boolean {
         val message = decryptedMessageData.value
@@ -509,8 +591,8 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             val embeddedImagesToFetch = ArrayList<EmbeddedImage>()
             val embeddedImagesAttachments = ArrayList<Attachment>()
             for (attachment in attachments) {
-                val embeddedImage = EmbeddedImage
-                    .fromAttachment(attachment, message.embeddedImagesArray.toList()) ?: continue
+                val embeddedImage = attachmentsHelper
+                    .fromAttachmentToEmbeddedImage(attachment, message.embeddedImageIds) ?: continue
                 embeddedImagesToFetch.add(embeddedImage)
                 embeddedImagesAttachments.add(attachment)
             }

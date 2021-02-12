@@ -153,6 +153,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
     NetworkConfigurator networkConfigurator;
     @Inject
     NetworkSwitcher networkSwitcher;
+    @Inject
+    DownloadUtils downloadUtils;
 
     private Bus mBus;
     private boolean mIsInitialized;
@@ -411,7 +413,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     public void onDownloadAttachmentEvent(DownloadedAttachmentEvent event) {
         final Status status = event.getStatus();
         if (status != Status.FAILED) {
-            DownloadUtils.viewAttachment(this, event.getFilename(), !event.isOfflineLoaded());
+            downloadUtils.viewAttachmentNotification(this, event.getFilename(), event.getAttachmentUri(), !event.isOfflineLoaded());
         }
     }
 

@@ -73,7 +73,8 @@ class MessageDetailsRepository @Inject constructor(
     private var pendingActionsDatabase: PendingActionsDao,
     private val applicationContext: Context,
     val databaseProvider: DatabaseProvider,
-    private val dispatchers: DispatcherProvider
+    private val dispatchers: DispatcherProvider,
+    private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 ) {
 
     private var messagesDao: MessagesDao = databaseProvider.provideMessagesDao()
@@ -92,26 +93,21 @@ class MessageDetailsRepository @Inject constructor(
     fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> =
         searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
-    suspend fun findMessageById(messageId: String) =
-        withContext(dispatchers.Io) {
-            findMessageByIdBlocking(messageId)
-        }
-
-    suspend fun findSearchMessageById(messageId: String, dispatcher: CoroutineDispatcher) =
-        withContext(dispatcher) {
-            searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
-        }
-
-
     suspend fun findMessageByMessageDbId(dbId: Long, dispatcher: CoroutineDispatcher): Message? =
         withContext(dispatcher) {
             findMessageByMessageDbId(dbId)
         }
 
     fun findMessageByIdBlocking(messageId: String): Message? =
+        messagesDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+
+    suspend fun findMessageById(messageId: String): Message? =
         messagesDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    fun findSearchMessageById(messageId: String): Message? =
+    fun findSearchMessageByIdBlocking(messageId: String): Message? =
+        searchDatabaseDao.findMessageByIdBlocking(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+
+    suspend fun findSearchMessageById(messageId: String): Message? =
         searchDatabaseDao.findMessageById(messageId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
     fun findMessageByIdSingle(messageId: String): Single<Message> =
@@ -196,11 +192,14 @@ class MessageDetailsRepository @Inject constructor(
         }
     }
 
-    fun findAttachmentsByMessageId(messageId: String) = messagesDao.findAttachmentsByMessageId(messageId)
+    suspend fun findAttachmentsByMessageId(messageId: String) = messagesDao.findAttachmentsByMessageId(messageId)
 
-    fun findSearchAttachmentsByMessageId(messageId: String) = searchDatabaseDao.findAttachmentsByMessageId(messageId)
+    suspend fun findSearchAttachmentsByMessageId(messageId: String) =
+        searchDatabaseDao.findAttachmentsByMessageId(messageId)
 
-    fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
+    fun saveAttachmentBlocking(attachment: Attachment) = messagesDao.saveAttachmentBlocking(attachment)
+
+    suspend fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
     fun findPendingSendByOfflineMessageIdAsync(messageId: String) =
         pendingActionsDatabase.findPendingSendByOfflineMessageIdAsync(messageId)
@@ -299,7 +298,7 @@ class MessageDetailsRepository @Inject constructor(
                 Log.d("PMTAG", "returning path to message body ${messageBodyFile.absolutePath}")
                 "file://${messageBodyFile.absolutePath}"
             } catch (e: Exception) {
-                e.printStackTrace()
+                Timber.i(e, "saveBodyToFileIfNeeded error")
                 null
             }
         }
@@ -387,8 +386,10 @@ class MessageDetailsRepository @Inject constructor(
             }
             Constants.MessageActionType.REPLY_ALL -> {
                 val emailSet = HashSet(
-                    Arrays.asList(*message.toListString.split(Constants.EMAIL_DELIMITER.toRegex())
-                        .dropLastWhile { it.isEmpty() }.toTypedArray())
+                    Arrays.asList(
+                        *message.toListString.split(Constants.EMAIL_DELIMITER.toRegex())
+                            .dropLastWhile { it.isEmpty() }.toTypedArray()
+                    )
                 )
 
                 val senderEmailAddress = if (message.replyToEmails.isNotEmpty())
@@ -401,7 +402,7 @@ class MessageDetailsRepository @Inject constructor(
                 includeCCList = true
             }
             else -> {
-                //NO OP
+                // NO OP
             }
         }
 
@@ -463,18 +464,15 @@ class MessageDetailsRepository @Inject constructor(
         api.messageDetail(messageId) // try to fetch the message details from the API
 
     fun startDownloadEmbeddedImages(messageId: String, username: String) {
-        DownloadEmbeddedAttachmentsWorker.enqueue(messageId, username, "")
+        attachmentsWorker.enqueue(messageId, username, "")
     }
 
     fun markRead(messageId: String) {
         jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
     }
 
-    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> {
-        return pendingActionsDatabase.findAllPendingSendsAsync()
-    }
+    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> = pendingActionsDatabase.findAllPendingSendsAsync()
 
-    fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> {
-        return pendingActionsDatabase.findAllPendingUploadsAsync()
-    }
+    fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
+        pendingActionsDatabase.findAllPendingUploadsAsync()
 }

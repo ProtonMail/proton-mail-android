@@ -308,6 +308,9 @@ public class ComposeMessageActivity
     @Inject
     MessageDetailsRepository messageDetailsRepository;
 
+    @Inject
+    DownloadEmbeddedAttachmentsWorker.Enqueuer attachmentsWorker;
+
     String composerInstanceId;
 
     Menu menu;
@@ -1042,7 +1045,7 @@ public class ComposeMessageActivity
             // get messageId from one of the attachments and use it to start DownloadEmbeddedAttachmentsWorker
             for (LocalAttachment localAttachment : embeddedAttachmentsList) {
                 if (!TextUtils.isEmpty(localAttachment.getMessageId())) {
-                    DownloadEmbeddedAttachmentsWorker.Companion.enqueue(
+                    attachmentsWorker.enqueue(
                             localAttachment.getMessageId(),
                             mUserManager.getUsername(),
                             null

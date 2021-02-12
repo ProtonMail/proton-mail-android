@@ -31,6 +31,9 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import okio.ByteString.Companion.decodeBase64
+import okio.buffer
+import okio.source
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
@@ -126,7 +129,7 @@ class AttachmentsRepository @Inject constructor(
                 attachment.keyPackets = response.attachment.keyPackets
                 attachment.signature = response.attachment.signature
                 attachment.isUploaded = true
-                messageDetailsRepository.saveAttachment(attachment)
+                messageDetailsRepository.saveAttachmentBlocking(attachment)
                 Timber.i("Upload attachment successful. attachmentId: ${response.attachmentID}")
                 return@withContext Result.Success(response.attachmentID)
             }
@@ -136,7 +139,7 @@ class AttachmentsRepository @Inject constructor(
         }
 
     private fun contentIdFormatted(headers: AttachmentHeaders): String {
-        val contentId = headers.contentId
+        val contentId = requireNotNull(headers.contentId)
         val parts = contentId.split("<").dropLastWhile { it.isEmpty() }.toTypedArray()
         if (parts.size > 1) {
             return parts[1].replace(">", "")
@@ -149,6 +152,21 @@ class AttachmentsRepository @Inject constructor(
             headers.contentDisposition.contains("inline") &&
             headers.contentId != null
 
+    suspend fun getAttachmentDataOrNull(
+        crypto: AddressCrypto,
+        attachmentId: String,
+        key: String
+    ): ByteArray? {
+        val responseBody = apiManager.downloadAttachment(attachmentId)
+
+        return withContext(dispatchers.Io) {
+            responseBody?.byteStream()?.source()?.buffer()?.use { bufferedSource ->
+                val byteArray = bufferedSource.readByteArray()
+                val keyBytes = requireNotNull(key.decodeBase64()?.toByteArray())
+                crypto.decryptAttachment(keyBytes, byteArray).decryptedData
+            }
+        }
+    }
 
     sealed class Result {
         data class Success(val uploadedAttachmentId: String) : Result()

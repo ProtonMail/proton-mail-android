@@ -24,15 +24,15 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class ServerAttachment(
-		var ID:String?=null,
-		var Name:String?=null,
-		var MIMEType:String?=null,
-		var Size:Long?=null,
-		var KeyPackets:String?=null,
-		var MessageId:String?=null,
-		var Uploaded:Int?=null,
-		var Uploading:Int?=null,
-		var Signature:String?=null,
-		@SerializedName(FIELD_ATTACHMENT_HEADERS)
-		var headers:AttachmentHeaders?=null
-):Serializable
+    var ID: String? = null,
+    var Name: String? = null,
+    var MIMEType: String? = null,
+    var Size: Long? = null,
+    var KeyPackets: String? = null,
+    var MessageId: String? = null,
+    var Uploaded: Int? = null,
+    var Uploading: Int? = null,
+    var Signature: String? = null,
+    @SerializedName(FIELD_ATTACHMENT_HEADERS)
+    var headers: AttachmentHeaders? = null
+) : Serializable

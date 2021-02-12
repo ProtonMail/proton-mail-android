@@ -52,7 +52,8 @@ class AttachmentFactory : IAttachmentFactory {
             isUploaded.makeInt(),
             isUploading.makeInt(),
             signature,
-            headers)
+            headers
+        )
     }
 
     override fun createAttachment(serverAttachment: ServerAttachment): Attachment {
@@ -64,12 +65,12 @@ class AttachmentFactory : IAttachmentFactory {
         val headers: AttachmentHeaders = serverAttachment.headers.notNull("Headers")
 
         return Attachment(
-                attachmentId = attachmentId,
-                fileName = fileName,
-                mimeType = mimeType,
-                fileSize = fileSize,
-                keyPackets = keyPackets,
-                headers = headers
+            attachmentId = attachmentId,
+            fileName = fileName,
+            mimeType = mimeType,
+            fileSize = fileSize,
+            keyPackets = keyPackets,
+            headers = headers
         )
     }
 }

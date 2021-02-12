@@ -318,7 +318,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
         List<Attachment> parentAttachmentList;
         MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
-        parentAttachmentList = message.attachments(messagesDatabase);
+        parentAttachmentList = message.attachmentsBlocking(messagesDatabase);
         User user = getUserManager().getUser(mUsername);
         String addressId = message.getAddressID();
         ch.protonmail.android.api.models.address.Address senderAddress =

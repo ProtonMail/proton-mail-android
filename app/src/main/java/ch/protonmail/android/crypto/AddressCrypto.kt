@@ -73,6 +73,13 @@ class AddressCrypto @AssistedInject constructor(
     override val passphrase: ByteArray?
         get() = passphraseFor(requirePrimaryKey())
 
+    private val AddressKey.isPrimary get() =
+        this == addressKeys.primaryKey
+
+    @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+    protected override val AddressKey.privateKey: PgpField.PrivateKey
+        get() = privateKey
+
     protected override fun passphraseFor(key: AddressKey): ByteArray? {
         // This is for smart-cast support
         val token = key.token
@@ -103,21 +110,21 @@ class AddressCrypto @AssistedInject constructor(
         signature: String,
         errorMessage: String
     ) = runCatching {
-            val armoredSignature = GoOpenPgpCrypto.newPGPSignatureFromArmored(signature)
-            val unlockedArmoredKey = GoOpenPgpCrypto.newKeyFromArmored(armoredPrivateKey).unlock(mailboxPassword)
-            val verificationKeyRing = GoOpenPgpCrypto.newKeyRing(unlockedArmoredKey)
-            verificationKeyRing.verifyDetached (
-                PlainMessage(decryptedToken),
-                armoredSignature,
-                GoOpenPgpCrypto.getUnixTime()
-            )
-        }.fold (
-            onSuccess = { true },
-            onFailure = {
-                Timber.w(it, errorMessage)
-                false
-            }
+        val armoredSignature = GoOpenPgpCrypto.newPGPSignatureFromArmored(signature)
+        val unlockedArmoredKey = GoOpenPgpCrypto.newKeyFromArmored(armoredPrivateKey).unlock(mailboxPassword)
+        val verificationKeyRing = GoOpenPgpCrypto.newKeyRing(unlockedArmoredKey)
+        verificationKeyRing.verifyDetached(
+            PlainMessage(decryptedToken),
+            armoredSignature,
+            GoOpenPgpCrypto.getUnixTime()
         )
+    }.fold(
+        onSuccess = { true },
+        onFailure = {
+            Timber.w(it, errorMessage)
+            false
+        }
+    )
 
     /**
      * Encrypt for Attachment
@@ -159,6 +166,9 @@ class AddressCrypto @AssistedInject constructor(
         }
     }
 
+    fun decryptAttachment(keyPacket: ByteArray, dataPacket: ByteArray): BinaryDecryptionResult =
+        decryptAttachment(CipherText(keyPacket, dataPacket))
+
     /**
      * Decrypt Message or Contact Data
      */
@@ -185,6 +195,7 @@ class AddressCrypto @AssistedInject constructor(
 
     fun getFingerprint(key: String): String =
         openPgp.getFingerprint(key)
+
 
     fun getSessionKey(keyPacket: ByteArray): SessionKey {
         return withCurrentKeys("Error getting Session") { key ->
@@ -223,12 +234,4 @@ class AddressCrypto @AssistedInject constructor(
             else -> IllegalStateException("$errorMessage. Caused by ${errors.joinToString { it.message!! }}")
         }
     }
-
-
-    private val AddressKey.isPrimary get() =
-        this == addressKeys.primaryKey
-
-    @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-    protected override val AddressKey.privateKey: PgpField.PrivateKey
-        get() = privateKey
 }

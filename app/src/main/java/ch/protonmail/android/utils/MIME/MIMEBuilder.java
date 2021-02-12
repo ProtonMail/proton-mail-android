@@ -166,7 +166,7 @@ public class MIMEBuilder {
         byte[] data = attachment.getMimeData();
         if (data == null) {
             byte[] keyBytes = Base64.decode(attachment.getKeyPackets(), Base64.DEFAULT);
-            byte[] dataBytes = api.downloadAttachment(attachment.getAttachmentId());
+            byte[] dataBytes = api.downloadAttachmentBlocking(attachment.getAttachmentId());
             CipherText message = new CipherText(keyBytes, dataBytes);
             BinaryDecryptionResult result = crypto.decryptAttachment(message);
             data = result.getDecryptedData();
