@@ -23,20 +23,16 @@ import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Compan
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.longClickedMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageDate
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.selectedMessageSubject
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageDate
-import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface.Companion.swipeLeftMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.externalGmailPGPEncrypted
 import ch.protonmail.android.uitests.testsHelper.TestData.externalOutlookPGPSigned
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
-import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
 import ch.protonmail.android.uitests.testsHelper.mailer.Mail
-import org.junit.Before
-import org.junit.Test
-import org.junit.experimental.categories.Category
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class InboxTests : BaseTest() {
 
@@ -47,7 +43,7 @@ class InboxTests : BaseTest() {
     private lateinit var pgpEncryptedBody: String
     private lateinit var pgpSignedBody: String
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         subject = TestData.messageSubject
@@ -155,19 +151,6 @@ class InboxTests : BaseTest() {
             .verify { messageWithSubjectExists(subject) }
     }
 
-    @TestId("29723")
-    @Category(SmokeTest::class)
-    @Test
-    fun deleteMessageWithSwipe() {
-        inboxRobot
-            .menuDrawer()
-            .sent()
-            .deleteMessageWithSwipe(1)
-            .verify {
-                messageDeleted(swipeLeftMessageSubject, swipeLeftMessageDate)
-            }
-    }
-
     @TestId("29724")
     @Test
     fun deleteMultipleMessages() {
@@ -181,16 +164,6 @@ class InboxTests : BaseTest() {
                 messageDeleted(longClickedMessageSubject, longClickedMessageDate)
                 messageDeleted(selectedMessageSubject, selectedMessageDate)
             }
-    }
-
-    @TestId("29725")
-    @Test
-    fun starMessageWithSwipe() {
-        inboxRobot
-            .menuDrawer()
-            .sent()
-            .swipeLeftMessageAtPosition(0)
-            .verify { messageStarred() }
     }
 
     @TestId("29726")

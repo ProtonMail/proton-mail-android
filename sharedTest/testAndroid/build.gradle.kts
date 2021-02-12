@@ -37,7 +37,7 @@ dependencies {
         // Kotlin
         `kotlin-jdk7`,
         `coroutines-android`,
-        `serialization`,
+        `serialization-json`,
 
         // Android
         `constraint-layout`,

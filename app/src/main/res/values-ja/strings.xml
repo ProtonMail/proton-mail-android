@@ -240,7 +240,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="update_me_for_new_features">新機能に関する最新情報を受け取る</string>
     <string name="create_mailbox_password">パスワードを作成</string>
     <string name="password_note"><b>注意:</b>これはメッセージの暗号化と復号に使用されます。
-このパスワードを失くした場合、電子メールが読めなくなります。</string>
+        このパスワードを失くした場合、電子メールが読めなくなります。</string>
     <string name="username_note"><b>注意:</b>ユーザー名はProtonMailアドレスに使用されます。</string>
     <string name="terms_and_conditions">ProtonMailを使用することによって、あなたは\n<a href="https://protonmail.com/terms-and-conditions"> 利用規約</a> と <a href="https://protonmail.com/privacy-policy"> プライバシー ポリシー</a> に同意したことになります。</string>
     <string name="human_verification">機械でないことの確認</string>
@@ -657,9 +657,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="close_app">アプリを終了</string>
     <string name="empty_subject">(件名なし)</string>
     <string name="contacts_unknown">不明</string>
-    <string name="learn_more">
-        <u>更に詳しく</u>
-    </string>
+    <string name="learn_more"><u>更に詳しく</u></string>
     <string name="info">情報</string>
     <string name="error_can_not_send_from_this_address">あなたの %s アドレスから送信するには有料プランへのアップグレードが必要です。</string>
     <string name="email_empty">メールアドレスがありません。</string>
@@ -719,9 +717,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="expiration_error_add_msg_password">次の宛先に対してのメッセージのパスワードを追加してください：</string>
     <string name="expiration_error_disable_pgp_sending">次の宛先に対して期限付きメッセージを送信するには、PGPを無効にしてください：</string>
     <string name="expiration_error_proceed">タップしてこれらの宛先には有効期限なしでそのまま送信する</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">より詳しく</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">より詳しく</a></string>
     <string name="channel_name_attachments">添付ファイル</string>
     <string name="channel_description_attachments">添付ファイルのダウンロード状態を知らせる</string>
     <string name="channel_name_emails">メール</string>
@@ -953,17 +949,18 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">一般的な接続の問題と解決策</string>
     <string name="troubleshoot_dialog_message">&lt;i&gt;インターネットに接続されていない&lt;/i&gt; - インターネットに接続されていることをご確認ください。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;インターネットサービスプロバイダー (ISP) の問題&lt;/i&gt; - 別のネットワークから Proton への接続を試みてみてください (または &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; もしくは &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;を使用してみてください) 。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府等による検閲&lt;/i&gt; - あなたの国(の政府)が、 Proton への接続を検閲(遮断)している可能性があります。 Proton に接続するために &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (もしくは他のVPN) または &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; を使用してみてください。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;ウイルス対策ソフトウェアの干渉&lt;/i&gt; - ウイルス対策ソフトウェアを一時的に無効にするか、削除することで解決する可能性もあります。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシまたはファイアウォールの干渉&lt;/i&gt; - プロキシまたはファイアウォールを無効にするか、ネットワーク管理者に問い合わせてみてください。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton のサービスが一時的にダウンしている&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton ステータス&lt;/a&gt; から私たちのシステムの動作状況をご確認ください。
-&lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;電子メール&lt;/a&gt; (support@protonmail.com), または &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.から直接私たちにお問い合わせください。
-</string>
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;インターネットサービスプロバイダー (ISP) の問題&lt;/i&gt; - 別のネットワークから Proton への接続を試みてみてください (または &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; もしくは &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;を使用してみてください) 。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;政府等による検閲&lt;/i&gt; - あなたの国(の政府)が、 Proton への接続を検閲(遮断)している可能性があります。 Proton に接続するために &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (もしくは他のVPN) または &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; を使用してみてください。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;ウイルス対策ソフトウェアの干渉&lt;/i&gt; - ウイルス対策ソフトウェアを一時的に無効にするか、削除することで解決する可能性もあります。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;プロキシまたはファイアウォールの干渉&lt;/i&gt; - プロキシまたはファイアウォールを無効にするか、ネットワーク管理者に問い合わせてみてください。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton のサービスが一時的にダウンしている&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton ステータス&lt;/a&gt; から私たちのシステムの動作状況をご確認ください。
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;それでも問題が解決しない場合&lt;/i&gt; -  &lt;a href=\"https://protonmail.com/support-form\"&gt;サポートフォーム&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;電子メール&lt;/a&gt; (support@protonmail.com), または &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.から直接私たちにお問い合わせください。
+    </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">画像が見つかりませんでした。</string>
     <string name="error_image_bad_url">不正な画像のURLです。</string>
+    <string name="error_saving_try_again">Error while saving message. Try again.</string>
     <!-- endregion -->
     <string name="allowed">許可</string>
     <string name="denied">拒否</string>

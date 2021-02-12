@@ -18,67 +18,66 @@
  */
 package ch.protonmail.android.api.models.room.messages
 
-import androidx.room.TypeConverter
 import android.util.Base64
-
+import androidx.room.TypeConverter
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.enumerations.MessageEncryption
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.utils.FileUtils
 import ch.protonmail.android.utils.Logger
-
 import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
 
-/**
- * Created by Kamil Rajtar on 15.07.18.  */
 class MessagesTypesConverter {
-	@TypeConverter
-	fun messageEncryptionToInt(messageEncryption:MessageEncryption)=messageEncryption.ordinal
 
-	@TypeConverter
-	fun intToMessageEncryption(messageEncryptionOrdinal:Int)=MessageEncryption.values()[messageEncryptionOrdinal]
+    @TypeConverter
+    fun messageEncryptionToInt(messageEncryption: MessageEncryption) = messageEncryption.ordinal
 
-	@TypeConverter
-	fun parsedHeadersToString(parsedHeaders:ParsedHeaders?)=parsedHeaders?.let {
-		FileUtils.toString(it)
-	}
+    @TypeConverter
+    fun intToMessageEncryption(messageEncryptionOrdinal: Int) = MessageEncryption.values()[messageEncryptionOrdinal]
 
-	@TypeConverter
-	fun stringToParsedHeaders(parsedHeadersString:String?)=FileUtils.deserializeStringToObject(
-			parsedHeadersString) as ParsedHeaders?
+    @TypeConverter
+    fun parsedHeadersToString(parsedHeaders: ParsedHeaders?) = parsedHeaders?.let {
+        FileUtils.toString(it)
+    }
 
-	@TypeConverter
-	fun messageRecipientsListToString(messageRecipient: List<MessageRecipient>?): String? = messageRecipient?.let {
-		FileUtils.toString(
-				messageRecipient)
-	}
+    @TypeConverter
+    fun stringToParsedHeaders(parsedHeadersString: String?) = FileUtils.deserializeStringToObject(
+        parsedHeadersString
+    ) as ParsedHeaders?
 
-	@TypeConverter
-	fun stringToMessageRecipientsList(messageRecipientString: String?): List<MessageRecipient>? {
-		if (messageRecipientString == null)
-			return null
-		val inputStream = ByteArrayInputStream(Base64.decode(messageRecipientString.toByteArray(), Base64.DEFAULT))
+    @TypeConverter
+    fun messageRecipientsListToString(messageRecipient: List<MessageRecipient>?): String? = messageRecipient?.let {
+        FileUtils.toString(
+            messageRecipient
+        )
+    }
 
-		return try {
-			ObjectInputStream(inputStream).readObject() as List<MessageRecipient>
-		} catch (e: Exception) {
-			Logger.doLogException("MessagesTypesConverter", "DeSerialization of recipients failed", e)
-			listOf()
-		}
-	}
+    @TypeConverter
+    fun stringToMessageRecipientsList(messageRecipientString: String?): List<MessageRecipient>? {
+        if (messageRecipientString == null)
+            return null
+        val inputStream = ByteArrayInputStream(Base64.decode(messageRecipientString.toByteArray(), Base64.DEFAULT))
 
-	//TODO unsafe conversion create for label ids separate type
-	@TypeConverter
-	fun labelIdsToString(labelIds:List<String>)=labelIds.joinToString(";")
+        return try {
+            ObjectInputStream(inputStream).readObject() as List<MessageRecipient>
+        } catch (e: Exception) {
+            Logger.doLogException("MessagesTypesConverter", "DeSerialization of recipients failed", e)
+            listOf()
+        }
+    }
 
-	//TODO unsafe conversion create for label ids separate type
-	@TypeConverter
-	fun stringToLabelIds(labelIdsString:String)=labelIdsString.split(";").dropLastWhile {it.isEmpty()}
+    // TODO unsafe conversion create for label ids separate type
+    @TypeConverter
+    fun labelIdsToString(labelIds: List<String>) = labelIds.joinToString(";")
 
-	@TypeConverter
-	fun messageTypeToInt(messageType:Message.MessageType)=messageType.ordinal
+    // TODO unsafe conversion create for label ids separate type
+    @TypeConverter
+    fun stringToLabelIds(labelIdsString: String) = labelIdsString.split(";").dropLastWhile { it.isEmpty() }
 
-	@TypeConverter
-	fun intToMessageType(messageTypeOrdinal:Int)=Message.MessageType.values()[messageTypeOrdinal]
+    @TypeConverter
+    fun messageTypeToInt(messageType: Message.MessageType) = messageType.ordinal
+
+    @TypeConverter
+    fun intToMessageType(messageTypeOrdinal: Int) = Message.MessageType.values()[messageTypeOrdinal]
 }

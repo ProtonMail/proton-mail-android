@@ -36,10 +36,10 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FetchContactDetailsTest : CoroutinesTest {
@@ -59,7 +59,7 @@ class FetchContactDetailsTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var useCase: FetchContactDetails
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
     }

@@ -38,8 +38,8 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DeleteContactWorkerTest {
@@ -61,7 +61,7 @@ class DeleteContactWorkerTest {
 
     private lateinit var worker: DeleteContactWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         worker = DeleteContactWorker(

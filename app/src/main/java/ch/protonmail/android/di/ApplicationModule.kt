@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.di
 
-import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
@@ -29,12 +28,12 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
+import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
 import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.attachments.Armorer
 import ch.protonmail.android.attachments.OpenPgpArmorer
 import ch.protonmail.android.core.Constants
@@ -76,9 +75,6 @@ object ApplicationModule {
     @Provides
     fun protonMailApplication(context: Context): ProtonMailApplication =
         context.app
-
-    @Provides
-    fun alarmReceiver() = AlarmReceiver()
 
     @Provides
     @AlternativeApiPins
@@ -154,17 +150,13 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun notificationManager(context: Context): NotificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-    @Provides
-    @Singleton
     fun protonRetrofitBuilder(
         userManager: UserManager,
         jobManager: JobManager,
         networkUtil: QueueNetworkUtil,
         okHttpProvider: OkHttpProvider,
-        @DefaultSharedPreferences prefs: SharedPreferences
+        @DefaultSharedPreferences prefs: SharedPreferences,
+        authenticator: ProtonMailAuthenticator
     ): ProtonRetrofitBuilder {
 
         // userManager.user.allowSecureConnectionsViaThirdParties)
@@ -175,7 +167,7 @@ object ApplicationModule {
 
         // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
 
-        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil)
+        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, authenticator)
             .apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 

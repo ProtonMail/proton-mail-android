@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.contacts.details
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
@@ -33,15 +32,12 @@ import io.reactivex.Flowable
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ContactGroupsRepositoryTest {
-
-    @get:Rule
-    val instantTaskExecutionRule = InstantTaskExecutorRule()
 
     @get:Rule
     val testSchedulerRule = TestSchedulerRule()
@@ -60,7 +56,7 @@ class ContactGroupsRepositoryTest {
     private val label3 = ContactLabel("c", "cc")
     private val label4 = ContactLabel("d", "dd")
 
-    @BeforeEach
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         every { protonMailApi.fetchContactGroupsAsObservable() } answers {

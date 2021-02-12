@@ -45,8 +45,8 @@ import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LogoutWorkerTest {
@@ -68,7 +68,7 @@ class LogoutWorkerTest {
 
     private lateinit var worker: LogoutWorker
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         every { parameters.taskExecutor } returns mockk(relaxed = true)

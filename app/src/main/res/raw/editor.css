@@ -187,3 +187,7 @@ blockquote {
   margin: 0 !important;
   border: 3px solid #657ee4 !important;
   border-width: 0 0 0 3px !important; }
+
+blockquote blockquote blockquote blockquote blockquote blockquote {
+  padding: 0 !important;
+  border: none !important; }

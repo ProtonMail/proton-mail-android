@@ -32,6 +32,7 @@ plugins {
     `kotlin-serialization`
     `sentry-android`
     `browserstack`
+    `jacoco`
 }
 
 kapt {
@@ -144,6 +145,7 @@ android(appIdSuffix = "android") {
         }
         getByName("debug") {
             isMinifyEnabled = false
+            isTestCoverageEnabled = true
         }
         getByName("releasePlayStore") {
             isMinifyEnabled = true
@@ -196,6 +198,33 @@ tasks.register("pullTestArtifacts", Exec::class) {
     commandLine(adb, "pull", "/sdcard/Download/artifacts")
 }
 
+tasks.register("jacocoTestReport", JacocoReport::class) {
+
+    dependsOn("testBetaDebugUnitTest")
+
+    reports {
+        xml.isEnabled = true
+        html.isEnabled = true
+    }
+
+    val fileFilter =
+        listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*", "android/**/*.*")
+    val debugTree: ConfigurableFileTree =
+        fileTree(
+            listOf("${project.buildDir}/tmp/kotlin-classes/betaDebug", "${project.buildDir}/tmp/kotlin-classes/debug")
+        )
+    debugTree.exclude(fileFilter)
+
+    val mainSrc = "${project.projectDir}/src/main/java"
+    sourceDirectories.setFrom(files(listOf(mainSrc)))
+    classDirectories.setFrom(files(listOf(debugTree)))
+
+    val reportFilesFilter = listOf("**/*.exec", "**/*.ec")
+    val reportFiles: ConfigurableFileTree = fileTree(project.buildDir)
+    reportFiles.include(reportFilesFilter)
+    executionData.setFrom(reportFiles)
+}
+
 dependencies {
 
     // Hilt
@@ -232,7 +261,7 @@ dependencies {
         `kotlin-jdk7`,
         `kotlin-reflect`,
         `coroutines-android`,
-        `serialization`,
+        `serialization-json`,
 
         // Android
         `android-annotation`,

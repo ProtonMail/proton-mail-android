@@ -21,7 +21,6 @@ package ch.protonmail.android.contacts.groups.details
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.EmptyResultSetException
 import androidx.work.WorkManager
-import ch.protonmail.android.api.ProtonMailApi
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.factories.IConverterFactory
@@ -38,10 +37,10 @@ import io.mockk.verify
 import io.reactivex.Flowable
 import io.reactivex.Single
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import java.io.IOException
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ContactGroupDetailsRepositoryTest {
@@ -63,7 +62,7 @@ class ContactGroupDetailsRepositoryTest {
 
     private lateinit var contactGroupDetailsRepository: ContactGroupDetailsRepository
 
-    @Before
+    @BeforeTest
     fun setUp() {
         contactGroupDetailsRepository = ContactGroupDetailsRepository(jobManager, protonMailApi, databaseProvider, workManager)
     }

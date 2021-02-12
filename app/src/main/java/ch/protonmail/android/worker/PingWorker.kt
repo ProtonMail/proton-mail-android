@@ -55,28 +55,32 @@ class PingWorker @WorkerInject constructor(
 
     override suspend fun doWork(): Result =
         withContext(dispatchers.Io) {
-            val isAccessible = isBackendStillReachable()
-            queueNetworkUtil.setCurrentlyHasConnectivity(isAccessible)
-
-            Timber.v("Ping isAccessible $isAccessible")
-            if (isAccessible)
-                Result.success()
-            else
-                Result.failure()
+            runCatching {
+                isBackendStillReachable()
+            }.fold(
+                onSuccess = { isAccessible ->
+                    Timber.v("Ping isAccessible: $isAccessible")
+                    if (isAccessible) {
+                        queueNetworkUtil.setCurrentlyHasConnectivity()
+                        Result.success()
+                    } else {
+                        Result.failure()
+                    }
+                },
+                onFailure = { throwable ->
+                    Timber.v("Ping isAccessible: failed")
+                    queueNetworkUtil.setConnectivityHasFailed(throwable)
+                    failure(throwable)
+                }
+            )
         }
 
     private suspend fun isBackendStillReachable(): Boolean =
-        runCatching { api.pingAsync() }
-            .fold(
-                onSuccess = { responseBody ->
-                    when (responseBody.code) {
-                        Constants.RESPONSE_CODE_OK,
-                        Constants.RESPONSE_CODE_API_OFFLINE -> true
-                        else -> false
-                    }
-                },
-                onFailure = { false }
-            )
+        when (api.pingAsync().code) {
+            Constants.RESPONSE_CODE_OK,
+            Constants.RESPONSE_CODE_API_OFFLINE -> true
+            else -> false
+        }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         private val uniqueWorkerName = "PingWorker"

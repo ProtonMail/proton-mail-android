@@ -18,13 +18,15 @@
  */
 package ch.protonmail.android.contacts.list.listView
 
-data class ContactItem @JvmOverloads constructor(val isProtonMailContact: Boolean,
-                                                 var contactId: String? = null,
-                                                 private var name: String? = null,
-                                                 private var email: String? = null,
-                                                 var additionalEmailsCount: Int = 0,
-                                                 var labels: List<String>? = null,
-                                                 var isChecked: Boolean = false) {
+data class ContactItem @JvmOverloads constructor(
+    val isProtonMailContact: Boolean,
+    var contactId: String? = null,
+    private var name: String? = null,
+    private var email: String? = null,
+    var additionalEmailsCount: Int = 0,
+    var labels: List<String>? = null,
+    var isChecked: Boolean = false
+) {
     val firstChar: Char
         get() {
             val name = getName()
@@ -36,13 +38,9 @@ data class ContactItem @JvmOverloads constructor(val isProtonMailContact: Boolea
             }
         }
 
-    fun getName(): String {
-        return this.name ?: ""
-    }
+    fun getName(): String = this.name ?: ""
 
-    fun getEmail(): String {
-        return email ?: ""
-    }
+    fun getEmail(): String = email ?: ""
 
     fun setName(name: String) {
         this.name = name

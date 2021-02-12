@@ -24,9 +24,9 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestData.onePassUser
 import ch.protonmail.android.uitests.testsHelper.annotations.SmokeTest
 import ch.protonmail.android.uitests.testsHelper.annotations.TestId
-import org.junit.Before
-import org.junit.Test
 import org.junit.experimental.categories.Category
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 class ReplyToMessageTests : BaseTest() {
 
@@ -34,7 +34,7 @@ class ReplyToMessageTests : BaseTest() {
     private lateinit var subject: String
     private lateinit var body: String
 
-    @Before
+    @BeforeTest
     override fun setUp() {
         super.setUp()
         subject = TestData.messageSubject

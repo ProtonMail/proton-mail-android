@@ -665,9 +665,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="close_app">App schließen</string>
     <string name="empty_subject">(Kein Betreff)</string>
     <string name="contacts_unknown">Unbekannt</string>
-    <string name="learn_more">
-        <u>Mehr erfahren</u>
-    </string>
+    <string name="learn_more"><u>Mehr erfahren</u></string>
     <string name="info">Information</string>
     <string name="error_can_not_send_from_this_address">Auf ein kostenpflichtiges Abonnement aktualisieren, um von Ihrer %s-Adresse Nachrichten senden zu können.</string>
     <string name="email_empty">E-Mail-Adresse eingeben</string>
@@ -727,9 +725,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <string name="expiration_error_add_msg_password">Bitte fügen Sie ein Nachrichtenpasswort für folgende Empfänger hinzu:</string>
     <string name="expiration_error_disable_pgp_sending">Bitte deaktivieren Sie den PGP-Versand, um die Verfallszeit für die folgenden Empfänger zu aktivieren:</string>
     <string name="expiration_error_proceed">Tippen Sie auf „Trotzdem senden”, um Nachrichten auch ohne Verfallszeitpunkt an diese Empfänger zu senden.</string>
-    <string name="expiration_error_learn_more">
-        <a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Weitere Informationen (engl.)</a>
-    </string>
+    <string name="expiration_error_learn_more"><a href="https://protonmail.com/support/knowledge-base/encrypt-for-outside-users/">Weitere Informationen (engl.)</a></string>
     <string name="channel_name_attachments">Anhänge</string>
     <string name="channel_description_attachments">Informiert über den Status der herunterzuladenden Anhänge</string>
     <string name="channel_name_emails">Nachrichten</string>
@@ -978,6 +974,7 @@ zu: &lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt; Möchten S
     <!-- region errors -->
     <string name="error_image_not_found">Grafik nicht gefunden</string>
     <string name="error_image_bad_url">Fehlerhaftes Grafik-Adresse</string>
+    <string name="error_saving_try_again">Fehler beim Speichern der Nachricht. Bitte versuchen Sie es erneut.</string>
     <!-- endregion -->
     <string name="allowed">Zugelassen</string>
     <string name="denied">Abgelehnt</string>

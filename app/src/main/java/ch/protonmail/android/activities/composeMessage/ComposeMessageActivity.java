@@ -389,8 +389,8 @@ public class ComposeMessageActivity
         Intent intent = getIntent();
         mAction = intent.getAction();
         final String type = intent.getType();
+        Bundle extras = intent.getExtras();
         if (savedInstanceState == null) {
-            Bundle extras = intent.getExtras();
             initialiseActivityOnFirstStart(intent, extras, type);
         } else {
             initialiseActivityOnFirstStart(intent, savedInstanceState, type);
@@ -398,7 +398,7 @@ public class ComposeMessageActivity
         }
         try {
             if (Arrays.asList(Constants.MessageActionType.FORWARD, Constants.MessageActionType.REPLY, Constants.MessageActionType.REPLY_ALL)
-                    .contains(composeMessageViewModel.get_actionId())) {
+                    .contains(composeMessageViewModel.get_actionId()) || extras.getBoolean(EXTRA_MAIL_TO)) {
                 // upload attachments if using pgp/mime
                 composeMessageViewModel.setBeforeSaveDraft(composeMessageViewModel.getMessageDataResult().isPGPMime(), mComposeBodyEditText.getText().toString());
             }

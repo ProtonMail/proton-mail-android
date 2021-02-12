@@ -30,7 +30,7 @@ import io.mockk.mockkStatic
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Test
+import kotlin.test.Test
 
 @LargeTest
 internal class TokenManagerTest {

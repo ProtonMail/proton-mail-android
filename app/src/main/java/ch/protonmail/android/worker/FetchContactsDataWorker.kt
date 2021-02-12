@@ -59,8 +59,6 @@ class FetchContactsDataWorker @WorkerInject constructor(
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
-    var retryCount = 0
-
     override suspend fun doWork(): Result =
         runCatching {
             withContext(dispatchers.Io) {
@@ -94,12 +92,10 @@ class FetchContactsDataWorker @WorkerInject constructor(
         )
 
     private fun shouldReRunOnThrowable(throwable: Throwable): Result =
-        if (retryCount < MAX_RETRY_COUNT) {
-            ++retryCount
-            Timber.d(throwable, "Fetch Contacts Worker failure, retrying count:$retryCount")
+        if (runAttemptCount < MAX_RETRY_COUNT) {
+            Timber.d(throwable, "Fetch Contacts Worker failure, retrying count: $runAttemptCount")
             Result.retry()
         } else {
-            retryCount = 0
             failure(throwable)
         }
 

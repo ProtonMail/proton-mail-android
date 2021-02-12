@@ -30,7 +30,7 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsString
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * Instrumentation test, which will execute on an Android device.

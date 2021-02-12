@@ -44,6 +44,15 @@ interface AuthenticationPubService {
 
     @POST("auth/refresh")
     @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
-    fun refreshSync(@Body refreshBody: RefreshBody): Call<RefreshResponse>
+    suspend fun refreshAuth(
+        @Body refreshBody: RefreshBody,
+        @Tag retrofitTag: RetrofitTag? = null
+    ): RefreshResponse
 
+    @POST("auth/refresh")
+    @Headers(RetrofitConstants.CONTENT_TYPE, RetrofitConstants.ACCEPT_HEADER_V1)
+    fun refreshAuthBlocking(
+        @Body refreshBody: RefreshBody,
+        @Tag retrofitTag: RetrofitTag? = null
+    ): Call<RefreshResponse>
 }

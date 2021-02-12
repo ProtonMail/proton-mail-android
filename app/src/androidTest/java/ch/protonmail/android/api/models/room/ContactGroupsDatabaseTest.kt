@@ -27,7 +27,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import org.junit.Assert
 import org.junit.Rule
-import org.junit.Test
+import kotlin.test.Test
 import java.util.*
 
 /**
