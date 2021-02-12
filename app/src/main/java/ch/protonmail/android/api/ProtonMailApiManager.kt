@@ -301,7 +301,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? = api.fetchMessages(location, time)
 
-    override suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag?): MessagesResponse =
+    override suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag): MessagesResponse =
         api.fetchMessageMetadata(messageId, retrofitTag)
 
     override fun markMessageAsRead(messageIds: IDList) = api.markMessageAsRead(messageIds)
@@ -321,7 +321,7 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =
         api.fetchMessageDetailsBlocking(messageId)
 
-    override suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag?): MessageResponse =
+    override suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag): MessageResponse =
         api.fetchMessageDetails(messageId, retrofitTag)
 
     override fun fetchMessageDetailsBlocking(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =

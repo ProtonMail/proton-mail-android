@@ -46,7 +46,7 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun fetchMessages(location: Int, time: Long): MessagesResponse?
 
-    suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag? = null): MessagesResponse
+    suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag): MessagesResponse
 
     @Throws(IOException::class)
     fun markMessageAsRead(messageIds: IDList)
@@ -72,7 +72,7 @@ interface MessageApiSpec {
     @Throws(Exception::class)
     fun fetchMessageDetailsBlocking(messageId: String): MessageResponse
 
-    suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag? = null): MessageResponse
+    suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag): MessageResponse
 
     @WorkerThread
     fun fetchMessageDetailsBlocking(messageId: String, retrofitTag: RetrofitTag): MessageResponse?

@@ -123,7 +123,7 @@ interface MessageService {
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun fetchMessageMetadata(
         @Query("ID") messageId: String,
-        @Tag retrofitTag: RetrofitTag?
+        @Tag retrofitTag: RetrofitTag
     ): MessagesResponse
 
     @PUT("mail/v4/messages/{messageId}")
@@ -150,7 +150,7 @@ interface MessageService {
     @Headers(ACCEPT_HEADER_V1)
     suspend fun fetchMessageDetails(
         @Path("messageId") messageId: String,
-        @Tag retrofitTag: RetrofitTag?
+        @Tag retrofitTag: RetrofitTag
     ): MessageResponse
 
     @GET("mail/v4/messages/{messageId}")

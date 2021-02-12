@@ -55,7 +55,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         } else ParseUtils.parse(service.fetchMessages(location, time).execute())
     }
 
-    override suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag?): MessagesResponse =
+    override suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag): MessagesResponse =
         service.fetchMessageMetadata(messageId, retrofitTag)
 
     @Throws(IOException::class)
@@ -95,7 +95,7 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =
         ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId).execute())
 
-    override suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag?): MessageResponse =
+    override suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag): MessageResponse =
         service.fetchMessageDetails(messageId, retrofitTag)
 
     @WorkerThread

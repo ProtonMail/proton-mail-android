@@ -20,6 +20,7 @@
 package ch.protonmail.android.repository
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.core.UserManager
@@ -86,7 +87,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            every { messagesDao.findMessageById(messageId) } returns null
+            coEvery { messagesDao.findMessageById(messageId) } returns null
             every { messagesDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessage
@@ -118,7 +119,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            every { messagesDao.findMessageById(messageId) } returns mockMessageInDb
+            coEvery { messagesDao.findMessageById(messageId) } returns mockMessageInDb
             every { messagesDao.saveMessage(mockMessageFetched) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessageFetched
@@ -146,7 +147,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            every { messagesDao.findMessageById(messageId) } returns null
+            coEvery { messagesDao.findMessageById(messageId) } returns null
             every { messagesDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageMetadata(messageId, any()) } returns mockk {
                 every { messages } returns listOf(mockMessage)
@@ -174,7 +175,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            every { messagesDao.findMessageById(messageId) } returns mockMessage
+            coEvery { messagesDao.findMessageById(messageId) } returns mockMessage
 
             // when
             val result = messageRepository.getMessage(messageId, username)
@@ -197,7 +198,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            every { messagesDao.findMessageById(messageId) } returns mockMessage
+            coEvery { messagesDao.findMessageById(messageId) } returns mockMessage
 
             // when
             val result = messageRepository.getMessage(messageId, username)
@@ -217,7 +218,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            every { messagesDao.findMessageById(messageId) } returns mockMessage
+            coEvery { messagesDao.findMessageById(messageId) } returns mockMessage
             coEvery { messageBodyFileManager.readMessageBodyFromFile(mockMessage) } returns "messageBody"
 
             // when
@@ -238,7 +239,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            every { messagesDao.findMessageById(messageId) } returns null
+            coEvery { messagesDao.findMessageById(messageId) } returns null
             every { messagesDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessage
@@ -263,8 +264,8 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns true
             }
-            every { messagesDao.findMessageById(messageId) } returns null
-            coEvery { protonMailApiManager.fetchMessageDetails(messageId) } throws Exception()
+            coEvery { messagesDao.findMessageById(messageId) } returns null
+            coEvery { protonMailApiManager.fetchMessageDetails(messageId, RetrofitTag(username)) } throws Exception()
 
             // when
             val result = messageRepository.getMessage(messageId, username)
@@ -283,8 +284,8 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            every { messagesDao.findMessageById(messageId) } returns null
-            coEvery { protonMailApiManager.fetchMessageMetadata(messageId) } throws Exception()
+            coEvery { messagesDao.findMessageById(messageId) } returns null
+            coEvery { protonMailApiManager.fetchMessageMetadata(messageId, RetrofitTag(username)) } throws Exception()
 
             // when
             val result = messageRepository.getMessage(messageId, username)
@@ -307,7 +308,7 @@ class MessageRepositoryTest {
             every { userManager.getUser(username) } returns mockk {
                 every { isGcmDownloadMessageDetails } returns false
             }
-            every { messagesDao.findMessageById(messageId) } returns null
+            coEvery { messagesDao.findMessageById(messageId) } returns null
             every { messagesDao.saveMessage(mockMessage) } returns 123
             coEvery { protonMailApiManager.fetchMessageDetails(messageId, any()) } returns mockk {
                 every { message } returns mockMessage
