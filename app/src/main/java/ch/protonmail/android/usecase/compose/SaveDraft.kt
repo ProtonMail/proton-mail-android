@@ -104,7 +104,7 @@ class SaveDraft @Inject constructor(
                     updatePendingForSendMessage(createdDraftId, localDraftId)
 
                     messageDetailsRepository.findMessageById(createdDraftId)?.let {
-                        val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto)
+                        val uploadResult = uploadAttachments(params.newAttachmentIds, it, addressCrypto, false)
 
                         if (uploadResult is UploadAttachments.Result.Failure) {
                             errorNotifier.showPersistentError(uploadResult.error, localDraft.subject)

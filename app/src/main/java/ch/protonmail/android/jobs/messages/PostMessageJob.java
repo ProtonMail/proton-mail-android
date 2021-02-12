@@ -246,7 +246,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
         UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase(pendingActionsDatabase);
-        UploadAttachments.Result result = uploadAttachments.blocking(mNewAttachments, message, crypto);
+        UploadAttachments.Result result = uploadAttachments.blocking(mNewAttachments, message, crypto, true);
 
         if (result instanceof UploadAttachments.Result.Failure) {
             UploadAttachments.Result.Failure failureResult = (UploadAttachments.Result.Failure) result;
