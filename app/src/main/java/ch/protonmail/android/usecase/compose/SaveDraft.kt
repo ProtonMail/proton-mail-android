@@ -23,6 +23,7 @@ import androidx.work.WorkInfo
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
+import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
@@ -115,7 +116,8 @@ class SaveDraft @Inject constructor(
             .filter { it?.state?.isFinished == true }
             .map {
                 if (it?.state == WorkInfo.State.FAILED) {
-                    userNotifier.showPersistentError("error", localDraft.subject)
+                    val errorMessage = it.outputData.getString(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR) ?: ""
+                    userNotifier.showPersistentError(errorMessage, localDraft.subject)
                     return@map SaveDraftResult.UploadDraftAttachmentsFailed
                 }
 

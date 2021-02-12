@@ -26,6 +26,7 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
+import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
@@ -254,7 +255,7 @@ class SaveDraftTest : CoroutinesTest {
             val workOutputData = workDataOf(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "createdDraftMessageId"
             )
-            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every {
                 createDraftScheduler.enqueue(
                     message,
@@ -263,7 +264,7 @@ class SaveDraftTest : CoroutinesTest {
                     "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
-            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId") } returns buildCreateDraftWorkerResponse(
+            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId") } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -294,7 +295,7 @@ class SaveDraftTest : CoroutinesTest {
             val workOutputData = workDataOf(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "createdDraftMessageId345"
             )
-            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
@@ -309,7 +310,7 @@ class SaveDraftTest : CoroutinesTest {
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
             every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345") } returns buildCreateDraftWorkerResponse(
+            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345") } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -338,7 +339,7 @@ class SaveDraftTest : CoroutinesTest {
             val workOutputData = workDataOf(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM to CreateDraftWorkerErrors.ServerError.name
             )
-            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.FAILED, workOutputData)
+            val workerStatusFlow = buildWorkerResponse(WorkInfo.State.FAILED, workOutputData)
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
             every {
@@ -375,16 +376,20 @@ class SaveDraftTest : CoroutinesTest {
                 subject = "Message Subject"
             }
             val newAttachmentIds = listOf("2345", "453")
-            val workOutputData = workDataOf(
+            val createDraftOutputData = workDataOf(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "newDraftId"
             )
-            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            val createDraftWorkerResult = buildWorkerResponse(WorkInfo.State.SUCCEEDED, createDraftOutputData)
             val errorMessage = "Can't upload attachments"
+            val uploadWorkOutputData = workDataOf(
+                KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to errorMessage
+            )
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("newDraftId") } returns message.copy(messageId = "newDraftId")
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
-            coEvery { uploadAttachments.enqueue(newAttachmentIds, "newDraftId") } returns buildCreateDraftWorkerResponse(
-                WorkInfo.State.FAILED
+            coEvery { uploadAttachments.enqueue(newAttachmentIds, "newDraftId") } returns buildWorkerResponse(
+                WorkInfo.State.FAILED,
+                uploadWorkOutputData
             )
             every {
                 createDraftScheduler.enqueue(
@@ -393,7 +398,7 @@ class SaveDraftTest : CoroutinesTest {
                     REPLY,
                     "previousSenderId132423"
                 )
-            } answers { workerStatusFlow }
+            } answers { createDraftWorkerResult }
 
             // When
             val result = saveDraft.invoke(
@@ -422,7 +427,7 @@ class SaveDraftTest : CoroutinesTest {
             val workOutputData = workDataOf(
                 KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "createdDraftMessageId345"
             )
-            val workerStatusFlow = buildCreateDraftWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
+            val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             val newAttachmentIds = listOf("2345", "453")
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
@@ -437,7 +442,7 @@ class SaveDraftTest : CoroutinesTest {
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
             every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
-            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345") } returns buildCreateDraftWorkerResponse(
+            coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345") } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
 
@@ -452,7 +457,7 @@ class SaveDraftTest : CoroutinesTest {
     }
 
 
-    private fun buildCreateDraftWorkerResponse(
+    private fun buildWorkerResponse(
         endState: WorkInfo.State,
         outputData: Data? = workDataOf()
     ): Flow<WorkInfo> {
