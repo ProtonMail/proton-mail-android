@@ -140,7 +140,7 @@ class ProtonMailApi private constructor(
             val labelApi = LabelApi(services.label)
             val organizationApi = OrganizationApi(services.organization)
             val paymentApi = PaymentApi(services.payment, paymentPubService)
-            val reportApi = ReportApi(services.report)
+            val reportApi = ReportApi(apiProvider)
             val mailSettingsApi = MailSettingsApi(services.mailSettings)
             // endregion
             return arrayOf(

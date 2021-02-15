@@ -56,6 +56,7 @@ import ch.protonmail.android.domain.entity.LabelId
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.jobs.helper.EmbeddedImage
 import ch.protonmail.android.labels.domain.usecase.MoveMessagesToFolder
 import ch.protonmail.android.mailbox.domain.ChangeConversationsReadStatus
@@ -76,6 +77,7 @@ import ch.protonmail.android.utils.HTMLTransformer.ViewportTransformer
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.crypto.KeyInformation
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -344,7 +346,9 @@ internal class MessageDetailsViewModel @Inject constructor(
         conversationUiModel.first().messagesCount!! > 1
     }
 
-    private suspend fun loadConversationDetails(result: DataResult<Conversation>, userId: UserId): ConversationUiModel? {
+    private suspend fun loadConversationDetails(
+        result: DataResult<Conversation>, userId: UserId
+    ): ConversationUiModel? {
         return when (result) {
             is DataResult.Success -> {
                 Timber.v("loadConversationDetails Success")
@@ -725,6 +729,16 @@ internal class MessageDetailsViewModel @Inject constructor(
                 messageRepository.unStarMessages(ids)
             }
         }
+    }
+
+    fun sendPhishingReport(message: Message, jobManager: JobManager) {
+        jobManager.addJobInBackground(
+            ReportPhishingJob(
+                requireNotNull(message.messageId),
+                requireNotNull(message.decryptedBody),
+                requireNotNull(message.mimeType)
+            )
+        )
     }
 
     fun storagePermissionDenied() {

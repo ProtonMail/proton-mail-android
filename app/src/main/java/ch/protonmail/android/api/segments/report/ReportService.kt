@@ -20,23 +20,21 @@ package ch.protonmail.android.api.segments.report
 
 import ch.protonmail.android.api.models.BugsBody
 import ch.protonmail.android.api.models.PostPhishingReportBody
-import ch.protonmail.android.api.models.ResponseBody
-import retrofit2.Call
+import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
+import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
-import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
-import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-
-interface ReportService {
+interface ReportService : BaseRetrofitApi {
 
     @POST("reports/bug")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun bugs(@Body bugsBody: BugsBody): Call<ResponseBody>
+    suspend fun postBugs(@Body bugsBody: BugsBody)
 
     @POST("reports/phishing")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun postPhishingReport(@Body postPhishingReportBody: PostPhishingReportBody): Call<ResponseBody>
+    suspend fun postPhishingReport(@Body postPhishingReportBody: PostPhishingReportBody)
 
 }

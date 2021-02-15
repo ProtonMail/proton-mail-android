@@ -20,7 +20,6 @@ package ch.protonmail.android.api
 
 import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.interceptors.ProtonMailRequestInterceptor
-import ch.protonmail.android.api.models.BugsBody
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.segments.ATTACH_PATH
@@ -177,8 +176,6 @@ sealed class ProtonRetrofit(
         .registerTypeAdapter(MessageRecipient::class.java, MessageRecipient.MessageRecipientDeserializer())
         .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodySerializer())
         .registerTypeAdapter(LabelBody::class.java, LabelBody.LabelBodyDeserializer())
-        .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodySerializer())
-        .registerTypeAdapter(BugsBody::class.java, BugsBody.BugsBodyDeserializer())
         .registerTypeAdapter(AttachmentHeaders::class.java, AttachmentHeaders.AttachmentHeadersDeserializer())
         .excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
         .create()

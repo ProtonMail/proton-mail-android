@@ -328,9 +328,10 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override fun fetchAvailablePlans(
         currency: String,
         cycle: Int
-    ): AvailablePlansResponse = api.fetchAvailablePlans(currency, cycle)
+    ): AvailablePlansResponse =
+        api.fetchAvailablePlans(currency, cycle)
 
-    override fun reportBug(
+    override suspend fun reportBug(
         osName: String,
         appVersion: String,
         client: String,
@@ -339,13 +340,16 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         description: String,
         username: String,
         email: String
-    ): ResponseBody = api.reportBug(osName, appVersion, client, clientVersion, title, description, username, email)
+    ): ApiResult<Unit> =
+        api.reportBug(osName, appVersion, client, clientVersion, title, description, username, email)
 
-    override fun postPhishingReport(
+    override suspend fun postPhishingReport(
         messageId: String,
         messageBody: String,
-        mimeType: String
-    ): ResponseBody? = api.postPhishingReport(messageId, messageBody, mimeType)
+        mimeType: String,
+        userId: UserId
+    ): ApiResult<Unit> =
+        api.postPhishingReport(messageId, messageBody, mimeType, userId)
 
     override suspend fun fetchMailSettings(userId: UserId): MailSettingsResponse = api.fetchMailSettings(userId)
 

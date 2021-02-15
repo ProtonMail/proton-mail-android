@@ -16,28 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.segments.report
+package ch.protonmail.android.api.models
 
-import me.proton.core.domain.entity.UserId
-import me.proton.core.network.domain.ApiResult
+import ch.protonmail.android.api.utils.Fields
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-interface ReportApiSpec {
-
-    suspend fun reportBug(
-        osName: String,
-        appVersion: String,
-        client: String,
-        clientVersion: String,
-        title: String,
-        description: String,
-        username: String,
-        email: String
-    ): ApiResult<Unit>
-
-    suspend fun postPhishingReport(
-        messageId: String,
-        messageBody: String,
-        mimeType: String,
-        userId: UserId
-    ): ApiResult<Unit>
-}
+@Serializable
+data class BugsBody(
+    @SerialName(Fields.Bugs.OS)
+    val os: String,
+    @SerialName(Fields.Bugs.OS_VERSION)
+    val osVersion: String,
+    @SerialName(Fields.Bugs.CLIENT)
+    val client: String,
+    @SerialName(Fields.Bugs.CLIENT_VERSION)
+    val clientVersion: String,
+    @SerialName(Fields.Bugs.TITLE)
+    val title: String,
+    @SerialName(Fields.Bugs.DESCRIPTION)
+    val description: String,
+    @SerialName(Fields.Bugs.USERNAME)
+    val username: String,
+    @SerialName(Fields.Bugs.EMAIL)
+    val email: String
+)
