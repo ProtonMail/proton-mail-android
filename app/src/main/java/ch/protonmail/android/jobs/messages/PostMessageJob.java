@@ -255,6 +255,14 @@ public class PostMessageJob extends ProtonMailBaseJob {
             String error = "Failed uploading attachments for message \"" + message.getSubject() + "\"";
             ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, getUserManager().getUser());
             return;
+        } else if (result instanceof UploadAttachments.Result.UploadInProgress) {
+            Timber.w("Failed uploading attachments as upload is already in progress");
+            pendingActionsDatabase.deletePendingUploadByMessageId(message.getMessageId());
+            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
+            String error = "Failed uploading attachments for message \"" + message.getSubject() + "\"";
+            Thread.sleep(500);
+            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, getUserManager().getUser());
+            return;
         }
 
         try {
