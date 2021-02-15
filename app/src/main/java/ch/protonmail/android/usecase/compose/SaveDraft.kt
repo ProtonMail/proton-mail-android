@@ -125,7 +125,9 @@ class SaveDraft @Inject constructor(
             .filter { it?.state?.isFinished == true }
             .map {
                 if (it?.state == WorkInfo.State.FAILED) {
-                    val errorMessage = it.outputData.getString(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR) ?: ""
+                    val errorMessage = requireNotNull(
+                        it.outputData.getString(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR)
+                    )
                     userNotifier.showPersistentError(errorMessage, localDraft.subject)
                     return@map SaveDraftResult.UploadDraftAttachmentsFailed
                 }

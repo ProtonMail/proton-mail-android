@@ -58,7 +58,7 @@ import kotlin.text.Charsets;
 
 public class PackageFactory {
 
-    private final ProtonMailApiManager mApi;
+    private final ProtonMailApiManager apiManager;
     private final AddressCrypto.Factory addressCryptoFactory;
     private final String currentUsername;
     private final HTMLToMDConverter htmlToMDConverter;
@@ -66,11 +66,11 @@ public class PackageFactory {
 
     @Inject
     public PackageFactory(
-            @NonNull ProtonMailApiManager mApi,
+            @NonNull ProtonMailApiManager apiManager,
             @NonNull AddressCrypto.Factory addressCryptoFactory,
             @CurrentUsername String currentUsername,
             @NonNull HTMLToMDConverter htmlToMDConverter) {
-        this.mApi = mApi;
+        this.apiManager = apiManager;
         this.addressCryptoFactory = addressCryptoFactory;
         this.currentUsername = currentUsername;
         this.htmlToMDConverter = htmlToMDConverter;
@@ -154,7 +154,7 @@ public class PackageFactory {
 
     private CipherText generateEncryptedMIME(Message message) throws Exception {
         MIMEType messageMime = MIMEType.fromString(message.getMimeType());
-        MIMEBuilder mimeBuilder = new MIMEBuilder(mApi, crypto);
+        MIMEBuilder mimeBuilder = new MIMEBuilder(apiManager, crypto);
         String html = messageMime == MIMEType.HTML ? message.getDecryptedHTML() : null;
         String plaintext = messageMime == MIMEType.PLAINTEXT ? message.getDecryptedBody() : null;
         String mimeString = mimeBuilder
@@ -231,7 +231,7 @@ public class PackageFactory {
     }
 
     private Auth generateAuth(MessageSecurityOptions securityOptions) {
-        final ModulusResponse modulus = mApi.randomModulus();
+        final ModulusResponse modulus = apiManager.randomModulus();
         final PasswordVerifier verifier = PasswordVerifier.calculate(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
         return new Auth(verifier.AuthVersion, verifier.ModulusID, verifier.Salt, verifier.SRPVerifier);
     }

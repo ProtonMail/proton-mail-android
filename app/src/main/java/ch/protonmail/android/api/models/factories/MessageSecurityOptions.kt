@@ -21,4 +21,8 @@ package ch.protonmail.android.api.models.factories
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MessageSecurityOptions(val password: String?, val hint: String?, val expiresAfterInSeconds: Long)
+data class MessageSecurityOptions(
+    val password: String?,
+    val hint: String?,
+    val expiresAfterInSeconds: Long
+)
