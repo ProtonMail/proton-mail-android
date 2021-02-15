@@ -112,11 +112,15 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftCallsSaveDraftUseCaseWhenTheDraftIsNew() {
+    fun saveDraftCallsSaveDraftUseCaseWithUserRequestedTriggerWhenTheDraftIsNewAndTheUserDidRequestSaving() {
         runBlockingTest {
             // Given
             val message = Message()
             givenViewModelPropertiesAreInitialised()
+            // This indicates that saving draft was requested by the user
+            viewModel.setUploadAttachments(true)
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -127,7 +131,35 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 emptyList(),
                 "parentId823",
                 Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId"
+                "previousSenderAddressId",
+                SaveDraft.SaveDraftTrigger.UserRequested
+            )
+            coVerify { saveDraft(parameters) }
+        }
+    }
+
+    @Test
+    fun saveDraftCallsSaveDraftUseCaseWithAutoSaveTriggerWhenTheDraftIsNewAndTheUserDidNotRequestSaving() {
+        runBlockingTest {
+            // Given
+            val message = Message()
+            givenViewModelPropertiesAreInitialised()
+            // This indicates that saving draft was not requested by the user
+            viewModel.setUploadAttachments(false)
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = false)
+
+            // Then
+            val parameters = SaveDraft.SaveDraftParameters(
+                message,
+                emptyList(),
+                "parentId823",
+                Constants.MessageActionType.FORWARD,
+                "previousSenderAddressId",
+                SaveDraft.SaveDraftTrigger.AutoSave
             )
             coVerify { saveDraft(parameters) }
         }
@@ -180,6 +212,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val message = Message()
             givenViewModelPropertiesAreInitialised()
             viewModel.draftId = "non-empty-draftId"
+            viewModel.setUploadAttachments(true)
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -190,7 +225,8 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 emptyList(),
                 "parentId823",
                 Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId"
+                "previousSenderAddressId",
+                SaveDraft.SaveDraftTrigger.UserRequested
             )
             coVerify { saveDraft(parameters) }
         }
@@ -260,7 +296,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun autoSaveDraftSchedulesJobToPerformSaveDraftAfterSomeDelay() {
+    fun autoSaveDraftSchedulesJobToPerformSaveDraftAfterSomeDelayWithUploadAttachmentsFalse() {
+        // It's important to check 'uploadAttachments' boolean flag as we rely on it to
+        // define the saveDraft trigger (AutoSave when uploadAttachments is false)
         runBlockingTest(dispatchers.Io) {
             // Given
             val messageBody = "Message body being edited..."
@@ -284,6 +322,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val expectedMessage = message.copy()
             assertEquals(expectedMessage, buildMessageObserver.observedValues[0]?.peekContent())
             assertEquals("&lt;html&gt; Message body being edited... &lt;html&gt;", viewModel.messageDataResult.content)
+            assertEquals(false, viewModel.messageDataResult.uploadAttachments)
             unmockkStatic(UiUtil::class)
         }
     }
@@ -314,6 +353,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // Then
             assertTrue(firstScheduledJob?.isCancelled ?: false)
             assertTrue(viewModel.autoSaveJob?.isActive ?: false)
+            assertEquals(false, viewModel.messageDataResult.uploadAttachments)
             unmockkStatic(UiUtil::class)
         }
     }

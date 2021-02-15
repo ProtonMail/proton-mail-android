@@ -116,7 +116,8 @@ class UploadAttachmentsTest : CoroutinesTest {
             // When
             UploadAttachments.Enqueuer(workManager).enqueue(
                 attachmentIds,
-                messageId
+                messageId,
+                true
             )
 
             // Then
@@ -132,8 +133,10 @@ class UploadAttachmentsTest : CoroutinesTest {
             val constraints = workSpec.constraints
             val inputData = workSpec.input
             val actualMessageLocalId = inputData.getString(KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID)
+            val actualIsMessageSending = inputData.getBoolean(KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING, false)
             val actualAttachmentIds = inputData.getStringArray(KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS)
             Assert.assertEquals(message.messageId, actualMessageLocalId)
+            Assert.assertEquals(true, actualIsMessageSending)
             Assert.assertArrayEquals(attachmentIds.toTypedArray(), actualAttachmentIds)
             Assert.assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
             Assert.assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
@@ -341,7 +344,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             val messageId = "messageId9273584"
             val username = "username"
             val message = Message(messageId = messageId, addressID = "senderAddress13")
-            givenFullValidInput(messageId, attachmentIds.toTypedArray())
+            givenFullValidInput(messageId, attachmentIds.toTypedArray(), true)
             every { cryptoFactory.create(Id("senderAddress13"), Name(username)) } returns crypto
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
             every { userManager.username } returns username
@@ -365,7 +368,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             val messageId = "messageId9273585"
             val username = "username"
             val message = Message(messageId = messageId, addressID = "senderAddress12")
-            givenFullValidInput(messageId, attachmentIds.toTypedArray())
+            givenFullValidInput(messageId, attachmentIds.toTypedArray(), true)
             every { cryptoFactory.create(Id("senderAddress12"), Name(username)) } returns crypto
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
             every { userManager.username } returns username
@@ -511,7 +514,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             val messageId = "messageId823762"
             val message = Message(messageId = messageId, addressID = "senderAddress6")
             every { userManager.username } returns username
-            givenFullValidInput(messageId)
+            givenFullValidInput(messageId, isMessageSending = true)
             every { cryptoFactory.create(Id("senderAddress6"), Name(username)) } returns crypto
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
             every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
@@ -701,12 +704,59 @@ class UploadAttachmentsTest : CoroutinesTest {
         }
     }
 
+    @Test
+    fun uploadAttachmentsDoesNotAttachThePublicKeyIfTheMessageIsNotBeingSent() {
+        runBlockingTest {
+            val messageId = "message-id-123842"
+            val message = Message(messageId, addressID = "addressId")
+            val username = "username"
+            givenFullValidInput(messageId, emptyArray(), isMessageSending = false)
+            every { userManager.username } returns username
+            every { pendingActionsDao.findPendingUploadByMessageId(messageId) } returns null
+            every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
+            coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
+            coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } returns mockk()
+
+            val result = uploadAttachments.doWork()
+
+            coVerify(exactly = 0) { attachmentsRepository.uploadPublicKey(any(), any()) }
+            assertEquals(ListenableWorker.Result.success(), result)
+        }
+    }
+
+    @Test
+    fun uploadAttachmentsAttachesThePublicKeyOnlyWhenTheMessageIsBeingSent() {
+        runBlockingTest {
+            val messageId = "message-id-123842"
+            val message = Message(messageId, addressID = "addressId")
+            val username = "username"
+            givenFullValidInput(messageId, emptyArray(), isMessageSending = true)
+            every { userManager.username } returns username
+            every { pendingActionsDao.findPendingUploadByMessageId(messageId) } returns null
+            every { userManager.getMailSettings(username)?.getAttachPublicKey() } returns true
+            coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
+            every { cryptoFactory.create(Id("addressId"), Name(username)) } returns crypto
+            coEvery { attachmentsRepository.uploadPublicKey(message, crypto) } answers {
+                AttachmentsRepository.Result.Success("82384")
+            }
+
+            val result = uploadAttachments.doWork()
+
+            coVerify { attachmentsRepository.uploadPublicKey(any(), any()) }
+            assertEquals(ListenableWorker.Result.success(), result)
+        }
+    }
+
     private fun givenFullValidInput(
         messageId: String,
-        attachments: Array<String> = arrayOf("attId62364")
+        attachments: Array<String> = arrayOf("attId62364"),
+        isMessageSending: Boolean = false
     ) {
         every { parameters.inputData.getStringArray(KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS) } answers { attachments }
         every { parameters.inputData.getString(KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID) } answers { messageId }
+        every {
+            parameters.inputData.getBoolean(KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING, false)
+        } answers { isMessageSending }
     }
 }
 

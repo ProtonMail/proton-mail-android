@@ -102,6 +102,10 @@ class SaveDraft @Inject constructor(
 
                     updatePendingForSendMessage(createdDraftId, localDraftId)
 
+                    if (params.trigger == SaveDraftTrigger.AutoSave) {
+                        return@map SaveDraftResult.Success(createdDraftId)
+                    }
+
                     return@map uploadAttachments(params, createdDraftId, localDraft)
                 } else {
                     Timber.e("Save Draft to API for messageId $localDraftId FAILED.")
@@ -111,8 +115,13 @@ class SaveDraft @Inject constructor(
             .flowOn(dispatchers.Io)
     }
 
-    private suspend fun uploadAttachments(params: SaveDraftParameters, createdDraftId: String, localDraft: Message) =
-        uploadAttachments.enqueue(params.newAttachmentIds, createdDraftId)
+    private suspend fun uploadAttachments(
+        params: SaveDraftParameters,
+        createdDraftId: String,
+        localDraft: Message
+    ): SaveDraftResult {
+        val isMessageSending = params.trigger == SaveDraftTrigger.SendingMessage
+        return uploadAttachments.enqueue(params.newAttachmentIds, createdDraftId, isMessageSending)
             .filter { it?.state?.isFinished == true }
             .map {
                 if (it?.state == WorkInfo.State.FAILED) {
@@ -123,6 +132,7 @@ class SaveDraft @Inject constructor(
 
                 return@map SaveDraftResult.Success(createdDraftId)
             }.first()
+    }
 
     private fun updatePendingForSendMessage(createdDraftId: String, messageId: String) {
         val pendingForSending = pendingActionsDao.findPendingSendByMessageId(messageId)
@@ -149,6 +159,13 @@ class SaveDraft @Inject constructor(
         val newAttachmentIds: List<String>,
         val parentId: String?,
         val actionType: Constants.MessageActionType,
-        val previousSenderAddressId: String
+        val previousSenderAddressId: String,
+        val trigger: SaveDraftTrigger
     )
+
+    enum class SaveDraftTrigger {
+        UserRequested,
+        AutoSave,
+        SendingMessage
+    }
 }

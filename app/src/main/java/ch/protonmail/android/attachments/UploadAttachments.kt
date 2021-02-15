@@ -51,6 +51,7 @@ import javax.inject.Inject
 
 internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS = "keyUploadAttachmentAttachmentIds"
 internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID = "keyUploadAttachmentMessageId"
+internal const val KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING = "keyUploadAttachmentIsMessageSending"
 internal const val KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR = "keyUploadAttachmentResultError"
 
 private const val UPLOAD_ATTACHMENTS_WORK_NAME_PREFIX = "uploadAttachmentUniqueWorkName"
@@ -71,12 +72,13 @@ class UploadAttachments @WorkerInject constructor(
         val newAttachments = inputData
             .getStringArray(KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS)?.toList().orEmpty()
         val messageId = inputData.getString(KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID).orEmpty()
+        val isMessageSending = inputData.getBoolean(KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING, false)
 
         messageDetailsRepository.findMessageById(messageId)?.let { message ->
             val addressId = requireNotNull(message.addressID)
             val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(userManager.username))
 
-            return@withContext when (val result = invoke(newAttachments, message, addressCrypto)) {
+            return@withContext when (val result = invoke(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()
                 is Result.Failure -> retryOrFail(result.error)
                 is Result.UploadInProgress -> {
@@ -84,13 +86,17 @@ class UploadAttachments @WorkerInject constructor(
                     retryOrFail("Failed uploading attachments")
                 }
             }
-
         }
 
         return@withContext failureWithError("Message not found")
     }
 
-    suspend operator fun invoke(attachmentIds: List<String>, message: Message, crypto: AddressCrypto): Result =
+    suspend operator fun invoke(
+        attachmentIds: List<String>,
+        message: Message,
+        crypto: AddressCrypto,
+        isMessageSending: Boolean
+    ): Result =
         withContext(dispatchers.Io) {
             val messageId = requireNotNull(message.messageId)
             Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
@@ -107,7 +113,7 @@ class UploadAttachments @WorkerInject constructor(
             }
 
             val isAttachPublicKey = userManager.getMailSettings(userManager.username)?.getAttachPublicKey() ?: false
-            if (isAttachPublicKey) {
+            if (isAttachPublicKey && isMessageSending) {
                 Timber.i("UploadAttachments attaching publicKey for messageId $messageId")
                 val result = attachmentsRepository.uploadPublicKey(message, crypto)
 
@@ -203,7 +209,8 @@ class UploadAttachments @WorkerInject constructor(
 
         fun enqueue(
             attachmentIds: List<String>,
-            messageId: String
+            messageId: String,
+            isMessageSending: Boolean
         ): Flow<WorkInfo?> {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -213,7 +220,8 @@ class UploadAttachments @WorkerInject constructor(
                 .setInputData(
                     workDataOf(
                         KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS to attachmentIds.toTypedArray(),
-                        KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID to messageId
+                        KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID to messageId,
+                        KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING to isMessageSending
                     )
                 )
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 2 * TEN_SECONDS, TimeUnit.SECONDS)

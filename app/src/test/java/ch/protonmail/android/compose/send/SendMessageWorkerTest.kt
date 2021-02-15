@@ -215,7 +215,8 @@ class SendMessageWorkerTest : CoroutinesTest {
             listOf("attId8327"),
             "parentId82384",
             Constants.MessageActionType.NONE,
-            "prevSenderAddress"
+            "prevSenderAddress",
+            SaveDraft.SaveDraftTrigger.SendingMessage
         )
         coVerify { saveDraft(expectedParameters) }
         assertEquals("Decrypted message body was not assigned to the message!", decryptedBody, message.decryptedBody)

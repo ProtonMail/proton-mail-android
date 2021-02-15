@@ -403,6 +403,11 @@ class ComposeMessageViewModel @Inject constructor(
                 message.dbId = _dbId
                 saveMessage(message)
             }
+            val saveDraftTrigger = if (uploadAttachments) {
+                SaveDraft.SaveDraftTrigger.UserRequested
+            } else {
+                SaveDraft.SaveDraftTrigger.AutoSave
+            }
             if (draftId.isNotEmpty()) {
                 if (MessageUtils.isLocalMessageId(_draftId.get()) && hasConnectivity) {
                     return@launch
@@ -411,7 +416,7 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId)
+                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
@@ -438,7 +443,7 @@ class ComposeMessageViewModel @Inject constructor(
                         uploadAttachments
                     )
                 }
-                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId)
+                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
                 _oldSenderAddressId = ""
                 setIsDirty(false)
@@ -454,7 +459,8 @@ class ComposeMessageViewModel @Inject constructor(
         newAttachments: List<String>,
         parentId: String?,
         messageActionType: Constants.MessageActionType,
-        oldSenderAddress: String
+        oldSenderAddress: String,
+        saveDraftTrigger: SaveDraft.SaveDraftTrigger
     ) {
         saveDraft(
             SaveDraft.SaveDraftParameters(
@@ -462,7 +468,8 @@ class ComposeMessageViewModel @Inject constructor(
                 newAttachments,
                 parentId,
                 messageActionType,
-                oldSenderAddress
+                oldSenderAddress,
+                saveDraftTrigger
             )
         ).collect { saveDraftResult ->
             when (saveDraftResult) {
@@ -1203,7 +1210,7 @@ class ComposeMessageViewModel @Inject constructor(
         buildMessage()
     }
 
-    private fun setUploadAttachments(uploadAttachments: Boolean) {
+    fun setUploadAttachments(uploadAttachments: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .uploadAttachments(uploadAttachments)
@@ -1256,7 +1263,7 @@ class ComposeMessageViewModel @Inject constructor(
         autoSaveJob = viewModelScope.launch(dispatchers.Io) {
             delay(1.seconds)
             Timber.d("Draft auto save triggered")
-            setBeforeSaveDraft(true, messageBody)
+            setBeforeSaveDraft(false, messageBody)
         }
     }
 }

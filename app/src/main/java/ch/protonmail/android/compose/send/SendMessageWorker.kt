@@ -247,7 +247,8 @@ class SendMessageWorker @WorkerInject constructor(
                 getInputAttachmentIds(),
                 getInputParentId(),
                 getInputActionType(),
-                previousSenderAddressId
+                previousSenderAddressId,
+                SaveDraft.SaveDraftTrigger.SendingMessage
             )
         ).first()
     }

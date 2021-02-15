@@ -471,7 +471,7 @@ public class ComposeMessageActivity
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show());
         composeMessageViewModel.getSavingDraftComplete().observe(this, event -> {
             if (mUpdateDraftPmMeChanged) {
-                composeMessageViewModel.setBeforeSaveDraft(true, mComposeBodyEditText.getText().toString());
+                composeMessageViewModel.setBeforeSaveDraft(false, mComposeBodyEditText.getText().toString());
                 mUpdateDraftPmMeChanged = false;
             }
             disableSendButton(false);
