@@ -66,13 +66,15 @@ class SaveDraft @Inject constructor(
         val messageId = requireNotNull(message.messageId)
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(username))
-        val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
-        if (message.decryptedBody == null) {
-            Timber.w("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")
-        }
+        if (params.trigger != SaveDraftTrigger.SendingMessage) {
+            val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(username))
+            val encryptedBody = addressCrypto.encrypt(message.decryptedBody ?: "", true).armored
+            if (message.decryptedBody == null) {
+                Timber.w("Save Draft for messageId $messageId - Decrypted Body was null, proceeding...")
+            }
 
-        message.messageBody = encryptedBody
+            message.messageBody = encryptedBody
+        }
 
         saveMessageLocallyAsDraft(message)
 

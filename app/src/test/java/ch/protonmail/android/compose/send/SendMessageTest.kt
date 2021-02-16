@@ -26,21 +26,30 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageLocationType
+import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.utils.ServerTime
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class SendMessageTest : CoroutinesTest {
+
+    @RelaxedMockK
+    private lateinit var addressCryptoFactory: AddressCrypto.Factory
 
     @RelaxedMockK
     private lateinit var sendMessageScheduler: SendMessageWorker.Enqueuer
@@ -54,15 +63,42 @@ class SendMessageTest : CoroutinesTest {
     @InjectMockKs
     lateinit var sendMessage: SendMessage
 
+    private val currentUsername = "username"
+
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
     }
 
     @Test
+    fun saveMessageEncryptsMessageBodyAndSavesItLocally() = runBlockingTest {
+        // Given
+        val senderAddressId = "addressId"
+        val message = Message(messageId = "9823472", addressID = senderAddressId)
+        val decryptedBody = "Message body in plain text"
+        message.decryptedBody = decryptedBody
+        val securityOptions = MessageSecurityOptions("", "", -1L)
+        val addressCrypto = mockk<AddressCrypto> {
+            every { encrypt(decryptedBody, true).armored } returns "encrypted armored content"
+        }
+        every { addressCryptoFactory.create(Id(senderAddressId), Name(currentUsername)) } returns addressCrypto
+
+        // When
+        val parameters = SendMessage.SendMessageParameters(message, listOf(), "", NONE, "", securityOptions)
+        sendMessage(parameters)
+
+        // Then
+
+        val messageCaptor = slot<Message>()
+        verify { addressCrypto.encrypt(decryptedBody, true) }
+        coVerify(exactly = 1) { messageDetailsRepository.saveMessageLocally(capture(messageCaptor)) }
+        assertEquals("encrypted armored content", messageCaptor.captured.messageBody)
+    }
+
+    @Test
     fun saveMessageAsNotDownloadedWithAllDraftsLocationAndCurrentTime() = runBlockingTest {
         // Given
-        val message = Message(messageId = "9823472")
+        val message = Message(messageId = "9823472", addressID = "addressId")
         val currentTimeMs = 23847233000L
         val securityOptions = MessageSecurityOptions("", "", -1L)
         mockkStatic(ServerTime::class)
@@ -91,6 +127,7 @@ class SendMessageTest : CoroutinesTest {
         val message = Message().apply {
             dbId = messageDbId
             this.messageId = messageId
+            addressID = "AddressId"
         }
         val securityOptions = MessageSecurityOptions("", "", -1L)
 
@@ -131,7 +168,6 @@ class SendMessageTest : CoroutinesTest {
         verify {
             sendMessageScheduler.enqueue(
                 message,
-                decryptedMessageBody,
                 attachmentIds,
                 "parentId82346",
                 NONE,

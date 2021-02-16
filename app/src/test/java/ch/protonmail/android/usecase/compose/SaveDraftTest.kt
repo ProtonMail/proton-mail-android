@@ -29,6 +29,7 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.attachments.KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR
 import ch.protonmail.android.attachments.UploadAttachments
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
+import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
 import ch.protonmail.android.core.Constants.MessageLocationType.ALL_DRAFT
@@ -97,7 +98,7 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftSavesEncryptedDraftMessageToDb() {
+    fun saveDraftEncryptsMessageAndSavesItToDbWhenTriggerIsUserRequestedSave() {
         runBlockingTest {
             // Given
             val message = Message().apply {
@@ -126,6 +127,87 @@ class SaveDraftTest : CoroutinesTest {
 
             // Then
             val expectedMessage = message.copy(messageBody = "encrypted armored content")
+            expectedMessage.setLabelIDs(
+                listOf(
+                    ALL_DRAFT.messageLocationTypeValue.toString(),
+                    ALL_MAIL.messageLocationTypeValue.toString(),
+                    DRAFT.messageLocationTypeValue.toString()
+                )
+            )
+            coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+        }
+    }
+
+    @Test
+    fun saveDraftEncryptsMessageAndSavesItToDbWhenTriggerIsAutoSave() {
+        runBlockingTest {
+            // Given
+            val message = Message().apply {
+                dbId = 8923L
+                this.messageId = "8234"
+                addressID = "addressIdAutoSave"
+                decryptedBody = "Message body in plain text auto saving"
+            }
+            val encryptedBody = "encrypted armored content auto saving"
+            val addressCrypto = mockk<AddressCrypto> {
+                every { encrypt("Message body in plain text auto saving", true).armored } returns encryptedBody
+            }
+            every { addressCryptoFactory.create(Id("addressIdAutoSave"), Name(currentUsername)) } returns addressCrypto
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 8923L
+
+            // When
+            saveDraft(
+                SaveDraftParameters(
+                    message,
+                    emptyList(),
+                    null,
+                    FORWARD,
+                    "previousSenderId1273",
+                    SaveDraft.SaveDraftTrigger.AutoSave
+                )
+            )
+
+            // Then
+            val expectedMessage = message.copy(messageBody = encryptedBody)
+            expectedMessage.setLabelIDs(
+                listOf(
+                    ALL_DRAFT.messageLocationTypeValue.toString(),
+                    ALL_MAIL.messageLocationTypeValue.toString(),
+                    DRAFT.messageLocationTypeValue.toString()
+                )
+            )
+            coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
+        }
+    }
+
+    @Test
+    fun saveDraftDoesNotEncryptTheMessageAgainWhenTheTriggerIsSendingMessage() {
+        runBlockingTest {
+            // Given
+            val encryptedBody = "message encrypted armored content, encrypted by SEND use case"
+            val message = Message().apply {
+                dbId = 823L
+                this.messageId = "8234"
+                addressID = "senderAddressId"
+                messageBody = encryptedBody
+                decryptedBody = null
+            }
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 823L
+
+            // When
+            saveDraft(
+                SaveDraftParameters(
+                    message,
+                    emptyList(),
+                    null,
+                    NONE,
+                    "previousSenderId1273",
+                    SaveDraft.SaveDraftTrigger.SendingMessage
+                )
+            )
+
+            // Then
+            val expectedMessage = message.copy(messageBody = encryptedBody)
             expectedMessage.setLabelIDs(
                 listOf(
                     ALL_DRAFT.messageLocationTypeValue.toString(),
