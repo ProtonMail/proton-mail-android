@@ -682,12 +682,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject002"
             }
             coEvery { apiManager.createDraft(any()) } returns errorAPIResponse
-            every { parameters.runAttemptCount } returns 0
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
                 coEvery { attachments(any()) } returns listOf(attachment)
             }
             every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+            every { parameters.runAttemptCount } returns 1
 
             // When
             val result = worker.doWork()
@@ -765,12 +765,12 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { this@mockk.message.subject } returns "Subject001"
             }
             coEvery { apiManager.createDraft(any()) } throws IOException(errorMessage)
-            every { parameters.runAttemptCount } returns 11
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
             val parentMessage = mockk<Message> {
                 coEvery { attachments(any()) } returns listOf(attachment)
             }
             every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+            every { parameters.runAttemptCount } returns 4
 
             // When
             val result = worker.doWork()

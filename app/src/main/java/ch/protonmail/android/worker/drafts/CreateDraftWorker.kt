@@ -70,7 +70,7 @@ internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM = "keySaveDraftErrorR
 internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID = "keySaveDraftSuccessResultDbId"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
-private const val SAVE_DRAFT_MAX_RETRIES = 10
+private const val SAVE_DRAFT_MAX_RETRIES = 3
 
 class CreateDraftWorker @WorkerInject constructor(
     @Assisted context: Context,
