@@ -53,6 +53,7 @@ fun initVersions() {
     `assert4k version` =                        "0.5.7"         // Released: Aug 15, 2020
     `assistedInject version` =                  "0.6.0"         // Released: Sep 14, 2020
     `dagger version` =                          "2.28.3"        // Released: Jul 18, 2020
+
     `mockK version` =                           "1.10.0"        // Released: Apr 19, 2020
     `retrofit version` =                        "2.6.1"         // Released: Jul 31, 2019
     `retrofit-kotlin-serialization version` =   ""
@@ -99,11 +100,13 @@ const val `playServices version` =              "17.0.0"        // Released: Jun
 const val `apache-commons-lang version` =       "3.4"           // Released: Apr 03, 2015
 const val `butterKnife version` =               "10.1.0"        // Released: Feb 14, 201
 const val `firebase-messaging version` =        "20.2.4"        // Released: Jul 30, 2020
+const val `gotev-cookieStore version` =         "1.3.1"         // Released: Oct 24, 2020
 const val `gson version` =                      "2.8.5"         // Released: May 22, 201
 const val `jackson version` =                   "2.10.2"        // Released: Jan 05, 2020
 const val `jsoup version` =                     "1.13.1"        // Released: Mar 01, 2020
 const val `minidns version` =                   "0.3.3"         // Released: Oct 14, 2018
 const val `okHttp3 version` =                   "3.14.9"        // Released: May 17, 2020 TODO: 4.x requires some refactor
+const val `okHttp-url-connection version` =     "3.14.9"        // Released: Sep, 2020
 const val `rf2 converter version` =             "2.9.0"         // Released: May 20, 2020
 const val `rxJava version` =                    "2.0.2"         // Released: Dec 02, 201
 const val `rxRelay version` =                   "2.1.1"         // Released: Aug 23, 201

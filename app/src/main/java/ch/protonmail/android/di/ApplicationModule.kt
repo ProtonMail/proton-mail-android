@@ -29,6 +29,7 @@ import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.api.DnsOverHttpsProviderRFC8484
 import ch.protonmail.android.api.OkHttpProvider
 import ch.protonmail.android.api.ProtonRetrofitBuilder
+import ch.protonmail.android.api.cookie.ProtonCookieStore
 import ch.protonmail.android.api.interceptors.ProtonMailAuthenticator
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.doh.Proxies
@@ -164,6 +165,7 @@ object ApplicationModule {
     @Provides
     @Singleton
     fun protonRetrofitBuilder(
+        context: Context,
         userManager: UserManager,
         jobManager: JobManager,
         networkUtil: QueueNetworkUtil,
@@ -180,7 +182,7 @@ object ApplicationModule {
 
         // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
 
-        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, authenticator)
+        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, authenticator, ProtonCookieStore(context))
             .apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 
