@@ -145,7 +145,7 @@ class AccountTypeActivity : BaseActivity() {
     @Subscribe
     fun onOrganizationEvent(event: OrganizationEvent) {
         if (event.status == Status.SUCCESS) {
-            val organization = event.response.organization
+            val organization = event.response.valueOrNull?.organization
             organization?.let { setOrganization(it) }
         }
     }

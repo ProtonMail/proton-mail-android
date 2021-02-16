@@ -18,19 +18,16 @@
  */
 package ch.protonmail.android.api.segments.organization
 
-import ch.protonmail.android.api.models.CreateOrganizationBody
+import ch.protonmail.android.api.models.CreateOrganizationRequest
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.OrganizationResponse
-import java.io.IOException
+import me.proton.core.network.domain.ApiResult
 
 interface OrganizationApiSpec {
 
-    @Throws(IOException::class)
-    fun fetchOrganization(): OrganizationResponse
+    suspend fun fetchOrganization(): ApiResult<OrganizationResponse>
 
-    @Throws(IOException::class)
-    fun fetchOrganizationKeys(): Keys
+    suspend fun fetchOrganizationKeys(): ApiResult<Keys>
 
-    @Throws(IOException::class)
-    fun createOrganization(body: CreateOrganizationBody): OrganizationResponse?
+    suspend fun createOrganization(body: CreateOrganizationRequest): ApiResult<OrganizationResponse>
 }

@@ -138,7 +138,7 @@ class ProtonMailApi private constructor(
             val messageApi = MessageApi(services.message)
             val conversationApi = ConversationApi(services.conversation)
             val labelApi = LabelApi(services.label)
-            val organizationApi = OrganizationApi(services.organization)
+            val organizationApi = OrganizationApi(apiProvider)
             val paymentApi = PaymentApi(services.payment, paymentPubService)
             val reportApi = ReportApi(apiProvider)
             val mailSettingsApi = MailSettingsApi(services.mailSettings)

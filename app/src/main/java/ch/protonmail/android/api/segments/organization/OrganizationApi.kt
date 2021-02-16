@@ -18,24 +18,26 @@
  */
 package ch.protonmail.android.api.segments.organization
 
-import ch.protonmail.android.api.models.CreateOrganizationBody
+import ch.protonmail.android.api.models.CreateOrganizationRequest
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.OrganizationResponse
-import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.api.utils.ParseUtils
-import java.io.IOException
+import me.proton.core.network.data.ApiProvider
+import me.proton.core.network.domain.ApiResult
 
-class OrganizationApi(private val service: OrganizationService) : BaseApi(), OrganizationApiSpec {
+class OrganizationApi(private val apiProvider: ApiProvider) : OrganizationApiSpec {
 
-    @Throws(IOException::class)
-    override fun fetchOrganization(): OrganizationResponse =
-        ParseUtils.parse(service.fetchOrganization().execute())
+    override suspend fun fetchOrganization(): ApiResult<OrganizationResponse> =
+        apiProvider.get<OrganizationService>().invoke {
+            fetchOrganization()
+        }
 
-    @Throws(IOException::class)
-    override fun fetchOrganizationKeys(): Keys =
-        ParseUtils.parse(service.fetchOrganizationsKeys().execute())
+    override suspend fun fetchOrganizationKeys(): ApiResult<Keys> =
+        apiProvider.get<OrganizationService>().invoke {
+            fetchOrganizationsKeys()
+        }
 
-    @Throws(IOException::class)
-    override fun createOrganization(body: CreateOrganizationBody): OrganizationResponse? =
-        ParseUtils.parse(service.createOrganization(body).execute())
+    override suspend fun createOrganization(body: CreateOrganizationRequest): ApiResult<OrganizationResponse> =
+        apiProvider.get<OrganizationService>().invoke {
+            createOrganization(body)
+        }
 }

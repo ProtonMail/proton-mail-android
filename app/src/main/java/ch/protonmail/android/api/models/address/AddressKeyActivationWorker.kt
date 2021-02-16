@@ -42,6 +42,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.arch.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import ch.protonmail.android.api.models.address.Address as OldAddress
@@ -79,8 +80,14 @@ class AddressKeyActivationWorker @AssistedInject constructor(
 
         // get orgKeys if existent -> This will work only if user is an organisation owner, otherwise
         // backend will return 403 for all other users (e.g. just members of an organisation)
-        val orgKeys = if (context.app.organization != null) {
+        val orgKeysResult = if (context.app.organization != null) {
             api.fetchOrganizationKeys()
+        } else {
+            null
+        }
+
+        val orgKeys = if (orgKeysResult is ApiResult.Success) {
+            orgKeysResult.value
         } else {
             null
         }
@@ -207,6 +214,7 @@ class AddressKeyActivationWorker @AssistedInject constructor(
     sealed class ActivationResult {
         object Success : ActivationResult()
         sealed class Error : ActivationResult() {
+
             abstract val id: UserId
 
             class Network(override val id: UserId) : Error()

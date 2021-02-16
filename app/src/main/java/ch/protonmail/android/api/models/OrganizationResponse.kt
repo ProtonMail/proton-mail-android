@@ -16,27 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models;
+package ch.protonmail.android.api.models
 
-import com.google.gson.annotations.SerializedName;
+import ch.protonmail.android.api.utils.Fields
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-import ch.protonmail.android.api.utils.Fields;
-
-/**
- * Created by dkadrikj on 7/10/16.
- */
-public class CreateOrganizationBody {
-
-    @SerializedName(Fields.Organization.DISPLAY_NAME)
-    private String displayName;
-    @SerializedName(Fields.Organization.PRIVATE_KEY)
-    private String privateKey;
-    @SerializedName(Fields.Organization.BACKUP_PRIVATE_KEY)
-    private String backupPrivateKey;
-
-    public CreateOrganizationBody(String displayName, String privateKey, String backupPrivateKey) {
-        this.displayName = displayName;
-        this.privateKey = privateKey;
-        this.backupPrivateKey = backupPrivateKey;
-    }
-}
+@Serializable
+data class OrganizationResponse(
+    @SerialName(Fields.Organization.ORGANIZATION)
+    val organization: Organization?
+)

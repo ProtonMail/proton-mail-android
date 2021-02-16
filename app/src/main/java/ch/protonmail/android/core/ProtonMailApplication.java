@@ -74,6 +74,8 @@ import ch.protonmail.android.api.NetworkSwitcher;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Organization;
+import ch.protonmail.android.api.models.OrganizationResponse;
+import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
@@ -268,7 +270,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @Subscribe
     public void onOrganizationEvent(OrganizationEvent event) {
         if (event.getStatus() == Status.SUCCESS) {
-            mOrganization = event.getResponse().getOrganization();
+            OrganizationResponse response = event.getResponse().getValueOrNull();
+            if (response != null) {
+                mOrganization = response.getOrganization();
+            }
         }
     }
 
