@@ -181,7 +181,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="send_report">Bericht senden</string>
     <string name="bug_title">Titel</string>
     <string name="bug_description">Fehlerbeschreibung</string>
-    <string name="sending_report">Bericht wird gesendet...</string>
+    <string name="sending_report">Bericht wird gesendet …</string>
     <string name="received_report">Bericht empfangen</string>
     <string name="not_received_report">Bericht nicht empfangen</string>
     <string name="not_received_report_offline">Keine Netzwerkverbindung! Der Bericht wird übermittelt, sobald Sie wieder online sind</string>
