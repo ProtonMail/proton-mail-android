@@ -72,6 +72,10 @@ class ContactsListViewModel @Inject constructor(
                         contactItem.getEmail().contains(searchPhrase ?: EMPTY_STRING, ignoreCase = true)
                 }
             }
+            .onEach {
+                // emit what we have until now, in case user did't agree to access android contacts in the next step
+                contactItems.value = it
+            }
             .combine(androidContacts.asFlow()) { protonContacts, androidContacts ->
                 contactsListMapper.mergeContactItems(protonContacts, androidContacts)
             }
