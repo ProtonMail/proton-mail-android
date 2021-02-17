@@ -48,7 +48,6 @@ import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
-import ch.protonmail.android.di.CurrentUsername;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.Name;
 import ch.protonmail.android.utils.HTMLToMDConverter;
@@ -60,7 +59,6 @@ public class PackageFactory {
 
     private final ProtonMailApiManager apiManager;
     private final AddressCrypto.Factory addressCryptoFactory;
-    private final String currentUsername;
     private final HTMLToMDConverter htmlToMDConverter;
     private AddressCrypto crypto;
 
@@ -68,23 +66,22 @@ public class PackageFactory {
     public PackageFactory(
             @NonNull ProtonMailApiManager apiManager,
             @NonNull AddressCrypto.Factory addressCryptoFactory,
-            @CurrentUsername String currentUsername,
             @NonNull HTMLToMDConverter htmlToMDConverter) {
         this.apiManager = apiManager;
         this.addressCryptoFactory = addressCryptoFactory;
-        this.currentUsername = currentUsername;
         this.htmlToMDConverter = htmlToMDConverter;
     }
 
     public List<MessageSendPackage> generatePackages(
             @NonNull Message message,
             @NonNull List<SendPreference> preferences,
-            @NonNull MessageSecurityOptions securityOptions
+            @NonNull MessageSecurityOptions securityOptions,
+            @NonNull String username
     ) throws Exception {
         final Map<MIMEType, MessageSendPackage> packageMap = new HashMap<>();
         crypto = addressCryptoFactory.create(
                 new Id(message.getAddressID()),
-                new Name(currentUsername)
+                new Name(username)
         );
 
         Set<String> recipients = getMessageRecipients(message);

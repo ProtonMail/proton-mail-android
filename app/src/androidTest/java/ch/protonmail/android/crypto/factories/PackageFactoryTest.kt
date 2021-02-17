@@ -63,8 +63,6 @@ class PackageFactoryTest {
     @InjectMockKs
     private lateinit var packageFactory: PackageFactory
 
-    private val currentUsername = "username"
-
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
@@ -101,6 +99,7 @@ class PackageFactoryTest {
             every { keyPacket } returns keyPackage
             every { dataPacket } returns "dataPacket".toByteArray()
         }
+        val currentUsername = "Marino"
         every { base64Encoder.encode(any()) } returns "encodedBase64"
         every { addressCryptoFactory.create(Id(addressId), Name(currentUsername)) } returns crypto
         every { htmlToMDConverter.convert(any()) } returns bodyPlainText
@@ -109,7 +108,7 @@ class PackageFactoryTest {
         every { crypto.encryptKeyPacket(any(), any()) } returns "encryptedKeyPackets".toByteArray()
         every { crypto.getSessionKey(keyPackage) } returns SessionKey("token".toByteArray(), "algorithm")
 
-        packageFactory.generatePackages(message, preferences, securityOptions)
+        packageFactory.generatePackages(message, preferences, securityOptions, currentUsername)
 
         verify { crypto.decryptKeyPacket(any()) }
         verify { crypto.getSessionKey(any()) }
