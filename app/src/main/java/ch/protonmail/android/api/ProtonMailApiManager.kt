@@ -209,7 +209,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
 
-    override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse = api.fetchContacts(page, pageSize)
+    override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse =
+        api.fetchContacts(page, pageSize)
 
     override suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
         api.fetchContactEmails(page, pageSize)

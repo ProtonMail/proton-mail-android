@@ -29,13 +29,12 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.Constants
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
-import me.proton.core.test.kotlin.TestDispatcherProvider
 import me.proton.core.util.android.workmanager.toWorkData
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -60,7 +59,7 @@ class FetchContactsDataWorkerTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = FetchContactsDataWorker(context, parameters, api, contactsDao, TestDispatcherProvider)
+        worker = FetchContactsDataWorker(context, parameters, api, contactsDao)
     }
 
     @Test
@@ -74,14 +73,14 @@ class FetchContactsDataWorkerTest {
                 every { total } returns contactsList.size
             }
             coEvery { api.fetchContacts(0, Constants.CONTACTS_PAGE_SIZE) } returns response
-            every { contactsDao.saveAllContactsData(contactsList) } returns listOf(1)
+            coEvery { contactsDao.saveAllContactsData(contactsList) } returns listOf(1)
             val expected = ListenableWorker.Result.success()
 
             // when
             val operationResult = worker.doWork()
 
             // then
-            verify { contactsDao.saveAllContactsData(contactsList) }
+            coVerify { contactsDao.saveAllContactsData(contactsList) }
             assertEquals(expected, operationResult)
         }
 
