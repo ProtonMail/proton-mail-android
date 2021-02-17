@@ -37,6 +37,7 @@ import okio.source
 import timber.log.Timber
 import java.io.IOException
 import java.util.Locale
+import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 /**
@@ -120,9 +121,12 @@ class AttachmentsRepository @Inject constructor(
             } catch (exception: IOException) {
                 Timber.e("Upload attachment failed: $exception")
                 return@withContext Result.Failure("Upload attachment request failed")
+            } catch (cancellationException: CancellationException) {
+                Timber.w("Upload attachment was cancelled. $cancellationException. Rethrowing")
+                throw cancellationException
             } catch (exception: Exception) {
-                Timber.w("Upload attachment failed throwing generic exception: $exception. Rethrowing.")
-                throw exception
+                Timber.w("Upload attachment failed throwing generic exception: $exception")
+                return@withContext Result.Failure("Upload attachment request failed")
             }
 
             if (uploadResult.code == Constants.RESPONSE_CODE_OK) {

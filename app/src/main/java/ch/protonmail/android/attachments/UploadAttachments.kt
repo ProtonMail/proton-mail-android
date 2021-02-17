@@ -78,7 +78,7 @@ class UploadAttachments @WorkerInject constructor(
             val addressId = requireNotNull(message.addressID)
             val addressCrypto = addressCryptoFactory.create(Id(addressId), Name(userManager.username))
 
-            return@withContext when (val result = invoke(newAttachments, message, addressCrypto, isMessageSending)) {
+            return@withContext when (val result = upload(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()
                 is Result.Failure -> retryOrFail(result.error)
             }
@@ -87,7 +87,7 @@ class UploadAttachments @WorkerInject constructor(
         return@withContext failureWithError("Message not found")
     }
 
-    suspend operator fun invoke(
+    private suspend fun upload(
         attachmentIds: List<String>,
         message: Message,
         crypto: AddressCrypto,

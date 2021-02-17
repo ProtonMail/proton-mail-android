@@ -243,12 +243,12 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
             val result = repository.upload(attachment, crypto)
 
-            verify {
+            coVerify {
                 attachment.attachmentId = apiAttachmentId
                 attachment.keyPackets = apiKeyPackets
                 attachment.signature = apiSignature
                 attachment.isUploaded = true
-                messageDetailsRepository.saveAttachmentBlocking(attachment)
+                messageDetailsRepository.saveAttachment(attachment)
             }
             val expected = AttachmentsRepository.Result.Success(apiAttachmentId)
             assertEquals(expected, result)
@@ -356,7 +356,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 assertEquals("Call was cancelled", exception.message)
             }
 
-            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+            coVerify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
         }
     }
 

@@ -895,6 +895,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns localMessage
             every { messageFactory.createDraftApiRequest(localMessage) } returns apiDraftRequest
             coEvery { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) } returns apiDraftResponse
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
 
             // When
             worker.doWork()
