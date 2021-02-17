@@ -27,6 +27,7 @@ import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import kotlinx.coroutines.runBlocking
 import me.proton.core.network.domain.ApiResult
+import timber.log.Timber
 
 class GetOrganizationJob : ProtonMailBaseJob(
     Params(Priority.HIGH).requireNetwork().groupBy(Constants.JOB_GROUP_PAYMENT)
@@ -34,15 +35,18 @@ class GetOrganizationJob : ProtonMailBaseJob(
     @Throws(Throwable::class)
     override fun onRun() {
         runBlocking {
-            val response = getApi().fetchOrganization()
+            val response = getApi().fetchOrganization(requireNotNull(userId))
             val keysResponse = if (response is ApiResult.Success) {
+                Timber.v("fetching Organization Keys")
                 getApi().fetchOrganizationKeys()
             } else {
+                Timber.i("Get Organization failure: $response")
                 null
             }
             if (keysResponse is ApiResult.Success) {
                 AppUtil.postEventOnUi(OrganizationEvent(Status.SUCCESS, response))
             } else {
+                Timber.i("Get Organization keys failure: $response")
                 AppUtil.postEventOnUi(OrganizationEvent(Status.FAILED, response))
             }
         }

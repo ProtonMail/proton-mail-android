@@ -20,11 +20,12 @@ package ch.protonmail.android.api.segments.organization
 
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.OrganizationResponse
+import me.proton.core.domain.entity.UserId
 import me.proton.core.network.domain.ApiResult
 
 interface OrganizationApiSpec {
 
-    suspend fun fetchOrganization(): ApiResult<OrganizationResponse>
+    suspend fun fetchOrganization(userId: UserId): ApiResult<OrganizationResponse>
 
     suspend fun fetchOrganizationKeys(): ApiResult<Keys>
 

@@ -238,7 +238,7 @@ object Fields {
         const val MAX_SPACE = "MaxSpace"
         const val MAX_MEMBERS = "MaxMembers"
         const val MAX_VPN = "MaxVPN"
-        const val TWO_FACTOR = "TwoFactor"
+        const val TWO_FACTOR_GRACE_PERIOD = "TwoFactorGracePeriod"
         const val USED_DOMAINS = "UsedDomains"
         const val USED_MEMBERS = "UsedMembers"
         const val USED_ADDRESSES = "UsedAddresses"

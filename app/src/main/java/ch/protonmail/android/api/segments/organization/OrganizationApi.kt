@@ -20,13 +20,14 @@ package ch.protonmail.android.api.segments.organization
 
 import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.OrganizationResponse
+import me.proton.core.domain.entity.UserId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiResult
 
 class OrganizationApi(private val apiProvider: ApiProvider) : OrganizationApiSpec {
 
-    override suspend fun fetchOrganization(): ApiResult<OrganizationResponse> =
-        apiProvider.get<OrganizationService>().invoke {
+    override suspend fun fetchOrganization(userId: UserId): ApiResult<OrganizationResponse> =
+        apiProvider.get<OrganizationService>(userId).invoke {
             fetchOrganization()
         }
 

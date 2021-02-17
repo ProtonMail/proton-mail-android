@@ -48,8 +48,8 @@ data class Organization(
     @SerialName(Fields.Organization.MAX_VPN)
     val maxVPN: Int,
 
-    @SerialName(Fields.Organization.TWO_FACTOR)
-    val twoFactor: Int,
+    @SerialName(Fields.Organization.TWO_FACTOR_GRACE_PERIOD)
+    val twoFactor: Int?,
 
     @SerialName(Fields.Organization.USED_DOMAINS)
     val usedDomains: Int,
