@@ -32,10 +32,10 @@ import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.api.models.Keys
 import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
+import ch.protonmail.android.api.models.OrganizationKeysResponse
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.models.PaymentMethodsResponse
 import ch.protonmail.android.api.models.PaymentsStatusResponse
@@ -312,7 +312,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
     override suspend fun fetchOrganization(userId: UserId): ApiResult<OrganizationResponse> =
         api.fetchOrganization(userId)
 
-    override suspend fun fetchOrganizationKeys(): ApiResult<Keys> = api.fetchOrganizationKeys()
+    override suspend fun fetchOrganizationKeys(userId: UserId): ApiResult<OrganizationKeysResponse> =
+        api.fetchOrganizationKeys(userId)
 
     override suspend fun fetchSubscription(): GetSubscriptionResponse = api.fetchSubscription()
 

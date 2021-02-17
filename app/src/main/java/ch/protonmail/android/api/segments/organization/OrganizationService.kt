@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.organization
 
-import ch.protonmail.android.api.models.Keys
+import ch.protonmail.android.api.models.OrganizationKeysResponse
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
@@ -34,6 +34,6 @@ interface OrganizationService : BaseRetrofitApi {
 
     @GET("organizations/keys")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun fetchOrganizationsKeys(): Keys
+    suspend fun fetchOrganizationsKeys(): OrganizationKeysResponse
 
 }

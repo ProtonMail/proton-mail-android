@@ -35,10 +35,11 @@ class GetOrganizationJob : ProtonMailBaseJob(
     @Throws(Throwable::class)
     override fun onRun() {
         runBlocking {
-            val response = getApi().fetchOrganization(requireNotNull(userId))
+            val userId = requireNotNull(userId)
+            val response = getApi().fetchOrganization(userId)
             val keysResponse = if (response is ApiResult.Success) {
                 Timber.v("fetching Organization Keys")
-                getApi().fetchOrganizationKeys()
+                getApi().fetchOrganizationKeys(userId)
             } else {
                 Timber.i("Get Organization failure: $response")
                 null

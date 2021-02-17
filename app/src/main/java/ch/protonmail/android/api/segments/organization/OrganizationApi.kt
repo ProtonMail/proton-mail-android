@@ -18,7 +18,7 @@
  */
 package ch.protonmail.android.api.segments.organization
 
-import ch.protonmail.android.api.models.Keys
+import ch.protonmail.android.api.models.OrganizationKeysResponse
 import ch.protonmail.android.api.models.OrganizationResponse
 import me.proton.core.domain.entity.UserId
 import me.proton.core.network.data.ApiProvider
@@ -31,8 +31,8 @@ class OrganizationApi(private val apiProvider: ApiProvider) : OrganizationApiSpe
             fetchOrganization()
         }
 
-    override suspend fun fetchOrganizationKeys(): ApiResult<Keys> =
-        apiProvider.get<OrganizationService>().invoke {
+    override suspend fun fetchOrganizationKeys(userId: UserId): ApiResult<OrganizationKeysResponse> =
+        apiProvider.get<OrganizationService>(userId).invoke {
             fetchOrganizationsKeys()
         }
 }

@@ -20,7 +20,6 @@
 package ch.protonmail.android.usecase.crypto
 
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.domain.entity.user.UserKey
 import ch.protonmail.android.utils.crypto.OpenPGP
 import com.proton.gopenpgp.crypto.Crypto
 import javax.inject.Inject
@@ -29,7 +28,7 @@ class GenerateTokenAndSignature @Inject constructor (
     private val userManager: UserManager,
     private val openPgp: OpenPGP
 ) {
-    operator fun invoke(orgKeys: UserKey?): TokenAndSignature {
+    operator fun invoke(privateKey: String): TokenAndSignature {
         val user = userManager.currentUser
         val secret = openPgp.randomToken()
         val tokenString = secret.joinToString("") { String.format("%02x", (it.toInt() and 0xff)) }
@@ -39,10 +38,8 @@ class GenerateTokenAndSignature @Inject constructor (
         val unlockedUserKey = Crypto.newKeyFromArmored(armoredPrivateKey).unlock(mailboxPassword)
         val tokenKeyRing = Crypto.newKeyRing(unlockedUserKey)
 
-        if (orgKeys != null) {
-            val unlockedOrgKey = Crypto.newKeyFromArmored(orgKeys.privateKey.content.s).unlock(mailboxPassword)
-            tokenKeyRing.addKey(unlockedOrgKey)
-        }
+        val unlockedOrgKey = Crypto.newKeyFromArmored(privateKey).unlock(mailboxPassword)
+        tokenKeyRing.addKey(unlockedOrgKey)
 
         val token = tokenKeyRing.encrypt(binMessage, null).armored
         val signature = tokenKeyRing.signDetached(binMessage).armored

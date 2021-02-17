@@ -361,6 +361,7 @@ object Fields {
         object KeyBody {
             const val FLAGS = "Flags"
             const val PUBLIC_KEY = "PublicKey"
+            const val PRIVATE_KEY = "PrivateKey"
         }
     }
 
