@@ -182,7 +182,7 @@ class UploadAttachmentsTest : CoroutinesTest {
     }
 
     @Test
-    fun uploadAttachmentsRemovesPendingUploadAndRetriesWhenUploadWasLeftOngoingForTheGivenMessageAndMaxRetriesWereNotReached() {
+    fun uploadAttachmentsExecutesNormallyWhenUploadWasLeftOngoingForTheGivenMessage() {
         runBlockingTest {
             val attachmentIds = listOf("1")
             val messageId = "message-id-123842"
@@ -190,37 +190,11 @@ class UploadAttachmentsTest : CoroutinesTest {
             givenFullValidInput(messageId, attachmentIds.toTypedArray())
             coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
             every { pendingActionsDao.findPendingUploadByMessageId(messageId) } returns PendingUpload(messageId)
-            every { parameters.runAttemptCount } returns 2
 
             val result = uploadAttachments.doWork()
 
-            verify { pendingActionsDao.deletePendingUploadByMessageId(messageId) }
-            verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
-            assertEquals(ListenableWorker.Result.retry(), result)
-        }
-    }
-
-    @Test
-    fun uploadAttachmentsRemovesPendingUploadAndFailsWhenUploadWasLeftOngoingForTheGivenMessageAndMaxRetriesWereReached() {
-        runBlockingTest {
-            val attachmentIds = listOf("1")
-            val messageId = "message-id-123842"
-            val message = Message(messageId = messageId, addressID = "senderAddress1")
-            givenFullValidInput(messageId, attachmentIds.toTypedArray())
-            coEvery { messageDetailsRepository.findMessageById(messageId) } returns message
-            every { pendingActionsDao.findPendingUploadByMessageId(messageId) } returns PendingUpload(messageId)
-            every { parameters.runAttemptCount } returns 4
-
-            val result = uploadAttachments.doWork()
-
-            verify { pendingActionsDao.deletePendingUploadByMessageId(messageId) }
-            verify(exactly = 0) { pendingActionsDao.insertPendingForUpload(any()) }
-            Assert.assertEquals(
-                ListenableWorker.Result.failure(
-                    workDataOf(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to "Failed uploading attachments")
-                ),
-                result
-            )
+            verify { pendingActionsDao.insertPendingForUpload(any()) }
+            Assert.assertEquals(ListenableWorker.Result.success(), result)
         }
     }
 
@@ -251,7 +225,6 @@ class UploadAttachmentsTest : CoroutinesTest {
             val result = uploadAttachments.doWork()
 
             coVerifyOrder {
-                pendingActionsDao.findPendingUploadByMessageId("messageId8234")
                 attachment1.setMessage(message)
                 attachmentsRepository.upload(attachment1, crypto)
                 attachment2.setMessage(message)

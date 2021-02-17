@@ -35,6 +35,7 @@ import okio.ByteString.Companion.decodeBase64
 import okio.buffer
 import okio.source
 import timber.log.Timber
+import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 
@@ -96,7 +97,7 @@ class AttachmentsRepository @Inject constructor(
             val dataPackage = RequestBody.create(attachmentMimeType, encryptedAttachment.dataPacket)
             val signature = RequestBody.create(octetStreamMimeType, signedFileContent)
 
-            val uploadResult = runCatching {
+            val uploadResult = try {
                 if (isAttachmentInline(headers)) {
                     requireNotNull(headers)
 
@@ -116,26 +117,26 @@ class AttachmentsRepository @Inject constructor(
                         signature
                     )
                 }
-            }
-
-            val response = uploadResult.getOrNull()
-            if (uploadResult.isFailure || response == null) {
-                Timber.e("Upload attachment failed: ${uploadResult.exceptionOrNull()}")
+            } catch (exception: IOException) {
+                Timber.e("Upload attachment failed: $exception")
                 return@withContext Result.Failure("Upload attachment request failed")
+            } catch (exception: Exception) {
+                Timber.w("Upload attachment failed throwing generic exception: $exception. Rethrowing.")
+                throw exception
             }
 
-            if (response.code == Constants.RESPONSE_CODE_OK) {
-                attachment.attachmentId = response.attachmentID
-                attachment.keyPackets = response.attachment.keyPackets
-                attachment.signature = response.attachment.signature
+            if (uploadResult.code == Constants.RESPONSE_CODE_OK) {
+                attachment.attachmentId = uploadResult.attachmentID
+                attachment.keyPackets = uploadResult.attachment.keyPackets
+                attachment.signature = uploadResult.attachment.signature
                 attachment.isUploaded = true
-                messageDetailsRepository.saveAttachmentBlocking(attachment)
-                Timber.i("Upload attachment successful. attachmentId: ${response.attachmentID}")
-                return@withContext Result.Success(response.attachmentID)
+                messageDetailsRepository.saveAttachment(attachment)
+                Timber.i("Upload attachment successful. attachmentId: ${uploadResult.attachmentID}")
+                return@withContext Result.Success(uploadResult.attachmentID)
             }
 
-            Timber.e("Upload attachment failed: ${response.error}")
-            return@withContext Result.Failure(response.error)
+            Timber.e("Upload attachment failed: ${uploadResult.error}")
+            return@withContext Result.Failure(uploadResult.error)
         }
 
     private fun contentIdFormatted(headers: AttachmentHeaders): String {

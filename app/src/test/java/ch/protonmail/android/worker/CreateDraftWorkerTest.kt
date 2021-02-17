@@ -834,7 +834,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             coVerify { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) }
-            val expectedMessage = Message().apply { this.dbId = messageDbId
+            val expectedMessage = Message().apply {
+                this.dbId = messageDbId
                 this.messageId = "created_draft_id"
                 this.toList = listOf()
                 this.ccList = listOf()

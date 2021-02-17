@@ -81,10 +81,6 @@ class UploadAttachments @WorkerInject constructor(
             return@withContext when (val result = invoke(newAttachments, message, addressCrypto, isMessageSending)) {
                 is Result.Success -> ListenableWorker.Result.success()
                 is Result.Failure -> retryOrFail(result.error)
-                is Result.UploadInProgress -> {
-                    pendingActionsDao.deletePendingUploadByMessageId(messageId)
-                    retryOrFail("Failed uploading attachments")
-                }
             }
         }
 
@@ -100,11 +96,6 @@ class UploadAttachments @WorkerInject constructor(
         withContext(dispatchers.Io) {
             val messageId = requireNotNull(message.messageId)
             Timber.i("UploadAttachments started for messageId $messageId - attachmentIds $attachmentIds")
-
-            pendingActionsDao.findPendingUploadByMessageId(messageId)?.let {
-                Timber.i("UploadAttachments STOPPED for messageId $messageId as already in progress")
-                return@withContext Result.UploadInProgress
-            }
 
             pendingActionsDao.insertPendingForUpload(PendingUpload(messageId))
 
@@ -201,7 +192,6 @@ class UploadAttachments @WorkerInject constructor(
 
     sealed class Result {
         object Success : Result()
-        object UploadInProgress : Result()
         data class Failure(val error: String) : Result()
     }
 

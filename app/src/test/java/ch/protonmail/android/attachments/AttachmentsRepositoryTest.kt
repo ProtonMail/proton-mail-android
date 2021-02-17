@@ -48,7 +48,8 @@ import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import java.util.concurrent.TimeoutException
+import java.net.SocketTimeoutException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -328,13 +329,34 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val unarmoredSignedFileContent = byteArrayOf()
             val attachment = mockk<Attachment>(relaxed = true)
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws TimeoutException("Call timed out")
+            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws SocketTimeoutException("Call timed out")
 
             val result = repository.upload(attachment, crypto)
 
             verify(exactly = 0) { messageDetailsRepository.saveAttachmentBlocking(any()) }
             val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
             assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun uploadLogsAndReThrowsCancellationExceptions() {
+        runBlockingTest {
+            val errorMessage = "Upload attachments work was cancelled"
+            val unarmoredSignedFileContent = byteArrayOf()
+            val attachment = mockk<Attachment>(relaxed = true)
+            every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+            coEvery {
+                apiManager.uploadAttachment(any(), any(), any(), any())
+            } throws CancellationException("Call was cancelled")
+
+            try {
+                repository.upload(attachment, crypto)
+            } catch (exception: CancellationException) {
+                assertEquals("Call was cancelled", exception.message)
+            }
+
+            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
         }
     }
 
