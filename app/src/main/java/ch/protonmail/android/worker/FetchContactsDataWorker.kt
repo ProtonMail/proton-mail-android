@@ -35,9 +35,8 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants.CONTACTS_PAGE_SIZE
-import kotlinx.coroutines.withContext
-import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
+import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -55,30 +54,29 @@ class FetchContactsDataWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactsDao: ContactsDao,
-    private val dispatchers: DispatcherProvider
+    private val contactsDao: ContactsDao
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result =
         runCatching {
-            withContext(dispatchers.Io) {
-                Timber.v("Fetch Contacts Worker started")
-                var page = 0
-                var response = api.fetchContacts(page, CONTACTS_PAGE_SIZE)
-                response.contacts?.let { contacts ->
-                    val total = response.total
-                    var fetched = contacts.size
-                    while (total > fetched) {
-                        ++page
-                        response = api.fetchContacts(page, CONTACTS_PAGE_SIZE)
-                        val contactDataList = response.contacts
-                        if (contactDataList.isNullOrEmpty()) {
-                            break
-                        }
-                        contacts.addAll(contactDataList)
-                        fetched = contacts.size
+            Timber.v("Fetch Contacts Worker started")
+            var page = 0
+            var response = api.fetchContacts(page, CONTACTS_PAGE_SIZE)
+            response.contacts?.let { contacts ->
+                val total = response.total
+                var fetched = contacts.size
+                while (total > fetched) {
+                    ++page
+                    response = api.fetchContacts(page, CONTACTS_PAGE_SIZE)
+                    val contactDataList = response.contacts
+                    if (contactDataList.isNullOrEmpty()) {
+                        break
                     }
+                    contacts.addAll(contactDataList)
+                    fetched = contacts.size
+                }
 
+                if (contacts.isNotEmpty()) {
                     contactsDao.saveAllContactsData(contacts)
                 }
             }
@@ -91,13 +89,18 @@ class FetchContactsDataWorker @WorkerInject constructor(
             }
         )
 
-    private fun shouldReRunOnThrowable(throwable: Throwable): Result =
-        if (runAttemptCount < MAX_RETRY_COUNT) {
+    private fun shouldReRunOnThrowable(throwable: Throwable): Result {
+        if (throwable is CancellationException) {
+            throw throwable
+        }
+
+        return if (runAttemptCount < MAX_RETRY_COUNT) {
             Timber.d(throwable, "Fetch Contacts Worker failure, retrying count: $runAttemptCount")
             Result.retry()
         } else {
             failure(throwable)
         }
+    }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         fun enqueue(): LiveData<WorkInfo> {

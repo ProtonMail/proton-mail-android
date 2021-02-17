@@ -63,7 +63,7 @@ interface ContactsDatabase {
     fun saveAllContactsData(vararg contactData: ContactData): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveAllContactsData(contactData: Collection<ContactData>): List<Long>
+    suspend fun saveAllContactsData(contactData: Collection<ContactData>): List<Long>
 
     @Delete
     fun deleteContactData(vararg contactData: ContactData)
