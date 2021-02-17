@@ -425,7 +425,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_free_with_price">FREE</string>
     <string name="plan_plus_with_price">PLUS %s /mjesečno</string>
     <string name="plan_visionary_with_price">VISIONARY %s /mjesečno</string>
-    <string name="plan_business_with_price">BUSINESS %s /mjesečno</string>
+    <string name="plan_business_with_price">TVRTKE %s /mjesečno</string>
     <string name="plan_free_title">Osnovni račun s ograničenim značajkama</string>
     <string name="plan_plus_title">Sigurna e-pošta s naprednim značajkama</string>
     <string name="plan_visionary_title">Posebni računi za naše pobornike</string>
