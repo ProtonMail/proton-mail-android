@@ -38,12 +38,18 @@ import ch.protonmail.android.utils.extensions.showToast
 import kotlinx.android.synthetic.main.contacts_v2_list_item.view.*
 import kotlinx.android.synthetic.main.contacts_v2_list_item_header.view.*
 
-/**
- * Created by Kamil Rajtar on 06.07.18.  */
-sealed class ContactListItemView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : RelativeLayout(context, attrs, defStyleAttr) {
+sealed class ContactListItemView(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : RelativeLayout(context, attrs, defStyleAttr) {
     abstract fun bind(item: ContactItem)
 
-    class ContactsHeaderView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ContactListItemView(context, attrs, defStyleAttr) {
+    class ContactsHeaderView(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+    ) : ContactListItemView(context, attrs, defStyleAttr) {
 
         init {
             inflate(context, R.layout.contacts_v2_list_item_header, this)
@@ -58,46 +64,49 @@ sealed class ContactListItemView(context: Context, attrs: AttributeSet? = null, 
         }
     }
 
-    class ContactView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ContactListItemView(context, attrs, defStyleAttr) {
+    class ContactView(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+    ) : ContactListItemView(context, attrs, defStyleAttr) {
 
-        private val mEmptyEmailList by lazy { context.getString(R.string.empty_email_list) }
+        private val emptyEmailList by lazy { context.getString(R.string.empty_email_list) }
 
-        private val mSelectedColor by lazy {
+        private val selectedColor by lazy {
             ContextCompat.getColor(context, R.color.white)
         }
 
-
         init {
-            inflate( context, R.layout.contacts_v2_list_item, this )
+            inflate(context, R.layout.contacts_v2_list_item, this)
             contactIcon.apply {
                 isClickable = false
-                setImageResource( R.drawable.ic_contacts_checkmark )
-                setBackgroundResource( R.drawable.bg_circle )
+                setImageResource(R.drawable.ic_contacts_checkmark)
+                setBackgroundResource(R.drawable.bg_circle)
                 drawable.setColorFilter(
-                        ContextCompat.getColor( context, R.color.contact_action ),
-                        PorterDuff.Mode.SRC_IN
+                    ContextCompat.getColor(context, R.color.contact_action),
+                    PorterDuff.Mode.SRC_IN
                 )
             }
         }
 
-        private fun handleSelectionUi( isSelected: Boolean ) {
+        private fun handleSelectionUi(isSelected: Boolean) {
             contactIcon.isVisible = isSelected
-            contactIconLetter.isVisible = ! isSelected
+            contactIconLetter.isVisible = !isSelected
             rowWrapper.setBackgroundColor(
-                    if ( isSelected ) context.getColorCompat( R.color.selectable_color )
-                    else mSelectedColor
+                if (isSelected) context.getColorCompat(R.color.selectable_color)
+                else selectedColor
             )
         }
 
         override fun bind(item: ContactItem) {
             local_contact_icon.visibility =
-                    if (item.isProtonMailContact) View.GONE else View.VISIBLE
+                if (item.isProtonMailContact) View.GONE else View.VISIBLE
 
             contact_name.text = item.getName()
             contactIconLetter.text = UiUtil.extractInitials(item.getName())
             val contactEmails =
                 if (item.getEmail().isEmpty()) {
-                    mEmptyEmailList
+                    emptyEmailList
                 } else {
                     val additionalEmailsText = if (item.additionalEmailsCount > 0)
                         ", +" + item.additionalEmailsCount.toString()
@@ -110,7 +119,8 @@ sealed class ContactListItemView(context: Context, attrs: AttributeSet? = null, 
                 val emailValue = item.getEmail()
                 if (!TextUtils.isEmpty(emailValue)) {
                     val intent = AppUtil.decorInAppIntent(Intent(context, ComposeMessageActivity::class.java))
-                    intent.putExtra(ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(item.getEmail())
+                    intent.putExtra(
+                        ComposeMessageActivity.EXTRA_TO_RECIPIENTS, arrayOf(item.getEmail())
                     )
                     context.startActivity(intent)
                 } else {
