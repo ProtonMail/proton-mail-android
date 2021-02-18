@@ -44,7 +44,7 @@ class ContactsListAdapter(
     val getSelectedItems get() = selectedItems
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        (holder).bind(
+        holder.bind(
             items[position],
             onContactGroupClickListener,
             onContactGroupSelect,
@@ -113,15 +113,11 @@ class ContactsListAdapter(
     }
 
     private fun getItemType(position: Int): ItemType {
-        return if (position == 0) {
+        val contactItem = items[position]
+        return if (contactItem.contactId == "-1") {
             ItemType.HEADER
-        } else {
-            val previousContactItem = items[position - 1]
-            val contactItem = items[position]
-            if (previousContactItem.isProtonMailContact && !contactItem.isProtonMailContact) {
-                ItemType.HEADER
-            } else ItemType.CONTACT
-        }
+        } else
+            ItemType.CONTACT
     }
 
     override fun getItemViewType(position: Int) = getItemType(position).ordinal
@@ -133,19 +129,12 @@ class ContactsListAdapter(
         }
     }
 
-    fun setChecked(position: Int, checked: Boolean) {
-        items[position].isChecked = checked
-        notifyDataSetChanged()
-    }
-
     fun setData(items: List<ContactItem>) {
         this.items = items
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount(): Int = items.size
 
     fun endSelectionMode() {
         selectedItems?.forEach {
