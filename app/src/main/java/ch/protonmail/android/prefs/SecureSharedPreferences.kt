@@ -30,10 +30,15 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.text.TextUtils
 import android.util.Base64
+import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.extensions.obfuscate
+import kotlinx.coroutines.withContext
+import me.proton.core.util.android.sharedpreferences.clearAll
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.math.BigInteger
 import java.security.Key
@@ -49,6 +54,7 @@ import java.util.Locale
 import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
+import javax.inject.Inject
 import javax.security.auth.x500.X500Principal
 
 // region constants
@@ -435,6 +441,44 @@ class SecureSharedPreferences(
         }
     }
 
+    /**
+     * Migrate [SecureSharedPreferences] to use Users' [Id] instead of username
+     *
+     * ### Output:
+     *  A [Map] of [String] usernames associated by its [Id]
+     */
+    class UsernameToIdMigration @Inject constructor(
+        private val dispatchers: DispatcherProvider,
+        private val context: Context
+    ) {
+
+        suspend operator fun invoke(usernames: Collection<String>): Map<String, Id> =
+            withContext(dispatchers.Io) {
+                usernames.mapNotNull(::migrateForUser).toMap()
+            }
+
+        private fun migrateForUser(username: String): Pair<String, Id>? {
+            Timber.v("Migrating SecureSharedPreferences for ${username.obfuscate()}")
+
+            val oldPrefs = _getPrefsForUser(context, username)
+            val userId = oldPrefs.get<String>(PREF_USER_ID)?.let(::Id)
+
+            return if (userId != null) {
+                val newPrefs = getPrefsForUser(context, userId)
+                for ((key, value) in oldPrefs.all) {
+                    newPrefs[key] = value
+                }
+                username to userId
+
+            } else {
+                Timber.e("Cannot get user Id for ${username.obfuscate()}")
+                null
+
+            }.also { oldPrefs.clearAll() }
+        }
+
+    }
+
     companion object {
 
         private const val keyStoreName = "AndroidKeyStore"
@@ -461,7 +505,7 @@ class SecureSharedPreferences(
             context: Context,
             appName: String,
             contextMode: Int = Context.MODE_PRIVATE
-        ): SecureSharedPreferences {
+        ): SharedPreferences {
             if (prefs == null) {
                 prefs = SecureSharedPreferences(
                     context.applicationContext,
@@ -473,13 +517,18 @@ class SecureSharedPreferences(
         }
 
         @Synchronized
-        // Temporally deprecated until replaced, this will be needed for migration
         @Deprecated(
             "Get with users' Id",
             ReplaceWith("getPrefsForUser(context, userId)"),
             DeprecationLevel.ERROR
         )
-        fun getPrefsForUser(context: Context, username: String): SecureSharedPreferences = userSSPs.getOrPut(username) {
+        fun getPrefsForUser(context: Context, username: String): SharedPreferences =
+            _getPrefsForUser(context, username)
+
+        private fun _getPrefsForUser(
+            context: Context,
+            username: String
+        ): SharedPreferences = userSSPs.getOrPut(username) {
             val name = "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-SSP"
             SecureSharedPreferences(
                 context.applicationContext,
@@ -489,7 +538,7 @@ class SecureSharedPreferences(
         }
 
         @Synchronized
-        fun getPrefsForUser(context: Context, userId: Id): SecureSharedPreferences =
+        fun getPrefsForUser(context: Context, userId: Id): SharedPreferences =
             usersPreferences.getOrPut(userId) {
                 SecureSharedPreferences(
                     context.applicationContext,
