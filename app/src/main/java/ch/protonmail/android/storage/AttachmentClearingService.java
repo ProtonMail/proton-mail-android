@@ -33,8 +33,6 @@ import javax.inject.Inject;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadata;
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase;
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.api.models.room.messages.Message;
@@ -44,6 +42,8 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.UserManager;
+import ch.protonmail.android.data.local.AttachmentMetadataDao;
+import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -60,7 +60,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
     @Inject
     MessageDetailsRepository messageDetailsRepository;
 
-    private AttachmentMetadataDatabase attachmentMetadataDatabase;
+    private AttachmentMetadataDao attachmentMetadataDao;
 
     public AttachmentClearingService() {
         super();
@@ -69,7 +69,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        attachmentMetadataDatabase = AttachmentMetadataDatabaseFactory.Companion.getInstance(this).getDatabase();
+        attachmentMetadataDao = AttachmentMetadataDatabase.Companion.getInstance(this).getDao();
     }
 
     public static void startClearUpImmediatelyService() {
@@ -87,7 +87,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
             String action = intent.getAction();
             User user = mUserManager.getUser();
             if (ACTION_REGULAR_CHECK.equals(action)) {
-                long currentEmbeddedImagesSize = attachmentMetadataDatabase.getAllAttachmentsSizeUsed();
+                long currentEmbeddedImagesSize = attachmentMetadataDao.getAllAttachmentsSizeUsed();
                 long maxSize = user.getMaxAllowedAttachmentSpace();
                 if (maxSize == -1) {
                     return;
@@ -99,13 +99,13 @@ public class AttachmentClearingService extends ProtonJobIntentService {
                 }
                 long neededSpaceToFreeUp = (currentEmbeddedImagesSize - maxSize) + (long) (maxSize * Constants.MIN_LOCAL_STORAGE_CLEARING_SIZE); // we try to reduce the space by 20%
                 long messagesFreedSize = doTheCleanMessages(leastAccessMessages, neededSpaceToFreeUp / 2);
-                long embeddedImagesFreedSize = doTheCleanEmbeddedImages(attachmentMetadataDatabase,
+                long embeddedImagesFreedSize = doTheCleanEmbeddedImages(attachmentMetadataDao,
                         neededSpaceToFreeUp / 2);
                 if (embeddedImagesFreedSize + messagesFreedSize < neededSpaceToFreeUp) {
                     if (embeddedImagesFreedSize < neededSpaceToFreeUp / 2) {
                         doTheCleanMessages(leastAccessMessages, (neededSpaceToFreeUp / 2) - embeddedImagesFreedSize);
                     } else if (messagesFreedSize < neededSpaceToFreeUp / 2) {
-                        doTheCleanEmbeddedImages(attachmentMetadataDatabase,
+                        doTheCleanEmbeddedImages(attachmentMetadataDao,
                                 (neededSpaceToFreeUp / 2) - messagesFreedSize);
                     }
                 }
@@ -119,18 +119,18 @@ public class AttachmentClearingService extends ProtonJobIntentService {
                 MessagesDatabaseFactory.Companion.deleteDb(context, username);
                 NotificationsDatabaseFactory.Companion.deleteDb(context, username);
                 CounterDatabase.Companion.deleteDb(context, username);
-                AttachmentMetadataDatabaseFactory.Companion.deleteDb(context, username);
+                AttachmentMetadataDatabase.Companion.deleteDb(context, username);
                 PendingActionsDatabaseFactory.Companion.deleteDb(context, username);
             }
     }
 
     private void clearStorage() {
-        List<AttachmentMetadata> attachmentForDeletion = attachmentMetadataDatabase.getAllAttachmentsMetadata();
+        List<AttachmentMetadata> attachmentForDeletion = attachmentMetadataDao.getAllAttachmentsMetadata();
         for (AttachmentMetadata attachmentMetadata : attachmentForDeletion) {
             File file = new File(getApplicationContext().getFilesDir() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS, attachmentMetadata.getFolderLocation());
             if (file.exists()) {
                 file.delete();
-                attachmentMetadataDatabase.deleteAttachmentMetadata(attachmentMetadata);
+                attachmentMetadataDao.deleteAttachmentMetadata(attachmentMetadata);
             }
         }
         File directory = new File(getApplicationContext().getFilesDir() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS);
@@ -156,26 +156,26 @@ public class AttachmentClearingService extends ProtonJobIntentService {
         return messagesFreedSize;
     }
 
-    private long doTheCleanEmbeddedImages(AttachmentMetadataDatabase attachmentMetadataDatabase,
+    private long doTheCleanEmbeddedImages(AttachmentMetadataDao attachmentMetadataDao,
                                           long neededSpaceToFreeUp) {
         long embeddedImagesFreedSize = 0;
         List<AttachmentMetadata> attachmentForDeletion = getAttachmentListForDeletion(
-                attachmentMetadataDatabase, neededSpaceToFreeUp);
+                attachmentMetadataDao, neededSpaceToFreeUp);
         // delete the attachments
         for (AttachmentMetadata attachmentMetadata : attachmentForDeletion) {
             File file = new File(getApplicationContext().getFilesDir() + Constants.DIR_EMB_ATTACHMENT_DOWNLOADS, attachmentMetadata.getFolderLocation());
             if (file.exists()) {
                 file.delete();
                 embeddedImagesFreedSize += attachmentMetadata.getSize();
-                attachmentMetadataDatabase.deleteAttachmentMetadata(attachmentMetadata);
+                attachmentMetadataDao.deleteAttachmentMetadata(attachmentMetadata);
             }
         }
         return embeddedImagesFreedSize;
     }
     //TODO move database to receiver after Kotlin
     private List<AttachmentMetadata> getAttachmentListForDeletion(
-            AttachmentMetadataDatabase attachmentMetadataDatabase, long neededSpaceToFree) {
-        List<AttachmentMetadata> attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsMetadata();
+            AttachmentMetadataDao attachmentMetadataDao, long neededSpaceToFree) {
+        List<AttachmentMetadata> attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsMetadata();
         List<AttachmentMetadata> attachmentMetadataListForDeletion = new ArrayList<>();
         long size = 0;
         for (AttachmentMetadata attachmentMetadata : attachmentMetadataList) {

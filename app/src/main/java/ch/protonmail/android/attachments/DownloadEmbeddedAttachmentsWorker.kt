@@ -32,10 +32,13 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProgressListener
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.Crypto
-import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
@@ -103,8 +106,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)
 
-        val username = userManager.getUserBlocking(userId).name.s
-        val addressCrypto = Crypto.forAddress(userManager, username, addressId)
+        val addressCrypto = Crypto.forAddress(userManager, userId, Id(addressId))
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)

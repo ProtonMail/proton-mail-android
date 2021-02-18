@@ -42,7 +42,6 @@ import ch.protonmail.android.activities.messageDetails.RegisterReloadTask
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.User
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Label
@@ -56,6 +55,7 @@ import ch.protonmail.android.core.Constants.DIR_EMB_ATTACHMENT_DOWNLOADS
 import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.helper.EmbeddedImage
@@ -93,7 +93,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     private val messageDetailsRepository: MessageDetailsRepository,
     private val userManager: UserManager,
     private val contactsRepository: ContactsRepository,
-    private val attachmentMetadataDatabase: AttachmentMetadataDatabase,
+    private val attachmentMetadataDao: AttachmentMetadataDao,
     private val deleteMessageUseCase: DeleteMessage,
     private val fetchVerificationKeys: FetchVerificationKeys,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
@@ -267,7 +267,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
         viewModelScope.launch(dispatchers.Io) {
 
-            val attachmentMetadataList = attachmentMetadataDatabase.getAllAttachmentsForMessage(messageId)
+            val attachmentMetadataList = attachmentMetadataDao.getAllAttachmentsForMessage(messageId)
             val embeddedImages = _embeddedImagesAttachments.mapNotNull {
                 attachmentsHelper.fromAttachmentToEmbeddedImage(
                     it, decryptedMessageData.value!!.embeddedImageIds.toList()
@@ -496,7 +496,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     fun viewOrDownloadAttachment(context: Context, attachmentToDownloadId: String, messageId: String) {
 
         viewModelScope.launch(dispatchers.Io) {
-            val metadata = attachmentMetadataDatabase
+            val metadata = attachmentMetadataDao
                 .getAttachmentMetadataForMessageAndAttachmentId(messageId, attachmentToDownloadId)
             Timber.v("viewOrDownloadAttachment Id: $attachmentToDownloadId metadataId: ${metadata?.id}")
             if (metadata != null) {

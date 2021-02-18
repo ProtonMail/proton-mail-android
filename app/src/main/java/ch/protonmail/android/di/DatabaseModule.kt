@@ -20,8 +20,6 @@
 package ch.protonmail.android.di
 
 import android.content.Context
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.models.room.counters.CounterDao
@@ -31,6 +29,8 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,8 +42,8 @@ import javax.inject.Named
 object DatabaseModule {
 
     @Provides
-    fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDatabase =
-        AttachmentMetadataDatabaseFactory.getInstance(context, userManager.username).getDatabase()
+    fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDao =
+        AttachmentMetadataDatabase.getInstance(context, userManager.username).getDao()
 
 
     @Provides

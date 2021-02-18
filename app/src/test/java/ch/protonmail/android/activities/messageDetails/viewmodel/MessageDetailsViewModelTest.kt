@@ -24,11 +24,10 @@ import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.activities.messageDetails.MessageRenderer
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
 import ch.protonmail.android.attachments.AttachmentsHelper
-import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.delete.DeleteMessage
 import ch.protonmail.android.usecase.fetch.FetchVerificationKeys
@@ -67,7 +66,7 @@ class MessageDetailsViewModelTest : ArchTest, CoroutinesTest {
     private lateinit var attachmentsHelper: AttachmentsHelper
 
     @RelaxedMockK
-    private lateinit var attachmentMetadataDatabase: AttachmentMetadataDatabase
+    private lateinit var attachmentMetadataDao: AttachmentMetadataDao
 
     private var messageRendererFactory = mockk<MessageRenderer.Factory> {
         every { create(any(), any()) } returns mockk(relaxed = true) {

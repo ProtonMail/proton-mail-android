@@ -17,7 +17,7 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.api.models.room.attachmentMetadata
+package ch.protonmail.android.data.local.model
 
 import android.net.Uri
 import androidx.room.TypeConverter

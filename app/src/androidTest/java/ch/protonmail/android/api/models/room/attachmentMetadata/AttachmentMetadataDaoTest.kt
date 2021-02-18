@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -21,18 +21,18 @@ package ch.protonmail.android.api.models.room.attachmentMetadata
 import android.net.Uri
 import androidx.room.Room
 import androidx.test.InstrumentationRegistry
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.AttachmentMetadataDatabase
+import ch.protonmail.android.data.local.model.AttachmentMetadata
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Assert
 import kotlin.test.Test
 
-class AttachmentMetadataDatabaseTest {
+class AttachmentMetadataDaoTest {
     private val context = InstrumentationRegistry.getTargetContext()
-    private var databaseFactory = Room.inMemoryDatabaseBuilder(
-        context,
-        AttachmentMetadataDatabaseFactory::class.java
-    ).build()
-    private var database = databaseFactory.getDatabase()
+    private var databaseFactory = AttachmentMetadataDatabase.buildInMemoryDatabase()
+    private var database = databaseFactory.getDao()
 
     private val first = AttachmentMetadata("a", "b", 3, "c", "d", 10, Uri.parse("a"))
     private val second = AttachmentMetadata("e", "f", 5, "g", "h", 11, Uri.parse("e"))

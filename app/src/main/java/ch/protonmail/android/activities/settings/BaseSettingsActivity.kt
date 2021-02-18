@@ -55,8 +55,6 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabase
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentMetadataDatabaseFactory
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.models.room.counters.CounterDao
@@ -69,6 +67,8 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDataba
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.AttachmentMetadataDao
+import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -120,7 +120,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     private var searchDatabase: MessagesDatabase? = null
     private var notificationsDatabase: NotificationsDatabase? = null
     var counterDao: CounterDao? = null
-    var attachmentMetadataDatabase: AttachmentMetadataDatabase? = null
+    var attachmentMetadataDao: AttachmentMetadataDao? = null
     var pendingActionsDatabase: PendingActionsDatabase? = null
     var sharedPreferences: SharedPreferences? = null
 
@@ -160,7 +160,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         searchDatabase = MessagesDatabaseFactory.getSearchDatabase(applicationContext).getDatabase()
         notificationsDatabase = NotificationsDatabaseFactory.getInstance(applicationContext).getDatabase()
         counterDao = CounterDatabase.getInstance(applicationContext).getDao()
-        attachmentMetadataDatabase = AttachmentMetadataDatabaseFactory.getInstance(applicationContext).getDatabase()
+        attachmentMetadataDao = AttachmentMetadataDatabase.getInstance(applicationContext).getDao()
         pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(applicationContext).getDatabase()
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@BaseSettingsActivity)
 
@@ -420,7 +420,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         searchDatabase,
                         notificationsDatabase,
                         counterDao,
-                        attachmentMetadataDatabase,
+                        attachmentMetadataDao,
                         pendingActionsDatabase,
                         true
                     )

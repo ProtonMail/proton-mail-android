@@ -21,14 +21,14 @@ package ch.protonmail.android.api.models
 import android.content.Context
 import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
-import ch.protonmail.android.api.models.room.counters.CounterDao
-import ch.protonmail.android.api.models.room.counters.CounterDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory
+import ch.protonmail.android.data.local.CounterDao
+import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.FindUsernameForUserId
 import javax.inject.Inject

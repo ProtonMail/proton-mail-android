@@ -101,7 +101,7 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         mAttachmentStorageValue = user.totalUploadLimit.toMegabytes().toInt()
 
         lifecycleScope.launch {
-            val attachmentSizeUsed = attachmentMetadataDatabase!!.getAllAttachmentsSizeUsed() / (1000.0 * 1000.0)
+            val attachmentSizeUsed = attachmentMetadataDao!!.getAllAttachmentsSizeUsed() / (1000.0 * 1000.0)
             setValue(
                 SettingsEnum.LOCAL_STORAGE_LIMIT,
                 String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)
