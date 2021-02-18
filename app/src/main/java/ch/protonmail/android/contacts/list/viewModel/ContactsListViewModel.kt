@@ -74,12 +74,15 @@ class ContactsListViewModel @Inject constructor(
             }
             .onEach {
                 // emit what we have until now, in case user did't agree to access android contacts in the next step
+                Timber.d("Display proton contacts size: ${it.size}")
                 contactItems.value = it
             }
             .combine(androidContacts.asFlow()) { protonContacts, androidContacts ->
+                Timber.d("protonContacts size: ${protonContacts.size} androidContacts size: ${androidContacts.size}")
                 contactsListMapper.mergeContactItems(protonContacts, androidContacts)
             }
             .onEach {
+                Timber.d("Display all contacts size: ${it.size}")
                 contactItems.value = it
             }
             .catch { Timber.w(it, "Error Fetching contacts") }

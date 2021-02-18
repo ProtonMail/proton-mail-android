@@ -230,14 +230,14 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
 
     private fun startObserving() {
         viewModel.contactItems.observe(viewLifecycleOwner) { contactItems ->
-            Timber.v("New Contact items: $contactItems")
+            Timber.v("New Contact items: $contactItems size: ${contactItems.size}")
             if (contactItems.isEmpty()) {
                 noResults.visibility = VISIBLE
             } else {
                 noResults.visibility = GONE
             }
             contactsAdapter.apply {
-                setData(contactItems!!)
+                setData(contactItems)
                 val count = contactItems.size - contactItems
                     .count { contactItem -> contactItem.contactId == "-1" }
                 listener.dataUpdated(0, count)
