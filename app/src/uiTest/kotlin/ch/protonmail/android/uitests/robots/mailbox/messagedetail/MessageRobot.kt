@@ -265,6 +265,10 @@ class MessageRobot {
 
     class Verify {
 
+        fun publicKeyIsAttached(publicKey: String) {
+            UIActions.check.viewWithTextIsDisplayed(publicKey)
+        }
+
         fun messageContainsAttachment() {
             UIActions.wait.forViewWithId(R.id.attachment_title)
         }

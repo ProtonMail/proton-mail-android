@@ -28,6 +28,7 @@ import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.settings.autolock.PinRobot
 import ch.protonmail.android.uitests.tests.BaseTest
 import ch.protonmail.android.uitests.testsHelper.TestData
+import ch.protonmail.android.uitests.testsHelper.TestData.autoAttachPublicKeyUser
 import ch.protonmail.android.uitests.testsHelper.TestData.docxFile
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPassword
 import ch.protonmail.android.uitests.testsHelper.TestData.editedPasswordHint
@@ -351,5 +352,22 @@ class AttachmentsTests : BaseTest() {
             .sent()
             .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
+    }
+
+    @TestId("1558")
+    @Test
+    fun automaticallyAttachPublicKey() {
+        val to = internalEmailNotTrustedKeys.email
+        val publicKey = "publickey - EmailAddress(s=${autoAttachPublicKeyUser.email}) - 0xA9FF792E.asc"
+        loginRobot
+            .loginUser(autoAttachPublicKeyUser)
+            .compose()
+            .sendMessage(to, subject, body)
+            .menuDrawer()
+            .sent()
+            .refreshMessageList()
+            .clickMessageBySubject(subject)
+            .expandAttachments()
+            .verify { publicKeyIsAttached(publicKey)}
     }
 }

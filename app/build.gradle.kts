@@ -71,6 +71,7 @@ val testUser1 = properties["TEST_USER1"] ?: privateProperties["TEST_USER1"]
 val testUser2 = properties["TEST_USER2"] ?: privateProperties["TEST_USER2"]
 val testUser3 = properties["TEST_USER3"] ?: privateProperties["TEST_USER3"]
 val testUser4 = properties["TEST_USER4"] ?: privateProperties["TEST_USER4"]
+val testUser5 = properties["TEST_USER5"] ?: privateProperties["TEST_USER5"]
 
 android(appIdSuffix = "android") {
 
@@ -101,6 +102,7 @@ android(appIdSuffix = "android") {
         buildConfigField("String", "TEST_USER2", testUser2.toString())
         buildConfigField("String", "TEST_USER3", testUser3.toString())
         buildConfigField("String", "TEST_USER4", testUser4.toString())
+        buildConfigField("String", "TEST_USER5", testUser5.toString())
 
         // Experimental
         buildConfigField("boolean", "EXPERIMENTAL_USERS_MANAGEMENT", "${experimentalProperties["users-management"]}")
