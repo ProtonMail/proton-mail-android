@@ -18,23 +18,13 @@
  */
 package ch.protonmail.android.api.models.messages.receive
 
-import ch.protonmail.android.api.models.ResponseBody
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-// region constants
 private const val FIELD_LABELS = "Labels"
-// endregion
 
-/**
- * Created by dkadrikj on 17.7.15.
- */
-
-class LabelsResponse : ResponseBody() {
-    @SerializedName(FIELD_LABELS)
-    private lateinit var serverLabels: List<ServerLabel>
-
-    val labels by lazy {
-        val labelFactory = LabelFactory()
-        serverLabels.map(labelFactory::createDBObjectFromServerObject)
-    }
-}
+@Serializable
+data class LabelsResponse(
+    @SerialName(FIELD_LABELS)
+    val labels: List<Label>
+)

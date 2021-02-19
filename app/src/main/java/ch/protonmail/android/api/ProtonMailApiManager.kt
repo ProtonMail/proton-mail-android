@@ -32,7 +32,6 @@ import ch.protonmail.android.api.models.DeleteResponse
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.IDList
-import ch.protonmail.android.api.models.LabelBody
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
 import ch.protonmail.android.api.models.OrganizationKeysResponse
@@ -47,6 +46,7 @@ import ch.protonmail.android.api.models.address.KeyActivationBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.messages.delete.MessageDeleteRequest
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.messages.receive.LabelsResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
@@ -66,7 +66,6 @@ import ch.protonmail.android.api.segments.payment.PaymentApiSpec
 import ch.protonmail.android.api.segments.report.ReportApiSpec
 import ch.protonmail.android.api.segments.settings.mail.MailSettingsApiSpec
 import ch.protonmail.android.data.local.model.Attachment
-import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.details.data.remote.model.ConversationResponse
 import ch.protonmail.android.mailbox.data.remote.ConversationApiSpec
@@ -212,26 +211,16 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
         keyId: String
     ): ResponseBody = api.activateKeyLegacy(keyActivationBody, keyId)
 
-    override fun fetchLabels(userIdTag: UserIdTag): LabelsResponse = api.fetchLabels(userIdTag)
+    override suspend fun fetchLabels(userId: UserId): ApiResult<LabelsResponse> = api.fetchLabels(userId)
 
-    override fun fetchContactGroups(): Single<ContactGroupsResponse> = api.fetchContactGroups()
+    override suspend fun fetchContactGroups(): ApiResult<ContactGroupsResponse> = api.fetchContactGroups()
 
-    override suspend fun fetchContactGroupsList(): List<ContactLabel> = api.fetchContactGroupsList()
+    override suspend fun createLabel(label: LabelRequestBody): ApiResult<LabelResponse> = api.createLabel(label)
 
-    override fun fetchContactGroupsAsObservable(): Observable<List<ContactLabel>> = api.fetchContactGroupsAsObservable()
+    override suspend fun updateLabel(labelId: String, label: LabelRequestBody): ApiResult<LabelResponse> =
+        api.updateLabel(labelId, label)
 
-    override fun createLabel(label: LabelBody): LabelResponse = api.createLabel(label)
-
-    override fun createLabelCompletable(label: LabelBody): Single<ContactLabel> = api.createLabelCompletable(label)
-
-    override fun updateLabel(labelId: String, label: LabelBody): LabelResponse = api.updateLabel(labelId, label)
-
-    override fun updateLabelCompletable(labelId: String, label: LabelBody): Completable =
-        api.updateLabelCompletable(labelId, label)
-
-    override fun deleteLabelSingle(labelId: String): Single<ResponseBody> = api.deleteLabelSingle(labelId)
-
-    override suspend fun deleteLabel(labelId: String): ResponseBody = api.deleteLabel(labelId)
+    override suspend fun deleteLabel(labelId: String): ApiResult<Unit> = api.deleteLabel(labelId)
 
     override suspend fun fetchMessagesCounts(userId: UserId): CountsResponse =
         api.fetchMessagesCounts(userId)

@@ -33,13 +33,18 @@ object Fields {
     }
 
     object Label {
+        const val ID = "ID"
         const val NAME = "Name"
+        const val PATH = "Path"
         const val COLOR = "Color"
-        const val DISPLAY = "Display"
-        const val ORDER = "Order"
-        const val EXCLUSIVE = "Exclusive"
         const val TYPE = "Type"
         const val NOTIFY = "Notify"
+        const val ORDER = "Order"
+        const val EXPANDED = "Expanded"
+        const val STICKY = "Sticky"
+        const val DISPLAY = "Display"
+        const val EXCLUSIVE = "Exclusive"
+        const val PARENT_ID = "ParentID"
     }
 
     object Payment {

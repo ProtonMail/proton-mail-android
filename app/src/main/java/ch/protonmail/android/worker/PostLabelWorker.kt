@@ -67,6 +67,11 @@ class PostLabelWorker @AssistedInject constructor(
             return failureResultWithError(labelResponse.error)
         }
 
+        // TODO: mapper here
+        // val label by lazy {
+        //        val labelFactory = LabelFactory()
+        //        labelFactory.createDBObjectFromServerObject(serverLabel)
+        //    }
         labelRepository.saveLabel(labelResponse.label)
         return Result.success()
     }
@@ -91,6 +96,11 @@ class PostLabelWorker @AssistedInject constructor(
         }
     }
 
+    // TODO: mapper here
+    // val label by lazy {
+    //        val labelFactory = LabelFactory()
+    //        labelFactory.createDBObjectFromServerObject(serverLabel)
+    //    }
     private fun hasInvalidLabelApiResponse(labelResponse: LabelResponse) = labelResponse.label.id.isEmpty()
 
     private fun getLabelIdParam() = inputData.getString(KEY_INPUT_DATA_LABEL_ID)

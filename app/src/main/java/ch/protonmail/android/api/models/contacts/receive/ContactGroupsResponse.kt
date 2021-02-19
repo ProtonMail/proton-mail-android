@@ -18,22 +18,6 @@
  */
 package ch.protonmail.android.api.models.contacts.receive
 
-import ch.protonmail.android.api.models.ResponseBody
-import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import com.google.gson.annotations.SerializedName
+import ch.protonmail.android.api.models.messages.receive.LabelsResponse
 
-// region constants
-private const val FIELD_LABELS = "Labels"
-// endregion
-
-data class ContactGroupsResponse(
-    @SerializedName(FIELD_LABELS)
-    var serverContactLabel: List<ServerLabel> = ArrayList()
-) : ResponseBody() {
-
-    @delegate:Transient
-    val contactGroups by lazy {
-        val contactGroupsFactory = ContactLabelFactory()
-        serverContactLabel.map(contactGroupsFactory::createDBObjectFromServerObject)
-    }
-}
+typealias ContactGroupsResponse = LabelsResponse

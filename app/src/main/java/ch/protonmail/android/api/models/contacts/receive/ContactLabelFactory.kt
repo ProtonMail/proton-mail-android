@@ -20,6 +20,7 @@ package ch.protonmail.android.api.models.contacts.receive
 
 import ch.protonmail.android.api.models.factories.IConverterFactory
 import ch.protonmail.android.api.models.factories.parseBoolean
+import ch.protonmail.android.api.models.messages.receive.Label
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
@@ -27,6 +28,7 @@ import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.domain.util.requireNotBlank
 import me.proton.core.util.kotlin.toInt
 
+// TODO: Maybe merge with [LabelFactory]
 class ContactLabelFactory : IConverterFactory<ServerLabel, ContactLabel> {
 
     override fun createServerObjectFromDBObject(dbObject: ContactLabel) = ServerLabel(
@@ -41,6 +43,17 @@ class ContactLabelFactory : IConverterFactory<ServerLabel, ContactLabel> {
 
     override fun createDBObjectFromServerObject(serverObject: ServerLabel) = ContactLabel(
         ID = requireNotBlank(serverObject.ID) { "id is empty" },
+        name = requireNotBlank(serverObject.name) { "name is empty" },
+        color = requireNotBlank(serverObject.color) { "color is empty" },
+        display = requireNotNull(serverObject.display) { "display is null" },
+        order = requireNotNull(serverObject.order) { "order is null" },
+        exclusive = requireNotNull(serverObject.exclusive) { "exclusive is null" }
+            .parseBoolean(Fields.Label.EXCLUSIVE),
+        type = requireNotNull(serverObject.type) { "type is null" }
+    )
+
+    fun createDBObjectFromServerLabelObject(serverObject: Label) = ContactLabel(
+        ID = requireNotBlank(serverObject.id) { "id is empty" },
         name = requireNotBlank(serverObject.name) { "name is empty" },
         color = requireNotBlank(serverObject.color) { "color is empty" },
         display = requireNotNull(serverObject.display) { "display is null" },

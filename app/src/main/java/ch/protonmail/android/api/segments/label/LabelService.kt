@@ -18,20 +18,15 @@
  */
 package ch.protonmail.android.api.segments.label
 
-import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.LabelBody
-import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.messages.receive.LabelsResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
 import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-import retrofit2.Call
+import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -39,50 +34,28 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Tag
 
-// region constants
 private const val PATH_LABEL_ID = "label_id"
-// endregion
 
-interface LabelService {
+interface LabelService : BaseRetrofitApi {
 
     @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_MESSAGE)
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun fetchLabels(@Tag userIdTag: UserIdTag): Call<LabelsResponse>
+    suspend fun fetchLabels(): LabelsResponse
 
     // this is coded here and not passed as a param because there is no point when it is a constant always
     @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)
-    fun fetchContactGroups(): Single<ContactGroupsResponse>
-
-    @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)
-    fun fetchContactGroupsAsObservable(): Observable<ContactGroupsResponse>
-
-    @GET("labels?" + Fields.Label.TYPE + "=" + Constants.LABEL_TYPE_CONTACT_GROUPS)
-    suspend fun fetchContactGroupsList(): ContactGroupsResponse
+    suspend fun fetchContactGroups(): ContactGroupsResponse
 
     @POST("labels")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createLabel(@Body label: LabelBody): Call<LabelResponse>
-
-    @POST("labels")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createLabelCompletable(@Body label: LabelBody): Single<LabelResponse>
+    suspend fun createLabel(@Body label: LabelRequestBody): LabelResponse
 
     @PUT("labels/{$PATH_LABEL_ID}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateLabel(@Path(PATH_LABEL_ID) labelId: String, @Body label: LabelBody): Call<LabelResponse>
-
-    @PUT("labels/{$PATH_LABEL_ID}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateLabelCompletable(@Path(PATH_LABEL_ID) labelId: String, @Body label: LabelBody): Completable
+    suspend fun updateLabel(@Path(PATH_LABEL_ID) labelId: String, @Body label: LabelRequestBody): LabelResponse
 
     @DELETE("labels/{$PATH_LABEL_ID}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun deleteLabelSingle(@Path(PATH_LABEL_ID) labelId: String): Single<ResponseBody>
-
-    @DELETE("labels/{$PATH_LABEL_ID}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun deleteLabel(@Path(PATH_LABEL_ID) labelId: String): ResponseBody
-
+    suspend fun deleteLabel(@Path(PATH_LABEL_ID) labelId: String)
 }

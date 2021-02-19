@@ -24,6 +24,7 @@ import androidx.core.app.JobIntentService
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
+import ch.protonmail.android.api.models.messages.receive.LabelFactory
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
@@ -179,8 +180,13 @@ class MessagesService : JobIntentService() {
         try {
             val currentUserId = userManager.requireCurrentUserId()
             val db = MessageDatabase.getInstance(applicationContext, currentUserId).getDao()
-            val labelList = mApi.fetchLabels(UserIdTag(currentUserId)).labels
-            db.saveAllLabels(labelList)
+
+            runBlocking {
+                val serverLabels = mApi.fetchLabels(currentUserId).valueOrThrow.labels
+                val labelFactory = LabelFactory()
+                val labelList = serverLabels.map(labelFactory::createDBObjectFromServerLabelObject)
+                db.saveAllLabels(labelList)
+            }
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
         } catch (error: Exception) {
             Timber.w(error, "handleFetchLabels has failed")

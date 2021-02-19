@@ -26,6 +26,7 @@ import com.google.gson.annotations.SerializedName
  * Created by Kamil Rajtar on 19.07.18.
  * TODO: Move to more appropriate package, because contact groups and message labels depend on this class.
  * */
+@Deprecated("Replaced with new serializable ch.protonmail.android.api.models.messages.receive.Label")
 data class ServerLabel(
     var ID: String? = null,
     @SerializedName(Fields.Label.NAME)

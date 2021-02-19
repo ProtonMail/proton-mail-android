@@ -24,6 +24,7 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.utils.extensions.notNull
 import ch.protonmail.android.utils.extensions.notNullOrEmpty
 
+// TODO: Maybe merge with [ContactLabelFactory]
 class LabelFactory : IConverterFactory<ServerLabel, Label> {
 
     override fun createServerObjectFromDBObject(dbObject: Label): ServerLabel {
@@ -32,6 +33,25 @@ class LabelFactory : IConverterFactory<ServerLabel, Label> {
 
     override fun createDBObjectFromServerObject(serverLabel: ServerLabel): Label {
         val id = serverLabel.ID.notNullOrEmpty("ID")
+        val name = serverLabel.name.notNullOrEmpty("name")
+        val color = serverLabel.color.notNullOrEmpty("color")
+        val display = serverLabel.display.notNull("display")
+        val order = serverLabel.order.notNull("order")
+        val exclusive = serverLabel.exclusive.notNull("exclusive").parseBoolean("exclusive")
+        val type = serverLabel.exclusive.notNull("type")
+        return Label(
+            id = id,
+            name = name,
+            color = color,
+            display = display,
+            order = order,
+            exclusive = exclusive,
+            type = type
+        )
+    }
+
+    fun createDBObjectFromServerLabelObject(serverLabel: ch.protonmail.android.api.models.messages.receive.Label): Label {
+        val id = serverLabel.id.notNullOrEmpty("ID")
         val name = serverLabel.name.notNullOrEmpty("name")
         val color = serverLabel.color.notNullOrEmpty("color")
         val display = serverLabel.display.notNull("display")

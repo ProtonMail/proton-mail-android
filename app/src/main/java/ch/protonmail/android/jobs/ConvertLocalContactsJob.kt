@@ -27,9 +27,9 @@ import android.text.TextUtils
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.ContactResponse
 import ch.protonmail.android.api.models.CreateContact
-import ch.protonmail.android.api.models.LabelBody
+import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.rx.ThreadSchedulers
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_EXIST
@@ -58,6 +58,8 @@ import ezvcard.property.Address
 import ezvcard.property.Email
 import ezvcard.property.Telephone
 import ezvcard.property.Uid
+import kotlinx.coroutines.runBlocking
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.toInt
 import timber.log.Timber
 import java.util.ArrayList
@@ -86,100 +88,103 @@ class ConvertLocalContactsJob(
         val contactsDatabase = ContactDatabase.getInstance(applicationContext, currentUser).getDao()
         val crypto = Crypto.forUser(getUserManager(), currentUser)
 
-        val executionResults = ContactDatabase.getInstance(applicationContext, currentUser).runInTransaction<List<Int>> {
+        val executionResults =
+            ContactDatabase.getInstance(applicationContext, currentUser).runInTransaction<List<Int>> {
 
-            val contactsGroups = getLocalContactsGroups()
-            val contactGroupsOnServer = uploadLocalContactsGroupsAndGetIds(contactsGroups)
+                val contactsGroups = getLocalContactsGroups()
+                val contactGroupsOnServer = uploadLocalContactsGroupsAndGetIds(contactsGroups)
 
-            val results = ArrayList<Int>()
-            var counter = 1
-            for (contactItem in localContacts) {
+                val results = ArrayList<Int>()
+                var counter = 1
+                for (contactItem in localContacts) {
 
-                Timber.v("Launching query contact id: ${contactItem.id}")
-                val c = applicationContext
-                    .contentResolver
-                    .query(
-                        ContactsContract.Data.CONTENT_URI,
-                        AndroidContactDetailsRepository.ANDROID_DETAILS_PROJECTION,
-                        AndroidContactDetailsRepository.ANDROID_DETAILS_SELECTION,
-                        arrayOf(contactItem.id),
-                        null
-                    ) ?: continue
+                    Timber.v("Launching query contact id: ${contactItem.id}")
+                    val c = applicationContext
+                        .contentResolver
+                        .query(
+                            ContactsContract.Data.CONTENT_URI,
+                            AndroidContactDetailsRepository.ANDROID_DETAILS_PROJECTION,
+                            AndroidContactDetailsRepository.ANDROID_DETAILS_SELECTION,
+                            arrayOf(contactItem.id),
+                            null
+                        ) ?: continue
 
-                val localContact = createLocalContact(c, contactsGroups)
-                c.close()
+                    val localContact = createLocalContact(c, contactsGroups)
+                    c.close()
 
-                val contactGroupIds = contactGroupsOnServer
-                    .filter { localContact.groups.contains(it.key) }
-                    .map { it.value }
+                    val contactGroupIds = contactGroupsOnServer
+                        .filter { localContact.groups.contains(it.key) }
+                        .map { it.value }
 
-                val vCardEncrypted = VCard()
-                vCardEncrypted.version = VCardVersion.V4_0
+                    val vCardEncrypted = VCard()
+                    vCardEncrypted.version = VCardVersion.V4_0
 
-                val vCard = VCard()
-                vCard.version = VCardVersion.V4_0
-                vCard.uid = Uid("proton-android-" + UUID.randomUUID().toString())
-                vCard.setFormattedName(contactItem.name)
+                    val vCard = VCard()
+                    vCard.version = VCardVersion.V4_0
+                    vCard.uid = Uid("proton-android-" + UUID.randomUUID().toString())
+                    vCard.setFormattedName(contactItem.name)
 
-                val contactData = ContactData(
-                    ContactData.generateRandomContactId(),
-                    contactItem.name
-                )
+                    val contactData = ContactData(
+                        ContactData.generateRandomContactId(),
+                        contactItem.name
+                    )
 
-                val dbId = contactsDatabase.saveContactData(contactData)
-                var emailGroupCounter = 1
-                for (email in localContact.emails) {
-                    val vCardEmail = Email(email)
-                    vCardEmail.types.add(EmailType.HOME)
-                    vCardEmail.group = "item" + emailGroupCounter++
-                    vCard.addEmail(vCardEmail)
-                }
-                for (phone in localContact.phones) {
-                    val vCardPhone = Telephone(phone)
-                    vCardEncrypted.addTelephoneNumber(vCardPhone)
-                }
-                for (address in localContact.addresses) {
-                    val isEmpty = TextUtils.isEmpty(address.street) && TextUtils.isEmpty(
-                        address.city
-                    ) && TextUtils.isEmpty(
-                        address.region
-                    ) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
-                    if (!isEmpty) {
-                        val vCardAddress = Address()
-                        vCardAddress.streetAddress = address.street
-                        vCardAddress.locality = address.city
-                        vCardAddress.region = address.region
-                        vCardAddress.postalCode = address.postcode
-                        vCardAddress.country = address.country
-                        vCardEncrypted.addAddress(vCardAddress)
+                    val dbId = contactsDatabase.saveContactData(contactData)
+                    var emailGroupCounter = 1
+                    for (email in localContact.emails) {
+                        val vCardEmail = Email(email)
+                        vCardEmail.types.add(EmailType.HOME)
+                        vCardEmail.group = "item" + emailGroupCounter++
+                        vCard.addEmail(vCardEmail)
                     }
+                    for (phone in localContact.phones) {
+                        val vCardPhone = Telephone(phone)
+                        vCardEncrypted.addTelephoneNumber(vCardPhone)
+                    }
+                    for (address in localContact.addresses) {
+                        val isEmpty = TextUtils.isEmpty(address.street) && TextUtils.isEmpty(
+                            address.city
+                        ) && TextUtils.isEmpty(
+                            address.region
+                        ) && TextUtils.isEmpty(address.postcode) && TextUtils.isEmpty(address.country)
+                        if (!isEmpty) {
+                            val vCardAddress = Address()
+                            vCardAddress.streetAddress = address.street
+                            vCardAddress.locality = address.city
+                            vCardAddress.region = address.region
+                            vCardAddress.postalCode = address.postcode
+                            vCardAddress.country = address.country
+                            vCardEncrypted.addAddress(vCardAddress)
+                        }
+                    }
+
+                    val signedDataSignature = crypto.sign(vCard.write())
+                    val contactEncryptedDataType2 =
+                        ContactEncryptedData(vCard.write(), signedDataSignature, Constants.VCardType.SIGNED)
+
+                    val vCardEncryptedData = vCardEncrypted.write()
+                    val encryptedData = crypto.encrypt(vCardEncryptedData, false)
+                    val encryptDataSignature = crypto.sign(vCardEncryptedData)
+                    val contactEncryptedDataType3 = ContactEncryptedData(
+                        encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED
+                    )
+
+                    val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
+                    contactEncryptedDataList.add(contactEncryptedDataType2)
+                    contactEncryptedDataList.add(contactEncryptedDataType3)
+
+                    val body = CreateContact(contactEncryptedDataList)
+                    val response = getApi().createContactBlocking(body)
+
+                    @ContactEvent.Status val status =
+                        handleResponse(contactsDatabase, response!!, dbId, contactGroupIds)
+                    if (status != ContactEvent.SUCCESS) {
+                        results.add(status)
+                    }
+                    AppUtil.postEventOnUi(ContactProgressEvent(counter++))
                 }
-
-                val signedDataSignature = crypto.sign(vCard.write())
-                val contactEncryptedDataType2 = ContactEncryptedData(vCard.write(), signedDataSignature, Constants.VCardType.SIGNED)
-
-                val vCardEncryptedData = vCardEncrypted.write()
-                val encryptedData = crypto.encrypt(vCardEncryptedData, false)
-                val encryptDataSignature = crypto.sign(vCardEncryptedData)
-                val contactEncryptedDataType3 = ContactEncryptedData(
-                    encryptedData.armored, encryptDataSignature, Constants.VCardType.SIGNED_ENCRYPTED
-                )
-
-                val contactEncryptedDataList = ArrayList<ContactEncryptedData>()
-                contactEncryptedDataList.add(contactEncryptedDataType2)
-                contactEncryptedDataList.add(contactEncryptedDataType3)
-
-                val body = CreateContact(contactEncryptedDataList)
-                val response = getApi().createContactBlocking(body)
-
-                @ContactEvent.Status val status = handleResponse(contactsDatabase, response!!, dbId, contactGroupIds)
-                if (status != ContactEvent.SUCCESS) {
-                    results.add(status)
-                }
-                AppUtil.postEventOnUi(ContactProgressEvent(counter++))
+                results
             }
-            results
-        }
 
         if (executionResults.isEmpty()) {
             AppUtil.postEventOnUi(ContactEvent(ContactEvent.SUCCESS, false))
@@ -226,7 +231,8 @@ class ConvertLocalContactsJob(
                     addresses.add(LocalContactAddress(street, city, region, postcode, country))
                 }
                 GroupMembership.CONTENT_ITEM_TYPE -> {
-                    val groupId = data.getLong(data.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID))
+                    val groupId =
+                        data.getLong(data.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID))
                     contactsGroups[groupId]?.let { groups.add(it) }
                 }
             }
@@ -270,32 +276,50 @@ class ConvertLocalContactsJob(
         var someGroupsAlreadyExist = false
 
         localGroups.forEach {
-            val response = getApi().createLabel(
-                LabelBody(it.value, defaultColor, 1, false.toInt(), Constants.LABEL_TYPE_CONTACT_GROUPS)
-            )
-            if (response.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
-                someGroupsAlreadyExist = true
-            } else {
-                result[it.value] = response.contactGroup.ID
-                ContactDatabase
-                    .getInstance(applicationContext, userId ?: getUserManager().requireCurrentUserId())
-                    .getDao()
-                    .saveContactGroupLabel(response.contactGroup)
+            runBlocking {
+                val requestBody = LabelRequestBody(
+                    it.value,
+                    defaultColor,
+                    Constants.LABEL_TYPE_CONTACT_GROUPS,
+                    parentId = null,
+                    notify = false.toInt(),
+                    null,
+                    null,
+                    null,
+                    null,
+                )
+                val response = getApi().createLabel(requestBody)
+
+                if (response is ApiResult.Error.Http &&
+                    response.proton?.code == RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST) {
+                    someGroupsAlreadyExist = true
+                } else {
+                    // TODO: mapper here
+    //                val contactGroup by lazy {
+    //                    val contactLabelFactory = ContactLabelFactory()
+    //                    contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+    //                }
+                    val serverLabel = response.valueOrThrow.label
+                    result[it.value] = serverLabel.id
+                    val dao = ContactDatabase
+                        .getInstance(applicationContext, userId ?: getUserManager().requireCurrentUserId())
+                        .getDao()
+                    val contactLabelFactory = ContactLabelFactory()
+                    dao.saveContactGroupLabel(contactLabelFactory.createDBObjectFromServerLabelObject(serverLabel))
+                }
             }
         }
 
         if (someGroupsAlreadyExist) { // at least one local group already exist on server, we fetch all of them to get IDs
-            val serverGroups = getApi().fetchContactGroups()
-                .map { it.contactGroups }
-                .subscribeOn(ThreadSchedulers.io())
-                .observeOn(ThreadSchedulers.io())
-                .blockingGet()
-
-            localGroups.filterNot { result.containsKey(it.value) }.forEach { localGroupEntry ->
-                serverGroups.find { it.name == localGroupEntry.value }?.run {
-                    result[localGroupEntry.value] = this.ID
+            runBlocking {
+                val serverGroups = getApi().fetchContactGroups().valueOrThrow.labels
+                localGroups.filterNot { result.containsKey(it.value) }.forEach { localGroupEntry ->
+                    serverGroups.find { it.name == localGroupEntry.value }?.run {
+                        result[localGroupEntry.value] = this.id
+                    }
                 }
             }
+
         }
 
         return result
@@ -339,7 +363,7 @@ class ConvertLocalContactsJob(
             contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.ALREADY_EXIST
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL || response
-            .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED
+                .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED
         ) {
             contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.INVALID_EMAIL

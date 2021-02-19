@@ -18,73 +18,39 @@
  */
 package ch.protonmail.android.api.segments.label
 
-import ch.protonmail.android.api.interceptors.UserIdTag
-import ch.protonmail.android.api.models.LabelBody
-import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.models.contacts.receive.ContactGroupsResponse
+import ch.protonmail.android.api.models.messages.receive.LabelRequestBody
 import ch.protonmail.android.api.models.messages.receive.LabelResponse
 import ch.protonmail.android.api.models.messages.receive.LabelsResponse
-import ch.protonmail.android.api.segments.BaseApi
-import ch.protonmail.android.api.utils.ParseUtils
-import ch.protonmail.android.data.local.model.ContactLabel
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Single
-import java.io.IOException
+import me.proton.core.domain.entity.UserId
+import me.proton.core.network.data.ApiProvider
+import me.proton.core.network.domain.ApiResult
 
-class LabelApi(private val service: LabelService) : BaseApi(), LabelApiSpec {
+class LabelApi(private val apiProvider: ApiProvider) : LabelApiSpec {
 
-    @Throws(IOException::class)
-    override fun fetchLabels(userIdTag: UserIdTag): LabelsResponse =
-        ParseUtils.parse(service.fetchLabels(userIdTag).execute())
-
-    @Throws(IOException::class)
-    override fun fetchContactGroups(): Single<ContactGroupsResponse> {
-        return service.fetchContactGroups().doOnError {
-            ParseUtils.doOnError(it)
+    override suspend fun fetchLabels(userId: UserId): ApiResult<LabelsResponse> =
+        apiProvider.get<LabelService>(userId).invoke {
+            fetchLabels()
         }
-    }
 
-    @Throws(IOException::class)
-    override fun fetchContactGroupsAsObservable(): Observable<List<ContactLabel>> {
-        return service.fetchContactGroupsAsObservable().map { t: ContactGroupsResponse -> t.contactGroups }
-            .doOnError {
-                ParseUtils.doOnError(it)
-            }
-    }
-
-    override suspend fun fetchContactGroupsList(): List<ContactLabel> =
-        service.fetchContactGroupsList().contactGroups
-
-    @Throws(IOException::class)
-    override fun createLabel(label: LabelBody): LabelResponse =
-        ParseUtils.parse(service.createLabel(label).execute())
-
-    override fun createLabelCompletable(label: LabelBody): Single<ContactLabel> {
-        return service.createLabelCompletable(label).map { t: LabelResponse ->
-            t.contactGroup
-        }.doOnError {
-            ParseUtils.doOnError(it)
+    override suspend fun fetchContactGroups(): ApiResult<ContactGroupsResponse> =
+        apiProvider.get<LabelService>().invoke {
+            fetchContactGroups()
         }
-    }
 
-    @Throws(IOException::class)
-    override fun updateLabel(labelId: String, label: LabelBody): LabelResponse =
-        ParseUtils.parse(service.updateLabel(labelId, label).execute())
-
-    override fun updateLabelCompletable(labelId: String, label: LabelBody): Completable {
-        return service.updateLabelCompletable(labelId, label).doOnError {
-            ParseUtils.doOnError(it)
+    override suspend fun createLabel(label: LabelRequestBody): ApiResult<LabelResponse> =
+        apiProvider.get<LabelService>().invoke {
+            createLabel(label)
         }
-    }
 
-    @Throws(IOException::class)
-    override fun deleteLabelSingle(labelId: String): Single<ResponseBody> {
-        return service.deleteLabelSingle(labelId).doOnError {
-            ParseUtils.doOnError(it)
+    override suspend fun updateLabel(labelId: String, label: LabelRequestBody): ApiResult<LabelResponse> =
+        apiProvider.get<LabelService>().invoke {
+            updateLabel(labelId, label)
         }
-    }
 
-    override suspend fun deleteLabel(labelId: String): ResponseBody = service.deleteLabel(labelId)
+    override suspend fun deleteLabel(labelId: String): ApiResult<Unit> =
+        apiProvider.get<LabelService>().invoke {
+            deleteLabel(labelId)
+        }
 
 }

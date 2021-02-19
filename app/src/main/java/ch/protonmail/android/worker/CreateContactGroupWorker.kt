@@ -72,6 +72,11 @@ class CreateContactGroupWorker @AssistedInject constructor(
             return failureResultWithError(response.error)
         }
 
+        // TODO: mapper here
+//                val contactGroup by lazy {
+//                    val contactLabelFactory = ContactLabelFactory()
+//                    contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+//                }
         repository.saveContactGroup(response.contactGroup)
         return Result.success()
     }
@@ -104,6 +109,11 @@ class CreateContactGroupWorker @AssistedInject constructor(
     private fun missingContactGroupIdError() =
         IllegalArgumentException("Missing required ID parameter to create contact group")
 
+    // TODO: mapper here
+//                val contactGroup by lazy {
+//                    val contactLabelFactory = ContactLabelFactory()
+//                    contactLabelFactory.createDBObjectFromServerObject(serverLabel)
+//                }
     private fun hasInvalidApiResponse(labelResponse: LabelResponse) = labelResponse.contactGroup.ID.isEmpty()
 
     private fun getContactGroupIdParam() = inputData.getString(KEY_INPUT_DATA_CREATE_CONTACT_GROUP_ID)

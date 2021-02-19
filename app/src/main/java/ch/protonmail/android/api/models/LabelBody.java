@@ -36,6 +36,7 @@ import ch.protonmail.android.core.Constants;
 /**
  * Created by dkadrikj on 17.7.15.
  */
+@Deprecated // replaced with LabelRequestBody
 public class LabelBody {
     @SerializedName(Fields.Label.NAME)
     private final String name;
