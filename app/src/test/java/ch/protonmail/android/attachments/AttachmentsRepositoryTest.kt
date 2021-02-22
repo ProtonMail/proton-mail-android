@@ -43,7 +43,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import okhttp3.MediaType
@@ -85,6 +84,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             every { attachmentID } returns "default success attachment ID"
             every { attachment.keyPackets } returns null
             every { attachment.signature } returns null
+            every { attachment.headers } returns null
+            every { attachment.fileSize } returns 823742L
         }
         coEvery { apiManager.uploadAttachmentInline(any(), any(), any(), any(), any(), any()) } returns successResponse
         coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
@@ -230,6 +231,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val apiAttachmentId = "456"
             val apiKeyPackets = "apiKeyPackets"
             val apiSignature = "apiSignature"
+            val headers = AttachmentHeaders(contentType = "testAttachments headers")
+            val fileSize = 1234L
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
             val attachment = mockk<Attachment>(relaxed = true)
             val successResponse = mockk<AttachmentUploadResponse>(relaxed = true) {
@@ -237,6 +240,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { attachmentID } returns apiAttachmentId
                 every { this@mockk.attachment.keyPackets } returns apiKeyPackets
                 every { this@mockk.attachment.signature } returns apiSignature
+                every { this@mockk.attachment.headers } returns headers
+                every { this@mockk.attachment.fileSize } returns fileSize
             }
             coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
@@ -248,6 +253,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 attachment.keyPackets = apiKeyPackets
                 attachment.signature = apiSignature
                 attachment.isUploaded = true
+                attachment.headers = headers
+                attachment.fileSize = fileSize
                 messageDetailsRepository.saveAttachment(attachment)
             }
             val expected = AttachmentsRepository.Result.Success(apiAttachmentId)
@@ -270,7 +277,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
             val result = repository.upload(attachment, crypto)
 
-            verify(exactly = 0) { messageDetailsRepository.saveAttachmentBlocking(any()) }
+            coVerify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
             val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
             assertEquals(expectedResult, result)
         }
@@ -303,8 +310,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 mimeType = "application/pgp-keys",
                 messageId = message.messageId!!,
                 attachmentId = "default success attachment ID",
-                isUploaded = true
-
+                isUploaded = true,
+                headers = null,
+                fileSize = 823742L
             )
             coVerifySequence {
                 apiManager.uploadAttachment(
@@ -333,7 +341,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
             val result = repository.upload(attachment, crypto)
 
-            verify(exactly = 0) { messageDetailsRepository.saveAttachmentBlocking(any()) }
+            coVerify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
             val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
             assertEquals(expectedResult, result)
         }

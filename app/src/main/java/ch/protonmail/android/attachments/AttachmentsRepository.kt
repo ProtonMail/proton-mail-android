@@ -133,6 +133,8 @@ class AttachmentsRepository @Inject constructor(
                 attachment.attachmentId = uploadResult.attachmentID
                 attachment.keyPackets = uploadResult.attachment.keyPackets
                 attachment.signature = uploadResult.attachment.signature
+                attachment.headers = uploadResult.attachment.headers
+                attachment.fileSize = uploadResult.attachment.fileSize
                 attachment.isUploaded = true
                 messageDetailsRepository.saveAttachment(attachment)
                 Timber.i("Upload attachment successful. attachmentId: ${uploadResult.attachmentID}")
