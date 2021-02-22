@@ -133,6 +133,7 @@ class SendMessageWorker @WorkerInject constructor(
             )
 
             Timber.d("Send Message Worker building request for messageId $messageId")
+            savedDraftMessage.decrypt(userManager, username)
             val requestBody = buildSendMessageRequest(savedDraftMessage, sendPreferences, username)
                 ?: return retryOrFail(
                     FailureBuildingApiRequest,

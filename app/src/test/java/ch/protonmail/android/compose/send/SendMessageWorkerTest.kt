@@ -45,9 +45,6 @@ import ch.protonmail.android.api.models.messages.send.MessageSendPackage
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
-import ch.protonmail.android.core.Constants.MessageLocationType.ALL_SENT
-import ch.protonmail.android.core.Constants.MessageLocationType.SENT
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.usecase.compose.SaveDraft
 import ch.protonmail.android.usecase.compose.SaveDraftResult
@@ -58,6 +55,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
+import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.slot
@@ -202,7 +200,7 @@ class SendMessageWorkerTest : CoroutinesTest {
             "prevSenderAddress"
         )
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        coEvery { messageDetailsRepository.findMessageById(any()) } returns Message()
+        coEvery { messageDetailsRepository.findMessageById(any()) } returns mockk(relaxed = true)
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(messageId))
         coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk(relaxed = true)
 
@@ -297,10 +295,10 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.messageId = messageId
         }
         val savedDraftId = "234232"
-        val savedDraftMessage = Message().apply {
-            dbId = messageDbId
-            this.messageId = savedDraftId
-            toList = listOf(MessageRecipient("recipient", "recipientOnSavedDraft@pm.me"))
+        val savedDraftMessage = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftId
+            every { this@mockk.toListString } returns "recipientOnSavedDraft@pm.me"
         }
         val username = "randomUsername1234823"
         givenFullValidInput(messageDbId, messageId, username = username)
@@ -387,11 +385,17 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.bccList = listOf(MessageRecipient("recipient3", bccRecipientEmail))
         }
         val savedDraftMessageId = "6234723"
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.toListString } returns "$toRecipientEmail,$toRecipientEmail,$toRecipient1Email"
+            every { this@mockk.ccListString } returns ccRecipientEmail
+            every { this@mockk.bccListString } returns bccRecipientEmail
+        }
         givenFullValidInput(messageDbId, messageId)
         every { sendPreferencesFactoryAssistedFactory.create(any()) } returns sendPreferencesFactory
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk(relaxed = true)
 
@@ -478,18 +482,47 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.bccList = listOf(MessageRecipient("emptyBccRecipient", ""))
         }
         val savedDraftMessageId = "6234723"
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.toListString } returns toRecipientEmail
+            every { this@mockk.ccListString } returns ""
+            every { this@mockk.bccListString } returns ""
+        }
         val username = "randomUsername9234823"
         givenFullValidInput(messageDbId, messageId, username = username)
         every { sendPreferencesFactoryAssistedFactory.create(username) } returns sendPreferencesFactory
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk(relaxed = true)
 
         worker.doWork()
 
         verify { sendPreferencesFactory.fetch(listOf(toRecipientEmail)) }
+    }
+
+    @Test
+    fun workerDecryptsSavedDraftMessageContentBeforeCreatingRequestPackets() = runBlockingTest {
+        val messageDbId = 8234L
+        val messageId = "823742"
+        val message = Message().apply {
+            dbId = messageDbId
+            this.messageId = messageId
+        }
+        val savedDraftMessageId = "23742"
+        val savedDraftMessage = mockk<Message>(relaxed = true)
+        val securityOptions = MessageSecurityOptions("password", "hint", 172800L)
+        val currentUsername = "username"
+        givenFullValidInput(messageDbId, messageId, securityOptions = securityOptions, username = currentUsername)
+        every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraftMessage
+        coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
+        coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk(relaxed = true)
+
+        worker.doWork()
+
+        verify { savedDraftMessage.decrypt(userManager, currentUsername) }
     }
 
     @Test
@@ -510,9 +543,9 @@ class SendMessageWorkerTest : CoroutinesTest {
                 mapOf("key" to messageSendKey)
             )
         )
-        val savedDraftMessage = Message().apply {
-            dbId = messageDbId
-            this.messageId = savedDraftMessageId
+        val savedDraftMessage = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
         }
         val sendPreference = SendPreference(
             "email",
@@ -562,10 +595,14 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = "Subject 002"
         }
         val savedDraftMessageId = "237684"
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns "Subject 002"
+        }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         every { userManager.getMailSettings(any())!!.autoSaveContacts } returns 1
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
@@ -589,9 +626,9 @@ class SendMessageWorkerTest : CoroutinesTest {
     fun workerDefaultsToNotAutoSavingContactsWhenGettingAutoSaveContactsPreferenceFails() = runBlockingTest {
         val messageDbId = 823742L
         val messageId = "923742"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
+        val message = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns messageId
         }
         val messageSendKey = MessageSendKey("algorithm", "key")
         val packages = listOf(
@@ -629,7 +666,10 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = "Subject 008"
         }
         val savedDraftMessageId = "9238427"
-        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+        }
         val exception = Exception("TEST - Failure creating packages")
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
@@ -659,7 +699,11 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = "Subject 005"
         }
         val savedDraftMessageId = "7236438"
-        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns "Subject 005"
+        }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
@@ -685,9 +729,9 @@ class SendMessageWorkerTest : CoroutinesTest {
     fun workerRetriesWhenSendMessageRequestFailsAndMaxRetriesWereNotReached() = runBlockingTest {
         val messageDbId = 723743L
         val messageId = "8237426"
-        val message = Message().apply {
-            dbId = messageDbId
-            this.messageId = messageId
+        val message = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns messageId
         }
         val savedDraftMessageId = "122748"
         givenFullValidInput(messageDbId, messageId)
@@ -717,7 +761,11 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = subject
         }
         val savedDraftMessageId = "283472"
-        val savedDraft = message.copy(savedDraftMessageId)
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns subject
+        }
         val errorMessage = "Sending Message Failed. Message is saved to drafts."
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
@@ -752,36 +800,43 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = subject
         }
         val savedDraftMessageId = "283472"
-        val savedDraft = message.copy(savedDraftMessageId)
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns subject
+        }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
+        val apiResponseMessage = mockk<Message> {
+            every { this@mockk.messageBody } returns "this is the body of the message that was sent"
+            every { this@mockk.replyTos } returns listOf(MessageRecipient("recipient", "address@pm.me"))
+            every { this@mockk.numAttachments } returns 3
+            justRun { this@mockk.writeTo(savedDraft) }
+        }
         coEvery { apiManager.sendMessage(any(), any(), any()) } returns mockk {
             every { code } returns 1000
-            every { sent } returns Message(
-                messageBody = "this is the body of the message that was sent",
-                replyTos = listOf(MessageRecipient("recipient", "address@pm.me")),
-                numAttachments = 3
-            )
+            every { sent } returns apiResponseMessage
         }
 
         val result = worker.doWork()
 
-        val expectedMessage = savedDraft.copy(
-            messageBody = "this is the body of the message that was sent",
-            replyTos = listOf(MessageRecipient("recipient", "address@pm.me")),
-            numAttachments = 3,
-            location = SENT.messageLocationTypeValue,
-            allLabelIDs = listOf(
-                ALL_SENT.messageLocationTypeValue.toString(),
-                ALL_MAIL.messageLocationTypeValue.toString(),
-                SENT.messageLocationTypeValue.toString()
+        verify { apiResponseMessage.writeTo(savedDraft) }
+        verify { savedDraft.location = Constants.MessageLocationType.SENT.messageLocationTypeValue }
+        verify {
+            savedDraft.setLabelIDs(
+                listOf(
+                    Constants.MessageLocationType.ALL_SENT.messageLocationTypeValue.toString(),
+                    Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue.toString(),
+                    Constants.MessageLocationType.SENT.messageLocationTypeValue.toString()
+                )
             )
-        )
-        coVerify { messageDetailsRepository.saveMessageLocally(expectedMessage) }
-        verify(exactly = 1) { pendingActionsDao.deletePendingSendByMessageId(expectedMessage.messageId!!) }
+        }
+
+        coVerify { messageDetailsRepository.saveMessageLocally(savedDraft) }
+        verify(exactly = 1) { pendingActionsDao.deletePendingSendByMessageId(savedDraftMessageId) }
         assertEquals(ListenableWorker.Result.success(), result)
     }
 
@@ -796,7 +851,11 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = subject
         }
         val savedDraftMessageId = "283472"
-        val savedDraft = message.copy(savedDraftMessageId)
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns subject
+        }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
@@ -824,7 +883,11 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = subject
         }
         val savedDraftMessageId = "82384"
-        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns subject
+        }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
         coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
@@ -864,7 +927,11 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = subject
         }
         val savedDraftMessageId = "923842"
-        val savedDraft = message.copy(messageId = savedDraftMessageId)
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns subject
+        }
         val apiError = "Detailed API error explanation"
         val userErrorMessage = "Sending Message Failed! Message is saved to drafts."
         givenFullValidInput(messageDbId, messageId)
@@ -906,10 +973,14 @@ class SendMessageWorkerTest : CoroutinesTest {
             this.subject = "Subject 008"
         }
         val savedDraftMessageId = "82383"
+        val savedDraft = mockk<Message>(relaxed = true) {
+            every { this@mockk.dbId } returns messageDbId
+            every { this@mockk.messageId } returns savedDraftMessageId
+            every { this@mockk.subject } returns "Subject 000"
+        }
         givenFullValidInput(messageDbId, messageId)
         every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
-        // The following mock reuses `message` defined above for convenience. It's actually the saved draft message
-        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns message
+        coEvery { messageDetailsRepository.findMessageById(savedDraftMessageId) } returns savedDraft
         coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success(savedDraftMessageId))
         every { userManager.getMailSettings(any()) } returns null
         every { sendPreferencesFactory.fetch(any()) } returns mapOf()
