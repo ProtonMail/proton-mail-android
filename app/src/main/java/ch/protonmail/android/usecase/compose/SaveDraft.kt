@@ -133,6 +133,9 @@ class SaveDraft @Inject constructor(
                     userNotifier.showPersistentError(errorMessage, localDraft.subject)
                     return@map SaveDraftResult.UploadDraftAttachmentsFailed
                 }
+                if (it?.state == WorkInfo.State.CANCELLED) {
+                    return@map SaveDraftResult.UploadDraftAttachmentsFailed
+                }
 
                 return@map SaveDraftResult.Success(createdDraftId)
             }.first()

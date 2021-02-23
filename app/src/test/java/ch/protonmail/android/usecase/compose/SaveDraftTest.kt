@@ -631,6 +631,58 @@ class SaveDraftTest : CoroutinesTest {
     }
 
     @Test
+    fun saveDraftsReturnsErrorWhenBackgroundWorkToUploadNewAttachmentsIsCancelled() {
+        runBlockingTest {
+            // Given
+            val localDraftId = "832834"
+            val message = Message().apply {
+                dbId = 8234L
+                this.messageId = "2374"
+                addressID = "addressId"
+                decryptedBody = "Message body in plain text"
+                localId = localDraftId
+                subject = "Message Subject"
+            }
+            val newAttachmentIds = listOf("23456", "4531")
+            val createDraftOutputData = workDataOf(
+                KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID to "newDraftId2384"
+            )
+            val createDraftWorkerResult = buildWorkerResponse(WorkInfo.State.SUCCEEDED, createDraftOutputData)
+            coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
+            coEvery {
+                messageDetailsRepository.findMessageById("UploadDraftAttachmentsFailed")
+            } returns message.copy(messageId = "newDraftId2384")
+            coEvery { messageDetailsRepository.findMessageById("45623") } returns message
+            coEvery { uploadAttachments.enqueue(newAttachmentIds, "newDraftId2384", false) } returns buildWorkerResponse(
+                WorkInfo.State.CANCELLED
+            )
+            every {
+                createDraftScheduler.enqueue(
+                    message,
+                    "parentId234",
+                    REPLY,
+                    "previousSenderId132423"
+                )
+            } answers { createDraftWorkerResult }
+
+            // When
+            val result = saveDraft.invoke(
+                SaveDraftParameters(
+                    message,
+                    newAttachmentIds,
+                    "parentId234",
+                    REPLY,
+                    "previousSenderId132423",
+                    SaveDraft.SaveDraftTrigger.UserRequested
+                )
+            ).first()
+
+            // Then
+            assertEquals(SaveDraftResult.UploadDraftAttachmentsFailed, result)
+        }
+    }
+
+    @Test
     fun saveDraftReturnsSuccessWhenBothDraftCreationAndAttachmentsUploadSucceeds() {
         runBlockingTest {
             // Given
