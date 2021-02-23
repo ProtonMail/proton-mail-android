@@ -112,7 +112,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         get() = _setupConvertContactFlow
     val freeUserEvent: LiveData<Unit>
         get() = _freeUserEvent
-    val hasConnectivity: LiveData<Boolean> =
+    val hasConnectivity: LiveData<VerifyConnection.ConnectionState> =
         _verifyConnectionTrigger.switchMap { verifyConnection().asLiveData() }
     val createContactResult: MutableLiveData<Int> = MutableLiveData()
     // endregion

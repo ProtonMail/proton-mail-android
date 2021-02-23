@@ -80,6 +80,7 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.user.MailSettingsEvent;
+import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Event;
@@ -779,15 +780,16 @@ public class EditContactDetailsActivity extends BaseConnectivityActivity {
         return new ContactAddressView(this, titleText, optionTitleText, standardOptionUIValues, standardOptionValues, rootView);
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
-        if (!hasConnectivity) {
+    private void onConnectivityEvent(VerifyConnection.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
+        if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
                     mUserManager.getUser(),
                     this,
-                    onConnectivityCheckRetry(),
-                    null
+                    null,
+                    null,
+                    connectivity == VerifyConnection.ConnectionState.NO_INTERNET
             ).show();
         } else {
             networkSnackBarUtil.hideAllSnackBars();

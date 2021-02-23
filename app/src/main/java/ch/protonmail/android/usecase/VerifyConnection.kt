@@ -56,16 +56,16 @@ class VerifyConnection @Inject constructor(
     private val queueNetworkUtil: QueueNetworkUtil
 ) {
 
-    operator fun invoke(): Flow<Boolean> {
+    operator fun invoke(): Flow<ConnectionState> {
 
         val connectivityManagerFlow = flowOf(
             connectivityManager.isConnectionAvailableFlow(),
             queueNetworkUtil.isBackendRespondingWithoutErrorFlow
         )
             .flattenMerge()
-            .filter { !it } // observe only disconnections
+            .filter { it != ConnectionState.CONNECTED } // observe only disconnections
             .onEach {
-                Timber.v("connectivityManagerFlow value: $it")
+                Timber.v("connectivityManagerFlow value: ${it.name}")
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
             }
 
@@ -76,17 +76,24 @@ class VerifyConnection @Inject constructor(
             .flattenMerge()
             .onStart {
                 pingWorkerEnqueuer.enqueue()
-                emit(connectivityManager.isInternetConnectionPossible()) // start with current net state
+                emit(
+                    if (connectivityManager.isInternetConnectionPossible())
+                        ConnectionState.CONNECTED else ConnectionState.NO_INTERNET
+                ) // start with current net state
             }
     }
 
-    private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<Boolean> {
+    private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<ConnectionState> {
         return workInfoLiveData
             .map { workInfoList ->
-                val hasSucceededEvents = mutableListOf<Boolean>()
+                val hasSucceededEvents = mutableListOf<ConnectionState>()
                 workInfoList?.forEach { info ->
                     if (info.state.isFinished) {
-                        hasSucceededEvents.add(info.state == WorkInfo.State.SUCCEEDED)
+                        if (info.state == WorkInfo.State.FAILED) {
+                            hasSucceededEvents.add(ConnectionState.CANT_REACH_SERVER)
+                        } else {
+                            hasSucceededEvents.add(ConnectionState.CONNECTED)
+                        }
                     }
                 }
                 Timber.v(
@@ -97,5 +104,9 @@ class VerifyConnection @Inject constructor(
             .asFlow()
             .filter { it.isNotEmpty() }
             .map { it[0] }
+    }
+
+    enum class ConnectionState {
+        CONNECTED, NO_INTERNET, CANT_REACH_SERVER
     }
 }

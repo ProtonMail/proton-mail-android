@@ -48,6 +48,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.user.MailSettingsEvent
 import ch.protonmail.android.permissions.PermissionHelper
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.moveToLogin
@@ -183,15 +184,16 @@ class ContactsActivity :
         contactsViewModel.checkConnectivityDelayed()
     }
 
-    private fun onConnectivityEvent(hasConnection: Boolean) {
-        Timber.v("onConnectivityEvent hasConnection:$hasConnection")
+    private fun onConnectivityEvent(connectivity: VerifyConnection.ConnectionState) {
+        Timber.v("onConnectivityEvent hasConnection:${connectivity.name}")
         networkSnackBarUtil.hideAllSnackBars()
-        if (!hasConnection) {
+        if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
                 mUserManager.user,
                 this,
-                { onConnectivityCheckRetry() }
+                { onConnectivityCheckRetry() },
+                isOffline = connectivity == VerifyConnection.ConnectionState.NO_INTERNET
             ).show()
         }
     }

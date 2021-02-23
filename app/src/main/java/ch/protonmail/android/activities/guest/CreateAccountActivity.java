@@ -76,6 +76,7 @@ import ch.protonmail.android.jobs.GetDirectEnabledJob;
 import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
+import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
@@ -564,15 +565,16 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         }
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
-        if (!hasConnectivity) {
+    private void onConnectivityEvent(VerifyConnection.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
+        if (connectivity.equals(VerifyConnection.ConnectionState.NO_INTERNET)) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
                     mUserManager.getUser(),
                     this,
                     onConnectivityCheckRetry(),
-                    null
+                    null,
+                    connectivity == VerifyConnection.ConnectionState.NO_INTERNET
             ).show();
         } else {
             if (captchaFragment != null && captchaFragment.isAdded()) {
@@ -632,7 +634,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
                 break;
             case NO_NETWORK:
                 checkDirectEnabled();
-                onConnectivityEvent(false);
+                onConnectivityEvent(VerifyConnection.ConnectionState.NO_INTERNET);
                 break;
         }
     }

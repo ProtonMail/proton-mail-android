@@ -46,12 +46,12 @@ open class ConnectivityBaseViewModel @ViewModelInject constructor(
 
     private val verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
-    val hasConnectivity: LiveData<Boolean> =
+    val hasConnectivity: LiveData<VerifyConnection.ConnectionState> =
         verifyConnectionTrigger.switchMap {
             verifyConnection()
                 .distinctUntilChanged()
                 .onEach { isConnected ->
-                    if (!isConnected) {
+                    if (isConnected != VerifyConnection.ConnectionState.CONNECTED) {
                         retryWithDoh()
                     }
                 }

@@ -83,6 +83,7 @@ import ch.protonmail.android.jobs.PostSpamJob
 import ch.protonmail.android.jobs.PostTrashJobV2
 import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
 import ch.protonmail.android.utils.Event
@@ -425,7 +426,7 @@ internal class MessageDetailsActivity :
         buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
     }
 
-    private fun showNoConnSnackExtended() {
+    private fun showNoConnSnackExtended(connectivity: VerifyConnection.ConnectionState) {
         Timber.v("Show no connection")
         networkSnackBarUtil.hideAllSnackBars()
         networkSnackBarUtil.getNoConnectionSnackBar(
@@ -433,7 +434,8 @@ internal class MessageDetailsActivity :
             mUserManager.user,
             this,
             { onConnectivityCheckRetry() },
-            anchorViewId = R.id.action_buttons
+            anchorViewId = R.id.action_buttons,
+            isOffline = connectivity == VerifyConnection.ConnectionState.NO_INTERNET
         ).show()
         invalidateOptionsMenu()
     }
@@ -457,12 +459,12 @@ internal class MessageDetailsActivity :
         viewModel.hasConnectivity.observe(
             this,
             { isConnectionActive ->
-                Timber.v("isConnectionActive:$isConnectionActive")
-                if (isConnectionActive) {
+                Timber.v("isConnectionActive:${isConnectionActive.name}")
+                if (isConnectionActive == VerifyConnection.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
                     viewModel.fetchMessageDetails(false)
                 } else {
-                    showNoConnSnackExtended()
+                    showNoConnSnackExtended(isConnectionActive)
                 }
             }
         )

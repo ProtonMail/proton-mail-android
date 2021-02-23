@@ -149,6 +149,7 @@ import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
+import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult;
 import ch.protonmail.android.utils.AppUtil;
@@ -815,16 +816,17 @@ public class ComposeMessageActivity
         };
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", hasConnectivity, isDohOngoing);
+    private void onConnectivityEvent(VerifyConnection.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", connectivity.name(), isDohOngoing);
         if (!isDohOngoing) {
-            if (!hasConnectivity) {
+            if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
                 networkSnackBarUtil.getNoConnectionSnackBar(
                         mSnackLayout,
                         mUserManager.getUser(),
                         this,
-                        onConnectivityCheckRetry(),
-                        null
+                        null,
+                        null,
+                        connectivity == VerifyConnection.ConnectionState.NO_INTERNET
                 ).show();
             } else {
                 networkSnackBarUtil.hideAllSnackBars();

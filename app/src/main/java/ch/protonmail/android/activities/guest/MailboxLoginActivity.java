@@ -42,6 +42,7 @@ import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.user.MailSettingsEvent;
+import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
@@ -197,15 +198,16 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         };
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
-        if (!hasConnectivity) {
+    private void onConnectivityEvent(VerifyConnection.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
+        if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
                     mUserManager.getUser(),
                     this,
-                    onConnectivityCheckRetry(),
-                    null
+                    null,
+                    null,
+                    connectivity == VerifyConnection.ConnectionState.NO_INTERNET
             ).show();
         } else {
             networkSnackBarUtil.hideAllSnackBars();

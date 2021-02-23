@@ -24,6 +24,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.usecase.VerifyConnection
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,17 +46,17 @@ class QueueNetworkUtil @Inject constructor(
 ) : NetworkUtil, NetworkEventProvider {
 
     private var listener: NetworkEventProvider.Listener? = null
-    private var isInternetAccessible: Boolean = false
+    private var isServerAccessible: Boolean = true
     private var lastEmissionTime = 0L
 
     /**
      * Flow that emits false when backend replies with an error, or true when
      * a correct reply is received.
      */
-    val isBackendRespondingWithoutErrorFlow: StateFlow<Boolean>
+    val isBackendRespondingWithoutErrorFlow: StateFlow<VerifyConnection.ConnectionState>
         get() = backendExceptionFlow
 
-    private val backendExceptionFlow = MutableStateFlow(true)
+    private val backendExceptionFlow = MutableStateFlow(VerifyConnection.ConnectionState.CONNECTED)
 
     init {
         updateRealConnectivity(true) // initially we assume there is connectivity
@@ -79,21 +80,21 @@ class QueueNetworkUtil @Inject constructor(
     }
 
     @Synchronized
-    private fun updateRealConnectivity(internetAccessible: Boolean) {
-        isInternetAccessible = internetAccessible
+    private fun updateRealConnectivity(serverAccessible: Boolean) {
+        isServerAccessible = serverAccessible
 
-        if (internetAccessible) {
-            backendExceptionFlow.value = internetAccessible
+        if (serverAccessible) {
+            backendExceptionFlow.value = VerifyConnection.ConnectionState.CONNECTED
         } else {
             // to prevent consecutive series of disconnection emissions we introduce a disconnection
             // emission buffer below
             val currentTime = System.currentTimeMillis()
             val emissionTimeDelta = currentTime - lastEmissionTime
-            Timber.v("updateRealConnectivity isInternetAccessible: $isInternetAccessible timeDelta: $emissionTimeDelta")
+            Timber.v("updateRealConnectivity isServerAccessible: $serverAccessible timeDelta: $emissionTimeDelta")
             val mayEmit = emissionTimeDelta > DISCONNECTION_EMISSION_WINDOW_MS
             if (mayEmit) {
                 lastEmissionTime = currentTime
-                backendExceptionFlow.value = internetAccessible
+                backendExceptionFlow.value = VerifyConnection.ConnectionState.CANT_REACH_SERVER
             }
         }
     }
@@ -108,7 +109,6 @@ class QueueNetworkUtil @Inject constructor(
         // should be followed by no connection snackbar and DoH setup
         when (throwable) {
             is SocketTimeoutException,
-            is UnknownHostException,
             is GeneralSecurityException, // e.g. CertificateException
             is SSLException -> updateRealConnectivity(false)
             else -> Timber.d("connectivityHasFailed ignoring exception: $throwable")
@@ -120,13 +120,13 @@ class QueueNetworkUtil @Inject constructor(
     }
 
     private fun hasConn(checkReal: Boolean): Boolean {
-        synchronized(isInternetAccessible) {
+        synchronized(isServerAccessible) {
             val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val netInfo = cm.activeNetworkInfo
             var hasConnection = netInfo != null && netInfo.isConnectedOrConnecting
-            val currentStatus = isInternetAccessible
+            val currentStatus = isServerAccessible
             if (checkReal) {
-                hasConnection = hasConnection && isInternetAccessible
+                hasConnection = hasConnection && isServerAccessible
             }
             if (checkReal && currentStatus != hasConnection) {
                 Timber.d("Network statuses differs hasConnection $hasConnection currentStatus $currentStatus")

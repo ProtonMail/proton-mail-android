@@ -76,6 +76,7 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
@@ -474,14 +475,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         }
     }
 
-    private fun onConnectivityEvent(hasConnection: Boolean) {
-        Timber.v("onConnectivityEvent hasConnection:$hasConnection")
-        if (!hasConnection) {
+    private fun onConnectivityEvent(connectivity: VerifyConnection.ConnectionState) {
+        Timber.v("onConnectivityEvent hasConnection:${connectivity.name}")
+        if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
                 mUserManager.user,
                 this,
-                { onConnectivityCheckRetry() }
+                { onConnectivityCheckRetry() },
+                isOffline = connectivity == VerifyConnection.ConnectionState.NO_INTERNET
             ).show()
         } else {
             networkSnackBarUtil.hideAllSnackBars()

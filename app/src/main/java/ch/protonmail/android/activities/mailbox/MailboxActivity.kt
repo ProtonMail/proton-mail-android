@@ -159,6 +159,7 @@ import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.servers.notification.EXTRA_MAILBOX_LOCATION
 import ch.protonmail.android.servers.notification.EXTRA_USERNAME
 import ch.protonmail.android.settings.pin.EXTRA_TOTAL_COUNT_EVENT
+import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
@@ -892,12 +893,12 @@ class MailboxActivity :
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+                MessageLocationType.DRAFT,
+                MessageLocationType.SPAM,
+                MessageLocationType.TRASH,
+                MessageLocationType.LABEL,
+                MessageLocationType.LABEL_FOLDER
+            )
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -1033,14 +1034,15 @@ class MailboxActivity :
         supportActionBar!!.setTitle(titleRes)
     }
 
-    private fun showNoConnSnackAndScheduleRetry() {
+    private fun showNoConnSnackAndScheduleRetry(connectivity: VerifyConnection.ConnectionState) {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 parentView = it,
                 user = mUserManager.user,
                 netConfiguratorCallback = this,
-                onRetryClick = { onConnectivityCheckRetry() }
+                onRetryClick = { onConnectivityCheckRetry() },
+                isOffline = connectivity == VerifyConnection.ConnectionState.NO_INTERNET
             ).show()
         }
     }
@@ -1146,13 +1148,13 @@ class MailboxActivity :
         setRefreshing(false)
     }
 
-    private fun onConnectivityEvent(hasConnection: Boolean) {
-        Timber.v("onConnectivityEvent hasConnection: $hasConnection")
+    private fun onConnectivityEvent(connectivity: VerifyConnection.ConnectionState) {
+        Timber.v("onConnectivityEvent hasConnection: ${connectivity.name}")
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
-            if (!hasConnection) {
+            if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
                 setRefreshing(false)
-                showNoConnSnackAndScheduleRetry()
+                showNoConnSnackAndScheduleRetry(connectivity)
             } else {
                 hideNoConnSnack()
             }
@@ -1183,7 +1185,7 @@ class MailboxActivity :
         when (status) {
             Status.FAILED,
             Status.NO_NETWORK -> {
-                showNoConnSnackAndScheduleRetry()
+                showNoConnSnackAndScheduleRetry(VerifyConnection.ConnectionState.NO_INTERNET)
             }
             Status.SUCCESS -> {
                 hideNoConnSnack()
