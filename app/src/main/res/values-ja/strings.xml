@@ -279,7 +279,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">メッセージ削除中にエラーが起きました。選択したメッセージのうち何通かは送信作業中ですか。</string>
     <string name="respond_inline">インラインで返信</string>
     <string name="no_connectivity_detected">接続が検出できません...</string>
-    <string name="no_connectivity_detected_troubleshoot">接続が検出できません… (<u>トラブルシュート</u>)</string>
+    <string name="server_not_reachable_troubleshoot">接続が検出できません… (<u>トラブルシュート</u>)</string>
     <string name="connectivity_checking">接続を確認しています...</string>
     <string name="sync_short">同期</string>
     <string name="draft_attachments_uploading">まだ下書きをアップロードしている最中です...</string>

@@ -85,7 +85,7 @@ class NetworkSnackBarUtil @Inject constructor() {
             noConnectionSnackBar
                 ?: Snackbar.make(
                     parentView,
-                    R.string.no_connectivity_detected_troubleshoot,
+                    R.string.server_not_reachable_troubleshoot,
                     Snackbar.LENGTH_INDEFINITE
                 ).apply {
                     anchorViewId?.let { setAnchorView(it) }

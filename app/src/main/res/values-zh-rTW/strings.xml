@@ -280,7 +280,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">刪除部分郵件時發生錯誤。一些選取的郵件在傳送過程?!</string>
     <string name="respond_inline">在內文回覆</string>
     <string name="no_connectivity_detected">未偵測到網際網路連線……</string>
-    <string name="no_connectivity_detected_troubleshoot">未偵測到網際網路連線……（<u>疑難排解</u>）</string>
+    <string name="server_not_reachable_troubleshoot">未偵測到網際網路連線……（<u>疑難排解</u>）</string>
     <string name="connectivity_checking">正在檢查網際網路連線……</string>
     <string name="sync_short">同步</string>
     <string name="draft_attachments_uploading">正在上傳草稿……</string>

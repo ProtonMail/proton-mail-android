@@ -286,7 +286,7 @@ Svájci székhellyel</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Válaszolás az eredeti levélben</string>
     <string name="no_connectivity_detected">Nincs kapcsolat...</string>
-    <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
     <string name="sync_short">szinkronizálás</string>
     <string name="draft_attachments_uploading">A piszkozat még feltöltés alatt...</string>
