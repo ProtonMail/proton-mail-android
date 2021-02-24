@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -59,9 +60,9 @@ import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.adapters.AttachmentListAdapter;
+import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.LocalAttachment;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
+import ch.protonmail.android.attachments.AttachmentsViewModel;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
@@ -191,9 +192,6 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
-                getApplicationContext()).getDatabase();
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -218,6 +216,11 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         mAdapter = new AttachmentListAdapter(this, attachmentList, totalEmbeddedImages,
                 workManager);
         mListView.setAdapter(mAdapter);
+
+        AttachmentsViewModel viewModel = new ViewModelProvider(this).get(AttachmentsViewModel.class);
+        viewModel.init(mDraftId);
+
+        viewModel.getViewState().observe(this, this::viewStateChanged);
     }
 
     @Override
@@ -406,6 +409,34 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
             TextExtensions.showToast(this, String.format(getString(R.string.attachment_download_failed), event.getFilename()), Toast.LENGTH_SHORT);
         }
     }
+
+    private void viewStateChanged(AttachmentsViewModel.ViewState viewState) {
+        if (viewState instanceof AttachmentsViewModel.ViewState.MissingConnectivity) {
+            onMessageReady();
+        }
+
+        if (viewState instanceof AttachmentsViewModel.ViewState.UpdateAttachments) {
+            onMessageReady();
+            updateDisplayedAttachments(
+                    ((AttachmentsViewModel.ViewState.UpdateAttachments) viewState).getAttachments()
+            );
+        }
+    }
+
+    private void onMessageReady() {
+        mDraftCreated = true;
+        mProgressLayout.setVisibility(View.GONE);
+        invalidateOptionsMenu();
+    }
+
+    private void updateDisplayedAttachments(List<Attachment> attachments) {
+        List<LocalAttachment> localAttachments = new ArrayList<>(
+                LocalAttachment.Companion.createLocalAttachmentList(attachments)
+        );
+        int totalEmbeddedImages = countEmbeddedImages(localAttachments);
+        mAdapter.updateData(new ArrayList(localAttachments), totalEmbeddedImages);
+    }
+
 
     private void handleAttachFileRequest(Uri uri, ClipData clipData) {
         String[] uris = null;

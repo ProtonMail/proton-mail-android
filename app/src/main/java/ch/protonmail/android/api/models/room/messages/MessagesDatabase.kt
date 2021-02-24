@@ -29,6 +29,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 // TODO remove when we change name of this class to MessagesDao and *Factory to *Database
 typealias MessagesDao = MessagesDatabase
@@ -84,6 +86,12 @@ abstract class MessagesDatabase {
         it.Attachments = it.attachments(this)
     }
 
+    fun findMessageByDbIdFlow(dbId: Long): Flow<Message> =
+        findMessageInfoByDbIdFlow(dbId).map {
+            it.Attachments = it.attachments(this)
+            return@map it
+        }
+
     @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0) = findAllMessageInfoByLastMessageAccessTime(laterThan).also {
         it.forEach { message ->
@@ -106,7 +114,10 @@ abstract class MessagesDatabase {
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
     protected abstract fun findMessageInfoByDbId(messageDbId: Long): Message?
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${COLUMN_MESSAGE_ACCESS_TIME}>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
+    protected abstract fun findMessageInfoByDbIdFlow(messageDbId: Long): Flow<Message>
+
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>
 
     @Transaction

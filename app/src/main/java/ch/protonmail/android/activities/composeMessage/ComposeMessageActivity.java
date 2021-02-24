@@ -2139,7 +2139,7 @@ public class ComposeMessageActivity
         public void onChanged(@Nullable List<LocalAttachment> attachments) {
             String draftId = composeMessageViewModel.getDraftId();
             Intent intent = AppUtil.decorInAppIntent(new Intent(ComposeMessageActivity.this, AddAttachmentsActivity.class));
-            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId));
+            intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_CREATED, !TextUtils.isEmpty(draftId) && !MessageUtils.INSTANCE.isLocalMessageId(draftId));
             intent.putParcelableArrayListExtra(AddAttachmentsActivity.EXTRA_ATTACHMENT_LIST, new ArrayList<>(attachments));
             intent.putExtra(AddAttachmentsActivity.EXTRA_DRAFT_ID, draftId);
             startActivityForResult(intent, REQUEST_CODE_ADD_ATTACHMENTS);
