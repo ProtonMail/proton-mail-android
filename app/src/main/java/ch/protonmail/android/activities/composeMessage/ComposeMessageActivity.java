@@ -149,7 +149,6 @@ import ch.protonmail.android.events.user.MailSettingsEvent;
 import ch.protonmail.android.events.verification.PostHumanVerificationEvent;
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob;
 import ch.protonmail.android.tasks.EmbeddedImagesThread;
-import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.usecase.model.FetchPublicKeysRequest;
 import ch.protonmail.android.usecase.model.FetchPublicKeysResult;
 import ch.protonmail.android.utils.AppUtil;

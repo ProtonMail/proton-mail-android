@@ -76,7 +76,6 @@ import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.servers.notification.CHANNEL_ID_EMAIL
 import ch.protonmail.android.settings.pin.PinSettingsActivity
 import ch.protonmail.android.uiModel.SettingsItemUiModel
-import ch.protonmail.android.usecase.VerifyConnection
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale

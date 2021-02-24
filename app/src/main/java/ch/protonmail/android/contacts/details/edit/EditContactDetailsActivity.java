@@ -80,7 +80,6 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.user.MailSettingsEvent;
-import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.DateUtil;
 import ch.protonmail.android.utils.Event;

@@ -58,7 +58,6 @@ import ch.protonmail.android.events.Login2FAEvent;
 import ch.protonmail.android.events.LoginEvent;
 import ch.protonmail.android.events.LoginInfoEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
-import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;

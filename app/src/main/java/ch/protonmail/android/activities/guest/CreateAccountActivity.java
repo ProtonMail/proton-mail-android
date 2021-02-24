@@ -76,7 +76,6 @@ import ch.protonmail.android.jobs.GetDirectEnabledJob;
 import ch.protonmail.android.jobs.SendVerificationCodeJob;
 import ch.protonmail.android.jobs.general.GetAvailableDomainsJob;
 import ch.protonmail.android.jobs.payments.VerifyPaymentJob;
-import ch.protonmail.android.usecase.VerifyConnection;
 import ch.protonmail.android.usecase.fetch.LaunchInitialDataFetch;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;

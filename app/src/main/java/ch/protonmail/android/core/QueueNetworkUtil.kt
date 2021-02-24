@@ -24,7 +24,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import ch.protonmail.android.api.NetworkConfigurator
-import ch.protonmail.android.usecase.VerifyConnection
 import com.birbit.android.jobqueue.network.NetworkEventProvider
 import com.birbit.android.jobqueue.network.NetworkUtil
 import kotlinx.coroutines.flow.MutableStateFlow
