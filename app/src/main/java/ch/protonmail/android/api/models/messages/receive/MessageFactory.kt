@@ -88,18 +88,18 @@ class MessageFactory @Inject constructor(
                 .fold(Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue) { location, newLocation ->
                     if (
                         newLocation !in listOf(
-                            Constants.MessageLocationType.STARRED.messageLocationTypeValue,
-                            Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
-                            Constants.MessageLocationType.INVALID.messageLocationTypeValue
-                        ) &&
+                                Constants.MessageLocationType.STARRED.messageLocationTypeValue,
+                                Constants.MessageLocationType.ALL_MAIL.messageLocationTypeValue,
+                                Constants.MessageLocationType.INVALID.messageLocationTypeValue
+                            ) &&
                         newLocation < location
                     ) {
                         newLocation
                     } else if (
                         newLocation in listOf(
-                            Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
-                            Constants.MessageLocationType.SENT.messageLocationTypeValue
-                        )
+                                Constants.MessageLocationType.DRAFT.messageLocationTypeValue,
+                                Constants.MessageLocationType.SENT.messageLocationTypeValue
+                            )
                     ) {
                         newLocation
                     } else
