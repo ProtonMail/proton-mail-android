@@ -21,6 +21,7 @@ package ch.protonmail.android.uitests.robots.menu
 import androidx.annotation.IdRes
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.contacts.ContactsRobot
+import ch.protonmail.android.uitests.robots.mailbox.archive.ArchiveRobot
 import ch.protonmail.android.uitests.robots.mailbox.drafts.DraftsRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.labelfolder.LabelFolderRobot
@@ -42,6 +43,12 @@ import ch.protonmail.android.uitests.testsHelper.uiactions.click
  * [MenuRobot] class contains actions and verifications for menu functionality.
  */
 class MenuRobot {
+
+    fun archive(): ArchiveRobot {
+        UIActions.wait.forViewWithId(R.id.left_drawer_navigation)
+        selectMenuItem(archiveText)
+        return ArchiveRobot()
+    }
 
     fun settings(): SettingsRobot {
         selectMenuItem(settingsText)
@@ -180,5 +187,6 @@ class MenuRobot {
         val logoutText = stringFromResource(R.string.logout)
         val trashText = stringFromResource(R.string.trash)
         val inboxText = stringFromResource(R.string.inbox)
+        val archiveText = stringFromResource(R.string.archive)
     }
 }
