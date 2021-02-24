@@ -44,8 +44,6 @@ import javax.inject.Inject
 class NetworkSnackBarUtil @Inject constructor() {
 
     private var noConnectionSnackBar: Snackbar? = null
-
-    //    private var serverNotReachableSnackBar: Snackbar? = null
     private var checkingConnectionSnackBar: Snackbar? = null
 
     /**

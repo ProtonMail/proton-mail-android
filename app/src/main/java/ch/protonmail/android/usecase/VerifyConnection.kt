@@ -23,6 +23,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.worker.PingWorker
@@ -56,14 +57,14 @@ class VerifyConnection @Inject constructor(
     private val queueNetworkUtil: QueueNetworkUtil
 ) {
 
-    operator fun invoke(): Flow<ConnectionState> {
+    operator fun invoke(): Flow<Constants.ConnectionState> {
 
         val connectivityManagerFlow = flowOf(
             connectivityManager.isConnectionAvailableFlow(),
             queueNetworkUtil.isBackendRespondingWithoutErrorFlow
         )
             .flattenMerge()
-            .filter { it != ConnectionState.CONNECTED } // observe only disconnections
+            .filter { it != Constants.ConnectionState.CONNECTED } // observe only disconnections
             .onEach {
                 Timber.v("connectivityManagerFlow value: ${it.name}")
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
@@ -78,21 +79,21 @@ class VerifyConnection @Inject constructor(
                 pingWorkerEnqueuer.enqueue()
                 emit(
                     if (connectivityManager.isInternetConnectionPossible())
-                        ConnectionState.CONNECTED else ConnectionState.NO_INTERNET
+                        Constants.ConnectionState.CONNECTED else Constants.ConnectionState.NO_INTERNET
                 ) // start with current net state
             }
     }
 
-    private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<ConnectionState> {
+    private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<Constants.ConnectionState> {
         return workInfoLiveData
             .map { workInfoList ->
-                val hasSucceededEvents = mutableListOf<ConnectionState>()
+                val hasSucceededEvents = mutableListOf<Constants.ConnectionState>()
                 workInfoList?.forEach { info ->
                     if (info.state.isFinished) {
                         if (info.state == WorkInfo.State.FAILED) {
-                            hasSucceededEvents.add(ConnectionState.CANT_REACH_SERVER)
+                            hasSucceededEvents.add(Constants.ConnectionState.CANT_REACH_SERVER)
                         } else {
-                            hasSucceededEvents.add(ConnectionState.CONNECTED)
+                            hasSucceededEvents.add(Constants.ConnectionState.CONNECTED)
                         }
                     }
                 }
@@ -104,9 +105,5 @@ class VerifyConnection @Inject constructor(
             .asFlow()
             .filter { it.isNotEmpty() }
             .map { it[0] }
-    }
-
-    enum class ConnectionState {
-        CONNECTED, NO_INTERNET, CANT_REACH_SERVER
     }
 }

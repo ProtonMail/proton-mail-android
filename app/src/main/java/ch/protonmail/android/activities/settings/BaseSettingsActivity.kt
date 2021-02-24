@@ -475,15 +475,15 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         }
     }
 
-    private fun onConnectivityEvent(connectivity: VerifyConnection.ConnectionState) {
+    private fun onConnectivityEvent(connectivity: Constants.ConnectionState) {
         Timber.v("onConnectivityEvent hasConnection:${connectivity.name}")
-        if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
+        if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 mSnackLayout,
                 mUserManager.user,
                 this,
                 { onConnectivityCheckRetry() },
-                isOffline = connectivity == VerifyConnection.ConnectionState.NO_INTERNET
+                isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
             ).show()
         } else {
             networkSnackBarUtil.hideAllSnackBars()

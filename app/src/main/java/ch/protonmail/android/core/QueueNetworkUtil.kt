@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.security.GeneralSecurityException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -53,10 +52,10 @@ class QueueNetworkUtil @Inject constructor(
      * Flow that emits false when backend replies with an error, or true when
      * a correct reply is received.
      */
-    val isBackendRespondingWithoutErrorFlow: StateFlow<VerifyConnection.ConnectionState>
+    val isBackendRespondingWithoutErrorFlow: StateFlow<Constants.ConnectionState>
         get() = backendExceptionFlow
 
-    private val backendExceptionFlow = MutableStateFlow(VerifyConnection.ConnectionState.CONNECTED)
+    private val backendExceptionFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
 
     init {
         updateRealConnectivity(true) // initially we assume there is connectivity
@@ -84,7 +83,7 @@ class QueueNetworkUtil @Inject constructor(
         isServerAccessible = serverAccessible
 
         if (serverAccessible) {
-            backendExceptionFlow.value = VerifyConnection.ConnectionState.CONNECTED
+            backendExceptionFlow.value = Constants.ConnectionState.CONNECTED
         } else {
             // to prevent consecutive series of disconnection emissions we introduce a disconnection
             // emission buffer below
@@ -94,7 +93,7 @@ class QueueNetworkUtil @Inject constructor(
             val mayEmit = emissionTimeDelta > DISCONNECTION_EMISSION_WINDOW_MS
             if (mayEmit) {
                 lastEmissionTime = currentTime
-                backendExceptionFlow.value = VerifyConnection.ConnectionState.CANT_REACH_SERVER
+                backendExceptionFlow.value = Constants.ConnectionState.CANT_REACH_SERVER
             }
         }
     }

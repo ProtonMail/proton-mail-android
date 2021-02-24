@@ -26,7 +26,6 @@ import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.RequiresApi
-import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -62,7 +61,7 @@ class NetworkConnectivityManager @Inject constructor(
     /**
      * Flow of boolean connection events. True when internet connection is established, false when it is lost.
      */
-    fun isConnectionAvailableFlow(): Flow<VerifyConnection.ConnectionState> = callbackFlow {
+    fun isConnectionAvailableFlow(): Flow<Constants.ConnectionState> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 Timber.v("Network $network available")
@@ -70,10 +69,10 @@ class NetworkConnectivityManager @Inject constructor(
 
             override fun onLost(network: Network) {
                 launch {
-                    delay(3.seconds)
+                    delay(2.seconds)
                     Timber.d("Network $network lost isInternetPossible: ${isInternetConnectionPossible()}")
                     if (!isInternetConnectionPossible()) {
-                        offer(VerifyConnection.ConnectionState.NO_INTERNET)
+                        offer(Constants.ConnectionState.NO_INTERNET)
                     }
                 }
             }
@@ -85,7 +84,7 @@ class NetworkConnectivityManager @Inject constructor(
             override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                 if (networkCapabilities.hasCapability(NET_CAPABILITY_INTERNET)) {
                     Timber.v("Network $network has internet capability")
-                    offer(VerifyConnection.ConnectionState.CONNECTED)
+                    offer(Constants.ConnectionState.CONNECTED)
                 }
             }
         }

@@ -33,6 +33,7 @@ import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.contacts.details.ContactDetailsViewModel
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.usecase.DownloadFile
 import ch.protonmail.android.usecase.VerifyConnection
@@ -112,7 +113,7 @@ class EditContactDetailsViewModel @ViewModelInject constructor(
         get() = _setupConvertContactFlow
     val freeUserEvent: LiveData<Unit>
         get() = _freeUserEvent
-    val hasConnectivity: LiveData<VerifyConnection.ConnectionState> =
+    val hasConnectivity: LiveData<Constants.ConnectionState> =
         _verifyConnectionTrigger.switchMap { verifyConnection().asLiveData() }
     val createContactResult: MutableLiveData<Int> = MutableLiveData()
     // endregion

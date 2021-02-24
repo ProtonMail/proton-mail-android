@@ -218,16 +218,16 @@ public class LoginActivity extends BaseLoginActivity {
         };
     }
 
-    private void onConnectivityEvent(VerifyConnection.ConnectionState connectivity) {
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
         Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
-        if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
+        if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
                     mUserManager.getUser(),
                     this,
                     null,
                     null,
-                    connectivity == VerifyConnection.ConnectionState.NO_INTERNET
+                    connectivity == Constants.ConnectionState.NO_INTERNET
             ).show();
         } else {
             networkSnackBarUtil.hideAllSnackBars();

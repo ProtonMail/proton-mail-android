@@ -27,6 +27,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -46,12 +47,12 @@ open class ConnectivityBaseViewModel @ViewModelInject constructor(
 
     private val verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
-    val hasConnectivity: LiveData<VerifyConnection.ConnectionState> =
+    val hasConnectivity: LiveData<Constants.ConnectionState> =
         verifyConnectionTrigger.switchMap {
             verifyConnection()
                 .distinctUntilChanged()
                 .onEach { isConnected ->
-                    if (isConnected != VerifyConnection.ConnectionState.CONNECTED) {
+                    if (isConnected != Constants.ConnectionState.CONNECTED) {
                         retryWithDoh()
                     }
                 }

@@ -565,16 +565,16 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
         }
     }
 
-    private void onConnectivityEvent(VerifyConnection.ConnectionState connectivity) {
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
         Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
-        if (connectivity.equals(VerifyConnection.ConnectionState.NO_INTERNET)) {
+        if (connectivity.equals(Constants.ConnectionState.NO_INTERNET)) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
                     mUserManager.getUser(),
                     this,
                     onConnectivityCheckRetry(),
                     null,
-                    connectivity == VerifyConnection.ConnectionState.NO_INTERNET
+                    connectivity == Constants.ConnectionState.NO_INTERNET
             ).show();
         } else {
             if (captchaFragment != null && captchaFragment.isAdded()) {
@@ -634,7 +634,7 @@ public class CreateAccountActivity extends BaseConnectivityActivity implements
                 break;
             case NO_NETWORK:
                 checkDirectEnabled();
-                onConnectivityEvent(VerifyConnection.ConnectionState.NO_INTERNET);
+                onConnectivityEvent(Constants.ConnectionState.NO_INTERNET);
                 break;
         }
     }
