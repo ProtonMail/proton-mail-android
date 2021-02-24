@@ -97,7 +97,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pngFile)
             .clickAttachment(pngFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
     @Test
@@ -120,7 +120,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(jpegFile)
             .clickAttachment(jpegFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(jpegFile, MimeTypes.image.jpeg) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.jpeg) }
     }
 
     @Test
@@ -143,7 +143,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(docxFile)
             .clickAttachment(docxFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(docxFile, MimeTypes.application.docx) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.docx) }
     }
 
     @Test
@@ -166,7 +166,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(zipFile)
             .clickAttachment(zipFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(zipFile, MimeTypes.application.zip) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.zip) }
     }
 
     @Test
@@ -189,7 +189,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pdfFile)
             .clickAttachment(pdfFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pdfFile, MimeTypes.application.pdf) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.application.pdf) }
     }
 
     @Test
@@ -220,7 +220,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pngFile)
             .clickAttachment(pngFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
     @Test
@@ -252,7 +252,7 @@ class AttachmentsTests : BaseTest() {
             .expandAttachments()
             .clickAttachment(pngFile)
             .clickAttachment(pngFile)
-            .verify { intentWithActionFileNameAndMimeTypeSent(pngFile, MimeTypes.image.png) }
+            .verify { intentWithActionFileNameAndMimeTypeSent(MimeTypes.image.png) }
     }
 
     @Test

@@ -57,6 +57,7 @@ class ReplyToMessageTests : BaseTest() {
             .reply()
             .editBodyAndReply(body, "Robot Reply")
             .navigateUpToSent()
+            .refreshMessageList()
             .verify {
                 messageWithSubjectExists(TestData.reSubject(subject))
                 messageWithSubjectHasRepliedFlag(subject)

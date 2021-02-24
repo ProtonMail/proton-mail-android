@@ -21,9 +21,11 @@ package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 import android.content.Intent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasType
 import androidx.test.espresso.intent.matcher.UriMatchers.hasPath
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.web.sugar.Web.onWebView
 import androidx.test.espresso.web.webdriver.DriverAtoms
 import androidx.test.espresso.web.webdriver.Locator
@@ -311,12 +313,10 @@ class MessageRobot {
             UIActions.wait.untilViewWithIdIsNotShown(R.id.containerDisplayImages)
         }
 
-        fun intentWithActionFileNameAndMimeTypeSent(fileName: String, mimeType: String) {
+        fun intentWithActionFileNameAndMimeTypeSent(mimeType: String) {
             UIActions.wait.forIntent(
                 allOf(
                     hasAction(Intent.ACTION_VIEW),
-                    hasData(hasPath(containsString(fileName.split('.')[0]))),
-                    hasData(hasPath(containsString(fileName.split('.')[1]))),
                     hasType(mimeType)
                 )
             )
