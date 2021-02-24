@@ -16,14 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.events;
+package ch.protonmail.android.events
 
-public class MailboxLoadedEvent {
-    public final Status status;
-    public final String uuid;
+import me.proton.core.util.kotlin.EMPTY_STRING
 
-    public MailboxLoadedEvent(Status status, String uuid) {
-        this.status = status;
-        this.uuid = uuid;
-    }
-}
+class MailboxLoadedEvent(val status: Status, val uuid: String? = null, val errorMessage: String = EMPTY_STRING)

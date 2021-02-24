@@ -98,7 +98,8 @@ class MessagesService : JobIntentService() {
                 val refreshDetails = intent.getBooleanExtra(EXTRA_REFRESH_DETAILS, false)
                 val refreshMessages = intent.getBooleanExtra(EXTRA_REFRESH_MESSAGES, false)
                 if (Constants.MessageLocationType.fromInt(location)
-                        in listOf(Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER)) {
+                    in listOf(Constants.MessageLocationType.LABEL, Constants.MessageLocationType.LABEL_FOLDER)
+                ) {
                     val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
                     handleFetchFirstLabelPage(
                         Constants.MessageLocationType.LABEL,
@@ -107,8 +108,10 @@ class MessagesService : JobIntentService() {
                         refreshMessages
                     )
                 } else {
-                    handleFetchFirstPage(Constants.MessageLocationType.fromInt(location), refreshDetails,
-                            intent.getStringExtra(EXTRA_UUID), currentUser, refreshMessages)
+                    handleFetchFirstPage(
+                        Constants.MessageLocationType.fromInt(location), refreshDetails,
+                        intent.getStringExtra(EXTRA_UUID), currentUser, refreshMessages
+                    )
                 }
             }
             ACTION_FETCH_MESSAGES_BY_TIME -> {
@@ -116,8 +119,11 @@ class MessagesService : JobIntentService() {
                 val extraTime = intent.getLongExtra(EXTRA_TIME, 0)
                 val savedTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), "")
                 val time = minOf(savedTime, extraTime)
-                if (Constants.MessageLocationType.fromInt(location) in listOf(Constants.MessageLocationType.LABEL,
-                                Constants.MessageLocationType.LABEL_FOLDER)) {
+                if (Constants.MessageLocationType.fromInt(location) in listOf(
+                        Constants.MessageLocationType.LABEL,
+                        Constants.MessageLocationType.LABEL_FOLDER
+                    )
+                ) {
                     val labelId = intent.getStringExtra(EXTRA_LABEL_ID)!!
                     val labelTime = getLastMessageTime(Constants.MessageLocationType.fromInt(location), labelId)
                     handleFetchMessagesByLabel(
@@ -136,15 +142,24 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleFetchFirstPage(
-            location: Constants.MessageLocationType,
-            refreshDetails: Boolean,
-            uuid: String?,
-            currentUser: String,
-            refreshMessages: Boolean
+        location: Constants.MessageLocationType,
+        refreshDetails: Boolean,
+        uuid: String?,
+        currentUser: String,
+        refreshMessages: Boolean
     ) {
         try {
             val messages = mApi.messages(location.messageLocationTypeValue, RetrofitTag(currentUser))
-            handleResult(messages, location, refreshDetails, uuid, currentUser, refreshMessages)
+            if (messages?.code == Constants.RESPONSE_CODE_OK)
+                handleResult(messages, location, refreshDetails, uuid, currentUser, refreshMessages)
+            else {
+                val errorMessage = messages?.error ?: ""
+                val event = MailboxLoadedEvent(Status.FAILED, uuid, errorMessage)
+                AppUtil.postEventOnUi(event)
+                mNetworkResults.setMailboxLoaded(event)
+                Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", Exception(errorMessage))
+            }
+
         } catch (error: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
@@ -164,10 +179,10 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleFetchFirstLabelPage(
-            location: Constants.MessageLocationType,
-            labelId: String,
-            currentUser: String,
-            refreshMessages: Boolean
+        location: Constants.MessageLocationType,
+        labelId: String,
+        currentUser: String,
+        refreshMessages: Boolean
     ) {
         try {
             val messagesResponse = mApi.searchByLabelAndPage(labelId, 0)
@@ -179,10 +194,10 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleFetchMessagesByLabel(
-            location: Constants.MessageLocationType,
-            unixTime: Long,
-            labelId: String,
-            currentUser: String
+        location: Constants.MessageLocationType,
+        unixTime: Long,
+        labelId: String,
+        currentUser: String
     ) {
         try {
             val messages = mApi.searchByLabelAndTime(labelId, unixTime)
@@ -213,14 +228,14 @@ class MessagesService : JobIntentService() {
         }
     }
 
-    //TODO extract common logic from handleResult methods
+    // TODO extract common logic from handleResult methods
     private fun handleResult(
-            messages: MessagesResponse?,
-            location: Constants.MessageLocationType,
-            refreshDetails: Boolean,
-            uuid: String?,
-            currentUser: String,
-            refreshMessages: Boolean = false
+        messages: MessagesResponse?,
+        location: Constants.MessageLocationType,
+        refreshDetails: Boolean,
+        uuid: String?,
+        currentUser: String,
+        refreshMessages: Boolean = false
     ) {
         val messageList = messages?.messages
         if (messageList == null || messageList.isEmpty()) {
@@ -288,11 +303,11 @@ class MessagesService : JobIntentService() {
     }
 
     private fun handleResult(
-            messagesResponse: MessagesResponse,
-            location: Constants.MessageLocationType,
-            labelId: String,
-            currentUser: String,
-            refreshMessages: Boolean = false
+        messagesResponse: MessagesResponse,
+        location: Constants.MessageLocationType,
+        labelId: String,
+        currentUser: String,
+        refreshMessages: Boolean = false
     ) {
         val messageList = messagesResponse.messages
         if (messageList.isEmpty()) {
@@ -384,10 +399,10 @@ class MessagesService : JobIntentService() {
          * Load initial page and detail of every message it fetch
          */
         fun startFetchFirstPage(
-                location: Constants.MessageLocationType,
-                refreshDetails: Boolean,
-                uuid: String?,
-                refreshMessages: Boolean
+            location: Constants.MessageLocationType,
+            refreshDetails: Boolean,
+            uuid: String?,
+            refreshMessages: Boolean
         ) {
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)
@@ -412,9 +427,9 @@ class MessagesService : JobIntentService() {
          * Load initial page and detail of every message it fetch dino
          */
         fun startFetchFirstPageByLabel(
-                location: Constants.MessageLocationType,
-                labelId: String?,
-                refreshMessages: Boolean
+            location: Constants.MessageLocationType,
+            labelId: String?,
+            refreshMessages: Boolean
         ) {
             val context = ProtonMailApplication.getApplication()
             val intent = Intent(context, MessagesService::class.java)

@@ -1034,7 +1034,7 @@ class MailboxActivity :
         supportActionBar!!.setTitle(titleRes)
     }
 
-    private fun showNoConnSnackAndScheduleRetry(connectivity: VerifyConnection.ConnectionState) {
+    private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getNoConnectionSnackBar(
@@ -1042,7 +1042,7 @@ class MailboxActivity :
                 user = mUserManager.user,
                 netConfiguratorCallback = this,
                 onRetryClick = { onConnectivityCheckRetry() },
-                isOffline = connectivity == VerifyConnection.ConnectionState.NO_INTERNET
+                isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
             ).show()
         }
     }
@@ -1144,15 +1144,18 @@ class MailboxActivity :
         if (event.status == Status.NO_NETWORK && setOfLabels.any { it == mailboxLocation }) {
             mailboxLocationMain.value = MessageLocationType.LABEL_OFFLINE
         }
+        if (event.status == Status.FAILED && event.errorMessage.isNotEmpty()) {
+            showToast(event.errorMessage, Toast.LENGTH_LONG)
+        }
         mNetworkResults.setMailboxLoaded(MailboxLoadedEvent(Status.SUCCESS, null))
         setRefreshing(false)
     }
 
-    private fun onConnectivityEvent(connectivity: VerifyConnection.ConnectionState) {
+    private fun onConnectivityEvent(connectivity: Constants.ConnectionState) {
         Timber.v("onConnectivityEvent hasConnection: ${connectivity.name}")
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
-            if (connectivity != VerifyConnection.ConnectionState.CONNECTED) {
+            if (connectivity != Constants.ConnectionState.CONNECTED) {
                 setRefreshing(false)
                 showNoConnSnackAndScheduleRetry(connectivity)
             } else {
@@ -1183,9 +1186,11 @@ class MailboxActivity :
 
     private fun showToast(status: Status) {
         when (status) {
-            Status.FAILED,
+            Status.UNAUTHORIZED -> {
+                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
+            }
             Status.NO_NETWORK -> {
-                showNoConnSnackAndScheduleRetry(VerifyConnection.ConnectionState.NO_INTERNET)
+                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.NO_INTERNET)
             }
             Status.SUCCESS -> {
                 hideNoConnSnack()
