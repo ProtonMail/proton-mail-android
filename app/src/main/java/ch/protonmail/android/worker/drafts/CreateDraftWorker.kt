@@ -43,7 +43,6 @@ import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.MessageActionType.FORWARD
-import ch.protonmail.android.core.Constants.MessageActionType.NONE
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY
 import ch.protonmail.android.core.Constants.MessageActionType.REPLY_ALL
 import ch.protonmail.android.core.UserManager
@@ -53,8 +52,6 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
-import ch.protonmail.android.utils.extensions.deserialize
-import ch.protonmail.android.utils.extensions.serialize
 import ch.protonmail.android.utils.notifier.ErrorNotifier
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
@@ -128,7 +125,7 @@ class CreateDraftWorker @WorkerInject constructor(
                     return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
 
-                val responseDraft = response.message.copy()
+                val responseDraft = response.message
                 updateStoredLocalDraft(responseDraft, message)
 
                 Timber.i("Create Draft Worker API call succeeded")
@@ -155,7 +152,6 @@ class CreateDraftWorker @WorkerInject constructor(
             isDownloaded = true
             setIsRead(true)
             numAttachments = localDraft.numAttachments
-            Attachments = localDraft.Attachments
             localId = localDraft.messageId
         }
 

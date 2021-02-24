@@ -54,7 +54,6 @@ import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.AddressKeys
 import ch.protonmail.android.utils.base64.Base64Encoder
-import ch.protonmail.android.utils.extensions.serialize
 import ch.protonmail.android.utils.notifier.ErrorNotifier
 import ch.protonmail.android.worker.drafts.CreateDraftWorker
 import ch.protonmail.android.worker.drafts.CreateDraftWorkerErrors
@@ -509,7 +508,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerPerformsCreateDraftRequestAndBuildsMessageFromResponseWhenSucceding() {
+    fun workerPerformsCreateDraftRequestAndBuildsMessageFromResponseWhenRequestSucceeds() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -523,11 +522,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 setLabelIDs(listOf("label", "label1", "label2"))
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
                 numAttachments = 2
-                Attachments = listOf(Attachment("235423"), Attachment("823421"))
+                Attachments = emptyList()
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
-            val responseMessage = Message(messageId = "created_draft_id")
+            val responseMessage = Message(messageId = "created_draft_id").apply {
+                Attachments = listOf(Attachment("235423"), Attachment("823421"))
+            }
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
                 every { messageId } returns "created_draft_id"
@@ -559,7 +560,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.isDownloaded = true
                 this.setIsRead(true)
                 this.numAttachments = message.numAttachments
-                this.Attachments = message.Attachments
+                this.Attachments = responseMessage.Attachments
                 this.localId = message.messageId
             }
             val actualMessage = slot<Message>()
@@ -738,7 +739,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerPerformsUpdateDraftRequestAndStoresResponseMessageInDbWhenMessageIsNotLocal() {
+    fun workerPerformsUpdateDraftRequestWhenMessageIsNotLocalAndStoresResponseMessageInDbWhenRequestSucceeds() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -753,11 +754,13 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 setLabelIDs(listOf("label", "label1", "label2"))
                 parsedHeaders = ParsedHeaders("recEncryption", "recAuth")
                 numAttachments = 1
-                Attachments = listOf(Attachment(attachmentId = "82374"))
+                Attachments = listOf(Attachment(attachmentId = "12749"))
             }
 
             val apiDraftRequest = mockk<DraftBody>(relaxed = true)
-            val responseMessage = Message(messageId = "created_draft_id")
+            val responseMessage = Message(messageId = "created_draft_id").apply {
+                Attachments = listOf(Attachment(attachmentId = "82374"))
+            }
             val apiDraftResponse = mockk<MessageResponse> {
                 every { code } returns 1000
                 every { messageId } returns "created_draft_id"
@@ -790,7 +793,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 this.isDownloaded = true
                 this.setIsRead(true)
                 this.numAttachments = message.numAttachments
-                this.Attachments = message.Attachments
+                this.Attachments = responseMessage.Attachments
                 this.localId = message.messageId
             }
             val actualMessage = slot<Message>()
