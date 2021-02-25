@@ -1,107 +1,157 @@
 /* for HTML 5 */
-article, aside, datagrid, datalist, details, dialog, figure, footer, header, main, menu, nav, section {
-  display: block; }
+article,
+aside,
+datalist,
+details,
+dialog,
+figure,
+footer,
+header,
+main,
+menu,
+nav,
+section {
+  display: block;
+}
 
-audio, canvas, progress, video {
-  display: inline-block; }
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
+}
 
-abbr, eventsource, mark, meter, time, output, bb {
-  display: inline; }
+abbr,
+mark,
+meter,
+time,
+output {
+  display: inline;
+}
 
-/* to comment/fallback if you care about IE<8 */
 html {
-  box-sizing: border-box; }
+  box-sizing: border-box;
+}
 
-*, *:before, *:after {
-  box-sizing: inherit; }
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
 
-/* reset minimum */
-html, body, blockquote, ul, ol, form, button, figure {
+html,
+body,
+blockquote,
+ul,
+ol,
+form,
+button,
+figure {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+}
 
-button, progress {
-  border: 0; }
+button,
+progress {
+  border: 0;
+}
 
-p, ul, ol, dl, blockquote, pre, menu, td, th {
+p,
+ul,
+ol,
+dl,
+blockquote,
+pre,
+menu,
+td,
+th {
   font-size: 1em;
   line-height: 1.5;
-  margin: 1.5em 0; }
+  margin: 1.5em 0;
+}
 
-input, select, textarea, optgroup, button {
-  font: inherit; }
+input,
+select,
+textarea,
+optgroup,
+button {
+  font: inherit;
+}
 
-/* fix display img/iframe */
 img,
 iframe {
-  vertical-align: middle; }
+  vertical-align: middle;
+}
 
-ul, ol, menu {
-  padding-left: 2em; }
+ul,
+ol,
+menu {
+  padding-left: 2em;
+}
 
 dd {
-  margin-left: 2em; }
+  margin-left: 2em;
+}
 
-b, strong {
-  font-weight: bold; }
+b,
+strong {
+  font-weight: bold;
+}
 
-/* harmonization between Chrome/Firefox */
-pre, code, kbd, samp {
-  font-family: SFMono-Regular, Consolas, "Liberation Mono", "Menlo", monospace, monospace;
-  font-size: 1em; }
+pre,
+code,
+kbd,
+samp {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", "Menlo", monospace,
+    monospace;
+  font-size: 1em;
+}
 
 pre {
   white-space: pre-wrap;
-  word-wrap: break-word; }
+  word-wrap: break-word;
+}
 
 mark {
   background-color: var(--bgcolor-mark, #ff0);
   color: var(--color-mark, currentColor);
-  font-weight: bold; }
+  font-weight: bold;
+}
 
 small {
-  font-size: 80%; }
+  font-size: 80%;
+}
 
-/* avoid border on images in links + fix border image IE */
 a:link img,
 a:visited img,
 img {
-  border-style: none; }
+  border-style: none;
+}
 
-/* tiny control */
 audio:not([controls]) {
   display: none;
-  height: 0; }
+  height: 0;
+}
 
-/* important, abbr are good */
-/* only those with a title are shown */
 abbr[title] {
   border-bottom: dotted 1px;
   cursor: help;
   text-decoration: none;
-  /* color inherited from text */ }
+}
 
 code,
 pre,
 samp {
-  white-space: pre-wrap; }
+  white-space: pre-wrap;
+}
 
 code {
-  line-height: 1; }
+  line-height: 1;
+}
 
 dfn {
-  font-style: italic; }
-
-[hidden] {
-  display: none; }
-
-body {
-  font-size: 100%;
-  width: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  padding: 1rem;
-  line-height: 1.5;
-  color: var(--color-main-area, #262a33); }
+  font-style: italic;
+}
 
 h1,
 .h1 {
@@ -109,7 +159,8 @@ h1,
   font-size: 2em;
   line-height: 1.5;
   margin: 0.75em 0;
-  font-weight: normal; }
+  font-weight: normal;
+}
 
 h2,
 .h2 {
@@ -117,7 +168,8 @@ h2,
   font-size: 1.5em;
   line-height: 1;
   margin: 0.5em 0;
-  font-weight: normal; }
+  font-weight: normal;
+}
 
 h3,
 .h3 {
@@ -125,7 +177,8 @@ h3,
   font-size: 1.1875em;
   line-height: 1.2631578947;
   margin: 1.2631578947em 0;
-  font-weight: normal; }
+  font-weight: normal;
+}
 
 h4,
 .h4 {
@@ -133,7 +186,8 @@ h4,
   font-size: 1em;
   line-height: 1.5;
   margin: 1.5em 0;
-  font-weight: normal; }
+  font-weight: normal;
+}
 
 h5,
 .h5 {
@@ -141,7 +195,8 @@ h5,
   font-size: 0.8125em;
   line-height: 1.8461538462;
   margin: 1.8461538462em 0;
-  font-weight: normal; }
+  font-weight: normal;
+}
 
 h6,
 .h6 {
@@ -149,45 +204,63 @@ h6,
   font-size: 0.75em;
   line-height: 2;
   margin: 2em 0;
-  font-weight: normal; }
+  font-weight: normal;
+}
 
-/* avoid ugly line-height */
-sup,
-sub {
-  vertical-align: 0;
-  position: relative; }
-
-sup {
-  bottom: 1ex; }
-
-sub {
-  top: .5ex; }
+body {
+  font-size: 100%;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  padding: 1rem;
+  line-height: 1.5;
+	overflow-wrap: break-word;
+  color: var(--color-main-area, #262a33);
+}
 
 q {
-  quotes: none; }
-  q::after, q::before {
-    content: none; }
+  quotes: none;
+}
+
+q::after,
+q::before {
+  content: none;
+}
 
 a:focus {
-  outline: dotted thin; }
-a:active, a:hover {
-  outline: 0; }
+  outline: dotted thin;
+}
+
+a:active,
+a:hover {
+  outline: 0;
+}
 
 img {
   border: 0;
-  max-width: 100%; }
+  max-width: 100%;
+}
 
 table img {
-  max-width: none; }
+  max-width: none;
+}
 
-/* styling quotes for messages */
 blockquote {
-  padding: .2em 1.2em !important;
-  /*margin: 1em 0 2em 0 !important;*/
+  padding: 0.2em 1.2em !important;
   margin: 0 !important;
   border: 3px solid #657ee4 !important;
-  border-width: 0 0 0 3px !important; }
+  border-width: 0 0 0 3px !important;
+}
 
-blockquote blockquote blockquote blockquote blockquote blockquote {
+blockquote blockquote {
+  font-size: 1em;
+}
+
+blockquote blockquote blockquote {
   padding: 0 !important;
-  border: none !important; }
+  border: none !important;
+}
+
+[hidden] {
+  display: none;
+}
