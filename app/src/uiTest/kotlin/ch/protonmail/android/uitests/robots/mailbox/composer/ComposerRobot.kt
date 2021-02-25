@@ -271,7 +271,7 @@ class ComposerRobot {
         return MessagePasswordRobot()
     }
 
-    private fun messageExpiration(): MessageExpirationRobot {
+    fun messageExpiration(): MessageExpirationRobot {
         UIActions.id.clickViewWithId(R.id.set_message_expiration)
         return MessageExpirationRobot()
     }
@@ -358,7 +358,7 @@ class ComposerRobot {
 
         fun setExpirationInDays(days: Int): ComposerRobot =
             expirationDays(days)
-                .confirmMessageExpiration()
+                .confirmsetMessageExpiration()
 
         private fun expirationDays(days: Int): MessageExpirationRobot {
             onView(allOf(withClassName(`is`(NumberPicker::class.java.canonicalName)), withId(R.id.days_picker)))
@@ -366,7 +366,7 @@ class ComposerRobot {
             return this
         }
 
-        private fun confirmMessageExpiration(): ComposerRobot {
+        private fun confirmsetMessageExpiration(): ComposerRobot {
             UIActions.system.clickPositiveDialogButton()
             return ComposerRobot()
         }
