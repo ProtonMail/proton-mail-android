@@ -85,7 +85,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
     fun initObservesMessageRepositoryByMessageDbIdWhenGivenMessageIdIsFound() = runBlockingTest {
         val messageId = "draftId234"
         val messageDbId = 124L
-        val message = Message().apply { dbId = messageDbId }
+        val message = Message(messageId = messageId).apply { dbId = messageDbId }
         coEvery { messageRepository.findMessageById(messageId) } returns message
 
         viewModel.init(messageId)
@@ -97,7 +97,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
     fun initUpdatesViewStateWhenMessageIsUpdatedInDbAsAResultOfDraftCreationCompleting() = runBlockingTest {
         val messageId = "91bbb263-2bf2-43dd-a079-233a305e69df"
         val messageDbId = 124L
-        val message = Message().apply { dbId = messageDbId }
+        val message = Message(messageId = messageId).apply { dbId = messageDbId }
         val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
         val remoteMessage = message.copy(messageId = "Remote message id").apply {
             Attachments = updatedMessageAttachments
@@ -112,10 +112,48 @@ class AttachmentsViewModelTest : CoroutinesTest {
     }
 
     @Test
+    fun initStopsListeningForMessageUpdatesWhenDraftCreationCompletedEventWasReceived() = runBlockingTest {
+        val messageId = "91bbb263-2bf2-43dd-a079-233a305e69df"
+        val messageDbId = 124L
+        val message = Message(messageId = messageId).apply { dbId = messageDbId }
+        val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
+        val remoteMessage = message.copy(messageId = "Remote message id").apply {
+            Attachments = updatedMessageAttachments
+        }
+        val updatedDraftMessage = remoteMessage.copy(messageId = "Updated remote messageID")
+        coEvery { messageRepository.findMessageById(messageId) } returns message
+        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(
+            remoteMessage, updatedDraftMessage
+        )
+
+        viewModel.init(messageId)
+
+        val expectedState = UpdateAttachments(updatedMessageAttachments)
+        coVerifySequence { mockObserver.onChanged(expectedState) }
+    }
+
+    @Test
+    fun initDoesNotUpdateViewStateWhenMessageIsUpdatedInDbAsAResultOfDraftUpdateCompleting() = runBlockingTest {
+        val messageId = "remote-draft-message ID"
+        val messageDbId = 2384L
+        val message = Message().apply { dbId = messageDbId }
+        val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
+        val remoteMessage = message.copy(messageId = "Updated Draft Remote message id").apply {
+            Attachments = updatedMessageAttachments
+        }
+        coEvery { messageRepository.findMessageById(messageId) } returns message
+        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(remoteMessage)
+
+        viewModel.init(messageId)
+
+        coVerify(exactly = 0) { mockObserver.onChanged(any()) }
+    }
+
+    @Test
     fun initDoesNotUpdateViewStateWhenMessageThatWasUpdatedInDbIsNotARemoteMessage() = runBlockingTest {
         val messageId = "91bbb263-2bf2-43dd-a079-233a305e69df"
         val messageDbId = 124L
-        val message = Message().apply { dbId = messageDbId }
+        val message = Message(messageId = messageId).apply { dbId = messageDbId }
         val updatedLocalMessage = message.copy(messageId = "82ccc723-2bf2-43dd-f834-233a305e69df")
         coEvery { messageRepository.findMessageById(messageId) } returns message
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(updatedLocalMessage)
@@ -129,7 +167,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
     fun initPostsOfflineViewStateWhenThereIsNoConnection() = runBlockingTest {
         val messageId = "91bbb263-2bf2-43dd-a079-233a305e69df"
         val messageDbId = 124L
-        val message = Message().apply { dbId = messageDbId }
+        val message = Message(messageId = messageId).apply { dbId = messageDbId }
         coEvery { messageRepository.findMessageById(messageId) } returns message
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf()
         every { networkUtils.isConnected() } returns false
