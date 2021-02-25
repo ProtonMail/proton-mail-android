@@ -28,6 +28,7 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.utils.MessageUtils
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -47,22 +48,26 @@ class AttachmentsViewModel @ViewModelInject constructor(
         viewModelScope.launch(dispatchers.Io) {
             val message = messageDetailsRepository.findMessageById(messageId)
 
-            message?.let {
-                val messageDbId = requireNotNull(it.dbId)
+            message?.let { existingMessage ->
+                val messageDbId = requireNotNull(existingMessage.dbId)
                 val messageFlow = messageDetailsRepository.findMessageByDbId(messageDbId)
 
                 if (!networkUtil.isConnected()) {
                     postViewState(ViewState.MissingConnectivity)
                 }
 
-                messageFlow.onEach { message ->
-                    if (isRemoteMessage(message)) {
-                        postViewState(ViewState.UpdateAttachments(message.Attachments))
+                messageFlow.onEach { updatedMessage ->
+                    if (isDraftCreationEvent(existingMessage, updatedMessage)) {
+                        postViewState(ViewState.UpdateAttachments(updatedMessage.Attachments))
+                        this.cancel()
                     }
                 }.collect()
             }
         }
     }
+
+    private fun isDraftCreationEvent(existingMessage: Message, updatedMessage: Message) =
+        !isRemoteMessage(existingMessage) && isRemoteMessage(updatedMessage)
 
     private suspend fun postViewState(state: ViewState) = withContext(dispatchers.Main) {
         viewState.value = state
