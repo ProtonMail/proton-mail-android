@@ -999,6 +999,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_settings">Fara í stillingar</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Ógildur API-kerfisviðmótslykill fyrir Firebase. Ýtitilkynningar munu ekki virka.</string>
-    <string name="failed_saving_draft_online">Failed saving online draft for message: \"%s\"</string>
-    <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
+    <string name="failed_saving_draft_online">Mistókst að vista netlægt drög að skilaboðum: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Get ekki opnað þessi skilaboð á meðan verið er að senda þau</string>
 </resources>
