@@ -32,6 +32,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.QueueNetworkUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -57,10 +58,12 @@ class PingWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result =
         when (val pingResult = api.ping()) {
-            is ApiResult.Success -> {
-                Timber.v("Ping is reachable")
-                queueNetworkUtil.setCurrentlyHasConnectivity()
-                Result.success()
+            is ApiResult.Success -> processSuccess()
+            is ApiResult.Error.Http -> {
+                if (pingResult.proton?.code == Constants.RESPONSE_CODE_API_OFFLINE)
+                    processSuccess()
+                else
+                    Result.failure()
             }
             is ApiResult.Error -> {
                 Timber.i(pingResult.cause, "Ping failure")
@@ -70,6 +73,12 @@ class PingWorker @AssistedInject constructor(
                 )
             }
         }
+
+    private fun processSuccess(): Result {
+        Timber.v("Ping is reachable")
+        queueNetworkUtil.setCurrentlyHasConnectivity()
+        return Result.success()
+    }
 
     class Enqueuer @Inject constructor(private val workManager: WorkManager) {
         private val uniqueWorkerName = "PingWorker"

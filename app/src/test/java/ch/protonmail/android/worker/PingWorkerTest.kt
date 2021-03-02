@@ -24,6 +24,7 @@ import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants.RESPONSE_CODE_API_OFFLINE
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.utils.AppUtil
 import io.mockk.MockKAnnotations
@@ -118,6 +119,24 @@ class PingWorkerTest {
             // then
             verify { queueNetworkUtil.setConnectivityHasFailed(ioException) }
             assertEquals(operationResult, expected)
+        }
+    }
+
+    @Test
+    fun verifySuccessIsReturnedWhenNetworkConnectionFailsWithProtonErrorCodeApiOffline() {
+        runBlockingTest {
+            // given
+            val protonData = ApiResult.Error.ProtonData(RESPONSE_CODE_API_OFFLINE, "Api offline")
+            val pingResponse = ApiResult.Error.Http(400, "error", protonData)
+            val expected = Result.success()
+            coEvery { api.ping() } returns pingResponse
+
+            // when
+            val operationResult = worker.doWork()
+
+            // then
+            verify { queueNetworkUtil.setCurrentlyHasConnectivity() }
+            assertEquals(expected, operationResult)
         }
     }
 }
