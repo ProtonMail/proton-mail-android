@@ -32,7 +32,6 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.utils.MessageUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -60,15 +59,15 @@ class AttachmentsViewModel @ViewModelInject constructor(
                     viewState.postValue(AttachmentsViewState.MissingConnectivity)
                 }
 
-                messageFlow.onEach { updatedMessage ->
+                messageFlow.collect { updatedMessage ->
                     if (!this.isActive) {
-                        return@onEach
+                        return@collect
                     }
                     if (isDraftCreationEvent(existingMessage, updatedMessage)) {
                         viewState.postValue(AttachmentsViewState.UpdateAttachments(updatedMessage.Attachments))
                         this.cancel()
                     }
-                }.collect()
+                }
             }
         }
     }
