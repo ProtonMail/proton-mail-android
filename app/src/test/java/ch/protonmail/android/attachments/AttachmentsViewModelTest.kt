@@ -26,9 +26,8 @@ import ch.protonmail.android.activities.AddAttachmentsActivity
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.attachments.AttachmentsViewModel.ViewState
-import ch.protonmail.android.attachments.AttachmentsViewModel.ViewState.MissingConnectivity
-import ch.protonmail.android.attachments.AttachmentsViewModel.ViewState.UpdateAttachments
+import ch.protonmail.android.attachments.AttachmentsViewState.MissingConnectivity
+import ch.protonmail.android.attachments.AttachmentsViewState.UpdateAttachments
 import ch.protonmail.android.core.QueueNetworkUtil
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -57,7 +56,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
     lateinit var networkUtils: QueueNetworkUtil
 
     @RelaxedMockK
-    private lateinit var mockObserver: Observer<ViewState>
+    private lateinit var mockObserver: Observer<AttachmentsViewState>
 
     @RelaxedMockK
     private lateinit var savedState: SavedStateHandle

@@ -63,6 +63,7 @@ import ch.protonmail.android.adapters.AttachmentListAdapter;
 import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.LocalAttachment;
 import ch.protonmail.android.attachments.AttachmentsViewModel;
+import ch.protonmail.android.attachments.AttachmentsViewState;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
@@ -412,15 +413,15 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         }
     }
 
-    private void viewStateChanged(AttachmentsViewModel.ViewState viewState) {
-        if (viewState instanceof AttachmentsViewModel.ViewState.MissingConnectivity) {
+    private void viewStateChanged(AttachmentsViewState viewState) {
+        if (viewState instanceof AttachmentsViewState.MissingConnectivity) {
             onMessageReady();
         }
 
-        if (viewState instanceof AttachmentsViewModel.ViewState.UpdateAttachments) {
+        if (viewState instanceof AttachmentsViewState.UpdateAttachments) {
             onMessageReady();
             updateDisplayedAttachments(
-                    ((AttachmentsViewModel.ViewState.UpdateAttachments) viewState).getAttachments()
+                    ((AttachmentsViewState.UpdateAttachments) viewState).getAttachments()
             );
         }
     }
