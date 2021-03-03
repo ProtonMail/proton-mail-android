@@ -63,7 +63,7 @@ class AttachmentsViewModel @ViewModelInject constructor(
                     if (!this.isActive) {
                         return@collect
                     }
-                    if (isDraftCreationEvent(existingMessage, updatedMessage)) {
+                    if (draftCreationHappened(existingMessage, updatedMessage)) {
                         viewState.postValue(AttachmentsViewState.UpdateAttachments(updatedMessage.Attachments))
                         this.cancel()
                     }
@@ -72,7 +72,7 @@ class AttachmentsViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun isDraftCreationEvent(existingMessage: Message, updatedMessage: Message) =
+    private fun draftCreationHappened(existingMessage: Message, updatedMessage: Message) =
         !isRemoteMessage(existingMessage) && isRemoteMessage(updatedMessage)
 
     private fun isRemoteMessage(message: Message) = !MessageUtils.isLocalMessageId(message.messageId)
