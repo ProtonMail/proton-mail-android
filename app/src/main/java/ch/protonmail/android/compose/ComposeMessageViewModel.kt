@@ -28,6 +28,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.MessageBuilderData
 import ch.protonmail.android.activities.composeMessage.UserAction
@@ -63,6 +64,7 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.resources.StringResourceResolver
 import ch.protonmail.android.viewmodel.ConnectivityBaseViewModel
+import ch.protonmail.android.worker.drafts.SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX
 import com.squareup.otto.Subscribe
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -96,6 +98,7 @@ class ComposeMessageViewModel @Inject constructor(
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver,
+    private val workManager: WorkManager,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -711,7 +714,7 @@ class ComposeMessageViewModel @Inject constructor(
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!, dispatchers.Io)
+                val savedMessage = messageDetailsRepository.findMessageByMessageDbIdBlocking(_dbId!!, dispatchers.Io)
                 message.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {
@@ -725,6 +728,14 @@ class ComposeMessageViewModel @Inject constructor(
 
             if (_dbId != null) {
                 val newAttachments = calculateNewAttachments(true)
+
+                // Cancel scheduled save draft work to allow attachments removal while offline
+                // This is needed to replace the logic to block draft creation while sending, which being in
+                // SaveDraft use case has no effect when CreateDraft is scheduled offline. As this logic
+                // was removed in the send refactor, this solution was adopted over moving the check in CreateDraftWorker
+                val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
+                workManager.cancelUniqueWork(saveDraftUniqueWorkId)
+
                 postMessageServiceFactory.startSendingMessage(
                     _dbId!!,
                     messageDataResult.message.decryptedBody ?: "",

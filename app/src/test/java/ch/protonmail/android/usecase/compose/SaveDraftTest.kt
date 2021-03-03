@@ -159,7 +159,7 @@ class SaveDraftTest : CoroutinesTest {
                 addressID = "addressId"
                 decryptedBody = "Message body in plain text"
             }
-            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns message
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns messageDbId
             every { pendingActionsDao.findPendingSendByDbId(messageDbId) } returns PendingSend("anyMessageId")
 
