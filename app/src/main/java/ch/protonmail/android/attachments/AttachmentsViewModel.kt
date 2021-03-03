@@ -28,7 +28,7 @@ import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.AddAttachmentsActivity.EXTRA_DRAFT_ID
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.utils.MessageUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
@@ -41,7 +41,7 @@ class AttachmentsViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val networkUtil: QueueNetworkUtil
+    private val networkConnectivityManager: NetworkConnectivityManager
 ) : ViewModel() {
 
     val viewState: MutableLiveData<AttachmentsViewState> = MutableLiveData()
@@ -55,7 +55,7 @@ class AttachmentsViewModel @ViewModelInject constructor(
                 val messageDbId = requireNotNull(existingMessage.dbId)
                 val messageFlow = messageDetailsRepository.findMessageByDbId(messageDbId)
 
-                if (!networkUtil.isConnected()) {
+                if (!networkConnectivityManager.isInternetConnectionPossible()) {
                     viewState.postValue(AttachmentsViewState.MissingConnectivity)
                 }
 
