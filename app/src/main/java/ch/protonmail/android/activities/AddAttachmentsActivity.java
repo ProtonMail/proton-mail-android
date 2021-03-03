@@ -218,7 +218,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
         mListView.setAdapter(mAdapter);
 
         AttachmentsViewModel viewModel = new ViewModelProvider(this).get(AttachmentsViewModel.class);
-        viewModel.init(mDraftId);
+        viewModel.init();
 
         viewModel.getViewState().observe(this, this::viewStateChanged);
     }

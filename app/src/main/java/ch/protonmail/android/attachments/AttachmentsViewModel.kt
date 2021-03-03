@@ -19,10 +19,13 @@
 
 package ch.protonmail.android.attachments
 
+import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.protonmail.android.activities.AddAttachmentsActivity.EXTRA_DRAFT_ID
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
@@ -37,6 +40,7 @@ import me.proton.core.util.kotlin.DispatcherProvider
 
 
 class AttachmentsViewModel @ViewModelInject constructor(
+    @Assisted private val savedStateHandle: SavedStateHandle,
     private val dispatchers: DispatcherProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
     private val networkUtil: QueueNetworkUtil
@@ -44,8 +48,9 @@ class AttachmentsViewModel @ViewModelInject constructor(
 
     val viewState: MutableLiveData<ViewState> = MutableLiveData()
 
-    fun init(messageId: String) {
+    fun init() {
         viewModelScope.launch(dispatchers.Io) {
+            val messageId = savedStateHandle.get<String>(EXTRA_DRAFT_ID) ?: return@launch
             val message = messageDetailsRepository.findMessageById(messageId)
 
             message?.let { existingMessage ->
