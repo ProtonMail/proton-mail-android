@@ -28,7 +28,7 @@ import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.attachments.AttachmentsViewState.MissingConnectivity
 import ch.protonmail.android.attachments.AttachmentsViewState.UpdateAttachments
-import ch.protonmail.android.core.QueueNetworkUtil
+import ch.protonmail.android.core.NetworkConnectivityManager
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -53,7 +53,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
     lateinit var messageRepository: MessageDetailsRepository
 
     @RelaxedMockK
-    lateinit var networkUtils: QueueNetworkUtil
+    lateinit var networkConnectivityManager: NetworkConnectivityManager
 
     @RelaxedMockK
     private lateinit var mockObserver: Observer<AttachmentsViewState>
@@ -70,10 +70,10 @@ class AttachmentsViewModelTest : CoroutinesTest {
             savedState,
             dispatchers,
             messageRepository,
-            networkUtils
+            networkConnectivityManager
         )
         viewModel.viewState.observeForever(mockObserver)
-        every { networkUtils.isConnected() } returns true
+        every { networkConnectivityManager.isInternetConnectionPossible() } returns true
     }
 
     @Test
@@ -181,7 +181,7 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val message = Message(messageId = messageId).apply { dbId = messageDbId }
         coEvery { messageRepository.findMessageById(messageId) } returns message
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf()
-        every { networkUtils.isConnected() } returns false
+        every { networkConnectivityManager.isInternetConnectionPossible() } returns false
         every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
         viewModel.init()
