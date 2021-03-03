@@ -199,4 +199,25 @@ class AttachmentsViewModelTest : CoroutinesTest {
         coVerify(exactly = 0) { messageRepository.findMessageByDbId(any()) }
         coVerify(exactly = 0) { mockObserver.onChanged(any()) }
     }
+
+    @Test
+    fun initIgnoresAnyNullMessagesReturnedByDatabaseFlow() = runBlockingTest {
+        val messageId = "91bbb263-2bf2-43dd-a079-233a305e79df"
+        val messageDbId = 113L
+        val message = Message(messageId = messageId).apply { dbId = messageDbId }
+        val updatedMessageAttachments = listOf(Attachment(attachmentId = "updatedAttId"))
+        val remoteMessage = message.copy(messageId = "Remote message id").apply {
+            Attachments = updatedMessageAttachments
+        }
+        coEvery { messageRepository.findMessageById(messageId) } returns message
+        coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(
+            remoteMessage, null
+        )
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
+
+        viewModel.init()
+
+        val expectedState = UpdateAttachments(updatedMessageAttachments)
+        coVerifySequence { mockObserver.onChanged(expectedState) }
+    }
 }
