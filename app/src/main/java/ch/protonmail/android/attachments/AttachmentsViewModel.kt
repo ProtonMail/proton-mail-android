@@ -33,8 +33,8 @@ import ch.protonmail.android.utils.MessageUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 
 
@@ -57,12 +57,15 @@ class AttachmentsViewModel @ViewModelInject constructor(
                 val messageFlow = messageDetailsRepository.findMessageByDbId(messageDbId)
 
                 if (!networkUtil.isConnected()) {
-                    postViewState(AttachmentsViewState.MissingConnectivity)
+                    viewState.postValue(AttachmentsViewState.MissingConnectivity)
                 }
 
                 messageFlow.onEach { updatedMessage ->
+                    if (!this.isActive) {
+                        return@onEach
+                    }
                     if (isDraftCreationEvent(existingMessage, updatedMessage)) {
-                        postViewState(AttachmentsViewState.UpdateAttachments(updatedMessage.Attachments))
+                        viewState.postValue(AttachmentsViewState.UpdateAttachments(updatedMessage.Attachments))
                         this.cancel()
                     }
                 }.collect()
@@ -72,10 +75,6 @@ class AttachmentsViewModel @ViewModelInject constructor(
 
     private fun isDraftCreationEvent(existingMessage: Message, updatedMessage: Message) =
         !isRemoteMessage(existingMessage) && isRemoteMessage(updatedMessage)
-
-    private suspend fun postViewState(state: AttachmentsViewState) = withContext(dispatchers.Main) {
-        viewState.value = state
-    }
 
     private fun isRemoteMessage(message: Message) = !MessageUtils.isLocalMessageId(message.messageId)
 
