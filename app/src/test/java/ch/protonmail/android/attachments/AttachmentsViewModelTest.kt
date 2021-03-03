@@ -21,6 +21,8 @@ package ch.protonmail.android.attachments
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateHandle
+import ch.protonmail.android.activities.AddAttachmentsActivity
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
@@ -57,12 +59,16 @@ class AttachmentsViewModelTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var mockObserver: Observer<ViewState>
 
+    @RelaxedMockK
+    private lateinit var savedState: SavedStateHandle
+
     private lateinit var viewModel: AttachmentsViewModel
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel = AttachmentsViewModel(
+            savedState,
             dispatchers,
             messageRepository,
             networkUtils
@@ -75,8 +81,9 @@ class AttachmentsViewModelTest : CoroutinesTest {
     fun initFindsMessageInDatabase() = runBlockingTest {
         val messageId = "draftId3214"
         coEvery { messageRepository.findMessageById(messageId) } returns mockk(relaxed = true)
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
-        viewModel.init(messageId)
+        viewModel.init()
 
         coVerify { messageRepository.findMessageById(messageId) }
     }
@@ -87,8 +94,9 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val messageDbId = 124L
         val message = Message(messageId = messageId).apply { dbId = messageDbId }
         coEvery { messageRepository.findMessageById(messageId) } returns message
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
-        viewModel.init(messageId)
+        viewModel.init()
 
         coVerify { messageRepository.findMessageByDbId(messageDbId) }
     }
@@ -104,8 +112,9 @@ class AttachmentsViewModelTest : CoroutinesTest {
         }
         coEvery { messageRepository.findMessageById(messageId) } returns message
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(remoteMessage)
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
-        viewModel.init(messageId)
+        viewModel.init()
 
         val expectedState = UpdateAttachments(updatedMessageAttachments)
         coVerify { mockObserver.onChanged(expectedState) }
@@ -125,8 +134,9 @@ class AttachmentsViewModelTest : CoroutinesTest {
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(
             remoteMessage, updatedDraftMessage
         )
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
-        viewModel.init(messageId)
+        viewModel.init()
 
         val expectedState = UpdateAttachments(updatedMessageAttachments)
         coVerifySequence { mockObserver.onChanged(expectedState) }
@@ -143,8 +153,9 @@ class AttachmentsViewModelTest : CoroutinesTest {
         }
         coEvery { messageRepository.findMessageById(messageId) } returns message
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(remoteMessage)
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
-        viewModel.init(messageId)
+        viewModel.init()
 
         coVerify(exactly = 0) { mockObserver.onChanged(any()) }
     }
@@ -157,8 +168,9 @@ class AttachmentsViewModelTest : CoroutinesTest {
         val updatedLocalMessage = message.copy(messageId = "82ccc723-2bf2-43dd-f834-233a305e69df")
         coEvery { messageRepository.findMessageById(messageId) } returns message
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf(updatedLocalMessage)
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
-        viewModel.init(messageId)
+        viewModel.init()
 
         coVerify(exactly = 0) { mockObserver.onChanged(any()) }
     }
@@ -171,9 +183,21 @@ class AttachmentsViewModelTest : CoroutinesTest {
         coEvery { messageRepository.findMessageById(messageId) } returns message
         coEvery { messageRepository.findMessageByDbId(messageDbId) } returns flowOf()
         every { networkUtils.isConnected() } returns false
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns messageId
 
-        viewModel.init(messageId)
+        viewModel.init()
 
         coVerifySequence { mockObserver.onChanged(MissingConnectivity) }
+    }
+
+    @Test
+    fun initLogsWarningAndStopsExecutionIfDraftIdWasNotPassed() = runBlockingTest {
+        every { savedState.get<String>(AddAttachmentsActivity.EXTRA_DRAFT_ID) } returns null
+
+        viewModel.init()
+
+        // test warning is logged here
+        coVerify(exactly = 0) { messageRepository.findMessageByDbId(any()) }
+        coVerify(exactly = 0) { mockObserver.onChanged(any()) }
     }
 }
