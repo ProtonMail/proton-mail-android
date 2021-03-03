@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.AddAttachmentsActivity.EXTRA_DRAFT_ID
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.utils.MessageUtils
@@ -46,7 +45,7 @@ class AttachmentsViewModel @ViewModelInject constructor(
     private val networkUtil: QueueNetworkUtil
 ) : ViewModel() {
 
-    val viewState: MutableLiveData<ViewState> = MutableLiveData()
+    val viewState: MutableLiveData<AttachmentsViewState> = MutableLiveData()
 
     fun init() {
         viewModelScope.launch(dispatchers.Io) {
@@ -58,12 +57,12 @@ class AttachmentsViewModel @ViewModelInject constructor(
                 val messageFlow = messageDetailsRepository.findMessageByDbId(messageDbId)
 
                 if (!networkUtil.isConnected()) {
-                    postViewState(ViewState.MissingConnectivity)
+                    postViewState(AttachmentsViewState.MissingConnectivity)
                 }
 
                 messageFlow.onEach { updatedMessage ->
                     if (isDraftCreationEvent(existingMessage, updatedMessage)) {
-                        postViewState(ViewState.UpdateAttachments(updatedMessage.Attachments))
+                        postViewState(AttachmentsViewState.UpdateAttachments(updatedMessage.Attachments))
                         this.cancel()
                     }
                 }.collect()
@@ -74,15 +73,10 @@ class AttachmentsViewModel @ViewModelInject constructor(
     private fun isDraftCreationEvent(existingMessage: Message, updatedMessage: Message) =
         !isRemoteMessage(existingMessage) && isRemoteMessage(updatedMessage)
 
-    private suspend fun postViewState(state: ViewState) = withContext(dispatchers.Main) {
+    private suspend fun postViewState(state: AttachmentsViewState) = withContext(dispatchers.Main) {
         viewState.value = state
     }
 
     private fun isRemoteMessage(message: Message) = !MessageUtils.isLocalMessageId(message.messageId)
-
-    sealed class ViewState {
-        object MissingConnectivity : ViewState()
-        data class UpdateAttachments(val attachments: List<Attachment>) : ViewState()
-    }
 
 }
