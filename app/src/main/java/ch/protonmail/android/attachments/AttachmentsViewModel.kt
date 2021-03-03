@@ -60,6 +60,9 @@ class AttachmentsViewModel @ViewModelInject constructor(
                 }
 
                 messageFlow.collect { updatedMessage ->
+                    if (updatedMessage == null) {
+                        return@collect
+                    }
                     if (!this.isActive) {
                         return@collect
                     }
