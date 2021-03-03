@@ -60,7 +60,7 @@ class PostMessageServiceFactory @Inject constructor(
     }
 
     private suspend fun handleMessage(messageDbId: Long, content: String, username: String): Message? {
-        val message: Message? = messageDetailsRepository.findMessageByMessageDbId(messageDbId, bgDispatcher)
+        val message: Message? = messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId, bgDispatcher)
 
         if (message != null) {
             val crypto = Crypto.forAddress(userManager, username, message.addressID!!)

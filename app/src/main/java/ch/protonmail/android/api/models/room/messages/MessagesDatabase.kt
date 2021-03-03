@@ -82,12 +82,12 @@ abstract class MessagesDatabase {
 
     fun findMessageByIdObservable(messageId: String) = findMessageInfoByIdObservable(messageId)
 
-    fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbId(messageDbId)?.also {
+    fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)?.also {
         it.Attachments = it.attachments(this)
     }
 
-    fun findMessageByDbIdFlow(dbId: Long): Flow<Message> =
-        findMessageInfoByDbIdFlow(dbId).map {
+    fun findMessageByDbId(dbId: Long): Flow<Message> =
+        findMessageInfoByDbId(dbId).map {
             it.Attachments = it.attachments(this)
             return@map it
         }
@@ -112,10 +112,10 @@ abstract class MessagesDatabase {
     protected abstract fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Message?
+    protected abstract fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    protected abstract fun findMessageInfoByDbIdFlow(messageDbId: Long): Flow<Message>
+    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>
