@@ -34,6 +34,7 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
 
@@ -122,6 +123,10 @@ class AccountSettingsActivity : BaseSettingsActivity() {
                 BuildConfig.VERSION_CODE
             )
         )
+
+        val mailSettings = mUserManager.mailSettings
+        Timber.d("MailSettings ViewMode = ${mailSettings?.viewMode}")
+        setEnabled(SettingsEnum.CONVERSATION_MODE_TOGGLE, mailSettings?.viewMode == 0)
     }
 
     @Subscribe
