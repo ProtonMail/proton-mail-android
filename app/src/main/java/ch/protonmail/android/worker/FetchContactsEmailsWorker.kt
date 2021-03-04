@@ -33,6 +33,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import timber.log.Timber
+import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -48,8 +49,11 @@ class FetchContactsEmailsWorker @WorkerInject constructor(
                 onSuccess = {
                     success()
                 },
-                onFailure = {
-                    failure(it)
+                onFailure = { throwable ->
+                    if (throwable is CancellationException) {
+                        throw throwable
+                    }
+                    failure(throwable)
                 }
             )
     }

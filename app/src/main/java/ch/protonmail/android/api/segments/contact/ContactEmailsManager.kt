@@ -46,12 +46,16 @@ class ContactEmailsManager @Inject constructor(
             currentPage++
         }
 
-        val allContactEmails = allResults.flatMap { it.contactEmails }
-        val allJoins = getJoins(allContactEmails)
-        Timber.v(
-            "Refresh emails: ${allContactEmails.size}, labels: ${contactLabelList.size}, allJoins: ${allJoins.size}"
-        )
-        contactsDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, allJoins)
+        if (allResults.isNotEmpty()) {
+            val allContactEmails = allResults.flatMap { it.contactEmails }
+            val allJoins = getJoins(allContactEmails)
+            Timber.v(
+                "Refresh emails: ${allContactEmails.size}, labels: ${contactLabelList.size}, allJoins: ${allJoins.size}"
+            )
+            contactsDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, allJoins)
+        } else {
+            Timber.v("contactEmails result list is empty")
+        }
     }
 
     private fun getJoins(allContactEmails: List<ContactEmail>): List<ContactEmailContactLabelJoin> {

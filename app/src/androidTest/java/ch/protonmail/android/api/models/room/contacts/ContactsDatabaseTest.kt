@@ -24,6 +24,7 @@ import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.Constants
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert
 import org.junit.Ignore
@@ -158,8 +159,10 @@ internal class ContactsDatabaseTest {
     )
 
     private fun ContactsDatabase.populate() {
-        saveAllContactsData(contactData)
-        saveAllContactsEmailsBlocking(contactEmails)
+        runBlocking {
+            saveAllContactsData(contactData)
+            saveAllContactsEmails(contactEmails)
+        }
         fullContactDetails.forEach(this::insertFullContactDetails)
     }
 
@@ -233,12 +236,14 @@ internal class ContactsDatabaseTest {
 
     @Test
     fun saveAllContactsData() {
-        val inserted = listOf(
-            ContactData("y", "yy"), ContactData("z", "zz")
-        )
-        val expected = contactData + inserted
-        database.saveAllContactsData(inserted)
-        assertDatabaseState(expectedContactData = expected)
+        runBlocking {
+            val inserted = listOf(
+                ContactData("y", "yy"), ContactData("z", "zz")
+            )
+            val expected = contactData + inserted
+            database.saveAllContactsData(inserted)
+            assertDatabaseState(expectedContactData = expected)
+        }
     }
 
     @Test
