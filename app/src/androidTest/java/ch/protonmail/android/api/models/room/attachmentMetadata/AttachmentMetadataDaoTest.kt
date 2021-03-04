@@ -25,6 +25,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.model.AttachmentMetadata
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Assert
 import kotlin.test.Test
@@ -73,11 +75,11 @@ class AttachmentMetadataDaoTest {
     }
 
     @Test
-    fun insertGetAllAttachmentsSizeUsed() {
+    fun insertGetAllAttachmentsSizeUsed() = runBlockingTest {
         val inserted = standardTest
         val expected = 15L
         database.insert(inserted)
-        val actual = database.getAllAttachmentsSizeUsed()
+        val actual = database.getAllAttachmentsSizeUsed().first()
         Assert.assertEquals(expected, actual)
     }
 

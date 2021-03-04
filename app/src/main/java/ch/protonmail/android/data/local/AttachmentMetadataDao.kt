@@ -28,6 +28,7 @@ import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_SIZE
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FOLDER_LOCATION
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
 import ch.protonmail.android.data.local.model.TABLE_ATTACHMENT_METADATA
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AttachmentMetadataDao {
@@ -42,13 +43,19 @@ interface AttachmentMetadataDao {
     fun clearAttachmentMetadataCache()
 
     @Query("SELECT SUM($COLUMN_ATTACHMENT_FILE_SIZE) size FROM $TABLE_ATTACHMENT_METADATA")
-    fun getAllAttachmentsSizeUsed(): Long
+    fun getAllAttachmentsSizeUsed(): Flow<Long?>
+
+    @Deprecated("Use Flow variant", ReplaceWith("getAllAttachmentsSizeUsed().first()"))
+    @Query("SELECT SUM($COLUMN_ATTACHMENT_FILE_SIZE) size FROM $TABLE_ATTACHMENT_METADATA")
+    fun getAllAttachmentsSizeUsedBlocking(): Long?
 
     @Query("SELECT * FROM $TABLE_ATTACHMENT_METADATA WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION = :messageId")
     fun getAllAttachmentsForMessage(messageId: String): List<AttachmentMetadata>
 
-    @Query("""SELECT * FROM $TABLE_ATTACHMENT_METADATA 
-        WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION = :messageId AND $COLUMN_ATTACHMENT_ID = :attachmentId""")
+    @Query("""
+        SELECT * FROM $TABLE_ATTACHMENT_METADATA 
+        WHERE $COLUMN_ATTACHMENT_FOLDER_LOCATION = :messageId AND $COLUMN_ATTACHMENT_ID = :attachmentId
+    """)
     fun getAttachmentMetadataForMessageAndAttachmentId(
         messageId: String,
         attachmentId: String

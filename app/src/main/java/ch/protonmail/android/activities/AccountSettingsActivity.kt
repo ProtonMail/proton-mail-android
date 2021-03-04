@@ -32,6 +32,7 @@ import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.moveToLogin
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
@@ -101,7 +102,8 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         mAttachmentStorageValue = user.totalUploadLimit.toMegabytes().toInt()
 
         lifecycleScope.launch {
-            val attachmentSizeUsed = attachmentMetadataDao!!.getAllAttachmentsSizeUsed() / (1000.0 * 1000.0)
+            val attachmentSizeUsedBytes = attachmentMetadataDao.getAllAttachmentsSizeUsed().first() ?: 0
+            val attachmentSizeUsed = attachmentSizeUsedBytes / (1000.0 * 1000.0)
             setValue(
                 SettingsEnum.LOCAL_STORAGE_LIMIT,
                 String.format(getString(R.string.storage_value), mAttachmentStorageValue, attachmentSizeUsed)

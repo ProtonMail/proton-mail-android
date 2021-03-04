@@ -20,10 +20,14 @@ package ch.protonmail.android.api.segments.contact
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
+import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.domain.entity.Id
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
@@ -32,6 +36,13 @@ class ContactEmailsManager @Inject constructor(
     private var api: ProtonMailApiManager,
     private val contactDao: ContactDao
 ) {
+
+    @AssistedInject
+    constructor(
+        api: ProtonMailApiManager,
+        databaseProvider: DatabaseProvider,
+        @Assisted userId: Id
+    ) : this(api, databaseProvider.provideContactDao(userId))
 
     suspend fun refresh(pageSize: Int = Constants.CONTACTS_PAGE_SIZE) {
         val contactLabelList = api.fetchContactGroupsList()
@@ -77,5 +88,10 @@ class ContactEmailsManager @Inject constructor(
     )
     fun refreshBlocking() = runBlocking {
         refresh()
+    }
+
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(userId: Id): ContactEmailsManager
     }
 }

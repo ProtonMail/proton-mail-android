@@ -58,7 +58,6 @@ import ch.protonmail.android.adapters.SettingsAdapter
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.AttachmentMetadataDao
-import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.CounterDao
@@ -106,6 +105,9 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     @Inject
     lateinit var launchInitialDataFetch: LaunchInitialDataFetch
 
+    @Inject
+    lateinit var attachmentMetadataDao: AttachmentMetadataDao
+
     // region views
     private val toolbar by lazy { findViewById<Toolbar>(R.id.toolbar) }
     private val settingsRecyclerView by lazy { findViewById<RecyclerView>(R.id.settingsRecyclerView) }
@@ -120,7 +122,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     private var searchDatabase: MessageDao? = null
     private var notificationDao: NotificationDao? = null
     var counterDao: CounterDao? = null
-    var attachmentMetadataDao: AttachmentMetadataDao? = null
     var pendingActionDao: PendingActionDao? = null
     var sharedPreferences: SharedPreferences? = null
 
@@ -164,7 +165,6 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         searchDatabase = MessageDatabase.getSearchDatabase(applicationContext, userId).getDao()
         notificationDao = NotificationDatabase.getInstance(applicationContext, userId).getDao()
         counterDao = CounterDatabase.getInstance(applicationContext, userId).getDao()
-        attachmentMetadataDao = AttachmentMetadataDatabase.getInstance(applicationContext, userId).getDao()
         pendingActionDao = PendingActionDatabase.getInstance(applicationContext, userId).getDao()
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@BaseSettingsActivity)
 

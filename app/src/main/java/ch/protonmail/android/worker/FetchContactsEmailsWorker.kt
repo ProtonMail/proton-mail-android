@@ -25,6 +25,7 @@ import androidx.hilt.work.WorkerInject
 import androidx.lifecycle.LiveData
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker.Result.failure
 import androidx.work.ListenableWorker.Result.success
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
@@ -32,6 +33,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
+import ch.protonmail.android.core.UserManager
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
@@ -40,11 +42,15 @@ import javax.inject.Inject
 class FetchContactsEmailsWorker @WorkerInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
-    private val contactEmailsManager: ContactEmailsManager
+    private val userManager: UserManager,
+    private val contactEmailsManagerFactory: ContactEmailsManager.AssistedFactory
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
-        return runCatching { contactEmailsManager.refresh() }
+        val currentUserId = userManager.currentUserId
+            ?: return failure()
+
+        return runCatching { contactEmailsManagerFactory.create(currentUserId).refresh() }
             .fold(
                 onSuccess = {
                     success()
