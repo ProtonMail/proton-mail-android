@@ -30,6 +30,7 @@ import androidx.room.Transaction
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 // TODO remove when we change name of this class to MessagesDao and *Factory to *Database
@@ -90,15 +91,19 @@ abstract class MessagesDatabase {
 
     fun findMessageByIdObservable(messageId: String) = findMessageInfoByIdObservable(messageId)
 
-    fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbId(messageDbId)?.also {
+    fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)?.also {
         it.Attachments = it.attachmentsBlocking(this)
     }
 
-    fun findMessageByDbIdFlow(dbId: Long): Flow<Message> =
-        findMessageInfoByDbIdFlow(dbId).map {
-            it.Attachments = it.attachments(this)
-            return@map it
-        }
+    fun findMessageByDbId(dbId: Long): Flow<Message> =
+        findMessageInfoByDbId(dbId)
+            .distinctUntilChanged()
+            .map { message ->
+                return@map message?.let {
+                    it.Attachments = it.attachmentsBlocking(this)
+                    it
+                }
+            }
 
     @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0) = findAllMessageInfoByLastMessageAccessTime(laterThan).also {
@@ -123,10 +128,10 @@ abstract class MessagesDatabase {
     protected abstract fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Message?
+    protected abstract fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    protected abstract fun findMessageInfoByDbIdFlow(messageDbId: Long): Flow<Message>
+    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>

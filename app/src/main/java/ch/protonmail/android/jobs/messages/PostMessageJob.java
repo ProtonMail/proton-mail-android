@@ -144,7 +144,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
-        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbIdBlocking(mMessageDbId);
         if (message != null) {
             if (!BuildConfig.DEBUG) {
                 EventBuilder eventBuilder = new EventBuilder()
@@ -200,7 +200,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             }
             throw e;
         }
-        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbIdBlocking(mMessageDbId);
         if (!BuildConfig.DEBUG && message == null) {
             EventBuilder eventBuilder = new EventBuilder()
                     .withTag(SENDING_FAILED_TAG, getAppVersion())
@@ -514,7 +514,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
     private void sendErrorSending(String error) {
         if (error == null) error = "";
-        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbIdBlocking(mMessageDbId);
         if (message != null) {
             String messageId = message.getMessageId();
             if (messageId != null) {

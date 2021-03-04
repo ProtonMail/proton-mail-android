@@ -85,7 +85,7 @@ class CreateDraftWorker @WorkerInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val message = messageDetailsRepository.findMessageByMessageDbId(getInputMessageDbId())
+        val message = messageDetailsRepository.findMessageByMessageDbIdBlocking(getInputMessageDbId())
             ?: return failureWithError(CreateDraftWorkerErrors.MessageNotFound)
         val senderAddressId = requireNotNull(message.addressID)
         val senderAddress = requireNotNull(getSenderAddress(senderAddressId))
