@@ -70,20 +70,24 @@ private const val PREF_NUM_MESSAGE_PER_PAGE = "mail_settings_NumMessagePerPage"
 private const val PREF_DRAFT_MIME_TYPE = "mail_settings_DraftMIMEType"
 private const val PREF_RECEIVE_MIME_TYPE = "mail_settings_ReceiveMIMEType"
 private const val PREF_SHOW_MIME_TYPE = "mail_settings_ShowMIMEType"
-// endregion
 
 class MailSettings : Serializable {
 
     @SerializedName(FIELD_DISPLAY_NAME)
     private val displayName: String? = null
+
     @SerializedName(FIELD_SIGNATURE)
     private val signature: String? = null
+
     @SerializedName(FIELD_THEME)
     private val theme: String? = null
+
     @SerializedName(FIELD_AUTO_SAVE_CONTACTS)
     var autoSaveContacts: Int = 0
+
     @SerializedName(FIELD_AUTO_WILDCARD_SEARCH)
     private val autoWildcardSearch: Int = 0
+
     /**
      * Auto showing remote and embedded images.
      * @return 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
@@ -92,34 +96,49 @@ class MailSettings : Serializable {
     // TODO this field should be changed to 'ShowImagesFrom' enum, once using Kotlinx serialization
     @Deprecated("Use 'showImagesFrom' field", ReplaceWith("showImagesFrom"))
     var showImages: Int = 0
+
     @SerializedName(FIELD_SHOW_MOVED)
     private val showMoved: Int = 0
+
     @SerializedName(FIELD_SWIPE_RIGHT)
     private var swipeRight: Int = 0
+
     @SerializedName(FIELD_SWIPE_LEFT)
     private var swipeLeft: Int = 0
+
     @SerializedName(FIELD_ALSO_ARCHIVE)
     private val alsoArchive: Int = 0
+
     @SerializedName(FIELD_PM_SIGNATURE)
     private val pmSignature: Int = 0
+
     @SerializedName(FIELD_RIGHT_TO_LEFT)
     private val rightToLeft: Int = 0
+
     @SerializedName(FIELD_ATTACH_PUBLIC_KEY)
     private var attachPublicKey: Int = 0
+
     @SerializedName(FIELD_SIGN)
     var sign: Int = 0
+
     @SerializedName(FIELD_PGP_SCHEME)
     var pgpScheme: Int = 0
+
     @SerializedName(FIELD_PROMPT_PIN)
     private val promptPin: Int = 0
+
     @SerializedName(FIELD_AUTOCRYPT)
     private val autocrypt: Int = 0
+
     @SerializedName(FIELD_NUM_MESSAGE_PER_PAGE)
     private val numMessagePerPage: Int = 0
+
     @SerializedName(FIELD_DRAFT_MIME_TYPE)
     private val draftMIMEType: String? = null
+
     @SerializedName(FIELD_RECEIVE_MIME_TYPE)
     private val receiveMIMEType: String? = null
+
     @SerializedName(FIELD_SHOW_MIME_TYPE)
     private val showMIMEType: String? = null
 
@@ -150,11 +169,9 @@ class MailSettings : Serializable {
     val defaultSign: Boolean
         get() = sign != 0
 
-    fun getPGPScheme(): PackageType? =
-        PackageType.fromInteger(pgpScheme)
+    fun getPGPScheme(): PackageType? = PackageType.fromInteger(pgpScheme)
 
-    fun getAttachPublicKey(): Boolean =
-        attachPublicKey != 0
+    fun getAttachPublicKey(): Boolean = attachPublicKey != 0
 
     fun setAttachPublicKey(attachPublicKey: Int) {
         this.attachPublicKey = attachPublicKey
