@@ -28,6 +28,7 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.worker.PingWorker
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
@@ -64,7 +65,7 @@ class VerifyConnection @Inject constructor(
             queueNetworkUtil.isBackendRespondingWithoutErrorFlow
         )
             .flattenMerge()
-            .filter { it != Constants.ConnectionState.CONNECTED } // observe only disconnections
+            .distinctUntilChanged()
             .onEach {
                 Timber.v("connectivityManagerFlow value: ${it.name}")
                 pingWorkerEnqueuer.enqueue() // re-schedule ping

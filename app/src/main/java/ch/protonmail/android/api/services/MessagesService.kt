@@ -157,7 +157,7 @@ class MessagesService : JobIntentService() {
                 val event = MailboxLoadedEvent(Status.FAILED, uuid, errorMessage)
                 AppUtil.postEventOnUi(event)
                 mNetworkResults.setMailboxLoaded(event)
-                Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", Exception(errorMessage))
+                Timber.v( "error while fetching messages", Exception(errorMessage))
             }
 
         } catch (error: Exception) {

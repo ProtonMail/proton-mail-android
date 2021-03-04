@@ -63,6 +63,7 @@ class NetworkSnackBarUtil @Inject constructor() {
         @IdRes anchorViewId: Int? = null,
         isOffline: Boolean
     ): Snackbar {
+        hideNoConnectionSnackBar()
         val snackBar = if (isOffline) {
             noConnectionSnackBar
                 ?: Snackbar.make(
