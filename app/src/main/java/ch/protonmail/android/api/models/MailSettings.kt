@@ -33,6 +33,7 @@ private const val FIELD_THEME = "Theme"
 private const val FIELD_AUTO_SAVE_CONTACTS = "AutoSaveContacts"
 private const val FIELD_AUTO_WILDCARD_SEARCH = "AutoWildcardSearch"
 private const val FIELD_SHOW_IMAGES = "ShowImages" // 0 for none, 1 for remote, 2 for embedded, 3 for remote and embedded
+private const val FIELD_VIEW_MODE = "ViewMode" // 0 conversation mode ON, 1 conversation mode OFF
 private const val FIELD_SHOW_MOVED = "ShowMoved"
 private const val FIELD_SWIPE_LEFT = "SwipeLeft"
 private const val FIELD_SWIPE_RIGHT = "SwipeRight"
@@ -141,6 +142,9 @@ class MailSettings : Serializable {
 
     @SerializedName(FIELD_SHOW_MIME_TYPE)
     private val showMIMEType: String? = null
+
+    @SerializedName(FIELD_VIEW_MODE)
+    var viewMode: Int = 1
 
     @Transient
     @Deprecated("We should not rely on username. No replacement", level = DeprecationLevel.ERROR)

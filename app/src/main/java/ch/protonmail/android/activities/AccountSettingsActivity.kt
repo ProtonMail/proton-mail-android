@@ -53,13 +53,13 @@ class AccountSettingsActivity : BaseSettingsActivity() {
 
         mSnackLayout = findViewById(R.id.layout_no_connectivity_info)
 
-        setUpSettingsItems(R.raw.acc_settings_structure)
+        setUpSettingsItems(getSettingsItems())
         renderViews()
     }
 
     override fun onResume() {
         super.onResume()
-        setUpSettingsItems(R.raw.acc_settings_structure)
+        setUpSettingsItems(getSettingsItems())
         renderViews()
     }
 
@@ -129,4 +129,13 @@ class AccountSettingsActivity : BaseSettingsActivity() {
     fun onLogoutEvent(event: LogoutEvent?) {
         moveToLogin()
     }
+
+    private fun getSettingsItems(): Int {
+        return if (Constants.FeatureFlags.CONVERSATION_MODE_ENABLED) {
+            R.raw.acc_settings_structure_with_conversation_mode_toggle
+        } else {
+            R.raw.acc_settings_structure
+        }
+    }
+
 }

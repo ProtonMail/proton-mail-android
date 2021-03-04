@@ -42,6 +42,10 @@ enum class SettingsEnum {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.storage)
     },
+    CONVERSATION_MODE_TOGGLE {
+        override fun getHint(context: Context): String = ""
+        override fun getHeader(context: Context): String = context.resources.getString(R.string.enable_conversation_mode)
+    },
     DEFAULT_EMAIL {
         override fun getHint(context: Context): String = ""
         override fun getHeader(context: Context): String = context.resources.getString(R.string.default_mail_address)
