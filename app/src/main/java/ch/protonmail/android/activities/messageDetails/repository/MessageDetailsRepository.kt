@@ -124,7 +124,7 @@ class MessageDetailsRepository @Inject constructor(
     fun findMessageByMessageDbIdBlocking(messageDbId: Long): Message? =
         messagesDao.findMessageByMessageDbId(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
 
-    fun findMessageByDbId(messageDbId: Long): Flow<Message> =
+    fun findMessageByDbId(messageDbId: Long): Flow<Message?> =
         messagesDao.findMessageByDbId(messageDbId)
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): List<Message> =

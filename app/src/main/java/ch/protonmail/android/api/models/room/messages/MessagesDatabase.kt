@@ -86,10 +86,12 @@ abstract class MessagesDatabase {
         it.Attachments = it.attachments(this)
     }
 
-    fun findMessageByDbId(dbId: Long): Flow<Message> =
-        findMessageInfoByDbId(dbId).map {
-            it.Attachments = it.attachments(this)
-            return@map it
+    fun findMessageByDbId(dbId: Long): Flow<Message?> =
+        findMessageInfoByDbId(dbId).map { message ->
+            return@map message?.let {
+                it.Attachments = it.attachments(this)
+                it
+            }
         }
 
     @JvmOverloads
@@ -115,7 +117,7 @@ abstract class MessagesDatabase {
     protected abstract fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message>
+    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>
