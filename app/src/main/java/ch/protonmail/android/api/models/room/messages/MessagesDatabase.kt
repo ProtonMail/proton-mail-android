@@ -30,7 +30,6 @@ import androidx.room.Transaction
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 // TODO remove when we change name of this class to MessagesDao and *Factory to *Database
@@ -88,14 +87,12 @@ abstract class MessagesDatabase {
     }
 
     fun findMessageByDbId(dbId: Long): Flow<Message?> =
-        findMessageInfoByDbId(dbId)
-            .distinctUntilChanged()
-            .map { message ->
-                return@map message?.let {
-                    it.Attachments = it.attachments(this)
-                    it
-                }
+        findMessageInfoByDbId(dbId).map { message ->
+            return@map message?.let {
+                it.Attachments = it.attachments(this)
+                it
             }
+        }
 
     @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0) = findAllMessageInfoByLastMessageAccessTime(laterThan).also {
