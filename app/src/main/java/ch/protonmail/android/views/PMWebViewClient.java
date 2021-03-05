@@ -148,8 +148,6 @@ public class PMWebViewClient extends WebViewClient {
      * @return true if confirmation was shown
      */
     private boolean showHyperlinkConfirmation(@NonNull String url) {
-
-        if (!Constants.FeatureFlags.HYPERLINK_CONFIRMATION) return false;
         try {
             URL parsedUrl = new URL(url);
 

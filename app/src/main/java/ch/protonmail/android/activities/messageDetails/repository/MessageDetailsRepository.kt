@@ -165,10 +165,7 @@ class MessageDetailsRepository @Inject constructor(
     )
     private val readMessageBodyFromFileIfNeeded: (Message?) -> Message? = { message ->
         message?.apply {
-            if (
-                Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE &&
-                true == messageBody?.startsWith("file://")
-            ) {
+            if (true == messageBody?.startsWith("file://")) {
                 val messageBodyFile = File(
                     applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS,
                     messageId?.replace(" ", "_")?.replace("/", ":")
@@ -258,7 +255,7 @@ class MessageDetailsRepository @Inject constructor(
         return if (isSearchMessage) {
             saveSearchMessageInDB(message)
         } else {
-            checkSaveFlagAndSaveFile(message)
+            saveFile(message)
             messagesDao.saveMessage(message)
         }
     }
@@ -289,13 +286,13 @@ class MessageDetailsRepository @Inject constructor(
             return
         }
         messages.forEach { message ->
-            checkSaveFlagAndSaveFile(message)
+            saveFile(message)
         }
         messagesDao.saveMessages(*messages.toTypedArray())
     }
 
     suspend fun saveSearchMessage(message: Message): Long {
-        checkSaveFlagAndSaveFile(message)
+        saveFile(message)
         return searchDatabaseDao.saveMessage(message)
     }
 
@@ -303,12 +300,10 @@ class MessageDetailsRepository @Inject constructor(
     suspend fun saveSearchMessageInDB(message: Message): Long =
         saveSearchMessage(message)
 
-    private fun checkSaveFlagAndSaveFile(message: Message) {
-        if (Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE) {
-            val localFilePath = saveBodyToFileIfNeeded(message)
-            localFilePath?.let {
-                message.messageBody = it
-            }
+    private fun saveFile(message: Message) {
+        val localFilePath = saveBodyToFileIfNeeded(message)
+        localFilePath?.let {
+            message.messageBody = it
         }
     }
 
@@ -331,7 +326,7 @@ class MessageDetailsRepository @Inject constructor(
             return
         }
         messages.forEach { message ->
-            checkSaveFlagAndSaveFile(message)
+            saveFile(message)
         }
         searchDatabaseDao.saveMessages(*messages.toTypedArray())
     }

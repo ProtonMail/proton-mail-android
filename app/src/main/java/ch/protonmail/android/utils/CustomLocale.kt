@@ -23,8 +23,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.preference.PreferenceManager
-import ch.protonmail.android.core.Constants
-import java.util.*
+import java.util.Locale
 
 // region constants
 const val PREF_CUSTOM_APP_LANGUAGE = "customAppLanguage"
@@ -49,7 +48,7 @@ class CustomLocale {
             var languageToSet = locale.substringBefore("_")
             var countryToSet = locale.substringAfter("_", "")
 
-            if (locale == "" || !Constants.FeatureFlags.CUSTOM_LANGUAGE_SELECTION) { // go back to default
+            if (locale == "") { // go back to default
                 if (Build.VERSION.SDK_INT >= 24) {
                     Resources.getSystem().configuration.locales.get(0)
                 } else {

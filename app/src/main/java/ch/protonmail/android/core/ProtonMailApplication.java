@@ -211,9 +211,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         }
 
         // Try to upgrade TLS Provider if needed
-        if (Constants.FeatureFlags.TLS_12_UPGRADE) {
-            upgradeTlsProviderIfNeeded();
-        }
+        upgradeTlsProviderIfNeeded();
 
         // Initialize TrustKit for TLS Certificate Pinning
         TrustKit.initializeWithNetworkSecurityConfiguration(this);
