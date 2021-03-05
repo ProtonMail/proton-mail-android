@@ -26,10 +26,10 @@ import ch.protonmail.android.api.models.requests.ShowImages
 import ch.protonmail.android.api.models.requests.Signature
 import ch.protonmail.android.api.models.requests.SwipeLeft
 import ch.protonmail.android.api.models.requests.SwipeRight
-import retrofit2.Call
-
+import ch.protonmail.android.api.models.requests.ViewMode
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
@@ -69,5 +69,8 @@ interface MailSettingsService {
 
     @PUT("mail/v4/settings/images")
     fun updateAutoShowImages(@Body showImages: ShowImages): Call<ResponseBody>
+
+    @PUT("mail/v4/settings/viewmode")
+    fun updateViewMode(@Body viewMode: ViewMode): Call<ResponseBody>
 
 }
