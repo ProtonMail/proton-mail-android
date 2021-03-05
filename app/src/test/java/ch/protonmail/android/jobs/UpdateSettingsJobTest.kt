@@ -37,7 +37,7 @@ import io.mockk.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-private const val CONVERSATION_MODE_ON_VALUE = 0
+private const val VIEW_MODE_CONVERSATION = 0
 
 class UpdateSettingsJobTest {
 
@@ -73,6 +73,16 @@ class UpdateSettingsJobTest {
     }
 
     @Test
+    fun jobSavesMailSettingsToUserManagerWhenMailSettingsAreValid() {
+        val mailSettings = MailSettings()
+        updateSettings = UpdateSettingsJob(mailSettings = mailSettings)
+
+        updateSettings.onRun()
+
+        verify { mockUserManager.mailSettings = mailSettings }
+    }
+
+    @Test
     fun jobCallsApiToUpdateAutoShowImagesSettingWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
         val mailSettings = MailSettings()
         updateSettings = UpdateSettingsJob(mailSettings = mailSettings)
@@ -83,9 +93,9 @@ class UpdateSettingsJobTest {
     }
 
     @Test
-    fun jobCallsApiToUpdateConversationModeToggleWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
+    fun jobCallsApiToUpdateViewModeToggleWhenMailSettingsAreValidAndNotificationEmailDidNotChange() {
         val mailSettings = MailSettings()
-        mailSettings.viewMode = CONVERSATION_MODE_ON_VALUE
+        mailSettings.viewMode = VIEW_MODE_CONVERSATION
         updateSettings = UpdateSettingsJob(
             featureFlags = featureFlagsManager,
             mailSettings = mailSettings
@@ -98,7 +108,7 @@ class UpdateSettingsJobTest {
     }
 
     @Test
-    fun jobDoesNotCallApiToUpdateConversationModeToggleWhenConversationModeFeatureFlagIsFalse() {
+    fun jobDoesNotCallApiToUpdateViewModeToggleWhenViewModeFeatureFlagIsFalse() {
         val mailSettings = MailSettings()
         updateSettings = UpdateSettingsJob(
             featureFlags = featureFlagsManager,
