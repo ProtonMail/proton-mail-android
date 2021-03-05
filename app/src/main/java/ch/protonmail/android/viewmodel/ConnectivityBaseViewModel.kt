@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-internal const val NETWORK_CHECK_DELAY = 800L
+internal const val NETWORK_CHECK_DELAY = 1000L
 
 /**
  * Base view model for activities that require connectivity check logic.

@@ -715,6 +715,7 @@ class MailboxActivity :
         }
         syncUUID = UUID.randomUUID().toString()
         handler.postDelayed(FetchMessagesRetryRunnable(this), 3.seconds.toLongMilliseconds())
+        mailboxViewModel.checkConnectivityDelayed()
     }
 
     private fun checkRegistration() {
@@ -892,12 +893,12 @@ class MailboxActivity :
         val mailboxLocation = mailboxLocationMain.value
         menu.findItem(R.id.empty).isVisible =
             mailboxLocation in listOf(
-                MessageLocationType.DRAFT,
-                MessageLocationType.SPAM,
-                MessageLocationType.TRASH,
-                MessageLocationType.LABEL,
-                MessageLocationType.LABEL_FOLDER
-            )
+            MessageLocationType.DRAFT,
+            MessageLocationType.SPAM,
+            MessageLocationType.TRASH,
+            MessageLocationType.LABEL,
+            MessageLocationType.LABEL_FOLDER
+        )
         return super.onPrepareOptionsMenu(menu)
     }
 

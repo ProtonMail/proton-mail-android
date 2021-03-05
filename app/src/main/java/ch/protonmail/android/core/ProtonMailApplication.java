@@ -290,7 +290,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     public void startJobManager() {
         if (jobManager != null) {
-            mNetworkUtil.setCurrentlyHasConnectivity();
             jobManager.start();
         }
     }

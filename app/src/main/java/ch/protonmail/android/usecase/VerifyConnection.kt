@@ -28,7 +28,6 @@ import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.worker.PingWorker
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
@@ -40,17 +39,16 @@ import javax.inject.Inject
 
 /**
  * Use case responsible for scheduling Worker that sends a ping message through [PingWorker], processing the result
- * and listening to system network disconnections events. It emits LiveData<Boolean> with true corresponding to
- * network connection being available and false otherwise.
+ * and listening to system network disconnections events. It emits LiveData<Constants.ConnectionState> with CONNECTED
+ * corresponding to network connection being available and CAN'T_REACH_SERVER otherwise.
  *
- * The idea followed here is that when we get a disconnection event from the system and we no longer have a network
- * interface with an internet capability we will emit false from this use case and the UI should display a
- * no connection snackbar.
+ * The idea followed here is that when we get a disconnection event from the system and we no longer have access to the
+ * server we will emit CAN'T_REACH_SERVER from this use case and the UI should display a error state snackbar.
  *
  * In order to ensure that we have the connection back we schedule a ping message on a unique worker
  * (because we can go through somehow restricted network and
  * just a system connectivity event might be not enough to check if we can really reach our servers).
- * When the ping is successful we emit true from the use case, the UI should hide the snack bar etc.
+ * When the ping is successful we emit CONNECTED from the use case, the UI should hide the snack bar etc.
  */
 class VerifyConnection @Inject constructor(
     private val pingWorkerEnqueuer: PingWorker.Enqueuer,
@@ -62,16 +60,18 @@ class VerifyConnection @Inject constructor(
 
         val connectivityManagerFlow = flowOf(
             connectivityManager.isConnectionAvailableFlow(),
-            queueNetworkUtil.isBackendRespondingWithoutErrorFlow
         )
             .flattenMerge()
-            .distinctUntilChanged()
+            .filter {
+                it != Constants.ConnectionState.CONNECTED
+            }
             .onEach {
                 Timber.v("connectivityManagerFlow value: ${it.name}")
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
             }
 
         return flowOf(
+            queueNetworkUtil.isBackendRespondingWithoutErrorFlow,
             getPingStateList(pingWorkerEnqueuer.getWorkInfoState()),
             connectivityManagerFlow
         )
