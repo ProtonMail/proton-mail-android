@@ -149,7 +149,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val requestSlot = slot<OneTimeWorkRequest>()
             verify {
                 workManager.enqueueUniqueWork(
-                    "saveDraftUniqueWorkName-$messageId",
+                    "saveDraftUniqueWork-$messageId",
                     ExistingWorkPolicy.REPLACE,
                     capture(requestSlot)
                 )
@@ -892,7 +892,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)
             givenPreviousSenderAddress("")
-            every { messageDetailsRepository.findMessageByMessageDbId(messageDbId) } returns localMessage
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns localMessage
             every { messageFactory.createDraftApiRequest(localMessage) } returns apiDraftRequest
             coEvery { apiManager.updateDraft(remoteMessageId, apiDraftRequest, retrofitTag) } returns apiDraftResponse
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)

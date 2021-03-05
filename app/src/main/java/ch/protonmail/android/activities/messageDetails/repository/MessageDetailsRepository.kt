@@ -94,8 +94,8 @@ class MessageDetailsRepository @Inject constructor(
     fun findSearchMessageByIdAsync(messageId: String): LiveData<Message> =
         searchDatabaseDao.findMessageByIdAsync(messageId).asyncMap(readMessageBodyFromFileIfNeeded)
 
-    suspend fun findMessageByMessageDbId(dbId: Long, dispatcher: CoroutineDispatcher): Message? =
-        withContext(dispatcher) {
+    suspend fun findMessageByMessageDbId(dbId: Long): Message? =
+        withContext(dispatchers.Io) {
             findMessageByMessageDbIdBlocking(dbId)
         }
 

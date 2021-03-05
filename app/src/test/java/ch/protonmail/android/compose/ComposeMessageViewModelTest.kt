@@ -365,6 +365,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val message = Message()
             givenViewModelPropertiesAreInitialised()
             viewModel.setMessagePassword("messagePassword", "a hint to discover it", true, 172800L, false)
+            every { workManager.cancelUniqueWork(any()) } returns mockk()
 
             // When
             viewModel.sendMessage(message)
