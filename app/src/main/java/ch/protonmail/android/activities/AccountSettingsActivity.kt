@@ -22,11 +22,16 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.lifecycle.lifecycleScope
 import ch.protonmail.android.BuildConfig
+import android.view.View
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.settings.BaseSettingsActivity
 import ch.protonmail.android.activities.settings.SettingsEnum
+import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.events.LogoutEvent
+import ch.protonmail.android.featureflags.FeatureFlagsManager
+import ch.protonmail.android.jobs.UpdateSettingsJob
+import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
 import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.moveToLogin
@@ -35,11 +40,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 import me.proton.core.util.kotlin.EMPTY_STRING
 import me.proton.core.util.kotlin.equalsNoCase
 
 @AndroidEntryPoint
 class AccountSettingsActivity : BaseSettingsActivity() {
+
+    @Inject
+    lateinit var featureFlags: FeatureFlagsManager
 
     override fun getLayoutId(): Int = R.layout.activity_settings
 
@@ -125,8 +134,8 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         )
 
         val mailSettings = mUserManager.mailSettings
-        Timber.d("MailSettings ViewMode = ${mailSettings?.viewMode}")
-        setEnabled(SettingsEnum.CONVERSATION_MODE_TOGGLE, mailSettings?.viewMode == 0)
+        showCurrentViewModeSetting(mailSettings)
+        setupViewModeChangedListener(mailSettings)
     }
 
     @Subscribe
@@ -135,8 +144,31 @@ class AccountSettingsActivity : BaseSettingsActivity() {
         moveToLogin()
     }
 
+    /**
+     * Shows the current ViewMode setting.
+     * This will only have an effect when `FeatureFlags.isChangeViewModeFeatureEnabled()` is true.
+     * When feature flag is false, no item will be shown in settings and this will have no effect.
+     */
+    private fun showCurrentViewModeSetting(mailSettings: MailSettings?) {
+        Timber.d("MailSettings ViewMode = ${mailSettings?.viewMode}")
+        setEnabled(SettingsEnum.CONVERSATION_MODE_TOGGLE, mailSettings?.viewMode == 0)
+    }
+
+    private fun setupViewModeChangedListener(mailSettings: MailSettings?) {
+        setToggleListener(
+            SettingsEnum.CONVERSATION_MODE_TOGGLE,
+            object : (View, Boolean) -> Unit {
+                override fun invoke(view: View, isEnabled: Boolean) {
+                    mailSettings?.viewMode = if (isEnabled) 0 else 1
+                    mailSettings?.save()
+                    mJobManager.addJobInBackground(UpdateSettingsJob(mailSettings = mailSettings))
+                }
+            }
+        )
+    }
+
     private fun getSettingsItems(): Int {
-        return if (Constants.FeatureFlags.CONVERSATION_MODE_ENABLED) {
+        return if (featureFlags.isChangeViewModeFeatureEnabled()) {
             R.raw.acc_settings_structure_with_conversation_mode_toggle
         } else {
             R.raw.acc_settings_structure

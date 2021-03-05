@@ -30,6 +30,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_OLD_PASSWORD_INCORRECT
 import ch.protonmail.android.api.services.LoginService
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.SettingsChangedEvent
+import ch.protonmail.android.featureflags.FeatureFlagsManager
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
 import ch.protonmail.android.utils.Logger
@@ -51,7 +52,8 @@ class UpdateSettingsJob(
     private val backPressed: Boolean = false,
     private val addressId: String = "",
     private val password: ByteArray = byteArrayOf(),
-    private val twoFactor: String = ""
+    private val twoFactor: String = "",
+    private val featureFlags: FeatureFlagsManager = FeatureFlagsManager()
 ) : ProtonMailBaseJob(Params(Priority.LOW).requireNetwork()) {
     private var oldEmail: String? = null
 
@@ -165,9 +167,8 @@ class UpdateSettingsJob(
                 if (actionRightSwipeChanged) {
                     getApi().updateRightSwipe(mailSettings.rightSwipeAction)
                 }
-                if (this.mailSettings != null) {
-                    getApi().updateAutoShowImages(this.mailSettings.showImagesFrom.flag)
-                    getApi().updateViewMode(mailSettings.viewMode)
+                if (mailSettings != null) {
+                    updateMailSettings(mailSettings)
                 }
                 AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.SUCCESS, oldEmail, backPressed, null))
             }
@@ -175,5 +176,13 @@ class UpdateSettingsJob(
             AppUtil.postEventOnUi(SettingsChangedEvent(AuthStatus.FAILED, null, backPressed, e.message))
         }
 
+    }
+
+    private fun updateMailSettings(mailSettings: MailSettings) {
+        getApi().updateAutoShowImages(mailSettings.showImages)
+
+        if (featureFlags.isChangeViewModeFeatureEnabled()) {
+            getApi().updateViewMode(mailSettings.viewMode)
+        }
     }
 }
