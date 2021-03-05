@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -29,6 +29,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 // TODO remove when we change name of this class to MessagesDao and *Factory to *Database
 typealias MessagesDao = MessagesDatabase
@@ -62,7 +64,7 @@ abstract class MessagesDatabase {
     abstract fun getMessagesCountByLocation(location: Int): Int
 
     @Query(
-        """SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES 
+        """SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES
 		WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  """
     )
     abstract fun getMessagesCountByByLabelId(labelId: String): Int
@@ -88,9 +90,17 @@ abstract class MessagesDatabase {
 
     fun findMessageByIdObservable(messageId: String) = findMessageInfoByIdObservable(messageId)
 
-    fun findMessageByMessageDbId(messageDbId: Long) = findMessageInfoByDbId(messageDbId)?.also {
+    fun findMessageByMessageDbIdBlocking(messageDbId: Long) = findMessageInfoByDbIdBlocking(messageDbId)?.also {
         it.Attachments = it.attachmentsBlocking(this)
     }
+
+    fun findMessageByDbId(dbId: Long): Flow<Message?> =
+        findMessageInfoByDbId(dbId).map { message ->
+            return@map message?.let {
+                it.Attachments = it.attachmentsBlocking(this)
+                it
+            }
+        }
 
     @JvmOverloads
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0) = findAllMessageInfoByLastMessageAccessTime(laterThan).also {
@@ -115,7 +125,10 @@ abstract class MessagesDatabase {
     protected abstract fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
-    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Message?
+    protected abstract fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
+
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
+    protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>

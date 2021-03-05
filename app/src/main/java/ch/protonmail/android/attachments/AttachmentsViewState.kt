@@ -17,14 +17,11 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-/**
- * Params for the Application and various modules
- * @author Davide Farella
- */
-object ProtonMail {
-    const val versionName = "1.13.28"
-    const val versionCode = 761
+package ch.protonmail.android.attachments
 
-    const val targetSdk = 30
-    const val minSdk = 21
+import ch.protonmail.android.api.models.room.messages.Attachment
+
+sealed class AttachmentsViewState {
+    object MissingConnectivity : AttachmentsViewState()
+    data class UpdateAttachments(val attachments: List<Attachment>) : AttachmentsViewState()
 }

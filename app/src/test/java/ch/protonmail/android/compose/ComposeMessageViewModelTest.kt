@@ -20,6 +20,7 @@
 package ch.protonmail.android.compose
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
@@ -93,6 +94,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
 
     @MockK
     lateinit var verifyConnection: VerifyConnection
+
+    @MockK
+    lateinit var workManager: WorkManager
 
     @InjectMockKs
     lateinit var viewModel: ComposeMessageViewModel

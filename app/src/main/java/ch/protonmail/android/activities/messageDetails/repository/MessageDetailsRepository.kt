@@ -50,6 +50,7 @@ import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.equalsNoCase
@@ -95,7 +96,7 @@ class MessageDetailsRepository @Inject constructor(
 
     suspend fun findMessageByMessageDbId(dbId: Long, dispatcher: CoroutineDispatcher): Message? =
         withContext(dispatcher) {
-            findMessageByMessageDbId(dbId)
+            findMessageByMessageDbIdBlocking(dbId)
         }
 
     fun findMessageByIdBlocking(messageId: String): Message? =
@@ -116,8 +117,11 @@ class MessageDetailsRepository @Inject constructor(
     fun findMessageByIdObservable(messageId: String): Flowable<Message> =
         messagesDao.findMessageByIdObservable(messageId).map(readMessageBodyFromFileIfNeeded)
 
-    fun findMessageByMessageDbId(messageDbId: Long): Message? =
-        messagesDao.findMessageByMessageDbId(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+    fun findMessageByMessageDbIdBlocking(messageDbId: Long): Message? =
+        messagesDao.findMessageByMessageDbIdBlocking(messageDbId)?.apply { readMessageBodyFromFileIfNeeded(this) }
+
+    fun findMessageByDbId(messageDbId: Long): Flow<Message?> =
+        messagesDao.findMessageByDbId(messageDbId)
 
     fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): List<Message> =
         messagesDao.findAllMessageByLastMessageAccessTime(laterThan).mapNotNull { readMessageBodyFromFileIfNeeded(it) }

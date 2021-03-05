@@ -52,7 +52,7 @@ class MessagesDatabaseTest {
         val id = "testId"
         expected.messageId = id
         val dbId = initiallyEmptyDatabase.saveMessage(expected)
-        val actual = initiallyEmptyDatabase.findMessageByMessageDbId(dbId)
+        val actual = initiallyEmptyDatabase.findMessageByMessageDbIdBlocking(dbId)
         Assert.assertEquals(expected, actual)
     }
 
