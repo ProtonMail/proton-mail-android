@@ -142,9 +142,9 @@ public class LoginActivity extends BaseLoginActivity {
         mPasswordEditText.setFocusable(false);
         mUsernameEditText.setOnTouchListener(mTouchListener);
         mPasswordEditText.setOnTouchListener(mTouchListener);
-        final Id userId = userManager.getCurrentUserId();
-        if (userId != null) {
-            mUsernameEditText.setText(userId.getS());
+        final ch.protonmail.android.domain.entity.user.User currentUser = userManager.getCurrentUserBlocking();
+        if (currentUser != null) {
+            mUsernameEditText.setText(currentUser.getName().getS());
             mPasswordEditText.requestFocus();
         }
 

@@ -39,11 +39,11 @@ import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.PasswordChangeEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
-import ch.protonmail.android.utils.Logger
 import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
+import timber.log.Timber
 
 class ChangePasswordJob(
     private val passwordType: Int,
@@ -135,7 +135,7 @@ class ChangePasswordJob(
         for (keys in userKeys) {
             updateKey(keys, generatedMailboxPassword, openPGP, privateKeyBodies, false)
         }
-        if(!getUserManager().user.legacyAccount) { // non-empty body for UserKeys for migrated users
+        if (!getUserManager().user.legacyAccount) { // non-empty body for UserKeys for migrated users
             userPrivateKeyBodies.addAll(privateKeyBodies)
         }
         for (address in userAddresses) {
@@ -194,16 +194,15 @@ class ChangePasswordJob(
         throwOnError: Boolean
     ) {
         try {
-            try {
-                val newPrivateKey = openPGP.updatePrivateKeyPassphrase(keys.privateKey,
-                    getUserManager().getCurrentUserMailboxPassword(), generatedMailboxPassword)
-                val privateKeyBody = PrivateKeyBody(newPrivateKey, keys.id)
-                privateKeyBody.let { privateKeyBodies.add(privateKeyBody) }
-            } catch (e: Exception) {
-                // should catch keys that are not "decryptable" with the old mailbox password
-                Logger.doLogException(TAG_CHANGE_PASSWORD_JOB, e)
-            }
+            val newPrivateKey = openPGP.updatePrivateKeyPassphrase(
+                keys.privateKey,
+                getUserManager().getCurrentUserMailboxPassword(),
+                generatedMailboxPassword
+            )
+            val privateKeyBody = PrivateKeyBody(newPrivateKey, keys.id)
+            privateKeyBody.let { privateKeyBodies.add(privateKeyBody) }
         } catch (e: Exception) {
+            Timber.e(e)
             if (throwOnError) {
                 AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.FAILED))
             }
@@ -217,7 +216,4 @@ class ChangePasswordJob(
         AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.FAILED))
     }
 
-    companion object {
-        private const val TAG_CHANGE_PASSWORD_JOB = "ChangePasswordJob"
-    }
 }
