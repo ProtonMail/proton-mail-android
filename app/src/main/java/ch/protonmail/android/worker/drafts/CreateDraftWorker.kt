@@ -93,13 +93,15 @@ class CreateDraftWorker @WorkerInject constructor(
         val createDraftRequest = messageFactory.createDraftApiRequest(message)
 
         parentId?.let {
-            createDraftRequest.parentID = parentId
-            createDraftRequest.action = getInputActionType().messageActionTypeValue
-            val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
-            val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
+            if (isDraftBeingCreated(message)) {
+                createDraftRequest.parentID = parentId
+                createDraftRequest.action = getInputActionType().messageActionTypeValue
+                val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
+                val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
 
-            buildDraftRequestParentAttachments(attachments, senderAddress).forEach {
-                createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
+                buildDraftRequestParentAttachments(attachments, senderAddress).forEach {
+                    createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
+                }
             }
         }
 
@@ -110,7 +112,7 @@ class CreateDraftWorker @WorkerInject constructor(
         val messageId = requireNotNull(message.messageId)
 
         return runCatching {
-            if (MessageUtils.isLocalMessageId(message.messageId)) {
+            if (isDraftBeingCreated(message)) {
                 apiManager.createDraft(createDraftRequest)
             } else {
                 apiManager.updateDraft(
@@ -139,6 +141,9 @@ class CreateDraftWorker @WorkerInject constructor(
             }
         )
     }
+
+    private fun isDraftBeingCreated(message: Message) =
+        MessageUtils.isLocalMessageId(message.messageId)
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
         val localAttachments = localDraft.Attachments.filterNot { it.isUploaded }

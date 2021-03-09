@@ -195,7 +195,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerSetsParentIdAndActionTypeOnCreateDraftRequestWhenParentIdIsGiven() {
+    fun workerSetsParentIdAndActionTypeOnCreateDraftRequestWhenParentIdIsGivenAndDraftIsBeingCreated() {
         runBlockingTest {
             // Given
             val parentId = "89345"
@@ -232,7 +232,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
     }
 
     @Test
-    fun workerSetsSenderAndMessageBodyOnCreateDraftRequest() {
+    fun workerSetsSenderAndMessageBodyOnCreateOrUpdateDraftRequest() {
         runBlockingTest {
             // Given
             val messageDbId = 345L
@@ -527,6 +527,41 @@ class CreateDraftWorkerTest : CoroutinesTest {
             worker.doWork()
 
             // Then
+            verify(exactly = 0) { apiDraftMessage.addAttachmentKeyPacket(any(), any()) }
+        }
+    }
+
+    @Test
+    fun workerDoesNotAddParentDataToRequestWhenDraftCreationAlreadyHappenedAndDraftIsBeingUpdated() {
+        runBlockingTest {
+            // Given
+            val parentId = "88237"
+            val messageDbId = 9238L
+            val message = Message().apply {
+                dbId = messageDbId
+                messageId = "remote-message-id2837"
+                addressID = "addressId835"
+                messageBody = "messageBody"
+            }
+
+            val apiDraftMessage = mockk<DraftBody>(relaxed = true)
+            givenMessageIdInput(messageDbId)
+            givenParentIdInput(parentId)
+            givenActionTypeInput(FORWARD)
+            givenPreviousSenderAddress("")
+            every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
+            every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
+            val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
+            val parentMessage = mockk<Message> {
+                coEvery { attachments(any()) } returns listOf(attachment)
+            }
+            every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
+
+            // When
+            worker.doWork()
+
+            // Then
+            verify(exactly = 0) { apiDraftMessage.parentID = any() }
             verify(exactly = 0) { apiDraftMessage.addAttachmentKeyPacket(any(), any()) }
         }
     }
