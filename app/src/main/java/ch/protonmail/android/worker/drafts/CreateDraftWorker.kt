@@ -99,17 +99,21 @@ class CreateDraftWorker @WorkerInject constructor(
                 val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
                 val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
 
-                buildDraftRequestParentAttachments(attachments, senderAddress).forEach {
+                buildParentAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
                     createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
                 }
             }
         }
 
+        val messageId = requireNotNull(message.messageId)
+        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId)
+        buildMessageAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
+            createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
+        }
+
         val encryptedMessage = requireNotNull(message.messageBody)
         createDraftRequest.setMessageBody(encryptedMessage)
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
-
-        val messageId = requireNotNull(message.messageId)
 
         return runCatching {
             if (isDraftBeingCreated(message)) {
@@ -140,6 +144,26 @@ class CreateDraftWorker @WorkerInject constructor(
                 retryOrFail(it.message, createDraftRequest.message.subject)
             }
         )
+    }
+
+    private fun buildMessageAttachmentsKeyPacketsMap(
+        attachments: List<Attachment>,
+        senderAddress: Address
+    ): Map<String, String> {
+        val draftAttachments = mutableMapOf<String, String>()
+        attachments.forEach { attachment ->
+
+            val keyPackets = if (isSenderAddressChanged()) {
+                reEncryptAttachment(senderAddress, attachment)
+            } else {
+                attachment.keyPackets
+            }
+
+            keyPackets?.let {
+                draftAttachments[attachment.attachmentId!!] = keyPackets
+            }
+        }
+        return draftAttachments
     }
 
     private fun isDraftBeingCreated(message: Message) =
@@ -176,7 +200,7 @@ class CreateDraftWorker @WorkerInject constructor(
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 
-    private fun buildDraftRequestParentAttachments(
+    private fun buildParentAttachmentsKeyPacketsMap(
         attachments: List<Attachment>?,
         senderAddress: Address
     ): Map<String, String> {
@@ -209,10 +233,15 @@ class CreateDraftWorker @WorkerInject constructor(
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 
         return attachment.keyPackets?.let {
-            val keyPackage = base64.decode(it)
-            val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
-            val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
-            return base64.encode(newKeyPackage)
+            return try {
+                val keyPackage = base64.decode(it)
+                val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
+                val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
+                return base64.encode(newKeyPackage)
+            } catch (exception: Exception) {
+                Timber.d("Re-encrypting message attachments threw exception $exception")
+                attachment.keyPackets
+            }
         }
     }
 
