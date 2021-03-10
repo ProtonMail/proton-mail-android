@@ -60,18 +60,16 @@ class VerifyConnection @Inject constructor(
 
         val connectivityManagerFlow = flowOf(
             connectivityManager.isConnectionAvailableFlow(),
+            queueNetworkUtil.isBackendRespondingWithoutErrorFlow
         )
             .flattenMerge()
-            .filter {
-                it != Constants.ConnectionState.CONNECTED
-            }
+            .filter { it != Constants.ConnectionState.CONNECTED } // observe only disconnections
             .onEach {
                 Timber.v("connectivityManagerFlow value: ${it.name}")
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
             }
 
         return flowOf(
-            queueNetworkUtil.isBackendRespondingWithoutErrorFlow,
             getPingStateList(pingWorkerEnqueuer.getWorkInfoState()),
             connectivityManagerFlow
         )

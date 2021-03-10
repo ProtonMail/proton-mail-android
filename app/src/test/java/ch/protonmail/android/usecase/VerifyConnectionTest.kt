@@ -31,7 +31,6 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -90,7 +89,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
 
         // then
         assertEquals(expected, resultList)
-        verify(exactly = 2) { workEnqueuer.enqueue() }
+        verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
@@ -117,7 +116,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
 
         // then
         assertEquals(expected, resultList)
-        verify(exactly = 2) { workEnqueuer.enqueue() }
+        verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
@@ -169,7 +168,7 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
 
         // then
         assertEquals(expected, response)
-        verify(exactly = 3) { workEnqueuer.enqueue() }
+        verify(exactly = 2) { workEnqueuer.enqueue() }
     }
 
     @Test
@@ -221,6 +220,6 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
 
         // then
         assertEquals(expected, response)
-        verify(exactly = 2) { workEnqueuer.enqueue() }
+        verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 }
