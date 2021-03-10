@@ -20,6 +20,9 @@ package ch.protonmail.android.api.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +63,39 @@ public class CreateSubscriptionBody {
         this.payment = payment;
         this.couponCode = couponCode;
         this.planIds = new HashMap<>();
-        for (String plan: planIds) {
+        for (String plan : planIds) {
             this.planIds.put(plan, 1);
         }
         this.cycle = cycle;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CreateSubscriptionBody that = (CreateSubscriptionBody) o;
+
+        return new EqualsBuilder()
+                .append(amount, that.amount)
+                .append(cycle, that.cycle)
+                .append(currency, that.currency)
+                .append(payment, that.payment)
+                .append(couponCode, that.couponCode)
+                .append(planIds, that.planIds)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(amount)
+                .append(currency)
+                .append(payment)
+                .append(couponCode)
+                .append(planIds)
+                .append(cycle)
+                .toHashCode();
+    }
 }
