@@ -90,13 +90,7 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse
 
-    @Throws(IOException::class)
-    fun createDraftBlocking(draftBody: DraftBody): MessageResponse?
-
     suspend fun createDraft(draftBody: DraftBody): MessageResponse
-
-    @Throws(IOException::class)
-    fun updateDraftBlocking(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse?
 
     suspend fun updateDraft(
         messageId: String,

@@ -48,12 +48,12 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Assert
+import org.junit.Assert.assertArrayEquals
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class UploadAttachmentsTest : CoroutinesTest {
 
@@ -135,12 +135,12 @@ class UploadAttachmentsTest : CoroutinesTest {
             val actualMessageLocalId = inputData.getString(KEY_INPUT_UPLOAD_ATTACHMENTS_MESSAGE_ID)
             val actualIsMessageSending = inputData.getBoolean(KEY_INPUT_UPLOAD_ATTACHMENTS_IS_MESSAGE_SENDING, false)
             val actualAttachmentIds = inputData.getStringArray(KEY_INPUT_UPLOAD_ATTACHMENTS_ATTACHMENT_IDS)
-            Assert.assertEquals(message.messageId, actualMessageLocalId)
-            Assert.assertEquals(true, actualIsMessageSending)
-            Assert.assertArrayEquals(attachmentIds.toTypedArray(), actualAttachmentIds)
-            Assert.assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
-            Assert.assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
-            Assert.assertEquals(20000, workSpec.backoffDelayDuration)
+            assertEquals(message.messageId, actualMessageLocalId)
+            assertEquals(true, actualIsMessageSending)
+            assertArrayEquals(attachmentIds.toTypedArray(), actualAttachmentIds)
+            assertEquals(NetworkType.CONNECTED, constraints.requiredNetworkType)
+            assertEquals(BackoffPolicy.EXPONENTIAL, workSpec.backoffPolicy)
+            assertEquals(20000, workSpec.backoffDelayDuration)
             verify { workManager.getWorkInfoByIdLiveData(any()) }
         }
     }
@@ -171,7 +171,7 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val result = uploadAttachments.doWork()
 
-            Assert.assertEquals(
+            assertEquals(
                 ListenableWorker.Result.failure(
                     workDataOf(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to "Message not found")
                 ),
@@ -194,7 +194,7 @@ class UploadAttachmentsTest : CoroutinesTest {
             val result = uploadAttachments.doWork()
 
             verify { pendingActionsDao.insertPendingForUpload(any()) }
-            Assert.assertEquals(ListenableWorker.Result.success(), result)
+            assertEquals(ListenableWorker.Result.success(), result)
         }
     }
 
@@ -265,7 +265,7 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val result = uploadAttachments.doWork()
 
-            Assert.assertEquals(ListenableWorker.Result.retry(), result)
+            assertEquals(ListenableWorker.Result.retry(), result)
             verify { pendingActionsDao.deletePendingUploadByMessageId("messageId8238") }
         }
     }
@@ -300,7 +300,7 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val result = uploadAttachments.doWork()
 
-            Assert.assertEquals(
+            assertEquals(
                 ListenableWorker.Result.failure(
                     workDataOf(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to "Failed to upload attachment2")
                 ),
@@ -329,7 +329,7 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val result = uploadAttachments.doWork()
 
-            Assert.assertEquals(ListenableWorker.Result.retry(), result)
+            assertEquals(ListenableWorker.Result.retry(), result)
             verify { pendingActionsDao.deletePendingUploadByMessageId("messageId9273584") }
         }
     }
@@ -353,7 +353,7 @@ class UploadAttachmentsTest : CoroutinesTest {
 
             val result = uploadAttachments.doWork()
 
-            Assert.assertEquals(
+            assertEquals(
                 ListenableWorker.Result.failure(
                     workDataOf(KEY_OUTPUT_RESULT_UPLOAD_ATTACHMENTS_ERROR to "Failed to upload public key")
                 ),

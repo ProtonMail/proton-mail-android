@@ -123,10 +123,6 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse =
         ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
 
-    @Throws(IOException::class)
-    override fun createDraftBlocking(draftBody: DraftBody): MessageResponse? =
-        ParseUtils.parse(service.createDraftCall(draftBody).execute())
-
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = service.createDraft(draftBody)
 
     override suspend fun updateDraft(
@@ -134,13 +130,6 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         draftBody: DraftBody,
         retrofitTag: RetrofitTag
     ): MessageResponse = service.updateDraft(messageId, draftBody, retrofitTag)
-
-    @Throws(IOException::class)
-    override fun updateDraftBlocking(
-        messageId: String,
-        draftBody: DraftBody,
-        retrofitTag: RetrofitTag
-    ): MessageResponse? = ParseUtils.parse(service.updateDraftCall(messageId, draftBody, retrofitTag).execute())
 
     override suspend fun sendMessage(
         messageId: String,

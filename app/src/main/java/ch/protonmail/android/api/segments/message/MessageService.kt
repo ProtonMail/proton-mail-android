@@ -103,23 +103,11 @@ interface MessageService {
 
     @POST("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun createDraftCall(@Body draftBody: DraftBody): Call<MessageResponse>
-
-    @POST("mail/v4/messages")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun createDraft(@Body draftBody: DraftBody): MessageResponse
 
     @GET("mail/v4/messages")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     fun fetchSingleMessageMetadata(@Query("ID") messageId: String): Call<MessagesResponse>
-
-    @PUT("mail/v4/messages/{messageId}")
-    @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    fun updateDraftCall(
-        @Path("messageId") messageId: String,
-        @Body draftBody: DraftBody,
-        @Tag retrofitTag: RetrofitTag
-    ): Call<MessageResponse>
 
     @PUT("mail/v4/messages/{messageId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
