@@ -33,11 +33,13 @@ import ch.protonmail.android.uitests.testsHelper.TestData
 import ch.protonmail.android.uitests.testsHelper.TestExecutionWatcher
 import ch.protonmail.android.uitests.testsHelper.User
 import ch.protonmail.android.uitests.testsHelper.testRail.TestRailService
+import ch.protonmail.android.utils.Logger
 import me.proton.core.test.android.instrumented.CoreTest
 import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.copyAssetFileToInternalFilesStorage
 import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.deleteDownloadArtifactsFolder
 import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.prepareArtifactsDir
 import me.proton.core.test.android.instrumented.devicesetup.DeviceSetup.setupDevice
+import org.apache.commons.logging.Log
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -96,6 +98,7 @@ open class BaseTest : CoreTest() {
             // BeforeClass workaround for Android Test Orchestrator - shared prefs are not cleared
             val isFirstRun = sharedPrefs.getBoolean(oneTimeRunFlag, true)
             if (isFirstRun) {
+                setupDeviceLocally(false)
                 setupDevice(true)
                 prepareArtifactsDir(artifactsPath)
                 prepareArtifactsDir(downloadArtifactsPath)
@@ -130,6 +133,19 @@ open class BaseTest : CoreTest() {
         private fun setUser(user: String): User {
             val userParams = user.split(",")
             return User(userParams[email], userParams[password], userParams[mailboxPassword], userParams[twoFaKey])
+        }
+
+        private fun setupDeviceLocally(shouldDisableNotifications: Boolean) {
+            automation.executeShellCommand("settings put global development_settings_enabled 1")
+            automation.executeShellCommand("settings put secure long_press_timeout 2000")
+            automation.executeShellCommand("settings put global animator_duration_scale 0.0")
+            automation.executeShellCommand("settings put global transition_animation_scale 0.0")
+            automation.executeShellCommand("settings put global window_animation_scale 0.0")
+            automation.executeShellCommand("settings put secure show_ime_with_hard_keyboard 0")
+            if (shouldDisableNotifications) {
+                // Disable floating notification pop-ups.
+                automation.executeShellCommand("settings put global heads_up_notifications_enabled 0")
+            }
         }
 
         private fun copyAssetsToDownload() {

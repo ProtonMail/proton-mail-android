@@ -68,7 +68,7 @@ const val `Proton-shared-preferences version` = "0.2.3"         // Released: Dec
 const val `Proton-work-manager version` =       "0.2.2"         // Released: Dec 18, 2020
 // Test
 const val `Proton-android-test version` =       "0.3.3"         // Released: Dec 18, 2020
-const val `Proton-android-instr-test version` = "0.3.2"         // Released: Jan 08, 2020
+const val `Proton-android-instr-test version` = "0.3.3"         // Released: Jan 08, 2020
 const val `Proton-kotlin-test version` =        "0.2"           // Released: Oct 21, 2020
 
 const val `Proton-domain version` =             "0.2.4"         // Released: Nov 18, 2020

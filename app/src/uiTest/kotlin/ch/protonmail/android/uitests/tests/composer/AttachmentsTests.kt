@@ -92,7 +92,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .clickAttachment(pngFile)
@@ -115,7 +114,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .clickAttachment(jpegFile)
@@ -138,7 +136,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .clickAttachment(docxFile)
@@ -161,7 +158,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .clickAttachment(zipFile)
@@ -184,7 +180,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .clickAttachment(pdfFile)
@@ -215,7 +210,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .clickAttachment(pngFile)
@@ -247,7 +241,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .clickAttachment(pngFile)
@@ -264,7 +257,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -277,7 +269,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -290,7 +281,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -306,7 +296,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -322,7 +311,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessageEOAndExpiryTimeWithAttachment(to, subject, body, 1, password, hint)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -336,7 +324,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessageCameraCaptureAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -350,7 +337,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessageTwoImageCaptureAttachments(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -365,7 +351,6 @@ class AttachmentsTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .expandAttachments()
             .verify { publicKeyIsAttached(publicKey)}

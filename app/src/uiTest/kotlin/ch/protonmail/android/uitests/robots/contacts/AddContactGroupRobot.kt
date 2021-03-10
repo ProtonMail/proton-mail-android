@@ -34,14 +34,14 @@ class AddContactGroupRobot {
         return GroupDetailsRobot()
     }
 
-    fun groupName(name: String): AddContactGroupRobot {
-        UIActions.wait.forViewWithId(R.id.contactGroupName).insert(name)
-        return this
-    }
-
     fun manageAddresses(): ManageAddressesRobot {
         UIActions.id.clickViewWithId(R.id.manageAddresses)
         return ManageAddressesRobot()
+    }
+
+    fun groupName(name: String): AddContactGroupRobot {
+        UIActions.wait.forViewWithId(R.id.contactGroupName).insert(name)
+        return this
     }
 
     fun done(): ContactsRobot {

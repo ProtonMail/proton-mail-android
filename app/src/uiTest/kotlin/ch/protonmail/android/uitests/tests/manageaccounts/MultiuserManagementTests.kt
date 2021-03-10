@@ -83,9 +83,7 @@ class MultiuserManagementTests : BaseTest() {
             .accountsList()
             .manageAccounts()
             .removeAllAccounts()
-            .verify {
-                loginScreenDisplayed()
-            }
+            .verify { loginScreenDisplayed() }
     }
 
     @Category(SmokeTest::class)
@@ -217,7 +215,6 @@ class MultiuserManagementTests : BaseTest() {
             .verify { accountLoggedOut(onePassUserWith2FA.name) }
     }
 
-    @Category(SmokeTest::class)
     @Test
     fun switchAccount() {
         loginRobot

@@ -185,7 +185,6 @@ class ContactsTests : BaseTest() {
             .navigateUpToInbox()
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 
@@ -202,7 +201,6 @@ class ContactsTests : BaseTest() {
             .navigateUpToInbox()
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 }

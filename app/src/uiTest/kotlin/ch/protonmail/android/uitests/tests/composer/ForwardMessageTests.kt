@@ -52,7 +52,6 @@ class ForwardMessageTests : BaseTest() {
             .sendMessage(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .forward()
             .forwardMessage(to, body)
@@ -73,11 +72,11 @@ class ForwardMessageTests : BaseTest() {
             .sendMessageWithFileAttachment(to, subject, body)
             .menuDrawer()
             .sent()
-            .refreshMessageList()
             .clickMessageBySubject(subject)
             .forward()
             .forwardMessage(to, body)
             .navigateUpToSent()
+            .refreshMessageList()
             .verify { messageWithSubjectExists(fwSubject(subject)) }
     }
 
@@ -98,6 +97,7 @@ class ForwardMessageTests : BaseTest() {
             .navigateUpToInbox()
             .menuDrawer()
             .sent()
+            .refreshMessageList()
             .verify { messageWithSubjectExists(subject) }
     }
 }
