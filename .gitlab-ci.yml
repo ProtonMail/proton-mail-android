@@ -278,6 +278,10 @@ include:
     ref: master
     file: '/jobs/commit-locales.gitlab-ci.yml'
 
+  - project: 'translations/spellcheck'
+    ref: master
+    file: '/jobs/android.gitlab-ci.yml'
+
   - project: 'agarroux/publish-github'
     ref: master
     file: '/jobs/release.gitlab-ci.yml'
@@ -299,6 +303,12 @@ i18n-commit-locales:
   except:
     variables:
       - $TEST_TYPE == "feature" || $TEST_TYPE == "regression"
+
+i18n-spellcheck:
+  stage: analyze
+  extends: .spellcheck-common
+  variables:
+    I18N_MAIN_BRANCH: develop
 
 release-publish-github:
   stage: manual-release
