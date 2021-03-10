@@ -29,7 +29,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="sign_out">Logga ut</string>
     <string name="sign_out_question">Är du säker på att du vill logga ut?</string>
     <string name="mailbox_password">Lösenord för brevlådan</string>
-    <string name="two_factor_code">Tvåfaktors Kod</string>
+    <string name="two_factor_code">Tvåfaktorskod</string>
     <string name="processing_request">Din begäran behandlas</string>
     <!-- should check for html tag -->
     <string name="need_to_be_logged_in">Du är inte inloggad!</string>
@@ -46,7 +46,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="login_failure">Inloggningen misslyckades</string>
     <string name="invalid_server_proof">Ogiltigt server autentisering</string>
     <string name="invalid_credentials">Ogiltiga inloggningsuppgifter</string>
-    <string name="incorrect_key_parameters">Felaktig nyckelparametrar</string>
+    <string name="incorrect_key_parameters">Incorrect key parameters</string>
     <string name="invalid_mailbox_password">Ogiltigt lösenord</string>
     <string name="not_signed_up">ProtonMail Android Beta ingår inte i ditt konto</string>
     <string name="no_network">Inget nätverk</string>
@@ -90,9 +90,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="compose_message">Skriv meddelande</string>
     <string name="empty_folder">Töm mapp</string>
     <string name="view_headers">Visa Headers</string>
-    <string name="message_headers">Meddelandets Header</string>
+    <string name="message_headers">Message Header</string>
     <string name="delete_message">Radera meddelande</string>
-    <string name="delete_messages">Radera meddelande</string>
+    <string name="delete_messages">Delete messages</string>
     <string name="add_label">Lägg till etikett</string>
     <string name="add_star">Stjärnmärk</string>
     <string name="remove_star">Ta bort stjärnmärkning</string>
@@ -102,7 +102,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="move_to_trash">Flytta till papperskorgen</string>
     <string name="move_to_spam">Flytta till Skräppost</string>
     <string name="move_to_inbox">Flytta till Inkorgen</string>
-    <string name="are_you_sure_empty">Är du säker på att du vill radera alla meddelanden från denna katalog?</string>
+    <string name="are_you_sure_empty">Are you sure you want to delete all messages from this folder?</string>
     <string name="send">Skicka</string>
     <string name="selected">Valda</string>
     <string name="no_messages">Inga meddelanden</string>
@@ -122,13 +122,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="forward">Vidarebefordra</string>
     <string name="subject">Ämne</string>
     <string name="email_subject">E-post ämne</string>
-    <string name="define_message_password">Meddelande Lösenord</string>
-    <string name="confirm_message_password">Bekräfta Lösenord</string>
-    <string name="define_password_hint">Ange Ledtråd (Valfritt)</string>
+    <string name="define_message_password">Message Password</string>
+    <string name="confirm_message_password">Confirm Password</string>
+    <string name="define_password_hint">Define Hint (Optional)</string>
     <string name="message_passwords_do_not_match">Inloggningslösenordet stämmer inte</string>
     <string name="eo_passwords_do_not_match">Lösenorden matchar inte</string>
-    <string name="define_expiration_period">Ange ett Utgångsdatum</string>
-    <string name="set_message_expiration">Ange när Meddelandet ska Upphöra att gälla</string>
+    <string name="define_expiration_period">Define Expiration Period</string>
+    <string name="set_message_expiration">Set Message Expiration</string>
     <string name="days">Dagar</string>
     <string name="hours">Timmar</string>
     <string name="max_labels_exceeded">Meddelandet %1$s kan inte ha mer än %2$d etiketter.</string>
@@ -207,7 +207,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="enter">Mata in</string>
     <string name="cancel">Avbryt</string>
     <string name="close">Stäng</string>
-    <string name="change_password">Byt Lösenord</string>
+    <string name="change_password">Ändra lösenord</string>
     <string name="change_mailbox_password">Ändra lösenord för brevlådan</string>
     <string name="eo_password_title">Ange lösenord</string>
     <string name="eo_password_subtitle">Ange ett lösenord för att kryptera detta meddelande för icke-ProtonMail-användare</string>

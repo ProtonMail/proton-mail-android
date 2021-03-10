@@ -68,14 +68,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="inbox_option">ВХІДНІ</string>
     <string name="starred_option">ПОЗНАЧЕНІ</string>
     <string name="drafts_option">ЧЕРНЕТКИ</string>
-    <string name="sent_option">ВІДПРАВЛЕНІ</string>
+    <string name="sent_option">НАДІСЛАНІ</string>
     <string name="archive_option">АРХІВ</string>
     <string name="trash_option">КОШИК</string>
     <string name="spam_option">СПАМ</string>
     <string name="inbox">Вхідні</string>
     <string name="starred">Вибрані</string>
     <string name="drafts">Чернетки</string>
-    <string name="sent">Відправлені</string>
+    <string name="sent">Надіслані</string>
     <string name="archive">Архів</string>
     <string name="trash">Кошик</string>
     <string name="spam">Спам</string>
@@ -122,7 +122,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="reply_all">Відповісти всім</string>
     <string name="forward">Переслати</string>
     <string name="subject">Тема</string>
-    <string name="email_subject">Email subject</string>
+    <string name="email_subject">Тема листа</string>
     <string name="define_message_password">Пароль повідомлення</string>
     <string name="confirm_message_password">Підтвердити пароль</string>
     <string name="define_password_hint">Вкажіть підказку (необов\'язково)</string>
@@ -188,27 +188,27 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="yes">Так</string>
     <string name="no">Ні</string>
     <string name="okay">Ок</string>
-    <string name="report_bugs">Повідомити про помилку</string>
+    <string name="report_bugs">Повідомити про вади</string>
     <string name="send_report">Надіслати звіт</string>
     <string name="bug_title">Заголовок</string>
     <string name="bug_description">Опис помилки</string>
     <string name="sending_report">Надсилання звіту...</string>
     <string name="received_report">Звіт отримано</string>
     <string name="not_received_report">Звіт не отримано</string>
-    <string name="not_received_report_offline">Ви не в мережі! Звіт буде відправлений при підключенні до інтернету</string>
+    <string name="not_received_report_offline">Ви не в мережі! Звіт буде надіслано після під\'єднання до інтернету</string>
     <string name="forward_prefix">Переслати:</string>
     <string name="original_message_divider">---Вихідне повідомлення--</string>
     <string name="invalid_email_address">Адреса \'%s\' введена невірно</string>
-    <string name="invalid_email_address_removed">The address \'%s\' is invalid and was removed</string>
+    <string name="invalid_email_address_removed">Адреса \'%s\' недійсна і була вилучена</string>
     <string name="no_recipients_specified">Будь ласка, вкажіть принаймні одного отримувача</string>
     <string name="no_password_specified">Термін дії можна встановити тільки на повністю зашифровані повідомлення. Будь ласка, вкажіть пароль для одержувачів поза ProtonMail.</string>
     <string name="attachment_limit">Межа для вкладень - %1$s. Цілком може бути вкладено %2$s.</string>
     <string name="sending_message">Повідомлення надсилається...</string>
     <string name="sending_message_offline">Поза мережею, поставлено в чергу на відправку...</string>
     <string name="go_to_inbox">Перейти до вхідних</string>
-    <string name="message_sent">Повідомлення відправленно</string>
+    <string name="message_sent">Повідомлення надіслано</string>
     <string name="message_failed">Помилка відправки повідомлення</string>
-    <string name="message_sending_failures">%d message sending failures</string>
+    <string name="message_sending_failures">%d невдалі надсилання повідомлень</string>
     <string name="storage_limit">Ліміт простору</string>
     <string name="edit_settings">Редагувати параметри</string>
     <string name="save_settings">Зберегти налаштування</string>
@@ -236,7 +236,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="pin_lock_option_settings">Налаштування блокування програми</string>
     <string name="pin_lock_after">Блокувати після</string>
     <string name="lock_the_app">Заблокувати додаток</string>
-    <string name="display_name_banned_chars">Invalid Display Name. \'&gt;\' and \'&lt;\' are not allowed</string>
+    <string name="display_name_banned_chars">Неприпустиме показуване ім\'я. \'&gt;\' і \'&lt;\' не дозволені</string>
     <string name="cont">Продовжити</string>
     <string name="email_verification_code">Ми надішлемо код підтвердження на адресу електронної пошти, вказану вище.</string>
     <string name="sms_verification_code">Ми відправимо код на вказаний вище номер телефону.</string>
@@ -245,9 +245,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="enter_verification_code">Введіть перевірковий код</string>
     <string name="verify">Перевірити</string>
     <string name="reply_prefix_on">Увімкнено</string>
-    <string name="create_new_account">Створити нову обліковку</string>
-    <string name="setup_new_account">Налаштувати Вашу обліковку</string>
-    <string name="create_account">Створити обліковку</string>
+    <string name="create_new_account">Створити новий обліковий запис</string>
+    <string name="setup_new_account">Налаштувати обліковий запис</string>
+    <string name="create_account">Створити обліковий запис</string>
     <string name="create_passwords">Встановити гасло</string>
     <string name="caps_username">Ім\'я користувача</string>
     <string name="caps_login_password">Гасло</string>
@@ -276,7 +276,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="labels_title_add">Додати мітку</string>
     <string name="labels_title">Мітки</string>
     <string name="label_name">Назва мітки</string>
-    <string name="label_name_empty">Мітка повинна мати ім\'я</string>
+    <string name="label_name_empty">Мітка повинна мати назву</string>
     <string name="label_name_duplicate">Така назва мітки вже є</string>
     <string name="label_created">Мітку створено</string>
     <string name="label_invalid">Мітку не додано через погане ім\'я.</string>
@@ -295,12 +295,12 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Помилка при видаленні деяких повідомлень. Деякі з вибраних повідомлень надсилають процес?!</string>
     <string name="respond_inline">Відповісти всередині тексту</string>
     <string name="no_connectivity_detected">Під\'\'днання не виявлено...</string>
-    <string name="no_connectivity_detected_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="no_connectivity_detected_troubleshoot">З\'єднань не виявлено… (<u>Розв\'язання проблеми</u>)</string>
     <string name="connectivity_checking">Перевірка під\'єднання...</string>
     <string name="sync_short">Синхр.</string>
     <string name="draft_attachments_uploading">Чернетку все ще вивантажувано...</string>
-    <string name="draft_label_attachments_uploading">uploading attachments…</string>
-    <string name="draft_label_message_uploading">sending message…</string>
+    <string name="draft_label_attachments_uploading">відвантаження вкладень…</string>
+    <string name="draft_label_message_uploading">надсилання повідомлення…</string>
     <string name="attachment_failed">Вивантаження вкладення для цього листа зазнало невдачі </string>
     <string name="attaching_photo_failed">Прикріплення світлини зазнало невдачі</string>
     <string name="empty_message">Порожнє повідомлення</string>
@@ -312,9 +312,9 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="saving_failed_no_conn">Не вдалось зберегти, нема зв\'язку</string>
     <string name="username_is_available">%s доступно!</string>
     <string name="username_is_not_available">%s НЕ доступно!</string>
-    <string name="username_is_too_long">Maximum length for a username is %d characters!</string>
+    <string name="username_is_too_long">Найбільше довжина імені користувача — %d символів!</string>
     <string name="congratulation">Вітаємо!</string>
-    <string name="new_account_ready">Ваш нова захищена обліковка\nе-пошти вже готова.</string>
+    <string name="new_account_ready">Ваш новий захищений обліковий запис\nе-пошти готовий.</string>
     <string name="optional_email_note">Не обов\'язкова адерса е-пошти для відновлення дозволяє Вам
         скинути вхідне гасло, якщо Ви його забудете.</string>
     <string name="optional_display_name">Коли ви надсилаєте е-лист, це ім\'я
@@ -328,7 +328,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="engagement_title_expire">Самознищувальні листи</string>
     <string name="engagement_title_help">Допомога й підтримка</string>
     <string name="engagement_title_support_protonmail">Підтримати ProtonMail</string>
-    <string name="engagement_subtitle_welcome">Вашу нову зашифровану обліковку вже налаштовано, і вона готова відправляти та отримувати шифровані листи.</string>
+    <string name="engagement_subtitle_welcome">Ваш новий зашифрований обліковий запис налаштований і готовий надсилати та отримувати зашифровані листи.</string>
     <string name="engagement_subtitle_swipe">Ви можете налаштувати жести відрухами в налаштуваннях застосунку ProtonMail.</string>
     <string name="engagement_subtitle_labels">Створити та додати мітки для впорядкування Вашої теки \"Вхідні\". Натисніть і втримайте на листі для показу усіх функцій.</string>
     <string name="engagement_subtitle_encryption">Ваша тека \"Вхідні\" тепер захищена скрізним шифруванням. Щоб автоматично надсилати захищені е-листи вашим контактам, запросіть їх до ProtonMail-а! Ви також можете рукошма шифрувати листи до них, якщо вони не користуються ProtonMail-ом.</string>
@@ -371,13 +371,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="ringtone">Мелодія</string>
     <string name="ringtone_selected">Мелодія:</string>
     <string name="ringtone_invalid">Вибір мелодії повертається некоректне значення</string>
-    <string name="ringtone_no_default">Impossible to load a default Ringtone</string>
+    <string name="ringtone_no_default">Неможливо завантажити типову мелодію</string>
     <string name="select_tone">Оберіть сигнал для повідомлень</string>
     <string name="copy_link">Копіювати посилання</string>
     <string name="share_link">Поділитись посиланням</string>
     <string name="sync_attachments">Синхронізуємо вкладення</string>
     <string name="processing_attachment">Обробка вкладення</string>
-    <string name="hyperlink_confirmation_dialog_text_html">You are about to launch the web browser and navigate to:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Do you want to continue?</string>
+    <string name="hyperlink_confirmation_dialog_text_html">Ви збираєтеся запустити браузер і перейти до:&lt;br/&gt;&lt;br/&gt;&lt;u&gt;%s&lt;/u&gt;&lt;br/&gt;&lt;br/&gt;Хочете продовжити?</string>
     <string name="dont_ask_again">Не запитувати знову</string>
     <string name="none">Немає</string>
     <string name="changes_affected_after_closing">Зміни будуть задіяні після закриття застосунку</string>
@@ -397,7 +397,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="logout">Вихiд</string>
     <string name="log_out">Вийти з %s?</string>
     <string name="logout_question">Впевнені, що хочете вийти?</string>
-    <string name="logout_question_next_account">You will be switched to %s.</string>
+    <string name="logout_question_next_account">Вас буде перемкнуто на %s.</string>
     <string name="upselling">Оновлення/пожертвувати</string>
     <string name="upselling_title">ProtonMail є бесплатний і має відкритий вихідний код</string>
     <string name="upselling_subtitle">Ми потребуємо Вашої підримки щоб продовжувати захищати конфіденційність та покращувати ProtonMail</string>
@@ -423,14 +423,14 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="other_plans">Для планів з більшим сховищем, оновлюйтесь через
     веб інтерфейс е-пошти ProtonMail.</string>
     <string name="upgrade_paid_user">Дякуюмо, що Ви - платний користувач!</string>
-    <string name="select_account_type">Виберіть тип своєї обліковки</string>
-    <string name="select_account_type_subtitle">ProtonMail - це безкоштовний сервіс
-    для громадського користування. Ви можете допомогти підтримувати конфіденційність в Інтернеті, вибравши платну обліковку.</string>
+    <string name="select_account_type">Виберіть тип облікового запису</string>
+    <string name="select_account_type_subtitle">ProtonMail — це безплатна служба
+    для загального користування. Ви можете допомогти підтримувати приватність в Інтернеті, вибравши платний обліковий запис.</string>
     <string name="plan_free_with_price">БЕЗКОШТОВНО</string>
     <string name="plan_plus_with_price">PLUS %s/місяць</string>
     <string name="plan_visionary_with_price">VISIONARY %s/місяць</string>
     <string name="plan_business_with_price">BUSINESS %s/місяць</string>
-    <string name="plan_free_title">Базова обліковка з обмеженими можливостями</string>
+    <string name="plan_free_title">Базовий обліковий запис з обмеженими можливостями</string>
     <string name="plan_plus_title">Безпечна електронна пошта з прогресивними функціями</string>
     <string name="plan_visionary_title">Особливі облікові записи для наших прибічників</string>
     <string name="plan_business_title">Особливі облікові записи для наших прибічників</string>
@@ -481,7 +481,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="payment_success_text">We are now upgrading your account, please wait a moment. Thank you for your support!</string>
     <string name="donation_success_title">Donation Success!</string>
     <string name="donation_success_text">Ваша допомога має важливе значення для продовження роботи ProtonMail. Дякуємо за підтримку приватності Інтернету!</string>
-    <string name="create_free_account">Створити бузкоштовну обліковку</string>
+    <string name="create_free_account">Створити безплатний обліковий запис</string>
     <string name="storage_gb">%d ГБ сховища</string>
     <string name="storage_mb">%d МБ сховища</string>
     <string name="max_addresses">До %d поштових псевдонімів</string>
@@ -492,7 +492,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="switch_billing_monthly">Перейти на місячну</string>
     <string name="switch_billing_yearly">Перейти на річну</string>
     <string name="warning">Засторога</string>
-    <string name="empty_recovery_email_question">Попередження: Ви не вказали резервну адресу е-пошти, тож відновлення обліковки є неможливим, якщо ви забудете гасло. Продовжити без резервної адреси е-пошти?</string>
+    <string name="empty_recovery_email_question">Попередження: Ви не вказали запасну адресу е-пошти, тож відновлення облікового запису неможливе, якщо ви забудете пароль. Продовжити без запасної адреси е-пошти?</string>
     <string name="card_details_title">%1$s (*** %2$s)</string>
     <string name="card_details_subtitle">Дата завершення: %s</string>
     <string name="payment_methods">Способи сплати</string>
@@ -654,7 +654,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="all_mail">Уся пошта</string>
     <string name="allmail_option">УСЯ ПОШТА</string>
     <string name="empty_emails">Нема е-листів</string>
-    <string name="empty_email_list">No email address</string>
+    <string name="empty_email_list">Немає адреси е-пошти</string>
     <string name="no_contacts">Немає контактів</string>
     <string name="sender_name_address">%1$s &lt; %2$s &gt; пише:</string>
     <string name="update_label">Оновити мітку</string>
@@ -688,7 +688,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="learn_more"><u>Learn More</u></string>
     <string name="info">Інформація</string>
     <string name="error_can_not_send_from_this_address">Перейдіть на платний план, щоб надіслати з вашої адреси %s.</string>
-    <string name="email_empty">Email address is missing</string>
+    <string name="email_empty">Пропущено адресу е-пошти</string>
     <string name="encrypted_contact_details">Encrypted Contact Details</string>
     <string name="convert_question">Upload local contacts</string>
     <string name="convert_question_subtitle">This will upload the local contacts on your device to your ProtonMail contacts directory. You will then be able to access these contacts on your other devices through ProtonMail.</string>
@@ -750,7 +750,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_description_attachments">Informs about attachment download status</string>
     <string name="channel_name_emails">Адреси е- пошти</string>
     <string name="channel_description_emails">Incoming email notifications</string>
-    <string name="channel_name_account">Обліковка</string>
+    <string name="channel_name_account">Обліковий запис</string>
     <string name="channel_description_account">Account status</string>
     <string name="channel_name_ongoing_operations">Ongoing operations</string>
     <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
@@ -964,32 +964,32 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <string name="app_settings">Параметри програми</string>
     <!-- region App Settings -->
-    <string name="push_notifications">Push Notifications</string>
+    <string name="push_notifications">Push-сповіщення</string>
     <string name="extended_notifications">Розширені сповіщення</string>
     <string name="extended_notifications_description">Turn this feature on to see the sender\nof the emails in the push notifications.</string>
     <string name="notification_settings">Налаштування сповіщень</string>
-    <string name="auto_lock">Auto-lock</string>
-    <string name="auto_lock_app">Auto-lock app</string>
-    <string name="auto_lock_description">Turn this feature on to auto-lock your\napp and use a PIN code or fingerprint\nto unlock it.</string>
+    <string name="auto_lock">Автоблокування</string>
+    <string name="auto_lock_app">Автоблокування застосунку</string>
+    <string name="auto_lock_description">Увімкніть цю функцію, щоб автоматично блокувати\nзастосунок і використовувати PIN-код або відбиток\nдля розблокування екрана.</string>
     <string name="change_pin_code">Change PIN code</string>
-    <string name="auto_lock_timer">Auto-lock timer</string>
+    <string name="auto_lock_timer">Таймер автоблокування</string>
     <string name="connections_via_third_parties">Alternative routing</string>
     <string name="allow_secure_connections_via_third_parties">Дозволити альтернативну маршрутизацію</string>
     <string name="allow_secure_connections_via_third_parties_settings_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability.</string>
     <string name="allow_secure_connections_via_third_parties_troubleshoot_description">In case Proton sites are blocked, this setting allows the app to try alternative network routing to reach Proton, which can be useful for bypassing firewalls or network issues. We recommend keeping this setting on for greater reliability. <a href="https://protonmail.com/blog/anti-censorship-alternative-routing/">Learn more</a></string>
     <string name="app_language">Мова програми</string>
-    <string name="custom_language_dialog_title">Select App Language</string>
-    <string name="auto_detect">Auto-detect</string>
+    <string name="custom_language_dialog_title">Вибір мови застосунку</string>
+    <string name="auto_detect">Автовизначення</string>
     <string name="combined_contacts">Combined Contacts</string>
     <string name="turn_combined_contacts_on">Turn this feature on to auto-complete email addresses using contacts from all your logged in accounts.</string>
     <string name="local_cache_management">Керування локальним кешем</string>
     <string name="cache_cleared">Локальний кеш оновлено</string>
-    <string name="empty_cache">Empty Cache</string>
+    <string name="empty_cache">Очистити кеш</string>
     <!-- endregion -->
     <string name="enabled">Увімкнено</string>
     <string name="disabled">Вимкнено</string>
-    <string name="app_info">App Information</string>
-    <string name="app_version">App version</string>
+    <string name="app_info">Відомості про застосунок</string>
+    <string name="app_version">Версія застосунку</string>
     <!-- endregion -->
     <!-- region Multi Account -->
     <string name="remove_account_question">Remove %s?</string>

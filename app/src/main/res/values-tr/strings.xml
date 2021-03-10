@@ -89,7 +89,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="compose">Oluştur</string>
     <string name="compose_message">İleti oluştur</string>
     <string name="empty_folder">Klasörü boşalt</string>
-    <string name="view_headers">Başlıkları görüntüle</string>
+    <string name="view_headers">Başlıkları Görüntüle</string>
     <string name="message_headers">Mesaj başlığı</string>
     <string name="delete_message">Mesajı sil</string>
     <string name="delete_messages">Mesajları sil</string>
