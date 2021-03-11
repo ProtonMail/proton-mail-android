@@ -45,6 +45,7 @@ import ch.protonmail.android.utils.crypto.KeyInformation
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.StringEscapeUtils
+import timber.log.Timber
 import java.io.Serializable
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit
@@ -469,7 +470,7 @@ data class Message @JvmOverloads constructor(
             hasInvalidSignature = hasSense && !tct.isSignatureValid
             decryptedMessage = tct.decryptedData
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.i(e, "decrypt error verkeys size: ${verKeys?.size}, keys size: ${keys.size}")
             decryptedBody = messageBody
             decryptedHTML = messageBody
             throw e

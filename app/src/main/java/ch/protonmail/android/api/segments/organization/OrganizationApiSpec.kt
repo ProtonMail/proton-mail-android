@@ -26,10 +26,10 @@ import java.io.IOException
 interface OrganizationApiSpec {
 
     @Throws(IOException::class)
-    fun fetchOrganization() : OrganizationResponse
+    fun fetchOrganization(): OrganizationResponse
 
     @Throws(IOException::class)
-    fun fetchOrganizationKeys() : Keys
+    fun fetchOrganizationKeys(): Keys
 
     @Throws(IOException::class)
     fun createOrganization(body: CreateOrganizationBody): OrganizationResponse?
