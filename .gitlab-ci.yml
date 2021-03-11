@@ -130,7 +130,7 @@ build release:
   except:
     - schedules
   only:
-    - releases
+    - release
   tags:
     - large
   script:
