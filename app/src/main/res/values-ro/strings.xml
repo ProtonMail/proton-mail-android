@@ -289,7 +289,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">A apărut o eroare la ștergerea unor mesaje. Unele din mesajele selectate sunt în proces de trimitere?!</string>
     <string name="respond_inline">Răspuns în mesaj</string>
     <string name="no_connectivity_detected">Nu există conexiune...</string>
-    <string name="no_connectivity_detected_troubleshoot">Nu există conexiune… (<u>Depanare</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Nu există conexiune… (<u>Depanare</u>)</string>
     <string name="connectivity_checking">Verificare conexiune...</string>
     <string name="sync_short">sincronizare</string>
     <string name="draft_attachments_uploading">Ciorna încă se încarcă...</string>

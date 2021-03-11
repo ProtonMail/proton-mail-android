@@ -425,7 +425,7 @@ internal class MessageDetailsActivity :
         buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
     }
 
-    private fun showNoConnSnackExtended() {
+    private fun showNoConnSnackExtended(connectivity: Constants.ConnectionState) {
         Timber.v("Show no connection")
         networkSnackBarUtil.hideAllSnackBars()
         networkSnackBarUtil.getNoConnectionSnackBar(
@@ -433,7 +433,8 @@ internal class MessageDetailsActivity :
             mUserManager.user,
             this,
             { onConnectivityCheckRetry() },
-            anchorViewId = R.id.action_buttons
+            anchorViewId = R.id.action_buttons,
+            isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
         ).show()
         invalidateOptionsMenu()
     }
@@ -457,12 +458,12 @@ internal class MessageDetailsActivity :
         viewModel.hasConnectivity.observe(
             this,
             { isConnectionActive ->
-                Timber.v("isConnectionActive:$isConnectionActive")
-                if (isConnectionActive) {
+                Timber.v("isConnectionActive:${isConnectionActive.name}")
+                if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
                     viewModel.fetchMessageDetails(false)
                 } else {
-                    showNoConnSnackExtended()
+                    showNoConnSnackExtended(isConnectionActive)
                 }
             }
         )

@@ -285,7 +285,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Fout bij het verwijderen van sommige berichten. Sommige van de geselecteerde berichten zijn aan het verzenden?!</string>
     <string name="respond_inline">Inline reageren</string>
     <string name="no_connectivity_detected">Geen netwerkverbinding gedetecteerd...</string>
-    <string name="no_connectivity_detected_troubleshoot">Geen verbinding gedetecteerd… (<u>Probleemoplossing</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Geen verbinding gedetecteerd… (<u>Probleemoplossing</u>)</string>
     <string name="connectivity_checking">Controleren op verbinding...</string>
     <string name="sync_short">bijwerken</string>
     <string name="draft_attachments_uploading">Concept wordt nog steeds geüpload...</string>

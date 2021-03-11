@@ -285,7 +285,7 @@ Bu şifreyi kaybetmeyin, kurtaramayız. Şifrenizi kaybederseniz, e-postaların�
     <string name="message_deleted_error">Bazı mesajlar silinirken hata oluştu. Seçilen mesajlardan bazıları gönderim aşamasında mı?!</string>
     <string name="respond_inline">Satır içinde yanıtla</string>
     <string name="no_connectivity_detected">Bağlantı bulunamadı...</string>
-    <string name="no_connectivity_detected_troubleshoot">Bağlantı algılanmadı… (<u>Sorun gider</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Bağlantı algılanmadı… (<u>Sorun gider</u>)</string>
     <string name="connectivity_checking">Bağlantı kontrol ediliyor...</string>
     <string name="sync_short">eşitleme</string>
     <string name="draft_attachments_uploading">Taslak hala yükleniyor...</string>

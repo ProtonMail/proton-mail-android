@@ -390,4 +390,10 @@ object Constants {
         SIGNED(2),
         SIGNED_ENCRYPTED(3);
     }
+
+    enum class ConnectionState {
+        CONNECTED,
+        NO_INTERNET,
+        CANT_REACH_SERVER;
+    }
 }

@@ -278,7 +278,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">部分邮件删除失败，可能正在发送当中</string>
     <string name="respond_inline">纯文本引用</string>
     <string name="no_connectivity_detected">网络未连接。</string>
-    <string name="no_connectivity_detected_troubleshoot">网络未连接（<u>排查故障</u>）</string>
+    <string name="server_not_reachable_troubleshoot">网络未连接（<u>排查故障</u>）</string>
     <string name="connectivity_checking">正在连接...</string>
     <string name="sync_short">同步</string>
     <string name="draft_attachments_uploading">草稿仍在上传中...</string>

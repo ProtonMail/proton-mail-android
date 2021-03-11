@@ -815,16 +815,17 @@ public class ComposeMessageActivity
         };
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", hasConnectivity, isDohOngoing);
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s DoHOngoing:%s", connectivity.name(), isDohOngoing);
         if (!isDohOngoing) {
-            if (!hasConnectivity) {
+            if (connectivity != Constants.ConnectionState.CONNECTED) {
                 networkSnackBarUtil.getNoConnectionSnackBar(
                         mSnackLayout,
                         mUserManager.getUser(),
                         this,
-                        onConnectivityCheckRetry(),
-                        null
+                        null,
+                        null,
+                        connectivity == Constants.ConnectionState.NO_INTERNET
                 ).show();
             } else {
                 networkSnackBarUtil.hideAllSnackBars();

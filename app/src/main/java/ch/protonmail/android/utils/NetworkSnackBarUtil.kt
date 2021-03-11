@@ -60,28 +60,49 @@ class NetworkSnackBarUtil @Inject constructor() {
         user: User,
         netConfiguratorCallback: INetworkConfiguratorCallback,
         onRetryClick: (() -> Unit)?,
-        @IdRes anchorViewId: Int? = null
+        @IdRes anchorViewId: Int? = null,
+        isOffline: Boolean
     ): Snackbar {
-        val snackBar = noConnectionSnackBar
-            ?: Snackbar.make(
-                parentView,
-                R.string.no_connectivity_detected_troubleshoot,
-                Snackbar.LENGTH_INDEFINITE
-            ).apply {
-                anchorViewId?.let { setAnchorView(it) }
-                setAction(context.getString(R.string.retry)) { onRetryClick?.invoke() }
-                setActionTextColor(ContextCompat.getColor(context, R.color.white))
-                view.apply {
-                    setBackgroundColor(ContextCompat.getColor(context, R.color.red))
-                    isClickable = true
-                    isFocusable = true
-                    setOnClickListener { showNoConnectionTroubleshootDialog(context, user, netConfiguratorCallback) }
-
-                    findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
-                        setTextColor(Color.WHITE)
+        hideNoConnectionSnackBar()
+        val snackBar = if (isOffline) {
+            noConnectionSnackBar
+                ?: Snackbar.make(
+                    parentView,
+                    R.string.you_are_offline,
+                    Snackbar.LENGTH_INDEFINITE
+                ).apply {
+                    anchorViewId?.let { setAnchorView(it) }
+                    setActionTextColor(ContextCompat.getColor(context, R.color.white))
+                    view.apply {
+                        setBackgroundColor(ContextCompat.getColor(context, R.color.orange))
+                        findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
+                            setTextColor(Color.WHITE)
+                        }
                     }
                 }
-            }
+        } else {
+            noConnectionSnackBar
+                ?: Snackbar.make(
+                    parentView,
+                    R.string.server_not_reachable_troubleshoot,
+                    Snackbar.LENGTH_INDEFINITE
+                ).apply {
+                    anchorViewId?.let { setAnchorView(it) }
+                    setAction(context.getString(R.string.retry)) { onRetryClick?.invoke() }
+                    setActionTextColor(ContextCompat.getColor(context, R.color.white))
+                    view.apply {
+                        setBackgroundColor(ContextCompat.getColor(context, R.color.red))
+                        isClickable = true
+                        isFocusable = true
+                        setOnClickListener {
+                            showNoConnectionTroubleshootDialog(context, user, netConfiguratorCallback)
+                        }
+                        findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
+                            setTextColor(Color.WHITE)
+                        }
+                    }
+                }
+        }
         noConnectionSnackBar = snackBar
         Timber.d("getNoConnectionSnackBar $snackBar $parentView")
         return snackBar

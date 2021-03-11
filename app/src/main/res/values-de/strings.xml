@@ -284,7 +284,7 @@ Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn
     <string name="message_deleted_error">Fehler beim Löschen einiger Nachrichten. Werden einige der ausgewählte gerade gesendet?</string>
     <string name="respond_inline">Eingebettet antworten</string>
     <string name="no_connectivity_detected">Keine Verbindung erkannt …</string>
-    <string name="no_connectivity_detected_troubleshoot">Keine Netzwerkverbindung erkannt … (<u>Problembehandlung</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Keine Netzwerkverbindung erkannt … (<u>Problembehandlung</u>)</string>
     <string name="connectivity_checking">Verbindung wird geprüft …</string>
     <string name="sync_short">Synchronisieren</string>
     <string name="draft_attachments_uploading">Entwurf wird noch hochgeladen …</string>

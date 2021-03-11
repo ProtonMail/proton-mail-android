@@ -715,6 +715,7 @@ class MailboxActivity :
         }
         syncUUID = UUID.randomUUID().toString()
         handler.postDelayed(FetchMessagesRetryRunnable(this), 3.seconds.toLongMilliseconds())
+        mailboxViewModel.checkConnectivityDelayed()
     }
 
     private fun checkRegistration() {
@@ -1033,14 +1034,15 @@ class MailboxActivity :
         supportActionBar!!.setTitle(titleRes)
     }
 
-    private fun showNoConnSnackAndScheduleRetry() {
+    private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 parentView = it,
                 user = mUserManager.user,
                 netConfiguratorCallback = this,
-                onRetryClick = { onConnectivityCheckRetry() }
+                onRetryClick = { onConnectivityCheckRetry() },
+                isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
             ).show()
         }
     }
@@ -1142,17 +1144,20 @@ class MailboxActivity :
         if (event.status == Status.NO_NETWORK && setOfLabels.any { it == mailboxLocation }) {
             mailboxLocationMain.value = MessageLocationType.LABEL_OFFLINE
         }
+        if (event.status == Status.FAILED && event.errorMessage.isNotEmpty()) {
+            showToast(event.errorMessage, Toast.LENGTH_LONG)
+        }
         mNetworkResults.setMailboxLoaded(MailboxLoadedEvent(Status.SUCCESS, null))
         setRefreshing(false)
     }
 
-    private fun onConnectivityEvent(hasConnection: Boolean) {
-        Timber.v("onConnectivityEvent hasConnection: $hasConnection")
+    private fun onConnectivityEvent(connectivity: Constants.ConnectionState) {
+        Timber.v("onConnectivityEvent hasConnection: ${connectivity.name}")
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
-            if (!hasConnection) {
+            if (connectivity != Constants.ConnectionState.CONNECTED) {
                 setRefreshing(false)
-                showNoConnSnackAndScheduleRetry()
+                showNoConnSnackAndScheduleRetry(connectivity)
             } else {
                 hideNoConnSnack()
             }
@@ -1181,9 +1186,11 @@ class MailboxActivity :
 
     private fun showToast(status: Status) {
         when (status) {
-            Status.FAILED,
+            Status.UNAUTHORIZED -> {
+                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
+            }
             Status.NO_NETWORK -> {
-                showNoConnSnackAndScheduleRetry()
+                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.NO_INTERNET)
             }
             Status.SUCCESS -> {
                 hideNoConnSnack()

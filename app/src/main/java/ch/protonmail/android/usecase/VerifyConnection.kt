@@ -23,6 +23,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.worker.PingWorker
@@ -38,17 +39,16 @@ import javax.inject.Inject
 
 /**
  * Use case responsible for scheduling Worker that sends a ping message through [PingWorker], processing the result
- * and listening to system network disconnections events. It emits LiveData<Boolean> with true corresponding to
- * network connection being available and false otherwise.
+ * and listening to system network disconnections events. It emits LiveData<Constants.ConnectionState> with CONNECTED
+ * corresponding to network connection being available and CAN'T_REACH_SERVER otherwise.
  *
- * The idea followed here is that when we get a disconnection event from the system and we no longer have a network
- * interface with an internet capability we will emit false from this use case and the UI should display a
- * no connection snackbar.
+ * The idea followed here is that when we get a disconnection event from the system and we no longer have access to the
+ * server we will emit CAN'T_REACH_SERVER from this use case and the UI should display a error state snackbar.
  *
  * In order to ensure that we have the connection back we schedule a ping message on a unique worker
  * (because we can go through somehow restricted network and
  * just a system connectivity event might be not enough to check if we can really reach our servers).
- * When the ping is successful we emit true from the use case, the UI should hide the snack bar etc.
+ * When the ping is successful we emit CONNECTED from the use case, the UI should hide the snack bar etc.
  */
 class VerifyConnection @Inject constructor(
     private val pingWorkerEnqueuer: PingWorker.Enqueuer,
@@ -56,16 +56,16 @@ class VerifyConnection @Inject constructor(
     private val queueNetworkUtil: QueueNetworkUtil
 ) {
 
-    operator fun invoke(): Flow<Boolean> {
+    operator fun invoke(): Flow<Constants.ConnectionState> {
 
         val connectivityManagerFlow = flowOf(
             connectivityManager.isConnectionAvailableFlow(),
             queueNetworkUtil.isBackendRespondingWithoutErrorFlow
         )
             .flattenMerge()
-            .filter { !it } // observe only disconnections
+            .filter { it != Constants.ConnectionState.CONNECTED } // observe only disconnections
             .onEach {
-                Timber.v("connectivityManagerFlow value: $it")
+                Timber.v("connectivityManagerFlow value: ${it.name}")
                 pingWorkerEnqueuer.enqueue() // re-schedule ping
             }
 
@@ -76,17 +76,24 @@ class VerifyConnection @Inject constructor(
             .flattenMerge()
             .onStart {
                 pingWorkerEnqueuer.enqueue()
-                emit(connectivityManager.isInternetConnectionPossible()) // start with current net state
+                emit(
+                    if (connectivityManager.isInternetConnectionPossible())
+                        Constants.ConnectionState.CONNECTED else Constants.ConnectionState.NO_INTERNET
+                ) // start with current net state
             }
     }
 
-    private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<Boolean> {
+    private fun getPingStateList(workInfoLiveData: LiveData<List<WorkInfo>?>): Flow<Constants.ConnectionState> {
         return workInfoLiveData
             .map { workInfoList ->
-                val hasSucceededEvents = mutableListOf<Boolean>()
+                val hasSucceededEvents = mutableListOf<Constants.ConnectionState>()
                 workInfoList?.forEach { info ->
                     if (info.state.isFinished) {
-                        hasSucceededEvents.add(info.state == WorkInfo.State.SUCCEEDED)
+                        if (info.state == WorkInfo.State.FAILED) {
+                            hasSucceededEvents.add(Constants.ConnectionState.CANT_REACH_SERVER)
+                        } else {
+                            hasSucceededEvents.add(Constants.ConnectionState.CONNECTED)
+                        }
                     }
                 }
                 Timber.v(

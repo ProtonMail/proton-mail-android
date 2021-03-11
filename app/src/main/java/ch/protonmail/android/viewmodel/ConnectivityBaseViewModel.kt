@@ -27,6 +27,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.usecase.VerifyConnection
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,7 +35,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-internal const val NETWORK_CHECK_DELAY = 800L
+internal const val NETWORK_CHECK_DELAY = 1000L
 
 /**
  * Base view model for activities that require connectivity check logic.
@@ -46,12 +47,12 @@ open class ConnectivityBaseViewModel @ViewModelInject constructor(
 
     private val verifyConnectionTrigger: MutableLiveData<Unit> = MutableLiveData()
 
-    val hasConnectivity: LiveData<Boolean> =
+    val hasConnectivity: LiveData<Constants.ConnectionState> =
         verifyConnectionTrigger.switchMap {
             verifyConnection()
                 .distinctUntilChanged()
                 .onEach { isConnected ->
-                    if (!isConnected) {
+                    if (isConnected != Constants.ConnectionState.CONNECTED) {
                         retryWithDoh()
                     }
                 }

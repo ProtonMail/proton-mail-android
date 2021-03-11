@@ -37,6 +37,7 @@ import com.squareup.otto.Subscribe;
 import butterknife.BindView;
 import butterknife.OnClick;
 import ch.protonmail.android.R;
+import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.MailboxLoginEvent;
@@ -197,15 +198,16 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         };
     }
 
-    private void onConnectivityEvent(boolean hasConnectivity) {
-        Timber.v("onConnectivityEvent hasConnectivity:%s", hasConnectivity);
-        if (!hasConnectivity) {
+    private void onConnectivityEvent(Constants.ConnectionState connectivity) {
+        Timber.v("onConnectivityEvent hasConnectivity:%s", connectivity.name());
+        if (connectivity != Constants.ConnectionState.CONNECTED) {
             networkSnackBarUtil.getNoConnectionSnackBar(
                     mSnackLayout,
                     mUserManager.getUser(),
                     this,
-                    onConnectivityCheckRetry(),
-                    null
+                    null,
+                    null,
+                    connectivity == Constants.ConnectionState.NO_INTERNET
             ).show();
         } else {
             networkSnackBarUtil.hideAllSnackBars();

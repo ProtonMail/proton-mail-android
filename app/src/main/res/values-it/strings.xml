@@ -285,7 +285,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Errore durante l\'eliminazione di alcuni messaggi. Alcuni dei messaggi selezionati sono in fase di invio?!</string>
     <string name="respond_inline">Rispondi in linea</string>
     <string name="no_connectivity_detected">Nessuna connessione rilevata...</string>
-    <string name="no_connectivity_detected_troubleshoot">Nessuna connettività rilevata… (<u>Risoluzione problemi</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Nessuna connettività rilevata… (<u>Risoluzione problemi</u>)</string>
     <string name="connectivity_checking">Verificando la connessione...</string>
     <string name="sync_short">sincronizza</string>
     <string name="draft_attachments_uploading">La bozza si sta ancora caricando...</string>
