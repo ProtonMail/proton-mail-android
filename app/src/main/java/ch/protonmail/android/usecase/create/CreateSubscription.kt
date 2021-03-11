@@ -66,10 +66,11 @@ class CreateSubscription @Inject constructor(
             )
         }
 
+        val mutablePlanIds = planIds.toMutableList()
         runCatching {
             api.fetchSubscription().subscription?.plans
                 ?.onEach {
-                    planIds.add(it.id)
+                    mutablePlanIds.add(it.id)
                 }
         }.onFailure {
             Timber.i(it, "Ignoring fetchSubscription error ${(it as? HttpException)?.toPMResponseBody()}")
@@ -78,10 +79,10 @@ class CreateSubscription @Inject constructor(
         return runCatching {
             val subscriptionBody = if (amount == 0) {
                 // don't provide payment method and put "amount" as 0, because we are using stored credits
-                CreateSubscriptionBody(0, currency, null, couponCode, planIds, cycle)
+                CreateSubscriptionBody(0, currency, null, couponCode, mutablePlanIds, cycle)
             } else {
                 // provide new payment method in body
-                CreateSubscriptionBody(amount, currency, TokenPaymentBody(paymentToken), couponCode, planIds, cycle)
+                CreateSubscriptionBody(amount, currency, TokenPaymentBody(paymentToken), couponCode, mutablePlanIds, cycle)
             }
 
             val subscriptionResponse = api.createUpdateSubscription(subscriptionBody)
