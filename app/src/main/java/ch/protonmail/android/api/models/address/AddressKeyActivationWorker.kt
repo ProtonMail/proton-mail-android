@@ -24,12 +24,10 @@ import androidx.hilt.work.WorkerInject
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.Keys
-import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -48,9 +46,8 @@ import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import ch.protonmail.android.api.models.address.Address as OldAddress
 
-// region constants
 private const val KEY_INPUT_DATA_USERNAME = "KEY_INPUT_DATA_USERNAME"
-// endregion
+private const val MAX_RETRY_COUNT = 3
 
 /**
  * This worker handles AddressKey activation by decrypting Activation Token and updating Private Key on server.
@@ -70,13 +67,16 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         val username = inputData.getString(KEY_INPUT_DATA_USERNAME) ?: return@withContext Result.failure()
         val mailboxPassword = userManager.getMailboxPassword(username) ?: return@withContext Result.failure()
 
+        Timber.v("AddressKeyActivationWorker started with username: $username")
+
         val user = userManager.getUser(username).toNewUser()
         val primaryKeys = user.addresses.addresses.values.map { it.keys.primaryKey }
         val keysToActivate = user.addresses.addresses.values.flatMap { address ->
             address.keys.keys.filter { it.activation != null }
         }
 
-        // get orgKeys if existent
+        // get orgKeys if existent -> This will work only if user is an organisation owner, otherwise
+        // backend will return 403 for all other users (e.g. just members of an organisation)
         val orgKeys = if (applicationContext.app.organization != null) {
             api.fetchOrganizationKeys()
         } else {
@@ -91,8 +91,12 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         return@withContext when {
             errors.isEmpty() -> Result.success()
             errors.any { it is ActivationResult.Error.Network } -> {
-                Timber.w("Network error: $failedCountMessage")
-                Result.retry()
+                Timber.w("Network error: $failedCountMessage, runAttemptCount: $runAttemptCount")
+                if (runAttemptCount < MAX_RETRY_COUNT) {
+                    Result.retry()
+                } else {
+                    Result.failure()
+                }
             }
             else -> {
                 Timber.e("Error: $failedCountMessage")
@@ -111,7 +115,8 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         return try {
             val activationToken = try {
                 getActivationToken(addressKey, openPgp, userKeys, mailboxPassword, isPrimary)
-            } catch (ignored: Exception) {
+            } catch (exception: Exception) {
+                Timber.i(exception, "getActivationToken has failed")
                 return ActivationResult.Error.MissingToken(addressKey.id)
             }
 
@@ -137,7 +142,8 @@ class AddressKeyActivationWorker @WorkerInject constructor(
             try {
                 val username = inputData.getString(KEY_INPUT_DATA_USERNAME)!!
                 val user = userManager.getUser(username)
-                if(user.legacyAccount) {
+                if (user.legacyAccount) {
+                    Timber.v("Activate key for legacy user")
                     api.activateKeyLegacy(
                         KeyActivationBody(
                             newPrivateKey,
@@ -148,8 +154,9 @@ class AddressKeyActivationWorker @WorkerInject constructor(
                         addressKey.id.s
                     )
                 } else {
+                    Timber.v("Activate key for non-legacy user")
                     val generatedTokenAndSignature =
-                        GenerateTokenAndSignature(userManager,openPgp).invoke(orgKeys?.toUserKey())
+                        GenerateTokenAndSignature(userManager, openPgp).invoke(orgKeys?.toUserKey())
                     val keyActivationBody = KeyActivationBody(
                         newPrivateKey,
                         signedKeyList,
@@ -159,11 +166,13 @@ class AddressKeyActivationWorker @WorkerInject constructor(
                     api.activateKey(keyActivationBody, addressKey.id.s)
                 }
                 ActivationResult.Success
-            } catch (ignored: Exception) {
+            } catch (exception: Exception) {
+                Timber.i(exception, "activateKey Network error")
                 ActivationResult.Error.Network(addressKey.id)
             }
 
-        } catch (ignored: Exception) {
+        } catch (exception: Exception) {
+            Timber.i(exception, "activateKey Generic error")
             ActivationResult.Error.Generic(addressKey.id)
         }
     }
@@ -176,20 +185,23 @@ class AddressKeyActivationWorker @WorkerInject constructor(
         isPrimary: Boolean
     ): String {
         // This is for smart-cast support
-        val activation = addressKey.activation
-        requireNotNull(activation)
+        val activation = requireNotNull(addressKey.activation)
 
         // try decrypting Activation Token with all UserKeys we have
         userKeys.keys.forEach {
             addressKey.runCatching {
                 return openPgp.decryptMessage(activation.string, it.privateKey.string, userKeysPassphrase)
+            }.onFailure {
+                Timber.i(it, "decryptMessage has failed")
             }
         }
 
-        throw IllegalStateException("Failed obtaining activation for key ${addressKey.id.s}, " +
-            "primary = $isPrimary, " +
-            "has signature = ${addressKey.signature != null}, " +
-            "has token = ${addressKey.token != null}")
+        throw IllegalStateException(
+            "Failed obtaining activation for key ${addressKey.id.s}, " +
+                "primary = $isPrimary, " +
+                "has signature = ${addressKey.signature != null}, " +
+                "has token = ${addressKey.token != null}"
+        )
     }
 
     sealed class ActivationResult {
@@ -226,10 +238,11 @@ class AddressKeyActivationWorker @WorkerInject constructor(
             runIfNeeded(context, addresses.addresses.values, username)
         }
 
-        fun runIfNeeded(context: Context, addresses: Collection<Address>, username: Name) {
+        private fun runIfNeeded(context: Context, addresses: Collection<Address>, username: Name) {
             val isActivationNeeded = addresses.any { address ->
                 address.keys.keys.any { it.activation != null }
             }
+
             if (isActivationNeeded) {
                 val data = workDataOf(KEY_INPUT_DATA_USERNAME to username.s)
                 val work = OneTimeWorkRequestBuilder<AddressKeyActivationWorker>()
