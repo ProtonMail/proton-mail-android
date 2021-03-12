@@ -171,19 +171,23 @@ object ApplicationModule {
         networkUtil: QueueNetworkUtil,
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
-        authenticator: ProtonMailAuthenticator
+        authenticator: ProtonMailAuthenticator,
+        errorNotifier: ErrorNotifier
     ): ProtonRetrofitBuilder {
 
-        // userManager.user.allowSecureConnectionsViaThirdParties)
         val dnsOverHttpsHost =
             if (!userManager.user.usingDefaultApi)
                 Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
             else Constants.ENDPOINT_URI
 
-        // val dnsOverHttpsHost = Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
-
-        return ProtonRetrofitBuilder(userManager, jobManager, networkUtil, authenticator, ProtonCookieStore(context))
-            .apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
+        return ProtonRetrofitBuilder(
+            userManager,
+            jobManager,
+            networkUtil,
+            authenticator,
+            ProtonCookieStore(context),
+            errorNotifier
+        ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 
     @Provides
@@ -221,8 +225,9 @@ object ApplicationModule {
     @Provides
     fun errorNotifier(
         notificationServer: NotificationServer,
-        userManager: UserManager
-    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager)
+        userManager: UserManager,
+        context: Context
+    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager, context)
 }
 
 @Module

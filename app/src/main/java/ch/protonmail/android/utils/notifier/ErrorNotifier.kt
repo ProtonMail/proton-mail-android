@@ -21,4 +21,5 @@ package ch.protonmail.android.utils.notifier
 
 interface ErrorNotifier {
     fun showPersistentError(errorMessage: String, messageSubject: String?)
+    fun showError(errorMessage: String)
 }
