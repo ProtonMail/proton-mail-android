@@ -127,14 +127,11 @@ class AddressKeyActivationWorker @WorkerInject constructor(
                 mailboxPassword
             )
             val keyFingerprint = openPgp.getFingerprint(privateKeyString)
-            val keyList = """
-                [{
-                    "Fingerprint": "$keyFingerprint",
-                    "SHA256Fingerprints": "${String(Helper.getJsonSHA256Fingerprints(privateKeyString))}",
-                    "Primary": 1, 
-                    "Flags": 3
-                }]
-                """.trimMargin()
+
+            // please keep this format as it is, as server is very sensitive about that
+            val keyList = "[{\"Fingerprint\": \"" + keyFingerprint + "\", " +
+                "\"SHA256Fingerprints\": " + String(Helper.getJsonSHA256Fingerprints(privateKeyString)) + ", " +
+                "\"Primary\": 1, \"Flags\": 3}]"
 
             val signature = openPgp.signTextDetached(keyList, newPrivateKey, mailboxPassword)
             val signedKeyList = SignedKeyList(keyList, signature)
