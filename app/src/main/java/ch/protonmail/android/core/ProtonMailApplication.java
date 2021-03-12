@@ -97,7 +97,6 @@ import ch.protonmail.android.events.PasswordChangeEvent;
 import ch.protonmail.android.events.RequestTimeoutEvent;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
-import ch.protonmail.android.events.UnprocessableEntityEvent;
 import ch.protonmail.android.events.general.AvailableDomainsEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
@@ -331,16 +330,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
             Activity activity = mCurrentActivity.get();
             if (activity != null && activity instanceof BaseActivity) {
                 ((BaseActivity) activity).showRequestTimeoutSnack();
-            }
-        }
-    }
-
-    @Subscribe
-    public void onUnprocessableEntityEvent(UnprocessableEntityEvent event) {
-        if (mCurrentActivity != null) {
-            Activity activity = mCurrentActivity.get();
-            if (activity != null) {
-                TextExtensions.showToast(activity, event.getError());
             }
         }
     }
