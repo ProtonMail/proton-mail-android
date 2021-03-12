@@ -73,7 +73,6 @@ import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.arch.map
 import timber.log.Timber
-import javax.inject.Named
 import kotlin.math.max
 
 class EventHandler @AssistedInject constructor(
@@ -86,7 +85,7 @@ class EventHandler @AssistedInject constructor(
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val contactDao: ContactDao,
     private val counterDao: CounterDao,
-    @Named("messages") var messageDao: MessageDao,
+    private val messageDao: MessageDao,
     private val pendingActionDao: PendingActionDao,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val mapper: AddressBridgeMapper,

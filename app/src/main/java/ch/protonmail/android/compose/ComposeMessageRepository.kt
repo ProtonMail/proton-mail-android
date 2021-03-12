@@ -33,6 +33,7 @@ import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.di.SearchMessageDaoQualifier
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
@@ -57,14 +58,13 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
-import javax.inject.Named
 
 class ComposeMessageRepository @Inject constructor(
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
-    @Named("messages") private var messageDao: MessageDao,
-    @Named("messages_search") private val searchDatabase: MessageDao,
+    private var messageDao: MessageDao,
+    @SearchMessageDaoQualifier private val searchDatabase: MessageDao,
     private val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
     private val accountManager: AccountManager,
     private val userManager: UserManager,

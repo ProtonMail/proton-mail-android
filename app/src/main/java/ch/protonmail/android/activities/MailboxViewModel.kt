@@ -95,33 +95,36 @@ class MailboxViewModel @ViewModelInject constructor(
     }
 
     fun usedSpaceActionEvent(limitReachedFlow: Int) {
-        userManager.setShowStorageLimitReached(true)
-        val user = userManager.user
-        val userUsedSpace = user.usedSpace
-        val userMaxSpace = if (user.maxSpace == 0L) Long.MAX_VALUE else user.maxSpace
-        val percentageUsed = userUsedSpace * 100 / userMaxSpace
-        val limitReached = percentageUsed >= 100
-        val limitApproaching = percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE
+        viewModelScope.launch {
+            userManager.setShowStorageLimitReached(true)
+            val user = userManager.getCurrentUser()
+                ?: return@launch
+            val (usedSpace, totalSpace) = with(user.dedicatedSpace) { used.l.toLong() to total.l.toLong() }
+            val userMaxSpace = if (totalSpace == 0L) Long.MAX_VALUE else totalSpace
+            val percentageUsed = usedSpace * 100L / userMaxSpace
+            val limitReached = percentageUsed >= 100
+            val limitApproaching = percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE
 
-        when (limitReachedFlow) {
-            FLOW_START_ACTIVITY -> {
-                if (limitReached) {
-                    _manageLimitReachedWarning.postValue(Event(limitReached))
-                } else if (limitApproaching) {
-                    _manageLimitApproachingWarning.postValue(Event(limitApproaching))
+            when (limitReachedFlow) {
+                FLOW_START_ACTIVITY     -> {
+                    if (limitReached) {
+                        _manageLimitReachedWarning.postValue(Event(limitReached))
+                    } else if (limitApproaching) {
+                        _manageLimitApproachingWarning.postValue(Event(limitApproaching))
+                    }
                 }
-            }
-            FLOW_USED_SPACE_CHANGED -> {
-                if (limitReached) {
-                    _manageLimitReachedWarning.postValue(Event(limitReached))
-                } else if (limitApproaching) {
-                    _manageLimitApproachingWarning.postValue(Event(limitApproaching))
-                } else {
-                    _manageLimitBelowCritical.postValue(Event(true))
+                FLOW_USED_SPACE_CHANGED -> {
+                    if (limitReached) {
+                        _manageLimitReachedWarning.postValue(Event(limitReached))
+                    } else if (limitApproaching) {
+                        _manageLimitApproachingWarning.postValue(Event(limitApproaching))
+                    } else {
+                        _manageLimitBelowCritical.postValue(Event(true))
+                    }
                 }
-            }
-            FLOW_TRY_COMPOSE -> {
-                _manageLimitReachedWarningOnTryCompose.postValue(Event(limitReached))
+                FLOW_TRY_COMPOSE        -> {
+                    _manageLimitReachedWarningOnTryCompose.postValue(Event(limitReached))
+                }
             }
         }
     }

@@ -486,17 +486,19 @@ abstract class NavigationActivity :
             fun onLogoutConfirmed(currentUserId: Id, hasNextLoggedInUser: Boolean) {
                 findViewById<View>(R.id.spinner_layout)?.visibility = View.VISIBLE
 
-                if (hasNextLoggedInUser) {
-                    overlayDialog =
-                        Dialog(this@NavigationActivity, android.R.style.Theme_Panel).also {
-                            it.setCancelable(false)
-                            it.show()
-                        }
-                    userManager.logoutLastActiveAccountBlocking()
-                    onLogout()
-                } else {
-                    userManager.logoutBlocking(currentUserId)
-                    onSwitchedAccounts()
+                lifecycleScope.launch {
+                    if (hasNextLoggedInUser) {
+                        overlayDialog =
+                            Dialog(this@NavigationActivity, android.R.style.Theme_Panel).also {
+                                it.setCancelable(false)
+                                it.show()
+                            }
+                        userManager.logoutLastActiveAccount()
+                        onLogout()
+                    } else {
+                        userManager.logout(currentUserId)
+                        onSwitchedAccounts()
+                    }
                 }
 
             }

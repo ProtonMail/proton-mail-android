@@ -189,7 +189,7 @@ class UserManager @Inject constructor(
         val currentIndex = allLoggedIn.indexOf(currentUserId)
         val nextIndex = (currentIndex + 1).takeIf { it < allLoggedIn.size } ?: 0
         return if (nextIndex != currentIndex)
-            allLoggedIn.elementAt(nextIndex)
+            allLoggedIn.elementAtOrNull(nextIndex)
         else null
     }
 
@@ -263,7 +263,7 @@ class UserManager @Inject constructor(
     @Deprecated("Use 'currentUser' variant", ReplaceWith("currentUserLoginState"))
     var loginState: Int
         @LoginState
-        get() = checkNotNull(currentUserLoginState)
+        get() = currentUserLoginState
         set(@LoginState status) {
             currentUserLoginState = status
         }
@@ -295,7 +295,7 @@ class UserManager @Inject constructor(
         ReplaceWith("requireCurrentUser()")
     )
     fun requireCurrentUserBlocking(): NewUser =
-        runBlocking { getUserBlocking(requireCurrentUserId()) }
+        runBlocking { getUser(requireCurrentUserId()) }
 
     suspend fun getCurrentLegacyUser(): User? =
         currentUserId?.let {
@@ -581,7 +581,7 @@ class UserManager @Inject constructor(
      */
     suspend fun logoutLastActiveAccount() {
         val userId = requireCurrentUserId()
-        saveBackupSettings()
+        saveCurrentUserBackupSettings()
         clearUserData(userId)
         isLoggedIn = false
         currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
@@ -665,12 +665,6 @@ class UserManager @Inject constructor(
             saveRingtoneBackup()
             saveCombinedContactsBackup()
         }
-    }
-
-    @Synchronized
-    @Deprecated("Use current user variant", ReplaceWith("saveCurrentUserBackupSettings"))
-    private fun saveBackupSettings() {
-        runBlocking { saveCurrentUserBackupSettings() }
     }
 
     private fun setRememberMailboxLogin(remember: Boolean) {

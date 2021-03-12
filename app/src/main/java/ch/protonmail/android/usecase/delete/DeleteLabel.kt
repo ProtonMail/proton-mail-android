@@ -31,7 +31,6 @@ import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import javax.inject.Inject
-import javax.inject.Named
 
 /**
  * Use case responsible for removing a label from the DB and scheduling
@@ -40,7 +39,7 @@ import javax.inject.Named
 class DeleteLabel @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val contactDao: ContactDao,
-    @Named("messages") private val messageDao: MessageDao,
+    private val messageDao: MessageDao,
     private val deleteLabelWorker: DeleteLabelWorker.Enqueuer
 ) {
 

@@ -41,6 +41,7 @@ import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
+import ch.protonmail.android.di.SearchMessageDaoQualifier
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
@@ -69,7 +70,6 @@ import java.io.IOException
 import java.util.Arrays
 import java.util.HashSet
 import javax.inject.Inject
-import javax.inject.Named
 
 private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
 private const val DEPRECATION_MESSAGE = "We should strive towards moving methods out of this repository and stopping using it."
@@ -79,7 +79,8 @@ class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
     userManager: UserManager,
-    @Named("messages_search") var searchDatabaseDao: MessageDao,
+    private var messagesDao: MessageDao,
+    @SearchMessageDaoQualifier var searchDatabaseDao: MessageDao,
     private var pendingActionDao: PendingActionDao,
     val databaseProvider: DatabaseProvider,
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
@@ -91,7 +92,6 @@ class MessageDetailsRepository @Inject constructor(
         jobManager: JobManager,
         api: ProtonMailApiManager,
         userManager: UserManager,
-        @Named("messages_search") searchDatabaseDao: MessageDao,
         databaseProvider: DatabaseProvider,
         attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer,
         @Assisted userId: Id
@@ -100,13 +100,12 @@ class MessageDetailsRepository @Inject constructor(
         jobManager = jobManager,
         api = api,
         userManager = userManager,
-        searchDatabaseDao = searchDatabaseDao,
+        messagesDao = databaseProvider.provideMessageDao(userId),
+        searchDatabaseDao = databaseProvider.provideMessageSearchDao(userId),
         pendingActionDao = databaseProvider.providePendingActionDao(userId),
         databaseProvider = databaseProvider,
         attachmentsWorker = attachmentsWorker
     )
-
-    private var messagesDao: MessageDao = databaseProvider.provideMessageDao(userManager.requireCurrentUserId())
 
     fun reloadDependenciesForUser(userId: Id) {
         pendingActionDao = databaseProvider.providePendingActionDao(userId)

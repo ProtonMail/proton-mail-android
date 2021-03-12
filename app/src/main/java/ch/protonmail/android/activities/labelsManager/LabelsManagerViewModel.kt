@@ -45,7 +45,6 @@ import studio.forface.viewstatestore.ViewStateStore
 import studio.forface.viewstatestore.from
 import studio.forface.viewstatestore.paging.PagedViewStateStore
 import studio.forface.viewstatestore.paging.ViewStateStoreScope
-import javax.inject.Named
 
 /**
  * A [ViewModel] for Manage Labels
@@ -54,7 +53,7 @@ import javax.inject.Named
  */
 internal class LabelsManagerViewModel @ViewModelInject constructor(
     private val jobManager: JobManager,
-    @Named("messages") private val messageDao: MessageDao,
+    private val messageDao: MessageDao,
     @Assisted private val savedStateHandle: SavedStateHandle,
     private val deleteLabel: DeleteLabel,
     private val workManager: WorkManager

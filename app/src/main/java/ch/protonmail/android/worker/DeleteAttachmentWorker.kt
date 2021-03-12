@@ -38,7 +38,6 @@ import ch.protonmail.android.data.local.*
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
-import javax.inject.Named
 
 internal const val KEY_WORKER_ERROR_DESCRIPTION = "KeyWorkerErrorDescription"
 
@@ -55,7 +54,7 @@ class DeleteAttachmentWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    @Named("messages") var messageDao: MessageDao,
+    private val messageDao: MessageDao,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 

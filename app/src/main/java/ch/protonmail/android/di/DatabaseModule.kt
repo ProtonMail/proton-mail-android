@@ -31,70 +31,65 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.domain.entity.Id
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Provides
-    fun provideAttachmentMetadataDatabase(context: Context, userManager: UserManager): AttachmentMetadataDao =
-        AttachmentMetadataDatabase.getInstance(context, userManager.requireCurrentUserId()).getDao()
+    fun provideAttachmentMetadataDao(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): AttachmentMetadataDao = AttachmentMetadataDatabase.getInstance(context, userId).getDao()
 
 
     @Provides
-    fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactDatabase =
-        ContactDatabase.getInstance(context, userManager.requireCurrentUserId())
+    fun provideContactDatabase(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): ContactDatabase = ContactDatabase.getInstance(context, userId)
 
     @Provides
-    fun provideContactsDatabase(factory: ContactDatabase): ContactDao =
+    fun provideContactDao(factory: ContactDatabase): ContactDao =
         factory.getDao()
 
 
     @Provides
-    fun provideCounterDatabase(context: Context, userManager: UserManager): CounterDatabase =
-        CounterDatabase.getInstance(context, userManager.requireCurrentUserId())
+    fun provideCounterDatabase(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): CounterDatabase = CounterDatabase.getInstance(context, userId)
 
     @Provides
     fun provideCounterDao(database: CounterDatabase): CounterDao =
         database.getDao()
 
-
     @Provides
-    @Named("messages_factory")
-    fun provideMessagesDatabaseFactory(context: Context, userManager: UserManager): MessageDatabase =
-        MessageDatabase.getInstance(context, userManager.requireCurrentUserId())
-
-    @Provides
-    @Named("messages")
-    fun provideMessagesDatabase(
-        @Named("messages_factory") messageDatabase: MessageDatabase
-    ): MessageDao = messageDatabase.getDao()
+    fun provideMessageDatabase(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): MessageDao = MessageDatabase.getInstance(context, userId).getDao()
 
 
     @Provides
-    fun providePendingActionsDatabaseFactory(context: Context, userManager: UserManager) =
+    fun providePendingActionDatabase(context: Context, userManager: UserManager) =
         PendingActionDatabase.getInstance(context, userManager.requireCurrentUserId())
 
     @Provides
-    fun providePendingActionsDatabase(
+    fun providePendingActionDao(
         pendingActionDatabase: PendingActionDatabase
     ): PendingActionDao = pendingActionDatabase.getDao()
 
-
     @Provides
-    @Named("messages_search_factory")
-    fun provideSearchMessagesDatabaseFactory(context: Context, userManager: UserManager): MessageDatabase =
-        MessageDatabase.getSearchDatabase(context, userManager.requireCurrentUserId())
-
-    @Provides
-    @Named("messages_search")
-    fun provideSearchMessagesDatabase(
-        @Named("messages_search_factory") messageDatabase: MessageDatabase
-    ): MessageDao = messageDatabase.getDao()
+    @SearchMessageDaoQualifier
+    fun provideSearchMessageDao(
+        context: Context,
+        @CurrentUserId userId: Id
+    ): MessageDao = MessageDatabase.getSearchDatabase(context, userId).getDao()
 
 }
