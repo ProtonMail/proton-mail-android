@@ -189,7 +189,7 @@ class MessageRobot {
         }
     }
 
-    class FoldersDialogRobot {
+    class FoldersDialogRobot : CoreRobot {
 
         fun clickCreateFolder(): AddFolderRobot {
             UIActions.wait.forViewWithId(R.id.folders_list_view)
@@ -241,7 +241,7 @@ class MessageRobot {
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
-    class AddFolderRobot {
+    class AddFolderRobot : CoreRobot {
 
         fun addFolderWithName(name: String): FoldersDialogRobot = typeName(name).saveNewFolder()
 
@@ -272,10 +272,11 @@ class MessageRobot {
                 UIActions.check.alertDialogWithPartialTextIsDisplayed(link)
             }
         }
+
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
-    class Verify {
+    class Verify : CoreRobot {
 
         fun publicKeyIsAttached(publicKey: String) {
             UIActions.check.viewWithTextIsDisplayed(publicKey)
@@ -294,7 +295,7 @@ class MessageRobot {
         }
 
         fun attachmentsAdded() {
-            UIActions.check.viewWithIdIsDisplayed(R.id.attachment_count)
+            view.withId(R.id.attachment_count).wait()
         }
 
         fun pgpIconShown() {
@@ -314,8 +315,8 @@ class MessageRobot {
         }
 
         fun loadEmbeddedImagesButtonIsGone() {
-            UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-            UIActions.wait.untilViewWithIdIsNotShown(R.id.containerLoadEmbeddedImagesContainer)
+            view.withId(R.id.messageWebViewContainer).wait()
+            view.withId(R.id.containerLoadEmbeddedImagesContainer).checkDisplayed()
         }
 
         fun showRemoteContentButtonIsGone() {

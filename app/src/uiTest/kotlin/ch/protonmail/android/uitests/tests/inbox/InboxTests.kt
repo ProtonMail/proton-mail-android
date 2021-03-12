@@ -178,7 +178,7 @@ class InboxTests : BaseTest() {
             .moveToExistingFolder(folder)
             .menuDrawer()
             .labelOrFolder(folder)
-            .verify { messageExists(longClickedMessageSubject) }
+            .verify { messageWithSubjectExists(longClickedMessageSubject) }
     }
 
     @Test

@@ -53,12 +53,6 @@ object TestData {
     var externalOutlookPGPSigned =
         User(email = emailStub, password = pwdStub, mailboxPassword = mailPwdStub, twoFASecurityKey = twoFAStub)
 
-
-    fun reSubject(subject: String): String = "Re: $subject"
-
-    // Forwarded subject
-    fun fwSubject(subject: String): String = "Fw: $subject"
-
     // SEARCH MESSAGE
     const val searchMessageSubject = "Random Subject"
     const val searchMessageSubjectNotFound = "MessageNotFound :O"
@@ -146,7 +140,6 @@ object TestData {
         "-----END PGP SIGNATURE-----"
 
     const val pgpSignedTextDecrypted = "PGP Signed Message from Outlook"
-
     const val editedPassword = "123"
     const val editedPasswordHint = "ProtonMail"
 
@@ -157,4 +150,8 @@ object TestData {
     const val jpegFile = "lorem_ipsum.jpeg"
     const val docxFile = "lorem_ipsum.docx"
 
+    // Forwarded subject
+    fun fwSubject(subject: String): String = "Fw: $subject"
+    // Replied subject
+    fun reSubject(subject: String): String = "Re: $subject"
 }

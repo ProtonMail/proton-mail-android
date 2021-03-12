@@ -187,7 +187,7 @@ tasks.register("copyArtifacts", Exec::class) {
         "cp",
         "-R",
         "./files/artifacts/",
-        "/sdcard/Download/"
+        "/sdcard/Download/artifacts"
     )
 }
 
