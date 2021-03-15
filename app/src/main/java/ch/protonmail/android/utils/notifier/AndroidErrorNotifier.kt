@@ -19,17 +19,28 @@
 
 package ch.protonmail.android.utils.notifier
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
+import ch.protonmail.android.utils.extensions.showToast
 import javax.inject.Inject
 
 class AndroidErrorNotifier @Inject constructor(
     private val notificationServer: INotificationServer,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val context: Context
 ) : ErrorNotifier {
 
     override fun showPersistentError(errorMessage: String, messageSubject: String?) {
         notificationServer.notifySaveDraftError(errorMessage, messageSubject, userManager.username)
+    }
+
+    override fun showError(errorMessage: String) {
+        Handler(Looper.getMainLooper()).post {
+            context.showToast(errorMessage)
+        }
     }
 
 }
