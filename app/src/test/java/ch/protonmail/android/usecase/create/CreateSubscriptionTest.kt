@@ -20,6 +20,7 @@
 package ch.protonmail.android.usecase.create
 
 import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.api.models.CreateSubscriptionBody
 import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.Plan
@@ -29,6 +30,8 @@ import ch.protonmail.android.usecase.model.CreateSubscriptionResult
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -36,6 +39,7 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Ignore
+import java.util.Collections
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -91,6 +95,58 @@ class CreateSubscriptionTest {
 
             // then
             assertEquals(expected, actualResult)
+        }
+    }
+
+    @Test
+    fun verifyGivenPlanIdsListIsTransformedToMutableCollectionBeforeAddingPlansReturnedByFetchSubscriptionApi() {
+        // This test is needed to verify we handle cases where the caller of CreateSubscription
+        // passes `Collections.singletonList("planId")` or `List<String>` as planIds parameter
+        runBlockingTest {
+            // given
+            val amount = 1
+            val currency = "EUR"
+            val cycle = 0
+
+            // when
+            val immutablePlanIds = mockk<MutableList<String>>(relaxed = true)
+            useCase.invoke(amount, currency, cycle, immutablePlanIds)
+
+            // then
+            coVerifyOrder {
+                immutablePlanIds.toMutableList()
+                api.fetchSubscription()
+            }
+        }
+    }
+
+    @Test
+    fun verifyCreateUpdateSubscriptionIsCalledWithInputPlansPlusAnyPlansReturnedByFetchSubscriptionsApiWhenAmountIsZero() {
+        runBlockingTest {
+            // given
+            val amount = 0
+            val currency = "EUR"
+            val cycle = 0
+            val testPlan = mockk<Plan>(relaxed = true) {
+                every { id } returns "existingPlanId"
+            }
+            val testSubscription = mockk<Subscription> {
+                every { plans } returns listOf(testPlan)
+            }
+            val getSubscriptionResponse = mockk<GetSubscriptionResponse> {
+                every { subscription } returns testSubscription
+                every { code } returns Constants.RESPONSE_CODE_OK
+            }
+            coEvery { api.fetchSubscription() } returns getSubscriptionResponse
+
+            // when
+            val immutablePlanIds = Collections.singletonList("inputPlanId")
+            useCase.invoke(amount, currency, cycle, immutablePlanIds)
+
+            // then
+            val expectedPlanIds = listOf("inputPlanId", "existingPlanId")
+            val expectedBody = CreateSubscriptionBody(amount, currency, null, null, expectedPlanIds, cycle)
+            coVerify { api.createUpdateSubscription(expectedBody) }
         }
     }
 
