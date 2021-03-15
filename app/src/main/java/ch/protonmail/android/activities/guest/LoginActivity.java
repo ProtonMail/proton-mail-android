@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.activities.guest;
 
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -56,6 +59,7 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.domain.entity.Name;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.Login2FAEvent;
 import ch.protonmail.android.events.LoginEvent;
@@ -71,9 +75,6 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.text.Charsets;
 import timber.log.Timber;
-
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
 @AndroidEntryPoint
 public class LoginActivity extends BaseLoginActivity {
@@ -247,7 +248,14 @@ public class LoginActivity extends BaseLoginActivity {
         app.resetLogin2FAEvent();
         hideProgress();
         enableInput();
-        showTwoFactorDialog(event.userId, event.password, event.infoResponse, event.loginResponse, event.fallbackAuthVersion);
+        showTwoFactorDialog(
+                event.userId,
+                event.username,
+                event.password,
+                event.infoResponse,
+                event.loginResponse,
+                event.fallbackAuthVersion
+        );
     }
 
     @Subscribe
@@ -402,8 +410,14 @@ public class LoginActivity extends BaseLoginActivity {
         startActivity(intent);
     }
 
-    private void showTwoFactorDialog(final Id userId, final byte[] password, final LoginInfoResponse infoResponse,
-                                     final LoginResponse loginResponse, int fallbackAuthVersion) {
+    private void showTwoFactorDialog(
+            final Id userId,
+            final Name username,
+            final byte[] password,
+            final LoginInfoResponse infoResponse,
+            final LoginResponse loginResponse,
+            int fallbackAuthVersion
+    ) {
         if (m2faAlertDialog != null && m2faAlertDialog.isShowing()) {
             return;
         }
@@ -411,7 +425,15 @@ public class LoginActivity extends BaseLoginActivity {
                 twoFactorString -> {
                     UiUtil.hideKeyboard(this);
                     mProgressContainer.setVisibility(View.VISIBLE);
-                    twoFA(userId, password, twoFactorString, infoResponse, loginResponse, fallbackAuthVersion);
+                    twoFA(
+                            userId,
+                            username,
+                            password,
+                            twoFactorString,
+                            infoResponse,
+                            loginResponse,
+                            fallbackAuthVersion
+                    );
                     app.resetLoginInfoEvent();
                     return null;
                 }, () -> {
@@ -422,9 +444,25 @@ public class LoginActivity extends BaseLoginActivity {
                 });
     }
 
-    private void twoFA(Id userId, byte[] password, String twoFactor, LoginInfoResponse infoResponse,
-                       LoginResponse loginResponse, int fallbackAuthVersion) {
-        userManager.twoFA(userId, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion, false, false);
+    private void twoFA(
+            Id userId,
+            Name username,
+            byte[] password,
+            String twoFactor,
+            LoginInfoResponse infoResponse,
+            LoginResponse loginResponse, int fallbackAuthVersion
+    ) {
+        userManager.twoFA(
+                userId,
+                username,
+                password,
+                twoFactor,
+                infoResponse,
+                loginResponse,
+                fallbackAuthVersion,
+                false,
+                false
+        );
     }
 
     private void disableInput() {

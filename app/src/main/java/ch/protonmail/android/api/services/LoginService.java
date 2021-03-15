@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.api.services;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -105,9 +108,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.text.Charsets;
 import timber.log.Timber;
-
-import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @AndroidEntryPoint
 public class LoginService extends ProtonJobIntentService {
@@ -319,12 +319,22 @@ public class LoginService extends ProtonJobIntentService {
         JobIntentService.enqueueWork(context, LoginService.class, Constants.JOB_INTENT_SERVICE_ID_LOGIN, intent);
     }
 
-    public static void start2FA(Id userId, byte[] password, String twoFactor, final LoginInfoResponse infoResponse,
-                                final LoginResponse loginResponse, final int fallbackAuthVersion, final boolean signUp, final boolean isConnecting) {
+    public static void start2FA(
+            Id userId,
+            Name username,
+            byte[] password,
+            String twoFactor,
+            final LoginInfoResponse infoResponse,
+            final LoginResponse loginResponse,
+            final int fallbackAuthVersion,
+            final boolean signUp,
+            final boolean isConnecting
+    ) {
         final Context context = ProtonMailApplication.getApplication();
         final Intent intent = new Intent(context, LoginService.class);
         intent.setAction(ACTION_2FA);
         intent.putExtra(EXTRA_USER_ID, userId.getS());
+        intent.putExtra(EXTRA_USERNAME, username.getS());
         intent.putExtra(EXTRA_PASSWORD, new String(password));
         intent.putExtra(EXTRA_TWO_FACTOR, twoFactor);
         intent.putExtra(EXTRA_LOGIN_INFO_RESPONSE, infoResponse);
@@ -494,7 +504,7 @@ public class LoginService extends ProtonJobIntentService {
                         if (loginResponse.getTwoFA().getEnabled() == 0) {
                             loginHelperData = handleSuccessLogin(loginResponse, userId, password, infoResponse, signUp, false, null);
                         } else {
-                            AppUtil.postEventOnUi(new Login2FAEvent(loginHelperData.status, infoResponse, userId, password, loginResponse, fallbackAuthVersion));
+                            AppUtil.postEventOnUi(new Login2FAEvent(loginHelperData.status, infoResponse, userId, new Name(username), password, loginResponse, fallbackAuthVersion));
                             return;
                         }
                     } else if (foundErrorCode || !loginResponse.isValid()) {
@@ -560,6 +570,7 @@ public class LoginService extends ProtonJobIntentService {
                     AuthStatus.FAILED,
                     infoResponse,
                     userId,
+                    username,
                     password,
                     loginResponse,
                     fallbackAuthVersion
@@ -642,7 +653,7 @@ public class LoginService extends ProtonJobIntentService {
                         if (loginResponse.getTwoFA().getEnabled() == 0) {
                             loginHelperData = handleSuccessLogin(loginResponse, userId, password, infoResponse, false, true, currentPrimaryUserId);
                         } else {
-                            AppUtil.postEventOnUi(new Login2FAEvent(loginHelperData.status, infoResponse, userId, password, loginResponse, fallbackAuthVersion));
+                            AppUtil.postEventOnUi(new Login2FAEvent(loginHelperData.status, infoResponse, userId, new Name(username), password, loginResponse, fallbackAuthVersion));
                             return;
                         }
                     } else if (foundErrorCode || !loginResponse.isValid()) {

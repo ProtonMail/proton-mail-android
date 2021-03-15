@@ -478,6 +478,7 @@ class UserManager @Inject constructor(
 
     fun twoFA(
         userId: Id,
+        username: Name,
         password: ByteArray,
         twoFactor: String?,
         infoResponse: LoginInfoResponse?,
@@ -487,8 +488,15 @@ class UserManager @Inject constructor(
         isConnecting: Boolean
     ) {
         LoginService.start2FA(
-            userId, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
-            signUp, isConnecting
+            userId,
+            username,
+            password,
+            twoFactor,
+            infoResponse,
+            loginResponse,
+            fallbackAuthVersion,
+            signUp,
+            isConnecting
         )
     }
 

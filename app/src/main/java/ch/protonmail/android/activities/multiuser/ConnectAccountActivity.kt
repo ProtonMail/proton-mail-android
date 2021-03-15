@@ -34,6 +34,7 @@ import ch.protonmail.android.api.models.LoginResponse
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.LOGIN_STATE_LOGIN_FINISHED
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountLoginEvent
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
@@ -54,6 +55,7 @@ import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_connect_account.*
 import kotlinx.android.synthetic.main.connect_account_progress.*
+import kotlinx.android.synthetic.main.drawer_header.*
 
 /**
  * This activity handles the first step towards connecting an account,
@@ -110,6 +112,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         enableInput(true)
         showTwoFactorDialog(
             event.userId,
+            event.username,
             event.password,
             event.infoResponse,
             event.loginResponse,
@@ -239,6 +242,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
 
     private fun showTwoFactorDialog(
         userId: Id,
+        username: Name,
         password: ByteArray,
         response: LoginInfoResponse?,
         loginResponse: LoginResponse?,
@@ -253,7 +257,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         twoFactorDialog = DialogUtils.show2FADialog(this, {
             UiUtil.hideKeyboard(this)
             progress.visibility = View.VISIBLE
-            twoFA(userId, password, it, response, loginResponse, fallbackAuthVersion)
+            twoFA(userId, username, password, it, response, loginResponse, fallbackAuthVersion)
             app.resetLoginInfoEvent()
         }, {
             UiUtil.hideKeyboard(this@ConnectAccountActivity)
@@ -263,14 +267,17 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
     }
 
     private fun twoFA(
-            userId: Id,
-            password: ByteArray,
-            twoFactor: String,
-            infoResponse: LoginInfoResponse?,
-            loginResponse: LoginResponse?,
-            fallbackAuthVersion: Int) {
+        userId: Id,
+        username: Name,
+        password: ByteArray,
+        twoFactor: String,
+        infoResponse: LoginInfoResponse?,
+        loginResponse: LoginResponse?,
+        fallbackAuthVersion: Int
+    ) {
         mUserManager.twoFA(
             userId,
+            username,
             password,
             twoFactor,
             infoResponse,
