@@ -28,8 +28,6 @@ import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MessagesListFooterView
 import ch.protonmail.android.views.messagesList.MessagesListItemView
 
-/**
- * Created by Kamil Rajtar on 17.07.18.  */
 class MessagesRecyclerViewAdapter(
     private val context: Context,
     private val onSelectionModeChange: ((SelectionModeEnum) -> Unit)?

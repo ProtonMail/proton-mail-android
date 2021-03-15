@@ -26,7 +26,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import ch.protonmail.android.data.local.model.Attachment
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_NAME
 import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_PATH
@@ -55,7 +54,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.runBlocking
 
 @Dao
 abstract class MessageDao {
@@ -82,7 +80,6 @@ abstract class MessageDao {
     """)
     abstract fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>>
 
-    @Transaction
     @Query("""
         SELECT *
         FROM $TABLE_MESSAGES
@@ -101,7 +98,6 @@ abstract class MessageDao {
     """)
     abstract fun getMessagesCountByByLabelId(labelId: String): Int
 
-    @Transaction
     @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
     abstract fun getAllMessages(): LiveData<List<Message>>
 
@@ -119,9 +115,11 @@ abstract class MessageDao {
             message.Attachments = message.attachments(this)
         }
 
-    fun findMessageByIdBlocking(messageId: String): Message? = runBlocking {
-        findMessageById(messageId).first()
-    }
+    @Deprecated("Use Flow variant", ReplaceWith("findMessageById(messageId).first()"))
+    fun findMessageByIdBlocking(messageId: String): Message? = findMessageInfoByIdBlocking(messageId)
+        ?.also { message ->
+            message.Attachments = message.attachmentsBlocking(this)
+        }
 
     fun findMessageByIdAsync(messageId: String) = findMessageInfoByIdAsync(messageId)
 
@@ -157,19 +155,23 @@ abstract class MessageDao {
                 }
             }
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     protected abstract fun findMessageInfoById(messageId: String): Flow<Message?>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
+    @Deprecated("Use Flow variant", ReplaceWith("findMessageInfoById(messageId).first()"))
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
+    protected abstract fun findMessageInfoByIdBlocking(messageId: String): Message?
+
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     protected abstract fun findMessageInfoByIdSingle(messageId: String): Single<Message>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     protected abstract fun findMessageInfoByIdObservable(messageId: String): Flowable<Message>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     protected abstract fun findMessageInfoByIdAsync(messageId: String): LiveData<Message>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID} = :messageDbId")
     protected abstract fun findMessageInfoByDbIdBlocking(messageDbId: Long): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
@@ -183,7 +185,6 @@ abstract class MessageDao {
     """)
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): Flow<List<Message>>
 
-    @Transaction
     open suspend fun saveMessage(message: Message): Long {
         processMessageAttachments(message)
         return saveMessageInfo(message)
@@ -255,7 +256,6 @@ abstract class MessageDao {
         message.Attachments = preservedAttachments
     }
 
-    @Transaction
     open suspend fun saveMessages(vararg messages: Message) {
         messages.forEach {
             processMessageAttachments(it)
@@ -264,7 +264,6 @@ abstract class MessageDao {
     }
 
     @Deprecated("Use MessageDetailsRepository's methods that contain logic for large Message bodies")
-    @Transaction
     open suspend fun saveAllMessages(messages: List<Message>) {
         messages.map { saveMessage(it) }
     }
@@ -284,7 +283,10 @@ abstract class MessageDao {
     abstract fun deleteExpiredMessages(currentTime: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveMessageInfo(message: Message): Long
+    abstract suspend fun saveMessageInfo(message: Message): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun saveMessageInfoBlocking(message: Message): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveMessagesInfo(vararg messages: Message)
@@ -367,16 +369,6 @@ abstract class MessageDao {
             findMessageInfoById(parts[1]) ?: return null
         }
         return findAttachmentByIdCorrectId(attachmentId)
-    }
-
-    fun findAttachmentByIdSingle(attachmentId: String): Single<Attachment> {
-        if (attachmentId.startsWith("PGPAttachment")) {
-            val parts = attachmentId.split("_".toRegex()).dropLastWhile { it.isEmpty() }
-            if (parts.size == 4) {
-                findMessageInfoByIdSingle(parts[1])
-            }
-        }
-        return findAttachmentByIdCorrectIdSingle(attachmentId)
     }
 
     @Query("DELETE FROM $TABLE_ATTACHMENTS")

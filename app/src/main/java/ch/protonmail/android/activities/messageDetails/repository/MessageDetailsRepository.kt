@@ -23,6 +23,7 @@ import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import androidx.room.Transaction
 import ch.protonmail.android.activities.messageDetails.IntentExtrasData
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
@@ -148,13 +149,13 @@ class MessageDetailsRepository @Inject constructor(
         message?.apply {
             if (
                 Constants.FeatureFlags.SAVE_MESSAGE_BODY_TO_FILE &&
-                true == message.messageBody?.startsWith("file://")
+                true == messageBody?.startsWith("file://")
             ) {
                 val messageBodyFile = File(
                     applicationContext.filesDir.toString() + Constants.DIR_MESSAGE_BODY_DOWNLOADS,
-                    message.messageId?.replace(" ", "_")?.replace("/", ":")
+                    messageId?.replace(" ", "_")?.replace("/", ":")
                 )
-                message.messageBody = try {
+                messageBody = try {
                     Timber.d("Reading body from file ${messageBodyFile.name}")
                     FileInputStream(messageBodyFile).bufferedReader().use { it.readText() }
                 } catch (e: Exception) {
@@ -253,17 +254,18 @@ class MessageDetailsRepository @Inject constructor(
     suspend fun saveMessageInDB(message: Message): Long =
         saveMessage(message)
 
+    @Transaction
     suspend fun saveAllMessages(messages: List<Message>) {
         messages.forEach { saveMessage(it) }
     }
 
     @Deprecated("Use suspend function", ReplaceWith("saveAllMessages(messages)"))
+    @Transaction
     fun saveAllMessagesBlocking(messages: List<Message>) {
-        runBlocking {
-            saveAllMessages(messages)
-        }
+        messages.forEach { saveMessageBlocking(it) }
     }
 
+    @Transaction
     suspend fun saveMessagesInOneTransaction(messages: List<Message>) {
         if (messages.isEmpty()) {
             return

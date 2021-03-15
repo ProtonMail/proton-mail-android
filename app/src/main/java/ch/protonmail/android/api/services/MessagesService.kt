@@ -37,10 +37,8 @@ import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.Logger
 import com.birbit.android.jobqueue.JobManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -168,7 +166,7 @@ class MessagesService : JobIntentService() {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
@@ -178,7 +176,7 @@ class MessagesService : JobIntentService() {
             handleResult(messages, location, false, null, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
@@ -193,7 +191,7 @@ class MessagesService : JobIntentService() {
             handleResult(messagesResponse, location, labelId, currentUserId, refreshMessages)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
@@ -208,7 +206,7 @@ class MessagesService : JobIntentService() {
             handleResult(messages, location, labelId, currentUserId)
         } catch (error: Exception) {
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.FAILED, null))
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "error while fetching messages", error)
+            Timber.e("Error while fetching messages", error)
         }
     }
 
@@ -243,7 +241,7 @@ class MessagesService : JobIntentService() {
     ) {
         val messageList = messages?.messages
         if (messageList == null || messageList.isEmpty()) {
-            Logger.doLog(TAG_MESSAGES_SERVICE, "no more messages")
+            Timber.i("No more messages")
             AppUtil.postEventOnUi(MailboxNoMessagesEvent())
             return
         }
@@ -254,61 +252,55 @@ class MessagesService : JobIntentService() {
             val messagesDb = messagesDbFactory.getDao()
             val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
-            messagesDbFactory.runInTransaction {
-                actionsDbFactory.runInTransaction {
-                    if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
-                    messageList.asSequence().map { msg ->
-                        unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
-                        msg.setLabelIDs(msg.getEventLabelIDs())
-                        msg.location = location.messageLocationTypeValue
-                        msg.setFolderLocation(messagesDb)
-                        if (savedMessage != null) {
-                            if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
-                                return@map null
-                            }
-                            msg.mimeType = savedMessage.mimeType
-                            msg.toList = savedMessage.toList
-                            msg.ccList = savedMessage.ccList
-                            msg.bccList = savedMessage.bccList
-                            msg.replyTos = savedMessage.replyTos
-                            msg.sender = savedMessage.sender
-                            msg.header = savedMessage.header
-                            msg.parsedHeaders = savedMessage.parsedHeaders
-                            if (!refreshDetails) {
-                                msg.isDownloaded = savedMessage.isDownloaded
-                                if (savedMessage.isDownloaded) {
-                                    msg.messageBody = savedMessage.messageBody
-                                }
-                                msg.setIsEncrypted(savedMessage.getIsEncrypted())
-                            }
-                            msg.isInline = savedMessage.isInline
-                            savedMessage.location = location.messageLocationTypeValue
-                            savedMessage.setFolderLocation(messagesDb)
-                            val attachments = savedMessage.Attachments
-                            if (attachments.isNotEmpty()) {
-                                msg.setAttachmentList(attachments)
-                            }
+            if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
+            messageList.asSequence().map { msg ->
+                unixTime = msg.time
+                val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
+                msg.setLabelIDs(msg.getEventLabelIDs())
+                msg.location = location.messageLocationTypeValue
+                msg.setFolderLocation(messagesDb)
+                if (savedMessage != null) {
+                    if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
+                        return@map null
+                    }
+                    msg.mimeType = savedMessage.mimeType
+                    msg.toList = savedMessage.toList
+                    msg.ccList = savedMessage.ccList
+                    msg.bccList = savedMessage.bccList
+                    msg.replyTos = savedMessage.replyTos
+                    msg.sender = savedMessage.sender
+                    msg.header = savedMessage.header
+                    msg.parsedHeaders = savedMessage.parsedHeaders
+                    if (!refreshDetails) {
+                        msg.isDownloaded = savedMessage.isDownloaded
+                        if (savedMessage.isDownloaded) {
+                            msg.messageBody = savedMessage.messageBody
                         }
-                        msg
-                    }.filterNotNull()
-                        .toList()
-                        .let {
-                            runBlocking {
-                                messageDetailsRepository.saveAllMessages(it)
-                            }
-                        }
+                        msg.setIsEncrypted(savedMessage.getIsEncrypted())
+                    }
+                    msg.isInline = savedMessage.isInline
+                    savedMessage.location = location.messageLocationTypeValue
+                    savedMessage.setFolderLocation(messagesDb)
+                    val attachments = savedMessage.Attachments
+                    if (attachments.isNotEmpty()) {
+                        msg.setAttachmentList(attachments)
+                    }
                 }
-            }
+                msg
+            }.filterNotNull()
+                .toList()
+                .let {
+                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                }
             saveLastMessageTime(unixTime, location, "")
             val event = MailboxLoadedEvent(Status.SUCCESS, uuid)
             AppUtil.postEventOnUi(event)
             mNetworkResults.setMailboxLoaded(event)
-            Logger.doLog(TAG_MESSAGES_SERVICE, "fetched messages successfully")
+            Timber.v("Fetched messages successfully")
         } catch (e: Exception) {
             val event = MailboxLoadedEvent(Status.FAILED, uuid)
             AppUtil.postEventOnUi(event)
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "fetched messages error", e)
+            Timber.e("Fetch messages error", e)
         }
     }
 
@@ -321,7 +313,7 @@ class MessagesService : JobIntentService() {
     ) {
         val messageList = messagesResponse.messages
         if (messageList.isEmpty()) {
-            Logger.doLog(TAG_MESSAGES_SERVICE, "no more messages")
+            Timber.i("No more messages")
             AppUtil.postEventOnUi(MailboxNoMessagesEvent())
             return
         }
@@ -332,55 +324,50 @@ class MessagesService : JobIntentService() {
             val messagesDb = messagesDbFactory.getDao()
             val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
-            messagesDbFactory.runInTransaction {
-                actionsDbFactory.runInTransaction {
-                    if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
-                    messageList.asSequence().map { msg ->
-                        unixTime = msg.time
-                        val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
-                        msg.setLabelIDs(msg.getEventLabelIDs())
-                        msg.location = location.messageLocationTypeValue
-                        msg.setFolderLocation(messagesDb)
-                        if (savedMessage != null) {
-                            if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
-                                return@map null
-                            }
-                            msg.toList = savedMessage.toList
-                            msg.ccList = savedMessage.ccList
-                            msg.bccList = savedMessage.bccList
-                            msg.replyTos = savedMessage.replyTos
-                            msg.sender = savedMessage.sender
-                            msg.isDownloaded = savedMessage.isDownloaded
-                            msg.header = savedMessage.header
-                            msg.parsedHeaders = savedMessage.parsedHeaders
-                            msg.spamScore = savedMessage.spamScore
-                            if (savedMessage.isDownloaded) {
-                                msg.messageBody = savedMessage.messageBody
-                            }
-                            msg.setIsEncrypted(savedMessage.getIsEncrypted())
-                            msg.isInline = savedMessage.isInline
-                            msg.mimeType = savedMessage.mimeType
-                            savedMessage.location = location.messageLocationTypeValue
-                            savedMessage.setFolderLocation(messagesDb)
-                            val attachments = savedMessage.Attachments
-                            if (attachments.isNotEmpty()) {
-                                msg.setAttachmentList(attachments)
-                            }
-                        }
-                        msg
-                    }.filterNotNull()
-                        .toList()
-                        .let {
-                            runBlocking {
-                                messageDetailsRepository.saveAllMessages(it)
-                            }
-                        }
+            if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)
+            messageList.asSequence().map { msg ->
+                unixTime = msg.time
+                val savedMessage = messageDetailsRepository.findMessageByIdBlocking(msg.messageId!!)
+                msg.setLabelIDs(msg.getEventLabelIDs())
+                msg.location = location.messageLocationTypeValue
+                msg.setFolderLocation(messagesDb)
+                if (savedMessage != null) {
+                    if (actionsDb.findPendingSendByDbId(savedMessage.dbId!!) != null) {
+                        return@map null
+                    }
+                    msg.toList = savedMessage.toList
+                    msg.ccList = savedMessage.ccList
+                    msg.bccList = savedMessage.bccList
+                    msg.replyTos = savedMessage.replyTos
+                    msg.sender = savedMessage.sender
+                    msg.isDownloaded = savedMessage.isDownloaded
+                    msg.header = savedMessage.header
+                    msg.parsedHeaders = savedMessage.parsedHeaders
+                    msg.spamScore = savedMessage.spamScore
+                    if (savedMessage.isDownloaded) {
+                        msg.messageBody = savedMessage.messageBody
+                    }
+                    msg.setIsEncrypted(savedMessage.getIsEncrypted())
+                    msg.isInline = savedMessage.isInline
+                    msg.mimeType = savedMessage.mimeType
+                    savedMessage.location = location.messageLocationTypeValue
+                    savedMessage.setFolderLocation(messagesDb)
+                    val attachments = savedMessage.Attachments
+                    if (attachments.isNotEmpty()) {
+                        msg.setAttachmentList(attachments)
+                    }
                 }
-            }
+                msg
+            }.filterNotNull()
+                .toList()
+                .let {
+                    messageDetailsRepository.saveAllMessagesBlocking(it)
+                }
+
             saveLastMessageTime(unixTime, location, labelId)
             AppUtil.postEventOnUi(MailboxLoadedEvent(Status.SUCCESS, null))
         } catch (e: Exception) {
-            Logger.doLogException(TAG_MESSAGES_SERVICE, "fetched messages error", e)
+            Timber.e("Fetch messages error", e)
         }
     }
 

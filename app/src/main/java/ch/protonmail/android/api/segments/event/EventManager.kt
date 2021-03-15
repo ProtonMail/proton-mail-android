@@ -24,7 +24,6 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.exceptions.ApiException
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.EventResponse
-import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
@@ -81,7 +80,7 @@ class EventManager @Inject constructor(
             }
 
             val eventID = recoverNextEventId(handler.userId)
-            val response = ParseUtils.parse(service.check(eventID!!, UserIdTag(handler.userId)).execute())
+            val response = service.check(eventID!!, UserIdTag(handler.userId))
 
             if (response.code == Constants.RESPONSE_CODE_OK) {
                 handleEvents(handler, response)
@@ -149,7 +148,7 @@ class EventManager @Inject constructor(
      * @throws ApiException if service call fails
      */
     private suspend fun generateNewEventId(userId: Id) {
-        val response = ParseUtils.parse(service.latestId(UserIdTag(userId)).execute())
+        val response = service.latestId(UserIdTag(userId))
         if (response.code == Constants.RESPONSE_CODE_OK) {
             backupNextEventId(userId, response.eventID)
         } else {

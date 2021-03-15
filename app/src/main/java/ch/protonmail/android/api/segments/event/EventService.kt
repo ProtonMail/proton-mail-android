@@ -23,7 +23,6 @@ import ch.protonmail.android.api.models.EventResponse
 import ch.protonmail.android.api.models.LatestEventResponse
 import ch.protonmail.android.api.segments.RetrofitConstants.ACCEPT_HEADER_V1
 import ch.protonmail.android.api.segments.RetrofitConstants.CONTENT_TYPE
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -33,9 +32,9 @@ interface EventService {
 
     @GET("events/{eventId}")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun check(@Path("eventId") eventId: String, @Tag idTag: UserIdTag): Call<EventResponse>
+    suspend fun check(@Path("eventId") eventId: String, @Tag idTag: UserIdTag): EventResponse
 
     @GET("events/latest")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
-    suspend fun latestId(@Tag idTag: UserIdTag): Call<LatestEventResponse>
+    suspend fun latestId(@Tag idTag: UserIdTag): LatestEventResponse
 }

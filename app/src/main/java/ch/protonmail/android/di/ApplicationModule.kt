@@ -198,8 +198,10 @@ object ApplicationModule {
         userNotifier: UserNotifier
     ): ProtonRetrofitBuilder {
 
+        // userManager.user.allowSecureConnectionsViaThirdParties)
+        val user = userManager.getCurrentLegacyUserBlocking()
         val dnsOverHttpsHost =
-            if (!userManager.user.usingDefaultApi)
+            if (user != null && !user.usingDefaultApi)
                 Proxies.getInstance(null, prefs).getCurrentWorkingProxyDomain()
             else Constants.ENDPOINT_URI
 

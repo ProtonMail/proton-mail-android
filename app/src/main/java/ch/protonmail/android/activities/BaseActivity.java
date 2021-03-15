@@ -228,13 +228,15 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     protected void onResume() {
         super.onResume();
 
+        User user = mUserManager.getCurrentLegacyUserBlocking();
+
         // Enable secure mode if screenshots are disabled, else disable it
-        if (isPreventingScreenshots() || mUserManager.getUser().isPreventTakingScreenshots()) {
+        if (isPreventingScreenshots() || user != null && user.isPreventTakingScreenshots()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
-        if (shouldLock && (secureContent() || mUserManager.getUser().isPreventTakingScreenshots())) {
+        if (shouldLock && (secureContent() || user != null && user.isPreventTakingScreenshots())) {
             enableScreenshotProtector();
         }
         app.setAppInBackground(false);
@@ -270,10 +272,13 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void shouldLock() {
-        User user = mUserManager.getUser();
+        User user = mUserManager.getCurrentLegacyUserBlocking();
+        if (user == null)
+            return;
+
         long diff = user.getLastInteractionDiff();
 
-        if(user.isUsePin()) {
+        if (user.isUsePin()) {
             if (diff >= 0) {
                 shouldLock = user.shouldPINLockTheApp(diff);
             } else {

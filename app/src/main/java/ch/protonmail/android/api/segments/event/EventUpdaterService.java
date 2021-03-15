@@ -33,10 +33,6 @@ import ch.protonmail.android.core.QueueNetworkUtil;
 import ch.protonmail.android.core.UserManager;
 import dagger.hilt.android.AndroidEntryPoint;
 
-/*
- * Created by dkadrikj on 11.9.15.
- */
-
 @AndroidEntryPoint
 public class EventUpdaterService extends ProtonJobIntentService {
 
