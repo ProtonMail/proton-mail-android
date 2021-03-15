@@ -18,12 +18,16 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<resources>
+    <!-- TODO: Move to values/styles.xml when min sdk is changed to 23 -->
+    <style name="ProtonTheme.Mail" parent="ProtonTheme">
+        <item name="brand_norm">@color/cornflower_blue</item>
+        <item name="brand_darken_20">@color/san_marino</item>
+        <item name="brand_darken_40">@color/chambray</item>
+        <item name="brand_lighten_20">@color/portage</item>
+        <item name="brand_lighten_40">@color/perano</item>
 
-    <application
-        android:theme="@style/ProtonTheme.Mail"
-        tools:replace="android:theme" />
-
-</manifest>
+        <item name="android:statusBarColor">@color/background_norm</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

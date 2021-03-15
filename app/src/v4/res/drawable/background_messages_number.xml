@@ -18,12 +18,11 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<manifest
+<shape
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:shape="rectangle">
 
-    <application
-        android:theme="@style/ProtonTheme.Mail"
-        tools:replace="android:theme" />
+    <stroke android:width="1dp" android:color="@color/text_weak" />
 
-</manifest>
+    <corners android:radius="3dp" />
+</shape>

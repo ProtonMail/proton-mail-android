@@ -41,6 +41,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.AbsListView.MultiChoiceModeListener
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -53,12 +54,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.switchMap
 import androidx.loader.app.LoaderManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.work.WorkInfo
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.EXTRA_FIRST_LOGIN
 import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
@@ -111,6 +114,7 @@ import ch.protonmail.android.api.services.MessagesService.Companion.startFetchMe
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchMessagesByLabel
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.DrawerOptionType
+import ch.protonmail.android.core.Constants.FLAVOR_V4
 import ch.protonmail.android.core.Constants.MessageLocationType
 import ch.protonmail.android.core.Constants.MessageLocationType.Companion.fromInt
 import ch.protonmail.android.core.Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES
@@ -179,6 +183,10 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.otto.Subscribe
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_mailbox.*
+import kotlinx.android.synthetic.main.activity_mailbox.mailboxRecyclerView
+import kotlinx.android.synthetic.main.activity_mailbox.screenShotPreventerView
+import kotlinx.android.synthetic.main.activity_mailbox.storageLimitAlert
+import kotlinx.android.synthetic.v4.activity_mailbox.*
 import kotlinx.android.synthetic.main.fragment_billing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
@@ -206,7 +214,6 @@ const val LOADER_ID = 0
 const val LOADER_ID_LABELS_OFFLINE = 32
 private const val REQUEST_CODE_TRASH_MESSAGE_DETAILS = 1
 private const val REQUEST_CODE_COMPOSE_MESSAGE = 19
-
 
 @AndroidEntryPoint
 class MailboxActivity :
@@ -354,12 +361,21 @@ class MailboxActivity :
         setUpDrawer()
         setTitle()
 
-        messages_list_view.adapter = messagesAdapter
-        messages_list_view.layoutManager = LinearLayoutManager(this)
+        mailboxRecyclerView.adapter = messagesAdapter
+        mailboxRecyclerView.layoutManager = LinearLayoutManager(this)
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            val itemDecoration = DividerItemDecoration(mailboxRecyclerView.context, DividerItemDecoration.VERTICAL)
+            itemDecoration.setDrawable(getDrawable(R.drawable.list_divider)!!)
+            mailboxRecyclerView.addItemDecoration(itemDecoration)
+        }
         buildSwipeProcessor()
-        initializeSwipeRefreshLayout(swipe_refresh_layout)
-        initializeSwipeRefreshLayout(spinner_layout)
-        initializeSwipeRefreshLayout(no_messages_layout)
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            initializeSwipeRefreshLayout(mailboxSwipeRefreshLayout)
+        } else {
+            initializeSwipeRefreshLayout(swipe_refresh_layout)
+            initializeSwipeRefreshLayout(spinner_layout)
+            initializeSwipeRefreshLayout(no_messages_layout)
+        }
 
         if (userManager.isFirstMailboxLoad) {
             swipeCustomizeSnack = Snackbar.make(
@@ -401,7 +417,7 @@ class MailboxActivity :
         checkRegistration()
         closeDrawer()
 
-        messages_list_view.addOnScrollListener(listScrollListener)
+        mailboxRecyclerView.addOnScrollListener(listScrollListener)
 
         fetchOrganizationData()
 
@@ -411,7 +427,7 @@ class MailboxActivity :
 
         mailboxLocationMain.observe(this, messagesAdapter::setNewLocation)
         messagesLiveData.observe(this, MessagesListObserver(messagesAdapter))
-        ItemTouchHelper(SwipeController()).attachToRecyclerView(messages_list_view)
+        ItemTouchHelper(SwipeController()).attachToRecyclerView(mailboxRecyclerView)
 
         if (extras != null && extras.getBoolean(EXTRA_HAS_SWITCHED_USER, false)) {
             if (EXTRA_SWITCHED_TO_USER_ID in extras) {
@@ -428,11 +444,11 @@ class MailboxActivity :
     override fun secureContent(): Boolean = true
 
     override fun enableScreenshotProtector() {
-        screenShotPreventer.visibility = View.VISIBLE
+        screenShotPreventerView.visibility = View.VISIBLE
     }
 
     override fun disableScreenshotProtector() {
-        screenShotPreventer.visibility = View.GONE
+        screenShotPreventerView.visibility = View.GONE
     }
 
     private fun startObserving() {
@@ -627,6 +643,10 @@ class MailboxActivity :
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
+
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            setElevationOnToolbarAndStatusView(false)
+        }
     }
 
     private inner class MessagesListObserver(
@@ -635,6 +655,16 @@ class MailboxActivity :
         override fun onChanged(messages: List<Message>) {
             adapter!!.clear()
             adapter.addAll(messages)
+        }
+    }
+
+    private fun setElevationOnToolbarAndStatusView(shouldIncreaseElevation: Boolean) {
+        if (shouldIncreaseElevation) {
+            supportActionBar?.elevation = 32F
+            mailboxStatusLayout.elevation = 32F
+        } else {
+            supportActionBar?.elevation = 0F
+            mailboxStatusLayout.elevation = 0F
         }
     }
 
@@ -654,6 +684,15 @@ class MailboxActivity :
             val lastPosition = adapter!!.itemCount - 1
             if (lastVisibleItem == lastPosition && dy > 0 && !setLoadingMore(true)) {
                 loadMoreMessages()
+            }
+
+            if (BuildConfig.FLAVOR == FLAVOR_V4) {
+                val firstVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition()
+                if (firstVisibleItem == 0) {
+                    setElevationOnToolbarAndStatusView(false)
+                } else {
+                    setElevationOnToolbarAndStatusView(true)
+                }
             }
         }
 
@@ -724,7 +763,9 @@ class MailboxActivity :
         syncUUID = UUID.randomUUID().toString()
         if (userManager.isBackgroundSyncEnabled) {
             setRefreshing(true)
-            layout_sync.visibility = View.VISIBLE
+            if (BuildConfig.FLAVOR != FLAVOR_V4) {
+                layout_sync.visibility = View.VISIBLE
+            }
         }
         if (firstLogin == null) {
             firstLogin = intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)
@@ -820,7 +861,9 @@ class MailboxActivity :
         reloadMessageCounts()
         registerFcmReceiver()
         checkDelinquency()
-        no_messages_layout.visibility = View.GONE
+        if (BuildConfig.FLAVOR != FLAVOR_V4) {
+            no_messages_layout.visibility = View.GONE
+        }
         mailboxViewModel.checkConnectivity()
         val mailboxLocation = mailboxLocationMain.value
         if (mailboxLocation == MessageLocationType.INBOX) {
@@ -859,11 +902,36 @@ class MailboxActivity :
         super.onSaveInstanceState(outState)
     }
 
+    private fun setUpMenuItems(composeMenuItem: MenuItem, searchMenuItem: MenuItem) {
+        composeMenuItem.actionView.findViewById<ImageView>(R.id.composeImageView)
+            .setOnClickListener {
+                mailboxViewModel.usedSpaceActionEvent(FLOW_TRY_COMPOSE)
+            }
+        searchMenuItem.actionView.findViewById<ImageView>(R.id.searchImageView)
+            .setOnClickListener {
+                val intent = AppUtil.decorInAppIntent(
+                    Intent(
+                        this@MailboxActivity,
+                        SearchActivity::class.java
+                    )
+                )
+                startActivity(intent)
+            }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.mailbox_options_menu, menu)
         val mailboxLocation = mailboxLocationMain.value
-        menu.findItem(R.id.empty).isVisible =
-            mailboxLocation in listOf(MessageLocationType.DRAFT, MessageLocationType.SPAM, MessageLocationType.TRASH)
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
+        } else {
+            menu.findItem(R.id.empty).isVisible =
+                mailboxLocation in listOf(
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.SPAM,
+                    MessageLocationType.TRASH
+                )
+        }
         return true
     }
 
@@ -871,14 +939,18 @@ class MailboxActivity :
         menu.clear()
         menuInflater.inflate(R.menu.mailbox_options_menu, menu)
         val mailboxLocation = mailboxLocationMain.value
-        menu.findItem(R.id.empty).isVisible =
-            mailboxLocation in listOf(
-            MessageLocationType.DRAFT,
-            MessageLocationType.SPAM,
-            MessageLocationType.TRASH,
-            MessageLocationType.LABEL,
-            MessageLocationType.LABEL_FOLDER
-        )
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            setUpMenuItems(menu.findItem(R.id.compose), menu.findItem(R.id.search))
+        } else {
+            menu.findItem(R.id.empty).isVisible =
+                mailboxLocation in listOf(
+                    MessageLocationType.DRAFT,
+                    MessageLocationType.SPAM,
+                    MessageLocationType.TRASH,
+                    MessageLocationType.LABEL,
+                    MessageLocationType.LABEL_FOLDER
+                )
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -918,12 +990,16 @@ class MailboxActivity :
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        drawerToggle.syncState()
+        if (BuildConfig.FLAVOR != FLAVOR_V4) {
+            drawerToggle.syncState()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        drawerToggle.syncState()
+        if (BuildConfig.FLAVOR != FLAVOR_V4) {
+            drawerToggle.syncState()
+        }
     }
 
     override fun onBackPressed() {
@@ -937,21 +1013,29 @@ class MailboxActivity :
     }
 
     private fun initializeSwipeRefreshLayout(swipeRefreshLayoutAux: SwipeRefreshLayout) {
-        swipeRefreshLayoutAux.setColorSchemeResources(R.color.ultramarine_blue, R.color.lake_blue)
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            swipeRefreshLayoutAux.setColorSchemeResources(R.color.cornflower_blue)
+        } else {
+            swipeRefreshLayoutAux.setColorSchemeResources(R.color.ultramarine_blue, R.color.lake_blue)
+        }
         swipeRefreshLayoutAux.setOnRefreshListener(this)
     }
 
     fun setRefreshing(shouldRefresh: Boolean) {
         Timber.v("setRefreshing shouldRefresh:$shouldRefresh")
-        swipe_refresh_layout.isRefreshing = shouldRefresh
-        spinner_layout.isRefreshing = shouldRefresh
-        no_messages_layout.isRefreshing = shouldRefresh
-        spinner_layout.visibility = if (shouldRefresh) View.VISIBLE else View.GONE
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            mailboxSwipeRefreshLayout.isRefreshing = shouldRefresh
+        } else {
+            swipe_refresh_layout.isRefreshing = shouldRefresh
+            spinner_layout.isRefreshing = shouldRefresh
+            no_messages_layout.isRefreshing = shouldRefresh
+            spinner_layout.visibility = if (shouldRefresh) View.VISIBLE else View.GONE
+        }
     }
 
     private fun setLoadingMore(loadingMore: Boolean): Boolean {
         val previousValue = isLoadingMore.getAndSet(loadingMore)
-        messages_list_view.post { messagesAdapter.includeFooter = isLoadingMore.get() }
+        mailboxRecyclerView.post { messagesAdapter.includeFooter = isLoadingMore.get() }
         return previousValue
     }
 
@@ -959,7 +1043,7 @@ class MailboxActivity :
     fun onSwitchedAccountEvent(event: SwitchUserEvent) {
         val (fromUsername, toUsername) = event.from.second.s to event.to.second.s
         showSignedInSnack(
-            messages_list_view,
+            mailboxRecyclerView,
             getString(R.string.signed_in_with_logged_out_from, fromUsername, toUsername)
         )
         onSwitchedAccounts()
@@ -1204,15 +1288,23 @@ class MailboxActivity :
 
     fun refreshEmptyView(count: Int) {
         if (count == 0) {
-            spinner_layout.visibility = View.GONE
-            no_messages_layout.visibility = View.VISIBLE
-            swipe_refresh_layout.visibility = View.GONE
-            swipe_refresh_wrapper.visibility = View.GONE
+            if (BuildConfig.FLAVOR == FLAVOR_V4) {
+                mailboxSwipeRefreshLayout.visibility = View.GONE
+            } else {
+                spinner_layout.visibility = View.GONE
+                no_messages_layout.visibility = View.VISIBLE
+                swipe_refresh_layout.visibility = View.GONE
+                swipe_refresh_wrapper.visibility = View.GONE
+            }
         } else {
-            spinner_layout.visibility = View.VISIBLE
-            no_messages_layout.visibility = View.GONE
-            swipe_refresh_layout.visibility = View.VISIBLE
-            swipe_refresh_wrapper.visibility = View.VISIBLE
+            if (BuildConfig.FLAVOR == FLAVOR_V4) {
+                mailboxSwipeRefreshLayout.visibility = View.VISIBLE
+            } else {
+                spinner_layout.visibility = View.VISIBLE
+                no_messages_layout.visibility = View.GONE
+                swipe_refresh_layout.visibility = View.VISIBLE
+                swipe_refresh_wrapper.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -1258,7 +1350,11 @@ class MailboxActivity :
             menu.removeItem(moveToInbox.itemId)
         }
         menu.findItem(R.id.move_to_spam).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        swipe_refresh_layout.isEnabled = false
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            mailboxSwipeRefreshLayout.isEnabled = false
+        } else {
+            swipe_refresh_layout.isEnabled = false
+        }
         return true
     }
 
@@ -1425,7 +1521,11 @@ class MailboxActivity :
 
     override fun onDestroyActionMode(mode: ActionMode) {
         actionMode = null
-        swipe_refresh_layout.isEnabled = true
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            mailboxSwipeRefreshLayout.isEnabled = true
+        } else {
+            swipe_refresh_layout.isEnabled = true
+        }
         messagesAdapter.endSelectionMode()
         UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar))
     }
@@ -1498,7 +1598,11 @@ class MailboxActivity :
 
     /* SwipeRefreshLayout.OnRefreshListener */
     override fun onRefresh() {
-        if (!spinner_layout.isRefreshing) {
+        if (BuildConfig.FLAVOR != FLAVOR_V4) {
+            if (!spinner_layout.isRefreshing) {
+                fetchUpdates(true)
+            }
+        } else {
             fetchUpdates(true)
         }
     }
@@ -1524,7 +1628,9 @@ class MailboxActivity :
     }
 
     private fun syncingDone() {
-        layout_sync.visibility = View.GONE
+        if (BuildConfig.FLAVOR != FLAVOR_V4) {
+            layout_sync.visibility = View.GONE
+        }
     }
 
     private class SyncDoneRunnable internal constructor(activity: MailboxActivity) : Runnable {
@@ -1537,12 +1643,19 @@ class MailboxActivity :
 
     private fun setupNewMessageLocation(newLocation: Int) {
         val newMessageLocationType = fromInt(newLocation)
-        swipe_refresh_layout.visibility = View.VISIBLE
-        swipe_refresh_layout.isRefreshing = true
-        swipe_refresh_wrapper.visibility = View.VISIBLE
+        if (BuildConfig.FLAVOR == FLAVOR_V4) {
+            mailboxSwipeRefreshLayout.visibility = View.VISIBLE
+            mailboxSwipeRefreshLayout.isRefreshing = true
+
+            setElevationOnToolbarAndStatusView(false)
+        } else {
+            swipe_refresh_layout.visibility = View.VISIBLE
+            swipe_refresh_layout.isRefreshing = true
+            swipe_refresh_wrapper.visibility = View.VISIBLE
+            no_messages_layout.visibility = View.GONE
+            spinner_layout.visibility = View.VISIBLE
+        }
         LoaderManager.getInstance(this).destroyLoader(LOADER_ID_LABELS_OFFLINE)
-        no_messages_layout.visibility = View.GONE
-        spinner_layout.visibility = View.VISIBLE
         if (actionMode != null) {
             actionMode!!.finish()
         }
@@ -1551,8 +1664,8 @@ class MailboxActivity :
         mailboxLocationMain.value = newMessageLocationType
         setTitle()
         closeDrawer()
-        messages_list_view.clearFocus()
-        messages_list_view.scrollToPosition(0)
+        mailboxRecyclerView.clearFocus()
+        mailboxRecyclerView.scrollToPosition(0)
         if (newMessageLocationType == MessageLocationType.STARRED) {
             startFetchFirstPage(applicationContext, userManager.requireCurrentUserId(), newMessageLocationType)
         } else {
@@ -1615,8 +1728,10 @@ class MailboxActivity :
 
             when (requestCode) {
                 REQUEST_CODE_TRASH_MESSAGE_DETAILS -> {
-                    move_to_trash.visibility = View.VISIBLE
-                    handler.postDelayed({ move_to_trash.visibility = View.GONE }, 1000)
+                    if (BuildConfig.FLAVOR != FLAVOR_V4) {
+                        move_to_trash.visibility = View.VISIBLE
+                        handler.postDelayed({ move_to_trash.visibility = View.GONE }, 1000)
+                    }
                 }
                 REQUEST_CODE_VALIDATE_PIN -> {
                     requireNotNull(data) { "No data for request $requestCode" }
@@ -1789,11 +1904,18 @@ class MailboxActivity :
 
         override fun onPostExecute(label: Label?) {
             val mailboxActivity = mailboxActivity.get() ?: return
-            mailboxActivity.swipe_refresh_layout.visibility = View.VISIBLE
-            mailboxActivity.swipe_refresh_wrapper.visibility = View.VISIBLE
-            mailboxActivity.swipe_refresh_layout.isRefreshing = true
-            mailboxActivity.no_messages_layout.visibility = View.GONE
-            mailboxActivity.spinner_layout.visibility = View.VISIBLE
+            if (BuildConfig.FLAVOR == FLAVOR_V4) {
+                mailboxActivity.mailboxSwipeRefreshLayout.visibility = View.VISIBLE
+                mailboxActivity.mailboxSwipeRefreshLayout.isRefreshing = true
+
+                mailboxActivity.setElevationOnToolbarAndStatusView(false)
+            } else {
+                mailboxActivity.swipe_refresh_layout.visibility = View.VISIBLE
+                mailboxActivity.swipe_refresh_wrapper.visibility = View.VISIBLE
+                mailboxActivity.swipe_refresh_layout.isRefreshing = true
+                mailboxActivity.no_messages_layout.visibility = View.GONE
+                mailboxActivity.spinner_layout.visibility = View.VISIBLE
+            }
             if (mailboxActivity.actionMode != null) {
                 mailboxActivity.actionMode!!.finish()
             }
@@ -1813,7 +1935,7 @@ class MailboxActivity :
                 }
             }
             mailboxActivity.closeDrawer()
-            mailboxActivity.messages_list_view.scrollToPosition(0)
+            mailboxActivity.mailboxRecyclerView.scrollToPosition(0)
             startFetchFirstPageByLabel(
                 mailboxActivity,
                 userId,
@@ -1837,7 +1959,7 @@ class MailboxActivity :
             ) {
                 syncUUID = UUID.randomUUID().toString()
                 checkUserAndFetchNews()
-                if ((messages_list_view.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {
+                if ((mailboxRecyclerView.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() > 1) {
                     handler.postDelayed(750) {
                         val newMessageSnack =
                             Snackbar.make(

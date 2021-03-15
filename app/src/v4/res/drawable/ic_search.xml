@@ -1,0 +1,32 @@
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+  <path
+      android:pathData="M20,20m-20,0a20,20 0,1 1,40 0a20,20 0,1 1,-40 0"
+      android:fillColor="@color/interaction_weak"/>
+  <path
+      android:pathData="M12.545,18.3061C12.545,15.1243 15.1243,12.545 18.3061,12.545C21.4879,12.545 24.0673,15.1243 24.0673,18.3061C24.0673,21.4879 21.4879,24.0673 18.3061,24.0673C15.1243,24.0673 12.545,21.4879 12.545,18.3061ZM18.3061,11C14.2711,11 11,14.2711 11,18.3061C11,22.3412 14.2711,25.6123 18.3061,25.6123C20.0454,25.6123 21.6427,25.0045 22.8973,23.9898L27.977,29.0696L29.0695,27.9771L23.9897,22.8974C25.0045,21.6428 25.6123,20.0454 25.6123,18.3061C25.6123,14.2711 22.3412,11 18.3061,11Z"
+      android:fillColor="@color/icon_norm"
+      android:fillType="evenOdd"/>
+</vector>

@@ -20,13 +20,18 @@ package ch.protonmail.android.adapters.messages
 
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Build
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import ch.protonmail.android.BuildConfig
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.core.Constants.FLAVOR_V4
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MessagesListFooterView
 import ch.protonmail.android.views.messagesList.MessagesListItemView
+import ch.protonmail.android.views.messagesList.MessagesListItemViewV4
 
 class MessagesRecyclerViewAdapter(
     private val context: Context,
@@ -61,14 +66,16 @@ class MessagesRecyclerViewAdapter(
 
         }
 
-    fun getItem(position: Int) = messages[position]
-
     val checkedMessages get() = selectedMessageIds.mapNotNull { messages.find { message -> message.messageId == it } }
 
+    fun getItem(position: Int) = messages[position]
+
     fun addAll(messages: List<Message>) {
-        this.messages.addAll(messages.filter {
-            !it.deleted
-        })
+        this.messages.addAll(
+            messages.filter {
+                !it.deleted
+            }
+        )
         notifyDataSetChanged()
     }
 
@@ -92,18 +99,30 @@ class MessagesRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagesListViewHolder {
         return when (ElementType.values()[viewType]) {
-            ElementType.MESSAGE -> MessagesListViewHolder.MessageViewHolder(MessagesListItemView(context))
+            ElementType.MESSAGE -> {
+                if (BuildConfig.FLAVOR == FLAVOR_V4 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    MessagesListViewHolder.MessageViewHolderV4(MessagesListItemViewV4(context))
+                } else {
+                    MessagesListViewHolder.MessageViewHolder(MessagesListItemView(context))
+                }
+            }
             ElementType.FOOTER -> MessagesListViewHolder.FooterViewHolder(MessagesListFooterView(context))
         }
     }
 
-    override fun getItemCount(): Int {
-        return messages.size + if (includeFooter) 1 else 0
-    }
+    override fun getItemCount(): Int = messages.size + if (includeFooter) 1 else 0
 
     override fun onBindViewHolder(holder: MessagesListViewHolder, position: Int) {
         when (ElementType.values()[getItemViewType(position)]) {
-            ElementType.MESSAGE -> (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
+            ElementType.MESSAGE -> {
+                if (BuildConfig.FLAVOR == FLAVOR_V4) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        (holder as MessagesListViewHolder.MessageViewHolderV4).bindMessage(position)
+                    }
+                } else {
+                    (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
+                }
+            }
             ElementType.FOOTER -> {
                 // NOOP
             }
@@ -115,10 +134,10 @@ class MessagesRecyclerViewAdapter(
         val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
 
         val pendingSend = pendingSendList?.find { it.messageId == message.messageId }
-        message.isBeingSent = pendingSend != null && pendingSend.sent == null // under these conditions the message is in sending process
+        // under these conditions the message is in sending process
+        message.isBeingSent = pendingSend != null && pendingSend.sent == null
         message.isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == message.messageId } != null
-        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name
-                ?: message.senderName
+        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
 
         this.view.bind(message, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation, typeface)
 
@@ -158,6 +177,21 @@ class MessagesRecyclerViewAdapter(
             }
 
             return@setOnLongClickListener true
+        }
+    }
+
+    // TODO: Remove annotation when we drop Android 5
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun MessagesListViewHolder.MessageViewHolderV4.bindMessage(position: Int) {
+        val message = messages[position]
+        val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
+
+        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
+
+        this.view.bind(message, messageLabels, mMailboxLocation)
+
+        this.view.setOnClickListener {
+            onItemClick?.invoke(message)
         }
     }
 

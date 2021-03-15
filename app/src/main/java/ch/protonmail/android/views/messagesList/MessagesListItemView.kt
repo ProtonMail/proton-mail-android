@@ -44,10 +44,6 @@ private const val CHECKBOX_WIDTH_IN_DP = 34
 private const val MAX_LABELS_WITH_TEXT = 1
 // endregion
 
-/**
- * Created by Kamil Rajtar on 16.07.18.
- */
-
 class MessagesListItemView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -56,18 +52,18 @@ class MessagesListItemView @JvmOverloads constructor(
     init {
         inflate(context, R.layout.messages_list_item_new, this)
         layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
+            ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     private val mCheckBoxWidthInPixels: Int by lazy {
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                CHECKBOX_WIDTH_IN_DP.toFloat(),
-                context.resources.displayMetrics).toInt()
+            CHECKBOX_WIDTH_IN_DP.toFloat(),
+            context.resources.displayMetrics).toInt()
     }
 
     private val mStrokeWidth by lazy {
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context
-                .resources.displayMetrics).toInt()
+            .resources.displayMetrics).toInt()
     }
 
     private var allFolders = HashMap<String, Label>()
@@ -138,7 +134,7 @@ class MessagesListItemView @JvmOverloads constructor(
 
         val messageSenderText = when {
             Constants.MessageLocationType.fromInt(message.location) in arrayOf(Constants.MessageLocationType.DRAFT,
-                    Constants.MessageLocationType.SENT) -> message.toListStringGroupsAware
+                Constants.MessageLocationType.SENT) -> message.toListStringGroupsAware
             !message.senderDisplayName.isNullOrEmpty() -> message.senderDisplayName
             else -> message.senderEmail
         }
@@ -149,11 +145,11 @@ class MessagesListItemView @JvmOverloads constructor(
         labelsLinearLayout.visibility = View.GONE
         val messageLabelsIDs = message.allLabelIDs
         val isMessageSentAndTrashed =
-                message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
-                        messageLabelsIDs.any { it == Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() }
+            message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
+                messageLabelsIDs.any { it == Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() }
         val isMessageSentAndArchived =
-                message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
-                        messageLabelsIDs.any { it == Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() }
+            message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
+                messageLabelsIDs.any { it == Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() }
         //region labels
         labels.forEach { allFolders[it.id] = it }
         val nonExclusiveLabels = labels.filter { !it.exclusive }
@@ -178,7 +174,7 @@ class MessagesListItemView @JvmOverloads constructor(
             } else {
                 val imageView = ImageView(context)
                 val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT)
+                    LinearLayout.LayoutParams.WRAP_CONTENT)
                 lp.setMargins(0, 0, 0, 0)
                 imageView.layoutParams = lp
                 imageView.setImageResource(R.drawable.mail_label_collapsed)
@@ -192,10 +188,10 @@ class MessagesListItemView @JvmOverloads constructor(
         //endregion
 
         messageLabelTrashTextView.visibility =
-                if (mailboxLocation != Constants.MessageLocationType.TRASH &&
+            if (mailboxLocation != Constants.MessageLocationType.TRASH &&
                 isMessageSentAndTrashed) View.VISIBLE else View.GONE
         messageLabelArchiveTextView.visibility =
-                if (mailboxLocation != Constants.MessageLocationType.ARCHIVE &&
+            if (mailboxLocation != Constants.MessageLocationType.ARCHIVE &&
                 isMessageSentAndArchived) View.VISIBLE else View.GONE
         messageStarredTextView.typeface = typeface
         messageExpirationTextView.typeface = typeface
@@ -217,10 +213,10 @@ class MessagesListItemView @JvmOverloads constructor(
         messageStarredTextView.visibility = if (message.isStarred == true) View.VISIBLE else View.GONE
 
         if (mailboxLocation in arrayOf(Constants.MessageLocationType.STARRED,
-                        Constants.MessageLocationType.LABEL,
-                        Constants.MessageLocationType.SEARCH,
-                        Constants.MessageLocationType.ALL_MAIL,
-                        Constants.MessageLocationType.SENT)) {
+                Constants.MessageLocationType.LABEL,
+                Constants.MessageLocationType.SEARCH,
+                Constants.MessageLocationType.ALL_MAIL,
+                Constants.MessageLocationType.SENT)) {
             val title = if (mailboxLocation == Constants.MessageLocationType.SENT)
                 message.getFolderTitle()
             else
@@ -281,11 +277,11 @@ class MessagesListItemView @JvmOverloads constructor(
             if (labelId.length <= 2) {
                 messageLocation = Constants.MessageLocationType.fromInt(Integer.valueOf(labelId))
                 if (messageLocation !in arrayOf(Constants.MessageLocationType.STARRED,
-                                Constants.MessageLocationType.ALL_MAIL,
-                                Constants.MessageLocationType.INVALID,
-                                Constants.MessageLocationType.ALL_DRAFT,
-                                Constants.MessageLocationType.ALL_SENT
-                        )) {
+                        Constants.MessageLocationType.ALL_MAIL,
+                        Constants.MessageLocationType.INVALID,
+                        Constants.MessageLocationType.ALL_DRAFT,
+                        Constants.MessageLocationType.ALL_SENT
+                    )) {
                     break
                 }
             }
@@ -312,7 +308,7 @@ class MessagesListItemView @JvmOverloads constructor(
 
     private fun Message.getFolderTitle(): String {
         return allLabelIDs.asReversed().asSequence().map(allFolders::get).filterNotNull().filter(Label::exclusive).map { it.name }.lastOrNull()
-                ?: ""
+            ?: ""
     }
 }
 

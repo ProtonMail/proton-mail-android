@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="@dimen/mailbox_list_item_padding_horizontal"
+    android:paddingVertical="@dimen/mailbox_list_item_padding_vertical"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/senderInitialTextView"
+        android:layout_width="@dimen/sender_initial_view_size"
+        android:layout_height="@dimen/sender_initial_view_size"
+        android:layout_marginStart="@dimen/sender_initial_view_margin_start"
+        android:layout_marginEnd="@dimen/sender_initial_view_margin_end"
+        android:layout_marginTop="@dimen/sender_initial_view_margin_top"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/senderInitialBarrier"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:background="@drawable/background_sender_initial"
+        tools:text="S" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/senderInitialBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageView
+        android:id="@+id/replyImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_icon_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toLeftOf="@id/replyAllImageView"
+        app:layout_constraintTop_toTopOf="@id/replyAllImageView"
+        app:layout_constraintBottom_toBottomOf="@id/replyAllImageView"
+        android:src="@drawable/ic_reply"
+        android:contentDescription="@null"
+        app:tint="@color/icon_weak" />
+
+    <ImageView
+        android:id="@+id/replyAllImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_icon_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/replyImageView"
+        app:layout_constraintRight_toLeftOf="@id/forwardImageView"
+        app:layout_constraintTop_toTopOf="@id/forwardImageView"
+        app:layout_constraintBottom_toBottomOf="@id/forwardImageView"
+        android:src="@drawable/ic_reply_all"
+        android:contentDescription="@null"
+        app:tint="@color/icon_weak" />
+
+    <ImageView
+        android:id="@+id/forwardImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_icon_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/replyAllImageView"
+        app:layout_constraintRight_toLeftOf="@id/draftImageView"
+        app:layout_constraintTop_toTopOf="@id/draftImageView"
+        app:layout_constraintBottom_toBottomOf="@id/draftImageView"
+        android:src="@drawable/ic_forward"
+        android:contentDescription="@null"
+        app:tint="@color/icon_weak" />
+
+    <ImageView
+        android:id="@+id/draftImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_icon_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/forwardImageView"
+        app:layout_constraintRight_toLeftOf="@id/senderTextView"
+        app:layout_constraintTop_toTopOf="@id/senderTextView"
+        app:layout_constraintBottom_toBottomOf="@id/senderTextView"
+        android:src="@drawable/ic_draft"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/senderTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_text_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/draftImageView"
+        app:layout_constraintRight_toLeftOf="@id/timeDateTextView"
+        app:layout_constraintTop_toTopOf="parent"
+        android:singleLine="true"
+        android:textAppearance="@style/Text.Default"
+        tools:text="@tools:sample/full_names" />
+
+    <TextView
+        android:id="@+id/timeDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/senderTextView"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/senderTextView"
+        app:layout_constraintBottom_toBottomOf="@id/senderTextView"
+        android:textAppearance="@style/Text.Caption.Weak"
+        tools:text="@tools:sample/date/ddmmyy" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/firstRowBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/senderTextView" />
+    
+    <ImageView
+        android:id="@+id/firstLocationImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_icon_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toLeftOf="@id/secondLocationImageView"
+        app:layout_constraintTop_toTopOf="@id/secondLocationImageView"
+        app:layout_constraintBottom_toBottomOf="@id/secondLocationImageView"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:contentDescription="@null"
+        app:tint="@color/icon_weak"
+        android:visibility="gone"
+        tools:src="@drawable/ic_trash"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/secondLocationImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_icon_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/firstLocationImageView"
+        app:layout_constraintRight_toLeftOf="@id/thirdLocationImageView"
+        app:layout_constraintTop_toTopOf="@id/thirdLocationImageView"
+        app:layout_constraintBottom_toBottomOf="@id/thirdLocationImageView"
+        android:contentDescription="@null"
+        app:tint="@color/icon_weak"
+        android:visibility="gone"
+        tools:src="@drawable/ic_trash"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/thirdLocationImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/mailbox_list_item_icon_margin_horizontal"
+        app:layout_constraintLeft_toRightOf="@id/secondLocationImageView"
+        app:layout_constraintRight_toLeftOf="@id/subjectTextView"
+        app:layout_constraintTop_toTopOf="@id/subjectTextView"
+        app:layout_constraintBottom_toBottomOf="@id/subjectTextView"
+        android:contentDescription="@null"
+        app:tint="@color/icon_weak"
+        android:visibility="gone"
+        tools:src="@drawable/ic_trash"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/subjectTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/thirdLocationImageView"
+        app:layout_constraintRight_toLeftOf="@id/messagesNumberTextView"
+        app:layout_constraintTop_toBottomOf="@id/firstRowBarrier"
+        app:layout_constrainedWidth="true"
+        android:singleLine="true"
+        android:textAppearance="@style/Text.DefaultSmall.Weak"
+        tools:text="@tools:sample/lorem" />
+
+    <TextView
+        android:id="@+id/messagesNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/mailbox_list_item_icon_margin_horizontal"
+        android:paddingHorizontal="@dimen/message_number_view_padding_horizontal"
+        android:paddingVertical="@dimen/message_number_view_padding_vertical"
+        app:layout_constraintLeft_toRightOf="@id/subjectTextView"
+        app:layout_constraintRight_toLeftOf="@id/emptySpaceView"
+        app:layout_constraintTop_toTopOf="@id/subjectTextView"
+        app:layout_constraintBottom_toBottomOf="@id/subjectTextView"
+        android:background="@drawable/background_messages_number"
+        android:textSize="11sp"
+        android:textColor="@color/text_weak"
+        android:visibility="gone"
+        tools:text="3"
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/emptySpaceView"
+        android:layout_width="@dimen/mailbox_list_item_text_margin_horizontal"
+        android:layout_height="1dp"
+        app:layout_constraintLeft_toRightOf="@id/messagesNumberTextView"
+        app:layout_constraintRight_toLeftOf="@id/attachmentImageView"
+        app:layout_constraintTop_toTopOf="@id/messagesNumberTextView"
+        app:layout_constraintBottom_toBottomOf="@id/messagesNumberTextView" />
+
+    <ImageView
+        android:id="@+id/attachmentImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@id/starImageView"
+        app:layout_constraintTop_toTopOf="@id/starImageView"
+        app:layout_constraintBottom_toBottomOf="@id/starImageView"
+        android:src="@drawable/ic_attachment"
+        android:contentDescription="@null"
+        app:tint="@color/icon_weak" />
+
+    <ImageView
+        android:id="@+id/starImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/subjectTextView"
+        app:layout_constraintBottom_toBottomOf="@id/subjectTextView"
+        android:src="@drawable/ic_star_filled"
+        android:contentDescription="@null"
+        app:tint="@color/notification_warning" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/secondRowBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subjectTextView" />
+
+    <ImageView
+        android:id="@+id/expirationImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mailbox_list_item_label_margin_top"
+        app:layout_constraintLeft_toRightOf="@id/senderInitialBarrier"
+        app:layout_constraintTop_toBottomOf="@id/secondRowBarrier"
+        android:src="@drawable/ic_expiration_pill"
+        android:contentDescription="@null" />
+
+    <!-- TODO: Should be replaced in MAILAND-1502 -->
+    <LinearLayout
+        android:id="@+id/labelsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/mailbox_list_item_label_margin_top"
+        android:layout_marginStart="@dimen/mailbox_list_item_label_margin_horizontal"
+        app:layout_goneMarginStart="0dp"
+        app:layout_constraintLeft_toRightOf="@id/expirationImageView"
+        app:layout_constraintTop_toBottomOf="@id/secondRowBarrier"
+        android:orientation="horizontal" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

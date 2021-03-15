@@ -22,8 +22,10 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import ch.protonmail.android.views.messagesList.MessagesListFooterView
 import ch.protonmail.android.views.messagesList.MessagesListItemView
+import ch.protonmail.android.views.messagesList.MessagesListItemViewV4
 
 sealed class MessagesListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     class MessageViewHolder(val view: MessagesListItemView) : MessagesListViewHolder(view)
+    class MessageViewHolderV4(val view: MessagesListItemViewV4) : MessagesListViewHolder(view)
     class FooterViewHolder(val view: MessagesListFooterView) : MessagesListViewHolder(view)
 }

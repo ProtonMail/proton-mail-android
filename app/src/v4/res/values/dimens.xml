@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<resources>
+
+    <dimen name="toolbar_action_layout_size">48dp</dimen>
+
+    <dimen name="action_bar_padding_start">0dp</dimen>
+    <dimen name="action_bar_padding_end">8dp</dimen>
+
+    <dimen name="updated_status_text_view_margin">16dp</dimen>
+    
+    <dimen name="unread_messages_chip_size">20dp</dimen>
+    <dimen name="unread_messages_chip_margin_horizontal">16dp</dimen>
+    <dimen name="unread_messages_chip_margin_vertical">14dp</dimen>
+    
+    <dimen name="mailbox_list_item_padding_horizontal">16dp</dimen>
+    <dimen name="mailbox_list_item_padding_vertical">12dp</dimen>
+    <dimen name="mailbox_list_item_text_margin_horizontal">8dp</dimen>
+    <dimen name="mailbox_list_item_icon_margin_horizontal">4dp</dimen>
+    <dimen name="mailbox_list_item_label_margin_top">8dp</dimen>
+    <dimen name="mailbox_list_item_label_margin_horizontal">4dp</dimen>
+    
+    <dimen name="sender_initial_view_size">28dp</dimen>
+    <dimen name="sender_initial_view_margin_start">2dp</dimen>
+    <dimen name="sender_initial_view_margin_end">16dp</dimen>
+    <dimen name="sender_initial_view_margin_top">2dp</dimen>
+
+    <dimen name="message_number_view_padding_horizontal">6dp</dimen>
+    <dimen name="message_number_view_padding_vertical">3dp</dimen>
+
+</resources>

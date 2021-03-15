@@ -25,6 +25,9 @@ import ch.protonmail.android.R
 
 object Constants {
 
+    // flavors
+    const val FLAVOR_V4 = "v4"
+
     // region Urls
     const val REDIRECT_URI = "https://protonmail.ch"
     const val ENDPOINT_URI = "https://api.protonmail.ch/"

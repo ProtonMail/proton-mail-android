@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2020 Proton Technologies AG
+  ~
+  ~ This file is part of ProtonMail.
+  ~
+  ~ ProtonMail is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ ProtonMail is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
+  -->
+
+<resources>
+
+    <style name="ProtonTheme.Mail" parent="ProtonTheme">
+        <item name="brand_norm">@color/cornflower_blue</item>
+        <item name="brand_darken_20">@color/san_marino</item>
+        <item name="brand_darken_40">@color/chambray</item>
+        <item name="brand_lighten_20">@color/portage</item>
+        <item name="brand_lighten_40">@color/perano</item>
+    </style>
+
+    <style name="UnreadMessagesStatusChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textAppearance">@style/Text.Caption.Strong</item>
+        <item name="android:textColor">@drawable/selector_unread_messages_status_text_color</item>
+        <item name="chipBackgroundColor">@drawable/selector_unread_messages_status_background</item>
+        <item name="chipCornerRadius">25dp</item>
+    </style>
+
+    <!-- Can be extracted to core -->
+    <style name="Text" parent="TextAppearance.AppCompat" />
+    <style name="Text.Headline">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:lineSpacingExtra">1sp</item>
+    </style>
+    <style name="Text.Headline.Hint">
+        <item name="android:textColor">@color/text_hint</item>
+    </style>
+    <style name="Text.Headline.Small">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+    </style>
+    <style name="Text.Default">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+    </style>
+    <style name="Text.Default.Strong">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Text.Default.Weak">
+        <item name="android:textColor">@color/text_weak</item>
+    </style>
+    <style name="Text.DefaultSmall">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+    </style>
+    <style name="Text.DefaultSmall.Weak">
+        <item name="android:textColor">@color/text_weak</item>
+    </style>
+    <style name="Text.DefaultSmall.Strong">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="Text.DefaultSmall.Weak.Italic">
+        <item name="android:textStyle">italic</item>
+    </style>
+    <style name="Text.DefaultSmall.Strong.Inverted">
+        <item name="android:textColor">@color/text_inverted</item>
+    </style>
+    <style name="Text.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_norm</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+    </style>
+    <style name="Text.Caption.Strong">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="Text.Caption.Weak">
+        <item name="android:textColor">@color/text_weak</item>
+    </style>
+    <style name="Text.Caption.Hint">
+        <item name="android:textColor">@color/text_hint</item>
+    </style>
+
+</resources>

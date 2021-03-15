@@ -18,6 +18,7 @@
  */
 package ch.protonmail.android.activities;
 
+import static ch.protonmail.android.core.Constants.FLAVOR_V4;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
@@ -53,6 +54,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.adapters.swipe.SwipeProcessor;
@@ -129,7 +131,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @BindView(R.id.layout_no_connectivity_info)
     protected View mConnectivitySnackLayout;
     @Nullable
-    @BindView(R.id.screenProtector)
+    @BindView(R.id.screenProtectorView)
     protected View mScreenProtectorLayout;
 
     private BroadcastReceiver mLangReceiver = null;
@@ -177,7 +179,9 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             setSupportActionBar(mToolbar);
         }
 
-        UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar));
+        if (!BuildConfig.FLAVOR.equals(FLAVOR_V4)) {
+            UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar));
+        }
 
         ForceSwitchedAccountNotifier.notifier.observe(this, event -> {
             if (event != null) {

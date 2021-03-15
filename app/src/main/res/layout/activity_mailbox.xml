@@ -17,7 +17,8 @@ You should have received a copy of the GNU General Public License
 along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 -->
 
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
@@ -46,10 +47,10 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-        <FrameLayout
-            android:id="@+id/swipe_refresh_wrapper"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            <FrameLayout
+                android:id="@+id/swipe_refresh_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                     android:id="@+id/swipe_refresh_layout"
@@ -57,7 +58,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                     android:layout_height="match_parent">
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/messages_list_view"
+                        android:id="@+id/mailboxRecyclerView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:divider="@null"
@@ -66,7 +67,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
                 <View
-                    android:id="@+id/screenProtector"
+                    android:id="@+id/screenProtectorView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
@@ -75,13 +76,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
             </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/layout_sync"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/rain_gray_50"
-            android:padding="5dp"
-            android:visibility="gone">
+            <FrameLayout
+                android:id="@+id/layout_sync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/rain_gray_50"
+                android:padding="5dp"
+                android:visibility="gone">
 
                 <ch.protonmail.android.views.CustomFontTextView
                     android:layout_width="wrap_content"
@@ -139,13 +140,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
                 android:layout_height="@dimen/shadow_height"
                 android:background="@drawable/actionbar_shadow" />
 
-        <TextView
-            android:id="@+id/move_to_trash"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:background="@android:color/transparent"
-            android:text="@string/trash_icon"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/move_to_trash"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:background="@android:color/transparent"
+                android:text="@string/trash_icon"
+                android:visibility="gone" />
 
             <FrameLayout
                 android:id="@+id/layout_no_connectivity_info"
@@ -154,62 +155,16 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
         </LinearLayout>
 
         <View
-            android:id="@+id/screenShotPreventer"
+            android:id="@+id/screenShotPreventerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary"
             android:clickable="true"
-            android:visibility="gone"
-            android:focusable="true" />
+            android:focusable="true"
+            android:visibility="gone" />
 
     </FrameLayout>
 
-    <ch.protonmail.android.views.ScrimInsetsFrameLayout
-        android:layout_width="@dimen/navdrawer_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/dark_purple"
-        app:pmInsetForeground="#4000">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <FrameLayout
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_alignParentTop="true">
-
-                <include
-                    layout="@layout/drawer_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/header">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/left_drawer_navigation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/left_drawer_users"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:background="@color/white"
-                    android:visibility="gone"/>
-
-            </FrameLayout>
-        </RelativeLayout>
-
-    </ch.protonmail.android.views.ScrimInsetsFrameLayout>
+    <include layout="@layout/navigation_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

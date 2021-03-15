@@ -18,12 +18,13 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <application
-        android:theme="@style/ProtonTheme.Mail"
-        tools:replace="android:theme" />
-
-</manifest>
+<resources>
+    <string name="inbox_option">Inbox</string>
+    <string name="starred_option">Starred</string>
+    <string name="drafts_option">Drafts</string>
+    <string name="sent_option">Sent</string>
+    <string name="archive_option">Archive</string>
+    <string name="trash_option">Trash</string>
+    <string name="spam_option">Spam</string>
+    <string name="allmail_option">All Mail</string>
+</resources>

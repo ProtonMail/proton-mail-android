@@ -18,12 +18,15 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<manifest
+<androidx.appcompat.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <application
-        android:theme="@style/ProtonTheme.Mail"
-        tools:replace="android:theme" />
-
-</manifest>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?attr/actionBarSize"
+    android:paddingStart="@dimen/action_bar_padding_start"
+    android:paddingEnd="@dimen/action_bar_padding_end"
+    app:contentInsetStartWithNavigation="0dp"
+    app:navigationIcon="@drawable/ic_hamburger"
+    app:titleTextAppearance="@style/Text.Headline.Small"
+    android:background="@color/background_norm" />
