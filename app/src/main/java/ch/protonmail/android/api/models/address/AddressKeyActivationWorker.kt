@@ -53,7 +53,7 @@ private const val MAX_RETRY_COUNT = 3
  * This worker handles AddressKey activation by decrypting Activation Token and updating Private Key on server.
  */
 class AddressKeyActivationWorker @WorkerInject constructor(
-    @Assisted context: Context,
+    @Assisted val context: Context,
     @Assisted params: WorkerParameters,
     private val userManager: UserManager,
     private val api: ProtonMailApiManager,
@@ -77,7 +77,7 @@ class AddressKeyActivationWorker @WorkerInject constructor(
 
         // get orgKeys if existent -> This will work only if user is an organisation owner, otherwise
         // backend will return 403 for all other users (e.g. just members of an organisation)
-        val orgKeys = if (applicationContext.app.organization != null) {
+        val orgKeys = if (context.app.organization != null) {
             api.fetchOrganizationKeys()
         } else {
             null
