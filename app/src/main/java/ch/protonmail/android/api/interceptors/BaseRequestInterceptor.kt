@@ -46,6 +46,7 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import timber.log.Timber
+import java.io.IOException
 
 // region constants
 private const val TWENTY_FOUR_HOURS_IN_MILLIS = 24 * 60 * 60 * 1000L
@@ -147,9 +148,14 @@ abstract class BaseRequestInterceptor(
                 Timber.d("'unprocessable entity' when processing request")
                 var responseBodyError = response.message()
                 try {
-                    val responseBody = Gson().fromJson(response.peekBody(Long.MAX_VALUE).string(), ResponseBody::class.java)
+                    val responseBody = Gson().fromJson(
+                        response.peekBody(Long.MAX_VALUE).string(),
+                        ResponseBody::class.java
+                    )
                     responseBodyError = responseBody.error
                 } catch (e: JsonSyntaxException) {
+                    Timber.d(e, "response had more bytes than MAX_VALUE")
+                } catch (e: IOException) {
                     Timber.d(e)
                 }
                 errorNotifier.showError(responseBodyError)
