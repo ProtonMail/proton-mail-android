@@ -18,6 +18,9 @@
  */
 package ch.protonmail.android.activities;
 
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN;
+import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
+
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
@@ -61,11 +64,13 @@ import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.adapters.AttachmentListAdapter;
 import ch.protonmail.android.attachments.AttachmentsViewModel;
+import ch.protonmail.android.attachments.AttachmentsViewState;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.model.Attachment;
 import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.LogoutEvent;
@@ -82,9 +87,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import timber.log.Timber;
-
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_DELETE_ORIGINAL_FILE_BOOLEAN;
-import static ch.protonmail.android.attachments.ImportAttachmentsWorkerKt.KEY_INPUT_DATA_FILE_URIS_STRING_ARRAY;
 
 @AndroidEntryPoint
 public class AddAttachmentsActivity extends BaseStoragePermissionActivity implements AttachmentListAdapter.IAttachmentListener {

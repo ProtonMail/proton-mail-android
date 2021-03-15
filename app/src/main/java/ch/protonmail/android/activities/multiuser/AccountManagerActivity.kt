@@ -200,7 +200,7 @@ class AccountManagerActivity : BaseActivity() {
                         user.toUiModel(loggedIn, id == currentUser)
                     }
 
-                accountsAdapter.items = accounts + DrawerUserModel.Footer
+                accountsAdapter.items = accounts + DrawerUserModel.AccFooter
                 accountsRecyclerView.adapter = accountsAdapter
             }
         }

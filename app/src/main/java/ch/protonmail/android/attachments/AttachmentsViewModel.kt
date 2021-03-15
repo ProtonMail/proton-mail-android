@@ -27,11 +27,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.protonmail.android.activities.AddAttachmentsActivity.EXTRA_DRAFT_ID
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
-import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.NetworkConnectivityManager
+import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.MessageUtils
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.proton.core.util.kotlin.DispatcherProvider
@@ -49,7 +50,7 @@ class AttachmentsViewModel @ViewModelInject constructor(
     fun init() {
         viewModelScope.launch(dispatchers.Io) {
             val messageId = savedStateHandle.get<String>(EXTRA_DRAFT_ID) ?: return@launch
-            val message = messageDetailsRepository.findMessageById(messageId)
+            val message = messageDetailsRepository.findMessageById(messageId).first()
 
             message?.let { existingMessage ->
                 val messageDbId = requireNotNull(existingMessage.dbId)

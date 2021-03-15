@@ -72,10 +72,6 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
 
     private val viewModel: ConnectAccountViewModel by viewModels()
 
-    override fun removeAccount(username: String) {
-        viewModel.removeAccount(username)
-    }
-
     override fun resetState() {
         // noop
     }
