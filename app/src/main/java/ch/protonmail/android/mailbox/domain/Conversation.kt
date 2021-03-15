@@ -34,5 +34,5 @@ data class Conversation(
     val addressId: String,
     val labelIds: List<String>,
     val labels: List<Label>,
-    val messages: List<Message>
+    val messages: List<Message>?
 )
