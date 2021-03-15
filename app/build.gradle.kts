@@ -338,7 +338,8 @@ dependencies {
         `viewStateStore`,
         `viewStateStore-paging`,
         `remark`,
-        `okio`
+        `okio`,
+        `store`
     )
 
     kapt(
