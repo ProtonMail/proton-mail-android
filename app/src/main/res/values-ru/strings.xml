@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Нет подключения к сети. Сообщение поставлено в очередь</string>
     <string name="update_app_title">Требуется обновление</string>
     <string name="update_app">Вашим приложением ProtonМail нельзя пользоваться, пока оно не будет обновлено</string>
+    <string name="you_are_offline">Вы не подключены к сети</string>
     <string name="api_offline_title">API ProtonMail отключён</string>
     <string name="api_offline">ProtonMail сейчас не в сети. Проверьте наш Twitter, чтобы узнать текущее состояние: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт сохранён</string>
@@ -295,7 +296,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Ошибка при удалении некоторых сообщений. Находятся ли некоторые из них в процессе отправки?!</string>
     <string name="respond_inline">Ответить с цитированием</string>
     <string name="no_connectivity_detected">Подключение не обнаружено...</string>
-    <string name="server_not_reachable_troubleshoot">Подключение не обнаружено… (<u>Устраните неполадки</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Сервер недоступен… (<u>Устранение неполадок</u>)</string>
     <string name="connectivity_checking">Проверка подключения...</string>
     <string name="sync_short">синхр.</string>
     <string name="draft_attachments_uploading">Черновик ещё загружается...</string>

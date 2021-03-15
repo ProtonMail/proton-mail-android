@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Δεν υπάρχει δίκτυο, το μήνυμα τέθηκε σε σειρά</string>
     <string name="update_app_title">Απαιτείται ενημέρωση</string>
     <string name="update_app">Η εφαρμογή ProtonMail δεν μπορεί να χρησιμοποιηθεί μέχρι να ενημερωθεί</string>
+    <string name="you_are_offline">Είστε εκτός σύνδεσης</string>
     <string name="api_offline_title">Το API του ProtonMail είναι εκτός σύνδεσης</string>
     <string name="api_offline">Το ProtonMail είναι εκτός σύνδεσης, ελέγξτε το twitter για την τρέχουσα κατάσταση: https://twitter.com/protonmail</string>
     <string name="contact_saved">Η επαφή αποθηκεύτηκε</string>
@@ -285,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Σφάλμα κατά τη διαγραφή ορισμένων μηνυμάτων. Μερικά από τα επιλεγμένα μηνύματα βρίσκονται σε διαδικασία αποστολής;!</string>
     <string name="respond_inline">Απάντηση μέσα στην γραμμή</string>
     <string name="no_connectivity_detected">Δεν εντοπίστηκε σύνδεση...</string>
-    <string name="server_not_reachable_troubleshoot">Δεν εντοπίστηκε σύνδεση...… (<u>Επίλυση Προβλημάτων</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Ο διακομιστής δεν είναι προσβάσιμος… (<u>Αντιμετώπιση προβλημάτων</u>)</string>
     <string name="connectivity_checking">Έλεγχος σύνδεσης...</string>
     <string name="sync_short">συγχρονισμός</string>
     <string name="draft_attachments_uploading">Το πρόχειρο εξακολουθεί να μεταφορτώνεται...</string>

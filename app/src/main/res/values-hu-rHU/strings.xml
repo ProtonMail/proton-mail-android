@@ -54,6 +54,7 @@ Svájci székhellyel</string>
     <string name="no_network_queued">Nincs hálózat, az üzenet várólistára került</string>
     <string name="update_app_title">Frissítés szükséges</string>
     <string name="update_app">A ProtonMail alkalmazás nem használható, amíg nincs frissítve</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">A ProtonMail API jelenleg nem elérhető</string>
     <string name="api_offline">A ProtonMail nem érhető el. Kérjük, nézze meg a https://protonstatus.com vagy https://twitter.com/protonmail oldalakat a friss hírekért.</string>
     <string name="contact_saved">Névjegy elmentve</string>
@@ -286,7 +287,7 @@ Svájci székhellyel</string>
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Válaszolás az eredeti levélben</string>
     <string name="no_connectivity_detected">Nincs kapcsolat...</string>
-    <string name="server_not_reachable_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Várakozás a kapcsolatra...</string>
     <string name="sync_short">szinkronizálás</string>
     <string name="draft_attachments_uploading">A piszkozat még feltöltés alatt...</string>

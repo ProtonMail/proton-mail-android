@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Keine Netzwerkverbindung, Nachricht in Warteschlange</string>
     <string name="update_app_title">Aktualisierung erforderlich</string>
     <string name="update_app">Die App ProtonMail kann erst genutzt werden, nachdem diese aktualisiert wurde</string>
+    <string name="you_are_offline">Keine Verbindung zum Internet</string>
     <string name="api_offline_title">Die ProtonMail-API ist derzeit nicht erreichbar</string>
     <string name="api_offline">ProtonMail ist derzeit nicht erreichbar. Den aktuellen Status finden Sie unter https://protonstatus.com oder https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt gespeichert</string>
@@ -284,7 +285,7 @@ Verlieren Sie dieses Passwort nicht, wir können es nicht wiederherstellen. Wenn
     <string name="message_deleted_error">Fehler beim Löschen einiger Nachrichten. Werden einige der ausgewählte gerade gesendet?</string>
     <string name="respond_inline">Eingebettet antworten</string>
     <string name="no_connectivity_detected">Keine Verbindung erkannt …</string>
-    <string name="server_not_reachable_troubleshoot">Keine Netzwerkverbindung erkannt … (<u>Problembehandlung</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server nicht erreichbar … ( <u>Problemlösung</u>)</string>
     <string name="connectivity_checking">Verbindung wird geprüft …</string>
     <string name="sync_short">Synchronisieren</string>
     <string name="draft_attachments_uploading">Entwurf wird noch hochgeladen …</string>

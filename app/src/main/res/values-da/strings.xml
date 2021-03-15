@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Ingen netværk, besked sat i kø</string>
     <string name="update_app_title">Opdatering nødvendig</string>
     <string name="update_app">Din ProtonMail-app kan ikke benyttes, før den opdateres</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">ProtonMail-API\'en er offline</string>
     <string name="api_offline">ProtonMail er pt. offline. For konkret status, se venligst https://protonstatus.com eller https://twitter.com/protonmail.</string>
     <string name="contact_saved">Kontakt er gemt</string>
@@ -285,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Besvar in-line</string>
     <string name="no_connectivity_detected">Ingen tilslutning fundet...</string>
-    <string name="server_not_reachable_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Tjekker for tilslutning...</string>
     <string name="sync_short">synkr.</string>
     <string name="draft_attachments_uploading">Udkast uploader stadig...</string>
