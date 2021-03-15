@@ -17,21 +17,13 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.mailbox.domain.model.GetConversationsParameters
-import kotlinx.coroutines.flow.Flow
+import ch.protonmail.android.core.Constants
 
-interface ConversationsRepository {
-
-    /**
-     * @param params a model representing the params needed to define which conversations to get
-     */
-    fun getConversations(params: GetConversationsParameters): Flow<List<Conversation>>
-
-    /**
-     * @param conversationId the encrypted id of the conversation to get
-     * @param messageId the id of the message to be returned fully (not only metadata)
-     */
-    fun getConversation(conversationId: String, messageId: String): Conversation
-}
+data class GetConversationsParameters(
+    val location: Constants.MessageLocationType,
+    val page: Int? = 0,
+    val pageSize: Int? = 50,
+    val labelId: String? = null
+)
