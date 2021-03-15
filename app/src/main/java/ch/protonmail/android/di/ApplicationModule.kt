@@ -172,7 +172,7 @@ object ApplicationModule {
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
         authenticator: ProtonMailAuthenticator,
-        errorNotifier: ErrorNotifier
+        userNotifier: UserNotifier
     ): ProtonRetrofitBuilder {
 
         val dnsOverHttpsHost =
@@ -186,7 +186,7 @@ object ApplicationModule {
             networkUtil,
             authenticator,
             ProtonCookieStore(context),
-            errorNotifier
+            userNotifier
         ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 
@@ -223,7 +223,7 @@ object ApplicationModule {
     fun base64Encoder(): Base64Encoder = AndroidBase64Encoder()
 
     @Provides
-    fun errorNotifier(
+    fun userNotifier(
         notificationServer: NotificationServer,
         userManager: UserManager,
         context: Context

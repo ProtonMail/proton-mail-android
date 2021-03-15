@@ -52,7 +52,7 @@ class AndroidUserNotifierTest : CoroutinesTest {
     private lateinit var userManager: UserManager
 
     @InjectMockKs
-    private lateinit var errorNotifier: AndroidUserNotifier
+    private lateinit var userNotifier: AndroidUserNotifier
 
     @BeforeTest
     fun setUp() {
@@ -60,23 +60,23 @@ class AndroidUserNotifierTest : CoroutinesTest {
     }
 
     @Test
-    fun errorNotifierCallsNotificationServerToDisplayErrorInPersistentNotification() {
+    fun userNotifierCallsNotificationServerToDisplayErrorInPersistentNotification() {
         val errorMessage = "Failed uploading attachments"
         val subject = "Message subject"
         every { userManager.username } returns "loggedInUsername"
 
-        errorNotifier.showPersistentError(errorMessage, subject)
+        userNotifier.showPersistentError(errorMessage, subject)
 
         verify { notificationServer.notifySaveDraftError(errorMessage, subject, "loggedInUsername") }
     }
 
     @Test
-    fun errorNotifierCallsNotificationServerToDisplaySendMessageErrorInPersistentNotification() {
+    fun userNotifierCallsNotificationServerToDisplaySendMessageErrorInPersistentNotification() {
         val errorMessage = "Failed sending message"
         val subject = "A message subject"
         every { userManager.username } returns "loggedInUsername"
 
-        errorNotifier.showSendMessageError(errorMessage, subject)
+        userNotifier.showSendMessageError(errorMessage, subject)
 
         val errorAndSubject = "\"$subject\" - $errorMessage"
         verify { notificationServer.notifySingleErrorSendingMessage(errorAndSubject, "loggedInUsername") }
@@ -87,14 +87,14 @@ class AndroidUserNotifierTest : CoroutinesTest {
         mockkStatic("ch.protonmail.android.utils.extensions.TextExtensions")
         every { context.showToast(any<Int>()) } just Runs
 
-        errorNotifier.showMessageSent()
+        userNotifier.showMessageSent()
 
         verify { context.showToast(R.string.message_sent) }
         unmockkStatic("ch.protonmail.android.utils.extensions.TextExtensions")
     }
 
     @Test
-    fun errorNotifierCallsNotificationServerToDisplayHumanVerificationNeededNotification() {
+    fun userNotifierCallsNotificationServerToDisplayHumanVerificationNeededNotification() {
         val subject = "A message subject 123"
         val messageId = "8234728348"
         val isMessageInline = false
@@ -107,7 +107,7 @@ class AndroidUserNotifierTest : CoroutinesTest {
         }
         every { userManager.username } returns "loggedInUsername"
 
-        errorNotifier.showHumanVerificationNeeded(message)
+        userNotifier.showHumanVerificationNeeded(message)
 
         verify {
             notificationServer.notifyVerificationNeeded(

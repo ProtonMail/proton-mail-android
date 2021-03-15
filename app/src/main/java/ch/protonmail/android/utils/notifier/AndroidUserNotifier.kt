@@ -27,7 +27,6 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
 import ch.protonmail.android.utils.extensions.showToast
-import ch.protonmail.android.R
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import javax.inject.Inject

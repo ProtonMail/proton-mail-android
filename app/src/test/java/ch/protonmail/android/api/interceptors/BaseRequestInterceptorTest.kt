@@ -28,7 +28,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -67,7 +67,7 @@ class BaseRequestInterceptorTest {
     }
 
     private val interceptor =
-        ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk(), errorNotifier)
+        ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk(), userNotifier)
 
     @BeforeTest
     fun setup() {
@@ -153,7 +153,7 @@ class BaseRequestInterceptorTest {
         interceptor.checkResponse(responseMock)
 
         // then
-        verify { errorNotifier.showError(errorMessage) }
+        verify { userNotifier.showError(errorMessage) }
     }
 
     companion object {
@@ -161,6 +161,6 @@ class BaseRequestInterceptorTest {
         // in order to perform assertions on it, otherwise verifications will fail as performed on the wrong instance.
         // That happens because the actual instance that will be in the SUT will always be the one passed when the
         // SUT was first created, which - unless this test runs first - may differ from the one that we're asserting on
-        private val errorNotifier = mockk<ErrorNotifier>(relaxed = true)
+        private val userNotifier = mockk<UserNotifier>(relaxed = true)
     }
 }
