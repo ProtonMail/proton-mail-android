@@ -19,6 +19,7 @@
 
 package ch.protonmail.android.utils.notifier
 
+import android.content.Context
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.servers.notification.INotificationServer
 import io.mockk.MockKAnnotations
@@ -30,10 +31,14 @@ import io.mockk.verify
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
+@Suppress("unused")
 class AndroidErrorNotifierTest {
 
     @RelaxedMockK
     private lateinit var notificationServer: INotificationServer
+
+    @MockK
+    private lateinit var context: Context
 
     @MockK
     private lateinit var userManager: UserManager
