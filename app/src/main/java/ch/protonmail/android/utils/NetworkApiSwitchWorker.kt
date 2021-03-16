@@ -36,7 +36,7 @@ class NetworkApiSwitchWorker(context: Context, workerParams: WorkerParameters) :
             Log.d(TAG, "worker was stopped")
             return Result.failure()
         }
-        ProtonMailApplication.getApplication().changeApiProviders(true, false) // try to switch to old, don't force
+        ProtonMailApplication.getApplication().changeApiProviders() // try to switch to old, don't force
         return Result.success()
     }
 

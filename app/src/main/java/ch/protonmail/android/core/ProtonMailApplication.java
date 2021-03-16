@@ -122,7 +122,6 @@ import timber.log.Timber;
 import static ch.protonmail.android.api.segments.event.EventManagerKt.PREF_LATEST_EVENT;
 import static ch.protonmail.android.core.Constants.FCM_MIGRATION_VERSION;
 import static ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER;
-import static ch.protonmail.android.core.Constants.Prefs.PREF_TIME_AND_DATE_CHANGED;
 import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 import static ch.protonmail.android.core.UserManagerKt.PREF_LOGIN_STATE;
 import static ch.protonmail.android.core.UserManagerKt.PREF_SHOW_STORAGE_LIMIT_REACHED;
@@ -134,7 +133,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private static ProtonMailApplication sInstance;
 
     @Inject
-    UserManager mUserManager;
+    UserManager userManager;
     @Inject
     EventManager eventManager;
     @Inject
@@ -163,9 +162,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private boolean mUpdateOccurred;
     private AllCurrencyPlans mAllCurrencyPlans;
     private Organization mOrganization;
-    private List<String> mAvailableDomains;
     private String mCurrentLocale;
-    private boolean mChangedSystemTimeDate;
     private AlertDialog forceUpgradeDialog;
 
     private ContactsDatabase contactsDatabase;
@@ -238,7 +235,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         try {
             ProviderInstaller.installIfNeeded(this);
         } catch (GooglePlayServicesRepairableException e) {
-            final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+            final SharedPreferences prefs = getDefaultSharedPreferences();
             if (!prefs.getBoolean(Constants.Prefs.PREF_DONT_SHOW_PLAY_SERVICES, false)) {
                 GoogleApiAvailability.getInstance().showErrorNotification(this, e.getConnectionStatusCode());
             }
@@ -249,7 +246,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     private void initLongRunningTask() {
         // check if storage limit approaching
-        final User user = mUserManager.getUser();
+        final User user = userManager.getUser();
         if (user.getMaxSpace() > 0) {
             long percentageUsed = (user.getUsedSpace() * 100) / user.getMaxSpace();
             if (percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE) {
@@ -276,7 +273,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     @NonNull
     @Deprecated // Using it is an ERROR!
-    @kotlin.Deprecated(message = "Use with user Id with SecureSharedPreferences.forUser")
+    @kotlin.Deprecated(message = "Use with user Id with SecureSharedPreferences#getPrefsForUser(context: Context, userId: Id)")
     public SharedPreferences getSecureSharedPreferences(String username) {
         throw new UnsupportedOperationException("Use with user Id with SecureSharedPreferences.forUser");
     }
@@ -323,7 +320,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         } else {
             startActivity(intent);
         }
-        mUserManager.logoutOffline();
+        userManager.logoutOffline();
     }
 
     @Subscribe
@@ -499,10 +496,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         return mUpdateOccurred;
     }
 
-    public void updateDone() {
-        mUpdateOccurred = false;
-    }
-
     private static class RefreshMessagesAndAttachments extends AsyncTask<Void, Void, Void> {
 
         private final MessagesDatabase messagesDatabase;
@@ -535,9 +528,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         }
     }
 
-    /**
-     * {@link MIGRATE_FROM_BUILD_CONFIG_FIELD_DOC}
-     */
     private void checkForUpdateAndClearCache() {
         final SharedPreferences prefs = getDefaultSharedPreferences();
         int currentAppVersion = AppUtil.getAppVersionCode(this);
@@ -549,14 +539,14 @@ public class ProtonMailApplication extends Application implements androidx.work.
             prefs.edit().putInt(Constants.Prefs.PREF_APP_VERSION, currentAppVersion).apply();
             mUpdateOccurred = true;
 
-            if (mUserManager.isLoggedIn()){
-                mUserManager.setLoginState(LOGIN_STATE_TO_INBOX);
+            if (userManager.isLoggedIn()) {
+                userManager.setLoginState(LOGIN_STATE_TO_INBOX);
             }
 
             if (BuildConfig.DEBUG) {
                 new RefreshMessagesAndAttachments(messagesDatabase).execute();
             }
-            if (BuildConfig.FETCH_FULL_CONTACTS && mUserManager.isLoggedIn()) {
+            if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
@@ -565,22 +555,22 @@ public class ProtonMailApplication extends Application implements androidx.work.
             }
             jobManager.addJobInBackground(new FetchLabelsJob());
             //new version will get set in RegisterGcmJob
-            if (mUserManager != null) {
+            if (userManager != null) {
                 // if this version requires the user to be logged out when updatingAttachmentMetadataDatabase
                 // and if every single previous version should be force logged out
                 // or any specific previous version should be logged out
 
                 // Removed check for updates where we need to logout as it was always false. See doc ref in method header
                 if (false) {
-                    mUserManager.logoutOffline();
-                    AppUtil.deleteDatabases(this, mUserManager.getUsername());
+                    userManager.logoutOffline();
+                    AppUtil.deleteDatabases(this, userManager.getUsername());
                     AppUtil.deletePrefs();
                 }
                 if (BuildConfig.DEBUG) {
                     List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
                     long elapsedTime = SystemClock.elapsedRealtime();
                     for (String userName : loggedInUsers) {
-                        User user = mUserManager.getUser(userName);
+                        User user = userManager.getUser(userName);
                         if (!user.isPaidUser()) {
                             user.setShowMobileSignature(true);
                             user.save();
@@ -594,9 +584,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     startJobManager();
                     TokenManager.Companion.removeEmptyTokenManagers();
                     List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
-                    String currentPrimary = mUserManager.getUsername();
+                    String currentPrimary = userManager.getUsername();
                     jobManager.addJobInBackground(new FetchUserSettingsJob(currentPrimary));
-                    for (String loggedInUser : loggedInUsers){
+                    for (String loggedInUser : loggedInUsers) {
                         if (!loggedInUser.equals(currentPrimary)) {
                             jobManager.addJobInBackground(new FetchUserSettingsJob(loggedInUser));
                         }
@@ -604,9 +594,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     eventManager.clearState();
                     alarmReceiver.setAlarm(this);
                 }
-                TokenManager tokenManager = mUserManager.getTokenManager();
+                TokenManager tokenManager = userManager.getTokenManager();
                 if (tokenManager != null && TextUtils.isEmpty(tokenManager.getEncPrivateKey())) {
-                    User user = mUserManager.getUser();
+                    User user = userManager.getUser();
                     for (Keys key : user.getKeys()) {
                         if (key.isPrimary()) {
                             tokenManager.setEncPrivateKey(key.getPrivateKey()); // it's needed for verification later
@@ -614,7 +604,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                         }
                     }
                 }
-                SharedPreferences secureSharedPreferences = getSecureSharedPreferences(mUserManager.getUsername());
+                SharedPreferences secureSharedPreferences = SecureSharedPreferences.Companion.getPrefsForUser(getApplicationContext(), userManager.getCurrentUserId());
                 SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
                 List<String> loggedInUsers = AccountManager.Companion.getInstance(this).getLoggedInUsers();
 
@@ -630,9 +620,10 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 }
                 if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
                     for (String user : loggedInUsers) {
-                        SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
-                        if (mUserManager.getMailboxPassword(user) == null) {
-                            mUserManager.logoutAccount(user);
+                        SharedPreferences secureSharedPreferencesForUser = SecureSharedPreferences.Companion.getPrefsForUser(getApplicationContext(),
+                                user);
+                        if (userManager.getMailboxPassword(user) == null) {
+                            userManager.logoutAccount(user);
                         } else {
                             secureSharedPreferencesForUser.edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
                         }
@@ -640,7 +631,11 @@ public class ProtonMailApplication extends Application implements androidx.work.
                     defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
                 }
                 for (String user : loggedInUsers) {
-                    SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
+                    SharedPreferences secureSharedPreferencesForUser =
+                            SecureSharedPreferences.Companion.getPrefsForUser(
+                                    getApplicationContext(),
+                                    user
+                            );
                     if (secureSharedPreferencesForUser.contains(PREF_LATEST_EVENT)) {
                         secureSharedPreferencesForUser.edit().remove(PREF_LATEST_EVENT).apply();
                     }
@@ -650,7 +645,11 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 }
                 if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
                     for (String user : loggedInUsers) {
-                        SharedPreferences secureSharedPreferencesForUser = getSecureSharedPreferences(user);
+                        SharedPreferences secureSharedPreferencesForUser =
+                                SecureSharedPreferences.Companion.getPrefsForUser(
+                                        getApplicationContext(),
+                                        user
+                                );
                         secureSharedPreferencesForUser.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
                                 defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
                         defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
@@ -666,7 +665,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     }
 
     public UserManager getUserManager() {
-        return mUserManager;
+        return userManager;
     }
 
     public ProtonMailApiManager getApi() {
@@ -726,8 +725,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
         NotificationManager notificationManager = (NotificationManager) getSystemService(
                 Context.NOTIFICATION_SERVICE);
         INotificationServer notificationServer = new NotificationServer(this, notificationManager);
-        if (mUserManager != null && mUserManager.isLoggedIn()) {
-            notificationServer.notifyUserLoggedOut(mUserManager.getUser(username));
+        if (userManager != null && userManager.isLoggedIn()) {
+            notificationServer.notifyUserLoggedOut(userManager.getUser(username));
         }
     }
 
@@ -738,18 +737,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     public void clearLocaleCache() {
         mCurrentLocale = null;
-    }
-
-    public void setChangedSystemTimeDate(boolean changedSystemTimeDate) {
-        mChangedSystemTimeDate = changedSystemTimeDate;
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        pref.edit().putBoolean(PREF_TIME_AND_DATE_CHANGED, mChangedSystemTimeDate).apply();
-    }
-
-    public boolean isChangedSystemTimeDate() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSharedPreferences(Constants.PrefsType.BACKUP_PREFS_NAME, Context.MODE_PRIVATE);
-        mChangedSystemTimeDate = pref.getBoolean(PREF_TIME_AND_DATE_CHANGED, false);
-        return mChangedSystemTimeDate;
     }
 
     @Override
@@ -763,8 +750,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
         CustomLocale.Companion.apply(this);
     }
 
-    public void changeApiProviders(boolean switchToOld, boolean force) {
-        final SharedPreferences prefs = ProtonMailApplication.getApplication().getDefaultSharedPreferences();
+    public void changeApiProviders() {
+        final SharedPreferences prefs = getDefaultSharedPreferences();
         networkConfigurator.networkSwitcher.reconfigureProxy(Proxies.Companion.getInstance(null, prefs));
     }
 }
