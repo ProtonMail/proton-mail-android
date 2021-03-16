@@ -82,14 +82,17 @@ data class User( // TODO: consider naming UserInfo or similar
         requireValid()
     }
 
+    fun findAddressById(addressId: Id): Address? {
+        return addresses.addresses.values.find { it.id == addressId }
+    }
+
     val isLegacy
         get() = with(addresses.primary?.keys?.primaryKey) {
             this?.signature == null && this?.token == null
         }
 
-    fun findAddressById(addressId: Id): Address? {
-        return addresses.addresses.values.find { it.id == addressId }
-    }
+    fun isPaidMailUser() =
+        Plan.Mail.Paid in plans
 }
 
 sealed class Delinquent(val i: UInt, val mailRoutesAccessible: Boolean = true) {

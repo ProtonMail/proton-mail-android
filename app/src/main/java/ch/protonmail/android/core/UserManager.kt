@@ -152,11 +152,24 @@ class UserManager @Inject constructor(
             if (value != null) withCurrentUserPreferences(value::save)
         }
 
-    var mailSettings: MailSettings? = null
-        set(value) {
-            field = value
-            if (value != null) withCurrentUserPreferences(value::saveBlocking)
-        }
+    @get:Deprecated(
+        "Caching is not supported anymore",
+        ReplaceWith("getCurrentUserMailSettings"),
+        DeprecationLevel.ERROR
+    )
+    @set:Deprecated(
+        "Caching is not supported anymore. No replacement",
+        level = DeprecationLevel.ERROR
+    )
+    var mailSettings: MailSettings? =
+        unsupported
+
+    suspend fun getCurrentUserMailSettings(): MailSettings? =
+        currentUserId?.let { getMailSettings(it) }
+
+    @Deprecated("Use suspend function", ReplaceWith("getCurrentUserMailSettings()"))
+    fun getCurrentUserMailSettingsBlocking(): MailSettings? =
+        runBlocking { getCurrentUserMailSettings() }
 
     suspend fun getMailSettings(userId: Id): MailSettings =
         MailSettings.load(SecureSharedPreferences.getPrefsForUser(context, userId))
@@ -278,8 +291,14 @@ class UserManager @Inject constructor(
             currentUserLoginState = status
         }
 
+    fun requireCurrentUserId: Id =
+        checkNotNull(currentUserId)
+
     suspend fun getCurrentUser(): NewUser? =
         currentUserId?.let { getUser(it) }
+
+    suspend fun requireCurrentUser(): NewUser =
+        getUser(requireCurrentUserId())
 
     @Deprecated(
         "Should not be used, necessary only for old and Java classes",
@@ -288,8 +307,18 @@ class UserManager @Inject constructor(
     fun getCurrentUserBlocking(): NewUser? =
         runBlocking { getCurrentUser() }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("requireCurrentUser()")
+    )
+    fun requireCurrentUserBlocking(): NewUser =
+        runBlocking { getUserBlocking(requireCurrentUserId()) }
+
     suspend fun getCurrentLegacyUser(): User? =
         currentUserId?.let { getLegacyUser(it) }
+
+    suspend fun requireCurrentLegacyUser(): User =
+        getLegacyUser(requireCurrentUserId())
 
     @Deprecated(
         "Should not be used, necessary only for old and Java classes",
@@ -297,6 +326,13 @@ class UserManager @Inject constructor(
     )
     fun getCurrentLegacyUserBlocking(): User? =
         runBlocking { getCurrentLegacyUser() }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("requireCurrentOldUser()")
+    )
+    fun requireCurrentLegacyUserBlocking(): User =
+        runBlocking { getLegacyUser(requireCurrentUserId()) }
 
     /**
      * Use this method to get settings for currently active User.
@@ -626,6 +662,15 @@ class UserManager @Inject constructor(
         }
     }
 
+    suspend fun logoutCurrentUserOffline() {
+        logoutOffline(requireCurrentUserId())
+    }
+
+    @Deprecated("Use suspend function", ReplaceWith("logoutCurrentUserOffline"))
+    fun logoutCurrentUserOfflineBlocking() {
+        runBlocking { logoutOffline(requireCurrentUserId()) }
+    }
+
     @Deprecated(
         "Use user Id",
         ReplaceWith("logoutOffline(userId)"),
@@ -695,7 +740,7 @@ class UserManager @Inject constructor(
         }
         engagementDone() // we set this to done since it is the same person that has switched account
 
-        accountManager.setLoggedIn(checkNotNull(currentUserId))
+        accountManager.setLoggedIn(requireCurrentUserId())
         _mailboxPassword = null
     }
 
@@ -944,7 +989,7 @@ class UserManager @Inject constructor(
         endTimeMinute: Int,
         repeatingDays: String
     ) {
-        val preferences = preferencesFor(checkNotNull(currentUserId))
+        val preferences = preferencesFor(requireCurrentUserId())
         checkNotNull(snoozeSettings).apply {
             snoozeScheduled = isOn
             snoozeScheduledStartTimeHour = startTimeHour
@@ -982,7 +1027,7 @@ class UserManager @Inject constructor(
      * @throws IllegalStateException if [currentUserId] or [snoozeSettings] is `null`
      */
     suspend fun setSnoozeQuick(isOn: Boolean, minutesFromNow: Int) {
-        val preferences = preferencesFor(checkNotNull(currentUserId))
+        val preferences = preferencesFor(requireCurrentUserId())
         checkNotNull(snoozeSettings).apply {
             snoozeQuick = isOn
             snoozeQuickEndTime = System.currentTimeMillis() + minutesFromNow.minutes.toLongMilliseconds()

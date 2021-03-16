@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -38,6 +37,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.work.WorkManager;
 
 import com.birbit.android.jobqueue.JobManager;
@@ -89,6 +89,10 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     public static final String EXTRA_IN_APP = "extra_in_app";
     public static final int REQUEST_CODE_VALIDATE_PIN = 998;
 
+    private ProtonMailApplication app;
+
+    @Deprecated // Doesn't make sense for this to be injected nor be used to sub-classes, as it can
+    //              be retrieved directly from the application context
     @Inject
     protected ProtonMailApplication mApp;
     @Inject
@@ -153,8 +157,9 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        app = (ProtonMailApplication) getApplication();
         super.onCreate(savedInstanceState);
-        ProtonMailApplication.getApplication().setAppInBackground(false);
+        app.setAppInBackground(false);
         inApp = getIntent().getBooleanExtra(EXTRA_IN_APP, false);
         if (savedInstanceState != null) {
             mCurrentLocale = savedInstanceState.getString("curr_loc");
@@ -162,23 +167,17 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
                 inApp = false;
             }
         }
-        mCurrentLocale = ProtonMailApplication.getApplication().getCurrentLocale();
+        mCurrentLocale = app.getCurrentLocale();
         buildHtmlProcessor();
 
         setContentView(getLayoutId());
         handlePin();
         ButterKnife.bind(this);
         if (mToolbar != null) {
-            try {
-                setSupportActionBar(mToolbar);
-            } catch (Exception e) {
-                // Samsung Android 4.2 only issue
-                // read more here: https://github.com/google/iosched/issues/79
-                // and here: https://code.google.com/p/android/issues/detail?id=78377
-            }
+            setSupportActionBar(mToolbar);
         }
 
-        UiUtil.setStatusBarColor(this, getResources().getColor(R.color.dark_purple_statusbar));
+        UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar));
 
         ForceSwitchedAccountNotifier.notifier.observe(this, event -> {
             if (event != null) {
@@ -238,13 +237,13 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         if (shouldLock && (secureContent() || mUserManager.getUser().isPreventTakingScreenshots())) {
             enableScreenshotProtector();
         }
-        ProtonMailApplication.getApplication().setAppInBackground(false);
+        app.setAppInBackground(false);
         NetworkConfigurator.Companion.setNetworkConfiguratorCallback(this);
     }
 
     @Override
     protected void onPause() {
-        ProtonMailApplication.getApplication().setAppInBackground(true);
+        app.setAppInBackground(true);
         super.onPause();
     }
 
@@ -254,19 +253,24 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         super.onSaveInstanceState(outState);
     }
 
-    protected void loadMailSettings() {
-        mUserManager.setMailSettings(MailSettings.Companion.load(mUserManager.getUsername()));
-        if (mUserManager.getMailSettings() == null) {
-            fetchMailSettingsWorkerEnqueuer.enqueue();
-        }
+    @Deprecated // TODO Must be removed! It does nothing
+    protected final void loadMailSettings() {
     }
 
     protected boolean isAutoShowRemoteImages() {
-        return mUserManager.getMailSettings() != null && (mUserManager.getMailSettings().getShowImages() == 1 || mUserManager.getMailSettings().getShowImages() == 3);
+        MailSettings mailSettings = mUserManager.getCurrentUserMailSettingsBlocking();
+        if (mailSettings != null)
+            return mailSettings.getShowImages() == 1 || mailSettings.getShowImages() == 3;
+        else
+            return false;
     }
 
     protected boolean isAutoShowEmbeddedImages() {
-        return mUserManager.getMailSettings() != null && (mUserManager.getMailSettings().getShowImages() == 2 || mUserManager.getMailSettings().getShowImages() == 3);
+        MailSettings mailSettings = mUserManager.getCurrentUserMailSettingsBlocking();
+        if (mailSettings != null)
+            return mailSettings.getShowImages() == 2 || mailSettings.getShowImages() == 3;
+        else
+            return false;
     }
 
     private void shouldLock() {
@@ -283,8 +287,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void handlePin() {
-        ProtonMailApplication.getApplication().setAppInBackground(false);
-        mApp.setCurrentActivity(this);
+        app.setAppInBackground(false);
+        app.setCurrentActivity(this);
         shouldLock();
         if (!shouldCheckForAutoLogout()) {
             return;
@@ -300,7 +304,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             return;
         }
         if (shouldLock) {
-            Intent validatePinIntent = new Intent(BaseActivity.this, ValidatePinActivity.class);
+            Intent validatePinIntent = new Intent(this, ValidatePinActivity.class);
             if (this instanceof MessageDetailsActivity) {
                 validatePinIntent.putExtra(EXTRA_FRAGMENT_TITLE, R.string.enter_pin_message_details);
             }
@@ -347,8 +351,8 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     @Override
     protected void onStart() {
         super.onStart();
-        ProtonMailApplication.getApplication().setAppInBackground(false);
-        new Handler().postDelayed(this::deactivateScreenProtector, 500);
+        app.setAppInBackground(false);
+        getWindow().getDecorView().postDelayed(this::deactivateScreenProtector, 500);
     }
 
     @Override
@@ -356,7 +360,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         super.onStop();
         // Enable secure mode for hide content from recent if pin is enabled, else disable it so
         // content will be visible in recent
-        if (mUserManager.getUser().isUsePin())
+        if (mUserManager.requireCurrentLegacyUserBlocking().isUsePin())
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
@@ -376,7 +380,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     private void activateScreenProtector() {
-        if (mUserManager.getUser().isUsePin()) {
+        if (mUserManager.requireCurrentLegacyUserBlocking().isUsePin()) {
             if (mScreenProtectorLayout != null) {
                 mScreenProtectorLayout.setVisibility(View.VISIBLE);
             }
@@ -385,14 +389,16 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
 
     protected void saveLastInteraction() {
         if (mUserManager.isLoggedIn()) {
-            User user = mUserManager.getUser();
+            User user = mUserManager.requireCurrentLegacyUserBlocking();
             user.setLastInteraction(SystemClock.elapsedRealtime());
         }
     }
 
     protected void checkDelinquency() {
-        User user = mUserManager.getUser();
-        if (user.getDelinquent() && (alertDelinquency == null || !alertDelinquency.isShowing())) {
+        ch.protonmail.android.domain.entity.user.User user =
+                mUserManager.requireCurrentUserBlocking();
+        boolean areMailRoutesAccessible = user.getDelinquent().getMailRoutesAccessible();
+        if (!areMailRoutesAccessible && (alertDelinquency == null || !alertDelinquency.isShowing())) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             LayoutInflater inflater = this.getLayoutInflater();
             View dialogView = inflater.inflate(R.layout.layout_delinquency_dialog, null, false);
@@ -403,7 +409,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
             Button btnLogout = dialogView.findViewById(R.id.logout);
 
             btnLogout.setOnClickListener(v -> {
-                mUserManager.logoutOffline();
+                mUserManager.logoutCurrentUserOfflineBlocking();
                 finish();
             });
             btnClose.setOnClickListener(v -> finish());
@@ -436,11 +442,13 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     protected void fetchOrganizationData() {
-        if (mUserManager.getUser().isPaidUser()) {
+        ch.protonmail.android.domain.entity.user.User user =
+                mUserManager.requireCurrentUserBlocking();
+        if (user.isPaidMailUser()) {
             GetOrganizationJob getOrganizationJob = new GetOrganizationJob();
             mJobManager.addJobInBackground(getOrganizationJob);
         } else {
-            ProtonMailApplication.getApplication().setOrganization(null);
+            app.setOrganization(null);
         }
     }
 
@@ -477,7 +485,7 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
     }
 
     @Override
-    public void startDohSignal () {
+    public void startDohSignal() {
         isDohOngoing = true;
         Timber.d("BaseActivity: startDohSignal");
     }
