@@ -25,7 +25,7 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -37,8 +37,8 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    errorNotifier: ErrorNotifier
-) : BaseRequestInterceptor(userManager, jobManager, networkUtil, errorNotifier) {
+    userNotifier: UserNotifier
+) : BaseRequestInterceptor(userManager, jobManager, networkUtil, userNotifier) {
 
     private var progressListener: ProgressListener? = null
     private var semaphore: Semaphore? = null
@@ -96,7 +96,7 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
             userManager: UserManager,
             jobManager: JobManager,
             networkUtil: QueueNetworkUtil,
-            errorNotifier: ErrorNotifier
+            userNotifier: UserNotifier
         ): ProtonMailAttachmentRequestInterceptor =
             INSTANCE ?: synchronized(this) {
                 INSTANCE
@@ -104,7 +104,7 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
                         /* publicService, */ userManager,
                         jobManager,
                         networkUtil,
-                        errorNotifier
+                        userNotifier
                     ).also { INSTANCE = it }
             }
 
@@ -112,7 +112,7 @@ class ProtonMailAttachmentRequestInterceptor private constructor(
             userManager: UserManager,
             jobManager: JobManager,
             networkUtil: QueueNetworkUtil,
-            errorNotifier: ErrorNotifier
-        ) = ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil, errorNotifier)
+            userNotifier: UserNotifier
+        ) = ProtonMailAttachmentRequestInterceptor(userManager, jobManager, networkUtil, userNotifier)
     }
 }

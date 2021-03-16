@@ -53,8 +53,8 @@ import ch.protonmail.android.utils.BuildInfo
 import ch.protonmail.android.utils.base64.AndroidBase64Encoder
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.extensions.app
-import ch.protonmail.android.utils.notifier.AndroidErrorNotifier
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.AndroidUserNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import com.squareup.inject.assisted.dagger2.AssistedModule
 import dagger.Module
@@ -172,7 +172,7 @@ object ApplicationModule {
         okHttpProvider: OkHttpProvider,
         @DefaultSharedPreferences prefs: SharedPreferences,
         authenticator: ProtonMailAuthenticator,
-        errorNotifier: ErrorNotifier
+        userNotifier: UserNotifier
     ): ProtonRetrofitBuilder {
 
         val dnsOverHttpsHost =
@@ -186,7 +186,7 @@ object ApplicationModule {
             networkUtil,
             authenticator,
             ProtonCookieStore(context),
-            errorNotifier
+            userNotifier
         ).apply { rebuildMapFor(okHttpProvider, dnsOverHttpsHost) }
     }
 
@@ -223,11 +223,11 @@ object ApplicationModule {
     fun base64Encoder(): Base64Encoder = AndroidBase64Encoder()
 
     @Provides
-    fun errorNotifier(
+    fun userNotifier(
         notificationServer: NotificationServer,
         userManager: UserManager,
         context: Context
-    ): ErrorNotifier = AndroidErrorNotifier(notificationServer, userManager, context)
+    ): UserNotifier = AndroidUserNotifier(notificationServer, userManager, context, dispatcherProvider())
 }
 
 @Module

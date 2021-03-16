@@ -22,7 +22,7 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.ConnectivityEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -38,8 +38,8 @@ class ProtonMailRequestInterceptor private constructor(
     userManager: UserManager,
     jobManager: JobManager,
     networkUtil: QueueNetworkUtil,
-    errorNotifier: ErrorNotifier
-) : BaseRequestInterceptor(userManager, jobManager, networkUtil, errorNotifier) {
+    userNotifier: UserNotifier
+) : BaseRequestInterceptor(userManager, jobManager, networkUtil, userNotifier) {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -83,19 +83,19 @@ class ProtonMailRequestInterceptor private constructor(
             userManager: UserManager,
             jobManager: JobManager,
             networkUtil: QueueNetworkUtil,
-            errorNotifier: ErrorNotifier
+            userNotifier: UserNotifier
         ): ProtonMailRequestInterceptor =
             INSTANCE ?: synchronized(this) {
                 INSTANCE
-                    ?: buildInstance(userManager, jobManager, networkUtil, errorNotifier).also { INSTANCE = it }
+                    ?: buildInstance(userManager, jobManager, networkUtil, userNotifier).also { INSTANCE = it }
             }
 
         private fun buildInstance(
             userManager: UserManager,
             jobManager: JobManager,
             networkUtil: QueueNetworkUtil,
-            errorNotifier: ErrorNotifier
-        ) = ProtonMailRequestInterceptor(userManager, jobManager, networkUtil, errorNotifier)
+            userNotifier: UserNotifier
+        ) = ProtonMailRequestInterceptor(userManager, jobManager, networkUtil, userNotifier)
 
     }
 }

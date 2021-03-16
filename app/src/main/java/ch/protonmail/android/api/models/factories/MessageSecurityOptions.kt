@@ -16,10 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
+package ch.protonmail.android.api.models.factories
 
-package ch.protonmail.android.utils.notifier
+import kotlinx.serialization.Serializable
 
-interface ErrorNotifier {
-    fun showPersistentError(errorMessage: String, messageSubject: String?)
-    fun showError(errorMessage: String)
-}
+@Serializable
+data class MessageSecurityOptions(
+    val password: String?,
+    val hint: String?,
+    val expiresAfterInSeconds: Long
+)

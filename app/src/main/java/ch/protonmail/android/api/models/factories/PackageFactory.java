@@ -24,13 +24,14 @@ import androidx.annotation.NonNull;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.Auth;
@@ -47,6 +48,8 @@ import ch.protonmail.android.api.models.room.messages.Attachment;
 import ch.protonmail.android.api.models.room.messages.Message;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
+import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.domain.entity.Name;
 import ch.protonmail.android.utils.HTMLToMDConverter;
 import ch.protonmail.android.utils.MIME.MIMEBuilder;
 import ch.protonmail.android.utils.crypto.EOToken;
@@ -54,33 +57,45 @@ import kotlin.text.Charsets;
 
 public class PackageFactory {
 
-    private ProtonMailApiManager mApi;
+    private final ProtonMailApiManager apiManager;
+    private final AddressCrypto.Factory addressCryptoFactory;
+    private final HTMLToMDConverter htmlToMDConverter;
     private AddressCrypto crypto;
-    private String outsidersPassword;
-    private String outsidersHint;
 
-    public PackageFactory(ProtonMailApiManager mApi, AddressCrypto crypto, String outsidersPassword, String outsidersHint) {
-        this.mApi = mApi;
-        this.crypto = crypto;
-        this.outsidersPassword = outsidersPassword;
-        this.outsidersHint = outsidersHint;
+    @Inject
+    public PackageFactory(
+            @NonNull ProtonMailApiManager apiManager,
+            @NonNull AddressCrypto.Factory addressCryptoFactory,
+            @NonNull HTMLToMDConverter htmlToMDConverter) {
+        this.apiManager = apiManager;
+        this.addressCryptoFactory = addressCryptoFactory;
+        this.htmlToMDConverter = htmlToMDConverter;
     }
 
-    public List<MessageSendPackage> generatePackages(Message message, List<SendPreference> preferences) throws Exception {
+    public List<MessageSendPackage> generatePackages(
+            @NonNull Message message,
+            @NonNull List<SendPreference> preferences,
+            @NonNull MessageSecurityOptions securityOptions,
+            @NonNull String username
+    ) throws Exception {
         final Map<MIMEType, MessageSendPackage> packageMap = new HashMap<>();
+        crypto = addressCryptoFactory.create(
+                new Id(message.getAddressID()),
+                new Name(username)
+        );
 
         Set<String> recipients = getMessageRecipients(message);
         for (SendPreference sendPref : preferences) {
             if (!recipients.contains(sendPref.getEmailAddress())) {
                 continue;
             }
-            MIMEType mime = getMIMEType(message, sendPref);
+            MIMEType mime = getMIMEType(message, sendPref, securityOptions);
             if (!packageMap.containsKey(mime)) {
                 packageMap.put(mime, generateTopLevelPackage(mime, message));
             }
 
             MessageSendPackage packageModel = packageMap.get(mime);
-            addAddress(packageModel, sendPref, message);
+            addAddress(packageModel, sendPref, message, securityOptions);
         }
         // This is apparently even faster than filling in an array matching the map size.
         return Arrays.asList(packageMap.values().toArray(new MessageSendPackage[0]));
@@ -136,7 +151,7 @@ public class PackageFactory {
 
     private CipherText generateEncryptedMIME(Message message) throws Exception {
         MIMEType messageMime = MIMEType.fromString(message.getMimeType());
-        MIMEBuilder mimeBuilder = new MIMEBuilder(mApi, crypto);
+        MIMEBuilder mimeBuilder = new MIMEBuilder(apiManager, crypto);
         String html = messageMime == MIMEType.HTML ? message.getDecryptedHTML() : null;
         String plaintext = messageMime == MIMEType.PLAINTEXT ? message.getDecryptedBody() : null;
         String mimeString = mimeBuilder
@@ -150,38 +165,46 @@ public class PackageFactory {
 
     private CipherText generatePlaintextBody(Message message) throws Exception {
         String html = message.getDecryptedHTML();
-        HTMLToMDConverter converter = new HTMLToMDConverter();
-        String plaintext = converter.convert(html);
+        String plaintext = htmlToMDConverter.convert(html);
         return crypto.encrypt(plaintext, true);
     }
 
-    private void addAddress(MessageSendPackage packageModel, SendPreference sendPref, Message message) throws Exception {
-        if (!sendPref.isEncryptionEnabled() && outsidersPassword != null && outsidersHint != null) {
-            addEOAddress(packageModel, sendPref, message);
+    private void addAddress(
+            MessageSendPackage packageModel,
+            SendPreference sendPref,
+            Message message,
+            MessageSecurityOptions securityOptions
+    ) throws Exception {
+        if (!sendPref.isEncryptionEnabled() && securityOptions.getPassword() != null && securityOptions.getHint() != null) {
+            addEOAddress(packageModel, sendPref, securityOptions);
             return;
         }
         if (sendPref.isEncryptionEnabled()) {
             addEncryptAddress(packageModel, sendPref, message);
             return;
         }
-        addUnencryptedAddress(packageModel, sendPref, message);
+        addUnencryptedAddress(packageModel, sendPref);
     }
 
-    private void addEOAddress(MessageSendPackage packageModel, SendPreference sendPref, Message message) throws Exception {
+    private void addEOAddress(
+            MessageSendPackage packageModel,
+            SendPreference sendPref,
+            MessageSecurityOptions securityOptions
+    ) throws Exception {
         MessageSendAddressBody messageAddress = new MessageSendAddressBody();
-        Map<String, String> attachmentKeys = symEncryptAttachmentKeys(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getAttachmentKeys());
+        Map<String, String> attachmentKeys = symEncryptAttachmentKeys(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getAttachmentKeys());
         messageAddress.setAttachmentKeyPackets(attachmentKeys);
         messageAddress.setType(PackageType.EO.getValue());
-        messageAddress.setBodyKeyPacket(symEncryptKeyPacket(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getBodyKey()));
-        EOToken token = crypto.generateEOToken(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/);
+        messageAddress.setBodyKeyPacket(symEncryptKeyPacket(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, packageModel.getBodyKey()));
+        EOToken token = crypto.generateEOToken(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/);
         messageAddress.setToken(token.getToken());
         messageAddress.setEncToken(token.getEncryptedToken());
-        messageAddress.setPasswordHint(outsidersHint);
-        messageAddress.setAuth(generateAuth());
+        messageAddress.setPasswordHint(securityOptions.getHint());
+        messageAddress.setAuth(generateAuth(securityOptions));
         packageModel.addAddress(sendPref.getEmailAddress(), messageAddress);
     }
 
-    private void addUnencryptedAddress(MessageSendPackage packageModel, SendPreference sendPref, Message message) {
+    private void addUnencryptedAddress(MessageSendPackage packageModel, SendPreference sendPref) {
         MessageSendAddressBody messageAddress = new MessageSendAddressBody();
         messageAddress.setType(sendPref.getEncryptionScheme().getValue());
         messageAddress.setSignature(sendPref.isSignatureEnabled() ? 1 : 0);
@@ -204,9 +227,9 @@ public class PackageFactory {
         packageModel.addAddress(sendPref.getEmailAddress(), messageAddress);
     }
 
-    private Auth generateAuth() throws IOException {
-        final ModulusResponse modulus = mApi.randomModulus();
-        final PasswordVerifier verifier = PasswordVerifier.calculate(outsidersPassword.getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
+    private Auth generateAuth(MessageSecurityOptions securityOptions) {
+        final ModulusResponse modulus = apiManager.randomModulus();
+        final PasswordVerifier verifier = PasswordVerifier.calculate(securityOptions.getPassword().getBytes(Charsets.UTF_8) /*TODO passphrase*/, modulus);
         return new Auth(verifier.AuthVersion, verifier.ModulusID, verifier.Salt, verifier.SRPVerifier);
     }
 
@@ -226,23 +249,23 @@ public class PackageFactory {
         return encAttachmentKeys;
     }
 
-    private String encryptKeyPacket(String publicKey, MessageSendKey bodyKey) throws Exception {
+    private String encryptKeyPacket(String publicKey, MessageSendKey bodyKey) {
         byte[] sessionKey = Base64.decode(bodyKey.getKey(), Base64.DEFAULT);
         byte[] encSessionKey = crypto.encryptKeyPacket(sessionKey, publicKey);
         return Base64.encodeToString(encSessionKey, Base64.NO_WRAP);
     }
 
-    private String symEncryptKeyPacket(byte[] password, MessageSendKey bodyKey) throws Exception {
+    private String symEncryptKeyPacket(byte[] password, MessageSendKey bodyKey) {
         byte[] sessionKey = Base64.decode(bodyKey.getKey(), Base64.DEFAULT);
         byte[] encSessionKey = crypto.encryptKeyPacketWithPassword(sessionKey, password);
         return Base64.encodeToString(encSessionKey, Base64.NO_WRAP);
     }
 
     @NonNull
-    private MIMEType getMIMEType(Message message, SendPreference sendPref) {
+    private MIMEType getMIMEType(Message message, SendPreference sendPref, MessageSecurityOptions securityOptions) {
         MIMEType input = sendPref.getMimeType();
         if ((!sendPref.isEncryptionEnabled() && sendPref.isSignatureEnabled() &&
-                outsidersPassword != null && outsidersHint != null) || input == MIMEType.HTML) {
+                securityOptions.getPassword() != null && securityOptions.getHint() != null) || input == MIMEType.HTML) {
             return ObjectUtils.firstNonNull(MIMEType.fromString(message.getMimeType()), MIMEType.HTML);
         }
         return input;

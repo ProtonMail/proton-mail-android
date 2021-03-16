@@ -38,7 +38,7 @@ import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.RequestTimeoutEvent
 import ch.protonmail.android.utils.AppUtil
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import com.birbit.android.jobqueue.JobManager
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
@@ -56,7 +56,7 @@ abstract class BaseRequestInterceptor(
     protected val userManager: UserManager,
     protected val jobManager: JobManager,
     protected val networkUtils: QueueNetworkUtil,
-    protected val errorNotifier: ErrorNotifier
+    protected val userNotifier: UserNotifier
 ) : Interceptor {
 
     private val appVersionName by lazy {
@@ -158,7 +158,7 @@ abstract class BaseRequestInterceptor(
                 } catch (e: IOException) {
                     Timber.d(e)
                 }
-                errorNotifier.showError(responseBodyError)
+                userNotifier.showError(responseBodyError)
             }
         }
         return null

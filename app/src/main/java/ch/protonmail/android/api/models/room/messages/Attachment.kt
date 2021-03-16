@@ -265,6 +265,7 @@ data class Attachment @JvmOverloads constructor(
         }
 
         @JvmOverloads
+        @Synchronized
         fun createAttachmentList(
             messagesDatabase: MessagesDatabase,
             localAttachmentList: List<LocalAttachment>,

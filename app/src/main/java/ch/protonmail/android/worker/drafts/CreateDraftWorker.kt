@@ -52,7 +52,7 @@ import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
-import ch.protonmail.android.utils.notifier.ErrorNotifier
+import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -70,7 +70,7 @@ internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM = "keySaveDraftErrorR
 internal const val KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID = "keySaveDraftSuccessResultDbId"
 
 private const val INPUT_MESSAGE_DB_ID_NOT_FOUND = -1L
-private const val SAVE_DRAFT_MAX_RETRIES = 10
+private const val SAVE_DRAFT_MAX_RETRIES = 3
 
 class CreateDraftWorker @WorkerInject constructor(
     @Assisted context: Context,
@@ -81,7 +81,7 @@ class CreateDraftWorker @WorkerInject constructor(
     private val addressCryptoFactory: AddressCrypto.Factory,
     private val base64: Base64Encoder,
     private val apiManager: ProtonMailApiManager,
-    private val errorNotifier: ErrorNotifier
+    private val userNotifier: UserNotifier
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -93,24 +93,30 @@ class CreateDraftWorker @WorkerInject constructor(
         val createDraftRequest = messageFactory.createDraftApiRequest(message)
 
         parentId?.let {
-            createDraftRequest.parentID = parentId
-            createDraftRequest.action = getInputActionType().messageActionTypeValue
-            val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
-            val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
+            if (isDraftBeingCreated(message)) {
+                createDraftRequest.parentID = parentId
+                createDraftRequest.action = getInputActionType().messageActionTypeValue
+                val parentMessage = messageDetailsRepository.findMessageByIdBlocking(parentId)
+                val attachments = parentMessage?.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao())
 
-            buildDraftRequestParentAttachments(attachments, senderAddress).forEach {
-                createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
+                buildParentAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
+                    createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
+                }
             }
+        }
+
+        val messageId = requireNotNull(message.messageId)
+        val attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId)
+        buildMessageAttachmentsKeyPacketsMap(attachments, senderAddress).forEach {
+            createDraftRequest.addAttachmentKeyPacket(it.key, it.value)
         }
 
         val encryptedMessage = requireNotNull(message.messageBody)
         createDraftRequest.setMessageBody(encryptedMessage)
         createDraftRequest.setSender(buildMessageSender(message, senderAddress))
 
-        val messageId = requireNotNull(message.messageId)
-
         return runCatching {
-            if (MessageUtils.isLocalMessageId(message.messageId)) {
+            if (isDraftBeingCreated(message)) {
                 apiManager.createDraft(createDraftRequest)
             } else {
                 apiManager.updateDraft(
@@ -123,12 +129,11 @@ class CreateDraftWorker @WorkerInject constructor(
             onSuccess = { response ->
                 if (response.code != Constants.RESPONSE_CODE_OK) {
                     Timber.e("Create Draft Worker Failed with bad response code: $response")
-                    errorNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
+                    userNotifier.showPersistentError(response.error, createDraftRequest.message.subject)
                     return failureWithError(CreateDraftWorkerErrors.BadResponseCodeError)
                 }
 
-                val responseDraft = response.message
-                updateStoredLocalDraft(responseDraft, message)
+                updateStoredLocalDraft(response.message, message)
 
                 Timber.i("Create Draft Worker API call succeeded")
                 Result.success(
@@ -140,6 +145,29 @@ class CreateDraftWorker @WorkerInject constructor(
             }
         )
     }
+
+    private fun buildMessageAttachmentsKeyPacketsMap(
+        attachments: List<Attachment>,
+        senderAddress: Address
+    ): Map<String, String> {
+        val draftAttachments = mutableMapOf<String, String>()
+        attachments.forEach { attachment ->
+
+            val keyPackets = if (isSenderAddressChanged()) {
+                reEncryptAttachment(senderAddress, attachment)
+            } else {
+                attachment.keyPackets
+            }
+
+            keyPackets?.let {
+                draftAttachments[attachment.attachmentId!!] = keyPackets
+            }
+        }
+        return draftAttachments
+    }
+
+    private fun isDraftBeingCreated(message: Message) =
+        MessageUtils.isLocalMessageId(message.messageId)
 
     private suspend fun updateStoredLocalDraft(apiDraft: Message, localDraft: Message) {
         apiDraft.apply {
@@ -166,11 +194,11 @@ class CreateDraftWorker @WorkerInject constructor(
             return Result.retry()
         }
         Timber.e("Create Draft Worker API call failed all the retries. error = $error. FAILING")
-        errorNotifier.showPersistentError(error.orEmpty(), messageSubject)
+        userNotifier.showPersistentError(error.orEmpty(), messageSubject)
         return failureWithError(CreateDraftWorkerErrors.ServerError)
     }
 
-    private fun buildDraftRequestParentAttachments(
+    private fun buildParentAttachmentsKeyPacketsMap(
         attachments: List<Attachment>?,
         senderAddress: Address
     ): Map<String, String> {
@@ -203,10 +231,15 @@ class CreateDraftWorker @WorkerInject constructor(
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 
         return attachment.keyPackets?.let {
-            val keyPackage = base64.decode(it)
-            val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
-            val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
-            return base64.encode(newKeyPackage)
+            return try {
+                val keyPackage = base64.decode(it)
+                val sessionKey = addressCrypto.decryptKeyPacket(keyPackage)
+                val newKeyPackage = addressCrypto.encryptKeyPacket(sessionKey, publicKey)
+                return base64.encode(newKeyPackage)
+            } catch (exception: Exception) {
+                Timber.d("Re-encrypting message attachments threw exception $exception")
+                attachment.keyPackets
+            }
         }
     }
 
