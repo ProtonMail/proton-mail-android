@@ -50,6 +50,7 @@ import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.jobs.contacts.GetSendPreferenceJob
@@ -74,6 +75,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -225,17 +227,17 @@ class ComposeMessageViewModel @Inject constructor(
     internal var autoSaveJob: Job? = null
     // endregion
 
-    private val loggedInUsernames = if (userManager.user.combinedContacts) {
-        AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).getLoggedInUsers()
+    private val loggedInUserIds = if (userManager.user.combinedContacts) {
+        AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).allLoggedInBlocking()
     } else {
-        listOf(userManager.username)
+        listOf(userManager.currentUserId)
     }
 
 
     fun init(processor: HtmlProcessor) {
         htmlProcessor = processor
         composeMessageRepository.lazyManager.reset()
-        composeMessageRepository.reloadDependenciesForUser(userManager.username)
+        composeMessageRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
         getSenderEmailAddresses()
         // if the user is free user, then we do not fetch contact groups and announce the setup is complete
         if (!userManager.user.isPaidUser) {
@@ -246,8 +248,10 @@ class ComposeMessageViewModel @Inject constructor(
                 loadPMContacts()
             }
         } else {
-            for (username in loggedInUsernames) {
-                fetchContactGroups(username)
+            for (userId in loggedInUserIds) {
+                userId?.let {
+                    fetchContactGroups(it)
+                }
             }
         }
     }
@@ -291,7 +295,7 @@ class ComposeMessageViewModel @Inject constructor(
     }
 
     @SuppressLint("CheckResult")
-    fun fetchContactGroups(username: String) {
+    fun fetchContactGroups(userId: Id) {
         if (!isPaidUser()) {
             return
         }
@@ -299,7 +303,7 @@ class ComposeMessageViewModel @Inject constructor(
             handleContactGroupsResult()
             return
         }
-        composeMessageRepository.getContactGroupsFromDB(username, userManager.user.combinedContacts)
+        composeMessageRepository.getContactGroupsFromDB(userId, userManager.user.combinedContacts)
             .flatMap {
                 for (group in it) {
                     val emails = composeMessageRepository.getContactGroupEmailsSync(group.ID)
@@ -375,7 +379,8 @@ class ComposeMessageViewModel @Inject constructor(
     fun onFetchMessageDetailEvent(event: FetchMessageDetailEvent) {
         if (event.success) {
             val message = event.message
-            message!!.decrypt(userManager, userManager.username)
+            val username = userManager.getCurrentUserBlocking()?.name?.s!! // TODO: how to improve this?
+            message!!.decrypt(userManager, username)
             val decryptedMessage = message.decryptedHTML // todo check if any var should be set
             val messageId = event.messageId
             composeMessageRepository.markMessageRead(messageId)
@@ -949,9 +954,9 @@ class ComposeMessageViewModel @Inject constructor(
             return
         }
         _protonMailContactsLoaded = true
-        for (username in loggedInUsernames) {
-            fetchContactGroups(username)
-            composeMessageRepository.findAllMessageRecipients(username)
+        for (userId in loggedInUserIds) {
+            fetchContactGroups(userId!!)
+            composeMessageRepository.findAllMessageRecipients(userId)
                 .subscribeOn(ThreadSchedulers.io())
                 .observeOn(ThreadSchedulers.main())
                 .subscribe {

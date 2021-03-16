@@ -23,6 +23,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -33,8 +34,10 @@ import androidx.work.workDataOf
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.crypto.Crypto
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.worker.KEY_WORKER_ERROR_DESCRIPTION
 import ch.protonmail.android.worker.failure
 import timber.log.Timber
@@ -43,7 +46,7 @@ import javax.inject.Inject
 
 // region constants
 internal const val KEY_INPUT_DATA_MESSAGE_ID_STRING = "KEY_INPUT_DATA_MESSAGE_ID_STRING"
-internal const val KEY_INPUT_DATA_USERNAME_STRING = "KEY_INPUT_DATA_USERNAME_STRING"
+internal const val KEY_INPUT_DATA_USER_ID_STRING = "KEY_INPUT_DATA_USER_ID_STRING"
 internal const val KEY_INPUT_DATA_ATTACHMENT_ID_STRING = "KEY_INPUT_DATA_ATTACHMENT_ID_STRING"
 // endregion
 
@@ -74,13 +77,17 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
     override suspend fun doWork(): Result {
 
         // sanitize input
-        val messageId = requireNotNull(inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING))
-        val username = requireNotNull(inputData.getString(KEY_INPUT_DATA_USERNAME_STRING))
+        val messageId = inputData.getString(KEY_INPUT_DATA_MESSAGE_ID_STRING)
+            ?: return Result.failure()
+        val userIdString = inputData.getString(KEY_INPUT_DATA_USER_ID_STRING)
+            ?: return Result.failure()
+        val userId = Id(userIdString)
+
         val singleAttachmentId = inputData.getString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING)
 
-        if (messageId.isEmpty() || username.isEmpty()) {
+        if (messageId.isEmpty()) {
             return Result.failure(
-                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messageId or username")
+                workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "Cannot proceed with empty messageId")
             )
         }
 
@@ -96,7 +103,8 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         requireNotNull(message)
         val addressId = requireNotNull(message.addressID)
 
-        val addressCrypto = AddressCrypto(userManager, userManager.openPgp, Name(username), Id(addressId))
+        val username = userManager.getUserBlocking(userId).name.s
+        val addressCrypto = Crypto.forAddress(userManager, username, addressId)
         // We need this outside of this because the embedded attachments are set once the message is actually decrypted
         try {
             message.decrypt(addressCrypto)
@@ -130,7 +138,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
 
         fun enqueue(
             messageId: String,
-            username: String,
+            userId: Id,
             attachmentId: String
         ): Operation {
 
@@ -138,16 +146,16 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
+            val data = Data.Builder()
+                .putString(KEY_INPUT_DATA_MESSAGE_ID_STRING, messageId)
+                .putString(KEY_INPUT_DATA_USER_ID_STRING, userId.s)
+                .putString(KEY_INPUT_DATA_ATTACHMENT_ID_STRING, attachmentId)
+                .build()
+
             val attachmentsWorkRequest =
                 OneTimeWorkRequest.Builder(DownloadEmbeddedAttachmentsWorker::class.java)
                     .setConstraints(constraints)
-                    .setInputData(
-                        workDataOf(
-                            KEY_INPUT_DATA_MESSAGE_ID_STRING to messageId,
-                            KEY_INPUT_DATA_USERNAME_STRING to username,
-                            KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId
-                        )
-                    )
+                    .setInputData(data)
                     .build()
 
             return workManager.enqueueUniqueWork(

@@ -206,6 +206,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
 
     init {
         tryFindMessage()
+        messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
 
         viewModelScope.launch {
             for (body in messageRenderer.renderedBody) {
@@ -217,7 +218,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
     }
 
     fun tryFindMessage() {
-        messageDetailsRepository.reloadDependenciesForUser(userManager.username)
+        messageDetailsRepository.reloadDependenciesForUser(userManager.requireCurrentUserId())
         message = if (isTransientMessage) {
             messageDetailsRepository.findSearchMessageByIdAsync(messageId)
         } else {
@@ -288,7 +289,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
             ) {
                 AppUtil.postEventOnUi(DownloadEmbeddedImagesEvent(Status.SUCCESS, embeddedImagesWithLocalFiles))
             } else {
-                messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.username)
+                messageDetailsRepository.startDownloadEmbeddedImages(messageId, userManager.requireCurrentUserId())
             }
         }
     }
@@ -510,12 +511,12 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     }
                     else -> {
                         Timber.v("No file attachment id: $attachmentToDownloadId downloading again")
-                        attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                        attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
                     }
                 }
             } else {
                 Timber.v("No metadata found for attachment id: $attachmentToDownloadId")
-                attachmentsWorker.enqueue(messageId, userManager.username, attachmentToDownloadId)
+                attachmentsWorker.enqueue(messageId, userManager.requireCurrentUserId(), attachmentToDownloadId)
             }
         }
     }

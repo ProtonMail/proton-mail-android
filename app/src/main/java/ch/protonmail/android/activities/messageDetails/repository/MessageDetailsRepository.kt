@@ -497,8 +497,8 @@ class MessageDetailsRepository @Inject constructor(
     fun fetchSearchMessageDetails(messageId: String): MessageResponse =
         api.fetchMessageDetailsBlocking(messageId) // try to fetch the message details from the API
 
-    fun startDownloadEmbeddedImages(messageId: String, username: String) {
-        attachmentsWorker.enqueue(messageId, username, "")
+    fun startDownloadEmbeddedImages(messageId: String, userId: Id) {
+        attachmentsWorker.enqueue(messageId, userId, "")
     }
 
     fun markRead(messageId: String) {

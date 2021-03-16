@@ -91,7 +91,7 @@ class MessagesService : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
 
         val currentUser = userManager.username
-        messageDetailsRepository.reloadDependenciesForUser(currentUser)
+        messageDetailsRepository.reloadDependenciesForUserId(userManager.currentUserId)
         when (intent.action) {
             ACTION_FETCH_MESSAGES_BY_PAGE -> {
                 val location = intent.getIntExtra(EXTRA_MESSAGE_LOCATION, 0)
@@ -249,7 +249,7 @@ class MessagesService : JobIntentService() {
             val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUser)
             val messagesDb = messagesDbFactory.getDatabase()
             val actionsDb = actionsDbFactory.getDatabase()
-            messageDetailsRepository.reloadDependenciesForUser(currentUser)
+            messageDetailsRepository.reloadDependenciesForUserId(userManager.currentUserId)
             messagesDbFactory.runInTransaction {
                 actionsDbFactory.runInTransaction {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLocation(location)
@@ -321,7 +321,7 @@ class MessagesService : JobIntentService() {
             val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUser)
             val messagesDb = messagesDbFactory.getDatabase()
             val actionsDb = actionsDbFactory.getDatabase()
-            messageDetailsRepository.reloadDependenciesForUser(currentUser)
+            messageDetailsRepository.reloadDependenciesForUserId(userManager.currentUserId)
             messagesDbFactory.runInTransaction {
                 actionsDbFactory.runInTransaction {
                     if (refreshMessages) messageDetailsRepository.deleteMessagesByLabel(labelId)

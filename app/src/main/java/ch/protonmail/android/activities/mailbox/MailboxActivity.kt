@@ -253,7 +253,7 @@ class MailboxActivity :
 
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
-            messageDetailsRepository.reloadDependenciesForUser(mUserManager.username)
+            messageDetailsRepository.reloadDependenciesForUserId(mUserManager.currentUserId)
             FcmUtil.setTokenSent(false) // force FCM to re-register
         }
         val extras = intent.extras
@@ -618,7 +618,7 @@ class MailboxActivity :
         mJobManager.start()
         countersDatabase = CountersDatabaseFactory.getInstance(this).getDatabase()
         pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
-        messageDetailsRepository.reloadDependenciesForUser(username)
+        messageDetailsRepository.reloadDependenciesForUserId(mUserManager.currentUserId)
         startObservingPendingActions()
         AppUtil.clearNotifications(this, username)
         lazyManager.reset()

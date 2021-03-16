@@ -34,6 +34,7 @@ import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
@@ -72,28 +73,28 @@ class ComposeMessageRepository @Inject constructor(
     /**
      * Reloads all statically required dependencies when currently active user changes.
      */
-    fun reloadDependenciesForUser(username: String) {
-        messageDetailsRepository.reloadDependenciesForUser(username)
-        messagesDatabase = databaseProvider.provideMessagesDao(username)
+    fun reloadDependenciesForUser(userId: Id) {
+        messageDetailsRepository.reloadDependenciesForUserId(userId)
+        messagesDatabase = databaseProvider.provideMessagesDao(userId)
     }
 
     private val contactsDao by resettableLazy(lazyManager) {
         databaseProvider.provideContactsDao()
     }
 
-    private val contactsDaos: HashMap<String, ContactsDao> by resettableLazy(lazyManager) {
-        val usernames = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).getLoggedInUsers()
-        val listOfDaos: HashMap<String, ContactsDao> = HashMap()
-        for (username in usernames) {
-            listOfDaos[username] = databaseProvider.provideContactsDao(username)
+    private val contactsDaos: HashMap<Id, ContactsDao> by resettableLazy(lazyManager) {
+        val userIds = AccountManager.getInstance(ProtonMailApplication.getApplication().applicationContext).allLoggedInBlocking()
+        val listOfDaos: HashMap<Id, ContactsDao> = HashMap()
+        for (userId in userIds) {
+            listOfDaos[userId] = databaseProvider.provideContactsDao(userId)
         }
         listOfDaos
     }
 
-    fun getContactGroupsFromDB(username: String, combinedContacts: Boolean): Observable<List<ContactLabel>> {
+    fun getContactGroupsFromDB(userId: Id, combinedContacts: Boolean): Observable<List<ContactLabel>> {
         var tempContactsDao: ContactsDao = contactsDao
         if (combinedContacts) {
-            tempContactsDao = contactsDaos[username]!!
+            tempContactsDao = contactsDaos[userId]!!
         }
         return tempContactsDao.findContactGroupsObservable()
             .flatMap { list ->
@@ -215,7 +216,7 @@ class ComposeMessageRepository @Inject constructor(
             .build()
     }
 
-    fun findAllMessageRecipients(username: String) = contactsDaos[username]!!.findAllMessageRecipients()
+    fun findAllMessageRecipients(userId: Id) = contactsDaos[userId]!!.findAllMessageRecipients()
 
     fun markMessageRead(messageId: String) {
         GlobalScope.launch(Dispatchers.IO) {

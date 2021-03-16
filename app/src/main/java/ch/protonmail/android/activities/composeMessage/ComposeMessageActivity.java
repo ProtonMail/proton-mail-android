@@ -95,6 +95,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -133,6 +134,8 @@ import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.crypto.AddressCrypto;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
+import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.events.AttachmentFailedEvent;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent;
 import ch.protonmail.android.events.FetchDraftDetailEvent;
@@ -306,6 +309,8 @@ public class ComposeMessageActivity
     private ComposeMessageViewModel composeMessageViewModel;
     @Inject
     MessageDetailsRepository messageDetailsRepository;
+    @Inject
+    AccountManager accountManager;
 
     @Inject
     DownloadEmbeddedAttachmentsWorker.Enqueuer attachmentsWorker;
@@ -1041,7 +1046,7 @@ public class ComposeMessageActivity
                 if (!TextUtils.isEmpty(localAttachment.getMessageId())) {
                     attachmentsWorker.enqueue(
                             localAttachment.getMessageId(),
-                            mUserManager.getUsername(),
+                            mUserManager.getCurrentUserId(),
                             null
                     );
                     break;
@@ -1640,7 +1645,8 @@ public class ComposeMessageActivity
             mScrollContentView.setVisibility(View.VISIBLE);
             mProgressView.setVisibility(View.GONE);
         }
-        AddressCrypto crypto = Crypto.forAddress(mUserManager, mUserManager.getUsername(), loadedMessage.getAddressID());
+        String username = mUserManager.getCurrentUserBlocking().getName().getS();
+        AddressCrypto crypto = Crypto.forAddress(mUserManager, username, loadedMessage.getAddressID());
         if (updateAttachments) {
             composeMessageViewModel.createLocalAttachments(loadedMessage);
         }
@@ -1878,9 +1884,9 @@ public class ComposeMessageActivity
             composeMessageViewModel.getMergedContactsLiveData().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            List<String> usernames = AccountManager.Companion.getInstance(this).getLoggedInUsers();
-            for (String username : usernames) {
-                composeMessageViewModel.fetchContactGroups(username);
+            Set<Id> userIds = accountManager.allLoggedInBlocking();
+            for(Id userId : userIds) {
+                composeMessageViewModel.fetchContactGroups(userId);
             }
             composeMessageViewModel.loadPMContacts();
         } else {
@@ -1888,7 +1894,7 @@ public class ComposeMessageActivity
             composeMessageViewModel.getContactGroupsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
-            composeMessageViewModel.fetchContactGroups(mUserManager.getUsername());
+            composeMessageViewModel.fetchContactGroups(mUserManager.getCurrentUserId());
             composeMessageViewModel.getPmMessageRecipientsResult().observe(this, messageRecipients -> {
                 mMessageRecipientViewAdapter.setData(messageRecipients);
             });
