@@ -25,11 +25,11 @@ import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import java.io.IOException
 
-class OrganizationApi(private val service : OrganizationService) : BaseApi(), OrganizationApiSpec {
+class OrganizationApi(private val service: OrganizationService) : BaseApi(), OrganizationApiSpec {
 
     @Throws(IOException::class)
     override fun fetchOrganization(): OrganizationResponse =
-            ParseUtils.parse(service.fetchOrganization().execute())
+        ParseUtils.parse(service.fetchOrganization().execute())
 
     @Throws(IOException::class)
     override fun fetchOrganizationKeys(): Keys =

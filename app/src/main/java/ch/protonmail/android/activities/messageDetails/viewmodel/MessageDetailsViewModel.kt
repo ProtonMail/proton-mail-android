@@ -379,7 +379,7 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                     isDecrypted = withContext(dispatchers.Comp) {
                         message.tryDecrypt(keys) ?: false
                     }
-                    Timber.v("Message isDecrypted:$isDecrypted")
+                    Timber.v("Message isDecrypted:$isDecrypted, keys size: ${keys?.size}")
                     value = message
                 }
             }
@@ -391,14 +391,16 @@ internal class MessageDetailsViewModel @ViewModelInject constructor(
                 } catch (exception: Exception) {
                     // signature verification failed with special case, try to decrypt again without verification
                     // and hardcode verification error
-                    if (verificationKeys != null && verificationKeys.isNotEmpty() && exception.message == "Signature Verification Error: No matching signature") {
+                    if (verificationKeys != null && verificationKeys.isNotEmpty() &&
+                        exception.message == "Signature Verification Error: No matching signature"
+                    ) {
                         Timber.d(exception, "Decrypting message again without verkeys")
                         decrypt(userManager = userManager, username = userManager.username)
                         this.hasValidSignature = false
                         this.hasInvalidSignature = true
                         true
                     } else {
-                        Timber.d(exception, "Cannot decrypt message even without empty verkeys")
+                        Timber.d(exception, "Cannot decrypt message")
                         false
                     }
                 }

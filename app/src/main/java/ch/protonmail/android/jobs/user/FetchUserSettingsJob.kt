@@ -31,6 +31,7 @@ import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
+import timber.log.Timber
 import kotlin.time.seconds
 
 class FetchUserSettingsJob(
@@ -42,6 +43,8 @@ class FetchUserSettingsJob(
         val fetchContactsEmails = entryPoint.fetchContactsEmailsWorkerEnqueuer()
         val fetchContactsData = entryPoint.fetchContactsDataWorkerEnqueuer()
 
+        Timber.v("FetchUserSettingsJob started for username: $username")
+
         val userInfo: UserInfo
         val userSettings: UserSettingsResponse
         val mailSettings: MailSettingsResponse
@@ -52,20 +55,28 @@ class FetchUserSettingsJob(
             userSettings = getApi().fetchUserSettings(username!!)
             mailSettings = getApi().fetchMailSettingsBlocking(username!!)
             addresses = getApi().fetchAddressesBlocking(username!!)
-            getUserManager().setUserInfo(userInfo, username, mailSettings.mailSettings,
-                userSettings.userSettings, addresses.addresses)
+            getUserManager().setUserInfo(
+                userInfo, username, mailSettings.mailSettings,
+                userSettings.userSettings, addresses.addresses
+            )
 
             val user = getUserManager().user
-            AddressKeyActivationWorker.activateAddressKeysIfNeeded(applicationContext,
-                addresses.addresses, user.username)
+            AddressKeyActivationWorker.activateAddressKeysIfNeeded(
+                applicationContext,
+                addresses.addresses, user.username
+            )
             user.notificationSetting = getUserManager().user.notificationSetting
             user.save()
 
             if (username == getUserManager().username) {
                 // if primary
                 AppUtil.deleteDatabases(ProtonMailApplication.getApplication(), username, true)
-                getJobManager().addJobInBackground(FetchByLocationJob(Constants.MessageLocationType.INBOX,
-                    null, true, null, false))
+                getJobManager().addJobInBackground(
+                    FetchByLocationJob(
+                        Constants.MessageLocationType.INBOX,
+                        null, true, null, false
+                    )
+                )
                 fetchContactsData.enqueue()
                 fetchContactsEmails.enqueue(2.seconds.toLongMilliseconds())
             } else {
@@ -76,12 +87,16 @@ class FetchUserSettingsJob(
             userSettings = getApi().fetchUserSettings()
             mailSettings = getApi().fetchMailSettingsBlocking()
             addresses = getApi().fetchAddressesBlocking()
-            getUserManager().setUserInfo(userInfo, mailSettings = mailSettings.mailSettings,
-                userSettings = userSettings.userSettings, addresses = addresses.addresses)
+            getUserManager().setUserInfo(
+                userInfo, mailSettings = mailSettings.mailSettings,
+                userSettings = userSettings.userSettings, addresses = addresses.addresses
+            )
 
             val user = getUserManager().user
-            AddressKeyActivationWorker.activateAddressKeysIfNeeded(applicationContext,
-                addresses.addresses, user.username)
+            AddressKeyActivationWorker.activateAddressKeysIfNeeded(
+                applicationContext,
+                addresses.addresses, user.username
+            )
             user.notificationSetting = getUserManager().user.notificationSetting
             user.save()
         }

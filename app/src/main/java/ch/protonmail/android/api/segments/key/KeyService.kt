@@ -60,7 +60,7 @@ interface KeyService {
     ): Call<ResponseBody>
 
     // legacy user
-    @PUT("/keys/{keyid}/activate")
+    @PUT("/keys/{keyId}/activate")
     @Headers(CONTENT_TYPE, ACCEPT_HEADER_V1)
     suspend fun activateKeyLegacy(
         @Body keyActivationBody: KeyActivationBody,
