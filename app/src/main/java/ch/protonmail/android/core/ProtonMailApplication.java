@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -71,9 +70,7 @@ import ch.protonmail.android.api.NetworkSwitcher;
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
-import ch.protonmail.android.api.models.Keys;
 import ch.protonmail.android.api.models.Organization;
-import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.doh.Proxies;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
@@ -83,6 +80,8 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.domain.entity.Id;
+import ch.protonmail.android.domain.entity.user.User;
+import ch.protonmail.android.domain.entity.user.UserKey;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.AuthStatus;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
@@ -156,7 +155,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     DownloadUtils downloadUtils;
 
     private Bus mBus;
-    private boolean mIsInitialized;
     private boolean appInBackground;
     private Snackbar apiOfflineSnackBar;
     @Nullable
@@ -231,7 +229,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
         WorkManager.initialize(this, getWorkManagerConfiguration());
 
         checkForUpdateAndClearCache();
-        initLongRunningTask();
     }
 
     private void upgradeTlsProviderIfNeeded() {
@@ -247,21 +244,8 @@ public class ProtonMailApplication extends Application implements androidx.work.
         }
     }
 
-    private void initLongRunningTask() {
-        // check if storage limit approaching
-        final User user = userManager.getUser();
-        if (user.getMaxSpace() > 0) {
-            long percentageUsed = (user.getUsedSpace() * 100) / user.getMaxSpace();
-            if (percentageUsed >= Constants.STORAGE_LIMIT_WARNING_PERCENTAGE) {
-                mLastStorageLimitEvent = new StorageLimitEvent();
-            }
-        }
-
-        mIsInitialized = true;
-    }
-
     public boolean isInitialized() {
-        return mIsInitialized;
+        return true;
     }
 
     @NonNull
@@ -559,33 +543,14 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 // or any specific previous version should be logged out
 
                 Id currentUserId = userManager.getCurrentUserId();
-                // Removed check for updates where we need to logout as it was always false. See doc ref in method header
-                if (false) {  // Can we remove this part
-                    userManager.logoutOfflineBlocking(currentUserId);
-                    AppUtil.deleteDatabases(this, currentUserId.getS());
-                    AppUtil.deletePrefs();
-                }
-                if (BuildConfig.DEBUG) {
-                    List<String> loggedInUsers = accountManager.getLoggedInUsers();
-                    long elapsedTime = SystemClock.elapsedRealtime();
-                    for (String userName : loggedInUsers) {
-                        User user = userManager.getLegacyUserBlocking(userName);
-                        if (!user.isPaidUser()) {
-                            user.setShowMobileSignature(true);
-                            user.save();
-                        }
-                        user.setLastInteraction(elapsedTime);
-                    }
-                }
                 if (BuildConfig.DEBUG) {
                     AlarmReceiver alarmReceiver = new AlarmReceiver();
                     alarmReceiver.cancelAlarm(this);
                     startJobManager();
                     Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
-                    Id currentPrimaryUserId = userManager.getCurrentUserId();
-                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentPrimaryUserId));
+                    jobManager.addJobInBackground(new FetchUserSettingsJob(currentUserId));
                     for (Id loggedInUser : loggedInUsers) {
-                        if (!loggedInUser.equals(currentPrimaryUserId)) {
+                        if (!loggedInUser.equals(currentUserId)) {
                             jobManager.addJobInBackground(new FetchUserSettingsJob(loggedInUser));
                         }
                     }
@@ -594,11 +559,11 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 }
                 TokenManager tokenManager = userManager.getTokenManager();
                 if (tokenManager != null && TextUtils.isEmpty(tokenManager.getEncPrivateKey())) {
-                    User user = userManager.getCurrentLegacyUserBlocking();
-                    for (Keys key : user.getKeys()) {
-                        if (key.isPrimary()) {
-                            tokenManager.setEncPrivateKey(key.getPrivateKey()); // it's needed for verification later
-                            break;
+                    User user = userManager.getCurrentUserBlocking();
+                    if (user != null) {
+                        UserKey primaryKey = user.getKeys().getPrimaryKey();
+                        if (primaryKey != null) {
+                            tokenManager.setEncPrivateKey(primaryKey.getPrivateKey().getString()); // it's needed for verification later
                         }
                     }
                 }
