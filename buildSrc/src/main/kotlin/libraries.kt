@@ -31,6 +31,7 @@ val DependencyHandler.`Proton-android-instrumented-test` get() =    protonTest("
 val DependencyHandler.`Proton-kotlin-test` get() =                  protonTest("kotlin") version `Proton-kotlin-test version`
 
 val DependencyHandler.`Proton-domain` get() =                       proton("domain") version `Proton-domain version`
+val DependencyHandler.`Proton-presentation` get() =                 proton("presentation") version `Proton-presentation version`
 
 fun DependencyHandler.protonTest(moduleSuffix: String, version: String? = null) =
     proton("test", moduleSuffix, version)
@@ -80,8 +81,10 @@ val DependencyHandler.`apache-commons-lang` get() =         dependency("org.apac
 val DependencyHandler.`butterknife-runtime` get() =         jakeWharton(module = "butterknife") version `butterKnife version`
 val DependencyHandler.`butterknife-compiler` get() =        jakeWharton(module = "butterknife", moduleSuffix = "compiler") version `butterKnife version`
 val DependencyHandler.`firebase-messaging` get() =          google("firebase", moduleSuffix = "messaging") version `firebase-messaging version`
+val DependencyHandler.`gotev-cookieStore` get() =           dependency("net.gotev", module = "cookie-store") version `gotev-cookieStore version`
 val DependencyHandler.`gson` get() =                        google("code.gson", "gson") version `gson version`
 val DependencyHandler.`jsoup` get() =                       dependency("org.jsoup", module = "jsoup") version `jsoup version`
+val DependencyHandler.`okhttp-url-connection` get() =       squareup("okhttp3", "okhttp-urlconnection") version `okHttp-url-connection version`
 val DependencyHandler.`sentry-android` get() =              dependency("io.sentry", module = "sentry-android") version `sentry version`
 val DependencyHandler.`sentry-android-plugin` get() =       dependency("io.sentry", module = "sentry-android-gradle-plugin") version `sentry-plugin version`
 val DependencyHandler.`stetho` get() =                      dependency("com.facebook", "stetho") version `stetho version`
@@ -94,6 +97,7 @@ val DependencyHandler.`fasterxml-jackson-core` get() =      dependency("com.fast
 val DependencyHandler.`fasterxml-jackson-anno` get() =      dependency("com.fasterxml.jackson.core", module = "jackson-annotations") version `jackson version`
 val DependencyHandler.`fasterxml-jackson-databind` get() =  dependency("com.fasterxml.jackson.core", module = "jackson-databind") version `jackson version`
 val DependencyHandler.`remark` get() =                      dependency("com.overzealous", module = "remark") version `remark version`
+val DependencyHandler.`okio` get() =                        dependency("com.squareup.okio", module = "okio") version `okio version`
 // endregion
 
 // endregion
@@ -102,6 +106,7 @@ val DependencyHandler.`remark` get() =                      dependency("com.over
 val DependencyHandler.aerogear get() =  dependency("org.jboss.aerogear", module = "aerogear-otp-java") version `aerogear version`
 val DependencyHandler.`espresso-contrib` get() =  androidx("test.espresso", module = "espresso-contrib") version `espresso version`
 val DependencyHandler.`espresso-intents` get() =  androidx("test.espresso", module = "espresso-intents") version `espresso version`
+val DependencyHandler.`espresso-web` get() =  androidx("test.espresso", module = "espresso-web") version `espresso version`
 val DependencyHandler.falcon get() = dependency("com.jraska", module = "falcon") version `falcon version`
 val DependencyHandler.`orchestrator` get() =  androidx("test", module = "orchestrator") version `android-test version`
 val DependencyHandler.`browserstack-gradle-plugin` get() =  dependency("gradle.plugin.com.browserstack.gradle", module = "browserstack-gradle-plugin") version `browserstack-plugin version`

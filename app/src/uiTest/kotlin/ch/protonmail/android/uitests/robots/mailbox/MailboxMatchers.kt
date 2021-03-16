@@ -20,7 +20,6 @@ package ch.protonmail.android.uitests.robots.mailbox
 
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
@@ -63,9 +62,9 @@ object MailboxMatchers {
                 val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
                 val actualSubject = messageSubjectView.text.toString()
                 return if (messageSubjectView != null) {
+                    messagesList.add(actualSubject)
                     subject == actualSubject
                 } else {
-                    messagesList.add(actualSubject)
                     false
                 }
             }
@@ -92,9 +91,9 @@ object MailboxMatchers {
                     .findViewById<LinearLayout>(R.id.flow_indicators_container)
                     .findViewById<TextView>(id)
                 return if (messageSubjectView != null) {
+                    messagesList.add("$actualSubject, flag visibility: ${flagView.visibility}")
                     subject == actualSubject && flagView.visibility == View.VISIBLE
                 } else {
-                    messagesList.add(actualSubject)
                     false
                 }
             }
@@ -102,6 +101,43 @@ object MailboxMatchers {
             override fun describeMoreTo(description: Description?) {
                 description?.apply {
                     appendText("Message item with subject: \"$subject\"\n")
+                    appendText("Here is the actual list of messages:\n")
+                }
+                messagesList.forEach { description?.appendText(" - \"$it\"\n") }
+            }
+        }
+    }
+
+    /**
+     * Matches the Mailbox message represented by [MessagesListItemView] by message subject and Reply, Reply all or
+     * Forward flag. Subject must be unique in a list in order to use this matcher.
+     *
+     * @param subject - message subject
+     * @param id - the view id of Reply, Reply all or Forward [TextView].
+     */
+    fun withMessageSubjectAndLocation(subject: String, locationText: String): Matcher<RecyclerView.ViewHolder> {
+        return object : BoundedDiagnosingMatcher<RecyclerView.ViewHolder,
+            MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
+
+            val messagesList = ArrayList<String>()
+
+            override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder?, mismatchDescription: Description?): Boolean {
+                val messageSubjectView = item!!.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val actualSubject = messageSubjectView.text.toString()
+                val locationView = item.itemView.findViewById<LinearLayout>(R.id.messageTitleContainerLinearLayout)
+                    .findViewById<LinearLayout>(R.id.flow_indicators_container)
+                    .findViewById<TextView>(R.id.messageLocationTextView)
+                return if (messageSubjectView != null) {
+                    messagesList.add("$actualSubject, location: ${locationView.text}")
+                    subject == actualSubject && locationView.text == locationText
+                } else {
+                    false
+                }
+            }
+
+            override fun describeMoreTo(description: Description?) {
+                description?.apply {
+                    appendText("Message item with subject: \"$subject\" and location text: $locationText\n")
                     appendText("Here is the actual list of messages:\n")
                 }
                 messagesList.forEach { description?.appendText(" - \"$it\"\n") }
@@ -134,9 +170,9 @@ object MailboxMatchers {
                 val actualSubject = messageSubjectView.text.toString()
                 val actualTo = messageToTextView.text.toString()
                 return if (messageSubjectView != null && messageToTextView != null) {
+                    messagesList.add("Subject: $actualSubject, to: $actualTo")
                     subject == actualSubject && to == actualTo
                 } else {
-                    messagesList.add("Subject: $actualSubject, to: $actualTo")
                     false
                 }
             }

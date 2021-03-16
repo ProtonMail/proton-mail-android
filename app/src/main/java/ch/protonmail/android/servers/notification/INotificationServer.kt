@@ -40,11 +40,11 @@ interface INotificationServer {
     fun notifyUserLoggedOut(user: User?)
 
     fun notifyVerificationNeeded(
-        user: User?,
-        messageTitle: String,
-        messageId: String,
+        username: String,
+        messageSubject: String?,
+        messageId: String?,
         messageInline: Boolean,
-        messageAddressId: String
+        messageAddressId: String?
     )
 
     fun notifyAboutAttachment(
@@ -83,9 +83,8 @@ interface INotificationServer {
     )
 
     fun notifySingleErrorSendingMessage(
-        message: Message,
         error: String,
-        user: User
+        username: String
     )
 
     fun notifyMultipleErrorSendingMessage(

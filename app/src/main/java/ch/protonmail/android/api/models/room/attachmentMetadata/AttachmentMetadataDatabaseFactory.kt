@@ -25,7 +25,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ch.protonmail.android.core.ProtonMailApplication
 
-@Database(entities = [AttachmentMetadata::class], version = 1)
+@Database(entities = [AttachmentMetadata::class], version = 2)
 abstract class AttachmentMetadataDatabaseFactory : RoomDatabase() {
     abstract fun getDatabase(): AttachmentMetadataDatabase
 
@@ -68,16 +68,20 @@ abstract class AttachmentMetadataDatabaseFactory : RoomDatabase() {
             context.getDatabasePath("$DEFAULT_DATABASE_FILENAME-shm").renameTo(context.getDatabasePath("${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-$DEFAULT_DATABASE_FILENAME-shm"))
             context.getDatabasePath("$DEFAULT_DATABASE_FILENAME-wal").renameTo(context.getDatabasePath("${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-$DEFAULT_DATABASE_FILENAME-wal"))
 
-            return Room.databaseBuilder(context.applicationContext,
-                    AttachmentMetadataDatabaseFactory::class.java,
-                    "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-$DEFAULT_DATABASE_FILENAME")
-                    .fallbackToDestructiveMigration()
-                    .build()
+            return Room.databaseBuilder(
+                context.applicationContext,
+                AttachmentMetadataDatabaseFactory::class.java,
+                "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-$DEFAULT_DATABASE_FILENAME"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
         }
 
         private fun buildInMemoryDatabase(context: Context) =
-                Room.inMemoryDatabaseBuilder(context.applicationContext,
-                        AttachmentMetadataDatabaseFactory::class.java)
-                        .build()
+            Room.inMemoryDatabaseBuilder(
+                context.applicationContext,
+                AttachmentMetadataDatabaseFactory::class.java
+            )
+                .build()
     }
 }

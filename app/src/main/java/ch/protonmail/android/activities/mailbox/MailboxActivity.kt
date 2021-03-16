@@ -136,8 +136,6 @@ import ch.protonmail.android.events.MailboxLoadedEvent
 import ch.protonmail.android.events.MailboxLoginEvent
 import ch.protonmail.android.events.MailboxNoMessagesEvent
 import ch.protonmail.android.events.MessageCountsEvent
-import ch.protonmail.android.events.MessageSentEvent
-import ch.protonmail.android.events.ParentEvent
 import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
@@ -703,18 +701,13 @@ class MailboxActivity :
         LocalBroadcastManager.getInstance(this).registerReceiver(fcmBroadcastReceiver, filter)
     }
 
-    private fun registerHumanVerificationReceiver() {
-        val filter = IntentFilter(getString(R.string.notification_action_verify))
-        filter.priority = 10
-        registerReceiver(humanVerificationBroadcastReceiver, filter)
-    }
-
     private fun onConnectivityCheckRetry() {
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getCheckingConnectionSnackBar(it).show()
         }
         syncUUID = UUID.randomUUID().toString()
         handler.postDelayed(FetchMessagesRetryRunnable(this), 3.seconds.toLongMilliseconds())
+        mailboxViewModel.checkConnectivityDelayed()
     }
 
     private fun checkRegistration() {
@@ -834,11 +827,9 @@ class MailboxActivity :
         }
         reloadMessageCounts()
         registerFcmReceiver()
-        registerHumanVerificationReceiver()
         checkDelinquency()
         no_messages_layout.visibility = View.GONE
         mailboxViewModel.checkConnectivity()
-        checkForDraftedMessages()
         val mailboxLocation = mailboxLocationMain.value
         if (mailboxLocation == MessageLocationType.INBOX) {
             AppUtil.clearNotifications(this, mUserManager.username)
@@ -857,8 +848,6 @@ class MailboxActivity :
     override fun onPause() {
         runCatching {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(fcmBroadcastReceiver)
-            unregisterReceiver(showDraftedSnackBroadcastReceiver)
-            unregisterReceiver(humanVerificationBroadcastReceiver)
         }
         networkSnackBarUtil.hideAllSnackBars()
         super.onPause()
@@ -1033,14 +1022,15 @@ class MailboxActivity :
         supportActionBar!!.setTitle(titleRes)
     }
 
-    private fun showNoConnSnackAndScheduleRetry() {
+    private fun showNoConnSnackAndScheduleRetry(connectivity: Constants.ConnectionState) {
         Timber.v("show NoConnection Snackbar ${mConnectivitySnackLayout != null}")
         mConnectivitySnackLayout?.let {
             networkSnackBarUtil.getNoConnectionSnackBar(
                 parentView = it,
                 user = mUserManager.user,
                 netConfiguratorCallback = this,
-                onRetryClick = { onConnectivityCheckRetry() }
+                onRetryClick = { onConnectivityCheckRetry() },
+                isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
             ).show()
         }
     }
@@ -1142,20 +1132,22 @@ class MailboxActivity :
         if (event.status == Status.NO_NETWORK && setOfLabels.any { it == mailboxLocation }) {
             mailboxLocationMain.value = MessageLocationType.LABEL_OFFLINE
         }
+        if (event.status == Status.FAILED && event.errorMessage.isNotEmpty()) {
+            showToast(event.errorMessage, Toast.LENGTH_LONG)
+        }
         mNetworkResults.setMailboxLoaded(MailboxLoadedEvent(Status.SUCCESS, null))
         setRefreshing(false)
     }
 
-    private fun onConnectivityEvent(hasConnection: Boolean) {
-        Timber.v("onConnectivityEvent hasConnection: $hasConnection")
+    private fun onConnectivityEvent(connectivity: Constants.ConnectionState) {
+        Timber.v("onConnectivityEvent hasConnection: ${connectivity.name}")
         if (!isDohOngoing) {
             Timber.d("DoH NOT ongoing showing UI")
-            if (!hasConnection) {
+            if (connectivity != Constants.ConnectionState.CONNECTED) {
                 setRefreshing(false)
-                showNoConnSnackAndScheduleRetry()
+                showNoConnSnackAndScheduleRetry(connectivity)
             } else {
                 hideNoConnSnack()
-                fetchUpdates(false)
             }
         } else {
             Timber.d("DoH ongoing, not showing UI")
@@ -1182,9 +1174,11 @@ class MailboxActivity :
 
     private fun showToast(status: Status) {
         when (status) {
-            Status.FAILED,
+            Status.UNAUTHORIZED -> {
+                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.CANT_REACH_SERVER)
+            }
             Status.NO_NETWORK -> {
-                showNoConnSnackAndScheduleRetry()
+                showNoConnSnackAndScheduleRetry(Constants.ConnectionState.NO_INTERNET)
             }
             Status.SUCCESS -> {
                 hideNoConnSnack()
@@ -1193,17 +1187,6 @@ class MailboxActivity :
                 return
             }
         }
-    }
-
-    @Subscribe
-    fun onParentEvent(event: ParentEvent?) {
-        OnParentEventTask(messageDetailsRepository, messagesAdapter, event!!).execute()
-    }
-
-    @Subscribe
-    override fun onMessageSentEvent(event: MessageSentEvent) {
-        super.onMessageSentEvent(event)
-        syncUUID = UUID.randomUUID().toString()
     }
 
     @Subscribe
@@ -1593,7 +1576,6 @@ class MailboxActivity :
                 )
             )
         }
-        checkForDraftedMessages()
         RefreshEmptyViewTask(
             WeakReference(this),
             countersDatabase,
@@ -1709,33 +1691,6 @@ class MailboxActivity :
         return true
     }
 
-    private fun checkForDraftedMessages() {
-        val mailboxLocation = mailboxLocationMain.value
-        if (mailboxLocation == MessageLocationType.ALL_DRAFT || mailboxLocation == MessageLocationType.DRAFT &&
-            mDraftedMessageSnack != null
-        ) {
-            mDraftedMessageSnack.dismiss()
-        }
-        registerReceiver(showDraftedSnackBroadcastReceiver, IntentFilter(ACTION_MESSAGE_DRAFTED))
-    }
-
-    private fun showDraftedSnack(intent: Intent) {
-        var errorText = getString(R.string.message_drafted)
-        if (intent.hasExtra(Constants.ERROR)) {
-            val extraText = intent.getStringExtra(Constants.ERROR)
-            if (!extraText.isNullOrEmpty()) {
-                errorText = extraText
-            }
-        }
-        mDraftedMessageSnack = Snackbar.make(mConnectivitySnackLayout!!, errorText, Snackbar.LENGTH_INDEFINITE)
-        val tv = mDraftedMessageSnack.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
-        tv.setTextColor(Color.WHITE)
-        mDraftedMessageSnack.setAction(getString(R.string.dismiss)) { mDraftedMessageSnack.dismiss() }
-        mDraftedMessageSnack.setActionTextColor(ContextCompat.getColor(this, R.color.icon_purple))
-        mDraftedMessageSnack.show()
-    }
-
-    private val showDraftedSnackBroadcastReceiver: BroadcastReceiver = ShowDraftedSnackBroadcastReceiver()
     private val fcmBroadcastReceiver: BroadcastReceiver = FcmBroadcastReceiver()
 
     private class FetchMessagesRetryRunnable internal constructor(activity: MailboxActivity) : Runnable {
@@ -2025,12 +1980,6 @@ class MailboxActivity :
                 canvas.restore()
             }
             super.onChildDraw(canvas, recyclerView, viewHolder, deltaX, deltaY, actionState, isCurrentlyActive)
-        }
-    }
-
-    private inner class ShowDraftedSnackBroadcastReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            showDraftedSnack(intent)
         }
     }
 

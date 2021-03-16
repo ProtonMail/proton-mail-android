@@ -26,6 +26,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.settings.SettingsMatchers.withSettingsHeader
 import ch.protonmail.android.uitests.robots.settings.SettingsRobot
+import ch.protonmail.android.uitests.robots.settings.account.labelsandfolders.LabelsAndFoldersRobot
+import ch.protonmail.android.uitests.robots.settings.account.privacy.PrivacySettingsRobot
+import ch.protonmail.android.uitests.robots.settings.account.swipinggestures.SwipingGesturesSettingsRobot
 import ch.protonmail.android.uitests.testsHelper.StringUtils.stringFromResource
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
@@ -43,6 +46,11 @@ class AccountSettingsRobot {
     fun passwordManagement(): PasswordManagementRobot {
         clickOnSettingsItemWithHeader(R.string.password_manager)
         return PasswordManagementRobot()
+    }
+
+    fun privacy(): PrivacySettingsRobot {
+        clickOnSettingsItemWithHeader(R.string.privacy)
+        return PrivacySettingsRobot()
     }
 
     fun recoveryEmail(): RecoveryEmailRobot {

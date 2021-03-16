@@ -19,6 +19,7 @@
 package ch.protonmail.android.uitests.robots.mailbox.labelfolder
 
 import ch.protonmail.android.R
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndLocation
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
@@ -36,12 +37,20 @@ class LabelFolderRobot : MailboxRobotInterface {
     /**
      * Contains all the validations that can be performed by [LabelFolderRobot].
      */
-    open class Verify {
+    open class Verify : MailboxRobotInterface.verify() {
 
-        fun messageExists(messageSubject: String) {
-            UIActions.wait.forViewWithIdAndText(R.id.messageTitleTextView, messageSubject)
+        fun withMessageSubjectAndLocationExists(subject: String, location: String) {
+            UIActions
+                .recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    R.id.messages_list_view,
+                    withMessageSubjectAndLocation(subject, location)
+                )
         }
     }
 
-    inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+    inline fun verify(block: Verify.() -> Unit): LabelFolderRobot {
+        Verify().apply(block)
+        return LabelFolderRobot()
+    }
 }

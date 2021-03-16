@@ -21,6 +21,7 @@ package ch.protonmail.android.usecase
 
 import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
+import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkConnectivityManager
 import ch.protonmail.android.core.QueueNetworkUtil
 import ch.protonmail.android.worker.PingWorker
@@ -30,6 +31,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.take
@@ -65,143 +67,159 @@ class VerifyConnectionTest : CoroutinesTest, ArchTest {
     }
 
     @Test
-    fun verifyThatTrueIsReturnedWhenOperationSucceeds() = runBlockingTest {
+    fun verifyThatConnectedIsReturnedWhenOperationSucceeds() = runBlockingTest {
         // given
-        val isInternetAvailable = false
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
             every { state } returns WorkInfo.State.SUCCEEDED
         }
         workInfoLiveData.value = listOf(workInfo)
-        val connectionsFlow = flow<Boolean> {}
-        val backendConnectionsFlow = MutableStateFlow(true)
+        val connectionsFlow = flow<Constants.ConnectionState> {}
+        val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
-        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isInternetConnectionPossible() } returns true
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
         every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
-        val expected = true
+        val expected = listOf(Constants.ConnectionState.CONNECTED, Constants.ConnectionState.CONNECTED)
+
 
         // when
         val resultList = verifyConnectionUseCase().take(2).toList()
 
         // then
-        assertEquals(isInternetAvailable, resultList[0])
-        assertEquals(expected, resultList[1])
+        assertEquals(expected, resultList)
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
-    fun verifyThatFalseIsReturnedWhenOperationFails() = runBlockingTest {
+    fun verifyThatCantReachServerIsReturnedWhenOperationFails() = runBlockingTest {
         // given
-        val isInternetAvailable = true
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
             every { state } returns WorkInfo.State.FAILED
         }
         workInfoLiveData.value = listOf(workInfo)
-        val connectionsFlow = flow<Boolean> {}
-        val backendConnectionsFlow = MutableStateFlow(true)
+        val connectionsFlow = flow<Constants.ConnectionState> {}
+        val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
-        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isInternetConnectionPossible() } returns true
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
         every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
 
-        val expected = false
+        val expected = listOf(Constants.ConnectionState.CONNECTED, Constants.ConnectionState.CANT_REACH_SERVER)
 
         // when
         val resultList = verifyConnectionUseCase().take(2).toList()
 
+
         // then
-        assertEquals(isInternetAvailable, resultList[0])
-        assertEquals(expected, resultList[1])
+        assertEquals(expected, resultList)
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
     fun verifyThatOnlyInitialNetworkStatusIsReturnedWhenOperationIsOngoingAndNothingLater() = runBlockingTest {
         // given
-        val isInternetAvailable = true
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
             every { state } returns WorkInfo.State.RUNNING
         }
         workInfoLiveData.value = listOf(workInfo)
-        val connectionsFlow = flow<Boolean> {}
-        val backendConnectionsFlow = MutableStateFlow(true)
+        val connectionsFlow = flow<Constants.ConnectionState> {}
+        val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
-        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isInternetConnectionPossible() } returns true
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
         every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+
+        val expected = Constants.ConnectionState.CONNECTED
 
         // when
         val resultsList = verifyConnectionUseCase().take(1).toList()
 
         // then
-        assertEquals(isInternetAvailable, resultsList[0])
+        assertEquals(expected, resultsList[0])
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 
     @Test
-    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionDrops() = runBlockingTest {
+    fun verifyThatConnectedAndThanNoInternetIsReturnedWhenOperationSucceedsAndThenConnectionDrops() = runBlockingTest {
         // given
-        val isInternetAvailable = false
-        val newConnectionEvent = false
-        val serverConnectionErrorValue = false
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
             every { state } returns WorkInfo.State.SUCCEEDED
         }
         workInfoLiveData.value = listOf(workInfo)
-        val connectionsFlow = flowOf(newConnectionEvent).take(1)
-        val backendConnectionsFlow = MutableStateFlow(false)
+        val connectionsFlow = flowOf(Constants.ConnectionState.NO_INTERNET).take(1)
+        val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
-        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isInternetConnectionPossible() } returns false
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
         every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
-        val expectedWorkerState = true
+
+        val expected = listOf(Constants.ConnectionState.CONNECTED, Constants.ConnectionState.NO_INTERNET)
 
         // when
-        val response = verifyConnectionUseCase().take(4).toList()
+        val response = verifyConnectionUseCase().take(3).drop(1).toList()
 
         // then
-        assertEquals(
-            listOf(isInternetAvailable, expectedWorkerState, newConnectionEvent, serverConnectionErrorValue),
-            response
-        )
+        assertEquals(expected, response)
+        verify(exactly = 2) { workEnqueuer.enqueue() }
+    }
+
+    @Test
+    fun verifyThatCantReachServerAndThanNoInternetIsReturnedWhenOperationFailsAndThenConnectionDrops() = runBlockingTest {
+        // given
+        val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
+        val workInfo = mockk<WorkInfo> {
+            every { state } returns WorkInfo.State.FAILED
+        }
+        workInfoLiveData.value = listOf(workInfo)
+        val connectionsFlow = flowOf(Constants.ConnectionState.NO_INTERNET).take(1)
+        val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CANT_REACH_SERVER)
+        every { workEnqueuer.enqueue() } returns Unit
+        every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
+        every { connectionManager.isInternetConnectionPossible() } returns false
+        every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
+        every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
+
+        val expected = listOf(Constants.ConnectionState.CANT_REACH_SERVER, Constants.ConnectionState.NO_INTERNET)
+
+        // when
+        val response = verifyConnectionUseCase().take(3).drop(1).toList()
+
+        // then
+        assertEquals(expected, response)
         verify(exactly = 3) { workEnqueuer.enqueue() }
     }
 
     @Test
-    fun verifyThatTrueAndThanFalseIsReturnedWhenOperationSucceedsAndThenConnectionEventIsNotTakenIntoAccount() = runBlockingTest {
+    fun verifyThatNoInternetAndThanConnectedIsReturnedWhenOperationSucceedsAfterInternetHasSuccessfullyReconnected() = runBlockingTest {
         // given
-        val isInternetAvailable = false
-        val newConnectionEvent = true
         val workInfoLiveData = MutableLiveData<List<WorkInfo>>()
         val workInfo = mockk<WorkInfo> {
             every { state } returns WorkInfo.State.SUCCEEDED
         }
         workInfoLiveData.value = listOf(workInfo)
-        val connectionsFlow = flowOf(newConnectionEvent).take(1)
-        val backendConnectionsFlow = MutableStateFlow(true)
+        val connectionsFlow = flow<Constants.ConnectionState> {}
+        val backendConnectionsFlow = MutableStateFlow(Constants.ConnectionState.CONNECTED)
         every { workEnqueuer.enqueue() } returns Unit
         every { workEnqueuer.getWorkInfoState() } returns workInfoLiveData
-        every { connectionManager.isInternetConnectionPossible() } returns isInternetAvailable
+        every { connectionManager.isInternetConnectionPossible() } returns false
         every { connectionManager.isConnectionAvailableFlow() } returns connectionsFlow
         every { queueNetworkUtil.isBackendRespondingWithoutErrorFlow } returns backendConnectionsFlow
-        val expectedWorkerState = true
+
+        val expected = listOf(Constants.ConnectionState.NO_INTERNET, Constants.ConnectionState.CONNECTED)
 
         // when
         val response = verifyConnectionUseCase().take(2).toList()
 
         // then
-        assertEquals(
-            listOf(isInternetAvailable, expectedWorkerState),
-            response
-        )
+        assertEquals(expected, response)
         verify(exactly = 1) { workEnqueuer.enqueue() }
     }
 }

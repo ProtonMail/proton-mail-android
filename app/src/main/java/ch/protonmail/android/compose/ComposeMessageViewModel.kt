@@ -38,13 +38,14 @@ import ch.protonmail.android.api.NetworkConfigurator
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.SendPreference
 import ch.protonmail.android.api.models.address.Address
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.rx.ThreadSchedulers
-import ch.protonmail.android.api.services.PostMessageServiceFactory
 import ch.protonmail.android.bl.HtmlProcessor
+import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
@@ -92,13 +93,13 @@ class ComposeMessageViewModel @Inject constructor(
     private val composeMessageRepository: ComposeMessageRepository,
     private val userManager: UserManager,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val postMessageServiceFactory: PostMessageServiceFactory,
     private val deleteMessage: DeleteMessage,
     private val fetchPublicKeys: FetchPublicKeys,
     private val saveDraft: SaveDraft,
     private val dispatchers: DispatcherProvider,
     private val stringResourceResolver: StringResourceResolver,
     private val workManager: WorkManager,
+    private val sendMessageUseCase: SendMessage,
     verifyConnection: VerifyConnection,
     networkConfigurator: NetworkConfigurator
 ) : ConnectivityBaseViewModel(verifyConnection, networkConfigurator) {
@@ -402,6 +403,11 @@ class ComposeMessageViewModel @Inject constructor(
                 message.dbId = _dbId
                 saveMessage(message)
             }
+            val saveDraftTrigger = if (uploadAttachments) {
+                SaveDraft.SaveDraftTrigger.UserRequested
+            } else {
+                SaveDraft.SaveDraftTrigger.AutoSave
+            }
             if (draftId.isNotEmpty()) {
                 if (MessageUtils.isLocalMessageId(_draftId.get()) && hasConnectivity) {
                     return@launch
@@ -410,7 +416,7 @@ class ComposeMessageViewModel @Inject constructor(
                 message.messageId = draftId
                 val newAttachments = calculateNewAttachments(uploadAttachments)
 
-                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId)
+                invokeSaveDraftUseCase(message, newAttachments, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
                 if (newAttachments.isNotEmpty() && uploadAttachments) {
                     _oldSenderAddressId = message.addressID
@@ -437,7 +443,7 @@ class ComposeMessageViewModel @Inject constructor(
                         uploadAttachments
                     )
                 }
-                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId)
+                invokeSaveDraftUseCase(message, newAttachmentIds, parentId, _actionId, _oldSenderAddressId, saveDraftTrigger)
 
                 _oldSenderAddressId = ""
                 setIsDirty(false)
@@ -453,7 +459,8 @@ class ComposeMessageViewModel @Inject constructor(
         newAttachments: List<String>,
         parentId: String?,
         messageActionType: Constants.MessageActionType,
-        oldSenderAddress: String
+        oldSenderAddress: String,
+        saveDraftTrigger: SaveDraft.SaveDraftTrigger
     ) {
         saveDraft(
             SaveDraft.SaveDraftParameters(
@@ -461,7 +468,8 @@ class ComposeMessageViewModel @Inject constructor(
                 newAttachments,
                 parentId,
                 messageActionType,
-                oldSenderAddress
+                oldSenderAddress,
+                saveDraftTrigger
             )
         ).collect { saveDraftResult ->
             when (saveDraftResult) {
@@ -475,8 +483,6 @@ class ComposeMessageViewModel @Inject constructor(
                 SaveDraftResult.UploadDraftAttachmentsFailed -> {
                     val errorMessage = stringResourceResolver(R.string.attachment_failed) + message.subject
                     _savingDraftError.postValue(errorMessage)
-                }
-                SaveDraftResult.SendingInProgressError -> {
                 }
             }
         }
@@ -714,7 +720,7 @@ class ComposeMessageViewModel @Inject constructor(
             } else {
                 // this will ensure the message get latest message id if it was already saved in a create/update draft job
                 // and also that the message has all the latest edits in between draft saving (creation) and sending the message
-                val savedMessage = messageDetailsRepository.findMessageByMessageDbIdBlocking(_dbId!!, dispatchers.Io)
+                val savedMessage = messageDetailsRepository.findMessageByMessageDbId(_dbId!!)
                 message.dbId = _dbId
                 savedMessage?.let {
                     if (!TextUtils.isEmpty(it.localId)) {
@@ -736,16 +742,19 @@ class ComposeMessageViewModel @Inject constructor(
                 val saveDraftUniqueWorkId = "$SAVE_DRAFT_UNIQUE_WORK_ID_PREFIX-${message.messageId})"
                 workManager.cancelUniqueWork(saveDraftUniqueWorkId)
 
-                postMessageServiceFactory.startSendingMessage(
-                    _dbId!!,
-                    messageDataResult.message.decryptedBody ?: "",
-                    messageDataResult.messagePassword,
-                    messageDataResult.passwordHint,
-                    messageDataResult.expirationTime!!,
-                    parentId, _actionId,
-                    newAttachments,
-                    ArrayList(messageDataResult.sendPreferences.values),
-                    _oldSenderAddressId
+                sendMessageUseCase(
+                    SendMessage.SendMessageParameters(
+                        message,
+                        newAttachments,
+                        parentId,
+                        _actionId,
+                        _oldSenderAddressId,
+                        MessageSecurityOptions(
+                            messageDataResult.messagePassword,
+                            messageDataResult.passwordHint,
+                            messageDataResult.expirationTime!!
+                        )
+                    )
                 )
             } else {
                 sendingInProcess = false
@@ -1201,7 +1210,7 @@ class ComposeMessageViewModel @Inject constructor(
         buildMessage()
     }
 
-    private fun setUploadAttachments(uploadAttachments: Boolean) {
+    fun setUploadAttachments(uploadAttachments: Boolean) {
         _messageDataResult = MessageBuilderData.Builder()
             .fromOld(_messageDataResult)
             .uploadAttachments(uploadAttachments)
@@ -1254,7 +1263,7 @@ class ComposeMessageViewModel @Inject constructor(
         autoSaveJob = viewModelScope.launch(dispatchers.Io) {
             delay(1.seconds)
             Timber.d("Draft auto save triggered")
-            setBeforeSaveDraft(true, messageBody)
+            setBeforeSaveDraft(false, messageBody)
         }
     }
 }

@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -34,8 +34,7 @@ class MessageFactory @Inject constructor(
     private val messageSenderFactory: MessageSenderFactory
 ) {
 
-    fun createDraftApiRequest(message: Message): DraftBody =
-        DraftBody(createServerMessage(message))
+    fun createDraftApiRequest(message: Message): DraftBody = DraftBody(createServerMessage(message))
 
     fun createServerMessage(message: Message): ServerMessage {
         return message.let {
@@ -43,7 +42,6 @@ class MessageFactory @Inject constructor(
             serverMessage.ID = it.messageId
             serverMessage.Subject = it.subject
             serverMessage.Unread = it.Unread.makeInt()
-
             serverMessage.Type = it.Type.ordinal
             serverMessage.Sender = it.sender?.let(messageSenderFactory::createServerMessageSender)
             serverMessage.Time = it.time
@@ -77,7 +75,7 @@ class MessageFactory @Inject constructor(
 
             message.Type = MessageUtils.calculateType(it.Flags)
 
-            val serverMessageSender = it.Sender ?: throw RuntimeException("Sender is not set")
+            val serverMessageSender = it.Sender ?: throw IllegalArgumentException("Sender is not set")
             message.sender = messageSenderFactory.createMessageSender(serverMessageSender)
             message.time = it.Time.checkIfSet("Time")
             message.totalSize = it.Size.checkIfSet("Size")
@@ -130,7 +128,7 @@ class MessageFactory @Inject constructor(
             message.header = it.Header
             message.parsedHeaders = it.parsedHeaders
             message.Attachments = it.Attachments.map(attachmentFactory::createAttachment)
-            message.embeddedImagesArray = it.embeddedImagesArray.toMutableList()
+            message.embeddedImageIds = it.embeddedImagesArray.toMutableList()
             val numOfAttachments = message.numAttachments
             val attachmentsListSize = message.Attachments.size
             if (attachmentsListSize != 0 && attachmentsListSize != numOfAttachments)

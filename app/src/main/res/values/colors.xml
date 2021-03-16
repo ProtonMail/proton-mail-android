@@ -80,6 +80,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
     <color name="red">#BF0000</color>
     <color name="red_orange">#EA644C</color>
+    <color name="orange">#D9804B</color>
     <color name="green">#A2C276</color>
     <color name="blue">#7569D1</color>
     <color name="yellow">#EDCF54</color>

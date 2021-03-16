@@ -73,7 +73,6 @@ import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.events.DownloadEmbeddedImagesEvent
 import ch.protonmail.android.events.DownloadedAttachmentEvent
 import ch.protonmail.android.events.LogoutEvent
-import ch.protonmail.android.events.MessageSentEvent
 import ch.protonmail.android.events.PostPhishingReportEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.user.MailSettingsEvent
@@ -85,7 +84,6 @@ import ch.protonmail.android.jobs.PostUnreadJob
 import ch.protonmail.android.jobs.ReportPhishingJob
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.CustomLocale
-import ch.protonmail.android.utils.DownloadUtils
 import ch.protonmail.android.utils.Event
 import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.UiUtil
@@ -141,7 +139,7 @@ internal class MessageDetailsActivity :
     override fun storagePermissionGranted() {
         val attachmentToDownloadIdAux = attachmentToDownloadId.getAndSet(null)
         if (!attachmentToDownloadIdAux.isNullOrEmpty()) {
-            viewModel.tryDownloadingAttachment(this, attachmentToDownloadIdAux, messageId)
+            viewModel.viewOrDownloadAttachment(this, attachmentToDownloadIdAux, messageId)
         }
     }
 
@@ -426,7 +424,7 @@ internal class MessageDetailsActivity :
         buttonsVisibilityHandler.removeCallbacks(buttonsVisibilityRunnable)
     }
 
-    private fun showNoConnSnackExtended() {
+    private fun showNoConnSnackExtended(connectivity: Constants.ConnectionState) {
         Timber.v("Show no connection")
         networkSnackBarUtil.hideAllSnackBars()
         networkSnackBarUtil.getNoConnectionSnackBar(
@@ -434,7 +432,8 @@ internal class MessageDetailsActivity :
             mUserManager.user,
             this,
             { onConnectivityCheckRetry() },
-            anchorViewId = R.id.action_buttons
+            anchorViewId = R.id.action_buttons,
+            isOffline = connectivity == Constants.ConnectionState.NO_INTERNET
         ).show()
         invalidateOptionsMenu()
     }
@@ -458,12 +457,12 @@ internal class MessageDetailsActivity :
         viewModel.hasConnectivity.observe(
             this,
             { isConnectionActive ->
-                Timber.v("isConnectionActive:$isConnectionActive")
-                if (isConnectionActive) {
+                Timber.v("isConnectionActive:${isConnectionActive.name}")
+                if (isConnectionActive == Constants.ConnectionState.CONNECTED) {
                     hideNoConnSnackExtended()
                     viewModel.fetchMessageDetails(false)
                 } else {
-                    showNoConnSnackExtended()
+                    showNoConnSnackExtended(isConnectionActive)
                 }
             }
         )
@@ -521,11 +520,6 @@ internal class MessageDetailsActivity :
         finish()
     }
 
-    @Subscribe
-    override fun onMessageSentEvent(event: MessageSentEvent) {
-        super.onMessageSentEvent(event)
-    }
-
     private fun getDecryptedBody(decryptedHtml: String?): String {
         var decryptedBody = decryptedHtml
         if (decryptedBody.isNullOrEmpty()) {
@@ -574,17 +568,15 @@ internal class MessageDetailsActivity :
             Status.SUCCESS -> {
                 messageExpandableAdapter.displayLoadEmbeddedImagesContainer(View.GONE)
                 messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.VISIBLE)
-                viewModel.downloadEmbeddedImagesResult.observe(
-                    this,
-                    Observer { content ->
-                        Timber.v("downloadEmbeddedImagesResult pair: $content")
-                        messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
-                        if (content.isNullOrEmpty()) {
-                            return@Observer
-                        }
-                        viewModel.webViewContentWithImages.setValue(content)
+                viewModel.downloadEmbeddedImagesResult.observe(this) { content ->
+                    Timber.v("downloadEmbeddedImagesResult content size: ${content.length}")
+                    messageExpandableAdapter.displayEmbeddedImagesDownloadProgress(View.GONE)
+                    if (content.isNullOrEmpty()) {
+                        return@observe
                     }
-                )
+                    viewModel.webViewContentWithImages.setValue(content)
+                }
+
                 viewModel.onEmbeddedImagesDownloaded(event)
             }
             Status.NO_NETWORK -> {
@@ -621,7 +613,7 @@ internal class MessageDetailsActivity :
                 attachmentsListAdapter.setIsPgpEncrypted(viewModel.isPgpEncrypted())
                 attachmentsListAdapter.setDownloaded(eventAttachmentId, isDownloaded)
                 if (isDownloaded) {
-                    DownloadUtils.viewAttachment(this, event.filename)
+                    viewModel.viewAttachment(this, event.filename, event.attachmentUri)
                 } else {
                     showToast(R.string.downloading)
                 }

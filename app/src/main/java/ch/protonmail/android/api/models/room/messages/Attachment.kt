@@ -61,8 +61,10 @@ const val COLUMN_ATTACHMENT_MIME_DATA = "mime_data"
 const val COLUMN_ATTACHMENT_IS_INLINE = "is_inline"
 const val FIELD_ATTACHMENT_HEADERS = "Headers"
 
-@Entity(tableName = TABLE_ATTACHMENTS,
-    indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)])
+@Entity(
+    tableName = TABLE_ATTACHMENTS,
+    indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)]
+)
 data class Attachment @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
     var attachmentId: String? = null,
@@ -119,20 +121,19 @@ data class Attachment @JvmOverloads constructor(
     fun setMessage(message: Message?) {
         if (message != null) {
             this.messageId = message.messageId ?: ""
-            this.inline = isInline(message.embeddedImagesArray)
+            this.inline = isInline(message.embeddedImageIds)
         }
     }
 
     private fun isInline(embeddedImagesArray: List<String>): Boolean {
         val headers = headers ?: return false
         val contentDisposition = headers.contentDisposition
-        var contentId = headers.contentId
-        if (TextUtils.isEmpty(contentId)) {
-            contentId = headers.contentLocation
+        var contentId = if (headers.contentId.isNullOrEmpty()) {
+            headers.contentLocation
+        } else {
+            headers.contentId
         }
-        if (contentId.isNotEmpty()) {
-            contentId = contentId.removeSurrounding("<", ">")
-        }
+        contentId = contentId?.removeSurrounding("<", ">")
         val embeddedMimeTypes = listOf("image/gif", "image/jpeg", "image/png", "image/bmp")
         var containsInline = false
         for (element in contentDisposition) {
@@ -143,7 +144,7 @@ data class Attachment @JvmOverloads constructor(
         }
 
         return contentDisposition != null &&
-            (containsInline || embeddedImagesArray.contains(contentId.removeSurrounding("<", ">"))) &&
+            (containsInline || embeddedImagesArray.contains(contentId?.removeSurrounding("<", ">"))) &&
             embeddedMimeTypes.contains(mimeType)
     }
 
@@ -225,8 +226,8 @@ data class Attachment @JvmOverloads constructor(
                 part.contentType,
                 encoding,
                 listOf(part.disposition),
-                listOf(contentId),
-                contentLocation, ""
+                contentId!!,
+                contentLocation!!, ""
             )
 
             Formatter().use { format ->
@@ -264,6 +265,7 @@ data class Attachment @JvmOverloads constructor(
         }
 
         @JvmOverloads
+        @Synchronized
         fun createAttachmentList(
             messagesDatabase: MessagesDatabase,
             localAttachmentList: List<LocalAttachment>,

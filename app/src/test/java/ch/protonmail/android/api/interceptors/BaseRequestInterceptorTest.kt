@@ -28,16 +28,17 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.utils.AppUtil
+import ch.protonmail.android.utils.notifier.UserNotifier
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import junit.framework.Assert.assertNull
 import okhttp3.Response
 import org.junit.After
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class BaseRequestInterceptorTest {
 
@@ -66,7 +67,7 @@ class BaseRequestInterceptorTest {
     }
 
     private val interceptor =
-        ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk())
+        ProtonMailRequestInterceptor.getInstance(userManagerMock, mockk(), mockk(), userNotifier)
 
     @BeforeTest
     fun setup() {
@@ -132,5 +133,34 @@ class BaseRequestInterceptorTest {
 
         // then
         assertNull(checkIfTokenExpiredResponse)
+    }
+
+    @Test
+    fun verifyThatUnprocessableEntityResponseShowsErrorToTheUser() {
+        // given
+        every {
+            ProtonMailApplication.getApplication().defaultSharedPreferences
+        } returns prefsMock
+
+        val errorMessage = "Error - Reason for 422 response"
+        val responseMock = mockk<Response> {
+            every { code() } returns 422
+            every { peekBody(any()).string() } returns "{ Error: \"$errorMessage\" }"
+            every { message() } returns "HTTP status message"
+        }
+
+        // when
+        interceptor.checkResponse(responseMock)
+
+        // then
+        verify { userNotifier.showError(errorMessage) }
+    }
+
+    companion object {
+        // Since the SUT is a Singleton, we need to have a single instance of userNotifier mock
+        // in order to perform assertions on it, otherwise verifications will fail as performed on the wrong instance.
+        // That happens because the actual instance that will be in the SUT will always be the one passed when the
+        // SUT was first created, which - unless this test runs first - may differ from the one that we're asserting on
+        private val userNotifier = mockk<UserNotifier>(relaxed = true)
     }
 }

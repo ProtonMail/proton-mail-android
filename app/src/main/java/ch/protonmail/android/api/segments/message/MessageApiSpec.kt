@@ -21,16 +21,15 @@ package ch.protonmail.android.api.segments.message
 import androidx.annotation.WorkerThread
 import ch.protonmail.android.api.interceptors.RetrofitTag
 import ch.protonmail.android.api.models.DeleteContactResponse
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.IDList
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.UnreadTotalMessagesResponse
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
 import ch.protonmail.android.api.models.messages.send.MessageSendBody
 import ch.protonmail.android.api.models.messages.send.MessageSendResponse
 import io.reactivex.Observable
-import retrofit2.Call
 import java.io.IOException
 
 interface MessageApiSpec {
@@ -91,13 +90,7 @@ interface MessageApiSpec {
     @Throws(IOException::class)
     fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse
 
-    @Throws(IOException::class)
-    fun createDraftBlocking(draftBody: DraftBody): MessageResponse?
-
     suspend fun createDraft(draftBody: DraftBody): MessageResponse
-
-    @Throws(IOException::class)
-    fun updateDraftBlocking(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse?
 
     suspend fun updateDraft(
         messageId: String,
@@ -105,7 +98,11 @@ interface MessageApiSpec {
         retrofitTag: RetrofitTag
     ): MessageResponse
 
-    fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse>
+    suspend fun sendMessage(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): MessageSendResponse
 
     @Throws(IOException::class)
     fun unlabelMessages(idList: IDList)

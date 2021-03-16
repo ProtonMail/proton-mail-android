@@ -21,7 +21,6 @@ package ch.protonmail.android.usecase.compose
 
 sealed class SaveDraftResult {
     data class Success(val draftId: String) : SaveDraftResult()
-    object SendingInProgressError : SaveDraftResult()
     object OnlineDraftCreationFailed : SaveDraftResult()
     object UploadDraftAttachmentsFailed : SaveDraftResult()
 }

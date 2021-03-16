@@ -71,6 +71,7 @@ val testUser1 = properties["TEST_USER1"] ?: privateProperties["TEST_USER1"]
 val testUser2 = properties["TEST_USER2"] ?: privateProperties["TEST_USER2"]
 val testUser3 = properties["TEST_USER3"] ?: privateProperties["TEST_USER3"]
 val testUser4 = properties["TEST_USER4"] ?: privateProperties["TEST_USER4"]
+val testUser5 = properties["TEST_USER5"] ?: privateProperties["TEST_USER5"]
 
 android(appIdSuffix = "android") {
 
@@ -101,6 +102,7 @@ android(appIdSuffix = "android") {
         buildConfigField("String", "TEST_USER2", testUser2.toString())
         buildConfigField("String", "TEST_USER3", testUser3.toString())
         buildConfigField("String", "TEST_USER4", testUser4.toString())
+        buildConfigField("String", "TEST_USER5", testUser5.toString())
 
         // Experimental
         buildConfigField("boolean", "EXPERIMENTAL_USERS_MANAGEMENT", "${experimentalProperties["users-management"]}")
@@ -130,12 +132,13 @@ android(appIdSuffix = "android") {
     }
 
     productFlavors {
-        register("playstore") {
+        register("production") {
             applicationId = "ch.protonmail.android"
         }
         register("beta") {
             applicationId = "ch.protonmail.android.beta"
         }
+        register("v4")
     }
 
     buildTypes {
@@ -147,12 +150,7 @@ android(appIdSuffix = "android") {
             isMinifyEnabled = false
             isTestCoverageEnabled = true
         }
-        getByName("releasePlayStore") {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), File("proguard-rules.pro"))
-            signingConfig = signingConfigs["release"]
-        }
-        getByName("releaseBeta") {
+        getByName("release") {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), File("proguard-rules.pro"))
             signingConfig = signingConfigs["release"]
@@ -189,7 +187,7 @@ tasks.register("copyArtifacts", Exec::class) {
         "cp",
         "-R",
         "./files/artifacts/",
-        "/sdcard/Download/"
+        "/sdcard/Download/artifacts"
     )
 }
 
@@ -252,6 +250,7 @@ dependencies {
         `Proton-shared-preferences`,
         `Proton-domain`,
         `Proton-work-manager`,
+        `Proton-presentation`,
 
         // Modules
         project(Module.domain),
@@ -311,8 +310,10 @@ dependencies {
         `fasterxml-jackson-databind`,
         `firebase-messaging`,
         `gson`,
+        `gotev-cookieStore`,
         `jsoup`,
         `minidns`,
+        `okhttp-url-connection`,
         `safetyNet`,
         `sentry-android`,
         `stetho`,
@@ -320,7 +321,8 @@ dependencies {
         `trustKit`,
         `viewStateStore`,
         `viewStateStore-paging`,
-        `remark`
+        `remark`,
+        `okio`
     )
 
     kapt(
@@ -340,8 +342,10 @@ dependencies {
         `falcon`,
         `espresso-contrib`,
         `espresso-intents`,
+        `espresso-web`,
         `uiautomator`,
-        `android-activation`
+        `android-activation`,
+        `Proton-android-instrumented-test`
     )
 }
 

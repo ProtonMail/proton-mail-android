@@ -32,7 +32,6 @@ import ch.protonmail.android.api.segments.BaseApi
 import ch.protonmail.android.api.utils.ParseUtils
 import ch.protonmail.android.core.Constants
 import io.reactivex.Observable
-import retrofit2.Call
 import timber.log.Timber
 import java.io.IOException
 
@@ -124,10 +123,6 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse =
         ParseUtils.parse(service.searchByLabel(query, unixTime).execute())
 
-    @Throws(IOException::class)
-    override fun createDraftBlocking(draftBody: DraftBody): MessageResponse? =
-        ParseUtils.parse(service.createDraftCall(draftBody).execute())
-
     override suspend fun createDraft(draftBody: DraftBody): MessageResponse = service.createDraft(draftBody)
 
     override suspend fun updateDraft(
@@ -136,12 +131,11 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         retrofitTag: RetrofitTag
     ): MessageResponse = service.updateDraft(messageId, draftBody, retrofitTag)
 
-    @Throws(IOException::class)
-    override fun updateDraftBlocking(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? =
-        ParseUtils.parse(service.updateDraftCall(messageId, draftBody, retrofitTag).execute())
-
-    override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> =
-        service.sendMessage(messageId, message, retrofitTag)
+    override suspend fun sendMessage(
+        messageId: String,
+        message: MessageSendBody,
+        retrofitTag: RetrofitTag
+    ): MessageSendResponse = service.sendMessage(messageId, message, retrofitTag)
 
     @Throws(IOException::class)
     override fun unlabelMessages(idList: IDList) {
@@ -150,5 +144,5 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     @Throws(IOException::class)
     override fun labelMessages(body: IDList): MoveToFolderResponse? =
-            ParseUtils.parse(service.labelMessages(body).execute())
+        ParseUtils.parse(service.labelMessages(body).execute())
 }

@@ -28,45 +28,42 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.isAccessible
 
-/**
- * Created by Kamil Rajtar on 07.09.18.  */
-class ReflectivePropertiesMatcher<T:Any>(
-		target: T,
-		matcherFactory: (Any?) -> Matcher<*> = {`is`(equalTo(it)) },
-		includeNonPublicFields: Boolean = true
-):TypeSafeDiagnosingMatcher<T> () {
+class ReflectivePropertiesMatcher<T : Any>(
+    target: T,
+    matcherFactory: (Any?) -> Matcher<*> = { `is`(equalTo(it)) },
+    includeNonPublicFields: Boolean = true
+) : TypeSafeDiagnosingMatcher<T>() {
 
-	private val declaredMemberProperties = target::class.declaredMemberProperties
-	private val propertiesMatchers = declaredMemberProperties.mapNotNull { property ->
-		if(property.visibility == KVisibility.PUBLIC || includeNonPublicFields) {
-			property.isAccessible = true
-			val name = property.name
-			val getter = property.getter
-			val value = getter.call(target)
-			val matcher = matcherFactory(value)
-			PropertyMatcher(name, matcher, getter)
-		}
-		else {
-			null
-		}
+    private val declaredMemberProperties = target::class.declaredMemberProperties
+    private val propertiesMatchers = declaredMemberProperties.mapNotNull { property ->
+        if (property.visibility == KVisibility.PUBLIC || includeNonPublicFields) {
+            property.isAccessible = true
+            val name = property.name
+            val getter = property.getter
+            val value = getter.call(target)
+            val matcher = matcherFactory(value)
+            PropertyMatcher(name, matcher, getter)
+        } else {
+            null
+        }
 
-	}
+    }
 
-	override fun describeTo(description:Description) {
-		return description.build(*propertiesMatchers.map { it.name to it.matcher }.toTypedArray())
-	}
+    override fun describeTo(description: Description) {
+        return description.build(*propertiesMatchers.map { it.name to it.matcher }.toTypedArray())
+    }
 
-	override fun matchesSafely(item: T, mismatchDescription: Description):Boolean {
-		val builder = HamcrestMismatchBuilder(mismatchDescription)
-		propertiesMatchers.forEach {
-			builder.match(it.name, it.matcher, it.getter.call(item))
-		}
-		return builder.build()
-	}
+    override fun matchesSafely(item: T, mismatchDescription: Description): Boolean {
+        val builder = HamcrestMismatchBuilder(mismatchDescription)
+        propertiesMatchers.forEach {
+            builder.match(it.name, it.matcher, it.getter.call(item))
+        }
+        return builder.build()
+    }
 
-	private data class PropertyMatcher(
-			val name:String,
-			val matcher:Matcher<*>,
-			val getter:KProperty1.Getter<*,*>
-	)
+    private data class PropertyMatcher(
+        val name: String,
+        val matcher: Matcher<*>,
+        val getter: KProperty1.Getter<*, *>
+    )
 }

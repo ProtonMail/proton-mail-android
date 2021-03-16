@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Нет подключения к сети. Сообщение поставлено в очередь</string>
     <string name="update_app_title">Требуется обновление</string>
     <string name="update_app">Вашим приложением ProtonМail нельзя пользоваться, пока оно не будет обновлено</string>
+    <string name="you_are_offline">Вы не подключены к сети</string>
     <string name="api_offline_title">API ProtonMail отключён</string>
     <string name="api_offline">ProtonMail сейчас не в сети. Проверьте наш Twitter, чтобы узнать текущее состояние: https://twitter.com/protonmail</string>
     <string name="contact_saved">Контакт сохранён</string>
@@ -295,7 +296,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Ошибка при удалении некоторых сообщений. Находятся ли некоторые из них в процессе отправки?!</string>
     <string name="respond_inline">Ответить с цитированием</string>
     <string name="no_connectivity_detected">Подключение не обнаружено...</string>
-    <string name="no_connectivity_detected_troubleshoot">Подключение не обнаружено… (<u>Устраните неполадки</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Сервер недоступен… (<u>Устранение неполадок</u>)</string>
     <string name="connectivity_checking">Проверка подключения...</string>
     <string name="sync_short">синхр.</string>
     <string name="draft_attachments_uploading">Черновик ещё загружается...</string>
@@ -1010,13 +1011,13 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Наиболее часто встречающиеся проблемы с соединением и их решения</string>
-    <string name="troubleshoot_dialog_message">&lt;i&gt;No internet connection&lt;/i&gt; - Please make sure that your internet connection is working.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Internet Service Provider (ISP) problem&lt;/i&gt; - Try connecting to Proton from a different network (or use &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Government block&lt;/i&gt; - Your country may be blocking access to Proton. Try &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (or any other VPN) or &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; to access Proton.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Antivirus interference&lt;/i&gt; - Temporarily disable or remove your antivirus software.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proxy/Firewall interference&lt;/i&gt; - Disable any proxies or firewalls, or contact your network administrator.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton is down&lt;/i&gt; - Check &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; for our system status.
-        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Still can’t find a solution&lt;/i&gt; - Contact us directly through our &lt;a href=\"https://protonmail.com/support-form\"&gt;support form&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;email&lt;/a&gt; (support@protonmail.com), or &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Нет подключения к интернет&lt;/i&gt; - Пожалуйста, убедитесь, что ваше соединение с интернет работает.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблема с интернет-провайдером (ISP)&lt;/i&gt; - Попробуйте подлключиться к сервисам Proton через другую сеть (или используйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; или &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Правительственные блокировки&lt;/i&gt; - Возможно, что ваша страна блокирует доступ к сервисам Proton. Попробуйте &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (или любой другой VPN-сервис) или &lt;a href=\"https://www.torproject.org/\"&gt;Tor,&lt;/a&gt; чтобы получить доступ к Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблемы из-за антивируса&lt;/i&gt; - Попробуйте временно отключить или удалить антивирус.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Проблемы из-за прокси/брандмауэра&lt;/i&gt; - Попробуйте отключить все прокси или брандмауэры или обратитесь к вашему сетевому администратору.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Сервисы Proton не работают&lt;/i&gt; - Проверьте сайт&lt;a href=\"http://protonstatus.com/\"&gt;Состояние сервисов Proton,&lt;/a&gt; чтобы проверить текущее состояние наших сервисов.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;По-прежнему не найти решение?&lt;/i&gt; - Напишите нам напрямую, воспользовавшись &lt;a href=\"https://protonmail.com/support-form\"&gt;формой обращения к поддержке&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;по электронной почте&lt;/a&gt; (support@protonmail.com) или &lt;a href=\"https://twitter.com/ProtonMail\"&gt;в Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
@@ -1032,6 +1033,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_settings">Перейти в настройки</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Неверный ключ API Firebase. Push-уведомления не будут работать.</string>
-    <string name="failed_saving_draft_online">Failed saving online draft for message: \"%s\"</string>
-    <string name="cannot_open_message_while_being_sent">Can\'t open this message while it\'s being sent</string>
+    <string name="failed_saving_draft_online">Не удалось сохранить онлайн черновик сообщения: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Невозможно открыть сообщение пока оно отправляется</string>
 </resources>

@@ -43,7 +43,6 @@ object Constants {
     const val END_PGP = "-----END PGP MESSAGE-----"
 
     const val DIR_EMB_ATTACHMENT_DOWNLOADS = "/ProtonMail/emb_att/"
-    const val DIR_ATTACHMENT_DOWNLOADS = "/"
     const val DIR_MESSAGE_BODY_DOWNLOADS = "/ProtonMail/messages/"
 
     const val FONTS_FOLDER = "fonts/"
@@ -390,5 +389,11 @@ object Constants {
         UNSIGNED(0),
         SIGNED(2),
         SIGNED_ENCRYPTED(3);
+    }
+
+    enum class ConnectionState {
+        CONNECTED,
+        NO_INTERNET,
+        CANT_REACH_SERVER;
     }
 }

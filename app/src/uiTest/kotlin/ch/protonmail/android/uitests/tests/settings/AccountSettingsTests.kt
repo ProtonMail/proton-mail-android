@@ -99,6 +99,13 @@ class AccountSettingsTests : BaseTest() {
             .verify { mobileSignatureToggleCheckedStateIs(true) }
     }
 
+    @Test
+    fun switchMobileSignatureToggleOn3() {
+        accountSettingsRobot
+            .privacy()
+            .enableRequestLinkConfirmation()
+    }
+
     fun changeLoginPassword() {
         accountSettingsRobot
             .passwordManagement()

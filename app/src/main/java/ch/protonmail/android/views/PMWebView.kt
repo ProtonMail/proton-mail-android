@@ -29,8 +29,8 @@ class PMWebView : WebView {
     constructor(context: Context, attrs: AttributeSet?) : super(getFixedContext(context), attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(getFixedContext(context), attrs, defStyleAttr)
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int)
-            : super(getFixedContext(context), attrs, defStyleAttr, defStyleRes)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
+        super(getFixedContext(context), attrs, defStyleAttr, defStyleRes)
 
     companion object {
         private fun getFixedContext(context: Context): Context {

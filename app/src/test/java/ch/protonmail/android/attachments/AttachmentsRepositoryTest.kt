@@ -32,6 +32,7 @@ import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
+import ch.protonmail.android.utils.crypto.BinaryDecryptionResult
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -42,12 +43,12 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
 import kotlinx.coroutines.test.runBlockingTest
 import me.proton.core.test.kotlin.CoroutinesTest
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import java.util.concurrent.TimeoutException
+import java.net.SocketTimeoutException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -83,6 +84,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             every { attachmentID } returns "default success attachment ID"
             every { attachment.keyPackets } returns null
             every { attachment.signature } returns null
+            every { attachment.headers } returns null
+            every { attachment.fileSize } returns 823742L
         }
         coEvery { apiManager.uploadAttachmentInline(any(), any(), any(), any(), any(), any()) } returns successResponse
         coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
@@ -102,7 +105,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 mimeType,
                 "contentTransferEncoding",
                 listOf("inline"),
-                listOf(contentId),
+                contentId,
                 "contentLocation",
                 "contentEncryption"
             )
@@ -152,7 +155,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 mimeType,
                 "contentTransferEncoding",
                 listOf("inline"),
-                listOf(contentId),
+                contentId,
                 "contentLocation",
                 "contentEncryption"
             )
@@ -228,6 +231,8 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val apiAttachmentId = "456"
             val apiKeyPackets = "apiKeyPackets"
             val apiSignature = "apiSignature"
+            val headers = AttachmentHeaders(contentType = "testAttachments headers")
+            val fileSize = 1234L
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
             val attachment = mockk<Attachment>(relaxed = true)
             val successResponse = mockk<AttachmentUploadResponse>(relaxed = true) {
@@ -235,17 +240,21 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 every { attachmentID } returns apiAttachmentId
                 every { this@mockk.attachment.keyPackets } returns apiKeyPackets
                 every { this@mockk.attachment.signature } returns apiSignature
+                every { this@mockk.attachment.headers } returns headers
+                every { this@mockk.attachment.fileSize } returns fileSize
             }
             coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } returns successResponse
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
 
             val result = repository.upload(attachment, crypto)
 
-            verify {
+            coVerify {
                 attachment.attachmentId = apiAttachmentId
                 attachment.keyPackets = apiKeyPackets
                 attachment.signature = apiSignature
                 attachment.isUploaded = true
+                attachment.headers = headers
+                attachment.fileSize = fileSize
                 messageDetailsRepository.saveAttachment(attachment)
             }
             val expected = AttachmentsRepository.Result.Success(apiAttachmentId)
@@ -268,7 +277,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
 
             val result = repository.upload(attachment, crypto)
 
-            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+            coVerify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
             val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
             assertEquals(expectedResult, result)
         }
@@ -301,8 +310,9 @@ class AttachmentsRepositoryTest : CoroutinesTest {
                 mimeType = "application/pgp-keys",
                 messageId = message.messageId!!,
                 attachmentId = "default success attachment ID",
-                isUploaded = true
-
+                isUploaded = true,
+                headers = null,
+                fileSize = 823742L
             )
             coVerifySequence {
                 apiManager.uploadAttachment(
@@ -327,13 +337,34 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val unarmoredSignedFileContent = byteArrayOf()
             val attachment = mockk<Attachment>(relaxed = true)
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
-            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws TimeoutException("Call timed out")
+            coEvery { apiManager.uploadAttachment(any(), any(), any(), any()) } throws SocketTimeoutException("Call timed out")
 
             val result = repository.upload(attachment, crypto)
 
-            verify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
+            coVerify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
             val expectedResult = AttachmentsRepository.Result.Failure(errorMessage)
             assertEquals(expectedResult, result)
+        }
+    }
+
+    @Test
+    fun uploadLogsAndReThrowsCancellationExceptions() {
+        runBlockingTest {
+            val errorMessage = "Upload attachments work was cancelled"
+            val unarmoredSignedFileContent = byteArrayOf()
+            val attachment = mockk<Attachment>(relaxed = true)
+            every { armorer.unarmor(any()) } returns unarmoredSignedFileContent
+            coEvery {
+                apiManager.uploadAttachment(any(), any(), any(), any())
+            } throws CancellationException("Call was cancelled")
+
+            try {
+                repository.upload(attachment, crypto)
+            } catch (exception: CancellationException) {
+                assertEquals("Call was cancelled", exception.message)
+            }
+
+            coVerify(exactly = 0) { messageDetailsRepository.saveAttachment(any()) }
         }
     }
 
@@ -351,5 +382,27 @@ class AttachmentsRepositoryTest : CoroutinesTest {
             val expectedResult = AttachmentsRepository.Result.Failure("This attachment name / type is invalid. Please retry")
             assertEquals(expectedResult, result)
         }
+    }
+
+
+    @Test
+    fun verifyThatAttachmentsBytesCanBeDownloadedSuccessfully() = runBlockingTest {
+        // given
+        val attachmentId = "Ida1"
+        val key = "zeKey1"
+        val content = "content1234"
+        val decryptedContent = "decryptedContent1234".encodeToByteArray()
+        val decryptedResult = mockk<BinaryDecryptionResult> {
+            every { decryptedData } returns decryptedContent
+        }
+        every { crypto.decryptAttachment(any(), any()) } returns decryptedResult
+        val testResponseBody = okhttp3.ResponseBody.create(MediaType.parse("image/jpg"), content)
+        coEvery { apiManager.downloadAttachment(attachmentId) } returns testResponseBody
+
+        // when
+        val result = repository.getAttachmentDataOrNull(crypto, attachmentId, key)
+
+        // then
+        assertEquals(decryptedContent, result)
     }
 }

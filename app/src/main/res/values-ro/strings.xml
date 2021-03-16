@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Nu există conexiune, mesaj pus în așteptare</string>
     <string name="update_app_title">Actualizare necesară</string>
     <string name="update_app">Nu puteți folosi aplicația ProtonMail înainte de a o actualiza</string>
+    <string name="you_are_offline">Sunteți deconectat</string>
     <string name="api_offline_title">API-ul ProtonMail nu este funcțional</string>
     <string name="api_offline">ProtonMail este momentan deconectat, pentru starea curentă verificați: https://twitter.com/protonmail</string>
     <string name="contact_saved">Contact salvat</string>
@@ -289,7 +290,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">A apărut o eroare la ștergerea unor mesaje. Unele din mesajele selectate sunt în proces de trimitere?!</string>
     <string name="respond_inline">Răspuns în mesaj</string>
     <string name="no_connectivity_detected">Nu există conexiune...</string>
-    <string name="no_connectivity_detected_troubleshoot">Nu există conexiune… (<u>Depanare</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Serverul nu este accesibil… (<u>Depanare</u>)</string>
     <string name="connectivity_checking">Verificare conexiune...</string>
     <string name="sync_short">sincronizare</string>
     <string name="draft_attachments_uploading">Ciorna încă se încarcă...</string>
@@ -1014,6 +1015,6 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="go_to_settings">Accesați setările</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Cheie API Firebase nevalidă. Notificările push nu vor funcționa.</string>
-    <string name="failed_saving_draft_online">Nu s-a reușit salvarea ciornei online pentru mesaj: \"%s\"</string>
+    <string name="failed_saving_draft_online">Nu s-a reușit salvarea ciornei pentru mesajul: „%s”</string>
     <string name="cannot_open_message_while_being_sent">Acest mesaj nu poate fi deschis în timp ce este trimis</string>
 </resources>

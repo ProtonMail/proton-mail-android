@@ -27,6 +27,7 @@ import ch.protonmail.android.api.models.enumerations.PackageType;
 import ch.protonmail.android.api.utils.Fields;
 
 public class MessageSendPackage {
+
     @SerializedName(Fields.Message.Send.ADDRESSES)
     private Map<String, MessageSendAddressBody> addresses;
     @SerializedName(Fields.Message.Send.TYPE)

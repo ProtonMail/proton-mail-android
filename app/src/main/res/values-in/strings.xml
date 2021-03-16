@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Tidak ada jaringan, pesan diantrekan</string>
     <string name="update_app_title">Butuh pembaruan</string>
     <string name="update_app">Aplikasi ProtonMail Anda tidak dapat digunakan karena perlu diperbarui</string>
+    <string name="you_are_offline">Anda luring</string>
     <string name="api_offline_title">API ProtonMail sedang luring</string>
     <string name="api_offline">ProtonMail saat ini sedang luring. Silakan kunjungi Twitter kami untuk status saat ini: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontak telah tersimpan</string>
@@ -280,7 +281,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Kesalahan saat menghapus beberapa pesan. Beberapa pesan yang di pilih sedang dalam proses pengiriman?!</string>
     <string name="respond_inline">Tanggapi dalam-baris</string>
     <string name="no_connectivity_detected">Tidak ada koneksivitas yang terdeteksi...</string>
-    <string name="no_connectivity_detected_troubleshoot">Tidak ada konektivitas yang terdeteksi… (<u>Penyelesaian masalah</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server tidak dapat dijangkau… (<u>Penyelesaian masalah</u>)</string>
     <string name="connectivity_checking">Memeriksa koneksi...</string>
     <string name="sync_short">sinkronkan</string>
     <string name="draft_attachments_uploading">Konsep masih mengunggah...</string>

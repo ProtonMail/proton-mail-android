@@ -23,11 +23,13 @@ import androidx.appcompat.widget.AppCompatImageButton
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.testsHelper.MockAddAttachmentIntent
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import me.proton.core.test.android.instrumented.CoreRobot
 
 /**
  * Class represents Message Attachments.
  */
-open class MessageAttachmentsRobot {
+open class MessageAttachmentsRobot: CoreRobot {
 
     fun addImageCaptureAttachment(@IdRes drawable: Int): ComposerRobot =
         mockCameraImageCapture(drawable).navigateUpToComposerView()
@@ -55,7 +57,7 @@ open class MessageAttachmentsRobot {
     }
 
     private fun mockFileAttachment(@IdRes drawable: Int): MessageAttachmentsRobot {
-        UIActions.wait.forViewWithId(addAttachmentIconId)
+        view.withId(addAttachmentIconId).wait()
         MockAddAttachmentIntent.mockChooseAttachment(addAttachmentIconId, drawable)
         return this
     }

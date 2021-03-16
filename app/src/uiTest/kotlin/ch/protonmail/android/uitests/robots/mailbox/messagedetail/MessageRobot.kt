@@ -21,8 +21,14 @@ package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 import android.content.Intent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasType
 import androidx.test.espresso.intent.matcher.UriMatchers.hasPath
+import androidx.test.espresso.matcher.ViewMatchers.withTagValue
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.web.sugar.Web.onWebView
+import androidx.test.espresso.web.webdriver.DriverAtoms
+import androidx.test.espresso.web.webdriver.Locator
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.ApplyLabelRobotInterface
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFolderName
@@ -38,6 +44,8 @@ import ch.protonmail.android.uitests.testsHelper.TestData.pgpSignedTextDecrypted
 import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.uiactions.click
 import ch.protonmail.android.uitests.testsHelper.uiactions.type
+import me.proton.core.test.android.instrumented.CoreRobot
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 
@@ -60,6 +68,15 @@ class MessageRobot {
     fun clickAttachment(attachmentFileName: String): MessageRobot {
         UIActions.wait.forViewWithIdAndText(R.id.attachment_name, attachmentFileName).click()
         return this
+    }
+
+    fun clickLink(linkText: String): LinkNavigationDialogRobot {
+        UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+        onWebView(withTagValue(`is`(messageWebViewTag)))
+            .forceJavascriptEnabled()
+            .withElement(DriverAtoms.findElement(Locator.LINK_TEXT, linkText))
+            .perform(DriverAtoms.webClick())
+        return LinkNavigationDialogRobot()
     }
 
     fun moveFromSpamToFolder(folderName: String): SpamRobot {
@@ -156,13 +173,23 @@ class MessageRobot {
             return this
         }
 
+        override fun checkAlsoArchiveCheckBox(): LabelsDialogRobot {
+            super.checkAlsoArchiveCheckBox()
+            return this
+        }
+
         override fun apply(): MessageRobot {
             super.apply()
             return MessageRobot()
         }
+
+        override fun applyAndArchive(): InboxRobot {
+            super.apply()
+            return InboxRobot()
+        }
     }
 
-    class FoldersDialogRobot {
+    class FoldersDialogRobot : CoreRobot {
 
         fun clickCreateFolder(): AddFolderRobot {
             UIActions.wait.forViewWithId(R.id.folders_list_view)
@@ -214,7 +241,7 @@ class MessageRobot {
         inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
     }
 
-    class AddFolderRobot {
+    class AddFolderRobot : CoreRobot {
 
         fun addFolderWithName(name: String): FoldersDialogRobot = typeName(name).saveNewFolder()
 
@@ -237,7 +264,24 @@ class MessageRobot {
         }
     }
 
-    class Verify {
+    class LinkNavigationDialogRobot {
+
+        class Verify : CoreRobot {
+
+            fun linkIsPresentInDialogMessage(link: String) {
+                UIActions.check.alertDialogWithPartialTextIsDisplayed(link)
+            }
+        }
+
+        inline fun verify(block: Verify.() -> Unit) = Verify().apply(block)
+    }
+
+    class Verify : CoreRobot {
+
+        fun publicKeyIsAttached(publicKey: String) {
+            UIActions.check.viewWithTextIsDisplayed(publicKey)
+        }
+
         fun messageContainsAttachment() {
             UIActions.wait.forViewWithId(R.id.attachment_title)
         }
@@ -251,7 +295,7 @@ class MessageRobot {
         }
 
         fun attachmentsAdded() {
-            UIActions.check.viewWithIdIsDisplayed(R.id.attachment_count)
+            view.withId(R.id.attachment_count).wait()
         }
 
         fun pgpIconShown() {
@@ -260,7 +304,6 @@ class MessageRobot {
 
         fun pgpEncryptedMessageDecrypted() {
             UIActions.wait.forViewWithTextByUiAutomator(pgpEncryptedTextDecrypted)
-
         }
 
         fun pgpSignedMessageDecrypted() {
@@ -272,16 +315,19 @@ class MessageRobot {
         }
 
         fun loadEmbeddedImagesButtonIsGone() {
-            UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
-            UIActions.wait.untilViewWithIdIsNotShown(R.id.containerLoadEmbeddedImagesContainer)
+            view.withId(R.id.messageWebViewContainer).wait()
+            view.withId(R.id.containerLoadEmbeddedImagesContainer).checkDisplayed()
         }
 
-        fun intentWithActionFileNameAndMimeTypeSent(fileName: String, mimeType: String) {
+        fun showRemoteContentButtonIsGone() {
+            UIActions.wait.forViewWithId(R.id.messageWebViewContainer)
+            UIActions.wait.untilViewWithIdIsNotShown(R.id.containerDisplayImages)
+        }
+
+        fun intentWithActionFileNameAndMimeTypeSent(mimeType: String) {
             UIActions.wait.forIntent(
                 allOf(
                     hasAction(Intent.ACTION_VIEW),
-                    hasData(hasPath(containsString(fileName.split('.')[0]))),
-                    hasData(hasPath(containsString(fileName.split('.')[1]))),
                     hasType(mimeType)
                 )
             )
@@ -292,10 +338,6 @@ class MessageRobot {
 
     companion object {
         const val sendMessageId = R.id.send_message
-        const val attachmentToggleId = R.id.attachments_toggle
-        const val attachmentTitleId = R.id.attachment_title
-        const val attachmentNameId = R.id.attachment_name
-        const val downloadAttachmentButtonId = R.id.attachment_name
-
+        const val messageWebViewTag = "messageWebView"
     }
 }

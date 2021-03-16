@@ -21,6 +21,8 @@ package ch.protonmail.android.api.models.factories;
 import androidx.annotation.WorkerThread;
 
 import com.proton.gopenpgp.armor.Armor;
+import com.squareup.inject.assisted.Assisted;
+import com.squareup.inject.assisted.AssistedInject;
 
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -29,9 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.ContactEncryptedData;
@@ -70,23 +69,27 @@ public class SendPreferencesFactory {
     private final ContactsDatabase contactsDatabase;
     private String username;
 
-    @Inject
+    @AssistedInject
     public SendPreferencesFactory(
             ProtonMailApiManager api,
             UserManager userManager,
-            @Named("username" /* TODO: use `CURRENT_USERNAME` const, unsupported in Java */) String username,
-            MailSettings mailSettings,
+            @Assisted String username,
             ContactsDatabase contactsDatabase
     ) {
         this.mApi = api;
         this.mUserManager = userManager;
         this.username = username;
-        this.mailSettings = mailSettings;
+        this.mailSettings = userManager.getMailSettings(username);
         this.crypto = Crypto.forUser(userManager, username);
-		this.contactsDatabase=contactsDatabase;
-	}
+        this.contactsDatabase = contactsDatabase;
+    }
 
-	@WorkerThread
+    @AssistedInject.Factory
+    public interface Factory {
+        SendPreferencesFactory create(String username);
+    }
+
+    @WorkerThread
     public Map<String, SendPreference> fetch(List<String> emails) throws Exception {
         Map<String, PublicKeyResponse> keyMap = getPublicKeys(emails);
         Map<String, FullContactDetails> contactDetailsMap = getContactDetails(emails);

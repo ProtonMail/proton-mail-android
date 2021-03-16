@@ -49,9 +49,9 @@ import java.io.File
  * Implements [ViewStateStoreScope] for being able to publish to a Locked [ViewStateStore]
  */
 internal class NotificationSettingsViewModel(
-        application: Application,
-        userManager: UserManager
-) : AndroidViewModel( application ), ViewStateStoreScope {
+    application: Application,
+    userManager: UserManager
+) : AndroidViewModel(application), ViewStateStoreScope {
 
     private companion object {
         /**
@@ -59,7 +59,7 @@ internal class NotificationSettingsViewModel(
          * This [Uri] could be [Uri.EMPTY]
          */
         val DEFAULT_RINGTONE_URI: Uri =
-                RingtoneManager.getDefaultUri( TYPE_NOTIFICATION ) ?: Uri.EMPTY
+            RingtoneManager.getDefaultUri(TYPE_NOTIFICATION) ?: Uri.EMPTY
     }
 
     /** @return [Context] from [getApplication] */
@@ -83,35 +83,35 @@ internal class NotificationSettingsViewModel(
 
     /** @return [RingtoneSettingsUiModel] */
     @VisibleForTesting
-    internal fun createRingtoneSettings() : RingtoneSettingsUiModel {
-        val ringtoneTitle = if ( currentRingtoneUri.isEmpty() ) {
-            ringtoneSettings.setError( NoDefaultRingtoneException() )
+    internal fun createRingtoneSettings(): RingtoneSettingsUiModel {
+        val ringtoneTitle = if (currentRingtoneUri.isEmpty()) {
+            ringtoneSettings.setError(NoDefaultRingtoneException())
             NONE
 
         } else {
             // Try to getUserRingtone else getDefaultRingtone
             val ringtone = try {
-                getUserRingtone()  // could be null
-            } catch ( e: SecurityException ) {
-                ringtoneSettings.setError( InvalidRingtoneException( e, currentRingtoneUri ) )
+                getUserRingtone() // could be null
+            } catch (e: SecurityException) {
+                ringtoneSettings.setError(InvalidRingtoneException(e, currentRingtoneUri))
                 null
             } ?: getDefaultRingtone()
 
             ringtone.title
         }
 
-        return RingtoneSettingsUiModel( user.notificationSetting, ringtoneTitle )
+        return RingtoneSettingsUiModel(user.notificationSetting, ringtoneTitle)
     }
 
     /**
      * @return [Ringtone] from [DEFAULT_RINGTONE_URI]
      * @throws AssertionError if [currentRingtoneUri] is empty
      */
-    private fun getDefaultRingtone() : Ringtone {
-        if ( currentRingtoneUri.isEmpty() ) throw AssertionError(
-                "'${::currentRingtoneUri.name}' is empty. Check 'Uri.isEmpty()' before call this"
+    private fun getDefaultRingtone(): Ringtone {
+        if (currentRingtoneUri.isEmpty()) throw AssertionError(
+            "'${::currentRingtoneUri.name}' is empty. Check 'Uri.isEmpty()' before call this"
         )
-        return RingtoneManager.getRingtone( context, currentRingtoneUri )
+        return RingtoneManager.getRingtone(context, currentRingtoneUri)
     }
 
     /**
@@ -120,31 +120,31 @@ internal class NotificationSettingsViewModel(
      * @throws AssertionError if [currentRingtoneUri] is empty
      */
     @VisibleForTesting
-    internal fun getUserRingtone() : Ringtone? {
-        if ( currentRingtoneUri.isEmpty() ) throw AssertionError(
-                "'${::currentRingtoneUri.name}' is empty. Check 'Uri.isEmpty()' before call this"
+    internal fun getUserRingtone(): Ringtone? {
+        if (currentRingtoneUri.isEmpty()) throw AssertionError(
+            "'${::currentRingtoneUri.name}' is empty. Check 'Uri.isEmpty()' before call this"
         )
 
-        return if ( currentRingtoneUri != DEFAULT_RINGTONE_URI ) {
-            RingtoneManager.getRingtone( context, currentRingtoneUri )
+        return if (currentRingtoneUri != DEFAULT_RINGTONE_URI) {
+            RingtoneManager.getRingtone(context, currentRingtoneUri)
         } else null
     }
 
     /** Create and publish a [RingtoneSettingsUiModel] from the current [user]s Setting */
     private fun sendRingtoneSettings() {
-        ringtoneSettings.setData( createRingtoneSettings() )
+        ringtoneSettings.setData(createRingtoneSettings())
     }
 
     /** Set new ringtone [Uri] to [User] and refresh data */
-    fun setRingtone( uri: Uri ) {
+    fun setRingtone(uri: Uri) {
         ringtoneSettings.setLoading()
         viewModelScope.launch {
             try {
-                val safeUri = withContext( IO ) { storeToPrivateIfFileScheme( uri ) }
+                val safeUri = withContext(IO) { storeToPrivateIfFileScheme(uri) }
                 user.ringtone = safeUri
                 sendRingtoneSettings()
-            } catch ( t: Throwable ) {
-                ringtoneSettings.setError( InvalidRingtoneException( t, uri ) )
+            } catch (t: Throwable) {
+                ringtoneSettings.setError(InvalidRingtoneException(t, uri))
             }
         }
     }
@@ -155,35 +155,35 @@ internal class NotificationSettingsViewModel(
      * @throws ( May throws exception )
      */
     @Suppress("RedundantSuspendModifier") // We don't wanna run it on UI
-    private suspend fun storeToPrivateIfFileScheme( uri: Uri ) : Uri {
+    private suspend fun storeToPrivateIfFileScheme(uri: Uri): Uri {
         // Return same uri if scheme is not file
-        if ( uri.scheme != "file" ) return uri
+        if (uri.scheme != "file") return uri
 
         val directory = context.filesDir
-        val file = File( directory, "cachedNotificationRingtone" )
+        val file = File(directory, "cachedNotificationRingtone")
         val output = file.outputStream()
-        context.contentResolver.openInputStream( uri )!!.use { it.copyTo( output ) }
-        return FileProvider.getUriForFile( context, context.packageName, file )
+        context.contentResolver.openInputStream(uri)!!.use { it.copyTo(output) }
+        return FileProvider.getUriForFile(context, context.packageName, file)
     }
 
     /** [ViewModelProvider.NewInstanceFactory] for [NotificationSettingsViewModel] */
     class Factory(
-            private val application: Application,
-            private val userManager: UserManager
+        private val application: Application,
+        private val userManager: UserManager
     ) : ViewModelProvider.NewInstanceFactory() {
 
         /** @return new instance of [NotificationSettingsViewModel] casted as T */
         @Suppress("UNCHECKED_CAST") // NotificationSettingsViewModel is T, since T is ViewModel
-        override fun <T : ViewModel?> create( modelClass: Class<T> ): T =
-                NotificationSettingsViewModel( application, userManager ) as T
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+            NotificationSettingsViewModel(application, userManager) as T
     }
 
     /** A [CharSequence] representing [R.string.none] resource */
     @Suppress("PrivatePropertyName")
-    private val NONE = context.getString( R.string.none )
+    private val NONE = context.getString(R.string.none)
 
     /** @return [String] from title of [Ringtone] */
-    private val Ringtone.title get() = getTitle( context )
+    private val Ringtone.title get() = getTitle(context)
 }
 
 /**
@@ -193,6 +193,6 @@ internal class NotificationSettingsViewModel(
  * @see User.NotificationSetting
  */
 internal data class RingtoneSettingsUiModel(
-        val userOption: Int,
-        val name: CharSequence
+    val userOption: Int,
+    val name: CharSequence
 )

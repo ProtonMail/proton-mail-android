@@ -24,6 +24,7 @@ import android.os.Parcelable
 import android.util.Base64
 import ch.protonmail.android.api.models.AttachmentHeaders
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.utils.extensions.deserialize
 import me.proton.core.util.kotlin.EMPTY_STRING
 
 class LocalAttachment @JvmOverloads constructor(

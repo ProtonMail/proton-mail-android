@@ -29,11 +29,11 @@ interface AttachmentApiSpec {
 
     fun deleteAttachment(attachmentId: String): ResponseBody
 
-    @Throws(IOException::class)
-    fun downloadAttachment(attachmentId: String, progressListener: ProgressListener): ByteArray
+    fun downloadAttachmentBlocking(attachmentId: String, progressListener: ProgressListener): ByteArray
 
-    @Throws(IOException::class)
-    fun downloadAttachment(attachmentId: String): ByteArray
+    fun downloadAttachmentBlocking(attachmentId: String): ByteArray
+
+    suspend fun downloadAttachment(attachmentId: String): okhttp3.ResponseBody?
 
     @Throws(IOException::class)
     fun uploadAttachmentInlineBlocking(

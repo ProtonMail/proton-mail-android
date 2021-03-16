@@ -24,8 +24,9 @@ import androidx.work.WorkManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.NetworkConfigurator
+import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.services.PostMessageServiceFactory
+import ch.protonmail.android.compose.send.SendMessage
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
@@ -80,8 +81,8 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     @RelaxedMockK
     lateinit var saveDraft: SaveDraft
 
-    @MockK
-    lateinit var postMessageServiceFactory: PostMessageServiceFactory
+    @RelaxedMockK
+    lateinit var sendMessage: SendMessage
 
     @MockK
     lateinit var deleteMessage: DeleteMessage
@@ -111,11 +112,15 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun saveDraftCallsSaveDraftUseCaseWhenTheDraftIsNew() {
+    fun saveDraftCallsSaveDraftUseCaseWithUserRequestedTriggerWhenTheDraftIsNewAndTheUserDidRequestSaving() {
         runBlockingTest {
             // Given
             val message = Message()
             givenViewModelPropertiesAreInitialised()
+            // This indicates that saving draft was requested by the user
+            viewModel.setUploadAttachments(true)
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -126,7 +131,35 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 emptyList(),
                 "parentId823",
                 Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId"
+                "previousSenderAddressId",
+                SaveDraft.SaveDraftTrigger.UserRequested
+            )
+            coVerify { saveDraft(parameters) }
+        }
+    }
+
+    @Test
+    fun saveDraftCallsSaveDraftUseCaseWithAutoSaveTriggerWhenTheDraftIsNewAndTheUserDidNotRequestSaving() {
+        runBlockingTest {
+            // Given
+            val message = Message()
+            givenViewModelPropertiesAreInitialised()
+            // This indicates that saving draft was not requested by the user
+            viewModel.setUploadAttachments(false)
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
+
+            // When
+            viewModel.saveDraft(message, hasConnectivity = false)
+
+            // Then
+            val parameters = SaveDraft.SaveDraftParameters(
+                message,
+                emptyList(),
+                "parentId823",
+                Constants.MessageActionType.FORWARD,
+                "previousSenderAddressId",
+                SaveDraft.SaveDraftTrigger.AutoSave
             )
             coVerify { saveDraft(parameters) }
         }
@@ -179,6 +212,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val message = Message()
             givenViewModelPropertiesAreInitialised()
             viewModel.draftId = "non-empty-draftId"
+            viewModel.setUploadAttachments(true)
+            coEvery { saveDraft(any()) } returns flowOf(SaveDraftResult.Success("draftId"))
+            coEvery { messageDetailsRepository.findMessageById("draftId") } returns message
 
             // When
             viewModel.saveDraft(message, hasConnectivity = false)
@@ -189,7 +225,8 @@ class ComposeMessageViewModelTest : CoroutinesTest {
                 emptyList(),
                 "parentId823",
                 Constants.MessageActionType.FORWARD,
-                "previousSenderAddressId"
+                "previousSenderAddressId",
+                SaveDraft.SaveDraftTrigger.UserRequested
             )
             coVerify { saveDraft(parameters) }
         }
@@ -259,7 +296,9 @@ class ComposeMessageViewModelTest : CoroutinesTest {
     }
 
     @Test
-    fun autoSaveDraftSchedulesJobToPerformSaveDraftAfterSomeDelay() {
+    fun autoSaveDraftSchedulesJobToPerformSaveDraftAfterSomeDelayWithUploadAttachmentsFalse() {
+        // It's important to check 'uploadAttachments' boolean flag as we rely on it to
+        // define the saveDraft trigger (AutoSave when uploadAttachments is false)
         runBlockingTest(dispatchers.Io) {
             // Given
             val messageBody = "Message body being edited..."
@@ -283,6 +322,7 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             val expectedMessage = message.copy()
             assertEquals(expectedMessage, buildMessageObserver.observedValues[0]?.peekContent())
             assertEquals("&lt;html&gt; Message body being edited... &lt;html&gt;", viewModel.messageDataResult.content)
+            assertEquals(false, viewModel.messageDataResult.uploadAttachments)
             unmockkStatic(UiUtil::class)
         }
     }
@@ -313,7 +353,33 @@ class ComposeMessageViewModelTest : CoroutinesTest {
             // Then
             assertTrue(firstScheduledJob?.isCancelled ?: false)
             assertTrue(viewModel.autoSaveJob?.isActive ?: false)
+            assertEquals(false, viewModel.messageDataResult.uploadAttachments)
             unmockkStatic(UiUtil::class)
+        }
+    }
+
+    @Test
+    fun sendMessageCallsSendMessageUseCaseWithMessageParameters() {
+        runBlockingTest {
+            // Given
+            val message = Message()
+            givenViewModelPropertiesAreInitialised()
+            viewModel.setMessagePassword("messagePassword", "a hint to discover it", true, 172800L, false)
+            every { workManager.cancelUniqueWork(any()) } returns mockk()
+
+            // When
+            viewModel.sendMessage(message)
+
+            // Then
+            val params = SendMessage.SendMessageParameters(
+                message,
+                listOf(),
+                "parentId823",
+                Constants.MessageActionType.FORWARD,
+                "previousSenderAddressId",
+                MessageSecurityOptions("messagePassword", "a hint to discover it", 172800L)
+            )
+            coVerify { sendMessage(params) }
         }
     }
 
