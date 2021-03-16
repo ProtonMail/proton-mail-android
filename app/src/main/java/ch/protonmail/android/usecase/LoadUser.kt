@@ -22,6 +22,7 @@ package ch.protonmail.android.usecase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import me.proton.core.util.kotlin.invoke
@@ -37,5 +38,14 @@ class LoadUser @Inject constructor(
     suspend operator fun invoke(userId: Id): User = withContext(dispatchers.Io) {
         val legacyUser = loadLegacyUser(userId)
         mapper { legacyUser.toNewUser() }
+    }
+
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("invoke(userId)")
+    )
+    fun blocking(userId: Id) = runBlocking {
+        invoke(userId)
     }
 }

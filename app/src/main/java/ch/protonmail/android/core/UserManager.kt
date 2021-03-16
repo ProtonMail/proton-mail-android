@@ -38,7 +38,6 @@ import ch.protonmail.android.api.services.LogoutService
 import ch.protonmail.android.di.BackupSharedPreferences
 import ch.protonmail.android.di.DefaultSharedPreferences
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
 import ch.protonmail.android.events.GenerateKeyPairEvent
@@ -292,7 +291,7 @@ class UserManager @Inject constructor(
             currentUserLoginState = status
         }
 
-    fun requireCurrentUserId: Id =
+    fun requireCurrentUserId(): Id =
         checkNotNull(currentUserId)
 
     suspend fun getCurrentUser(): NewUser? =
@@ -490,7 +489,7 @@ class UserManager @Inject constructor(
     }
 
     fun twoFA(
-        username: String,
+        userId: Id,
         password: ByteArray,
         twoFactor: String?,
         infoResponse: LoginInfoResponse?,
@@ -500,13 +499,14 @@ class UserManager @Inject constructor(
         isConnecting: Boolean
     ) {
         LoginService.start2FA(
-            username, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
+            userId, password, twoFactor, infoResponse, loginResponse, fallbackAuthVersion,
             signUp, isConnecting
         )
     }
 
-    fun mailboxLogin(username: String, mailboxPassword: String, keySalt: String?, signUp: Boolean) {
-        LoginService.startMailboxLogin(username, mailboxPassword, keySalt, signUp)
+    // used for two-password mode. Since already the user is logged in, we should have the userID by now
+    fun mailboxLogin(userId: Id, mailboxPassword: String, keySalt: String?, signUp: Boolean) {
+        LoginService.startMailboxLogin(userId, mailboxPassword, keySalt, signUp)
     }
 
     fun setupAddress(domain: String) {
@@ -527,6 +527,7 @@ class UserManager @Inject constructor(
         LoginService.startConnectAccount(username, password, twoFactor, response, fallbackAuthVersion)
     }
 
+    // used for two-password mode. Since already the user is logged in, we should have the userID by now
     // TODO: find better name for its purpose
     suspend fun connectAccountMailboxLogin(
         userId: Id,
@@ -538,9 +539,23 @@ class UserManager @Inject constructor(
         val currentPrimary =
             if (currentPrimaryUserId != userId) loadUser(currentPrimaryUserId).name
             else username
-        LoginService.startConnectAccountMailboxLogin(username.s, currentPrimary.s, mailboxPassword, keySalt)
+        LoginService.startConnectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
     }
 
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("connectAccountMailboxLoginBlocking(userId, currentPrimaryId, mailboxPassword, keySalt)")
+    )
+    fun connectAccountMailboxLoginBlocking(
+        userId: Id,
+        currentPrimaryUserId: Id,
+        mailboxPassword: String,
+        keySalt: String
+    ) = runBlocking {
+        connectAccountMailboxLogin(userId, currentPrimaryUserId, mailboxPassword, keySalt)
+    }
+
+    // used for two-password mode. Since already the user is logged in, we should have the userID by now
     @Deprecated(
         "Use with user Id",
         ReplaceWith("connectAccountMailboxLogin(userId, currentPrimaryUserId, password, keySalt)"),
@@ -795,6 +810,19 @@ class UserManager @Inject constructor(
     }
 
     @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("saveMailboxPassword(userId, mailboxPassword)")
+    )
+    @JvmOverloads
+    fun saveMailboxPasswordBlocking(userId: Id? = currentUserId, mailboxPassword: ByteArray) = runBlocking {
+        if(userId == null) {
+            // TODO: how to save the mailbox password if the userId is not available yet
+        } else {
+            saveMailboxPassword(userId, mailboxPassword)
+        }
+    }
+
+    @Deprecated(
         "Save with user Id",
         ReplaceWith("saveMailboxPassword(userId, mailboxPassword)"),
         DeprecationLevel.ERROR
@@ -806,6 +834,20 @@ class UserManager @Inject constructor(
     suspend fun saveKeySalt(userId: Id, keysSalt: String?) = withContext(dispatchers.Io) {
         val secureSharedPreferences = SecureSharedPreferences.getPrefsForUser(context, userId)
         secureSharedPreferences[PREF_KEY_SALT] = keysSalt
+    }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("saveKeySalt(userId, keySalt)")
+    )
+    @JvmOverloads
+    fun saveKeySaltBlocking(userId: Id? = currentUserId, keysSalt: String?) = runBlocking {
+        if(userId == null) {
+            // TODO: how to save the keySalt when the userId is not available yet
+
+        } else {
+            saveKeySalt(userId, keysSalt)
+        }
     }
 
     @Deprecated(
@@ -858,6 +900,19 @@ class UserManager @Inject constructor(
             this.snoozeSettings = SnoozeSettings.load(preferencesFor(Id(user.id)))
             this.user = user
         }
+    }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("setUserDetailsBlocking(user, addreses, mailSettings, userSettings)")
+    )
+    fun setUserDetailsBlocking(
+        user: User,
+        addresses: List<Address>,
+        mailSettings: MailSettings,
+        userSettings: UserSettings
+    ) = runBlocking {
+        setUserDetails(user, addresses, mailSettings, userSettings)
     }
 
     @JvmOverloads
@@ -945,6 +1000,14 @@ class UserManager @Inject constructor(
             tokenManager.encPrivateKey = user.keys.primaryKey?.privateKey?.string
         }
         return tokenManager
+    }
+
+    @Deprecated(
+        "Should not be used, necessary only for old and Java classes",
+        ReplaceWith("getTokenManager(userId)")
+    )
+    fun getTokenManagerBlocking(userId: Id) = runBlocking {
+        getTokenManager(userId)
     }
 
     @Deprecated("Use user Id", ReplaceWith("getTokenManager(userId)"), DeprecationLevel.ERROR)

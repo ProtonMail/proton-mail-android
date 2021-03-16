@@ -24,21 +24,22 @@ import androidx.annotation.Nullable;
 import ch.protonmail.android.api.models.LoginInfoResponse;
 import ch.protonmail.android.api.models.LoginResponse;
 import ch.protonmail.android.api.models.ResponseBody;
+import ch.protonmail.android.domain.entity.Id;
 
 public class Login2FAEvent extends ResponseBody {
     public final @NonNull AuthStatus status;
     public final @Nullable LoginInfoResponse infoResponse;
     public final @Nullable LoginResponse loginResponse;
-    public final String username;
+    public final Id userId;
     public final byte[] password;
     public final int fallbackAuthVersion;
 
     public Login2FAEvent(final @NonNull AuthStatus status, final @Nullable LoginInfoResponse infoResponse,
-                         final String username, final byte[] password, final @Nullable LoginResponse loginResponse,
+                         final Id userId, final byte[] password, final @Nullable LoginResponse loginResponse,
                          final int fallbackAuthVersion) {
         this.status = status;
         this.infoResponse = infoResponse;
-        this.username = username;
+        this.userId = userId;
         this.password = password;
         this.loginResponse = loginResponse;
         this.fallbackAuthVersion = fallbackAuthVersion;

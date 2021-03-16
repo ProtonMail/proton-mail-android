@@ -36,6 +36,7 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.LOGIN_STATE_LOGIN_FINISHED
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.ConnectAccountLoginEvent
 import ch.protonmail.android.events.ConnectAccountMailboxLoginEvent
@@ -44,6 +45,7 @@ import ch.protonmail.android.events.Login2FAEvent
 import ch.protonmail.android.events.LoginInfoEvent
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.UiUtil
+import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.extensions.removeWhitespaces
 import ch.protonmail.android.utils.extensions.setcolor
 import ch.protonmail.android.utils.extensions.showToast
@@ -91,7 +93,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
     override fun getLayoutId(): Int = R.layout.activity_connect_account
 
     override fun unsubscribeFromEvents() {
-        ProtonMailApplication.getApplication().bus.unregister(this)
+        app.bus.unregister(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,8 +138,11 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
         hideProgress()
         enableInput(true)
         showTwoFactorDialog(
-            event.username, event.password, event.infoResponse,
-            event.loginResponse, event.fallbackAuthVersion
+            event.userId,
+            event.password,
+            event.infoResponse,
+            event.loginResponse,
+            event.fallbackAuthVersion
         )
     }
 
@@ -207,8 +212,10 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             AuthStatus.FAILED -> {
                 if (event.isRedirectToSetup) {
                     showInfoDialog(
-                        this, getString(R.string.login_failure),
-                        getString(R.string.login_failure_missing_keys), null
+                        this,
+                        getString(R.string.login_failure),
+                        getString(R.string.login_failure_missing_keys),
+                        null
                     )
                 }
                 hideProgress()
@@ -216,7 +223,8 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             AuthStatus.CANT_CONNECT -> {
                 hideProgress()
                 showInfoDialog(
-                    this@ConnectAccountActivity, getString(R.string.connect_account_limit_title),
+                    this@ConnectAccountActivity,
+                    getString(R.string.connect_account_limit_title),
                     getString(R.string.connect_account_limit_subtitle)
                 ) {
                     saveLastInteraction()
@@ -260,7 +268,7 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
     }
 
     private fun showTwoFactorDialog(
-        username: String,
+        userId: Id,
         password: ByteArray,
         response: LoginInfoResponse?,
         loginResponse: LoginResponse?,
@@ -272,34 +280,34 @@ class ConnectAccountActivity : ConnectAccountBaseActivity() {
             }
         }
 
-        twoFactorDialog = DialogUtils.show2FADialog(
-            this,
-            {
-                UiUtil.hideKeyboard(this)
-                progress.visibility = View.VISIBLE
-                twoFA(username, password, it, response, loginResponse, fallbackAuthVersion)
-                ProtonMailApplication.getApplication().resetLoginInfoEvent()
-            },
-            {
-                UiUtil.hideKeyboard(this@ConnectAccountActivity)
-                ProtonMailApplication.getApplication().resetLoginInfoEvent()
-                mUserManager.logoutAccount(username)
-            }
-        )
+        twoFactorDialog = DialogUtils.show2FADialog(this, {
+            UiUtil.hideKeyboard(this)
+            progress.visibility = View.VISIBLE
+            twoFA(userId, password, it, response, loginResponse, fallbackAuthVersion)
+            ProtonMailApplication.getApplication().resetLoginInfoEvent()
+        }, {
+            UiUtil.hideKeyboard(this@ConnectAccountActivity)
+            ProtonMailApplication.getApplication().resetLoginInfoEvent()
+            mUserManager.logoutBlocking(userId)
+        })
     }
 
     private fun twoFA(
-        username: String,
-        password: ByteArray,
-        twoFactor: String,
-        infoResponse: LoginInfoResponse?,
-        loginResponse: LoginResponse?,
-        fallbackAuthVersion: Int
-    ) {
+            userId: Id,
+            password: ByteArray,
+            twoFactor: String,
+            infoResponse: LoginInfoResponse?,
+            loginResponse: LoginResponse?,
+            fallbackAuthVersion: Int) {
         mUserManager.twoFA(
-            username, password, twoFactor, infoResponse, loginResponse, signUp = false,
-
-            isConnecting = true, fallbackAuthVersion = fallbackAuthVersion
+            userId,
+            password,
+            twoFactor,
+            infoResponse,
+            loginResponse,
+            signUp = false,
+            isConnecting = true,
+            fallbackAuthVersion = fallbackAuthVersion
         )
     }
 

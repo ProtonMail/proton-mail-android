@@ -53,6 +53,7 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.address.Address;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.events.Login2FAEvent;
 import ch.protonmail.android.events.LoginEvent;
@@ -235,13 +236,13 @@ public class LoginActivity extends BaseLoginActivity {
 
     @Subscribe
     public void onLogin2FAEvent(final Login2FAEvent event) {
-        if (event == null || TextUtils.isEmpty(event.username)) {
+        if (event == null || event.userId == null) {
             return;
         }
         ProtonMailApplication.getApplication().resetLogin2FAEvent();
         hideProgress();
         enableInput();
-        showTwoFactorDialog(event.username, event.password, event.infoResponse, event.loginResponse, event.fallbackAuthVersion);
+        showTwoFactorDialog(event.userId, event.password, event.infoResponse, event.loginResponse, event.fallbackAuthVersion);
     }
 
     @Subscribe
@@ -395,7 +396,7 @@ public class LoginActivity extends BaseLoginActivity {
         startActivity(intent);
     }
 
-    private void showTwoFactorDialog(final String username, final byte[] password, final LoginInfoResponse infoResponse,
+    private void showTwoFactorDialog(final Id userId, final byte[] password, final LoginInfoResponse infoResponse,
                                      final LoginResponse loginResponse, int fallbackAuthVersion) {
         if (m2faAlertDialog != null && m2faAlertDialog.isShowing()) {
             return;
@@ -404,7 +405,7 @@ public class LoginActivity extends BaseLoginActivity {
             twoFactorString -> {
             UiUtil.hideKeyboard(this);
             mProgressContainer.setVisibility(View.VISIBLE);
-            twoFA(username, password, twoFactorString, infoResponse, loginResponse, fallbackAuthVersion);
+            twoFA(userId, password, twoFactorString, infoResponse, loginResponse, fallbackAuthVersion);
             ProtonMailApplication.getApplication().resetLoginInfoEvent();
             return null;
         }, () -> {
@@ -415,9 +416,9 @@ public class LoginActivity extends BaseLoginActivity {
         });
     }
 
-    private void twoFA(String username, byte[] password, String twoFactor, LoginInfoResponse infoResponse,
+    private void twoFA(Id userId, byte[] password, String twoFactor, LoginInfoResponse infoResponse,
                        LoginResponse loginResponse, int fallbackAuthVersion) {
-        mUserManager.twoFA(username, password, twoFactor, infoResponse, loginResponse,  fallbackAuthVersion,false, false);
+        mUserManager.twoFA(userId, password, twoFactor, infoResponse, loginResponse,  fallbackAuthVersion,false, false);
     }
 
     private void disableInput() {

@@ -169,7 +169,7 @@ public class MailboxLoginActivity extends BaseLoginActivity {
         UiUtil.hideKeyboard(this, mPasswordEditText);
         new Handler().postDelayed(() -> {
             mDisableBack = false;
-            mUserManager.mailboxLogin(mUserManager.getUsername() /* TODO we should indicate in GUI, which user we log in */, mailboxPassword, getIntent().getStringExtra(EXTRA_KEY_SALT), false);
+            mUserManager.mailboxLogin(mUserManager.getCurrentUserId() /* TODO we should indicate in GUI, which user we log in */, mailboxPassword, getIntent().getStringExtra(EXTRA_KEY_SALT), false);
         }, 1500);
     }
 
