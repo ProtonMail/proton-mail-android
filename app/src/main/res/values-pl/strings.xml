@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Brak połączenia z siecią. Wiadomości zostały dodane do kolejki</string>
     <string name="update_app_title">Aktualizacja jest wymagana</string>
     <string name="update_app">Nie możesz używać aplikacji ProtonMail, dopóki jej nie zaktualizujesz.</string>
+    <string name="you_are_offline">Jesteś w trybie offline</string>
     <string name="api_offline_title">Interfejs API ProtonMaila jest niedostępny</string>
     <string name="api_offline">ProtonMail jest obecnie niedostępny. Sprawdź naszego Twittera, aby poznać stan usługi: https://twitter.com/protonmail</string>
     <string name="contact_saved">Kontakt został zapisany</string>
@@ -295,7 +296,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Wystąpił błąd podczas usuwania wiadomości. Niektóre wiadomości są w trakcie wysyłania.</string>
     <string name="respond_inline">Odpowiedz w linii</string>
     <string name="no_connectivity_detected">Wykryto brak połączenia...</string>
-    <string name="server_not_reachable_troubleshoot">Wykryto brak połączenia… (<u>Rozwiązywanie problemów</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Serwer jest nieosiągalny… (<u>Rozwiązywanie problemów</u>)</string>
     <string name="connectivity_checking">Sprawdzanie połączenia...</string>
     <string name="sync_short">synchronizuj</string>
     <string name="draft_attachments_uploading">Szkic jest w trakcie przesyłania...</string>

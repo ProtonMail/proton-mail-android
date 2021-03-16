@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Sem conexão com a internet. A mensagem está na fila de espera</string>
     <string name="update_app_title">Atualização necessária</string>
     <string name="update_app">Seu aplicativo ProtonMail não pode ser usado até que seja atualizado</string>
+    <string name="you_are_offline">Você está desconectado</string>
     <string name="api_offline_title">API do ProtonMail está indisponível</string>
     <string name="api_offline">O ProtonMail está atualmente offiline. Por favor, visite https://protonstatus.com ou ttps://twitter.com/protonmail para saber o status atual.</string>
     <string name="contact_saved">Contato salvo</string>
@@ -285,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Erro ao excluir algumas mensagens. Algumas mensagens selecionadas estão em processo de envio?!</string>
     <string name="respond_inline">Responder no corpo</string>
     <string name="no_connectivity_detected">Nenhuma conexão detectada...</string>
-    <string name="server_not_reachable_troubleshoot">Nenhuma conexão detectada… (<u>Solução de problemas</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Servidor não acessível… (<u>Solucionar problemas</u>)</string>
     <string name="connectivity_checking">Verificando a conexão...</string>
     <string name="sync_short">sincronizar</string>
     <string name="draft_attachments_uploading">Rascunho ainda está sendo enviado...</string>
@@ -1000,6 +1001,6 @@ redefina sua senha caso você necessite.</string>
     <string name="go_to_settings">Ir para configurações</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Chave API do Firebase inválida. As notificações push não funcionarão.</string>
-    <string name="failed_saving_draft_online">Falha ao salvar o rascunho online da mensagem: \"%s\"</string>
+    <string name="failed_saving_draft_online">Falha ao salvar o rascunho da mensagem: \"%s\"</string>
     <string name="cannot_open_message_while_being_sent">Não é possível abrir esta mensagem enquanto ela está sendo enviada</string>
 </resources>

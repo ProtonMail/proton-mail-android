@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Ulac azeṭṭa, izen yettraǧu</string>
     <string name="update_app_title">Ilaq uleqqem</string>
     <string name="update_app">Asnas-ik Protonmail ur izmir ara ad yettwaseqdec arama yettwalqem</string>
+    <string name="you_are_offline">Ur teqqineḍ ara</string>
     <string name="api_offline_title">API Protonmail war tuqqna</string>
     <string name="api_offline">ProtonMail ur iqqin ara akka tura. Ttxil senqed addad amiran n https://protonstatus.com neɣ https://twitter.com/protonmail.</string>
     <string name="contact_saved">Anermis yettwasekles</string>
@@ -285,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Error while deleting some messages. Some of the selected messages are in sending process?!</string>
     <string name="respond_inline">Respond in-line</string>
     <string name="no_connectivity_detected">Ulac tuqqna yettwafen...</string>
-    <string name="server_not_reachable_troubleshoot">No connectivity detected… (<u>Troubleshoot</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Aqeddac ur yettwaweḍ ara… (<u> Aqeɛɛed</u>)</string>
     <string name="connectivity_checking">Asenqed n tuqqna...</string>
     <string name="sync_short">mtawi</string>
     <string name="draft_attachments_uploading">Irewwayen ad ttadren akka tura...</string>

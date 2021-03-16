@@ -53,6 +53,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="no_network_queued">Nessuna rete, messaggio in coda</string>
     <string name="update_app_title">Aggiornamento richiesto</string>
     <string name="update_app">La sua app di ProtonMail non potrà essere utilizzata fino a quando non verrà aggiornata</string>
+    <string name="you_are_offline">You are offline</string>
     <string name="api_offline_title">API ProtonMail non in linea</string>
     <string name="api_offline">ProtonMail è attualmente offline. Si prega di controllare https://protonstatus.com o https://twitter.com/protonmail per lo stato attuale.</string>
     <string name="contact_saved">Contatto salvato</string>
@@ -285,7 +286,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="message_deleted_error">Errore durante l\'eliminazione di alcuni messaggi. Alcuni dei messaggi selezionati sono in fase di invio?!</string>
     <string name="respond_inline">Rispondi in linea</string>
     <string name="no_connectivity_detected">Nessuna connessione rilevata...</string>
-    <string name="server_not_reachable_troubleshoot">Nessuna connettività rilevata… (<u>Risoluzione problemi</u>)</string>
+    <string name="server_not_reachable_troubleshoot">Server not reachable… (<u>Troubleshoot</u>)</string>
     <string name="connectivity_checking">Verificando la connessione...</string>
     <string name="sync_short">sincronizza</string>
     <string name="draft_attachments_uploading">La bozza si sta ancora caricando...</string>
