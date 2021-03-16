@@ -287,7 +287,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
             val responses = response.responses
             for (contactResponse in responses) {
                 val contact = contactResponse.response.contact
-                contactsDatabase.saveAllContactsEmails(contact.emails!!)
+                contactsDatabase.saveAllContactsEmailsBlocking(contact.emails!!)
                 contactGroupIds.forEach { contactGroupId ->
                     val emailsList = contact.emails!!.map { it.contactEmailId }
                     getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
@@ -296,7 +296,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                                 for (contactEmail in emailsList) {
                                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                                 }
-                                contactsDatabase.saveContactEmailContactLabel(joins)
+                                contactsDatabase.saveContactEmailContactLabelBlocking(joins)
                             }
                             .blockingAwait()
                 }

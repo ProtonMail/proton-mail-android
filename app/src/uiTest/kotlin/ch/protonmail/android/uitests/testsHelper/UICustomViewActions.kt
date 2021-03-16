@@ -411,6 +411,7 @@ object UICustomViewActions {
         }
     }
 
+
     fun checkGroupDoesNotExist(name: String, email: String): PositionableRecyclerViewAction =
         CheckGroupDoesNotExist(name, email)
 
@@ -449,7 +450,7 @@ object UICustomViewActions {
     fun clickOnChildWithId(@IdRes id: Int): ViewAction {
         return object : ViewAction {
             override fun perform(uiController: UiController, view: View) {
-                view.findViewById<View>(id).callOnClick()
+                view.findViewById<View>(id).performClick()
             }
 
             override fun getDescription(): String = "Click child view with id."

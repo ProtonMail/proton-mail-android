@@ -37,6 +37,7 @@ import ch.protonmail.android.api.models.CreateUpdateSubscriptionResponse
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.DirectEnabledResponse
 import ch.protonmail.android.api.models.DonateBody
+import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.GetPaymentTokenResponse
 import ch.protonmail.android.api.models.GetSubscriptionResponse
 import ch.protonmail.android.api.models.HumanVerifyOptionsResponse
@@ -51,7 +52,6 @@ import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.api.models.MailboxResetBody
 import ch.protonmail.android.api.models.ModulusResponse
 import ch.protonmail.android.api.models.MoveToFolderResponse
-import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.OrganizationResponse
 import ch.protonmail.android.api.models.PasswordVerifier
 import ch.protonmail.android.api.models.PaymentMethodResponse
@@ -209,9 +209,11 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override suspend fun pingAsync(): ResponseBody = api.pingAsync()
 
-    override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse = api.fetchContacts(page, pageSize)
+    override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse =
+        api.fetchContacts(page, pageSize)
 
-    override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> = api.fetchContactEmails(pageSize)
+    override suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
+        api.fetchContactEmails(page, pageSize)
 
     override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> = api.fetchContactsEmailsByLabelId(page, labelId)
 
@@ -268,6 +270,8 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun fetchContactGroups(): Single<ContactGroupsResponse> = api.fetchContactGroups()
 
+    override suspend fun fetchContactGroupsList(): List<ContactLabel> = api.fetchContactGroupsList()
+
     override fun fetchContactGroupsAsObservable(): Observable<List<ContactLabel>> = api.fetchContactGroupsAsObservable()
 
     override fun createLabel(label: LabelBody): LabelResponse = api.createLabel(label)
@@ -319,9 +323,21 @@ class ProtonMailApiManager @Inject constructor(var api: ProtonMailApi) :
 
     override fun searchByLabelAndTime(query: String, unixTime: Long): MessagesResponse = api.searchByLabelAndTime(query, unixTime)
 
-    override fun createDraft(draftBody: DraftBody): MessageResponse? = api.createDraft(draftBody)
+    override fun createDraftBlocking(draftBody: DraftBody): MessageResponse? = api.createDraftBlocking(draftBody)
 
-    override fun updateDraft(messageId: String, draftBody: DraftBody, retrofitTag: RetrofitTag): MessageResponse? = api.updateDraft(messageId, draftBody, retrofitTag)
+    override suspend fun createDraft(draftBody: DraftBody): MessageResponse = api.createDraft(draftBody)
+
+    override fun updateDraftBlocking(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse? = api.updateDraftBlocking(messageId, draftBody, retrofitTag)
+
+    override suspend fun updateDraft(
+        messageId: String,
+        draftBody: DraftBody,
+        retrofitTag: RetrofitTag
+    ): MessageResponse = api.updateDraft(messageId, draftBody, retrofitTag)
 
     override fun sendMessage(messageId: String, message: MessageSendBody, retrofitTag: RetrofitTag): Call<MessageSendResponse> = api.sendMessage(messageId, message, retrofitTag)
 

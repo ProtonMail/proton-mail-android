@@ -68,8 +68,8 @@ open class ContactDetailsRepository @Inject constructor(
 
     private fun getContactGroupsFromApi(): Observable<List<ContactLabel>> {
         return api.fetchContactGroupsAsObservable().doOnNext {
-            contactsDao.clearContactGroupsLabelsTable()
-            contactsDao.saveContactGroupsList(it)
+            contactsDao.clearContactGroupsLabelsTableBlocking()
+            contactsDao.saveContactGroupsListBlocking(it)
         }
     }
 
@@ -78,7 +78,7 @@ open class ContactDetailsRepository @Inject constructor(
             .flatMap { list ->
                 Observable.fromIterable(list)
                     .map {
-                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelId(it.ID)
+                        it.contactEmailsCount = contactsDao.countContactEmailsByLabelIdBlocking(it.ID)
                         it
                     }
                     .toList()
@@ -94,7 +94,7 @@ open class ContactDetailsRepository @Inject constructor(
             .doOnComplete {
                 val joins = contactsDao.fetchJoins(contactLabel.ID)
                 contactsDao.saveContactGroupLabel(contactLabel)
-                contactsDao.saveContactEmailContactLabel(joins)
+                contactsDao.saveContactEmailContactLabelBlocking(joins)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -118,7 +118,7 @@ open class ContactDetailsRepository @Inject constructor(
                 for (contactEmail in membersList) {
                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                 }
-                contactsDao.saveContactEmailContactLabel(joins)
+                contactsDao.saveContactEmailContactLabelBlocking(joins)
             }
             .doOnError { throwable ->
                 if (throwable is IOException) {
@@ -168,7 +168,7 @@ open class ContactDetailsRepository @Inject constructor(
             contactId?.let {
                 val localContactEmails = contactsDao.findContactEmailsByContactId(it)
                 contactsDao.deleteAllContactsEmails(localContactEmails)
-                contactsDao.saveAllContactsEmails(contactServerEmails)
+                contactsDao.saveAllContactsEmailsBlocking(contactServerEmails)
             }
         }
     }

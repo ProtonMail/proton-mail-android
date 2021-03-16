@@ -27,15 +27,16 @@ import androidx.test.espresso.matcher.ViewMatchers.withParent
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withFirstInstanceMessageSubject
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubject
+import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndFlag
 import ch.protonmail.android.uitests.robots.mailbox.MailboxMatchers.withMessageSubjectAndRecipient
 import ch.protonmail.android.uitests.robots.mailbox.composer.ComposerRobot
 import ch.protonmail.android.uitests.robots.mailbox.inbox.InboxRobot
 import ch.protonmail.android.uitests.robots.mailbox.messagedetail.MessageRobot
 import ch.protonmail.android.uitests.robots.mailbox.search.SearchRobot
 import ch.protonmail.android.uitests.robots.menu.MenuRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
-import ch.protonmail.android.uitests.testsHelper.swipeViewDown
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.swipeViewDown
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.instanceOf
 
@@ -43,25 +44,25 @@ interface MailboxRobotInterface {
 
     fun swipeLeftMessageAtPosition(position: Int): Any {
         UIActions.recyclerView
-            .waitForBeingPopulated(messagesRecyclerViewId)
-            .saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSwipeLeftMessage)())
-        UIActions.recyclerView.swipeRightToLeftObjectWithIdAtPosition(messagesRecyclerViewId, position)
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSwipeLeftMessage)())
+        UIActions.recyclerView.common.swipeRightToLeftObjectWithIdAtPosition(messagesRecyclerViewId, position)
         return Any()
     }
 
     fun longClickMessageOnPosition(position: Int): Any {
         UIActions.recyclerView
-            .waitForBeingPopulated(messagesRecyclerViewId)
-            .saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetLongClickMessage)())
-        UIActions.recyclerView.longClickItemInRecyclerView(messagesRecyclerViewId, position)
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetLongClickMessage)())
+        UIActions.recyclerView.common.longClickItemInRecyclerView(messagesRecyclerViewId, position)
         return Any()
     }
 
     fun deleteMessageWithSwipe(position: Int): Any {
         UIActions.recyclerView
-            .waitForBeingPopulated(messagesRecyclerViewId)
-            .saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetDeleteWithSwipeMessage)())
-        UIActions.recyclerView.swipeItemLeftToRightOnPosition(messagesRecyclerViewId, position)
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetDeleteWithSwipeMessage)())
+        UIActions.recyclerView.common.swipeItemLeftToRightOnPosition(messagesRecyclerViewId, position)
         return Any()
     }
 
@@ -83,8 +84,8 @@ interface MailboxRobotInterface {
 
     fun clickMessageByPosition(position: Int): MessageRobot {
         UIActions.wait.forViewWithId(messagesRecyclerViewId)
-        UIActions.recyclerView.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSelectMessage)())
-        UIActions.recyclerView.clickOnRecyclerViewItemByPosition(messagesRecyclerViewId, 1)
+        UIActions.recyclerView.messages.saveMessageSubjectAtPosition(messagesRecyclerViewId, position, (::SetSelectMessage)())
+        UIActions.recyclerView.common.clickOnRecyclerViewItemByPosition(messagesRecyclerViewId, 1)
         return MessageRobot()
     }
 
@@ -99,8 +100,8 @@ interface MailboxRobotInterface {
             )
         UIActions.wait.forViewWithId(messagesRecyclerViewId)
         UIActions.recyclerView
-            .waitForBeingPopulated(messagesRecyclerViewId)
-            .clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
+            .common.waitForBeingPopulated(messagesRecyclerViewId)
+            .common.clickOnRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubject(subject))
         return MessageRobot()
     }
 
@@ -115,28 +116,66 @@ interface MailboxRobotInterface {
     @Suppress("ClassName")
     open class verify {
 
+        fun messageExists(messageSubject: String) {
+            UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, messageSubject)
+        }
+
+        fun draftWithAttachmentSaved(draftSubject: String) {
+            UIActions.wait.forViewWithIdAndText(messageTitleTextViewId, draftSubject)
+        }
+
         fun mailboxLayoutShown() {
             UIActions.wait.forViewWithId(R.id.swipe_refresh_layout)
         }
 
         fun messageDeleted(subject: String, date: String) {
             UIActions.recyclerView
-                .waitForBeingPopulated(messagesRecyclerViewId)
-                .checkDoesNotContainMessage(messagesRecyclerViewId, subject, date)
+                .common.waitForBeingPopulated(messagesRecyclerViewId)
+                .messages.checkDoesNotContainMessage(messagesRecyclerViewId, subject, date)
         }
 
         fun messageWithSubjectExists(subject: String) {
-            UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
             UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
-                .scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
+                .common.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withFirstInstanceMessageSubject(subject))
+        }
+
+        fun messageWithSubjectHasRepliedFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageReplyTextView)
+                )
+        }
+
+        fun messageWithSubjectHasRepliedAllFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageReplyAllTextView)
+                )
+        }
+
+        fun messageWithSubjectHasForwardedFlag(subject: String) {
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.wait.forViewWithText(subject)
+            UIActions.recyclerView
+                .common.scrollToRecyclerViewMatchedItem(
+                    messagesRecyclerViewId,
+                    withMessageSubjectAndFlag(subject, R.id.messageForwardTextView)
+                )
         }
 
         fun messageWithSubjectAndRecipientExists(subject: String, to: String) {
-            UIActions.recyclerView.waitForBeingPopulated(messagesRecyclerViewId)
+            UIActions.recyclerView.common.waitForBeingPopulated(messagesRecyclerViewId)
             UIActions.wait.forViewWithText(subject)
             UIActions.recyclerView
-                .scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectAndRecipient(subject, to))
+                .common.scrollToRecyclerViewMatchedItem(messagesRecyclerViewId, withMessageSubjectAndRecipient(subject, to))
         }
     }
 
@@ -179,6 +218,7 @@ interface MailboxRobotInterface {
         var deletedMessageDate = ""
 
         private const val messagesRecyclerViewId = R.id.messages_list_view
+        private const val messageTitleTextViewId = R.id.messageTitleTextView
         private const val drawerLayoutId = R.id.drawer_layout
     }
 }

@@ -54,7 +54,6 @@ class MessageBuilderData(
     val isRespondInlineChecked: Boolean,
     val showImages: Boolean,
     val showRemoteContent: Boolean,
-    val offlineDraftSaved: Boolean,
     val initialMessageContent: String,
     val decryptedMessage: String,
     val isMessageBodyVisible: Boolean,
@@ -90,7 +89,6 @@ class MessageBuilderData(
         private var isRespondInlineChecked: Boolean = false
         private var showImages: Boolean = false
         private var showRemoteContent: Boolean = false
-        private var offlineDraftSaved: Boolean = false
         private var initialMessageContent: String = ""
         private var decryptedMessage: String = ""
         private var isMessageBodyVisible: Boolean = false
@@ -129,7 +127,6 @@ class MessageBuilderData(
             this.isRespondInlineChecked = oldObject.isRespondInlineChecked
             this.showImages = oldObject.showImages
             this.showRemoteContent = oldObject.showRemoteContent
-            this.offlineDraftSaved = oldObject.offlineDraftSaved
             this.initialMessageContent = oldObject.initialMessageContent
             this.isMessageBodyVisible = oldObject.isMessageBodyVisible
             this.quotedHeader = oldObject.quotedHeader
@@ -218,9 +215,6 @@ class MessageBuilderData(
         fun showRemoteContent(showRemoteContent: Boolean) =
             apply { this.showRemoteContent = showRemoteContent }
 
-        fun offlineDraftSaved(offlineDraftSaved: Boolean) =
-            apply { this.offlineDraftSaved = offlineDraftSaved }
-
         fun initialMessageContent(initialMessageContent: String) =
             apply { this.initialMessageContent = initialMessageContent }
 
@@ -265,7 +259,6 @@ class MessageBuilderData(
                     isRespondInlineChecked,
                     showImages,
                     showRemoteContent,
-                    offlineDraftSaved,
                     initialMessageContent,
                     decryptedMessage,
                     isMessageBodyVisible,

@@ -58,7 +58,7 @@ public class PostSpamJob extends ProtonMailCounterJob {
                 .getDatabase();
         int totalUnread = 0;
         for (String id : mMessageIds) {
-            final Message message = getMessageDetailsRepository().findMessageById(id);
+            final Message message = getMessageDetailsRepository().findMessageByIdBlocking(id);
             if (message != null) {
                 if (markMessageLocally(countersDatabase,message)) {
                     totalUnread++;

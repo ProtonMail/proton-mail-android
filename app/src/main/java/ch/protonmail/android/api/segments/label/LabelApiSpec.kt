@@ -38,6 +38,8 @@ interface LabelApiSpec {
     @Throws(IOException::class)
     fun fetchContactGroups(): Single<ContactGroupsResponse>
 
+    suspend fun fetchContactGroupsList(): List<ContactLabel>
+
     @Throws(IOException::class)
     fun fetchContactGroupsAsObservable(): Observable<List<ContactLabel>>
 

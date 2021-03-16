@@ -27,13 +27,13 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.Observer
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Operation
@@ -197,7 +197,7 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
     override fun onStart() {
         super.onStart()
         listener.registerObject(this)
-        startObserving()
+        viewModel.fetchContactItems()
     }
 
     override fun onStop() {
@@ -209,8 +209,8 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val loaderManager = LoaderManager.getInstance(this)
         val application = activity!!.application
@@ -225,41 +225,39 @@ class ContactsListFragment : BaseFragment(), IContactsFragment {
         initAdapter()
         listener.selectPage(0)
         listener.doRequestContactsPermission()
+        startObserving()
     }
 
     private fun startObserving() {
-        viewModel.contactItems.observe(
-            viewLifecycleOwner,
-            { contactItems ->
-                if (contactItems.isEmpty()) {
-                    noResults.visibility = VISIBLE
-                } else {
-                    noResults.visibility = GONE
-                }
-                contactsAdapter.apply {
-                    setData(contactItems!!)
-                    val count = contactItems.size - contactItems
-                        .count { contactItem -> contactItem.contactId == "-1" }
-                    listener.dataUpdated(0, count)
-                }
+        viewModel.contactItems.observe(viewLifecycleOwner) { contactItems ->
+            Timber.v("New Contact items: $contactItems size: ${contactItems.size}")
+            if (contactItems.isEmpty()) {
+                noResults.visibility = VISIBLE
+            } else {
+                noResults.visibility = GONE
             }
-        )
+            contactsAdapter.apply {
+                setData(contactItems)
+                val count = contactItems.size - contactItems
+                    .count { contactItem -> contactItem.contactId == "-1" }
+                listener.dataUpdated(0, count)
+            }
+        }
+
         val progressDialogFactory = ProgressDialogFactory(requireContext())
-        viewModel.uploadProgress.observe(
-            viewLifecycleOwner,
+        viewModel.uploadProgress.observe(viewLifecycleOwner) {
             UploadProgressObserver(progressDialogFactory::create)
-        )
-        viewModel.contactToConvert.observe(
-            viewLifecycleOwner,
-            Observer {
-                val localContact = it?.getContentIfNotHandled() ?: return@Observer
-                val intent = EditContactDetailsActivity.startConvertContactActivity(
-                    requireContext(),
-                    localContact
-                )
-                listener.doStartActivityForResult(intent, REQUEST_CODE_CONVERT_CONTACT)
-            }
-        )
+        }
+
+        viewModel.contactToConvert.observe(viewLifecycleOwner) { event ->
+            Timber.v("ContactToConvert event: $event")
+            val localContact = event?.getContentIfNotHandled() ?: return@observe
+            val intent = EditContactDetailsActivity.startConvertContactActivity(
+                requireContext(),
+                localContact
+            )
+            listener.doStartActivityForResult(intent, REQUEST_CODE_CONVERT_CONTACT)
+        }
     }
 
     override fun getLayoutResourceId() = R.layout.fragment_contacts

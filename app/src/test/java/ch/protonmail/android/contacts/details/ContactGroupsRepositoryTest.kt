@@ -24,16 +24,16 @@ import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.verify
-import io.reactivex.Flowable
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.kotlin.TestDispatcherProvider
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import java.io.IOException
-import java.util.concurrent.TimeUnit
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -51,6 +51,8 @@ class ContactGroupsRepositoryTest {
     @InjectMockKs
     private lateinit var contactGroupsRepository: ContactGroupsRepository
 
+    private val dispatcherProvider = TestDispatcherProvider
+
     private val label1 = ContactLabel("a", "aa")
     private val label2 = ContactLabel("b", "bb")
     private val label3 = ContactLabel("c", "cc")
@@ -59,45 +61,57 @@ class ContactGroupsRepositoryTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        every { protonMailApi.fetchContactGroupsAsObservable() } answers {
-            Observable.just(listOf(label1, label2, label3, label4)).delay(500, TimeUnit.MILLISECONDS)
+    }
+
+    @Test
+    fun verifyThatDbAndApiContactsAreEmittedInOrder() {
+        runBlockingTest {
+            // given
+            val dbContactsList = listOf(label1)
+            val searchTerm = "Rob"
+            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
+
+            // when
+            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
+
+            // then
+            assertEquals(dbContactsList, result)
         }
-        every { contactsDao.findContactGroupsObservable() } answers { Flowable.just(listOf(label1, label2, label3)) }
     }
 
     @Test
-    fun testDbAndAPIEventsEmitted() {
-        val testObserver = contactGroupsRepository.getContactGroups().test()
+    fun verifyThatDbAndApiContactsAreEmittedIn() {
+        runBlockingTest {
+            // given
+            val dbContactsList = listOf(label1)
+            val searchTerm = "Rob"
+            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
 
-        testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
-        testObserver.awaitTerminalEvent()
-        testObserver.assertNoErrors()
-        testObserver.assertValueCount(2)
+            // when
+            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
+
+            // then
+            assertEquals(dbContactsList, result)
+        }
     }
 
     @Test
-    fun testDbEventBeforeAPIEvent() {
-        val testObserver = contactGroupsRepository.getContactGroups().test()
+    fun verifyThatDbContactsAreEmitted() {
+        runBlockingTest {
+            // given
+            val searchTerm = "search"
+            val dbContactsList = listOf(label1)
+            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
 
-        testObserver.assertValueCount(1)
-        testObserver.assertValue(listOf(label1, label2, label3))
-        testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
-        testObserver.awaitCount(2)
-        testObserver.assertValueCount(2)
-        assertEquals(listOf(label1, label2, label3, label4), testObserver.values()[1])
-    }
+            // when
+            val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
 
-    @Test
-    fun testApiErrorEvent() {
-        every { protonMailApi.fetchContactGroupsAsObservable() } answers { Observable.error(IOException(":(")) }
-
-        val testObserver = contactGroupsRepository.getContactGroups().test()
-
-        testSchedulerRule.schedulerTest.triggerActions()
-        testSchedulerRule.schedulerTest.advanceTimeBy(1000, TimeUnit.MILLISECONDS)
-        testObserver.awaitTerminalEvent()
-        testObserver.assertValue(listOf(label1, label2, label3))
-        testObserver.assertError(IOException::class.java)
+            // then
+            assertEquals(dbContactsList, result)
+        }
     }
 
     @Test

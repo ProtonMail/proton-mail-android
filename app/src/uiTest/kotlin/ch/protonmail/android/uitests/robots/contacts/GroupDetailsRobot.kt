@@ -19,8 +19,8 @@
 package ch.protonmail.android.uitests.robots.contacts
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.UIActions
-import ch.protonmail.android.uitests.testsHelper.click
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.click
 
 /**
  * [GroupDetailsRobot] class contains actions and verifications for Contacts functionality.

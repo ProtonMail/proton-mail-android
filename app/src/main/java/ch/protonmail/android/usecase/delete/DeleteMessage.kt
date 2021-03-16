@@ -52,7 +52,7 @@ class DeleteMessage @Inject constructor(
 
             for (id in validMessageIdList) {
                 ensureActive()
-                messageDetailsRepository.findMessageById(id)?.let { message ->
+                messageDetailsRepository.findMessageByIdBlocking(id)?.let { message ->
                     message.deleted = true
                     messagesToSave.add(message)
                 }

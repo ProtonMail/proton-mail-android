@@ -31,52 +31,51 @@ import ch.protonmail.android.views.CustomFontTextView
 import ch.protonmail.android.views.SettingsDefaultItemView
 import ch.protonmail.libs.core.ui.adapter.BaseAdapter
 import ch.protonmail.libs.core.ui.adapter.ClickableAdapter
-import java.util.*
+import java.util.Locale
 
 // region constants
 private const val VIEW_TYPE_SECTION = 0
 private const val VIEW_TYPE_ITEM = 1
 // endregion
 
-internal class SettingsAdapter : BaseAdapter<SettingsItemUiModel, SettingsAdapter.ViewHolder<SettingsItemUiModel>>(ModelsComparator) {
+internal class SettingsAdapter :
+    BaseAdapter<SettingsItemUiModel, SettingsAdapter.ViewHolder<SettingsItemUiModel>>(ModelsComparator) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<SettingsItemUiModel> {
-        return parent.viewHolderForViewType(viewType)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<SettingsItemUiModel> =
+        parent.viewHolderForViewType(viewType)
 
     override fun getItemViewType(position: Int) = items[position].viewType
 
     private object ModelsComparator : BaseAdapter.ItemsComparator<SettingsItemUiModel>() {
-
-        override fun areItemsTheSame(oldItem: SettingsItemUiModel, newItem: SettingsItemUiModel): Boolean {
-            return false
-        }
+        override fun areItemsTheSame(oldItem: SettingsItemUiModel, newItem: SettingsItemUiModel): Boolean = false
     }
 
     abstract class ViewHolder<Model>(itemView: View) :
-            ClickableAdapter.ViewHolder<Model>(itemView)
+        ClickableAdapter.ViewHolder<Model>(itemView)
 
     companion object {
-        fun getHeader(settingsId: String, context: Context): String {
-            return SettingsEnum.valueOf(settingsId).getHeader(context)
-        }
+        fun getHeader(settingsId: String, context: Context): String =
+            SettingsEnum.valueOf(settingsId).getHeader(context)
     }
 
     private class SectionViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
         override fun onBind(item: SettingsItemUiModel) = with(itemView as CustomFontTextView) {
             super.onBind(item)
             //TODO after we receive translations for TURKISH remove excess toUpperCase methods
-            text = if (item.settingHeader.isNullOrEmpty()) getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context).toUpperCase(Locale.ENGLISH) else item.settingHeader?.toUpperCase(Locale.ENGLISH)
+            text = if (item.settingHeader.isNullOrEmpty())
+                getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context).toUpperCase(Locale.ENGLISH)
+            else
+                item.settingHeader?.toUpperCase(Locale.ENGLISH)
         }
     }
 
-    internal class ItemViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
+    class ItemViewHolder(itemView: View) : ViewHolder<SettingsItemUiModel>(itemView) {
         lateinit var header: String
 
         override fun onBind(item: SettingsItemUiModel) = with(itemView as SettingsDefaultItemView) {
             super.onBind(item)
 
-            header = if (item.settingHeader.isNullOrEmpty()){
+            header = if (item.settingHeader.isNullOrEmpty()) {
                 getHeader(item.settingId.toUpperCase(Locale.ENGLISH), context)
             } else {
                 item.settingHeader!!
@@ -96,6 +95,7 @@ internal class SettingsAdapter : BaseAdapter<SettingsItemUiModel, SettingsAdapte
 
             setToggleChangedListener(item.toggleListener)
             setEditTextOnFocusChangeListener(item.editTextListener)
+            setEditTextOnTextChangeListener(item.editTextChangeListener)
         }
     }
 

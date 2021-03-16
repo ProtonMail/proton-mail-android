@@ -42,8 +42,8 @@ import java.util.Set;
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.api.interceptors.RetrofitTag;
-import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.DraftBody;
+import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.factories.PackageFactory;
@@ -144,7 +144,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
     @Override
     protected void onProtonCancel(int cancelReason, @Nullable Throwable throwable) {
         PendingActionsDatabase pendingActionsDatabase = PendingActionsDatabaseFactory.Companion.getInstance(getApplicationContext(), mUsername).getDatabase();
-        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbIdBlocking(mMessageDbId);
         if (message != null) {
             if (!BuildConfig.DEBUG) {
                 EventBuilder eventBuilder = new EventBuilder()
@@ -200,7 +200,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             }
             throw e;
         }
-        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbIdBlocking(mMessageDbId);
         if (!BuildConfig.DEBUG && message == null) {
             EventBuilder eventBuilder = new EventBuilder()
                     .withTag(SENDING_FAILED_TAG, getAppVersion())
@@ -235,7 +235,9 @@ public class PostMessageJob extends ProtonMailBaseJob {
             // create the draft if there was no connectivity previously for execution the create and post draft job
             // this however should not happen, because the jobs with the same ID are executed serial,
             // but just in case that there is no any bug on the JobQueue library
-            final MessageResponse draftResponse = getApi().createDraft(newMessage);
+
+            // TODO verify whether this is actually needed or can be done through saveDtaft use case
+            final MessageResponse draftResponse = getApi().createDraftBlocking(newMessage);
             message.setMessageId(draftResponse.getMessageId());
         }
         message.setTime(ServerTime.currentTimeMillis() / 1000);
@@ -243,14 +245,22 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
         MailSettings mailSettings = getUserManager().getMailSettings(mUsername);
 
-        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase();
-        UploadAttachments.Result result = uploadAttachments.blocking(mNewAttachments, message, crypto);
+        UploadAttachments uploadAttachments = buildUploadAttachmentsUseCase(pendingActionsDatabase);
+        UploadAttachments.Result result = uploadAttachments.blocking(mNewAttachments, message, crypto, true);
 
         if (result instanceof UploadAttachments.Result.Failure) {
             UploadAttachments.Result.Failure failureResult = (UploadAttachments.Result.Failure) result;
             Timber.e("Failed uploading attachments - Exception --> " + failureResult.getError());
             pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
             String error = "Failed uploading attachments for message \"" + message.getSubject() + "\"";
+            ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, getUserManager().getUser());
+            return;
+        } else if (result instanceof UploadAttachments.Result.UploadInProgress) {
+            Timber.w("Failed uploading attachments as upload is already in progress");
+            pendingActionsDatabase.deletePendingUploadByMessageId(message.getMessageId());
+            pendingActionsDatabase.deletePendingSendByMessageId(message.getMessageId());
+            String error = "Failed uploading attachments for message \"" + message.getSubject() + "\"";
+            Thread.sleep(500);
             ProtonMailApplication.getApplication().notifySingleErrorSendingMessage(message, error, getUserManager().getUser());
             return;
         }
@@ -271,7 +281,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
      * TODO Drop this and just inject the use case when migrating this Job to a worker
      */
     @NotNull
-    private UploadAttachments buildUploadAttachmentsUseCase() {
+    private UploadAttachments buildUploadAttachmentsUseCase(PendingActionsDatabase pendingActionsDatabase) {
         DispatcherProvider dispatchers = new DispatcherProvider() {
             @Override
             public @NotNull CoroutineDispatcher getMain() {
@@ -298,6 +308,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
         return new UploadAttachments(
                 dispatchers,
                 attachmentsRepository,
+                pendingActionsDatabase,
                 getMessageDetailsRepository(),
                 getUserManager()
         );
@@ -327,7 +338,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
             newMessage.getMessage().setSender(new ServerMessageSender(message.getSenderName(), message.getSenderEmail()));
         }
 
-        final MessageResponse draftResponse = getApi().updateDraft(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
+        final MessageResponse draftResponse = getApi().updateDraftBlocking(message.getMessageId(), newMessage, new RetrofitTag(mUsername));
         EventBuilder eventBuilder = new EventBuilder()
                 .withTag(SENDING_FAILED_TAG, getAppVersion())
                 .withTag(SENDING_FAILED_DEVICE_TAG, Build.MODEL + " " + Build.VERSION.SDK_INT)
@@ -503,7 +514,7 @@ public class PostMessageJob extends ProtonMailBaseJob {
 
     private void sendErrorSending(String error) {
         if (error == null) error = "";
-        Message message = getMessageDetailsRepository().findMessageByMessageDbId(mMessageDbId);
+        Message message = getMessageDetailsRepository().findMessageByMessageDbIdBlocking(mMessageDbId);
         if (message != null) {
             String messageId = message.getMessageId();
             if (messageId != null) {

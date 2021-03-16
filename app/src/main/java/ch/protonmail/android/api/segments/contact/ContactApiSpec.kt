@@ -36,8 +36,7 @@ interface ContactApiSpec {
 
     suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse
 
-    @Throws(IOException::class)
-    fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?>
+    suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2
 
     @Throws(IOException::class)
     fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2>

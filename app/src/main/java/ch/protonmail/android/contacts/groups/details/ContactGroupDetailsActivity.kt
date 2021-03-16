@@ -28,7 +28,7 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseActivity
 import ch.protonmail.android.contacts.groups.ContactGroupEmailsAdapter
@@ -54,10 +54,10 @@ const val EXTRA_CONTACT_GROUP = "extra_contact_group"
 class ContactGroupDetailsActivity : BaseActivity() {
 
     @Inject
-    lateinit var contactGroupDetailsViewModelFactory: ContactGroupDetailsViewModelFactory
+    lateinit var app: ProtonMailApplication
 
-    private lateinit var contactGroupDetailsViewModel: ContactGroupDetailsViewModel
     private lateinit var contactGroupEmailsAdapter: ContactGroupEmailsAdapter
+    private val contactGroupDetailsViewModel: ContactGroupDetailsViewModel by viewModels()
 
     override fun getLayoutId() = R.layout.activity_contact_group_details
 
@@ -65,12 +65,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setSupportActionBar(animToolbar)
-        if (supportActionBar != null)
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        contactGroupDetailsViewModel =
-                ViewModelProvider(this, contactGroupDetailsViewModelFactory)
-                    .get(ContactGroupDetailsViewModel::class.java)
         initAdapter()
         startObserving()
         val bundle = intent?.getBundleExtra(EXTRA_CONTACT_GROUP)
@@ -86,12 +82,12 @@ class ContactGroupDetailsActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        ProtonMailApplication.getApplication().bus.register(this)
+        app.bus.register(this)
     }
 
     override fun onStop() {
         super.onStop()
-        ProtonMailApplication.getApplication().bus.unregister(this)
+        app.bus.unregister(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -147,10 +143,11 @@ class ContactGroupDetailsActivity : BaseActivity() {
         )
 
     private fun startObserving() {
-        contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this) {
-            contactGroupEmailsAdapter.setData(it ?: ArrayList())
-            if (it != null && TextUtils.isEmpty(filterView.text.toString())) {
-                setTitle(contactGroupDetailsViewModel.getData()?.name, it.size)
+        contactGroupDetailsViewModel.contactGroupEmailsResult.observe(this) { list ->
+            Timber.v("New contacts emails list size: ${list.size}")
+            contactGroupEmailsAdapter.setData(list ?: ArrayList())
+            if (list != null && TextUtils.isEmpty(filterView.text.toString())) {
+                setTitle(contactGroupDetailsViewModel.getData()?.name, list.size)
             }
         }
 
@@ -158,10 +155,10 @@ class ContactGroupDetailsActivity : BaseActivity() {
             contactGroupEmailsAdapter.setData(ArrayList())
         }
 
-        contactGroupDetailsViewModel.setupUIData.observe(this) {
-            val colorString = UiUtil.normalizeColor(it?.color)
+        contactGroupDetailsViewModel.setupUIData.observe(this) { contactLabel ->
+            val colorString = UiUtil.normalizeColor(contactLabel?.color)
             val color = Color.parseColor(colorString)
-            initCollapsingToolbar(color, it.name, it.contactEmailsCount)
+            initCollapsingToolbar(color, contactLabel.name, contactLabel.contactEmailsCount)
         }
 
         contactGroupDetailsViewModel.deleteGroupStatus.observe(this) {
@@ -192,7 +189,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
                 override fun afterTextChanged(editable: Editable?) {
                     contactGroupDetailsViewModel.doFilter(filterView.text.toString())
                 }
-            })
+            }
+            )
         }
     }
 
@@ -201,8 +199,8 @@ class ContactGroupDetailsActivity : BaseActivity() {
         R.id.action_delete -> consume {
             DialogUtils.showDeleteConfirmationDialog(
                 this, getString(R.string.delete),
-                resources.getQuantityString(R.plurals.are_you_sure_delete_group, 1))
-            {
+                resources.getQuantityString(R.plurals.are_you_sure_delete_group, 1)
+            ) {
                 contactGroupDetailsViewModel.delete()
             }
         }

@@ -59,6 +59,7 @@ class ReplyToMessageTests : BaseTest() {
             .navigateUpToSent()
             .verify {
                 messageWithSubjectExists(TestData.reSubject(subject))
+                messageWithSubjectHasRepliedFlag(subject)
             }
     }
 
@@ -95,6 +96,9 @@ class ReplyToMessageTests : BaseTest() {
             .replyAll()
             .editBodyAndReply(body, "Robot ReplyAll ")
             .navigateUpToSent()
-            .verify { messageWithSubjectExists(TestData.reSubject(subject)) }
+            .verify {
+                messageWithSubjectExists(TestData.reSubject(subject))
+                messageWithSubjectHasRepliedAllFlag(subject)
+            }
     }
 }

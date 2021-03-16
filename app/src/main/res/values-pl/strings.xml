@@ -1027,4 +1027,6 @@ zresetować hasło logowania, jeśli je zapomnisz.</string>
     <string name="go_to_settings">Przejdź do ustawień</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">Klucz interfejsu API Firebase jest nieprawidłowy. Powiadomienia nie będą działać.</string>
+    <string name="failed_saving_draft_online">Nie udało się zapisać szkicu: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">Nie można otworzyć wiadomości podczas jej wysyłania</string>
 </resources>

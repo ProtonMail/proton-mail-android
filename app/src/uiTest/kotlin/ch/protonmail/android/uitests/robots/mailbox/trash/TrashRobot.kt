@@ -20,7 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox.trash
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.MailboxRobotInterface
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [TrashRobot] class implements [MailboxRobotInterface],

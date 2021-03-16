@@ -109,7 +109,7 @@ class DownloadEmbeddedAttachmentsWorker @WorkerInject constructor(
         if (message != null) { // use search or standard message database, if Message comes from search
             attachments = messageDetailsRepository.findSearchAttachmentsByMessageId(messageId)
         } else {
-            message = messageDetailsRepository.findMessageById(messageId)
+            message = messageDetailsRepository.findMessageByIdBlocking(messageId)
             attachments = messageDetailsRepository.findAttachmentsByMessageId(messageId)
         }
 

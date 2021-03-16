@@ -34,19 +34,16 @@ import ch.protonmail.android.api.utils.ParseUtils
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import retrofit2.Call
 import java.io.IOException
 
 class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpec {
     @Throws(IOException::class)
-    override fun labelContacts(labelContactsBody: LabelContactsBody): Completable {
-        return service.labelContacts(labelContactsBody)
-    }
+    override fun labelContacts(labelContactsBody: LabelContactsBody): Completable =
+        service.labelContacts(labelContactsBody)
 
     @Throws(IOException::class)
-    override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable {
-        return service.unlabelContactEmailsCompletable(labelContactsBody)
-    }
+    override fun unlabelContactEmailsCompletable(labelContactsBody: LabelContactsBody): Completable =
+        service.unlabelContactEmailsCompletable(labelContactsBody)
 
     override suspend fun unlabelContactEmails(labelContactsBody: LabelContactsBody) =
         service.unlabelContactEmails(labelContactsBody)
@@ -54,27 +51,15 @@ class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpe
     override suspend fun fetchContacts(page: Int, pageSize: Int): ContactsDataResponse =
         service.contacts(page, pageSize)
 
-    @Throws(IOException::class)
-    override fun fetchContactEmails(pageSize: Int): List<ContactEmailsResponseV2?> {
-        val list = ArrayList<ContactEmailsResponseV2?>()
-        val pendingRequests = ArrayList<Call<ContactEmailsResponseV2>>()
-        val firstPage = service.contactsEmails(0, pageSize).execute().body()
-        list.add(firstPage!!)
-        for (i in 1..(firstPage.total + (pageSize - 1)) / pageSize) {
-            pendingRequests.add(service.contactsEmails(i, pageSize))
-        }
-        list.addAll(executeAll(pendingRequests))
-        return list
-    }
+    override suspend fun fetchContactEmails(page: Int, pageSize: Int): ContactEmailsResponseV2 =
+        service.contactsEmails(page, pageSize)
 
-    override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> {
-        return service.contactsEmailsByLabelId(page, labelId)
-    }
+    override fun fetchContactsEmailsByLabelId(page: Int, labelId: String): Observable<ContactEmailsResponseV2> =
+        service.contactsEmailsByLabelId(page, labelId)
 
     @Throws(IOException::class)
-    override fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse? {
-        return ParseUtils.parse(service.contactByIdBlocking(contactId).execute())
-    }
+    override fun fetchContactDetailsBlocking(contactId: String): FullContactDetailsResponse? =
+        ParseUtils.parse(service.contactByIdBlocking(contactId).execute())
 
     override suspend fun fetchContactDetails(contactId: String): FullContactDetailsResponse =
         service.contactById(contactId)
@@ -103,14 +88,12 @@ class ContactApi(private val service: ContactService) : BaseApi(), ContactApiSpe
     }
 
     @Throws(IOException::class)
-    override fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse? {
-        return ParseUtils.parse(service.updateContact(contactId, body).execute())
-    }
+    override fun updateContact(contactId: String, body: CreateContactV2BodyItem): FullContactDetailsResponse? =
+        ParseUtils.parse(service.updateContact(contactId, body).execute())
 
     @Throws(IOException::class)
-    override fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse> {
-        return service.deleteContactSingle(contactIds)
-    }
+    override fun deleteContactSingle(contactIds: IDList): Single<DeleteContactResponse> =
+        service.deleteContactSingle(contactIds)
 
     override suspend fun deleteContact(contactIds: IDList): DeleteContactResponse =
         service.deleteContact(contactIds)

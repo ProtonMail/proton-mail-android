@@ -19,9 +19,9 @@
 package ch.protonmail.android.uitests.robots.settings.account
 
 import ch.protonmail.android.R
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 import ch.protonmail.android.uitests.testsHelper.User
-import ch.protonmail.android.uitests.testsHelper.insert
+import ch.protonmail.android.uitests.testsHelper.uiactions.insert
 
 /**
  * Class represents Email recovery view.

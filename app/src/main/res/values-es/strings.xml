@@ -48,7 +48,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="invalid_credentials">Credenciales inválidas</string>
     <string name="incorrect_key_parameters">Parámetros clave incorrectos</string>
     <string name="invalid_mailbox_password">Contraseña del buzón inválida</string>
-    <string name="not_signed_up">No está registrado en la Beta de ProtonMail para Android</string>
+    <string name="not_signed_up">No estás registrado en la Beta de ProtonMail para Android</string>
     <string name="no_network">Sin conexión</string>
     <string name="no_network_queued">No hay conexión, mensaje en espera</string>
     <string name="update_app_title">Actualización requerida</string>
@@ -428,7 +428,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="plan_plus_line4">Enviar mensajes cifrados a destinatarios externos</string>
     <string name="plan_plus_line7">Soporte prioritario</string>
     <string name="plan_free_line1">500 MB de almacenamiento</string>
-    <string name="plan_free_line2">150 mensajes enviados por día</string>
+    <string name="plan_free_line2">150 mensajes al día</string>
     <string name="plan_free_line3">20 etiquetas</string>
     <string name="plan_free_line4">Dominios personalizados: no soportado</string>
     <string name="plan_free_line5">1 dirección</string>
@@ -661,7 +661,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="signature_error">Error de verificación</string>
     <string name="signature_error_desc">Falló la verificación de la firma de este contenido</string>
     <string name="decryption_error">Error de descifrado</string>
-    <string name="decryption_error_desc">Falló el descifrado de este contenido</string>
+    <string name="decryption_error_desc">El descifrado de este contenido ha fallado</string>
     <string name="address">Dirección: </string>
     <string name="address_street">Calle</string>
     <string name="address_city">Ciudad</string>
@@ -979,19 +979,19 @@ compre más
     <!-- endregion -->
     <!-- region Troubleshoot screen -->
     <string name="troubleshoot_dialog_title">Problemas y soluciones habituales de conexión</string>
-    <string name="troubleshoot_dialog_message"><i>Sin conexión a Internet</i> - Asegúrese de que su conexión a Internet está funcionando.
-        \n\n<i>problema con el proveedor de servicios de Internet (ISP)</i> - Intente conectarse a Proton desde una red diferente (o utilice <a href="https://protonvpn.com/">ProtonVPN</a> o <a href="https://www.torproject.org/">Tor</a>).
-        \n\n<i>Bloqueo de gobierno</i> - Puede que su país esté bloqueando el acceso a Proton. Pruebe <a href="https://protonvpn.com/">ProtonVPN</a> (o cualquier otra VPN) o <a href="https://www.torproject.org/">Tor</a> para acceder a Proton.
-        \n\n<i>Interferencia antivirus</i> - Deshabilite o elimine temporalmente su antivirus.
-        \n\n<i>interferencia de Proxy/Firewall</i> - Desactive cualquier proxy o cortafuegos, o póngase en contacto con su administrador de red.
-        \n\n<i>Proton está fuera de servicio</i> - Compruebe <a href="http://protonstatus.com/">Proton Status</a> para ver el estado de nuestro sistema.
-        \n\n<i>Si todavía no ha encontrado una solución</i> - Contáctenos directamente a través de nuestro <a href="https://protonmail.com/support-form">formulario de ayuda</a>, <a href="mailto:support@protonmail.com">correo electrónico</a> (support@protonmail. om), o <a href="https://twitter.com/ProtonMail">Twitter</a>.
+    <string name="troubleshoot_dialog_message">&lt;i&gt;Sin conexión a internet&lt;/i&gt; - Por favor, asegúrate de que tu conexión a internet está funcionando.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Problema con tu proveedor de servicios de Internet (ISP)&lt;/i&gt; - Prueba a conectarte a Proton desde una red diferente (o utiliza &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt;).
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Bloqueo del Gobierno&lt;/i&gt; - Tu país puede estar bloqueando el acceso a Proton. Prueba &lt;a href=\"https://protonvpn.com/\"&gt;ProtonVPN&lt;/a&gt; (o cualquier otra VPN) o &lt;a href=\"https://www.torproject.org/\"&gt;Tor&lt;/a&gt; para acceder a Proton.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia del antivirus&lt;/i&gt; - Deshabilita o elimina temporalmente tu software de antivirus.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Interferencia del proxy/firewall&lt;/i&gt; - Desactiva cualquier proxy o firewall, o ponte en contacto con tu administrador de red.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Proton está caído&lt;/i&gt; - Comprueba &lt;a href=\"http://protonstatus.com/\"&gt;Proton Status&lt;/a&gt; para ver el estado de nuestro sistema.
+        &lt;br/&gt;&lt;br/&gt;&lt;i&gt;Todavía no puedes encontrar una solución&lt;/i&gt; - Contáctanos directamente a través de nuestro &lt;a href=\"https://protonmail.com/support-form\"&gt;formulario de soporte&lt;/a&gt;, &lt;a href=\"mailto:support@protonmail.com\"&gt;correo electrónico&lt;/a&gt; (support@protonmail. om), o &lt;a href=\"https://twitter.com/ProtonMail\"&gt;Twitter&lt;/a&gt;.
     </string>
     <!-- endregion -->
     <!-- region errors -->
     <string name="error_image_not_found">Imagen no encontrada</string>
     <string name="error_image_bad_url">URL de la imagen mal formada</string>
-    <string name="error_saving_try_again">Error while saving message. Try again.</string>
+    <string name="error_saving_try_again">Se ha producido un error al guardar el mensaje. Inténtalo de nuevo.</string>
     <!-- endregion -->
     <string name="allowed">Permitido</string>
     <string name="denied">Denegado</string>
@@ -1001,4 +1001,6 @@ compre más
     <string name="go_to_settings">Ir a los ajustes</string>
     <!-- endregion -->
     <string name="invalid_firebase_api_key_message">La clave de la API de Firebase no es válida. Las notificaciones Push no funcionarán.</string>
+    <string name="failed_saving_draft_online">Error al guardar el borrador en línea para el mensaje: \"%s\"</string>
+    <string name="cannot_open_message_while_being_sent">No se puede abrir este mensaje mientras está siendo enviado</string>
 </resources>

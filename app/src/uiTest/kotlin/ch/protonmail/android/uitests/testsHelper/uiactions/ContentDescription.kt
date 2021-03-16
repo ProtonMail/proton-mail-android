@@ -1,36 +1,31 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.contacts.groups.details
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import javax.inject.Inject
+package ch.protonmail.android.uitests.testsHelper.uiactions
 
-/**
- * Created by kadrikj on 8/23/18. */
-class ContactGroupDetailsViewModelFactory @Inject constructor(
-        private val contactGroupDetailsViewModel: ContactGroupDetailsViewModel): ViewModelProvider.NewInstanceFactory() {
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import org.hamcrest.CoreMatchers.containsString
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ContactGroupDetailsViewModel::class.java)) {
-            return contactGroupDetailsViewModel as T
-        }
-        throw IllegalArgumentException("Unknown class name")
+object ContentDescription {
+    fun clickViewWithContentDescSubstring(contDesc: String) {
+        onView(withContentDescription(containsString(contDesc))).perform(click())
     }
 }

@@ -145,7 +145,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
 			final String emailToClear=email.getEmail();
 			mContactsDatabase.clearByEmail(emailToClear);
         }
-		mContactsDatabase.saveAllContactsEmails(contactEmails);
+		mContactsDatabase.saveAllContactsEmailsBlocking(contactEmails);
         Map<ContactLabel, List<String>> mapContactGroupContactEmails = new HashMap<>();
         if (updateJoins) {
             for (ContactEmail email : contactEmails) {
@@ -203,7 +203,7 @@ public class UpdateContactJob extends ProtonMailEndlessJob {
                         for (String contactEmail : membersList) {
                             joins.add(new ContactEmailContactLabelJoin(contactEmail, contactGroupId));
                         }
-                        mContactsDatabase.saveContactEmailContactLabel(joins);
+                        mContactsDatabase.saveContactEmailContactLabelBlocking(joins);
                     })
                     .doOnError(throwable ->
                             getJobManager().addJobInBackground(new SetMembersForContactGroupJob(contactGroupId, contactGroupName, membersList)))

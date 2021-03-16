@@ -36,7 +36,8 @@ class ServerMessageTest {
             Body = "Body",
             ToList = listOf(MessageRecipient("User1", "user1@protonmail.com"), MessageRecipient("User2", "user2@pm.me")),
             CCList = listOf(MessageRecipient("User3", "user3@protonmail.com")),
-            BCCList = listOf()
+            BCCList = listOf(),
+            Unread = 1
         )
 
         val actual = serverMessage.toMessagePayload()
@@ -48,7 +49,8 @@ class ServerMessageTest {
             "Body",
             listOf(MessageRecipient("User1", "user1@protonmail.com"), MessageRecipient("User2", "user2@pm.me")),
             listOf(MessageRecipient("User3", "user3@protonmail.com")),
-            listOf()
+            listOf(),
+            1
         )
 
         assertMessagePayloadEquality(expected, actual)

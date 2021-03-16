@@ -24,19 +24,20 @@ import android.os.Bundle
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.fragments.BaseFragment
 import ch.protonmail.android.api.models.MessageRecipient
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.contacts.IContactsFragment
 import ch.protonmail.android.contacts.IContactsListFragmentListener
 import ch.protonmail.android.contacts.groups.details.ContactGroupDetailsActivity
@@ -48,31 +49,23 @@ import ch.protonmail.android.utils.extensions.setDefaultIfEmpty
 import ch.protonmail.android.utils.extensions.showToast
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
-import ch.protonmail.libs.core.utils.ViewModelProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_contacts_groups.*
 import timber.log.Timber
 import java.io.Serializable
-import javax.inject.Inject
 
 // region constants
 private const val TAG_CONTACT_GROUPS_FRAGMENT = "ProtonMail.ContactGroupsFragment"
 // endregion
 
-/*
- * Created by kadrikj on 8/24/18.
- */
-
 @AndroidEntryPoint
 class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
-    @Inject
-    lateinit var contactGroupsViewModelFactory: ContactGroupsViewModelFactory
-    private lateinit var contactGroupsViewModel: ContactGroupsViewModel
     private lateinit var contactGroupsAdapter: ContactsGroupsListAdapter
+    private val contactGroupsViewModel: ContactGroupsViewModel by viewModels()
     override var actionMode: ActionMode? = null
         private set
-    
+
     private val listener: IContactsListFragmentListener by lazy {
         requireActivity() as IContactsListFragmentListener
     }
@@ -82,9 +75,7 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         position: Int,
         id: Long,
         checked: Boolean
-    ) {
-        // NOOP
-    }
+    ) = Unit
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         when (item?.itemId) {
@@ -94,7 +85,8 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
                     requireContext().resources.getQuantityString(
                         R.plurals.are_you_sure_delete_group,
                         contactGroupsAdapter.getSelectedItems!!.toList().size,
-                        contactGroupsAdapter.getSelectedItems!!.toList().size)
+                        contactGroupsAdapter.getSelectedItems!!.toList().size
+                    )
                 ) {
                     onDelete()
                     mode!!.finish()
@@ -135,13 +127,12 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         UiUtil.setStatusBarColor(
             activity as AppCompatActivity,
             ContextCompat.getColor(requireContext(), R.color.dark_purple_statusbar)
-
         )
 
         listener.setTitle(getString(R.string.contacts))
     }
 
-    override fun onContactPermissionChange(hasPermission: Boolean) { }
+    override fun onContactPermissionChange(hasPermission: Boolean) {}
 
     override fun getLayoutResourceId() = R.layout.fragment_contacts_groups
 
@@ -149,22 +140,14 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
 
     override fun getSearchListener(): ISearchListenerViewModel = contactGroupsViewModel
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        contactGroupsViewModel = ViewModelProvider(this, contactGroupsViewModelFactory)
-            .get(ContactGroupsViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initAdapter()
     }
 
     override fun onStart() {
         super.onStart()
         startObserving()
-    }
-
-    companion object {
-
-        fun newInstance() = ContactGroupsFragment()
     }
 
     private fun initAdapter() {
@@ -197,24 +180,24 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
     }
 
     private fun startObserving() {
-        contactGroupsViewModel.contactGroupsResult.observe(this, {
-            Timber.v("contactGroupsResult $it")
-            if (it.isEmpty()) {
+        contactGroupsViewModel.contactGroupsResult.observe(this) { list ->
+            Timber.d("contactGroupsResult size: ${list.size}")
+            if (list.isEmpty()) {
                 noResults.visibility = VISIBLE
             } else {
                 noResults.visibility = GONE
             }
-            listener.dataUpdated(1, it?.size ?: 0)
-            contactGroupsAdapter.setData(it ?: ArrayList())
-        })
+            listener.dataUpdated(1, list?.size ?: 0)
+            contactGroupsAdapter.setData(list ?: ArrayList())
+        }
 
-        contactGroupsViewModel.contactGroupsError.observe(this, { event ->
-            event?.getContentIfNotHandled()?.let { it ->
+        contactGroupsViewModel.contactGroupsError.observe(this) { event ->
+            event?.getContentIfNotHandled()?.let {
+                Timber.i("contactGroupsResult Error: $it")
                 context?.showToast(it.setDefaultIfEmpty(getString(R.string.default_error_message)))
             }
-        })
-        contactGroupsViewModel.fetchContactGroups(ThreadSchedulers.main())
-        contactGroupsViewModel.watchForJoins(ThreadSchedulers.main())
+        }
+        contactGroupsViewModel.observeContactGroups()
     }
 
     private fun onContactGroupSelect() {
@@ -234,7 +217,6 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
         startActivity(AppUtil.decorInAppIntent(detailsIntent))
     }
 
-
     override fun onDelete() {
         contactGroupsViewModel.deleteSelected(contactGroupsAdapter.getSelectedItems!!.toList())
     }
@@ -245,23 +227,31 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             context?.showToast(R.string.paid_plan_needed)
             return
         }
-        contactGroupsViewModel.contactGroupEmailsResult.observe(this, { event ->
-            event?.getContentIfNotHandled()?.let {
+        contactGroupsViewModel.contactGroupEmailsResult.observe(this) { event ->
+            event?.getContentIfNotHandled()?.let { list ->
+                Timber.v("Contact email list received $list")
                 composeIntent.putExtra(
-                    ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS, it.asSequence().map { email ->
-                    MessageRecipient(email.name, email.email, contactGroup.name)
-                }.toList() as Serializable
+                    ComposeMessageActivity.EXTRA_TO_RECIPIENT_GROUPS,
+                    list.asSequence().map { email ->
+                        MessageRecipient(email.name, email.email, contactGroup.name)
+                    }.toList() as Serializable
                 )
                 startActivity(AppUtil.decorInAppIntent(composeIntent))
                 contactGroupsViewModel.contactGroupEmailsResult.removeObservers(this)
             }
-        })
+        }
 
-        contactGroupsViewModel.contactGroupEmailsError.observe(this, { event ->
-            event?.getContentIfNotHandled()?.let {
-                context?.showToast(it.setDefaultIfEmpty(getString(R.string.default_error_message)))
+        contactGroupsViewModel.contactGroupEmailsError.observe(this) { event ->
+            event?.getContentIfNotHandled()?.let { message ->
+                context?.showToast(
+                    if (message.isNotBlank()) {
+                        message
+                    } else {
+                        getString(R.string.default_error_message)
+                    }
+                )
             }
-        })
+        }
 
         contactGroupsViewModel.getContactGroupEmails(contactGroup)
     }
@@ -272,5 +262,9 @@ class ContactGroupsFragment : BaseFragment(), IContactsFragment {
             actionMode!!.finish()
             actionMode = null
         }
+    }
+
+    companion object {
+        fun newInstance() = ContactGroupsFragment()
     }
 }

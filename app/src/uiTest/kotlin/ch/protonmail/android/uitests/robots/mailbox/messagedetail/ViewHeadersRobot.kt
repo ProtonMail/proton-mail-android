@@ -20,7 +20,7 @@ package ch.protonmail.android.uitests.robots.mailbox.messagedetail
 
 import ch.protonmail.android.R
 import ch.protonmail.android.uitests.robots.mailbox.sent.SentRobot
-import ch.protonmail.android.uitests.testsHelper.UIActions
+import ch.protonmail.android.uitests.testsHelper.uiactions.UIActions
 
 /**
  * [ViewHeadersRobot] class contains actions and verifications for View Headers functionality.
