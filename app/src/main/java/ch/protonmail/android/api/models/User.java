@@ -177,6 +177,12 @@ public class User {
     public static User load(Id userId, Context context) {
         final SharedPreferences securePrefs =
                 SecureSharedPreferences.Companion.getPrefsForUser(context, userId);
+
+        final String userName = securePrefs.getString(PREF_USER_NAME, "");
+        if (TextUtils.isEmpty(userName)) {
+            throw new IllegalStateException("Cannot load user with empty name/username");
+        }
+
         final User user = new User();
         user.name = securePrefs.getString(PREF_USER_NAME, "");
         user.username = user.name;

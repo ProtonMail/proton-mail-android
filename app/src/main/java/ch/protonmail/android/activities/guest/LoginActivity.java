@@ -18,9 +18,6 @@
  */
 package ch.protonmail.android.activities.guest;
 
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
-import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -75,6 +72,9 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.text.Charsets;
 import timber.log.Timber;
+
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_LOGIN_FINISHED;
+import static ch.protonmail.android.core.UserManagerKt.LOGIN_STATE_TO_INBOX;
 
 @AndroidEntryPoint
 public class LoginActivity extends BaseLoginActivity {
@@ -316,7 +316,7 @@ public class LoginActivity extends BaseLoginActivity {
                 }
                 hideProgress();
                 userManager.setCurrentUserLoginState(LOGIN_STATE_LOGIN_FINISHED);
-                userManager.saveKeySaltBlocking(new Id(event.getUser().getId()), event.getKeySalt());
+                userManager.saveKeySaltBlocking(event.getUserId(), event.getKeySalt());
                 Intent mailboxLoginIntent = new Intent(this, MailboxLoginActivity.class);
                 mailboxLoginIntent.putExtra(MailboxLoginActivity.EXTRA_KEY_SALT, event.getKeySalt());
                 startActivity(AppUtil.decorInAppIntent(mailboxLoginIntent));

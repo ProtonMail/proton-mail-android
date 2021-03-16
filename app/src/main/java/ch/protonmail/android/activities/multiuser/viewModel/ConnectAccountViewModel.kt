@@ -18,11 +18,12 @@
  */
 package ch.protonmail.android.activities.multiuser.viewModel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import ch.protonmail.android.api.models.LoginInfoResponse
 import ch.protonmail.android.core.UserManager
 
-class ConnectAccountViewModel(
+class ConnectAccountViewModel @ViewModelInject constructor(
     private val userManager: UserManager
 ) : ViewModel() {
 

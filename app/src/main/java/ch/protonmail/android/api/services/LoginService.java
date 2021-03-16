@@ -18,9 +18,6 @@
  */
 package ch.protonmail.android.api.services;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -108,6 +105,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import kotlin.text.Charsets;
 import timber.log.Timber;
+
+import static ch.protonmail.android.BuildConfig.SAFETY_NET_API_KEY;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @AndroidEntryPoint
 public class LoginService extends ProtonJobIntentService {
@@ -208,7 +208,7 @@ public class LoginService extends ProtonJobIntentService {
             handleLoginInfo(username, password.getBytes(Charsets.UTF_8), fallbackAuthVersion);
         } else if (ACTION_MAILBOX_LOGIN.equals(action)) {
             final String mailboxPassword = intent.getStringExtra(EXTRA_MAILBOX_PASSWORD);
-            final Id userId = new Id(intent.getStringExtra(EXTRA_USERNAME));
+            final Id userId = new Id(intent.getStringExtra(EXTRA_USER_ID));
             final String keySalt = intent.getStringExtra(EXTRA_KEY_SALT);
             final boolean signUp = intent.getBooleanExtra(EXTRA_SIGNUP, false);
             handleMailboxLogin(userId, mailboxPassword.getBytes(Charsets.UTF_8), keySalt, signUp);
@@ -498,6 +498,7 @@ public class LoginService extends ProtonJobIntentService {
                     if (!foundErrorCode && loginResponse.isValid() && ConstantTime.isEqual(proofs.expectedServerProof, Base64.decode(loginResponse.getServerProof(), Base64.DEFAULT))) {
                         // handling valid login response
                         Id userId = new Id(loginResponse.getUserID());
+                        loginHelperData.userId = userId;
                         userManager.setCurrentUserBlocking(userId); // all calls after this do not have to rely on username
                         tokenManager = TokenManager.Companion.getInstance(getApplicationContext(), userId);
                         tokenManager.handleLogin(loginResponse);
@@ -646,6 +647,7 @@ public class LoginService extends ProtonJobIntentService {
                     boolean foundErrorCode = AppUtil.checkForErrorCodes(loginResponse.getCode(), loginResponse.getError());
                     if (!foundErrorCode && loginResponse.isValid() && ConstantTime.isEqual(proofs.expectedServerProof, Base64.decode(loginResponse.getServerProof(), Base64.DEFAULT))) {
                         Id userId = new Id(loginResponse.getUserID());
+                        loginHelperData.userId = userId;
                         // handling valid login response
                         userManager.setCurrentUserBlocking(userId);
                         tokenManager = userManager.getTokenManagerBlocking(userId);
@@ -671,6 +673,7 @@ public class LoginService extends ProtonJobIntentService {
         }
 
         Id userId = findUserIdForUsername.blocking(new Name(username));
+        loginHelperData.userId = userId;
         handleAfterConnect(infoResponse, loginHelperData, userId, password, fallbackAuthVersion);
     }
 
@@ -782,14 +785,34 @@ public class LoginService extends ProtonJobIntentService {
             if (loginHelperData.redirectToSetup) {
                 try {
                     AddressesResponse addressResponse = api.fetchAddressesBlocking();
-                    User user = loginHelperData.user;
-                    AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, loginHelperData.keySalt, loginHelperData.redirectToSetup,
-                            user, username, loginHelperData.domainName, addressResponse.getAddresses()));
+                    AppUtil.postEventOnUi(
+                            new LoginEvent(
+                                    AuthStatus.FAILED,
+                                    loginHelperData.keySalt,
+                                    loginHelperData.redirectToSetup,
+                                    loginHelperData.userId,
+                                    loginHelperData.user,
+                                    username,
+                                    loginHelperData.domainName,
+                                    addressResponse.getAddresses()
+                            )
+                    );
                 } catch (Exception e) {
                     Timber.e(e);
                 }
             } else {
-                AppUtil.postEventOnUi(new LoginEvent(AuthStatus.FAILED, null, false, null, username, null, null));
+                AppUtil.postEventOnUi(
+                        new LoginEvent(
+                                AuthStatus.FAILED,
+                                null,
+                                false,
+                                loginHelperData.userId,
+                                null,
+                                username,
+                                null,
+                                null
+                        )
+                );
                 userManager.logoutBlocking(findUserIdForUsername.blocking(new Name(username)));
             }
             return;
@@ -804,7 +827,18 @@ public class LoginService extends ProtonJobIntentService {
 
             startInfo(username, password, newFallback);
         } else if (loginHelperData.postLoginEvent) {
-            AppUtil.postEventOnUi(new LoginEvent(loginHelperData.status, loginHelperData.keySalt, loginHelperData.redirectToSetup, loginHelperData.user, username, loginHelperData.domainName, null));
+            AppUtil.postEventOnUi(
+                    new LoginEvent(
+                            loginHelperData.status,
+                            loginHelperData.keySalt,
+                            loginHelperData.redirectToSetup,
+                            loginHelperData.userId,
+                            loginHelperData.user,
+                            username,
+                            loginHelperData.domainName,
+                            null
+                    )
+            );
         }
     }
 
@@ -882,7 +916,7 @@ public class LoginService extends ProtonJobIntentService {
             if (isConnecting) {
                 if (loginResponse.getPasswordMode() == Constants.PasswordMode.SINGLE && !TextUtils.isEmpty(keySalt)) {
                     connectAccountMailboxLogin(userId, currentPrimaryUserId, password, keySalt);
-                    return new LoginHelperData(status, keySalt, redirectToSetup, user, domainName, false);
+                    return new LoginHelperData(userId, status, keySalt, redirectToSetup, user, domainName, false);
                 }
             } else {
                 if (signUp || (loginResponse.getPasswordMode() == Constants.PasswordMode.SINGLE && !TextUtils.isEmpty(keySalt))) {
@@ -894,7 +928,7 @@ public class LoginService extends ProtonJobIntentService {
                     } else {
                         handleMailboxLogin(userId, password, keySalt, false);
                     }
-                    return new LoginHelperData(status, keySalt, redirectToSetup, user, domainName, false);
+                    return new LoginHelperData(userId, status, keySalt, redirectToSetup, user, domainName, false);
                 }
             }
 
@@ -904,7 +938,7 @@ public class LoginService extends ProtonJobIntentService {
             status = AuthStatus.FAILED;
         }
 
-        return new LoginHelperData(status, keySalt, redirectToSetup, user, domainName);
+        return new LoginHelperData(userId, status, keySalt, redirectToSetup, user, domainName);
     }
 
     private void handleKeysSetup(String addressId, byte[] password) {
@@ -1002,21 +1036,43 @@ public class LoginService extends ProtonJobIntentService {
 // endregion
 
     static class LoginHelperData {
-        AuthStatus status = AuthStatus.FAILED;
-        String keySalt = null;
-        boolean redirectToSetup = false;
-        User user = null;
-        String domainName = null;
-        boolean postLoginEvent = true;
+        Id userId;
+        AuthStatus status;
+        String keySalt;
+        boolean redirectToSetup;
+        User user;
+        String domainName;
+        boolean postLoginEvent;
 
         LoginHelperData() {
+            this(null);
         }
 
-        LoginHelperData(AuthStatus status, String keySalt, boolean redirectToSetup, User user, String domainName) {
-            this(status, keySalt, redirectToSetup, user, domainName, true);
+        LoginHelperData(Id userId) {
+            this(userId, AuthStatus.FAILED, null, false, null, null);
         }
 
-        LoginHelperData(AuthStatus status, String keySalt, boolean redirectToSetup, User user, String domainName, boolean postLoginEvent) {
+        LoginHelperData(
+                Id userId,
+                AuthStatus status,
+                String keySalt,
+                boolean redirectToSetup,
+                User user,
+                String domainName
+        ) {
+            this(userId, status, keySalt, redirectToSetup, user, domainName, true);
+        }
+
+        LoginHelperData(
+                Id userId,
+                AuthStatus status,
+                String keySalt,
+                boolean redirectToSetup,
+                User user,
+                String domainName,
+                boolean postLoginEvent
+        ) {
+            this.userId = userId;
             this.status = status;
             this.keySalt = keySalt;
             this.redirectToSetup = redirectToSetup;
