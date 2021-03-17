@@ -79,6 +79,8 @@ import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
+import ch.protonmail.android.data.local.ContactsDao;
+import ch.protonmail.android.data.local.ContactsDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.user.User;
 import ch.protonmail.android.domain.entity.user.UserKey;
@@ -94,6 +96,7 @@ import ch.protonmail.android.events.MailboxLoginEvent;
 import ch.protonmail.android.events.PasswordChangeEvent;
 import ch.protonmail.android.events.RequestTimeoutEvent;
 import ch.protonmail.android.events.Status;
+import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
 import ch.protonmail.android.fcm.FcmUtil;
@@ -164,7 +167,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private String mCurrentLocale;
     private AlertDialog forceUpgradeDialog;
 
-    private ContactsDatabase contactsDatabase;
+    private ContactsDao contactsDao;
     private MessagesDatabase messagesDatabase;
 
     @NonNull
@@ -216,7 +219,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         ViewStateStoreConfig.INSTANCE
                 .setErrorStateGenerator(ErrorStateGeneratorsKt.getErrorStateGenerator());
 
-        contactsDatabase = ContactsDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
+        contactsDao = ContactsDatabase.Companion.getInstance(getApplicationContext()).getDao();
         messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
 
         FileUtils.createDownloadsDir(this);

@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+
 import ch.protonmail.android.api.ProtonMailApiManager;
 import ch.protonmail.android.api.models.ContactEncryptedData;
 import ch.protonmail.android.api.models.MailSettings;
@@ -42,12 +44,15 @@ import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.enumerations.MIMEType;
 import ch.protonmail.android.api.models.enumerations.PackageType;
 import ch.protonmail.android.api.models.room.contacts.ContactEmail;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
+import ch.protonmail.android.data.local.ContactsDao;
+import ch.protonmail.android.data.local.model.ContactEmail;
+import ch.protonmail.android.data.local.model.FullContactDetails;
+import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.domain.entity.user.Addresses;
@@ -66,7 +71,7 @@ public class SendPreferencesFactory {
     private UserManager mUserManager;
     private MailSettings mailSettings;
     private UserCrypto crypto;
-    private final ContactsDatabase contactsDatabase;
+    private final ContactsDao contactsDao;
     private String username;
 
     @AssistedInject
@@ -74,14 +79,14 @@ public class SendPreferencesFactory {
             ProtonMailApiManager api,
             UserManager userManager,
             @Assisted String username,
-            ContactsDatabase contactsDatabase
+            ContactsDao contactsDao
     ) {
         this.mApi = api;
         this.mUserManager = userManager;
         this.username = username;
         this.mailSettings = userManager.getMailSettings(username);
         this.crypto = Crypto.forUser(userManager, username);
-        this.contactsDatabase = contactsDatabase;
+        this.contactsDao = contactsDao;
     }
 
     @AssistedInject.Factory
@@ -140,7 +145,7 @@ public class SendPreferencesFactory {
         Map<String, String> contactIDs = new HashMap<>();
         for (String email : emails) {
             Address address = getAddress(email);
-            ContactEmail contactEmail = contactsDatabase.findContactEmailByEmail(email);
+            ContactEmail contactEmail = contactsDao.findContactEmailByEmail(email);
             if (address != null || contactEmail == null ) {
                 continue;
             }
@@ -161,7 +166,7 @@ public class SendPreferencesFactory {
                 continue;
             }
             FullContactDetails contact = contactDetails.get(contactID).getContact();
-            contactsDatabase.insertFullContactDetails(contact);
+            contactsDao.insertFullContactDetails(contact);
             result.put(email, contact);
         }
         return result;

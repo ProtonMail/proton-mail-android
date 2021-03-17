@@ -32,9 +32,9 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants.CONTACTS_PAGE_SIZE
+import ch.protonmail.android.data.local.ContactsDao
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit

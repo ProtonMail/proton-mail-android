@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,7 +24,7 @@ import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
+import ch.protonmail.android.api.models.room.contacts.ContactDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert
@@ -37,8 +37,8 @@ import kotlin.test.Test
  */
 class ContactGroupsDatabaseTest {
     private val context = InstrumentationRegistry.getTargetContext()
-    private val databaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabaseFactory::class.java).build()
-    private val database = databaseFactory.getDatabase()
+    private val databaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabase::class.java).build()
+    private val database = databaseFactory.getDao()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()

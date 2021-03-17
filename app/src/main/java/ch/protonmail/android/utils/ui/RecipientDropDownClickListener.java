@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -31,9 +31,9 @@ import androidx.appcompat.widget.PopupMenu;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.api.models.room.contacts.ContactEmail;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
 import ch.protonmail.android.contacts.details.ContactDetailsActivity;
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
+import ch.protonmail.android.data.local.ContactsDao;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
@@ -44,15 +44,15 @@ import ch.protonmail.android.utils.extensions.TextExtensions;
 public class RecipientDropDownClickListener implements View.OnClickListener {
 
     private final Context mContext;
-    private final ContactsDatabase contactsDatabase;
+    private final ContactsDao contactsDao;
     private final String mRecipientEmail;
     @Nullable
     private OpenContactDetailsTask openContactDetailsTask;
 
-    public RecipientDropDownClickListener(Context context, ContactsDatabase contactsDatabase,
+    public RecipientDropDownClickListener(Context context, ContactsDao contactsDao,
                                           String recipientEmail) {
         mContext = context;
-        this.contactsDatabase = contactsDatabase;
+        this.contactsDao = contactsDao;
         mRecipientEmail = recipientEmail;
     }
 
@@ -78,7 +78,7 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
                     }
 
                     OpenContactDetailsTask current = new OpenContactDetailsTask(
-                            RecipientDropDownClickListener.this.contactsDatabase,
+                            RecipientDropDownClickListener.this.contactsDao,
                             mRecipientEmail, this::openContactDetails);
                     current.execute();
                     openContactDetailsTask = current;
@@ -105,14 +105,14 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
 
     private static class OpenContactDetailsTask extends AsyncTask<Void,Void,ContactEmail> {
 
-        private final ContactsDatabase contactsDatabase;
+        private final ContactsDao contactsDao;
         private final String recipientEmail;
         @Nullable
         private ContactEmailListener onContactObtained;
 
-        OpenContactDetailsTask(ContactsDatabase contactsDatabase, String recipientEmail,
+        OpenContactDetailsTask(ContactsDao contactsDao, String recipientEmail,
                                @NonNull ContactEmailListener onContactObtained) {
-            this.contactsDatabase = contactsDatabase;
+            this.contactsDao = contactsDao;
             this.onContactObtained = onContactObtained;
             this.recipientEmail = recipientEmail;
         }
@@ -125,7 +125,7 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
 
         @Override
         protected ContactEmail doInBackground(Void... voids) {
-            return contactsDatabase.findContactEmailByEmail(recipientEmail);
+            return contactsDao.findContactEmailByEmail(recipientEmail);
         }
 
         @Override

@@ -55,8 +55,6 @@ import ch.protonmail.android.activities.labelsManager.LabelsManagerActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.api.models.room.counters.CounterDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
@@ -69,6 +67,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
+import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -115,7 +115,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     var settingsUiList: List<SettingsItemUiModel> = ArrayList()
 
-    var contactsDatabase: ContactsDatabase? = null
+    var contactsDao: ContactsDao? = null
     var messagesDatabase: MessagesDatabase? = null
     private var searchDatabase: MessagesDatabase? = null
     private var notificationsDatabase: NotificationsDatabase? = null
@@ -155,7 +155,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext).getDatabase()
+        contactsDao = ContactsDatabase.getInstance(applicationContext).getDao()
         messagesDatabase = MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
         searchDatabase = MessagesDatabaseFactory.getSearchDatabase(applicationContext).getDatabase()
         notificationsDatabase = NotificationsDatabaseFactory.getInstance(applicationContext).getDatabase()
@@ -415,7 +415,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showToast(R.string.processing_request, gravity = Gravity.CENTER)
                 if (canClick.getAndSet(false)) {
                     AppUtil.clearStorage(
-                        contactsDatabase,
+                        contactsDao,
                         messagesDatabase,
                         searchDatabase,
                         notificationsDatabase,

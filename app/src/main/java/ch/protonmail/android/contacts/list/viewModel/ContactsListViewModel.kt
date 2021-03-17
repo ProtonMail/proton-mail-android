@@ -31,6 +31,7 @@ import ch.protonmail.android.contacts.list.progress.ProgressLiveData
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.IAndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
+import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.worker.DeleteContactWorker
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -41,7 +42,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ContactsListViewModel @Inject constructor(
-    private val contactsDao: ContactsDao,
+    private val contactDao: ContactDao,
     private val workManager: WorkManager,
     private val androidContactsRepository: IAndroidContactsRepository<ContactItem>,
     private val androidContactsDetailsRepository: AndroidContactDetailsRepository,

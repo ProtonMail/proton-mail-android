@@ -46,8 +46,6 @@ import java.util.Locale;
 
 import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
 import ch.protonmail.android.api.models.room.counters.CounterDao;
 import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
@@ -62,6 +60,8 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
+import ch.protonmail.android.data.local.ContactsDao;
+import ch.protonmail.android.data.local.ContactsDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -168,7 +168,7 @@ public class AppUtil {
     private static void deleteDatabases(Context context, String username, IDBClearDone clearDoneListener, boolean clearContacts) {
         try {
             if (!TextUtils.isEmpty(username)) {
-                clearStorage(ContactsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
+                clearStorage(ContactsDatabase.Companion.getInstance(context, username).getDao(),
                         MessagesDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
                         NotificationsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
@@ -177,7 +177,7 @@ public class AppUtil {
                         PendingActionsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         clearDoneListener, clearContacts);
             } else {
-                clearStorage(ContactsDatabaseFactory.Companion.getInstance(context).getDatabase(),
+                clearStorage(ContactsDatabase.Companion.getInstance(context).getDao(),
                         MessagesDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
                         NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase(),
@@ -320,7 +320,7 @@ public class AppUtil {
     }
 
     public static void clearStorage(
-            final ContactsDatabase contactsDatabase,
+            final ContactsDao contactsDao,
             final MessagesDatabase messagesDatabase,
             final MessagesDatabase searchDatabase,
             final NotificationsDatabase notificationsDatabase,
@@ -329,12 +329,12 @@ public class AppUtil {
             final PendingActionsDatabase pendingActionsDatabase,
             final boolean clearContacts
     ) {
-        clearStorage(contactsDatabase, messagesDatabase, searchDatabase, notificationsDatabase, counterDao,
+        clearStorage(contactsDao, messagesDatabase, searchDatabase, notificationsDatabase, counterDao,
                 attachmentMetadataDao, pendingActionsDatabase, null, clearContacts);
     }
 
     private static void clearStorage(
-            final ContactsDatabase contactsDatabase,
+            final ContactsDao contactsDao,
             final MessagesDatabase messagesDatabase,
             final MessagesDatabase searchDatabase,
             final NotificationsDatabase notificationsDatabase,
@@ -351,11 +351,11 @@ public class AppUtil {
                 pendingActionsDatabase.clearPendingSendCache();
                 pendingActionsDatabase.clearPendingUploadCache();
                 if (clearContacts) {
-                    contactsDatabase.clearContactEmailsLabelsJoin();
-                    contactsDatabase.clearContactEmailsCacheBlocking();
-                    contactsDatabase.clearContactDataCache();
-                    contactsDatabase.clearContactGroupsLabelsTableBlocking();
-                    contactsDatabase.clearFullContactDetailsCache();
+                    contactsDao.clearContactEmailsLabelsJoin();
+                    contactsDao.clearContactEmailsCacheBlocking();
+                    contactsDao.clearContactDataCache();
+                    contactsDao.clearContactGroupsLabelsTableBlocking();
+                    contactsDao.clearFullContactDetailsCache();
                 }
                 messagesDatabase.clearMessagesCache();
                 messagesDatabase.clearAttachmentsCache();

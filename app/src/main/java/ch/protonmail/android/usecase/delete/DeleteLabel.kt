@@ -22,8 +22,8 @@ package ch.protonmail.android.usecase.delete
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.work.WorkInfo
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
 import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.utils.extensions.filter
 import ch.protonmail.android.worker.DeleteLabelWorker
 import kotlinx.coroutines.ensureActive
@@ -39,7 +39,7 @@ import javax.inject.Named
  */
 class DeleteLabel @Inject constructor(
     private val dispatchers: DispatcherProvider,
-    private val contactsDatabase: ContactsDatabase,
+    private val contactsDao: ContactsDao,
     @Named("messages") private val messagesDatabase: MessagesDatabase,
     private val deleteLabelWorker: DeleteLabelWorker.Enqueuer
 ) {
@@ -51,10 +51,10 @@ class DeleteLabel @Inject constructor(
             labelIds.forEach { labelId ->
                 ensureActive()
 
-                val contactLabel = contactsDatabase.findContactGroupById(labelId)
+                val contactLabel = contactsDao.findContactGroupById(labelId)
                 contactLabel?.let { label ->
                     Timber.v("Delete DB contact group $label")
-                    contactsDatabase.deleteContactGroup(label)
+                    contactsDao.deleteContactGroup(label)
                 }
                 Timber.v("Delete DB label $labelId")
                 messagesDatabase.deleteLabelById(labelId)

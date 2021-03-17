@@ -32,8 +32,6 @@ import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
 import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED
@@ -46,6 +44,8 @@ import ch.protonmail.android.contacts.repositories.andorid.details.IAndroidConta
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.crypto.Crypto
+import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
@@ -80,11 +80,11 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
     @Throws(Throwable::class)
     override fun onRun() {
 
-        val contactsDatabase = ContactsDatabaseFactory.getInstance(
-                applicationContext).getDatabase()
-        val crypto = Crypto.forUser(getUserManager(), getUserManager().currentUserId)
+        val currentUser = getUserManager().requireCurrentUserId()
+        val contactsDatabase = ContactsDatabase.getInstance(applicationContext, currentUser).getDao()
+        val crypto = Crypto.forUser(getUserManager(), currentUser)
 
-        val executionResults = ContactsDatabaseFactory.getInstance(applicationContext).runInTransaction<List<Int>> {
+        val executionResults = ContactsDatabase.getInstance(applicationContext, currentUser).runInTransaction<List<Int>> {
 
             val contactsGroups = getLocalContactsGroups()
             val contactGroupsOnServer = uploadLocalContactsGroupsAndGetIds(contactsGroups)
@@ -252,7 +252,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 someGroupsAlreadyExist = true
             } else {
                 result[it.value] = response.contactGroup.ID
-                ContactsDatabaseFactory.getInstance(applicationContext).getDatabase().saveContactGroupLabel(response.contactGroup)
+                ContactsDatabase.getInstance(applicationContext).getDao().saveContactGroupLabel(response.contactGroup)
             }
         }
 
@@ -274,46 +274,46 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
     }
 
     @ContactEvent.Status
-    private fun handleResponse(contactsDatabase: ContactsDatabase, response: ContactResponse,
+    private fun handleResponse(contactsDao: ContactsDao, response: ContactResponse,
                                contactDataDbId: Long, contactGroupIds: List<String>): Int {
         val remoteContactId = response.contactId
-        val previousContactData = contactsDatabase.findContactDataByDbId(contactDataDbId)
+        val previousContactData = contactsDao.findContactDataByDbId(contactDataDbId)
         if (remoteContactId != "") {
-            val contactEmails = contactsDatabase.findContactEmailsByContactId(
+            val contactEmails = contactsDao.findContactEmailsByContactId(
                     previousContactData!!.contactId!!)
             previousContactData.contactId = remoteContactId
-            contactsDatabase.saveContactData(previousContactData)
-            contactsDatabase.deleteAllContactsEmails(contactEmails)
+            contactsDao.saveContactData(previousContactData)
+            contactsDao.deleteAllContactsEmails(contactEmails)
             val responses = response.responses
             for (contactResponse in responses) {
                 val contact = contactResponse.response.contact
-                contactsDatabase.saveAllContactsEmailsBlocking(contact.emails!!)
+                contactsDao.saveAllContactsEmailsBlocking(contact.emails!!)
                 contactGroupIds.forEach { contactGroupId ->
                     val emailsList = contact.emails!!.map { it.contactEmailId }
                     getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
                             .doOnComplete {
-                                val joins = contactsDatabase.fetchJoins(contactGroupId) as ArrayList
+                                val joins = contactsDao.fetchJoins(contactGroupId) as ArrayList
                                 for (contactEmail in emailsList) {
                                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                                 }
-                                contactsDatabase.saveContactEmailContactLabelBlocking(joins)
+                                contactsDao.saveContactEmailContactLabelBlocking(joins)
                             }
                             .blockingAwait()
                 }
             }
             return ContactEvent.SUCCESS
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_EXIST || response.responseErrorCode == RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL) {
-            contactsDatabase.deleteContactData(previousContactData!!)
+            contactsDao.deleteContactData(previousContactData!!)
             return ContactEvent.ALREADY_EXIST
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL || response
                         .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED) {
-            contactsDatabase.deleteContactData(previousContactData!!)
+            contactsDao.deleteContactData(previousContactData!!)
             return ContactEvent.INVALID_EMAIL
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED) {
-            contactsDatabase.deleteContactData(previousContactData!!)
+            contactsDao.deleteContactData(previousContactData!!)
             return ContactEvent.DUPLICATE_EMAIL
         } else if (response.responseErrorCode != Constants.RESPONSE_CODE_OK) {
-            contactsDatabase.deleteContactData(previousContactData!!)
+            contactsDao.deleteContactData(previousContactData!!)
             return ContactEvent.ERROR
         } else {
             return ContactEvent.SAVED

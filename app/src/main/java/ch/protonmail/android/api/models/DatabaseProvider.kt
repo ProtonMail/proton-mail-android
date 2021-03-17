@@ -19,25 +19,24 @@
 package ch.protonmail.android.api.models
 
 import android.content.Context
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory
+import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.FindUsernameForUserId
+import me.proton.core.util.kotlin.unsupported
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * Provider of DAOs and Databases, use this instead of old *Factory classes.
- *
- * This class and its functions are "open" only because Mockito needs it.
  */
 @Singleton
 class DatabaseProvider @Inject constructor(
@@ -45,19 +44,27 @@ class DatabaseProvider @Inject constructor(
     private val findUsernameForUserId: FindUsernameForUserId
 ) {
 
-    fun provideContactsDao(userId: Id? = null): ContactsDao =
-        provideContactsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
+    fun provideContactsDatabase(userId: Id): ContactsDatabase =
+        ContactsDatabase.getInstance(context, userId)
 
-    @Deprecated("Get by user Id", ReplaceWith("provideContactsDao(userId)"))
+    fun provideContactsDao(userId: Id): ContactsDao =
+        provideContactsDatabase(userId).getDao()
+
+    @Deprecated(
+        "Get by user Id",
+        ReplaceWith("provideContactsDao(userId)"),
+        DeprecationLevel.ERROR
+    )
     fun provideContactsDao(username: String?): ContactsDao =
-        ContactsDatabaseFactory.getInstance(context, username).getDatabase()
+        unsupported
 
-    fun provideContactsDatabase(userId: Id? = null) =
-        provideContactsDatabase(userId?.let { findUsernameForUserId.blocking(it) }?.s)
-
-    @Deprecated("Get by user Id", ReplaceWith("provideContactsDatabase(userId)"))
-    fun provideContactsDatabase(username: String?) =
-        ContactsDatabaseFactory.getInstance(context, username)
+    @Deprecated(
+        "Get by user Id",
+        ReplaceWith("provideContactsDatabase(userId)"),
+        DeprecationLevel.ERROR
+    )
+    fun provideContactsDatabase(username: String?): ContactsDatabase =
+        unsupported
 
     fun provideMessagesDao(userId: Id? = null): MessagesDao =
         provideMessagesDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)

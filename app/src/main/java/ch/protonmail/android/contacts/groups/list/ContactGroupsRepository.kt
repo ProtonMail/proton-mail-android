@@ -19,10 +19,8 @@
 package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.model.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -31,11 +29,11 @@ import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
     private val api: ProtonMailApiManager,
-    private val contactsDao: ContactsDao,
+    private val contactDao: ContactDao,
     private val dispatchers: DispatcherProvider
 ) {
 
-    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactsDao.fetchJoins()
+    fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.fetchJoins()
 
     fun observeContactGroups(filter: String): Flow<List<ContactLabel>> =
         contactsDao.findContactGroupsFlow("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")

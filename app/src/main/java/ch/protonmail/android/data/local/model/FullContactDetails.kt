@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models.room.contacts
+package ch.protonmail.android.data.local.model
 
+import android.util.Base64
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.enumerations.ContactEncryption
 import ch.protonmail.android.crypto.UserCrypto
@@ -30,6 +32,12 @@ import com.proton.gopenpgp.armor.Armor
 import ezvcard.Ezvcard
 import ezvcard.VCard
 import me.proton.core.util.kotlin.equalsNoCase
+import timber.log.Timber
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 
 const val TABLE_FULL_CONTACT_DETAILS = "fullContactsDetails"
 const val COLUMN_CONTACT_ID = "ID"
@@ -134,4 +142,32 @@ data class FullContactDetails @Ignore constructor(
 
     private fun getClearData(cards: List<ContactEncryptedData>): String? =
         cards.find { it.encryptionType == ContactEncryption.CLEARTEXT }?.data
+}
+
+class FullContactDetailsConverter {
+
+    @TypeConverter
+    fun contactEncryptedDataListToString(contactEncryptedDataList: List<ContactEncryptedData>?): String? {
+        val out = ByteArrayOutputStream()
+        try {
+            val encryptedDataArray = contactEncryptedDataList?.toTypedArray() ?: arrayOf()
+            ObjectOutputStream(out).writeObject(encryptedDataArray)
+        } catch (e: IOException) {
+            Timber.e("Serialization of encrypted data failed ", e)
+        }
+
+        return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT)
+    }
+
+    @TypeConverter
+    fun stringToContactEncryptedDataList(contactEncryptedDataString: String?): List<ContactEncryptedData>? {
+        return try {
+            val inputStream = ByteArrayInputStream(Base64.decode(contactEncryptedDataString, Base64.DEFAULT))
+            val resultArray = ObjectInputStream(inputStream).readObject() as Array<ContactEncryptedData>
+            resultArray.toList()
+        } catch (e: Exception) {
+            Timber.e("DeSerialization of recipients failed", e)
+            null
+        }
+    }
 }

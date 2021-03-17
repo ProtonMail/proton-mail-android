@@ -25,11 +25,11 @@ import ch.protonmail.android.api.models.PublicKeyResponse
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField

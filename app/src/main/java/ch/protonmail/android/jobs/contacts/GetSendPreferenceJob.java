@@ -29,7 +29,7 @@ import ch.protonmail.android.api.models.MailSettings;
 import ch.protonmail.android.api.models.ResponseBody;
 import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.factories.SendPreferencesFactory;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
+import ch.protonmail.android.data.local.ContactsDao;
 import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.contacts.SendPreferencesEvent;
 import ch.protonmail.android.jobs.Priority;
@@ -45,7 +45,7 @@ import static ch.protonmail.android.api.segments.BaseApiKt.RESPONSE_CODE_RECIPIE
 
 public class GetSendPreferenceJob extends ProtonMailBaseJob {
 
-	private final ContactsDatabase contactsDatabase;
+	private final ContactsDao contactsDao;
     private final List<String> mEmails;
     private final Destination mDestination;
 
@@ -53,9 +53,9 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
         TO, CC, BCC
     }
 
-    public GetSendPreferenceJob(ContactsDatabase contactsDatabase,List<String> emails,Destination destination) {
+    public GetSendPreferenceJob(ContactsDao contactsDao, List<String> emails, Destination destination) {
         super(new Params(Priority.HIGH).requireNetwork());
-		this.contactsDatabase=contactsDatabase;
+		this.contactsDao = contactsDao;
 		mEmails = emails;
         mDestination = destination;
     }
@@ -63,7 +63,7 @@ public class GetSendPreferenceJob extends ProtonMailBaseJob {
     @Override
     public void onRun() throws Throwable {
         MailSettings mailSettings = getUserManager().getMailSettings();
-        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().getUsername(), contactsDatabase);
+        SendPreferencesFactory factory = new SendPreferencesFactory(getApi(), getUserManager(), getUserManager().getUsername(), mailSettings, contactsDao);
         Map<String, SendPreference> sendPreferenceMap = new HashMap<>();
         sendPreferenceMap.put(mEmails.get(0), null);
         try {

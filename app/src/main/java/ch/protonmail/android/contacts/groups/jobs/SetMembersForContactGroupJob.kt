@@ -20,9 +20,9 @@ package ch.protonmail.android.contacts.groups.jobs
 
 import android.text.TextUtils
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.jobs.Priority
 import ch.protonmail.android.jobs.ProtonMailBaseJob
 import ch.protonmail.android.utils.extensions.ifNullElse
@@ -37,7 +37,7 @@ class SetMembersForContactGroupJob(
 ) : ProtonMailBaseJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_LABEL)) {
 
     override fun onRun() {
-        val contactsDatabase = ContactsDatabaseFactory.getInstance(applicationContext).getDatabase()
+        val contactsDatabase = ContactsDatabase.getInstance(applicationContext).getDao()
         var id = contactGroupId
         if (TextUtils.isEmpty(id)) {
             val contactLabel = contactsDatabase.findContactGroupByName(contactGroupName)

@@ -22,9 +22,9 @@ package ch.protonmail.android.usecase.fetch
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.PublicKeyBody
 import ch.protonmail.android.api.models.enumerations.KeyFlag
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
+import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.utils.crypto.KeyInformation
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider

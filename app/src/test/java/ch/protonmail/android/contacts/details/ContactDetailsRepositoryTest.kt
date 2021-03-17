@@ -23,7 +23,7 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
+import ch.protonmail.android.data.local.ContactsDao
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
 import io.mockk.coVerify

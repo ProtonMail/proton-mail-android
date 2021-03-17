@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -24,6 +24,8 @@ import androidx.test.InstrumentationRegistry
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.*
+import ch.protonmail.android.data.local.model.*
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.`is`
 import org.junit.Assert
@@ -32,12 +34,12 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.BeforeTest
 
-internal class ContactsDatabaseTest {
+internal class ContactsDaoTest {
 
     private val context = InstrumentationRegistry.getTargetContext()
-    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabaseFactory::class.java).build()
-    private var database = databaseFactory.getDatabase()
-    private val initiallyEmptyDatabase = databaseFactory.getDatabase()
+    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabase::class).build()
+    private var database = databaseFactory.getDao()
+    private val initiallyEmptyDatabase = databaseFactory.getDao()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -158,7 +160,7 @@ internal class ContactsDatabaseTest {
         FullContactDetails("f")
     )
 
-    private fun ContactsDatabase.populate() {
+    private fun ContactDao.populate() {
         runBlocking {
             saveAllContactsData(contactData)
             saveAllContactsEmails(contactEmails)

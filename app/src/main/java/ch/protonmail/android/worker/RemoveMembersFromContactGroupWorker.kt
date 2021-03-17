@@ -32,7 +32,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.send.LabelContactsBody
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
+import ch.protonmail.android.data.local.ContactsDao
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
@@ -55,7 +55,7 @@ class RemoveMembersFromContactGroupWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactsDatabase: ContactsDatabase,
+    private val contactsDao: ContactsDao,
     private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
@@ -69,7 +69,7 @@ class RemoveMembersFromContactGroupWorker @WorkerInject constructor(
 
         if (id.isEmpty() && contactGroupName?.isNotEmpty() == true) {
             val contactLabel = withContext(dispatchers.Io) {
-                contactsDatabase.findContactGroupByName(contactGroupName)
+                contactsDao.findContactGroupByName(contactGroupName)
             }
             id = contactLabel?.ID ?: ""
         }

@@ -27,9 +27,9 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DeleteContactResponse
 import ch.protonmail.android.api.models.room.contacts.ContactData
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactsDatabase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
@@ -51,10 +51,10 @@ class DeleteContactWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @RelaxedMockK
-    private lateinit var contactsDbFactory: ContactsDatabaseFactory
+    private lateinit var contactsDbFactory: ContactsDatabase
 
     @MockK
-    private lateinit var contactsDb: ContactsDatabase
+    private lateinit var contactsDb: ContactsDao
 
     @MockK
     private lateinit var api: ProtonMailApiManager

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models.room.contacts
+package ch.protonmail.android.data.local.model
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -42,27 +42,37 @@ const val TABLE_CONTACT_LABEL = "ContactLabel"
 
 @Entity(
     tableName = TABLE_CONTACT_LABEL,
-    indices = [(Index(COLUMN_LABEL_ID, unique = true))]
+    indices = [Index(COLUMN_LABEL_ID, unique = true)]
 )
 data class ContactLabel @JvmOverloads constructor(
+
     @ColumnInfo(name = COLUMN_LABEL_ID)
     @PrimaryKey
     var ID: String = "",
+
     @ColumnInfo(name = COLUMN_LABEL_NAME)
     var name: String = "",
+
     @ColumnInfo(name = COLUMN_LABEL_COLOR)
     var color: String = "",
+
     @ColumnInfo(name = COLUMN_LABEL_DISPLAY)
     var display: Int = 0,
+
     @ColumnInfo(name = COLUMN_LABEL_ORDER)
     var order: Int = 0,
+
     @ColumnInfo(name = COLUMN_LABEL_EXCLUSIVE)
     var exclusive: Boolean = false,
+
     @ColumnInfo(name = COLUMN_LABEL_TYPE)
     var type: Int = 1
+
 ) : Parcelable, Serializable {
+
     var contactEmailsCount: Int = 0
     var contactDataCount: Int = 0
+
     @Ignore
     var isSelected: ContactEmailGroupSelectionState = ContactEmailGroupSelectionState.DEFAULT
 
@@ -94,13 +104,11 @@ data class ContactLabel @JvmOverloads constructor(
     override fun describeContents(): Int = 0
 
     companion object CREATOR : Parcelable.Creator<ContactLabel> {
-        override fun createFromParcel(parcel: Parcel): ContactLabel {
-            return ContactLabel(parcel)
-        }
 
-        override fun newArray(size: Int): Array<ContactLabel?> {
-            return arrayOfNulls(size)
-        }
+        override fun createFromParcel(parcel: Parcel): ContactLabel =
+            ContactLabel(parcel)
+
+        override fun newArray(size: Int): Array<ContactLabel?> =
+            arrayOfNulls(size)
     }
-
 }
