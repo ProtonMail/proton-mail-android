@@ -17,21 +17,9 @@
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
 
-package ch.protonmail.android.mailbox.domain
+package ch.protonmail.android.mailbox.domain.model
 
-import ch.protonmail.android.mailbox.domain.model.Correspondent
-import ch.protonmail.android.mailbox.domain.model.MessageEntity
-
-data class Conversation(
-    val id: String,
-    val subject: String,
-    val senders: List<Correspondent>,
-    val receivers: List<Correspondent>,
-    val messagesCount: Int,
-    val unreadCount: Int,
-    val attachmentsCount: Int,
-    val expirationTime: Long,
-    val addressId: String,
-    val labelIds: List<String>,
-    val messages: List<MessageEntity>?
+data class Correspondent(
+    val name: String,
+    val address: String
 )
