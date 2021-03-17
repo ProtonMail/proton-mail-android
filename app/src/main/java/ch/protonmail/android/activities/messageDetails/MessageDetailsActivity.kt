@@ -46,7 +46,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.WorkInfo
 import ch.protonmail.android.R
 import ch.protonmail.android.activities.BaseStoragePermissionActivity
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
+import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment
 import ch.protonmail.android.activities.dialogs.ManageLabelsDialogFragment.ILabelCreationListener
@@ -546,7 +546,7 @@ internal class MessageDetailsActivity :
         if (messageRecipientUsername != null) {
             val mailboxIntent = AppUtil.decorInAppIntent(Intent(this, MailboxActivity::class.java))
             mailboxIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            mailboxIntent.putExtra(EXTRA_SWITCHED_USER, true)
+            mailboxIntent.putExtra(EXTRA_HAS_SWITCHED_USER, true)
             startActivity(mailboxIntent)
         }
         finish()

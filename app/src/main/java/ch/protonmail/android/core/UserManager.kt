@@ -562,7 +562,7 @@ class UserManager @Inject constructor(
         DeprecationLevel.ERROR
     )
     fun connectAccountMailboxLogin(username: String, currentPrimary: String, mailboxPassword: String, keySalt: String) {
-        LoginService.startConnectAccountMailboxLogin(username, currentPrimary, mailboxPassword, keySalt)
+        unsupported
     }
 
     suspend fun switchTo(userId: Id) {
@@ -644,13 +644,13 @@ class UserManager @Inject constructor(
     }
 
     suspend fun logoutOffline(userId: Id) = withContext(dispatchers.Io) {
-        val nextUser = getNextLoggedInUser()
+        val nextUserId = getNextLoggedInUser()
 
         if (currentUserId !in accountManager.allLoggedIn()) {
             return@withContext
         }
 
-        if (nextUser == null) {
+        if (nextUserId == null) {
             isLoggedIn = false
             currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
             saveCurrentUserBackupSettings()
@@ -666,12 +666,13 @@ class UserManager @Inject constructor(
             AppUtil.postEventOnUi(LogoutEvent(Status.SUCCESS))
             TokenManager.clearAllInstances()
         } else {
-            val oldUser = requireNotNull(currentUserId)
+            val oldUser = requireCurrentUser()
             accountManager.setLoggedOut(userId)
             AppUtil.deleteSecurePrefs(preferencesFor(userId), false)
             deleteDatabases(app, userId)
-            setCurrentUser(nextUser)
-            val event = SwitchUserEvent(from = oldUser, to = nextUser)
+            setCurrentUser(nextUserId)
+            val nextUser = loadUser(nextUserId)
+            val event = SwitchUserEvent(from = oldUser.id to oldUser.name, to = nextUser.id to nextUser.name)
             ForceSwitchedAccountNotifier.notifier.postValue(event)
             TokenManager.clearInstance(userId)
         }

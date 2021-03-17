@@ -62,6 +62,7 @@ import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingF
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
 import ch.protonmail.android.storage.AttachmentClearingService;
@@ -232,6 +233,15 @@ public class AppUtil {
         new ClearNotificationsFromDatabaseTask(notificationsDatabase).execute();
     }
 
+    public static void clearNotifications(Context context, Id userId) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(userId.hashCode());
+        final NotificationsDatabase notificationsDatabase = NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
+        new ClearNotificationsFromDatabaseTask(notificationsDatabase).execute();
+    }
+
+    @Deprecated
+    @kotlin.Deprecated(message = "Use with user Id")
     public static void clearNotifications(Context context, String username) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(username.hashCode());
@@ -244,6 +254,15 @@ public class AppUtil {
         notificationManager.cancel(notificationId);
     }
 
+    public static void clearSendingFailedNotifications(Context context, Id userId) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
+        final SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase = SendingFailedNotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
+        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationsDatabase).execute();
+    }
+
+    @Deprecated
+    @kotlin.Deprecated(message = "Use with user Id")
     public static void clearSendingFailedNotifications(Context context, String username) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED);

@@ -28,7 +28,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat.startActivity
 import ch.protonmail.android.R
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
+import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.REQUEST_CODE_ACCOUNT_MANAGER
 import ch.protonmail.android.activities.REQUEST_CODE_SWITCHED_USER
 import ch.protonmail.android.activities.multiuser.AccountManagerActivity
@@ -146,7 +146,7 @@ internal class AccountsAdapter :
                 val activity = context as Activity
                 val intent = Intent(context, ConnectAccountActivity::class.java)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    .putExtra(EXTRA_SWITCHED_USER, true)
+                    .putExtra(EXTRA_HAS_SWITCHED_USER, true)
                 startActivityForResult(
                     activity,
                     AppUtil.decorInAppIntent(intent),

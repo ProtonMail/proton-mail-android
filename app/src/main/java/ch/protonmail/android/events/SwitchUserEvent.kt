@@ -20,5 +20,9 @@
 package ch.protonmail.android.events
 
 import ch.protonmail.android.domain.entity.Id
+import ch.protonmail.android.domain.entity.Name
 
-data class SwitchUserEvent(val from: Id, val to: Id)
+data class SwitchUserEvent(
+    val from: Pair<Id, Name>,
+    val to: Pair<Id, Name>
+)

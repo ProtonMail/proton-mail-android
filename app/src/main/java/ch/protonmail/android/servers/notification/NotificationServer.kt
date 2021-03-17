@@ -40,8 +40,8 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import ch.protonmail.android.R
+import ch.protonmail.android.activities.EXTRA_HAS_SWITCHED_USER
 import ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER
-import ch.protonmail.android.activities.EXTRA_SWITCHED_USER
 import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity
 import ch.protonmail.android.activities.mailbox.MailboxActivity
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
@@ -51,6 +51,7 @@ import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingF
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.receivers.EXTRA_NOTIFICATION_DELETE_MESSAGE
 import ch.protonmail.android.utils.buildArchiveIntent
 import ch.protonmail.android.utils.buildReplyIntent
@@ -63,7 +64,13 @@ import ch.protonmail.android.api.models.room.notifications.Notification as RoomN
 
 const val CHANNEL_ID_EMAIL = "emails"
 const val EXTRA_MAILBOX_LOCATION = "mailbox_location"
+@Deprecated(
+    "Use user Id",
+    ReplaceWith("EXTRA_USER_ID", "ch.protonmail.android.servers.notification.EXTRA_USER_ID"),
+    DeprecationLevel.ERROR
+)
 const val EXTRA_USERNAME = "username"
+const val EXTRA_USER_ID = "user.id"
 const val NOTIFICATION_ID_SENDING_FAILED = 680
 private const val CHANNEL_ID_ONGOING_OPS = "ongoingOperations"
 private const val CHANNEL_ID_ACCOUNT = "account"
@@ -72,6 +79,7 @@ private const val NOTIFICATION_ID_SAVE_DRAFT_ERROR = 6812
 private const val NOTIFICATION_GROUP_ID_EMAIL = 99
 private const val NOTIFICATION_ID_VERIFICATION = 2
 private const val NOTIFICATION_ID_LOGGED_OUT = 3
+// endregion
 
 /**
  * A class that is responsible for creating notification channels, and creating and showing notifications.
@@ -448,7 +456,7 @@ class NotificationServer @Inject constructor(
         loggedInUser: User,
         unreadNotifications: List<RoomNotification>
     ) {
-        val contentPendingIntent = getMailboxActivityIntent(userManager.username, loggedInUser.username)
+        val contentPendingIntent = getMailboxActivityIntent(userManager.requireCurrentUserId(), Id(loggedInUser.id))
 
         // Prepare Notification info
         val notificationTitle = context.getString(R.string.new_emails, unreadNotifications.size)
@@ -514,7 +522,7 @@ class NotificationServer @Inject constructor(
     }
 
     private fun createGenericErrorSendingMessageNotification(
-        username: String
+        userId: Id
     ): NotificationCompat.Builder {
 
         // Create channel and get id
@@ -523,13 +531,13 @@ class NotificationServer @Inject constructor(
         // Create content Intent to open Drafts
         val contentIntent = Intent(context, MailboxActivity::class.java)
         contentIntent.putExtra(EXTRA_MAILBOX_LOCATION, Constants.MessageLocationType.DRAFT.messageLocationTypeValue)
-        contentIntent.putExtra(EXTRA_USERNAME, username)
+        contentIntent.putExtra(EXTRA_USER_ID, userId.s)
 
         val stackBuilder = TaskStackBuilder.create(context)
             .addParentStack(MailboxActivity::class.java)
             .addNextIntent(contentIntent)
 
-        val contentPendingIntent = stackBuilder.getPendingIntent(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentPendingIntent = stackBuilder.getPendingIntent(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED, PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Set Notification's colors
         val mainColor = context.getColorCompat(R.color.ocean_blue)
@@ -550,11 +558,12 @@ class NotificationServer @Inject constructor(
             .setSummaryText(username)
             .bigText(error)
 
-        val notificationBuilder = createGenericErrorSendingMessageNotification(username)
+        // Create notification builder
+        val notificationBuilder = createGenericErrorSendingMessageNotification(Id(user.id))
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()
-        notificationManager.notify(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
+        notificationManager.notify(user.id.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
     override fun notifyMultipleErrorSendingMessage(
@@ -571,7 +580,7 @@ class NotificationServer @Inject constructor(
             .bigText(createSpannableBigText(unreadSendingFailedNotifications))
 
         // Create notification builder
-        val notificationBuilder = createGenericErrorSendingMessageNotification(user.username)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(Id(user.id))
             .setStyle(bigTextStyle)
 
         // Build and show notification
@@ -579,7 +588,7 @@ class NotificationServer @Inject constructor(
         notificationManager.notify(user.username.hashCode() + NOTIFICATION_ID_SENDING_FAILED, notification)
     }
 
-    override fun notifySaveDraftError(errorMessage: String, messageSubject: String?, username: String) {
+    override fun notifySaveDraftError(userId: Id, errorMessage: String, messageSubject: String?, username: String) {
         val title = context.getString(R.string.failed_saving_draft_online, messageSubject)
 
         val bigTextStyle = NotificationCompat.BigTextStyle()
@@ -587,7 +596,7 @@ class NotificationServer @Inject constructor(
             .setSummaryText(username)
             .bigText(errorMessage)
 
-        val notificationBuilder = createGenericErrorSendingMessageNotification(username)
+        val notificationBuilder = createGenericErrorSendingMessageNotification(userId)
             .setStyle(bigTextStyle)
 
         val notification = notificationBuilder.build()

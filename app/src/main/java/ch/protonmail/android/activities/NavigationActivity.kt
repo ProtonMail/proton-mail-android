@@ -71,6 +71,7 @@ import ch.protonmail.android.utils.extensions.app
 import ch.protonmail.android.utils.resettableLazy
 import ch.protonmail.android.utils.resettableManager
 import ch.protonmail.android.utils.ui.dialogs.DialogUtils
+import ch.protonmail.android.utils.ui.dialogs.DialogUtils.Companion.showTwoButtonInfoDialog
 import ch.protonmail.android.views.DrawerHeaderView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.drawer_header.*
@@ -84,10 +85,19 @@ import javax.inject.Inject
 import ch.protonmail.android.api.models.User as OldUser
 
 // region constants
-const val EXTRA_FIRST_LOGIN = "EXTRA_FIRST_LOGIN"
-const val EXTRA_SWITCHED_USER = "EXTRA_SWITCHED_USER"
+const val EXTRA_FIRST_LOGIN = "extra.first.login"
+const val EXTRA_HAS_SWITCHED_USER = "extra.has.switched.user"
+@Deprecated(
+    "Use 'EXTRA_SWITCHED_TO_USER_ID'",
+    ReplaceWith(
+        "EXTRA_SWITCHED_TO_USER_ID",
+        "ch.protonmail.android.activities.EXTRA_SWITCHED_TO_USER_ID"
+    ),
+    DeprecationLevel.ERROR
+)
 const val EXTRA_SWITCHED_TO_USER = "EXTRA_SWITCHED_TO_USER"
-const val EXTRA_LOGOUT = "EXTRA_LOGOUT"
+const val EXTRA_SWITCHED_TO_USER_ID = "extra.switched.to.user.id"
+const val EXTRA_LOGOUT = "extra.logout"
 
 const val REQUEST_CODE_ACCOUNT_MANAGER = 997
 const val REQUEST_CODE_SWITCHED_USER = 999
@@ -245,7 +255,6 @@ abstract class NavigationActivity :
     }
 
     protected fun switchAccount(userId: Id, username: String) {
-        app.clearPaymentMethods()
         lifecycleScope.launchWhenCreated {
             userManager.switchTo(userId)
             onSwitchedAccounts()
@@ -302,7 +311,7 @@ abstract class NavigationActivity :
             )
         )
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START)
-        setUpInitialDrawerItems(checkNotNull(userManager.getCurrentOldUserBlocking()).isUsePin)
+        setUpInitialDrawerItems(checkNotNull(userManager.getCurrentLegacyUserBlocking()).isUsePin)
         refreshDrawer()
 
         // LayoutManager set from xml
@@ -441,7 +450,7 @@ abstract class NavigationActivity :
     }
 
     @Deprecated(
-        "User with \"new\" User",
+        "Use with \"new\" User",
         ReplaceWith("refreshDrawerHeader(currentUser)"),
         DeprecationLevel.ERROR
     )
