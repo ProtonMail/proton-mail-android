@@ -19,7 +19,7 @@
 package ch.protonmail.android.uitests.robots.mailbox
 
 import android.view.View
-import android.widget.LinearLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
@@ -59,7 +59,7 @@ object MailboxMatchers {
             }
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
-                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.subjectTextView)
                 val actualSubject = messageSubjectView.text.toString()
                 return if (messageSubjectView != null) {
                     messagesList.add(actualSubject)
@@ -85,11 +85,9 @@ object MailboxMatchers {
             val messagesList = ArrayList<String>()
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder?, mismatchDescription: Description?): Boolean {
-                val messageSubjectView = item!!.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val messageSubjectView = item!!.itemView.findViewById<TextView>(R.id.subjectTextView)
                 val actualSubject = messageSubjectView.text.toString()
-                val flagView = item.itemView.findViewById<LinearLayout>(R.id.messageTitleContainerLinearLayout)
-                    .findViewById<LinearLayout>(R.id.flow_indicators_container)
-                    .findViewById<TextView>(id)
+                val flagView = item.itemView.findViewById<ImageView>(id)
                 return if (messageSubjectView != null) {
                     messagesList.add("$actualSubject, flag visibility: ${flagView.visibility}")
                     subject == actualSubject && flagView.visibility == View.VISIBLE
@@ -115,6 +113,7 @@ object MailboxMatchers {
      * @param subject - message subject
      * @param id - the view id of Reply, Reply all or Forward [TextView].
      */
+    // TODO: Rewrite this to work well with location icons with MAILAND-1422. The test that uses this matcher is temporarily ignored.
     fun withMessageSubjectAndLocation(subject: String, locationText: String): Matcher<RecyclerView.ViewHolder> {
         return object : BoundedDiagnosingMatcher<RecyclerView.ViewHolder,
             MessagesListViewHolder.MessageViewHolder>(MessagesListViewHolder.MessageViewHolder::class.java) {
@@ -122,14 +121,13 @@ object MailboxMatchers {
             val messagesList = ArrayList<String>()
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder?, mismatchDescription: Description?): Boolean {
-                val messageSubjectView = item!!.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val messageSubjectView = item!!.itemView.findViewById<TextView>(R.id.subjectTextView)
                 val actualSubject = messageSubjectView.text.toString()
-                val locationView = item.itemView.findViewById<LinearLayout>(R.id.messageTitleContainerLinearLayout)
-                    .findViewById<LinearLayout>(R.id.flow_indicators_container)
-                    .findViewById<TextView>(R.id.messageLocationTextView)
+                val locationView = item.itemView.findViewById<ImageView>(R.id.firstLocationImageView)
                 return if (messageSubjectView != null) {
-                    messagesList.add("$actualSubject, location: ${locationView.text}")
-                    subject == actualSubject && locationView.text == locationText
+//                    messagesList.add("$actualSubject, location: ${locationView.text}")
+//                    subject == actualSubject && locationView.text == locationText
+                    subject == actualSubject && locationView.visibility == View.VISIBLE
                 } else {
                     false
                 }
@@ -165,8 +163,8 @@ object MailboxMatchers {
             }
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
-                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
-                val messageToTextView = item.itemView.findViewById<TextView>(R.id.messageSenderTextView)
+                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.subjectTextView)
+                val messageToTextView = item.itemView.findViewById<TextView>(R.id.senderTextView)
                 val actualSubject = messageSubjectView.text.toString()
                 val actualTo = messageToTextView.text.toString()
                 return if (messageSubjectView != null && messageToTextView != null) {
@@ -198,7 +196,7 @@ object MailboxMatchers {
             }
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
-                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.subjectTextView)
                 val actualSubject = messageSubjectView.text.toString()
                 return if (actualSubject.contains(subjectPart)) {
                     true
@@ -230,7 +228,7 @@ object MailboxMatchers {
             }
 
             override fun matchesSafely(item: MessagesListViewHolder.MessageViewHolder): Boolean {
-                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.messageTitleTextView)
+                val messageSubjectView = item.itemView.findViewById<TextView>(R.id.subjectTextView)
                 val actualSubject = messageSubjectView.text.toString()
                 if (messageSubjectView != null) {
                     /** since we need only the first match [alreadyMatched] var acts as a guard for other matches **/

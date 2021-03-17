@@ -43,7 +43,7 @@ class LabelFolderRobot : MailboxRobotInterface {
             UIActions
                 .recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
-                    R.id.messages_list_view,
+                    R.id.mailboxRecyclerView,
                     withMessageSubjectAndLocation(subject, location)
                 )
         }

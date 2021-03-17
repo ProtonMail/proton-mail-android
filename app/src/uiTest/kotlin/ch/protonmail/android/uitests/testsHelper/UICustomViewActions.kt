@@ -133,9 +133,9 @@ object UICustomViewActions {
             val recyclerView = view as RecyclerView
             val layoutManager = recyclerView.layoutManager as LinearLayoutManager
             val messageSubject = layoutManager.getChildAt(position)
-                ?.findViewById<TextView>(R.id.messageTitleTextView)?.text.toString()
+                ?.findViewById<TextView>(R.id.subjectTextView)?.text.toString()
             val messageDate = layoutManager.getChildAt(position)
-                ?.findViewById<TextView>(R.id.messageDateTextView)?.text.toString()
+                ?.findViewById<TextView>(R.id.subjectTextView)?.text.toString()
             saveSubject.invoke(messageSubject, messageDate)
         }
     }
@@ -163,8 +163,8 @@ object UICustomViewActions {
             for (i in 0..recyclerView.adapter!!.itemCount) {
                 val item = recyclerView.getChildAt(i)
                 if (item != null) {
-                    messageSubject = item.findViewById<TextView>(R.id.messageTitleTextView).text.toString()
-                    messageDate = item.findViewById<TextView>(R.id.messageDateTextView).text.toString()
+                    messageSubject = item.findViewById<TextView>(R.id.subjectTextView).text.toString()
+                    messageDate = item.findViewById<TextView>(R.id.subjectTextView).text.toString()
                     isMatches = messageSubject == subject && messageDate == date
                     if (isMatches) {
                         break

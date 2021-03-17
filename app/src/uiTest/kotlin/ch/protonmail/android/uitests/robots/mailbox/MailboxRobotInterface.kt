@@ -95,7 +95,7 @@ interface MailboxRobotInterface : CoreRobot {
     }
 
     fun clickFirstMatchedMessageBySubject(subject: String): MessageRobot {
-        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.messages_list_view)).waitUntilGone()
+        view.instanceOf(ImageView::class.java).withParent(view.withId(R.id.mailboxRecyclerView)).waitUntilGone()
         recyclerView
             .withId(messagesRecyclerViewId)
             .waitUntilPopulated()
@@ -128,7 +128,7 @@ interface MailboxRobotInterface : CoreRobot {
         }
 
         fun mailboxLayoutShown() {
-            view.withId(R.id.swipe_refresh_layout).wait()
+            view.withId(R.id.mailboxSwipeRefreshLayout).wait()
         }
 
         fun messageDeleted(subject: String, date: String) {
@@ -149,7 +149,7 @@ interface MailboxRobotInterface : CoreRobot {
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
-                    withMessageSubjectAndFlag(subject, R.id.messageReplyTextView)
+                    withMessageSubjectAndFlag(subject, R.id.replyImageView)
                 )
         }
 
@@ -158,7 +158,7 @@ interface MailboxRobotInterface : CoreRobot {
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
-                    withMessageSubjectAndFlag(subject, R.id.messageReplyAllTextView)
+                    withMessageSubjectAndFlag(subject, R.id.replyAllImageView)
                 )
         }
 
@@ -167,7 +167,7 @@ interface MailboxRobotInterface : CoreRobot {
             UIActions.recyclerView
                 .common.scrollToRecyclerViewMatchedItem(
                     messagesRecyclerViewId,
-                    withMessageSubjectAndFlag(subject, R.id.messageForwardTextView)
+                    withMessageSubjectAndFlag(subject, R.id.forwardImageView)
                 )
         }
 
@@ -217,8 +217,8 @@ interface MailboxRobotInterface : CoreRobot {
         var deletedMessageSubject = ""
         var deletedMessageDate = ""
 
-        private const val messagesRecyclerViewId = R.id.messages_list_view
-        private const val messageTitleTextViewId = R.id.messageTitleTextView
+        private const val messagesRecyclerViewId = R.id.mailboxRecyclerView
+        private const val messageTitleTextViewId = R.id.subjectTextView
         private const val drawerLayoutId = R.id.drawer_layout
     }
 }
