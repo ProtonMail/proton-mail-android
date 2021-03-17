@@ -76,17 +76,6 @@ class MessageDetailsRepository @Inject constructor(
 
     private var messagesDao: MessagesDao = databaseProvider.provideMessageDao()
 
-    /**
-     * Reloads all statically required dependencies when currently active user changes.
-     */
-    @Deprecated("Use new function for User Id",
-        ReplaceWith("reloadDependenciesForUserId(userId: Id)")
-    )
-    fun reloadDependenciesForUser(username: String?) {
-        pendingActionDatabase = databaseProvider.providePendingActionDao(username)
-        messagesDao = databaseProvider.provideMessageDao(username)
-    }
-
     fun reloadDependenciesForUser(userId: Id) {
         pendingActionDatabase = databaseProvider.providePendingActionDao(userId)
         messagesDao = databaseProvider.provideMessageDao(userId)

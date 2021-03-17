@@ -52,7 +52,7 @@ public class PostSpamJob extends ProtonMailCounterJob {
     @Override
     public void onAdded() {
         final CounterDao counterDao = CounterDatabase.Companion
-                .getInstance(getApplicationContext())
+                .getInstance(getApplicationContext(), userId)
                 .getDao();
         int totalUnread = 0;
         for (String id : mMessageIds) {

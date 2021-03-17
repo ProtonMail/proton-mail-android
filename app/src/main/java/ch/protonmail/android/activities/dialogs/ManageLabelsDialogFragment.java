@@ -53,6 +53,7 @@ import butterknife.OnClick;
 import ch.protonmail.android.R;
 import ch.protonmail.android.adapters.LabelColorsAdapter;
 import ch.protonmail.android.adapters.LabelsAdapter;
+import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Label;
@@ -65,6 +66,9 @@ import static ch.protonmail.android.viewmodel.ManageLabelsDialogViewModel.ViewSt
 
 @AndroidEntryPoint
 public class ManageLabelsDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
+
+    @Inject
+    UserManager userManager;
 
     public static final String ARGUMENT_CHECKED_LABELS = "ch.protonmail.android.ARG_CHECKED_LABELS";
     public static final String ARGUMENT_NUMBER_SELECTED_MESSAGES = "ch.protonmail.android.ARG_NUMBER_SELECTED_MESSAGES";
@@ -178,7 +182,9 @@ public class ManageLabelsDialogFragment extends AbstractDialogFragment implement
         mList.setOnItemLongClickListener(labelItemLongClick);
         mColorsGrid.setOnItemClickListener(this);
         mArchiveCheckbox.setNumberOfStates(2);
-        MessageDao messageDao = MessageDatabase.Companion.getInstance(getContext().getApplicationContext()).getDao();
+        MessageDao messageDao = MessageDatabase.Companion
+                .getInstance(requireContext().getApplicationContext(), userManager.requireCurrentUserId())
+                .getDao();
         messageDao.getAllLabels().observe(this,new LabelsObserver());
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

@@ -48,8 +48,6 @@ import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
-import ch.protonmail.android.data.local.*;
-import ch.protonmail.android.data.local.model.*;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
@@ -57,6 +55,7 @@ import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
+import ch.protonmail.android.data.local.model.Message;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
@@ -94,8 +93,12 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        searchDao = MessageDatabase.Companion.getSearchDatabase(getApplicationContext()).getDao();
-        pendingActionDao = PendingActionDatabase.Companion.getInstance(getApplicationContext()).getDao();
+        searchDao = MessageDatabase.Companion
+                .getSearchDatabase(getApplicationContext(), mUserManager.requireCurrentUserId())
+                .getDao();
+        pendingActionDao = PendingActionDatabase.Companion
+                .getInstance(getApplicationContext(), mUserManager.requireCurrentUserId())
+                .getDao();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

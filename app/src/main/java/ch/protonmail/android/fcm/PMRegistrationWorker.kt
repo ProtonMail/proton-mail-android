@@ -94,7 +94,7 @@ class PMRegistrationWorker @WorkerInject constructor(
                 if (!FcmUtil.isTokenSent(username)) {
                     val request = OneTimeWorkRequestBuilder<PMRegistrationWorker>()
                         .setConstraints(constraints)
-                        .setInputData(workDataOf(KEY_PM_REGISTRATION_WORKER_USERNAME to username))
+                        .setInputData(workDataOf(KEY_PM_REGISTRATION_WORKER_USER_ID to userId.s))
                         .build()
 
                     workManager.enqueue(request)

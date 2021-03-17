@@ -54,7 +54,7 @@ public class AttachmentClearingService extends ProtonJobIntentService {
     public static final String EXTRA_USERNAME = "EXTRA_USERNAME";
 
     @Inject
-    UserManager mUserManager;
+    UserManager userManager;
 
     @Inject
     MessageDetailsRepository messageDetailsRepository;
@@ -68,7 +68,10 @@ public class AttachmentClearingService extends ProtonJobIntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        attachmentMetadataDao = AttachmentMetadataDatabase.Companion.getInstance(this).getDao();
+        Id userId = userManager.requireCurrentUserId();
+        attachmentMetadataDao = AttachmentMetadataDatabase.Companion
+                .getInstance(this, userId)
+                .getDao();
     }
 
     public static void startClearUpImmediatelyService() {
@@ -80,11 +83,11 @@ public class AttachmentClearingService extends ProtonJobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-            if (!mUserManager.isLoggedIn()) {
+            if (!userManager.isLoggedIn()) {
                 return;
             }
             String action = intent.getAction();
-            User user = mUserManager.getUser();
+            User user = userManager.getUser();
             if (ACTION_REGULAR_CHECK.equals(action)) {
                 long currentEmbeddedImagesSize = attachmentMetadataDao.getAllAttachmentsSizeUsed();
                 long maxSize = user.getMaxAllowedAttachmentSpace();

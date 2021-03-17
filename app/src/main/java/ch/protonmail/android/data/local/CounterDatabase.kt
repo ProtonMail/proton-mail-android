@@ -18,14 +18,12 @@
  */
 package ch.protonmail.android.data.local
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import ch.protonmail.android.data.local.model.TotalLabelCounter
 import ch.protonmail.android.data.local.model.TotalLocationCounter
 import ch.protonmail.android.data.local.model.UnreadLabelCounter
 import ch.protonmail.android.data.local.model.UnreadLocationCounter
-import me.proton.core.util.kotlin.unsupported
 
 @Database(
     entities = [
@@ -42,28 +40,5 @@ abstract class CounterDatabase : RoomDatabase() {
     companion object : DatabaseFactory<CounterDatabase>(
         CounterDatabase::class,
         "UnreadCountersDatabase.db"
-    ) {
-
-        @JvmOverloads
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("CounterDatabase.getInstance(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun getInstance(context: Context, username: String? = null): CounterDatabase {
-            unsupported
-        }
-
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("CounterDatabase.deleteDatabase(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun deleteDb(context: Context, username: String) {
-            unsupported
-        }
-
-    }
+    )
 }

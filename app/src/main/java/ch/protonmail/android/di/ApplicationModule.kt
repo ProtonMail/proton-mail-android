@@ -40,6 +40,8 @@ import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.attachments.Armorer
 import ch.protonmail.android.attachments.OpenPgpArmorer
+import ch.protonmail.android.contacts.list.listView.ContactItemListFactory
+import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsLoaderCallbacksFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.core.ProtonMailApplication
@@ -97,6 +99,10 @@ object ApplicationModule {
         "MSlVrBCdL0hKyczvgYVSRNm88RicyY04Q2y5qrBt0xA=",
         "C2UxW0T1Ckl9s+8cXfjXxlEqwAfPM4HiW2y3UdtBeCw="
     )
+
+    @Provides
+    fun androidContactsLoaderCallbacksFactory(context: Context): AndroidContactsLoaderCallbacksFactory =
+        AndroidContactsLoaderCallbacksFactory(context, ContactItemListFactory()::convert)
 
     @Provides
     @AttachmentsDirectory

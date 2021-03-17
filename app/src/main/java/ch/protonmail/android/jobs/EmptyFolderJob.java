@@ -42,8 +42,9 @@ public class EmptyFolderJob extends ProtonMailBaseJob {
     @Override
     public void onAdded() {
         super.onAdded();
-        MessageDao messageDao = MessageDatabase.Companion.getInstance(
-                getApplicationContext()).getDao();
+        MessageDao messageDao = MessageDatabase.Companion
+                .getInstance(getApplicationContext(), userId)
+                .getDao();
 
         if (labelId != null) {
             messageDao.deleteMessagesByLabel(labelId);

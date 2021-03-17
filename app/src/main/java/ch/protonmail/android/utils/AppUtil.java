@@ -48,6 +48,7 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactDao;
@@ -224,26 +225,24 @@ public class AppUtil {
         return activityManager.isInLockTaskMode();
     }
 
+    @Deprecated // Use with User Id
     public static void clearNotifications(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-        final NotificationDao notificationDao = NotificationDatabase.Companion.getInstance(context).getDao();
+        final UserManager userManager = ((ProtonMailApplication) context.getApplicationContext()).getUserManager();
+        final Id userId = userManager.requireCurrentUserId();
+        final NotificationDao notificationDao = NotificationDatabase.Companion
+                .getInstance(context, userId)
+                .getDao();
         new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
     public static void clearNotifications(Context context, Id userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(userId.hashCode());
-        final NotificationDao notificationDao = NotificationDatabase.Companion.getInstance(context).getDao();
-        new ClearNotificationsFromDatabaseTask(notificationDao).execute();
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = "Use with user Id")
-    public static void clearNotifications(Context context, String username) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(username.hashCode());
-        final NotificationDao notificationDao = NotificationDatabase.Companion.getInstance(context).getDao();
+        final NotificationDao notificationDao = NotificationDatabase.Companion
+                .getInstance(context, userId)
+                .getDao();
         new ClearNotificationsFromDatabaseTask(notificationDao).execute();
     }
 
@@ -255,16 +254,9 @@ public class AppUtil {
     public static void clearSendingFailedNotifications(Context context, Id userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
-        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion.getInstance(context).getDao();
-        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationDao).execute();
-    }
-
-    @Deprecated
-    @kotlin.Deprecated(message = "Use with user Id")
-    public static void clearSendingFailedNotifications(Context context, String username) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
-        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion.getInstance(context).getDao();
+        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion
+                .getInstance(context, userId)
+                .getDao();
         new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationDao).execute();
     }
 

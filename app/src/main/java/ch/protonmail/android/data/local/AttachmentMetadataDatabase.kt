@@ -18,11 +18,9 @@
  */
 package ch.protonmail.android.data.local
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import ch.protonmail.android.data.local.model.AttachmentMetadata
-import me.proton.core.util.kotlin.unsupported
 
 @Database(entities = [AttachmentMetadata::class], version = 1)
 abstract class AttachmentMetadataDatabase : RoomDatabase() {
@@ -32,27 +30,5 @@ abstract class AttachmentMetadataDatabase : RoomDatabase() {
     companion object : DatabaseFactory<AttachmentMetadataDatabase>(
         AttachmentMetadataDatabase::class,
         "AttachmentMetadataDatabase.db"
-    ) {
-
-        @JvmOverloads
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("AttachmentMetadataDatabase.getInstance(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun getInstance(context: Context, username: String? = null): AttachmentMetadataDatabase =
-            unsupported
-
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("AttachmentMetadataDatabase.deleteDatabase(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun deleteDb(context: Context, username: String) {
-            unsupported
-        }
-
-    }
+    )
 }

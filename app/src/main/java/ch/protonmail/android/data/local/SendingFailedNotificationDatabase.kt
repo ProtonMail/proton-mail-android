@@ -18,11 +18,9 @@
  */
 package ch.protonmail.android.data.local
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import ch.protonmail.android.data.local.model.SendingFailedNotification
-import me.proton.core.util.kotlin.unsupported
 
 @Database(entities = [SendingFailedNotification::class], version = 1)
 abstract class SendingFailedNotificationDatabase : RoomDatabase() {
@@ -32,26 +30,5 @@ abstract class SendingFailedNotificationDatabase : RoomDatabase() {
     companion object : DatabaseFactory<SendingFailedNotificationDatabase>(
         SendingFailedNotificationDatabase::class,
         "SendingFailedNotificationsDatabase.db"
-    ) {
-
-        @JvmOverloads
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("SendingFailedNotificationDatabase.getInstance(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun getInstance(context: Context, username: String? = null): SendingFailedNotificationDatabase =
-            unsupported
-
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("SendingFailedNotificationDatabase.deleteDatabase(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun deleteDb(context: Context, username: String) {
-            unsupported
-        }
-    }
+    )
 }

@@ -34,6 +34,8 @@ import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.loader.app.LoaderManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Operation

@@ -64,8 +64,9 @@ import ch.protonmail.android.attachments.AttachmentsViewModel;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
-import ch.protonmail.android.data.local.model.*;
-import ch.protonmail.android.data.local.*;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.model.LocalAttachment;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
@@ -195,7 +196,7 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        messageDao = MessageDatabase.Companion.getInstance(getApplicationContext()).getDao();
+        messageDao = MessageDatabase.Companion.getInstance(getApplicationContext(), mUserManager.requireCurrentUserId()).getDao();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

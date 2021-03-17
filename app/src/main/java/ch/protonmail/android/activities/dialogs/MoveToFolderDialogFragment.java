@@ -39,19 +39,23 @@ import androidx.lifecycle.Observer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.adapters.FoldersAdapter;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.model.Label;
+import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Created by dino on 2/20/17.
- */
-
+@AndroidEntryPoint
 public class MoveToFolderDialogFragment extends AbstractDialogFragment implements AdapterView.OnItemClickListener {
+
+    @Inject
+    UserManager userManager;
 
     private static final String ARGUMENT_MESSAGE_LOCATION = "ch.protonmail.android.ARG_LOCATION";
 
@@ -189,8 +193,9 @@ public class MoveToFolderDialogFragment extends AbstractDialogFragment implement
         mList.setOnItemLongClickListener(labelItemLongClick);
         mList.setOnItemClickListener(this);
 
-        final MessageDao messageDao = MessageDatabase.Companion.getInstance(
-                getContext().getApplicationContext()).getDao();
+        final MessageDao messageDao = MessageDatabase.Companion
+                .getInstance(requireContext().getApplicationContext(), userManager.requireCurrentUserId())
+                .getDao();
         messageDao.getAllLabels().observe(this, new LabelsObserver());
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

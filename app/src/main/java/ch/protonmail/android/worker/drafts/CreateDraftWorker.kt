@@ -224,7 +224,7 @@ class CreateDraftWorker @WorkerInject constructor(
 
     private fun reEncryptAttachment(senderAddress: Address, attachment: Attachment): String? {
         val previousSenderAddressId = requireNotNull(getInputPreviousSenderAddressId())
-        val addressCrypto = addressCryptoFactory.create(Id(previousSenderAddressId), Name(userManager.username))
+        val addressCrypto = addressCryptoFactory.create(userId, Id(previousSenderAddressId))
         val primaryKey = senderAddress.keys
         val publicKey = addressCrypto.buildArmoredPublicKey(primaryKey.primaryKey!!.privateKey)
 

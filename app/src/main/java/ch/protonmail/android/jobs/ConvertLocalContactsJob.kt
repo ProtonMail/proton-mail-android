@@ -38,7 +38,7 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_EMAIL_VALIDATION_F
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_GROUP_ALREADY_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_ERROR_INVALID_EMAIL
 import ch.protonmail.android.contacts.list.listView.ContactItem
-import ch.protonmail.android.contacts.repositories.andorid.details.IAndroidContactDetailsRepository
+import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.crypto.Crypto
@@ -63,12 +63,18 @@ import java.io.Serializable
 import java.util.ArrayList
 import java.util.UUID
 
-class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
+class ConvertLocalContactsJob(
+    localContacts: List<ContactItem>
+) : ProtonMailEndlessJob(Params(Priority.MEDIUM).requireNetwork().persist().groupBy(Constants.JOB_GROUP_CONTACT)) {
 
     private val mLocalContacts: List<LocalContactItem>
 
     init {
-        mLocalContacts = localContacts.asSequence().filter { it.contactId != null }.map { LocalContactItem(it.contactId!!, it.getName(), it.getEmail()) }.toList()
+        mLocalContacts = localContacts
+            .asSequence()
+            .filter { it.contactId != null }
+            .map { LocalContactItem(it.contactId!!, it.getName(), it.getEmail()) }
+            .toList()
     }
 
     override fun onAdded() {
@@ -96,8 +102,8 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 val c = ProtonMailApplication.getApplication()
                         .contentResolver
                         .query(ContactsContract.Data.CONTENT_URI,
-                                IAndroidContactDetailsRepository.ANDROID_DETAILS_PROJECTION,
-                                IAndroidContactDetailsRepository.ANDROID_DETAILS_SELECTION,
+                                AndroidContactDetailsRepository.ANDROID_DETAILS_PROJECTION,
+                                AndroidContactDetailsRepository.ANDROID_DETAILS_SELECTION,
                                 arrayOf(contactItem.id), null) ?: continue
 
                 val localContact = createLocalContact(c, contactsGroups)

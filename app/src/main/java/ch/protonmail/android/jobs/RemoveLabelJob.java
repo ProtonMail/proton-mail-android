@@ -69,8 +69,9 @@ public class RemoveLabelJob extends ProtonMailBaseJob {
 
     @Override
     public void onAdded() {
-        final CounterDao counterDao = CounterDatabase.Companion.getInstance(
-                getApplicationContext()).getDao();
+        final CounterDao counterDao = CounterDatabase.Companion
+                .getInstance(getApplicationContext(), userId)
+                .getDao();
 
         int totalUnread = 0;
         for (String messageId : messageIds) {

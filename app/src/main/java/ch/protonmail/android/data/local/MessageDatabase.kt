@@ -28,7 +28,6 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.data.local.model.MessagesTypesConverter
 import ch.protonmail.android.domain.entity.Id
-import me.proton.core.util.kotlin.unsupported
 
 @Database(
 	entities = [Attachment::class, Message::class, Label::class],
@@ -45,38 +44,8 @@ abstract class MessageDatabase : RoomDatabase() {
 	) {
 		private val searchCache = mutableMapOf<Id, MessageDatabase>()
 
-		@JvmOverloads
-		@Synchronized
-		@Deprecated(
-			"Use with user Id",
-			ReplaceWith("MessagesDatabase.getInstance(context, userId)"),
-			DeprecationLevel.ERROR
-		)
-		fun getInstance(context:Context, username: String? = null): MessageDatabase =
-			unsupported
-
 		@Synchronized
 		fun getSearchDatabase(context: Context, userId: Id): MessageDatabase =
 			searchCache.getOrPut(userId) { buildInMemoryDatabase(context) }
-
-		@Synchronized
-		@Deprecated(
-			"Use with user Id",
-			ReplaceWith("MessagesDatabase.getSearchDatabase(context, userId)"),
-			DeprecationLevel.ERROR
-		)
-		fun getSearchDatabase(context: Context): MessageDatabase {
-			unsupported
-		}
-
-		@Synchronized
-		@Deprecated(
-			"Use with user Id",
-			ReplaceWith("MessagesDatabase.deleteDatabase(context, userId)"),
-			DeprecationLevel.ERROR
-		)
-		fun deleteDb(context: Context, username: String) {
-			unsupported
-		}
 	}
 }

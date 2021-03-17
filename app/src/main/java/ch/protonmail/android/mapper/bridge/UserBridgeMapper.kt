@@ -23,6 +23,7 @@ package ch.protonmail.android.mapper.bridge
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.domain.entity.NotBlankString
+import ch.protonmail.android.domain.entity.ValidationException
 import ch.protonmail.android.domain.entity.bytes
 import ch.protonmail.android.domain.entity.user.Delinquent
 import ch.protonmail.android.domain.entity.user.Plan
@@ -46,20 +47,24 @@ class UserBridgeMapper @Inject constructor(
 
     override fun LegacyUser.toNewModel(): User {
 
-        return User(
-            id = Id(id),
-            name = Name(name.takeIfNotBlank() ?: username),
-            addresses = addressMapper { addresses.toNewModel() },
-            keys = keysMapper { keys.toNewModel() },
-            plans = getPlans(services, subscribed),
-            private = private.toBoolean(),
-            role = getRole(role),
-            currency = NotBlankString(currency),
-            credits = credit,
-            delinquent = getDelinquent(delinquentValue),
-            totalUploadLimit = maxUpload.bytes,
-            dedicatedSpace = UserSpace(usedSpace.bytes, maxSpace.bytes)
-        )
+        return try {
+            User(
+                id = Id(id),
+                name = Name(name.takeIfNotBlank() ?: username),
+                addresses = addressMapper { addresses.toNewModel() },
+                keys = keysMapper { keys.toNewModel() },
+                plans = getPlans(services, subscribed),
+                private = private.toBoolean(),
+                role = getRole(role),
+                currency = NotBlankString(currency),
+                credits = credit,
+                delinquent = getDelinquent(delinquentValue),
+                totalUploadLimit = maxUpload.bytes,
+                dedicatedSpace = UserSpace(usedSpace.bytes, maxSpace.bytes)
+            )
+        } catch (e: ValidationException) {
+            throw ValidationException("Cannot map user with id '$id', name '$name' and username '$username'", e)
+        }
     }
 
     @OptIn(ExperimentalStdlibApi::class)

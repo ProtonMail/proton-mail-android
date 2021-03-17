@@ -36,15 +36,20 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     protected val entryPoint get() =
         EntryPoints.get(ProtonMailApplication.getApplication(), JobEntryPoint::class.java)
 
+    // This is needed for the class to be serialized by JobQueue library
+    private val userIdString = userId?.s
+
+    @Transient
+    @JvmField
+    protected val userId: Id? = userIdString?.let(::Id)
+        ?: getUserManager().currentUserId
+
     protected fun getAccountManager() = entryPoint.accountManager()
     protected fun getApi() = entryPoint.apiManager()
     protected fun getJobManager() = entryPoint.jobManager()
     protected fun getMessageDetailsRepository() = entryPoint.messageDetailsRepository()
     protected fun getQueueNetworkUtil() = entryPoint.queueNetworkUtil()
     protected fun getUserManager() = entryPoint.userManager()
-
-    @JvmField
-    protected var userId: Id? = userId ?: getUserManager().currentUserId
 
     override fun onAdded() {}
 
@@ -59,7 +64,7 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
             onProtonCancel(cancelReason, throwable)
 
         } catch (ignored: Exception) {
-            Timber.e(ignored, this.javaClass.name + " threw exception in onProtonCancel")
+            Timber.e(ignored, "%s threw exception in onProtonCancel", this.javaClass.name)
         }
     }
 

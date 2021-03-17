@@ -18,13 +18,11 @@
  */
 package ch.protonmail.android.data.local
 
-import android.content.Context
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import ch.protonmail.android.data.local.model.PendingDraft
 import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.data.local.model.PendingUpload
-import me.proton.core.util.kotlin.unsupported
 
 @Database(
     entities = [PendingSend::class, PendingUpload::class, PendingDraft::class],
@@ -36,28 +34,6 @@ abstract class PendingActionDatabase : RoomDatabase() {
 
     companion object : DatabaseFactory<PendingActionDatabase>(
         PendingActionDatabase::class,
-        "PendingActionsDatabase.db"
-    ) {
-
-        @JvmOverloads
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("PendingActionsDatabase.getInstance(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun getInstance(context: Context, username: String? = null): PendingActionDatabase =
-            unsupported
-
-        @Synchronized
-        @Deprecated(
-            "Use with user Id",
-            ReplaceWith("PendingActionsDatabase.deleteDatabase(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun deleteDb(context: Context, username: String) {
-            unsupported
-        }
-
-    }
+        "PendingActionDatabase.db"
+    )
 }

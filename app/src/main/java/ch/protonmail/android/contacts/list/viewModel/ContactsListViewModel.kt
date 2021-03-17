@@ -21,29 +21,23 @@ package ch.protonmail.android.contacts.list.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
+import androidx.loader.app.LoaderManager
 import androidx.work.Operation
 import androidx.work.WorkManager
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.list.progress.ProgressLiveData
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
-import ch.protonmail.android.contacts.repositories.andorid.baseInfo.IAndroidContactsRepository
+import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.worker.DeleteContactWorker
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import me.proton.core.util.kotlin.EMPTY_STRING
-import timber.log.Timber
+import ch.protonmail.libs.core.utils.ViewModelFactory
 import javax.inject.Inject
 
-class ContactsListViewModel @Inject constructor(
+class ContactsListViewModel(
     private val contactDao: ContactDao,
     private val workManager: WorkManager,
-    private val androidContactsRepository: IAndroidContactsRepository<ContactItem>,
+    private val androidContactsRepository: AndroidContactsRepository,
     private val androidContactsDetailsRepository: AndroidContactDetailsRepository,
     private val contactsListMapper: ContactsListMapper
 ) : ViewModel(), IContactsListViewModel, ISearchListenerViewModel {
@@ -116,4 +110,25 @@ class ContactsListViewModel @Inject constructor(
 
     fun deleteSelected(contacts: List<String>): LiveData<Operation.State> =
         DeleteContactWorker.Enqueuer(workManager).enqueue(contacts).state
+
+    class Factory @Inject constructor(
+        private val contactDao: ContactDao,
+        private val workManager: WorkManager,
+        private val androidContactsRepositoryFactory: AndroidContactsRepository.AssistedFactory,
+        private val androidContactsDetailsRepositoryFactory: AndroidContactDetailsRepository.AssistedFactory
+    ) : ViewModelFactory<ContactsListViewModel>() {
+
+        lateinit var loaderManager: LoaderManager
+
+        override fun create(): ContactsListViewModel {
+            val androidContactsRepository = androidContactsRepositoryFactory.create(loaderManager)
+            val androidContactsDetailsRepository = androidContactsDetailsRepositoryFactory.create(loaderManager)
+            return ContactsListViewModel(
+                contactDao,
+                workManager,
+                androidContactsRepository,
+                androidContactsDetailsRepository
+            )
+        }
+    }
 }
