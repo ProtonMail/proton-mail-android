@@ -30,6 +30,7 @@ import ch.protonmail.android.api.segments.HEADER_USER_AGENT
 import ch.protonmail.android.api.segments.REFRESH_PATH
 import ch.protonmail.android.api.segments.RESPONSE_CODE_TOO_MANY_REQUESTS
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.usecase.NotifyLoggedOut
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.JobManager
@@ -47,7 +48,9 @@ import javax.inject.Singleton
 class ProtonMailAuthenticator @Inject constructor(
     private val userManager: UserManager,
     private val jobManager: JobManager,
+    private val notifyLoggedOut: NotifyLoggedOut,
     private val appContext: Context
+
 ) : Authenticator {
 
     private val appVersionName by lazy {
@@ -104,7 +107,7 @@ class ProtonMailAuthenticator @Inject constructor(
                             "(refresh token blank = ${tokenManager.isRefreshTokenBlank()}, " +
                             "uid blank = ${tokenManager.isUidBlank()}), logging out"
                     )
-                    appContext.app.notifyLoggedOut(usernameAuth)
+                    notifyLoggedOut.blocking(userId)
                     jobManager.stop()
                     jobManager.clear()
                     jobManager.cancelJobsInBackground(null, TagConstraint.ALL)
@@ -137,8 +140,8 @@ class ProtonMailAuthenticator @Inject constructor(
                     "(refresh token blank = ${tokenManager.isRefreshTokenBlank()}, " +
                     "uid blank = ${tokenManager.isUidBlank()})"
             )
-            appContext.app.notifyLoggedOut(usernameAuth)
-            userManager.logoutOffline(usernameAuth)
+            notifyLoggedOut.blocking(userId)
+            userManager.logoutOfflineBlocking(userId)
             return null
         }
     }
