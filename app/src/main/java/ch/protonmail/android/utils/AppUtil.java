@@ -48,8 +48,6 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.api.models.room.counters.CounterDao;
 import ch.protonmail.android.api.models.room.counters.CounterDatabase;
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabase;
-import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;
@@ -62,6 +60,8 @@ import ch.protonmail.android.data.local.NotificationDao;
 import ch.protonmail.android.data.local.NotificationDatabase;
 import ch.protonmail.android.data.local.PendingActionDao;
 import ch.protonmail.android.data.local.PendingActionDatabase;
+import ch.protonmail.android.data.local.SendingFailedNotificationDao;
+import ch.protonmail.android.data.local.SendingFailedNotificationDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -257,8 +257,8 @@ public class AppUtil {
     public static void clearSendingFailedNotifications(Context context, Id userId) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(userId.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
-        final SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase = SendingFailedNotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationsDatabase).execute();
+        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion.getInstance(context).getDao();
+        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationDao).execute();
     }
 
     @Deprecated
@@ -266,8 +266,8 @@ public class AppUtil {
     public static void clearSendingFailedNotifications(Context context, String username) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(username.hashCode() + NOTIFICATION_ID_SENDING_FAILED);
-        final SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase = SendingFailedNotificationsDatabaseFactory.Companion.getInstance(context).getDatabase();
-        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationsDatabase).execute();
+        final SendingFailedNotificationDao sendingFailedNotificationDao = SendingFailedNotificationDatabase.Companion.getInstance(context).getDao();
+        new ClearSendingFailedNotificationsFromDatabaseTask(sendingFailedNotificationDao).execute();
     }
 
     /// read string from raw
@@ -448,15 +448,15 @@ public class AppUtil {
 
     // TODO: Rewrite with coroutines after the whole AppUtil file is converted to Kotlin
     private static class ClearSendingFailedNotificationsFromDatabaseTask extends AsyncTask<Void, Void, Void> {
-        private final SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase;
+        private final SendingFailedNotificationDao sendingFailedNotificationDao;
 
-        ClearSendingFailedNotificationsFromDatabaseTask(SendingFailedNotificationsDatabase sendingFailedNotificationsDatabase) {
-            this.sendingFailedNotificationsDatabase = sendingFailedNotificationsDatabase;
+        ClearSendingFailedNotificationsFromDatabaseTask(SendingFailedNotificationDao sendingFailedNotificationDao) {
+            this.sendingFailedNotificationDao = sendingFailedNotificationDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            sendingFailedNotificationsDatabase.clearSendingFailedNotifications();
+            sendingFailedNotificationDao.clearSendingFailedNotifications();
             return null;
 
         }
