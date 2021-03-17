@@ -26,12 +26,20 @@ interface ConversationsRepository {
 
     /**
      * @param params a model representing the params needed to define which conversations to get
+     *
+     * @return a List<Conversation> when the repository could successfully get conversations from some data source.
+     * @return an empty optional when the repository encounters a handled failure getting conversations
+     * @throws exception when the repository fails getting conversations for any unhandled reasons
      */
-    fun getConversations(params: GetConversationsParameters): Flow<List<Conversation>>
+    suspend fun getConversations(params: GetConversationsParameters): Flow<List<Conversation>?>
 
     /**
      * @param conversationId the encrypted id of the conversation to get
      * @param messageId the id of the message to be returned fully (not only metadata)
+     *
+     * @return a Conversation object when the repository could successfully get it from some data source.
+     * @return an empty optional when the repository encounters a handled failure getting the given conversation
+     * @throws exception when the repository fails getting this conversation for any unhandled reasons
      */
-    fun getConversation(conversationId: String, messageId: String): Conversation
+    suspend fun getConversation(conversationId: String, messageId: String): Conversation?
 }
