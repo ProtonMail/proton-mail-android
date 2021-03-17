@@ -102,14 +102,8 @@
         </receiver>
 
         <service
-            android:name=".fcm.FcmIntentService"
+            android:name=".fcm.PMFirebaseMessagingService"
             android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".fcm.PMFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -433,10 +427,6 @@
             android:name=".api.services.ConnectivityService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".fcm.PMRegistrationIntentService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
     </application>
 
 </manifest>

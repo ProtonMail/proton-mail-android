@@ -525,7 +525,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
             INotificationServer notificationServer = new NotificationServer(this, notificationManager);
             notificationServer.createEmailsChannel();
             notificationServer.createAttachmentsChannel();
-            notificationServer.createCheckingMailboxNotification();
+            notificationServer.createRetrievingNotificationsNotification();
             notificationServer.createAccountChannel();
         }
     }

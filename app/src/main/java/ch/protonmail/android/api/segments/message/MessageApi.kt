@@ -39,14 +39,14 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     @Throws(IOException::class)
     override fun fetchMessagesCount(retrofitTag: RetrofitTag): UnreadTotalMessagesResponse =
-            ParseUtils.parse(service.fetchMessagesCount(retrofitTag).execute())
+        ParseUtils.parse(service.fetchMessagesCount(retrofitTag).execute())
 
     @Throws(IOException::class)
     override fun messages(location: Int): MessagesResponse? =
-            ParseUtils.parse(service.messages(location, "time", "", "").execute())
+        ParseUtils.parse(service.messages(location, "time", "", "").execute())
 
     override fun messages(location: Int, retrofitTag: RetrofitTag): MessagesResponse? =
-            ParseUtils.parse(service.messages(location, "time", "", "", retrofitTag).execute())
+        ParseUtils.parse(service.messages(location, "time", "", "", retrofitTag).execute())
 
     @Throws(IOException::class)
     override fun fetchMessages(location: Int, time: Long): MessagesResponse? {
@@ -55,9 +55,8 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
         } else ParseUtils.parse(service.fetchMessages(location, time).execute())
     }
 
-    @Throws(IOException::class)
-    override fun fetchSingleMessageMetadata(messageId: String): MessagesResponse? =
-            ParseUtils.parse(service.fetchSingleMessageMetadata(messageId).execute())
+    override suspend fun fetchMessageMetadata(messageId: String, retrofitTag: RetrofitTag): MessagesResponse =
+        service.fetchMessageMetadata(messageId, retrofitTag)
 
     @Throws(IOException::class)
     override fun markMessageAsRead(messageIds: IDList) {
@@ -93,27 +92,30 @@ class MessageApi(private val service: MessageService) : BaseApi(), MessageApiSpe
 
     @WorkerThread
     @Throws(Exception::class)
-    override fun messageDetail(messageId: String): MessageResponse =
-            ParseUtils.parse(service.messageDetail(messageId).execute())
+    override fun fetchMessageDetailsBlocking(messageId: String): MessageResponse =
+        ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId).execute())
+
+    override suspend fun fetchMessageDetails(messageId: String, retrofitTag: RetrofitTag): MessageResponse =
+        service.fetchMessageDetails(messageId, retrofitTag)
 
     @WorkerThread
-    override fun messageDetail(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
-            try {
-                ParseUtils.parse(service.messageDetail(messageId, retrofitTag).execute())
-            } catch (exc: Exception) {
-                Timber.e(exc, "An exception was thrown while fetching message details")
-                null
-            }
+    override fun fetchMessageDetailsBlocking(messageId: String, retrofitTag: RetrofitTag): MessageResponse? =
+        try {
+            ParseUtils.parse(service.fetchMessageDetailsBlocking(messageId, retrofitTag).execute())
+        } catch (exc: Exception) {
+            Timber.e(exc, "An exception was thrown while fetching message details")
+            null
+        }
 
     @WorkerThread
     @Throws(Exception::class)
     override fun messageDetailObservable(messageId: String): Observable<MessageResponse> =
-            service.messageDetailObservable(messageId)
+        service.messageDetailObservable(messageId)
 
     @WorkerThread
     @Throws(Exception::class)
     override fun search(query: String, page: Int): MessagesResponse =
-            ParseUtils.parse(service.search(query, page).execute())
+        ParseUtils.parse(service.search(query, page).execute())
 
     @Throws(IOException::class)
     override fun searchByLabelAndPage(query: String, page: Int): MessagesResponse =

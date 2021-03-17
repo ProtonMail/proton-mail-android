@@ -803,7 +803,7 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
     <string name="channel_description_ongoing_operations">Shows all ongoing operations like new
 		message download on background
 	</string>
-    <string name="checking_mailbox">Checking mailbox</string>
+    <string name="retrieving_notifications">Retrieving notifications</string>
     <string name="report_phishing">Report phishing</string>
     <string name="print">Print</string>
     <string name="phishing_dialog_title">Confirm phishing report</string>

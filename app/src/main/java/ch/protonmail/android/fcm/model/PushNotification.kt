@@ -16,11 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.fcm.models
+package ch.protonmail.android.fcm.model
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class NotificationSender(
-        @SerializedName("Address") val senderEmail: String? = null,
-        @SerializedName("Name") val senderName: String? = null
+@Serializable
+data class PushNotification(
+    @SerialName("type") val type: String,
+    @SerialName("version") val version: Int,
+    @SerialName("data") val data: PushNotificationData?
 )

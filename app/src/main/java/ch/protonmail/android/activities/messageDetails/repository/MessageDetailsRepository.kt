@@ -65,7 +65,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 private const val MAX_BODY_SIZE_IN_DB = 900 * 1024 // 900 KB
-
+private const val DEPRECATION_MESSAGE = "We should strive towards moving methods out of this repository and stopping using it."
 
 class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
@@ -129,6 +129,13 @@ class MessageDetailsRepository @Inject constructor(
     /**
      * Helper function mapping Message with body saved in file to body in memory.
      */
+    @Deprecated(
+        message = DEPRECATION_MESSAGE,
+        replaceWith = ReplaceWith(
+            expression = "messageBodyFileManager.readMessageBodyFromFile(message)",
+            imports = arrayOf("ch.protonmail.android.utils.MessageBodyFileManager")
+        )
+    )
     private val readMessageBodyFromFileIfNeeded: (Message?) -> Message? = { message ->
         message?.apply {
             if (
@@ -282,6 +289,13 @@ class MessageDetailsRepository @Inject constructor(
      *
      * @return absolute path to saved File
      */
+    @Deprecated(
+        message = DEPRECATION_MESSAGE,
+        replaceWith = ReplaceWith(
+            expression = "messageBodyFileManager.saveMessageBodyToFile(message)",
+            imports = arrayOf("ch.protonmail.android.utils.MessageBodyFileManager")
+        )
+    )
     @WorkerThread
     private fun saveBodyToFileIfNeeded(message: Message, overwrite: Boolean = true): String? {
 
@@ -453,9 +467,16 @@ class MessageDetailsRepository @Inject constructor(
             message.checkIfAttHeadersArePresent(messagesDao)
         }
 
+    @Deprecated(
+        message = DEPRECATION_MESSAGE,
+        replaceWith = ReplaceWith(
+            expression = "messageRepository.getMessage(messageId, username, true)",
+            imports = arrayOf("ch.protonmail.android.repositories.MessageRepository")
+        )
+    )
     fun fetchMessageDetails(messageId: String): MessageResponse {
         return try {
-            api.messageDetail(messageId) // try to fetch the message details from the API
+            api.fetchMessageDetailsBlocking(messageId) // try to fetch the message details from the API
         } catch (ioException: IOException) {
             // if there is an IO exception, meaning the connection could not be established
             // then schedule a background job for run in future
@@ -465,7 +486,7 @@ class MessageDetailsRepository @Inject constructor(
     }
 
     fun fetchSearchMessageDetails(messageId: String): MessageResponse =
-        api.messageDetail(messageId) // try to fetch the message details from the API
+        api.fetchMessageDetailsBlocking(messageId) // try to fetch the message details from the API
 
     fun startDownloadEmbeddedImages(messageId: String, username: String) {
         attachmentsWorker.enqueue(messageId, username, "")
