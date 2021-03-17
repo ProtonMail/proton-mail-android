@@ -19,19 +19,19 @@
 package ch.protonmail.android.api.models
 
 import android.content.Context
-import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.data.local.ContactsDao
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
 import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.PendingActionDatabase
+import ch.protonmail.android.data.local.SendingFailedNotificationDao
 import ch.protonmail.android.data.local.SendingFailedNotificationDatabase
 import ch.protonmail.android.domain.entity.Id
-import ch.protonmail.android.usecase.FindUsernameForUserId
-import me.proton.core.util.kotlin.unsupported
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -40,88 +40,45 @@ import javax.inject.Singleton
  */
 @Singleton
 class DatabaseProvider @Inject constructor(
-    private val context: Context,
-    private val findUsernameForUserId: FindUsernameForUserId
+    private val context: Context
 ) {
 
-    fun provideContactsDatabase(userId: Id): ContactsDatabase =
-        ContactsDatabase.getInstance(context, userId)
+    // Contact
+    fun provideContactDatabase(userId: Id): ContactDatabase =
+        ContactDatabase.getInstance(context, userId)
 
-    fun provideContactsDao(userId: Id): ContactsDao =
-        provideContactsDatabase(userId).getDao()
+    fun provideContactDao(userId: Id): ContactDao =
+        provideContactDatabase(userId).getDao()
 
-    @Deprecated(
-        "Get by user Id",
-        ReplaceWith("provideContactsDao(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun provideContactsDao(username: String?): ContactsDao =
-        unsupported
-
-    @Deprecated(
-        "Get by user Id",
-        ReplaceWith("provideContactsDatabase(userId)"),
-        DeprecationLevel.ERROR
-    )
-    fun provideContactsDatabase(username: String?): ContactsDatabase =
-        unsupported
-
-    fun provideMessagesDao(userId: Id? = null): MessagesDao =
-        provideMessagesDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
-
-    @Deprecated("Get by user Id", ReplaceWith("provideMessagesDao(userId)"))
-    fun provideMessagesDao(username: String?): MessagesDao =
-        MessageDatabase.getInstance(context, username).getDao()
-
-    fun provideMessagesDatabaseFactory(userId: Id? = null) =
-        provideMessagesDatabaseFactory(userId?.let { findUsernameForUserId.blocking(it) }?.s)
-
-    @Deprecated("Get by user Id", ReplaceWith("provideMessagesDatabaseFactory(userId)"))
-    fun provideMessagesDatabaseFactory(username: String?) =
-        MessageDatabase.getInstance(context, username)
-
-    fun provideCountersDao(userId: Id): CounterDao =
+    // Counter
+    fun provideCounterDao(userId: Id): CounterDao =
         CounterDatabase.getInstance(context, userId).getDao()
 
-    fun providePendingActionsDao(userId: Id? = null): PendingActionDao =
-        providePendingActionsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
+    // Message
+    fun provideMessageDatabase(userId: Id): MessageDatabase =
+        MessageDatabase.getInstance(context, userId)
 
-    @Deprecated("Get by user Id", ReplaceWith("providePendingActionsDao(userId)"))
-    fun providePendingActionsDao(username: String?): PendingActionDao =
-        PendingActionDatabase.getInstance(context, username).getDao()
+    fun provideMessageDao(userId: Id): MessageDao =
+        provideMessageDatabase(userId).getDao()
 
-    fun providePendingActionsDatabase(userId: Id? = null) =
-        providePendingActionsDatabase(userId?.let { findUsernameForUserId.blocking(it) }?.s)
+    // Notification
+    fun provideNotificationDatabase(userId: Id): NotificationDatabase =
+        NotificationDatabase.getInstance(context, userId)
 
-    @Deprecated("Get by user Id", ReplaceWith("providePendingActionsDatabase(userId)"))
-    fun providePendingActionsDatabase(username: String?) =
-        PendingActionDatabase.getInstance(context, username)
+    fun provideNotificationsDao(userId: Id): NotificationDao =
+        provideNotificationDatabase(userId).getDao()
 
-    fun provideNotificationsDao(userId: Id? = null) =
-        provideNotificationsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
+    // Pending Action
+    fun providePendingActionDatabase(userId: Id): PendingActionDatabase =
+        PendingActionDatabase.getInstance(context, userId)
 
-    @Deprecated("Get by user Id", ReplaceWith("provideNotificationsDao(userId)"))
-    fun provideNotificationsDao(username: String?) =
-        NotificationDatabase.getInstance(context, username).getDao()
+    fun providePendingActionDao(userId: Id): PendingActionDao =
+        providePendingActionDatabase(userId).getDao()
 
-    fun provideNotificationsDatabase(userId: Id? = null) =
-        provideNotificationsDatabase(userId?.let { findUsernameForUserId.blocking(it) }?.s)
+    // Sending failed notification
+    fun provideSendingFailedNotificationsDatabase(userId: Id): SendingFailedNotificationDatabase =
+        SendingFailedNotificationDatabase.getInstance(context, userId)
 
-    @Deprecated("Get by user Id", ReplaceWith("provideNotificationsDatabase(userId)"))
-    fun provideNotificationsDatabase(username: String?) =
-        NotificationDatabase.getInstance(context, username)
-
-    fun provideSendingFailedNotificationsDao(userId: Id? = null) =
-        provideSendingFailedNotificationsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
-
-    @Deprecated("Get by user Id", ReplaceWith("provideSendingFailedNotificationsDao(userId)"))
-    fun provideSendingFailedNotificationsDao(username: String?) =
-        SendingFailedNotificationDatabase.getInstance(context, username).getDao()
-
-    fun provideSendingFailedNotificationsDatabase(userId: Id? = null) =
-        provideSendingFailedNotificationsDatabase(userId?.let { findUsernameForUserId.blocking(it) }?.s)
-
-    @Deprecated("Get by user Id", ReplaceWith("provideSendingFailedNotificationsDatabase(userId)"))
-    fun provideSendingFailedNotificationsDatabase(username: String?) =
-        SendingFailedNotificationDatabase.getInstance(context, username)
+    fun provideSendingFailedNotificationsDao(userId: Id): SendingFailedNotificationDao =
+        provideSendingFailedNotificationsDatabase(userId).getDao()
 }

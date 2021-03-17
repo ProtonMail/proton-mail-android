@@ -23,9 +23,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkInfo
 import androidx.work.workDataOf
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.ContactLabel
 import ch.protonmail.android.worker.DeleteLabelWorker
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -53,14 +53,14 @@ class DeleteLabelTest {
     private lateinit var messageDao: MessageDao
 
     @MockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     private lateinit var deleteLabel: DeleteLabel
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        deleteLabel = DeleteLabel(TestDispatcherProvider, contactsDao, messageDao, workScheduler)
+        deleteLabel = DeleteLabel(TestDispatcherProvider, contactDao, messageDao, workScheduler)
     }
 
     @Test
@@ -83,8 +83,8 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = true
 
-            coEvery { contactsDao.findContactGroupById(labelId) } returns contactLabel
-            coEvery { contactsDao.deleteContactGroup(contactLabel) } returns Unit
+            coEvery { contactDao.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
             every { messageDao.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
@@ -118,8 +118,8 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = false
 
-            coEvery { contactsDao.findContactGroupById(labelId) } returns contactLabel
-            coEvery { contactsDao.deleteContactGroup(contactLabel) } returns Unit
+            coEvery { contactDao.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
             every { messageDao.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 
@@ -152,8 +152,8 @@ class DeleteLabelTest {
             val workerStatusLiveData = MutableLiveData<WorkInfo>()
             workerStatusLiveData.value = workInfo
 
-            coEvery { contactsDao.findContactGroupById(labelId) } returns contactLabel
-            coEvery { contactsDao.deleteContactGroup(contactLabel) } returns Unit
+            coEvery { contactDao.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
             every { messageDao.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
 

@@ -23,7 +23,6 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
-import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.worker.PostLabelWorker
@@ -39,7 +38,7 @@ class ContactGroupDetailsRepository @Inject constructor(
     private val workManager: WorkManager
 ) {
 
-    private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupDetailsRepository"); databaseProvider.provideContactsDao() }
+    private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in ContactGroupDetailsRepository"); databaseProvider.provideContactDao() }
 
     fun findContactGroupDetailsBlocking(id: String): Single<ContactLabel> =
         contactsDatabase.findContactGroupByIdAsync(id)

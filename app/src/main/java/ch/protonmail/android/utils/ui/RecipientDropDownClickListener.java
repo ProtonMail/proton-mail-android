@@ -33,7 +33,7 @@ import ch.protonmail.android.activities.composeMessage.ComposeMessageActivity;
 import ch.protonmail.android.api.models.room.contacts.ContactEmail;
 import ch.protonmail.android.contacts.details.ContactDetailsActivity;
 import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
-import ch.protonmail.android.data.local.ContactsDao;
+import ch.protonmail.android.data.local.ContactDao;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.utils.extensions.TextExtensions;
@@ -44,15 +44,15 @@ import ch.protonmail.android.utils.extensions.TextExtensions;
 public class RecipientDropDownClickListener implements View.OnClickListener {
 
     private final Context mContext;
-    private final ContactsDao contactsDao;
+    private final ContactDao contactDao;
     private final String mRecipientEmail;
     @Nullable
     private OpenContactDetailsTask openContactDetailsTask;
 
-    public RecipientDropDownClickListener(Context context, ContactsDao contactsDao,
+    public RecipientDropDownClickListener(Context context, ContactDao contactDao,
                                           String recipientEmail) {
         mContext = context;
-        this.contactsDao = contactsDao;
+        this.contactDao = contactDao;
         mRecipientEmail = recipientEmail;
     }
 
@@ -78,7 +78,7 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
                     }
 
                     OpenContactDetailsTask current = new OpenContactDetailsTask(
-                            RecipientDropDownClickListener.this.contactsDao,
+                            RecipientDropDownClickListener.this.contactDao,
                             mRecipientEmail, this::openContactDetails);
                     current.execute();
                     openContactDetailsTask = current;
@@ -105,14 +105,14 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
 
     private static class OpenContactDetailsTask extends AsyncTask<Void,Void,ContactEmail> {
 
-        private final ContactsDao contactsDao;
+        private final ContactDao contactDao;
         private final String recipientEmail;
         @Nullable
         private ContactEmailListener onContactObtained;
 
-        OpenContactDetailsTask(ContactsDao contactsDao, String recipientEmail,
+        OpenContactDetailsTask(ContactDao contactDao, String recipientEmail,
                                @NonNull ContactEmailListener onContactObtained) {
-            this.contactsDao = contactsDao;
+            this.contactDao = contactDao;
             this.onContactObtained = onContactObtained;
             this.recipientEmail = recipientEmail;
         }
@@ -125,7 +125,7 @@ public class RecipientDropDownClickListener implements View.OnClickListener {
 
         @Override
         protected ContactEmail doInBackground(Void... voids) {
-            return contactsDao.findContactEmailByEmail(recipientEmail);
+            return contactDao.findContactEmailByEmail(recipientEmail);
         }
 
         @Override

@@ -28,7 +28,7 @@ import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidConta
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.AndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsCallbacksFactory
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDatabase
 
 class ContactsListViewModelFactory(
     private val application: Application,
@@ -39,7 +39,7 @@ class ContactsListViewModelFactory(
         modelClass: Class<T>
     ): T {
         val contactsDatabase =
-            ContactsDatabase.getInstance(application.applicationContext).getDao()
+            ContactDatabase.getInstance(application.applicationContext).getDao()
         val contactItemFactory = ContactItemListFactory()
         val androidContactsLoaderCallbacksFactory =
             AndroidContactsLoaderCallbacksFactory(application.applicationContext, contactItemFactory::convert)

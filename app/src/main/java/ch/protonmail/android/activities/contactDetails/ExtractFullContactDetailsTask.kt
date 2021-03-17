@@ -20,16 +20,16 @@ package ch.protonmail.android.activities.contactDetails
 
 import android.os.AsyncTask
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
 
 class ExtractFullContactDetailsTask(
-    private val contactsDao: ContactsDao,
+    private val contactDao: ContactDao,
     private val contactId: String,
     private val callback: (FullContactDetails?) -> Unit
 ) : AsyncTask<Void, Void, FullContactDetails>() {
 
     override fun doInBackground(vararg voids: Void): FullContactDetails? {
-        return contactsDao.findFullContactDetailsById(contactId)
+        return contactDao.findFullContactDetailsById(contactId)
     }
 
     override fun onPostExecute(fullContactDetails: FullContactDetails?) {

@@ -25,7 +25,7 @@ import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.api.models.room.contacts.FullContactDetails
 import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
 import io.mockk.MockKAnnotations
@@ -48,7 +48,7 @@ class FetchContactDetailsTest : CoroutinesTest {
     val archRule = InstantTaskExecutorRule()
 
     @MockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     @MockK
     private lateinit var userManager: UserManager
@@ -90,8 +90,8 @@ class FetchContactDetailsTest : CoroutinesTest {
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
-            every { contactsDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
-            every { contactsDao.insertFullContactDetails(any()) } returns Unit
+            every { contactDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
+            every { contactDao.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
             val expectedDb = FetchContactDetailsResult.Data(
                 decryptedVCardType0 = testDataDb
@@ -125,7 +125,7 @@ class FetchContactDetailsTest : CoroutinesTest {
             val fullContactsFromDb = mockk<FullContactDetails> {
                 every { encryptedData } returns mutableListOf(contactEncryptedData)
             }
-            every { contactsDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
+            every { contactDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
             val ioException = IOException("Cannot load contacts")
             coEvery { api.fetchContactDetails(contactId) } throws ioException
             val expected = FetchContactDetailsResult.Data(
@@ -166,8 +166,8 @@ class FetchContactDetailsTest : CoroutinesTest {
             val fullContactsResponse = mockk<FullContactDetailsResponse> {
                 every { contact } returns fullContactsFromNet
             }
-            every { contactsDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
-            every { contactsDao.insertFullContactDetails(any()) } returns Unit
+            every { contactDao.findFullContactDetailsById(contactId) } returns fullContactsFromDb
+            every { contactDao.insertFullContactDetails(any()) } returns Unit
             coEvery { api.fetchContactDetails(contactId) } returns fullContactsResponse
             val expected = FetchContactDetailsResult.Data(
                 decryptedVCardType2 = testDataNet,
@@ -187,7 +187,7 @@ class FetchContactDetailsTest : CoroutinesTest {
             // given
             val contactId = "testContactId"
             val exception = Exception("An error!")
-            every { contactsDao.findFullContactDetailsById(contactId) } returns null
+            every { contactDao.findFullContactDetailsById(contactId) } returns null
             coEvery { api.fetchContactDetails(contactId) } throws exception
             val expected = FetchContactDetailsResult.Error(exception)
 

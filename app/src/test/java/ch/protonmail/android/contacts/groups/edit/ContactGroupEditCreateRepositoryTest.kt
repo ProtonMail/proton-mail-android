@@ -23,9 +23,8 @@ import androidx.work.WorkManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.contacts.receive.ContactLabelFactory
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.worker.CreateContactGroupWorker
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.MockKAnnotations
@@ -52,7 +51,7 @@ class ContactGroupEditCreateRepositoryTest {
     private lateinit var apiManager: ProtonMailApiManager
 
     @RelaxedMockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     @RelaxedMockK
     private lateinit var contactLabelFactory: ContactLabelFactory
@@ -95,15 +94,15 @@ class ContactGroupEditCreateRepositoryTest {
         val contactLabel = ContactLabel(contactGroupId, "name", "color")
         val emailLabelJoinedList = listOf(ContactEmailContactLabelJoin("emailId", "labelId"))
         every { apiManager.updateLabelCompletable(any(), any()) } returns Completable.complete()
-        every { contactsDao.fetchJoins(contactGroupId) } returns emailLabelJoinedList
+        every { contactDao.fetchJoins(contactGroupId) } returns emailLabelJoinedList
 
         val testObserver = repository.editContactGroup(contactLabel).test()
 
         testObserver.awaitTerminalEvent()
         verifyOrder {
-            contactsDao.fetchJoins(contactGroupId)
-            contactsDao.saveContactGroupLabel(contactLabel)
-            contactsDao.saveContactEmailContactLabelBlocking(emailLabelJoinedList)
+            contactDao.fetchJoins(contactGroupId)
+            contactDao.saveContactGroupLabel(contactLabel)
+            contactDao.saveContactEmailContactLabelBlocking(emailLabelJoinedList)
         }
     }
 
@@ -150,7 +149,7 @@ class ContactGroupEditCreateRepositoryTest {
         val testObserver = repository.createContactGroup(contactLabel).test()
 
         testObserver.awaitTerminalEvent()
-        verify { contactsDao.saveContactGroupLabel(contactLabel) }
+        verify { contactDao.saveContactGroupLabel(contactLabel) }
     }
 
     @Test

@@ -28,7 +28,7 @@ import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
@@ -46,12 +46,12 @@ import kotlin.test.assertEquals
 class ContactGroupDetailsRepositoryTest {
     //region mocks
     private val protonMailApi = mockk<ProtonMailApiManager>(relaxed = true)
-    private val database = mockk<ContactsDao>(relaxed = true)
+    private val database = mockk<ContactDao>(relaxed = true)
     private val jobManager = mockk<JobManager>(relaxed = true)
     private val workManager = mockk<WorkManager>(relaxed = true)
     private val contactLabelFactory = mockk<IConverterFactory<ServerLabel, ContactLabel>>(relaxed = true)
     private val databaseProvider = mockk<DatabaseProvider>(relaxed = true) {
-        every { provideContactsDao(any()) } returns database
+        every { provideContactDao(any()) } returns database
     }
     //endregion
 

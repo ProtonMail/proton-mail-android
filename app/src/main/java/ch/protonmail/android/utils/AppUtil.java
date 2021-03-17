@@ -52,8 +52,8 @@ import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
-import ch.protonmail.android.data.local.ContactsDao;
-import ch.protonmail.android.data.local.ContactsDatabase;
+import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.NotificationDao;
@@ -168,7 +168,7 @@ public class AppUtil {
     private static void deleteDatabases(Context context, String username, IDBClearDone clearDoneListener, boolean clearContacts) {
         try {
             if (!TextUtils.isEmpty(username)) {
-                clearStorage(ContactsDatabase.Companion.getInstance(context, username).getDao(),
+                clearStorage(ContactDatabase.Companion.getInstance(context, username).getDao(),
                         MessageDatabase.Companion.getInstance(context, username).getDao(),
                         MessageDatabase.Companion.getSearchDatabase(context).getDao(),
                         NotificationDatabase.Companion.getInstance(context, username).getDao(),
@@ -177,7 +177,7 @@ public class AppUtil {
                         PendingActionDatabase.Companion.getInstance(context, username).getDao(),
                         clearDoneListener, clearContacts);
             } else {
-                clearStorage(ContactsDatabase.Companion.getInstance(context).getDao(),
+                clearStorage(ContactDatabase.Companion.getInstance(context).getDao(),
                         MessageDatabase.Companion.getInstance(context).getDao(),
                         MessageDatabase.Companion.getSearchDatabase(context).getDao(),
                         NotificationDatabase.Companion.getInstance(context).getDao(),
@@ -320,7 +320,7 @@ public class AppUtil {
     }
 
     public static void clearStorage(
-            final ContactsDao contactsDao,
+            final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
             final NotificationDao notificationDao,
@@ -329,12 +329,12 @@ public class AppUtil {
             final PendingActionDao pendingActionDao,
             final boolean clearContacts
     ) {
-        clearStorage(contactsDao, messageDao, searchDatabase, notificationDao, counterDao,
+        clearStorage(contactDao, messageDao, searchDatabase, notificationDao, counterDao,
                 attachmentMetadataDao, pendingActionDao, null, clearContacts);
     }
 
     private static void clearStorage(
-            final ContactsDao contactsDao,
+            final ContactDao contactDao,
             final MessageDao messageDao,
             final MessageDao searchDatabase,
             final NotificationDao notificationDao,
@@ -351,11 +351,11 @@ public class AppUtil {
                 pendingActionDao.clearPendingSendCache();
                 pendingActionDao.clearPendingUploadCache();
                 if (clearContacts) {
-                    contactsDao.clearContactEmailsLabelsJoin();
-                    contactsDao.clearContactEmailsCacheBlocking();
-                    contactsDao.clearContactDataCache();
-                    contactsDao.clearContactGroupsLabelsTableBlocking();
-                    contactsDao.clearFullContactDetailsCache();
+                    contactDao.clearContactEmailsLabelsJoin();
+                    contactDao.clearContactEmailsCacheBlocking();
+                    contactDao.clearContactDataCache();
+                    contactDao.clearContactGroupsLabelsTableBlocking();
+                    contactDao.clearFullContactDetailsCache();
                 }
                 messageDao.clearMessagesCache();
                 messageDao.clearAttachmentsCache();

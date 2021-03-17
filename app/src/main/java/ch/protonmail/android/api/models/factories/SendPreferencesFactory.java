@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.api.models.factories;
 
+import android.content.Context;
+
 import androidx.annotation.WorkerThread;
 
 import com.proton.gopenpgp.armor.Armor;
@@ -43,16 +45,15 @@ import ch.protonmail.android.api.models.SendPreference;
 import ch.protonmail.android.api.models.User;
 import ch.protonmail.android.api.models.enumerations.MIMEType;
 import ch.protonmail.android.api.models.enumerations.PackageType;
-import ch.protonmail.android.api.models.room.contacts.ContactEmail;
-import ch.protonmail.android.api.models.room.contacts.FullContactDetails;
-import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsResponse;
 import ch.protonmail.android.core.UserManager;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
-import ch.protonmail.android.data.local.ContactsDao;
+import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.model.ContactEmail;
 import ch.protonmail.android.data.local.model.FullContactDetails;
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse;
+import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.user.Address;
 import ch.protonmail.android.domain.entity.user.AddressKey;
 import ch.protonmail.android.domain.entity.user.Addresses;
@@ -67,31 +68,31 @@ import ezvcard.property.RawProperty;
 
 public class SendPreferencesFactory {
 
-    private ProtonMailApiManager mApi;
-    private UserManager mUserManager;
-    private MailSettings mailSettings;
-    private UserCrypto crypto;
-    private final ContactsDao contactsDao;
-    private String username;
+    private final ProtonMailApiManager mApi;
+    private final UserManager mUserManager;
+    private final MailSettings mailSettings;
+    private final UserCrypto crypto;
+    private final ContactDao contactDao;
+    private final Id userId;
 
     @AssistedInject
     public SendPreferencesFactory(
+            Context context,
             ProtonMailApiManager api,
             UserManager userManager,
-            @Assisted String username,
-            ContactsDao contactsDao
+            @Assisted Id userId
     ) {
         this.mApi = api;
         this.mUserManager = userManager;
-        this.username = username;
-        this.mailSettings = userManager.getMailSettings(username);
-        this.crypto = Crypto.forUser(userManager, username);
-        this.contactsDao = contactsDao;
-    }
+        this.userId = userId;
+        this.mailSettings = userManager.getMailSettings(userId);
+        this.crypto = Crypto.forUser(userManager, userId);
+		this.contactDao = ContactDatabase.Companion.getInstance(context, userId).getDao();
+	}
 
     @AssistedInject.Factory
     public interface Factory {
-        SendPreferencesFactory create(String username);
+        SendPreferencesFactory create(Id userId);
     }
 
     @WorkerThread
@@ -145,7 +146,7 @@ public class SendPreferencesFactory {
         Map<String, String> contactIDs = new HashMap<>();
         for (String email : emails) {
             Address address = getAddress(email);
-            ContactEmail contactEmail = contactsDao.findContactEmailByEmail(email);
+            ContactEmail contactEmail = contactDao.findContactEmailByEmail(email);
             if (address != null || contactEmail == null ) {
                 continue;
             }
@@ -166,7 +167,7 @@ public class SendPreferencesFactory {
                 continue;
             }
             FullContactDetails contact = contactDetails.get(contactID).getContact();
-            contactsDao.insertFullContactDetails(contact);
+            contactDao.insertFullContactDetails(contact);
             result.put(email, contact);
         }
         return result;
@@ -235,8 +236,8 @@ public class SendPreferencesFactory {
     }
 
     private Address getAddress(String email) {
-        User user = (username != null) ? mUserManager.getUser(username) : mUserManager.getUser();
-        Addresses addresses = user.toNewUser().getAddresses();
+        ch.protonmail.android.domain.entity.user.User user = mUserManager.getUserBlocking(userId);
+        Addresses addresses = user.getAddresses();
         for (Address address : addresses.sorted()) {
             if (email.equalsIgnoreCase(address.getEmail().getS())) {
                 return address;

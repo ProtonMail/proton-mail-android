@@ -34,10 +34,10 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.BeforeTest
 
-internal class ContactsDaoTest {
+internal class ContactDaoTest {
 
     private val context = InstrumentationRegistry.getTargetContext()
-    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabase::class).build()
+    private var databaseFactory = ContactDatabase.buildInMemoryDatabase(context)
     private var database = databaseFactory.getDao()
     private val initiallyEmptyDatabase = databaseFactory.getDao()
 

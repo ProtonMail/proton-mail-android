@@ -19,12 +19,12 @@
 package ch.protonmail.android.contacts.groups.list
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.*
+import io.reactivex.Observable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import me.proton.core.util.kotlin.DispatcherProvider
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ContactGroupsRepository @Inject constructor(
@@ -36,24 +36,24 @@ class ContactGroupsRepository @Inject constructor(
     fun getJoins(): Flow<List<ContactEmailContactLabelJoin>> = contactDao.fetchJoins()
 
     fun observeContactGroups(filter: String): Flow<List<ContactLabel>> =
-        contactsDao.findContactGroupsFlow("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
+        contactDao.findContactGroupsFlow("$SEARCH_DELIMITER$filter$SEARCH_DELIMITER")
             .map { labels ->
-                labels.map { label -> label.contactEmailsCount = contactsDao.countContactEmailsByLabelId(label.ID) }
+                labels.map { label -> label.contactEmailsCount = contactDao.countContactEmailsByLabelId(label.ID) }
                 labels
             }
             .flowOn(dispatchers.Io)
 
     suspend fun getContactGroupEmails(id: String): List<ContactEmail> =
-        contactsDao.findAllContactsEmailsByContactGroupId(id)
+        contactDao.findAllContactsEmailsByContactGroupId(id)
 
     fun saveContactGroup(contactLabel: ContactLabel) {
-        contactsDao.saveContactGroupLabel(contactLabel)
+        contactDao.saveContactGroupLabel(contactLabel)
     }
 
     suspend fun getContactGroupsFromApi(): List<ContactLabel> {
         return api.fetchContactGroupsList().also { labels ->
-            contactsDao.clearContactGroupsLabelsTable()
-            contactsDao.saveContactGroupsList(labels)
+            contactDao.clearContactGroupsLabelsTable()
+            contactDao.saveContactGroupsList(labels)
         }
     }
 

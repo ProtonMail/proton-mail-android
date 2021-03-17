@@ -45,17 +45,17 @@ class NavigationViewModel @ViewModelInject constructor(
     }
 
     fun reloadDependencies() {
-        locationsListLiveData = databaseProvider.provideCountersDao().findAllUnreadLocations()
-        unreadLabelsLiveData = databaseProvider.provideCountersDao().findAllUnreadLabels()
+        locationsListLiveData = databaseProvider.provideCounterDao().findAllUnreadLocations()
+        unreadLabelsLiveData = databaseProvider.provideCounterDao().findAllUnreadLabels()
     }
 
     private fun labelsLiveData(): LiveData<List<Label>> =
-        databaseProvider.provideMessagesDao()
+        databaseProvider.provideMessageDao()
             .getAllLabels()
             .map { list -> list.sortedBy { it.order } }
 
-    private var locationsListLiveData = databaseProvider.provideCountersDao().findAllUnreadLocations()
-    private var unreadLabelsLiveData = databaseProvider.provideCountersDao().findAllUnreadLabels()
+    private var locationsListLiveData = databaseProvider.provideCounterDao().findAllUnreadLocations()
+    private var unreadLabelsLiveData = databaseProvider.provideCounterDao().findAllUnreadLabels()
 
     fun labelsWithUnreadCounterLiveData(): MediatorLiveData<MutableList<LabelWithUnreadCounter>> =
         LabelsWithUnreadCounterLiveData(labelsLiveData(), unreadLabelsLiveData)

@@ -94,8 +94,8 @@ import ch.protonmail.android.contacts.details.edit.EditContactDetailsActivity;
 import ch.protonmail.android.crypto.CipherText;
 import ch.protonmail.android.crypto.Crypto;
 import ch.protonmail.android.crypto.UserCrypto;
-import ch.protonmail.android.data.local.ContactsDao;
-import ch.protonmail.android.data.local.ContactsDatabase;
+import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.events.ContactEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult;
@@ -190,7 +190,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     @BindView(R.id.fabWeb)
     ImageButton fabWeb;
 
-    private ContactsDao contactsDao;
+    private ContactDao contactDao;
     private User mUser;
     private LayoutInflater inflater;
     private String mContactId;
@@ -220,7 +220,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        contactsDao = ContactsDatabase.Companion.getInstance(getApplicationContext()).getDao();
+        contactDao = ContactDatabase.Companion.getInstance(getApplicationContext()).getDao();
         viewModel = new ViewModelProvider(this).get(ContactDetailsViewModel.class);
 
         setSupportActionBar(toolbar);
@@ -250,7 +250,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
             else didSetupComplete = false;
 
             if (didSetupComplete) {
-                new ExtractFullContactDetailsTask(contactsDao, mContactId, fullContactDetails -> {
+                new ExtractFullContactDetailsTask(contactDao, mContactId, fullContactDetails -> {
                     onInitialiseContact(fullContactDetails);
                     return Unit.INSTANCE;
                 }).execute();
@@ -376,7 +376,7 @@ public class ContactDetailsActivity extends BaseActivity implements AppBarLayout
     }
 
     private void updateDisplayedContact() {
-        new ExtractFullContactDetailsTask(contactsDao, mContactId, fullContactDetails -> {
+        new ExtractFullContactDetailsTask(contactDao, mContactId, fullContactDetails -> {
             decryptAndFillVCard(fullContactDetails);
             onEditContact(fullContactDetails, mContactId);
             return Unit.INSTANCE;

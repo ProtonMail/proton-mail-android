@@ -29,7 +29,7 @@ import ch.protonmail.android.api.models.room.contacts.server.FullContactDetailsR
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.crypto.UserCrypto
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.domain.entity.EmailAddress
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
@@ -63,7 +63,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
     private lateinit var userCrypto: UserCrypto
 
     @MockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     lateinit var useCase: FetchVerificationKeys
 
@@ -95,7 +95,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
         every { userManager.user } returns testUser
         every { userManager.username } returns "testUserName"
         every { userManager.openPgp } returns mockk()
-        useCase = FetchVerificationKeys(api, userManager, userCrypto, contactsDao, TestDispatcherProvider)
+        useCase = FetchVerificationKeys(api, userManager, userCrypto, contactDao, TestDispatcherProvider)
     }
 
     @Test
@@ -106,8 +106,8 @@ class FetchVerificationKeysTest : CoroutinesTest {
         val testContactEmail = mockk<ContactEmail> {
             every { contactId } returns testContactId
         }
-        every { contactsDao.findContactEmailByEmail(testEmail) } returns testContactEmail
-        every { contactsDao.insertFullContactDetails(any()) } returns Unit
+        every { contactDao.findContactEmailByEmail(testEmail) } returns testContactEmail
+        every { contactDao.insertFullContactDetails(any()) } returns Unit
         val fullContactDetailsResponse = mockk<FullContactDetailsResponse> {
             every { contact } returns mockk {
                 every { contactId } returns "contactId"
@@ -158,8 +158,8 @@ class FetchVerificationKeysTest : CoroutinesTest {
         val testContactEmail = mockk<ContactEmail> {
             every { contactId } returns testContactId
         }
-        every { contactsDao.findContactEmailByEmail(testEmail) } returns testContactEmail
-        every { contactsDao.insertFullContactDetails(any()) } returns Unit
+        every { contactDao.findContactEmailByEmail(testEmail) } returns testContactEmail
+        every { contactDao.insertFullContactDetails(any()) } returns Unit
         val fullContactDetailsResponse = mockk<FullContactDetailsResponse> {
             every { contact } returns mockk {
                 every { contactId } returns "contactId"

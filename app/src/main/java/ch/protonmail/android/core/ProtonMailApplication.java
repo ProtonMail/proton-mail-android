@@ -76,8 +76,8 @@ import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingF
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
-import ch.protonmail.android.data.local.ContactsDao;
-import ch.protonmail.android.data.local.ContactsDatabase;
+import ch.protonmail.android.data.local.ContactDao;
+import ch.protonmail.android.data.local.ContactDatabase;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.domain.entity.Id;
@@ -166,7 +166,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private String mCurrentLocale;
     private AlertDialog forceUpgradeDialog;
 
-    private ContactsDao contactsDao;
+    private ContactDao contactDao;
     private MessageDao messageDao;
 
     @NonNull
@@ -218,7 +218,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
         ViewStateStoreConfig.INSTANCE
                 .setErrorStateGenerator(ErrorStateGeneratorsKt.getErrorStateGenerator());
 
-        contactsDao = ContactsDatabase.Companion.getInstance(getApplicationContext()).getDao();
+        contactDao = ContactDatabase.Companion.getInstance(getApplicationContext()).getDao();
         messageDao = MessageDatabase.Companion.getInstance(getApplicationContext()).getDao();
 
         FileUtils.createDownloadsDir(this);

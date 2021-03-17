@@ -25,13 +25,12 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.work.Operation
 import androidx.work.WorkManager
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.contacts.list.listView.ContactItem
 import ch.protonmail.android.contacts.list.progress.ProgressLiveData
 import ch.protonmail.android.contacts.list.search.ISearchListenerViewModel
 import ch.protonmail.android.contacts.repositories.andorid.baseInfo.IAndroidContactsRepository
 import ch.protonmail.android.contacts.repositories.andorid.details.AndroidContactDetailsRepository
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.worker.DeleteContactWorker
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -62,8 +61,8 @@ class ContactsListViewModel @Inject constructor(
         private set
 
     fun fetchContactItems() {
-        contactsDao.findAllContactData()
-            .combine(contactsDao.findAllContactsEmails()) { data, email ->
+        contactDao.findAllContactData()
+            .combine(contactDao.findAllContactsEmails()) { data, email ->
                 contactsListMapper.mapToContactItems(data, email)
             }
             .combine(searchPhraseLiveData.asFlow()) { contacts, searchPhrase ->

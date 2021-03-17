@@ -53,7 +53,7 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
-abstract class ContactsDao {
+abstract class ContactDao {
 
     //region Contact data
     @Query("SELECT * FROM $TABLE_CONTACT_DATA WHERE $COLUMN_CONTACT_DATA_ID = :contactId")

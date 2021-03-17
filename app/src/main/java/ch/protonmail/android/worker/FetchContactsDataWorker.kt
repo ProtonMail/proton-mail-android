@@ -34,7 +34,9 @@ import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.segments.TEN_SECONDS
 import ch.protonmail.android.core.Constants.CONTACTS_PAGE_SIZE
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
+import kotlinx.coroutines.withContext
+import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
@@ -54,7 +56,8 @@ class FetchContactsDataWorker @WorkerInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val api: ProtonMailApiManager,
-    private val contactsDao: ContactsDao
+    private val contactDao: ContactDao,
+    private val dispatchers: DispatcherProvider
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result =
@@ -77,7 +80,7 @@ class FetchContactsDataWorker @WorkerInject constructor(
                 }
 
                 if (contacts.isNotEmpty()) {
-                    contactsDao.saveAllContactsData(contacts)
+                    contactDao.saveAllContactsData(contacts)
                 }
             }
         }.fold(

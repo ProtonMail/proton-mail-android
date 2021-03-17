@@ -61,8 +61,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
-import ch.protonmail.android.data.local.ContactsDao
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.NotificationDao
@@ -115,7 +115,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
 
     var settingsUiList: List<SettingsItemUiModel> = ArrayList()
 
-    var contactsDao: ContactsDao? = null
+    var contactDao: ContactDao? = null
     var messageDao: MessageDao? = null
     private var searchDatabase: MessageDao? = null
     private var notificationDao: NotificationDao? = null
@@ -155,7 +155,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        contactsDao = ContactsDatabase.getInstance(applicationContext).getDao()
+        contactDao = ContactDatabase.getInstance(applicationContext).getDao()
         messageDao = MessageDatabase.getInstance(applicationContext).getDao()
         searchDatabase = MessageDatabase.getSearchDatabase(applicationContext).getDao()
         notificationDao = NotificationDatabase.getInstance(applicationContext).getDao()
@@ -415,7 +415,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 showToast(R.string.processing_request, gravity = Gravity.CENTER)
                 if (canClick.getAndSet(false)) {
                     AppUtil.clearStorage(
-                        contactsDao,
+                        contactDao,
                         messageDao,
                         searchDatabase,
                         notificationDao,

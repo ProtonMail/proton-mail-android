@@ -25,11 +25,11 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DeleteContactResponse
-import ch.protonmail.android.api.models.room.contacts.ContactData
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.ContactsDao
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.data.local.model.ContactData
+import ch.protonmail.android.data.local.model.ContactEmail
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
@@ -51,10 +51,10 @@ class DeleteContactWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @RelaxedMockK
-    private lateinit var contactsDbFactory: ContactsDatabase
+    private lateinit var contactDatabase: ContactDatabase
 
     @MockK
-    private lateinit var contactsDb: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     @MockK
     private lateinit var api: ProtonMailApiManager
@@ -68,8 +68,8 @@ class DeleteContactWorkerTest {
             context,
             parameters,
             api,
-            contactsDb,
-            contactsDbFactory,
+            contactDao,
+            contactDatabase,
             TestDispatcherProvider
         )
     }
@@ -103,10 +103,10 @@ class DeleteContactWorkerTest {
             val contactEmail= mockk<ContactEmail>()
             val expected = ListenableWorker.Result.success()
 
-            every { contactsDb.findContactDataById(contactId) } returns contactData
-            every { contactsDb.findContactEmailsByContactId(contactId) } returns listOf(contactEmail)
-            every { contactsDb.deleteAllContactsEmails(any()) } returns mockk()
-            every { contactsDb.deleteContactData(any()) } returns mockk()
+            every { contactDao.findContactDataById(contactId) } returns contactData
+            every { contactDao.findContactEmailsByContactId(contactId) } returns listOf(contactEmail)
+            every { contactDao.deleteAllContactsEmails(any()) } returns mockk()
+            every { contactDao.deleteContactData(any()) } returns mockk()
             every { parameters.inputData } returns
                 workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))
             coEvery { api.deleteContact(any()) } returns deleteResponse
@@ -134,10 +134,10 @@ class DeleteContactWorkerTest {
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $randomErrorCode")
             )
 
-            every { contactsDb.findContactDataById(contactId) } returns contactData
-            every { contactsDb.findContactEmailsByContactId(contactId) } returns listOf(contactEmail)
-            every { contactsDb.deleteAllContactsEmails(any()) } returns mockk()
-            every { contactsDb.deleteContactData(any()) } returns mockk()
+            every { contactDao.findContactDataById(contactId) } returns contactData
+            every { contactDao.findContactEmailsByContactId(contactId) } returns listOf(contactEmail)
+            every { contactDao.deleteAllContactsEmails(any()) } returns mockk()
+            every { contactDao.deleteContactData(any()) } returns mockk()
             every { parameters.inputData } returns
                 workDataOf(KEY_INPUT_DATA_CONTACT_IDS to arrayOf(contactId))
             coEvery { api.deleteContact(any()) } returns deleteResponse

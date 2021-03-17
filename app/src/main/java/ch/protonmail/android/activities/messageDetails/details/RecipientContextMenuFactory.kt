@@ -21,7 +21,7 @@ package ch.protonmail.android.activities.messageDetails.details
 import android.view.View
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity
 import ch.protonmail.android.core.ProtonMailApplication
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.utils.ui.RecipientDropDownClickListener
 
 /**
@@ -30,7 +30,7 @@ import ch.protonmail.android.utils.ui.RecipientDropDownClickListener
 internal class RecipientContextMenuFactory(private val context:MessageDetailsActivity):Function1<String,View.OnClickListener> {
 
 	override fun invoke(email: String): View.OnClickListener {
-		val contactsDatabase = ContactsDatabase.getInstance(ProtonMailApplication.getApplication()).getDao()
+		val contactsDatabase = ContactDatabase.getInstance(ProtonMailApplication.getApplication()).getDao()
 		return RecipientDropDownClickListener(context, contactsDatabase, email)
 	}
 }

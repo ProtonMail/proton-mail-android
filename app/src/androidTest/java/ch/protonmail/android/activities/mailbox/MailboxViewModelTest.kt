@@ -23,7 +23,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.core.UserManager
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDatabase
 import com.birbit.android.jobqueue.JobManager
@@ -35,7 +35,7 @@ import io.mockk.mockk
 class MailboxViewModelTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private val labelsDatabaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabase::class.java).build()
+    private val labelsDatabaseFactory = Room.inMemoryDatabaseBuilder(context, ContactDatabase::class.java).build()
     private val messagesDatabaseFactory = Room.inMemoryDatabaseBuilder(context, MessageDatabase::class.java).build()
     private val pendingActionsDatabaseFactory = Room.inMemoryDatabaseBuilder(context, PendingActionDatabase::class.java).build()
     private val labelsDatabase = labelsDatabaseFactory.getDao()

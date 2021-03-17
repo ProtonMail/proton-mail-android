@@ -74,7 +74,7 @@ class MessageDetailsRepository @Inject constructor(
     private val attachmentsWorker: DownloadEmbeddedAttachmentsWorker.Enqueuer
 ) {
 
-    private var messagesDao: MessagesDao = databaseProvider.provideMessagesDao()
+    private var messagesDao: MessagesDao = databaseProvider.provideMessageDao()
 
     /**
      * Reloads all statically required dependencies when currently active user changes.
@@ -83,13 +83,13 @@ class MessageDetailsRepository @Inject constructor(
         ReplaceWith("reloadDependenciesForUserId(userId: Id)")
     )
     fun reloadDependenciesForUser(username: String?) {
-        pendingActionDatabase = databaseProvider.providePendingActionsDao(username)
-        messagesDao = databaseProvider.provideMessagesDao(username)
+        pendingActionDatabase = databaseProvider.providePendingActionDao(username)
+        messagesDao = databaseProvider.provideMessageDao(username)
     }
 
     fun reloadDependenciesForUser(userId: Id) {
-        pendingActionDatabase = databaseProvider.providePendingActionsDao(userId)
-        messagesDao = databaseProvider.provideMessagesDao(userId)
+        pendingActionDatabase = databaseProvider.providePendingActionDao(userId)
+        messagesDao = databaseProvider.provideMessageDao(userId)
     }
 
     fun findMessageByIdAsync(messageId: String): LiveData<Message> =

@@ -21,12 +21,8 @@ package ch.protonmail.android.api.models.room
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.InstrumentationRegistry
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactDatabase
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.runBlockingTest
+import ch.protonmail.android.data.local.ContactDatabase
+import ch.protonmail.android.data.local.model.*
 import org.junit.Assert
 import org.junit.Rule
 import java.util.Arrays
@@ -37,7 +33,7 @@ import kotlin.test.Test
  */
 class ContactGroupsDatabaseTest {
     private val context = InstrumentationRegistry.getTargetContext()
-    private val databaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabase::class.java).build()
+    private val databaseFactory = ContactDatabase.buildInMemoryDatabase(context)
     private val database = databaseFactory.getDao()
 
     @get:Rule

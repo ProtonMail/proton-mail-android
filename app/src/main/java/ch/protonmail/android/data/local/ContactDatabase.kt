@@ -42,12 +42,12 @@ import me.proton.core.util.kotlin.unsupported
     version = BuildConfig.ROOM_DB_VERSION
 )
 @TypeConverters(value = [FullContactDetailsConverter::class])
-abstract class ContactsDatabase : RoomDatabase() {
+abstract class ContactDatabase : RoomDatabase() {
 
-    abstract fun getDao(): ContactsDao
+    abstract fun getDao(): ContactDao
 
-    companion object : DatabaseFactory<ContactsDatabase>(
-        ContactsDatabase::class,
+    companion object : DatabaseFactory<ContactDatabase>(
+        ContactDatabase::class,
         "ContactsDatabase.db"
     ) {
 
@@ -58,7 +58,7 @@ abstract class ContactsDatabase : RoomDatabase() {
             ReplaceWith("ContactsDatabase.getInstance(context, userId)"),
             DeprecationLevel.ERROR
         )
-        fun getInstance(context: Context, username: String? = null): ContactsDatabase =
+        fun getInstance(context: Context, username: String? = null): ContactDatabase =
             unsupported
 
         @Synchronized

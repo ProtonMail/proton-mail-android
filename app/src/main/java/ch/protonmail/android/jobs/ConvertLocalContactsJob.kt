@@ -44,8 +44,8 @@ import ch.protonmail.android.contacts.repositories.andorid.details.IAndroidConta
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.crypto.Crypto
-import ch.protonmail.android.data.local.ContactsDao
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.events.ContactEvent
 import ch.protonmail.android.events.ContactProgressEvent
 import ch.protonmail.android.utils.AppUtil
@@ -81,10 +81,10 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
     override fun onRun() {
 
         val currentUser = getUserManager().requireCurrentUserId()
-        val contactsDatabase = ContactsDatabase.getInstance(applicationContext, currentUser).getDao()
+        val contactsDatabase = ContactDatabase.getInstance(applicationContext, currentUser).getDao()
         val crypto = Crypto.forUser(getUserManager(), currentUser)
 
-        val executionResults = ContactsDatabase.getInstance(applicationContext, currentUser).runInTransaction<List<Int>> {
+        val executionResults = ContactDatabase.getInstance(applicationContext, currentUser).runInTransaction<List<Int>> {
 
             val contactsGroups = getLocalContactsGroups()
             val contactGroupsOnServer = uploadLocalContactsGroupsAndGetIds(contactsGroups)
@@ -252,7 +252,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
                 someGroupsAlreadyExist = true
             } else {
                 result[it.value] = response.contactGroup.ID
-                ContactsDatabase.getInstance(applicationContext).getDao().saveContactGroupLabel(response.contactGroup)
+                ContactDatabase.getInstance(applicationContext).getDao().saveContactGroupLabel(response.contactGroup)
             }
         }
 
@@ -274,46 +274,46 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
     }
 
     @ContactEvent.Status
-    private fun handleResponse(contactsDao: ContactsDao, response: ContactResponse,
+    private fun handleResponse(contactDao: ContactDao, response: ContactResponse,
                                contactDataDbId: Long, contactGroupIds: List<String>): Int {
         val remoteContactId = response.contactId
-        val previousContactData = contactsDao.findContactDataByDbId(contactDataDbId)
+        val previousContactData = contactDao.findContactDataByDbId(contactDataDbId)
         if (remoteContactId != "") {
-            val contactEmails = contactsDao.findContactEmailsByContactId(
+            val contactEmails = contactDao.findContactEmailsByContactId(
                     previousContactData!!.contactId!!)
             previousContactData.contactId = remoteContactId
-            contactsDao.saveContactData(previousContactData)
-            contactsDao.deleteAllContactsEmails(contactEmails)
+            contactDao.saveContactData(previousContactData)
+            contactDao.deleteAllContactsEmails(contactEmails)
             val responses = response.responses
             for (contactResponse in responses) {
                 val contact = contactResponse.response.contact
-                contactsDao.saveAllContactsEmailsBlocking(contact.emails!!)
+                contactDao.saveAllContactsEmailsBlocking(contact.emails!!)
                 contactGroupIds.forEach { contactGroupId ->
                     val emailsList = contact.emails!!.map { it.contactEmailId }
                     getApi().labelContacts(LabelContactsBody(contactGroupId, emailsList))
                             .doOnComplete {
-                                val joins = contactsDao.fetchJoins(contactGroupId) as ArrayList
+                                val joins = contactDao.fetchJoins(contactGroupId) as ArrayList
                                 for (contactEmail in emailsList) {
                                     joins.add(ContactEmailContactLabelJoin(contactEmail, contactGroupId))
                                 }
-                                contactsDao.saveContactEmailContactLabelBlocking(joins)
+                                contactDao.saveContactEmailContactLabelBlocking(joins)
                             }
                             .blockingAwait()
                 }
             }
             return ContactEvent.SUCCESS
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_EXIST || response.responseErrorCode == RESPONSE_CODE_ERROR_CONTACT_EXIST_THIS_EMAIL) {
-            contactsDao.deleteContactData(previousContactData!!)
+            contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.ALREADY_EXIST
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_INVALID_EMAIL || response
                         .responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_VALIDATION_FAILED) {
-            contactsDao.deleteContactData(previousContactData!!)
+            contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.INVALID_EMAIL
         } else if (response.responseErrorCode == RESPONSE_CODE_ERROR_EMAIL_DUPLICATE_FAILED) {
-            contactsDao.deleteContactData(previousContactData!!)
+            contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.DUPLICATE_EMAIL
         } else if (response.responseErrorCode != Constants.RESPONSE_CODE_OK) {
-            contactsDao.deleteContactData(previousContactData!!)
+            contactDao.deleteContactData(previousContactData!!)
             return ContactEvent.ERROR
         } else {
             return ContactEvent.SAVED

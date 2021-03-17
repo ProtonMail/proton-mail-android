@@ -19,9 +19,9 @@
 package ch.protonmail.android.contacts.details
 
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.contacts.groups.list.ContactGroupsRepository
-import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.testAndroid.rx.TestSchedulerRule
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -46,7 +46,7 @@ class ContactGroupsRepositoryTest {
     private lateinit var protonMailApi: ProtonMailApiManager
 
     @RelaxedMockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     @InjectMockKs
     private lateinit var contactGroupsRepository: ContactGroupsRepository
@@ -120,7 +120,7 @@ class ContactGroupsRepositoryTest {
 
         contactGroupsRepository.saveContactGroup(contactGroup)
 
-        verify { contactsDao.saveContactGroupLabel(contactGroup) }
+        verify { contactDao.saveContactGroupLabel(contactGroup) }
     }
 
 }

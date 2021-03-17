@@ -31,7 +31,7 @@ import javax.inject.Singleton
 @Singleton
 class AddressChooserRepository @Inject constructor(private val databaseProvider: DatabaseProvider) {
 
-    private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in AddressChooserRepository"); databaseProvider.provideContactsDao() }
+    private val contactsDatabase by lazy { /*TODO*/ Log.d("PMTAG", "instantiating contactsDatabase in AddressChooserRepository"); databaseProvider.provideContactDao() }
 
     fun getContactGroupEmails(): Observable<List<ContactEmail>> {
         return contactsDatabase.findAllContactsEmailsAsyncObservable()

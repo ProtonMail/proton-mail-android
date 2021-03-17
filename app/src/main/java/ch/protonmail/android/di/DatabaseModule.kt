@@ -25,8 +25,8 @@ import ch.protonmail.android.api.models.room.counters.CounterDatabase
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
-import ch.protonmail.android.data.local.ContactsDao
-import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.ContactDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.PendingActionDao
@@ -47,11 +47,11 @@ object DatabaseModule {
 
 
     @Provides
-    fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactsDatabase =
-        ContactsDatabase.getInstance(context, userManager.username)
+    fun provideContactsDatabaseFactory(context: Context, userManager: UserManager): ContactDatabase =
+        ContactDatabase.getInstance(context, userManager.username)
 
     @Provides
-    fun provideContactsDatabase(factory: ContactsDatabase): ContactsDao =
+    fun provideContactsDatabase(factory: ContactDatabase): ContactDao =
         factory.getDao()
 
 
