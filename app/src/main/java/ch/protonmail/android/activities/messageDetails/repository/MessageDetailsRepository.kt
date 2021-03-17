@@ -28,16 +28,12 @@ import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingSend
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.data.local.*
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
@@ -71,7 +67,7 @@ class MessageDetailsRepository @Inject constructor(
     private val jobManager: JobManager,
     private val api: ProtonMailApiManager,
     @Named("messages_search") var searchDatabaseDao: MessagesDao,
-    private var pendingActionsDatabase: PendingActionsDao,
+    private var pendingActionDatabase: PendingActionDao,
     private val applicationContext: Context,
     val databaseProvider: DatabaseProvider,
     private val dispatchers: DispatcherProvider,
@@ -87,12 +83,12 @@ class MessageDetailsRepository @Inject constructor(
         ReplaceWith("reloadDependenciesForUserId(userId: Id)")
     )
     fun reloadDependenciesForUser(username: String?) {
-        pendingActionsDatabase = databaseProvider.providePendingActionsDao(username)
+        pendingActionDatabase = databaseProvider.providePendingActionsDao(username)
         messagesDao = databaseProvider.provideMessagesDao(username)
     }
 
     fun reloadDependenciesForUser(userId: Id) {
-        pendingActionsDatabase = databaseProvider.providePendingActionsDao(userId)
+        pendingActionDatabase = databaseProvider.providePendingActionsDao(userId)
         messagesDao = databaseProvider.provideMessagesDao(userId)
     }
 
@@ -221,9 +217,9 @@ class MessageDetailsRepository @Inject constructor(
     suspend fun saveAttachment(attachment: Attachment) = messagesDao.saveAttachment(attachment)
 
     fun findPendingSendByOfflineMessageIdAsync(messageId: String) =
-        pendingActionsDatabase.findPendingSendByOfflineMessageIdAsync(messageId)
+        pendingActionDatabase.findPendingSendByOfflineMessageIdAsync(messageId)
 
-    fun findPendingSendByMessageId(messageId: String) = pendingActionsDatabase.findPendingSendByMessageId(messageId)
+    fun findPendingSendByMessageId(messageId: String) = pendingActionDatabase.findPendingSendByMessageId(messageId)
 
 
     @Suppress("RedundantSuspendModifier")
@@ -504,8 +500,8 @@ class MessageDetailsRepository @Inject constructor(
         jobManager.addJobInBackground(PostReadJob(listOf(messageId)))
     }
 
-    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> = pendingActionsDatabase.findAllPendingSendsAsync()
+    fun findAllPendingSendsAsync(): LiveData<List<PendingSend>> = pendingActionDatabase.findAllPendingSendsAsync()
 
     fun findAllPendingUploadsAsync(): LiveData<List<PendingUpload>> =
-        pendingActionsDatabase.findAllPendingUploadsAsync()
+        pendingActionDatabase.findAllPendingUploadsAsync()
 }

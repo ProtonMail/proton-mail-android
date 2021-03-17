@@ -20,8 +20,6 @@ package ch.protonmail.android.api.models
 
 import android.content.Context
 import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory
 import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.data.local.ContactsDatabase
@@ -29,6 +27,8 @@ import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.NotificationDatabase
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.FindUsernameForUserId
 import me.proton.core.util.kotlin.unsupported
@@ -83,19 +83,19 @@ class DatabaseProvider @Inject constructor(
     fun provideCountersDao(userId: Id): CounterDao =
         CounterDatabase.getInstance(context, userId).getDao()
 
-    fun providePendingActionsDao(userId: Id? = null): PendingActionsDao =
+    fun providePendingActionsDao(userId: Id? = null): PendingActionDao =
         providePendingActionsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)
 
     @Deprecated("Get by user Id", ReplaceWith("providePendingActionsDao(userId)"))
-    fun providePendingActionsDao(username: String?): PendingActionsDao =
-        PendingActionsDatabaseFactory.getInstance(context, username).getDatabase()
+    fun providePendingActionsDao(username: String?): PendingActionDao =
+        PendingActionDatabase.getInstance(context, username).getDao()
 
     fun providePendingActionsDatabase(userId: Id? = null) =
         providePendingActionsDatabase(userId?.let { findUsernameForUserId.blocking(it) }?.s)
 
     @Deprecated("Get by user Id", ReplaceWith("providePendingActionsDatabase(userId)"))
     fun providePendingActionsDatabase(username: String?) =
-        PendingActionsDatabaseFactory.getInstance(context, username)
+        PendingActionDatabase.getInstance(context, username)
 
     fun provideNotificationsDao(userId: Id? = null) =
         provideNotificationsDao(userId?.let { findUsernameForUserId.blocking(it) }?.s)

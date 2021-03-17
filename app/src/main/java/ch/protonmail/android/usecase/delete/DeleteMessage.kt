@@ -21,9 +21,9 @@ package ch.protonmail.android.usecase.delete
 
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingSend
 import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
+import ch.protonmail.android.data.local.PendingActionDao
 import ch.protonmail.android.usecase.model.DeleteMessageResult
 import ch.protonmail.android.worker.DeleteMessageWorker
 import kotlinx.coroutines.ensureActive
@@ -38,7 +38,7 @@ import javax.inject.Inject
 class DeleteMessage @Inject constructor(
     private val dispatchers: DispatcherProvider,
     private val messageDetailsRepository: MessageDetailsRepository,
-    private val pendingActionsDatabase: PendingActionsDao,
+    private val pendingActionDatabase: PendingActionDao,
     private val workerScheduler: DeleteMessageWorker.Enqueuer
 ) {
 
@@ -81,8 +81,8 @@ class DeleteMessage @Inject constructor(
             if (id.isEmpty()) {
                 continue
             }
-            val pendingUploads = pendingActionsDatabase.findPendingUploadByMessageId(id)
-            val pendingForSending = pendingActionsDatabase.findPendingSendByMessageId(id)
+            val pendingUploads = pendingActionDatabase.findPendingUploadByMessageId(id)
+            val pendingForSending = pendingActionDatabase.findPendingSendByMessageId(id)
 
             if (areThereAnyPendingUplandsOrSends(pendingUploads, pendingForSending)) {
                 invalidMessageIdList.add(id)

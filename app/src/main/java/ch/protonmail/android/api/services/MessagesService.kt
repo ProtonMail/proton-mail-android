@@ -24,13 +24,13 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -250,8 +250,8 @@ class MessagesService : JobIntentService() {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
             val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDb = messagesDbFactory.getDatabase()
-            val actionsDb = actionsDbFactory.getDatabase()
+            val messagesDb = messagesDbFactory.getDao()
+            val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             messagesDbFactory.runInTransaction {
                 actionsDbFactory.runInTransaction {
@@ -322,8 +322,8 @@ class MessagesService : JobIntentService() {
             var unixTime = 0L
             val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
             val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
-            val messagesDb = messagesDbFactory.getDatabase()
-            val actionsDb = actionsDbFactory.getDatabase()
+            val messagesDb = messagesDbFactory.getDao()
+            val actionsDb = actionsDbFactory.getDao()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
             messagesDbFactory.runInTransaction {
                 actionsDbFactory.runInTransaction {

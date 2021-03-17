@@ -57,8 +57,6 @@ import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
 import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.api.models.room.counters.CounterDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.AttachmentMetadataDao
@@ -69,6 +67,8 @@ import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.data.local.NotificationDao
 import ch.protonmail.android.data.local.NotificationDatabase
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -121,7 +121,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     private var notificationDao: NotificationDao? = null
     var counterDao: CounterDao? = null
     var attachmentMetadataDao: AttachmentMetadataDao? = null
-    var pendingActionsDatabase: PendingActionsDatabase? = null
+    var pendingActionDao: PendingActionDao? = null
     var sharedPreferences: SharedPreferences? = null
 
     private var mMailboxLocation: Constants.MessageLocationType = Constants.MessageLocationType.INBOX
@@ -161,7 +161,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         notificationDao = NotificationDatabase.getInstance(applicationContext).getDao()
         counterDao = CounterDatabase.getInstance(applicationContext).getDao()
         attachmentMetadataDao = AttachmentMetadataDatabase.getInstance(applicationContext).getDao()
-        pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(applicationContext).getDatabase()
+        pendingActionDao = PendingActionDatabase.getInstance(applicationContext).getDao()
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this@BaseSettingsActivity)
 
         mMailboxLocation = Constants.MessageLocationType
@@ -421,7 +421,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                         notificationDao,
                         counterDao,
                         attachmentMetadataDao,
-                        pendingActionsDatabase,
+                        pendingActionDao,
                         true
                     )
                     launchInitialDataFetch()

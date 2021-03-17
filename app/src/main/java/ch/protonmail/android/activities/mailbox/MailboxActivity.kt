@@ -109,8 +109,6 @@ import ch.protonmail.android.api.models.room.counters.TotalLabelCounter
 import ch.protonmail.android.api.models.room.counters.TotalLocationCounter
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.services.MessagesService.Companion.getLastMessageTime
 import ch.protonmail.android.api.services.MessagesService.Companion.startFetchFirstPage
@@ -127,6 +125,8 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USED_SPACE
 import ch.protonmail.android.core.Constants.SWIPE_GESTURES_CHANGED_VERSION
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.ContactsRepository
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.AttachmentFailedEvent
 import ch.protonmail.android.events.AuthStatus
@@ -220,7 +220,7 @@ class MailboxActivity :
     DialogInterface.OnDismissListener {
 
     private lateinit var counterDao: CounterDao
-    private lateinit var pendingActionsDatabase: PendingActionsDatabase
+    private lateinit var pendingActionDao: PendingActionDao
 
     @Inject
     lateinit var messageDetailsRepository: MessageDetailsRepository
@@ -258,7 +258,7 @@ class MailboxActivity :
         super.onCreate(savedInstanceState)
         counterDao = CounterDatabase.getInstance(this, userManager.requireCurrentUserId())
             .getDao()
-        pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
+        pendingActionDao = PendingActionDatabase.getInstance(this).getDao()
 
         // force reload of MessageDetailsRepository's internal dependencies in case we just switched user
 
@@ -581,7 +581,7 @@ class MailboxActivity :
 
         mJobManager.start()
         counterDao = CounterDatabase.getInstance(this, currentUserId).getDao()
-        pendingActionsDatabase = PendingActionsDatabaseFactory.getInstance(this).getDatabase()
+        pendingActionDao = PendingActionDatabase.getInstance(this).getDao()
         messageDetailsRepository.reloadDependenciesForUser(currentUserId)
 
         startObservingPendingActions()
@@ -1690,7 +1690,7 @@ class MailboxActivity :
             if (messageLocation == MessageLocationType.DRAFT || messageLocation == MessageLocationType.ALL_DRAFT) {
                 TryToOpenMessageTask(
                     this.mailboxActivity,
-                    mailboxActivity?.pendingActionsDatabase,
+                    mailboxActivity?.pendingActionDao,
                     message.messageId,
                     message.isInline,
                     message.addressID
@@ -1712,7 +1712,7 @@ class MailboxActivity :
 
     private class TryToOpenMessageTask internal constructor(
         private val mailboxActivity: WeakReference<MailboxActivity>,
-        private val pendingActionsDatabase: PendingActionsDatabase?,
+        private val pendingActionDao: PendingActionDao?,
         private val messageId: String?,
         private val isInline: Boolean,
         private val addressId: String?
@@ -1720,10 +1720,13 @@ class MailboxActivity :
 
         override fun doInBackground(vararg params: Unit): Boolean {
             // return true if message is not in sending process and can be opened
-            val pendingForSending = pendingActionsDatabase?.findPendingSendByMessageId(messageId!!)
-            return pendingForSending == null ||
-                pendingForSending.sent != null &&
-                !pendingForSending.sent!!
+            val pendingUploads = pendingActionDao?.findPendingUploadByMessageId(messageId!!)
+            val pendingForSending = pendingActionDao?.findPendingSendByMessageId(messageId!!)
+            return pendingUploads == null &&
+                (
+                    pendingForSending == null ||
+                        pendingForSending.sent != null && !pendingForSending.sent!!
+                    )
         }
 
         override fun onPostExecute(openMessage: Boolean) {

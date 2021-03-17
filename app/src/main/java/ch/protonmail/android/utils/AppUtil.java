@@ -48,8 +48,6 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.api.models.room.counters.CounterDao;
 import ch.protonmail.android.api.models.room.counters.CounterDatabase;
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase;
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabase;
 import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotificationsDatabaseFactory;
 import ch.protonmail.android.core.Constants;
@@ -62,6 +60,8 @@ import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.data.local.NotificationDao;
 import ch.protonmail.android.data.local.NotificationDatabase;
+import ch.protonmail.android.data.local.PendingActionDao;
+import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -174,7 +174,7 @@ public class AppUtil {
                         NotificationDatabase.Companion.getInstance(context, username).getDao(),
                         CounterDatabase.Companion.getInstance(context, username).getDao(),
                         AttachmentMetadataDatabase.Companion.getInstance(context, username).getDao(),
-                        PendingActionsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
+                        PendingActionDatabase.Companion.getInstance(context, username).getDao(),
                         clearDoneListener, clearContacts);
             } else {
                 clearStorage(ContactsDatabase.Companion.getInstance(context).getDao(),
@@ -183,7 +183,7 @@ public class AppUtil {
                         NotificationDatabase.Companion.getInstance(context).getDao(),
                         CounterDatabase.Companion.getInstance(context).getDao(),
                         AttachmentMetadataDatabase.Companion.getInstance(context).getDao(),
-                        PendingActionsDatabaseFactory.Companion.getInstance(context).getDatabase(),
+                        PendingActionDatabase.Companion.getInstance(context).getDao(),
                         clearDoneListener, clearContacts);
             }
         } catch (Exception e) {
@@ -326,11 +326,11 @@ public class AppUtil {
             final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
-            final PendingActionsDatabase pendingActionsDatabase,
+            final PendingActionDao pendingActionDao,
             final boolean clearContacts
     ) {
         clearStorage(contactsDao, messageDao, searchDatabase, notificationDao, counterDao,
-                attachmentMetadataDao, pendingActionsDatabase, null, clearContacts);
+                attachmentMetadataDao, pendingActionDao, null, clearContacts);
     }
 
     private static void clearStorage(
@@ -340,7 +340,7 @@ public class AppUtil {
             final NotificationDao notificationDao,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
-            final PendingActionsDatabase pendingActionsDatabase,
+            final PendingActionDao pendingActionDao,
             final IDBClearDone clearDone,
             final boolean clearContacts
     ) {
@@ -348,8 +348,8 @@ public class AppUtil {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                pendingActionsDatabase.clearPendingSendCache();
-                pendingActionsDatabase.clearPendingUploadCache();
+                pendingActionDao.clearPendingSendCache();
+                pendingActionDao.clearPendingUploadCache();
                 if (clearContacts) {
                     contactsDao.clearContactEmailsLabelsJoin();
                     contactsDao.clearContactEmailsCacheBlocking();

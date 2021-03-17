@@ -22,8 +22,6 @@ package ch.protonmail.android.di
 import android.content.Context
 import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.api.models.room.counters.CounterDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
@@ -31,6 +29,8 @@ import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.data.local.MessageDao
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,12 +78,12 @@ object DatabaseModule {
 
     @Provides
     fun providePendingActionsDatabaseFactory(context: Context, userManager: UserManager) =
-        PendingActionsDatabaseFactory.getInstance(context, userManager.username)
+        PendingActionDatabase.getInstance(context, userManager.username)
 
     @Provides
     fun providePendingActionsDatabase(
-        pendingActionsDatabaseFactory: PendingActionsDatabaseFactory
-    ): PendingActionsDatabase = pendingActionsDatabaseFactory.getDatabase()
+        pendingActionDatabase: PendingActionDatabase
+    ): PendingActionDao = pendingActionDatabase.getDao()
 
 
     @Provides

@@ -50,13 +50,13 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
 import ch.protonmail.android.data.local.*;
 import ch.protonmail.android.data.local.model.*;
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
-import ch.protonmail.android.api.models.room.pendingActions.PendingUpload;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
 import ch.protonmail.android.data.local.MessageDao;
 import ch.protonmail.android.data.local.MessageDatabase;
+import ch.protonmail.android.data.local.PendingActionDao;
+import ch.protonmail.android.data.local.PendingActionDatabase;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
@@ -69,6 +69,8 @@ import static ch.protonmail.android.core.Constants.MessageLocationType;
 
 @AndroidEntryPoint
 public class SearchActivity extends BaseActivity {
+
+    private PendingActionDao pendingActionDao;
 
     private MessagesRecyclerViewAdapter mAdapter;
     private TextView noMessagesView;

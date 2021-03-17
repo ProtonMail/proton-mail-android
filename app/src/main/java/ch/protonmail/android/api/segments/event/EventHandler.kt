@@ -45,8 +45,7 @@ import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
+import ch.protonmail.android.data.local.*
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_DOES_NOT_EXIST
 import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICTED
@@ -54,6 +53,8 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
@@ -91,8 +92,9 @@ class EventHandler @AssistedInject constructor(
     private val fetchContactsData: FetchContactsDataWorker.Enqueuer,
     private val contactDao: ContactDao,
     private val counterDao: CounterDao,
-    @Named("messages") var messageDao: MessageDao,
+    @Named("messages") var messagesDao: MessagesDao,
     private val pendingActionDao: PendingActionDao,
+    private val pendingActionsDaoFactory: PendingActionDatabase,
     private val launchInitialDataFetch: LaunchInitialDataFetch,
     private val mapper: AddressBridgeMapper,
     @Assisted val userId: Id
@@ -219,7 +221,7 @@ class EventHandler @AssistedInject constructor(
     private fun unsafeWrite(
         context: Context,
         contactsDao: ContactsDao,
-        messagesDao: MessagesDao,
+        messageDao: MessageDao,
         pendingActionsDao: PendingActionsDao,
         response: EventResponse
     ) {
@@ -247,7 +249,7 @@ class EventHandler @AssistedInject constructor(
         }
         if (messages != null) {
             messages.sortByDescending { eventMessageSortSelector(it) }
-            writeMessagesUpdates(messagesDao, pendingActionsDao, messages)
+            writeMessagesUpdates(messagesDao, pendingActionDao, messages)
         }
         if (contacts != null) {
             writeContactsUpdates(contactsDao, contacts)
@@ -310,7 +312,7 @@ class EventHandler @AssistedInject constructor(
 
     private fun writeMessagesUpdates(
         messageDao: MessageDao,
-        pendingActionsDatabase: PendingActionsDatabase,
+        pendingActionDao: PendingActionDao,
         events: List<EventResponse.MessageEventBody>
     ) {
         var latestTimestamp = userManager.checkTimestamp
@@ -319,19 +321,19 @@ class EventHandler @AssistedInject constructor(
                 latestTimestamp = max(event.message.Time.toFloat(), latestTimestamp)
             }
             val messageID = event.messageID
-            writeMessageUpdate(event, pendingActionsDatabase, messageID, messageDao)
+            writeMessageUpdate(event, pendingActionDao, messageID, messageDao)
         }
         userManager.checkTimestamp = latestTimestamp
     }
 
     private fun writeMessageUpdate(
         event: EventResponse.MessageEventBody,
-        pendingActionsDatabase: PendingActionsDatabase,
+        pendingActionDao: PendingActionDao,
         messageID: String,
         messageDao: MessageDao
     ) {
         val type = EventType.fromInt(event.type)
-        if (type != EventType.DELETE && checkPendingForSending(pendingActionsDatabase, messageId)) {
+        if (type != EventType.DELETE && checkPendingForSending(pendingActionDao, messageId)) {
             return
         }
         Timber.v("Update message type: $type Id: $messageId")
@@ -478,12 +480,12 @@ class EventHandler @AssistedInject constructor(
         stagedMessages.remove(messageId)
     }
 
-    private fun checkPendingForSending(pendingActionsDao: PendingActionsDao, messageId: String): Boolean {
-        var pendingForSending = pendingActionsDao.findPendingSendByMessageId(messageId)
+    private fun checkPendingForSending(pendingActionDao: PendingActionDao, messageId: String): Boolean {
+        var pendingForSending = pendingActionDao.findPendingSendByMessageId(messageId)
         if (pendingForSending != null) {
             return true
         }
-        pendingForSending = pendingActionsDao.findPendingSendByOfflineMessageId(messageId)
+        pendingForSending = pendingActionDao.findPendingSendByOfflineMessageId(messageId)
         return pendingForSending != null
     }
 

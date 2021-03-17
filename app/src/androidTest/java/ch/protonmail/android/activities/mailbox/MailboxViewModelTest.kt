@@ -22,10 +22,10 @@ import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.data.local.MessageDatabase
+import ch.protonmail.android.data.local.PendingActionDatabase
 import com.birbit.android.jobqueue.JobManager
 import io.mockk.every
 import io.mockk.mockk
@@ -37,10 +37,10 @@ class MailboxViewModelTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val labelsDatabaseFactory = Room.inMemoryDatabaseBuilder(context, ContactsDatabase::class.java).build()
     private val messagesDatabaseFactory = Room.inMemoryDatabaseBuilder(context, MessageDatabase::class.java).build()
-    private val pendingActionsDatabaseFactory = Room.inMemoryDatabaseBuilder(context, PendingActionsDatabaseFactory::class.java).build()
+    private val pendingActionsDatabaseFactory = Room.inMemoryDatabaseBuilder(context, PendingActionDatabase::class.java).build()
     private val labelsDatabase = labelsDatabaseFactory.getDao()
     private val messagesDatabase = messagesDatabaseFactory.getDao()
-    private val pendingActionsDatabase = pendingActionsDatabaseFactory.getDatabase()
+    private val pendingActionsDatabase = pendingActionsDatabaseFactory.getDao()
 
     private val label1 = ContactLabel("a", "aa", "aaa")
     private val label2 = ContactLabel("b", "ab", "aab", 0, 1)

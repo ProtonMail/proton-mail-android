@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2020 Proton Technologies AG
- * 
+ *
  * This file is part of ProtonMail.
- * 
+ *
  * ProtonMail is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ProtonMail is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
@@ -23,8 +23,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import ch.protonmail.android.api.models.room.testValue
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.data.local.PendingActionDao
+import ch.protonmail.android.data.local.PendingActionDatabase
 import ch.protonmail.android.testAndroidInstrumented.ReflectivePropertiesMatcher
-import ch.protonmail.android.testAndroidInstrumented.matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.Assert
@@ -34,11 +35,11 @@ import kotlin.test.Test
 
 /**
  * Created by Kamil Rajtar on 06.09.18.  */
-internal class PendingActionsDatabaseTest {
+internal class PendingActionDaoTest {
 
     private val context = ApplicationProvider.getApplicationContext<ProtonMailApplication>()
-    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, PendingActionsDatabaseFactory::class.java).build()
-    private var database = databaseFactory.getDatabase()
+    private var databaseFactory = Room.inMemoryDatabaseBuilder(context, PendingActionDatabase::class.java).build()
+    private var database = databaseFactory.getDao()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -59,7 +60,7 @@ internal class PendingActionsDatabaseTest {
         PendingUpload("e")
     )
 
-    private fun PendingActionsDatabase.populate() {
+    private fun PendingActionDao.populate() {
         pendingSends.forEach(this::insertPendingForSend)
         pendingUploads.forEach(this::insertPendingForUpload)
     }
