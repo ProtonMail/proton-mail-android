@@ -19,7 +19,6 @@
 
 package ch.protonmail.android.worker
 
-import android.content.Context
 import androidx.work.BackoffPolicy
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
@@ -30,7 +29,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.DraftBody
 import ch.protonmail.android.api.models.messages.ParsedHeaders
 import ch.protonmail.android.api.models.messages.receive.MessageFactory
@@ -59,14 +58,13 @@ import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_DB_ID
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_LOCAL_ID
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_MSG_PARENT_ID
 import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_PREV_SENDER_ADDR_ID
+import ch.protonmail.android.worker.drafts.KEY_INPUT_SAVE_DRAFT_USER_ID
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_ERROR_ENUM
 import ch.protonmail.android.worker.drafts.KEY_OUTPUT_RESULT_SAVE_DRAFT_MESSAGE_ID
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -83,38 +81,41 @@ class CreateDraftWorkerTest : CoroutinesTest {
     @RelaxedMockK
     private lateinit var userNotifier: UserNotifier
 
-    @RelaxedMockK
-    private lateinit var context: Context
+    private val errorNotifier: ErrorNotifier = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var parameters: WorkerParameters
+    private val parameters: WorkerParameters = mockk(relaxed = true) {
+        every { inputData.getString(KEY_INPUT_SAVE_DRAFT_USER_ID) } returns testUserId.s
+    }
 
-    @RelaxedMockK
-    private lateinit var messageFactory: MessageFactory
+    private val messageFactory: MessageFactory = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var messageDetailsRepository: MessageDetailsRepository
+    private val messageDetailsRepository: MessageDetailsRepository = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var workManager: WorkManager
+    private val workManager: WorkManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var userManager: UserManager
+    private val userManager: UserManager = mockk(relaxed = true) {
+        every { currentUserId } returns testUserId
+        every { requireCurrentUserId() } returns testUserId
+        coEvery { getUser(testUserId) } returns mockk(relaxed = true)
+    }
 
-    @RelaxedMockK
-    private lateinit var addressCryptoFactory: AddressCrypto.Factory
+    private val addressCryptoFactory: AddressCrypto.Factory = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var base64: Base64Encoder
+    private val base64: Base64Encoder = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var apiManager: ProtonMailApiManager
+    private val apiManager: ProtonMailApiManager = mockk(relaxed = true)
 
-    @RelaxedMockK
-    private lateinit var pendingActionsDao: PendingActionsDao
-
-    @InjectMockKs
-    private lateinit var worker: CreateDraftWorker
+    private val worker = CreateDraftWorker(
+        context = mockk(),
+        parameters,
+        messageDetailsRepository,
+        messageFactory,
+        userManager,
+        addressCryptoFactory,
+        base64,
+        apiManager,
+        errorNotifier
+    )
 
     @BeforeTest
     fun setUp() {
@@ -137,10 +138,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // When
             CreateDraftWorker.Enqueuer(workManager).enqueue(
-                message,
-                messageParentId,
-                messageActionType,
-                previousSenderAddressId
+                userId = testUserId,
+                message = message,
+                parentId = messageParentId,
+                actionType = messageActionType,
+                previousSenderAddressId = previousSenderAddressId
             )
 
             // Then
@@ -247,6 +249,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 null,
                 EmailAddress("sender@email.it"),
                 Name("senderName"),
+                null,
                 true,
                 Address.Type.ORIGINAL,
                 allowedToSend = true,
@@ -257,8 +260,8 @@ class CreateDraftWorkerTest : CoroutinesTest {
             givenActionTypeInput()
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
-            every { userManager.username } returns "username"
-            every { userManager.getUser("username").loadNew("username") } returns mockk {
+            every { userManager.currentUserId } returns testUserId
+            coEvery { userManager.getUser(testUserId) } returns mockk {
                 every { findAddressById(Id(addressId)) } returns address
             }
             val attachment = Attachment("attachment", keyPackets = "OriginalAttachmentPackets", inline = true)
@@ -326,7 +329,6 @@ class CreateDraftWorkerTest : CoroutinesTest {
             val attachment = Attachment("attachment1", "pic.jpg", "image/jpeg", keyPackets = "somePackets")
             val previousSenderAddressId = "previousSenderId82348"
             val privateKey = PgpField.PrivateKey(NotBlankString("current sender private key"))
-            val username = "username934"
             val senderPublicKey = "new sender public key"
             val decodedPacketsBytes = "decoded attachment packets".toByteArray()
             val encryptedKeyPackets = "re-encrypted att key packets".toByteArray()
@@ -351,11 +353,11 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
-            every { userManager.username } returns username
-            every { userManager.getUser(username).loadNew(username) } returns mockk {
+            every { userManager.currentUserId } returns testUserId
+            coEvery { userManager.getUser(testUserId) } returns mockk {
                 every { findAddressById(Id("addressId835")) } returns senderAddress
             }
-            every { addressCryptoFactory.create(Id(previousSenderAddressId), Name(username)) } returns addressCrypto
+            every { addressCryptoFactory.create(testUserId, Id(previousSenderAddressId)) } returns addressCrypto
             every { addressCrypto.buildArmoredPublicKey(privateKey) } returns senderPublicKey
             every { base64.decode(attachment.keyPackets!!) } returns decodedPacketsBytes
             every { base64.encode(encryptedKeyPackets) } returns "encrypted encoded packets"
@@ -365,7 +367,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
 
             // Then
             val attachmentReEncrypted = attachment.copy(keyPackets = "encrypted encoded packets")
-            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessageDao(testUserId)) }
             verify { addressCrypto.buildArmoredPublicKey(privateKey) }
             verify { apiDraftMessage.addAttachmentKeyPacket("attachment1", attachmentReEncrypted.keyPackets!!) }
         }
@@ -398,7 +400,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             every { messageDetailsRepository.findMessageByMessageDbIdBlocking(messageDbId) } returns message
             every { messageFactory.createDraftApiRequest(message) } answers { apiDraftMessage }
             every { messageDetailsRepository.findMessageByIdBlocking(parentId) } returns parentMessage
-            every { userManager.username } returns "username93w"
+            every { userManager.currentUserId } returns Id("another")
 
             // When
             worker.doWork()
@@ -440,7 +442,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             worker.doWork()
 
             // Then
-            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessageDao(testUserId)) }
             verifyOrder {
                 apiDraftMessage.addAttachmentKeyPacket("attachment", "OriginalAttachmentPackets")
                 apiDraftMessage.addAttachmentKeyPacket("attachment1", "Attachment1KeyPackets")
@@ -481,7 +483,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
             worker.doWork()
 
             // Then
-            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessagesDao()) }
+            coVerify { parentMessage.attachments(messageDetailsRepository.databaseProvider.provideMessageDao(testUserId)) }
             verifyOrder {
                 apiDraftMessage.addAttachmentKeyPacket("attachment", "OriginalAttachmentPackets")
                 apiDraftMessage.addAttachmentKeyPacket("attachment2", "Attachment2KeyPackets")
@@ -991,7 +993,7 @@ class CreateDraftWorkerTest : CoroutinesTest {
                 every { messageId } returns "created_draft_id"
                 every { this@mockk.message } returns responseMessage
             }
-            val retrofitTag = RetrofitTag(userManager.username)
+            val retrofitTag = UserIdTag(testUserId)
             givenMessageIdInput(messageDbId)
             givenParentIdInput(parentId)
             givenActionTypeInput(NONE)

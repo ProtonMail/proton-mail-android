@@ -137,7 +137,7 @@ class AccountManager(
      * @return all the logged in users
      */
     suspend fun allLoggedIn(): Set<Id> = withContext(dispatchers.Io) {
-        sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet())
+        sharedPreferences.get(PREF_ALL_LOGGED_IN, emptySet<String>()).map(::Id).toSet()
     }
 
     @Deprecated(
@@ -158,7 +158,7 @@ class AccountManager(
      * @return all the saved users, both logged in and logged out
      */
     suspend fun allSaved(): Set<Id> = withContext(dispatchers.Io) {
-        sharedPreferences.get(PREF_ALL_SAVED, emptySet())
+        sharedPreferences.get(PREF_ALL_SAVED, emptySet<String>()).map(::Id).toSet()
     }
 
     @Deprecated(

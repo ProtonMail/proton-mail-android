@@ -23,7 +23,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -244,34 +243,9 @@ public class User {
         return load(userId, ProtonMailApplication.getApplication());
     }
 
-    @NonNull
-    @Deprecated
-    @kotlin.Deprecated(message = "Load with user Id")
-    public static User load(String username) {
-        throw new UnsupportedOperationException("Load with user Id");
-    }
-
-    /**
-     * Returns the new User entity.
-     * It relies on old load mechanism for load User, and then map it to new entity.
-     * This is supposed to be replaced by extracting outside of this class, and locate into a proper
-     * place
-     *
-     * @param username of the User intended to load
-     * @return new {@link ch.protonmail.android.domain.entity.user.User}
-     */
-    public ch.protonmail.android.domain.entity.user.User loadNew(String username) {
-        return load(username).toNewUser();
-    }
-
     public void save() {
-        final SharedPreferences pref;
-        if (!TextUtils.isEmpty(this.username)) {
-            pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        } else {
-            pref = ProtonMailApplication.getApplication().getSecureSharedPreferences();
-        }
-        Log.d("PMTAG", "saving User for username: `" + username + "`");
+        Timber.v("Saving User for username: `" + username + "`");
+        final SharedPreferences pref = getPreferences();
 
         if (NotificationSetting == -1) {
             NotificationSetting = loadNotificationSettingsFromBackup();
@@ -340,53 +314,51 @@ public class User {
     }
 
     private void saveShowSignatureSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        pref.edit().putBoolean(PREF_DISPLAY_SIGNATURE, ShowSignature).apply();
+        getPreferences().edit().putBoolean(PREF_DISPLAY_SIGNATURE, ShowSignature).apply();
     }
 
     private boolean loadShowSignatureSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        return pref.getBoolean(PREF_DISPLAY_SIGNATURE, false);
+        return getPreferences().getBoolean(PREF_DISPLAY_SIGNATURE, false);
     }
 
     private void saveShowMobileSignatureSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        pref.edit().putBoolean(PREF_DISPLAY_MOBILE, ShowMobileSignature).apply();
+        getPreferences().edit().putBoolean(PREF_DISPLAY_MOBILE, ShowMobileSignature).apply();
     }
 
     private boolean loadShowMobileSignatureSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        return pref.getBoolean(PREF_DISPLAY_MOBILE, true);
+        return getPreferences().getBoolean(PREF_DISPLAY_MOBILE, true);
     }
 
     private void saveGcmDownloadMessageDetailsSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        pref.edit().putBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, GcmDownloadMessageDetails).apply();
+        getPreferences().edit().putBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, GcmDownloadMessageDetails).apply();
     }
 
     private boolean loadGcmDownloadMessageDetailsSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        return pref.getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
+        return getPreferences().getBoolean(PREF_GCM_DOWNLOAD_MESSAGE_DETAILS, false);
     }
 
     private void saveBackgroundSyncSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        pref.edit().putBoolean(PREF_BACKGROUND_SYNC, BackgroundSync).apply();
+        getPreferences().edit().putBoolean(PREF_BACKGROUND_SYNC, BackgroundSync).apply();
     }
 
     private boolean loadBackgroundSyncSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        return pref.getBoolean(PREF_BACKGROUND_SYNC, true);
+        return getPreferences().getBoolean(PREF_BACKGROUND_SYNC, true);
     }
 
     private void savePreventTakingScreenshotsSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        pref.edit().putInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0).apply();
+        getPreferences().edit().putInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0).apply();
     }
 
     private int loadPreventTakingScreenshotsSetting() {
-        final SharedPreferences pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-        return pref.getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
+        return getPreferences().getInt(PREF_PREVENT_TAKING_SCREENSHOTS, 0);
+    }
+
+    private SharedPreferences getPreferences() {
+        if (TextUtils.isEmpty(id)) {
+            throw new IllegalStateException("Cannot save for user without id");
+        }
+        ProtonMailApplication application = ProtonMailApplication.getApplication();
+        return SecureSharedPreferences.Companion.getPrefsForUser(application, new Id(id));
     }
 
     public void setAllowSecureConnectionsViaThirdParties(boolean allowSecureConnectionsViaThirdParties) {
@@ -579,14 +551,8 @@ public class User {
     public void setAndSaveUsedSpace(long usedSpace) {
         if (this.usedSpace != usedSpace) {
             this.usedSpace = usedSpace;
-            final SharedPreferences pref;
-            if (!TextUtils.isEmpty(this.username)) {
-                pref = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-            } else {
-                pref = ProtonMailApplication.getApplication().getSecureSharedPreferences();
-            }
-            Log.d("PMTAG", "setAndSaveUsedSpace for username: `" + username + "`");
-            pref.edit().putLong(PREF_USED_SPACE, this.usedSpace).apply();
+            Timber.v("SetAndSaveUsedSpace for username: `" + username + "`");
+            getPreferences().edit().putLong(PREF_USED_SPACE, this.usedSpace).apply();
         }
     }
 
@@ -664,13 +630,7 @@ public class User {
 
     private void tryLoadAddresses() {
         if (Addresses == null || Addresses.size() == 0) {
-            final SharedPreferences securePrefs;
-            if (!TextUtils.isEmpty(this.username)) {
-                securePrefs = ProtonMailApplication.getApplication().getSecureSharedPreferences(this.username);
-            } else {
-                securePrefs = ProtonMailApplication.getApplication().getSecureSharedPreferences();
-            }
-            Addresses = deserializeAddresses(securePrefs.getString(PREF_ALIASES, ""));
+            Addresses = deserializeAddresses(getPreferences().getString(PREF_ALIASES, ""));
 
             // TODO try to verify and decrypt private key here?
         }

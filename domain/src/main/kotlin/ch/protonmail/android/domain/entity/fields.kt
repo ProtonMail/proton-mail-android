@@ -18,6 +18,8 @@
  */
 package ch.protonmail.android.domain.entity
 
+import kotlinx.serialization.Serializable
+
 /*
  * A set of typed representation of business models that can be described as 'field'.
  * e.g. Email, Username, Password
@@ -67,6 +69,7 @@ data class EmailAddress(val s: String) : Validable by RegexValidator(s, VALIDATI
  * [Validable] by [NotBlankStringValidator]
  */
 @Validated
+@Serializable
 data class Id(val s: String) : Validable by NotBlankStringValidator(s) {
     init { requireValid() }
 }

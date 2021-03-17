@@ -28,6 +28,7 @@ import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.crypto.CipherText
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.utils.crypto.BinaryDecryptionResult
@@ -284,16 +285,19 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     @Test
     fun uploadPublicKeyCallsUploadAttachmentApiWithPublicKeyAttachment() {
         runBlockingTest {
-            val username = "username"
-            val message = Message(messageId = "messageId")
+            val userId = Id("id")
+            val addressId = Id("addressId")
+            val message = Message(messageId = "messageId", addressID = addressId.s)
             val privateKey = mockk<PgpField.PrivateKey>()
             val unarmoredSignedFileContent = "unarmoredSignedFileContent".toByteArray()
             val address = mockk<Address> {
                 every { keys.primaryKey?.privateKey } returns privateKey
                 every { email } returns EmailAddress("message@email.com")
             }
-            every { userManager.username } returns username
-            every { userManager.getUser(username).getAddressById(message.addressID).toNewAddress() } returns address
+            every { userManager.currentUserId } returns userId
+            every { userManager.requireCurrentUserId() } returns userId
+            coEvery { userManager.getLegacyUser(userId).getAddressById(addressId.s).toNewAddress() } returns address
+            coEvery { userManager.getUser(userId).findAddressById(addressId) } returns address
             every { crypto.buildArmoredPublicKey(any()) } returns "PublicKeyString"
             every { crypto.getFingerprint("PublicKeyString") } returns "PublicKeyStringFingerprint"
             every { armorer.unarmor(any()) } returns unarmoredSignedFileContent

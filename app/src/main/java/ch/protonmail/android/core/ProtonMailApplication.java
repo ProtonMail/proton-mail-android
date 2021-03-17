@@ -55,7 +55,9 @@ import com.squareup.otto.Subscribe;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -97,7 +99,7 @@ import ch.protonmail.android.events.Status;
 import ch.protonmail.android.events.StorageLimitEvent;
 import ch.protonmail.android.events.organizations.OrganizationEvent;
 import ch.protonmail.android.exceptions.ErrorStateGeneratorsKt;
-import ch.protonmail.android.fcm.FcmUtil;
+import ch.protonmail.android.fcm.FcmTokenManager;
 import ch.protonmail.android.jobs.FetchLabelsJob;
 import ch.protonmail.android.jobs.organizations.GetOrganizationJob;
 import ch.protonmail.android.jobs.user.FetchUserSettingsJob;
@@ -154,6 +156,9 @@ public class ProtonMailApplication extends Application implements androidx.work.
     NetworkSwitcher networkSwitcher;
     @Inject
     DownloadUtils downloadUtils;
+
+    @Inject
+    FcmTokenManager.Factory fcmTokenManagerFactory;
 
     private Bus mBus;
     private boolean appInBackground;
@@ -250,13 +255,6 @@ public class ProtonMailApplication extends Application implements androidx.work.
     @NonNull
     public SharedPreferences getSecureSharedPreferences() {
         return SecureSharedPreferences.Companion.getPrefs(this, "ProtonMailSSP", Context.MODE_PRIVATE);
-    }
-
-    @NonNull
-    @Deprecated // Using it is an ERROR!
-    @kotlin.Deprecated(message = "Use with user Id with SecureSharedPreferences#getPrefsForUser(context: Context, userId: Id)")
-    public SharedPreferences getSecureSharedPreferences(String username) {
-        throw new UnsupportedOperationException("Use with user Id with SecureSharedPreferences.forUser");
     }
 
     @NonNull
@@ -535,7 +533,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 new FetchContactsDataWorker.Enqueuer(WorkManager.getInstance(this)).enqueue();
             }
             if (BuildConfig.REREGISTER_FOR_PUSH) {
-                FcmUtil.setTokenSent(false);
+                fcmTokenManagerFactory.create(prefs).setTokenSentBlocking(false);
             }
             jobManager.addJobInBackground(new FetchLabelsJob());
             //new version will get set in RegisterGcmJob
@@ -579,51 +577,63 @@ public class ProtonMailApplication extends Application implements androidx.work.
                             );
 
                     if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_WARNING)) {
-                        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING,
-                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)).apply();
+                        secureSharedPreferences.edit().putBoolean(
+                                PREF_SHOW_STORAGE_LIMIT_WARNING,
+                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_WARNING, true)
+                        ).apply();
                         defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_WARNING).apply();
                     }
                     if (defaultSharedPreferences.contains(PREF_SHOW_STORAGE_LIMIT_REACHED)) {
-                        secureSharedPreferences.edit().putBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED,
-                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)).apply();
+                        secureSharedPreferences.edit().putBoolean(
+                                PREF_SHOW_STORAGE_LIMIT_REACHED,
+                                defaultSharedPreferences.getBoolean(PREF_SHOW_STORAGE_LIMIT_REACHED, true)
+                        ).apply();
                         defaultSharedPreferences.edit().remove(PREF_SHOW_STORAGE_LIMIT_REACHED).apply();
                     }
                 }
 
                 Set<Id> loggedInUsers = accountManager.allLoggedInBlocking();
+                Map<Id, SharedPreferences> allLoggedInUserPreferences = new HashMap();
+                for (Id user : loggedInUsers) {
+                    allLoggedInUserPreferences.put(
+                            user,
+                            SecureSharedPreferences.Companion.getPrefsForUser(this, user)
+                    );
+                }
+
                 if (defaultSharedPreferences.contains(PREF_LOGIN_STATE)) {
-                    for (Id user : loggedInUsers) {
-                        SharedPreferences secureSharedPreferencesForUser = SecureSharedPreferences.Companion.getPrefsForUser(getApplicationContext(),
-                                user);
-                        if (userManager.getMailboxPassword(user) == null) {
-                            userManager.logoutBlocking(user);
+                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                        Id id = entry.getKey();
+                        if (userManager.getMailboxPassword(id) == null) {
+                            userManager.logoutBlocking(id);
                         } else {
-                            secureSharedPreferencesForUser.edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
+                            entry.getValue().edit().putInt(PREF_LOGIN_STATE, LOGIN_STATE_TO_INBOX).apply();
                         }
                     }
                     defaultSharedPreferences.edit().remove(PREF_LOGIN_STATE).apply();
                 }
-                for (Id user : loggedInUsers) {
-                    SharedPreferences secureSharedPreferencesForUser =
-                            SecureSharedPreferences.Companion.getPrefsForUser(
-                                    getApplicationContext(),
-                                    user
-                            );
-                    if (secureSharedPreferencesForUser.contains(PREF_LATEST_EVENT)) {
-                        secureSharedPreferencesForUser.edit().remove(PREF_LATEST_EVENT).apply();
+                for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                    SharedPreferences userPrefs = entry.getValue();
+                    if (userPrefs.contains(PREF_LATEST_EVENT)) {
+                        userPrefs.edit().remove(PREF_LATEST_EVENT).apply();
                     }
                 }
                 if (previousVersion < FCM_MIGRATION_VERSION) {
-                    FcmUtil.setTokenSent(false);
+                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                        SharedPreferences userPrefs = entry.getValue();
+                        fcmTokenManagerFactory.create(userPrefs).setTokenSentBlocking(false);
+                    }
                 }
                 if (defaultSharedPreferences.contains(PREF_SENT_TOKEN_TO_SERVER)) {
-                    for (Id user : loggedInUsers) {
-                        SharedPreferences secureSharedPreferencesForUser =
-                                SecureSharedPreferences.Companion.getPrefsForUser(
-                                        getApplicationContext(),
-                                        user
-                                );
-                        secureSharedPreferencesForUser.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
+                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                        SharedPreferences userPrefs = entry.getValue();
+                        userPrefs.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
+                                defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
+                        defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
+                    }
+                    for (Map.Entry<Id, SharedPreferences> entry : allLoggedInUserPreferences.entrySet()) {
+                        SharedPreferences userPrefs = entry.getValue();
+                        userPrefs.edit().putBoolean(PREF_SENT_TOKEN_TO_SERVER,
                                 defaultSharedPreferences.getBoolean(PREF_SENT_TOKEN_TO_SERVER, false)).apply();
                         defaultSharedPreferences.edit().remove(PREF_SENT_TOKEN_TO_SERVER).apply();
                     }

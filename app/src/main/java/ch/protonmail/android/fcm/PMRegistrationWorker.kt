@@ -37,6 +37,7 @@ import ch.protonmail.android.core.Constants.RESPONSE_CODE_OK
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.BuildInfo
+import me.proton.core.util.kotlin.takeIfNotBlank
 import javax.inject.Inject
 
 // region constants
@@ -57,9 +58,9 @@ class PMRegistrationWorker @WorkerInject constructor(
 ) : CoroutineWorker(context, workerParameters) {
 
     override suspend fun doWork(): Result {
-        val userId = inputData.getString(KEY_PM_REGISTRATION_WORKER_USER_ID)
+        val userId = inputData.getString(KEY_PM_REGISTRATION_WORKER_USER_ID)?.takeIfNotBlank()
             ?.let(::Id)
-            ?: return Result.failure(workDataOf(KEY_PM_REGISTRATION_WORKER_ERROR to "Username not provided"))
+            ?: return Result.failure(workDataOf(KEY_PM_REGISTRATION_WORKER_ERROR to "User id not provided"))
 
         val userPrefs = SecureSharedPreferences.getPrefsForUser(applicationContext, userId)
         val fcmTokenManager = fcmTokenManagerFactory.create(userPrefs)

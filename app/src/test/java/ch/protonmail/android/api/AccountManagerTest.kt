@@ -30,6 +30,7 @@ import assert4k.invoke
 import assert4k.that
 import assert4k.times
 import assert4k.unaryPlus
+import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.utils.getStringList
@@ -146,10 +147,12 @@ class AccountManagerTest : CoroutinesTest {
         private val secureSharedPreferencesMigration: SecureSharedPreferences.UsernameToIdMigration = mockk {
             coEvery { this@mockk(any()) } returns mapOf(user1, user2, user3, user4)
         }
+        private val userManagerMigration: UserManager.UsernameToIdMigration = mockk(relaxed = true)
         private val migration = AccountManager.UsernameToIdMigration(
             dispatchers,
             accountManager,
             secureSharedPreferencesMigration,
+            userManagerMigration,
             defaultPreferences.apply {
                 edit {
                     putStringList(PREF_USERNAMES_LOGGED_IN, listOf(user1, user2).map { it.first })
@@ -174,13 +177,13 @@ class AccountManagerTest : CoroutinesTest {
 
             assert that accountManager.allLoggedIn() * {
                 +size() equals 2
-                it contains user1.second.s
-                it contains user2.second.s
+                it contains user1.second
+                it contains user2.second
             }
             assert that accountManager.allLoggedOut() * {
                 +size() equals 2
-                it contains user3.second.s
-                it contains user4.second.s
+                it contains user3.second
+                it contains user4.second
             }
         }
 
@@ -190,8 +193,8 @@ class AccountManagerTest : CoroutinesTest {
 
             migration()
 
-            assert that accountManager.allLoggedIn() equals setOf(user1.second.s)
-            assert that accountManager.allLoggedOut() equals setOf(user3.second.s)
+            assert that accountManager.allLoggedIn() equals setOf(user1.second)
+            assert that accountManager.allLoggedOut() equals setOf(user3.second)
         }
     }
 }

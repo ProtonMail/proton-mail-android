@@ -137,8 +137,9 @@ import ch.protonmail.android.events.RefreshDrawerEvent
 import ch.protonmail.android.events.SettingsChangedEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.SwitchUserEvent
-import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.fcm.PMRegistrationWorker
+import ch.protonmail.android.fcm.model.FirebaseToken
 import ch.protonmail.android.jobs.EmptyFolderJob
 import ch.protonmail.android.jobs.FetchByLocationJob
 import ch.protonmail.android.jobs.FetchLabelsJob
@@ -230,6 +231,13 @@ class MailboxActivity :
     @Inject
     lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
 
+    @Inject
+    lateinit var fcmTokenManagerFactory: FcmTokenManager.Factory
+    private val fcmTokenManager: FcmTokenManager by lazy {
+        val prefs = SecureSharedPreferences.getPrefsForUser(this, userManager.requireCurrentUserId())
+        fcmTokenManagerFactory.create(prefs)
+    }
+
     private lateinit var messagesAdapter: MessagesRecyclerViewAdapter
     private val mailboxLocationMain = MutableLiveData<MessageLocationType>()
     private val isLoadingMore = AtomicBoolean(false)
@@ -261,7 +269,7 @@ class MailboxActivity :
         // TODO if we decide to use special flag for switching (and not login), change this
         if (intent.getBooleanExtra(EXTRA_FIRST_LOGIN, false)) {
             messageDetailsRepository.reloadDependenciesForUser(userId)
-            FcmUtil.setTokenSent(false) // force FCM to re-register
+            fcmTokenManager.setTokenSentBlocking(false) // force FCM to re-register
         }
         val extras = intent.extras
         if (!userManager.isEngagementShown) {
@@ -663,23 +671,25 @@ class MailboxActivity :
 
     private fun checkRegistration() {
         // Check device for Play Services APK.
-        if (checkPlayServices()) {
-            val tokenSent = FcmUtil.isTokenSent()
-            if (!tokenSent) {
-                try {
-                    FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            task.result?.let { result ->
-                                FcmUtil.setFirebaseToken(result.token)
-                                pmRegistrationWorkerEnqueuer()
+        lifecycleScope.launchWhenCreated {
+            if (checkPlayServices()) {
+                val tokenSent = fcmTokenManager.isTokenSent()
+                if (!tokenSent) {
+                    try {
+                        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                task.result?.let { result ->
+                                    fcmTokenManager.saveTokenBlocking(FirebaseToken(result.token))
+                                    pmRegistrationWorkerEnqueuer()
+                                }
+                            } else {
+                                Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
                             }
-                        } else {
-                            Timber.e(task.exception, "Could not retrieve FirebaseInstanceId")
                         }
+                    } catch (exc: IllegalArgumentException) {
+                        showToast(R.string.invalid_firebase_api_key_message)
+                        Timber.e(exc, getString(R.string.invalid_firebase_api_key_message))
                     }
-                } catch (exc: IllegalArgumentException) {
-                    Toast.makeText(this, R.string.invalid_firebase_api_key_message, Toast.LENGTH_LONG).show()
-                    Timber.e(exc, getString(R.string.invalid_firebase_api_key_message))
                 }
             }
         }

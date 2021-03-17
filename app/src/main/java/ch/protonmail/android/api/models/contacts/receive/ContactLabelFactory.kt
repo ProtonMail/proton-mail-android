@@ -19,51 +19,35 @@
 package ch.protonmail.android.api.models.contacts.receive
 
 import ch.protonmail.android.api.models.factories.IConverterFactory
-import ch.protonmail.android.api.models.factories.makeInt
 import ch.protonmail.android.api.models.factories.parseBoolean
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.api.utils.Fields
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.data.local.model.ContactLabel
-import ch.protonmail.android.utils.extensions.notNull
-import ch.protonmail.android.utils.extensions.notNullOrEmpty
+import ch.protonmail.android.domain.util.requireNotBlank
+import me.proton.core.util.kotlin.toInt
 
 class ContactLabelFactory : IConverterFactory<ServerLabel, ContactLabel> {
 
-    override fun createServerObjectFromDBObject(dbObject: ContactLabel): ServerLabel {
-        val id = dbObject.ID
-        val name = dbObject.name.notNullOrEmpty(Fields.Label.NAME)
-        val color = dbObject.color.notNullOrEmpty(Fields.Label.COLOR)
-        val display = dbObject.display
-        val order = dbObject.order
-        val exclusive = dbObject.exclusive.makeInt()
-        val type = Constants.LABEL_TYPE_CONTACT_GROUPS
-        return ServerLabel(
-            ID = id,
-            name = name,
-            color = color,
-            display = display,
-            order = order,
-            exclusive = exclusive,
-            type = type)
-    }
+    override fun createServerObjectFromDBObject(dbObject: ContactLabel) = ServerLabel(
+        ID = dbObject.ID,
+        name = requireNotBlank(dbObject.name) { "name is empty" },
+        color = requireNotBlank(dbObject.color) { "color is empty" },
+        display = dbObject.display,
+        order = dbObject.order,
+        exclusive = dbObject.exclusive.toInt(),
+        type = Constants.LABEL_TYPE_CONTACT_GROUPS
+    )
 
-    override fun createDBObjectFromServerObject(serverObject: ServerLabel): ContactLabel {
-        val id = serverObject.ID.notNullOrEmpty("ID")
-        val name = serverObject.name.notNullOrEmpty(Fields.Label.NAME)
-        val color = serverObject.color.notNullOrEmpty(Fields.Label.COLOR)
-        val display = serverObject.display.notNull(Fields.Label.DISPLAY)
-        val order = serverObject.order.notNull(Fields.Label.ORDER)
-        val exclusive = serverObject.exclusive.notNull(Fields.Label.EXCLUSIVE).parseBoolean(Fields.Label.EXCLUSIVE)
-        val type = serverObject.type.notNull(Fields.Label.TYPE)
-        return ContactLabel(
-                ID = id,
-                name = name,
-                color = color,
-                display = display,
-                order = order,
-                exclusive = exclusive,
-                type = type)
-    }
+    override fun createDBObjectFromServerObject(serverObject: ServerLabel) = ContactLabel(
+        ID = requireNotBlank(serverObject.ID) { "id is empty" },
+        name = requireNotBlank(serverObject.name) { "name is empty" },
+        color = requireNotBlank(serverObject.color) { "color is empty" },
+        display = requireNotNull(serverObject.display) { "display is null" },
+        order = requireNotNull(serverObject.order) { "order is null" },
+        exclusive = requireNotNull(serverObject.exclusive) { "exclusive is null" }
+            .parseBoolean(Fields.Label.EXCLUSIVE),
+        type = requireNotNull(serverObject.type) { "type is null" }
+    )
 
 }

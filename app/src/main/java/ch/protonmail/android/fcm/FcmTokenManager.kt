@@ -27,6 +27,7 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_SENT_TOKEN_TO_SERVER
 import ch.protonmail.android.fcm.model.FirebaseToken
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.android.sharedpreferences.get
 import me.proton.core.util.android.sharedpreferences.set
@@ -64,6 +65,11 @@ class FcmTokenManager @AssistedInject constructor(
         return@withContext registrationId
     }
 
+    @Deprecated("Use suspend variant", ReplaceWith("getToken()"))
+    fun getTokenBlocking(): FirebaseToken? = runBlocking {
+        getToken()
+    }
+
     suspend fun saveToken(token: FirebaseToken) {
         withContext(dispatchers.Io) {
             val appVersion = BuildConfig.VERSION_CODE
@@ -71,6 +77,11 @@ class FcmTokenManager @AssistedInject constructor(
             userPreferences[PREF_REGISTRATION_ID] = token
             userPreferences[PREF_APP_VERSION] = appVersion
         }
+    }
+
+    @Deprecated("Use suspend variant", ReplaceWith("saveToken(sent)"))
+    fun saveTokenBlocking(token: FirebaseToken) {
+        runBlocking { saveToken(token) }
     }
 
     suspend fun setTokenSent(sent: Boolean) {

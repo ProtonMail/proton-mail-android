@@ -19,50 +19,42 @@
 
 package ch.protonmail.android.usecase.fetch
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEncryptedData
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.FullContactDetails
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.testAndroid.lifecycle.testObserver
 import ch.protonmail.android.usecase.model.FetchContactDetailsResult
-import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
 import kotlinx.coroutines.test.runBlockingTest
+import me.proton.core.test.android.ArchTest
 import me.proton.core.test.kotlin.CoroutinesTest
-import org.junit.Rule
 import java.io.IOException
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class FetchContactDetailsTest : CoroutinesTest {
+class FetchContactDetailsTest : ArchTest, CoroutinesTest {
 
-    @get:Rule
-    val archRule = InstantTaskExecutorRule()
+    private val contactDao: ContactDao = mockk()
 
-    @MockK
-    private lateinit var contactDao: ContactDao
+    private val testUserId = Id("id")
 
-    @MockK
-    private lateinit var userManager: UserManager
-
-    @MockK
-    private lateinit var api: ProtonMailApiManager
-
-    @InjectMockKs
-    private lateinit var useCase: FetchContactDetails
-
-    @BeforeTest
-    fun setUp() {
-        MockKAnnotations.init(this)
+    private val userManager: UserManager = mockk {
+        every { currentUserId } returns testUserId
+        every { requireCurrentUserId() } returns testUserId
+        every { openPgp } returns mockk(relaxed = true)
     }
+
+    private val api: ProtonMailApiManager = mockk()
+
+    private val useCase = FetchContactDetails(
+        contactDao, userManager, api, mockk(), dispatchers
+    )
 
     @Test
     fun verifyThatExistingContactsDataIsFetchedFromTheDbAndPassedInLiveDataAndThenApiReturnsData() =
@@ -71,8 +63,6 @@ class FetchContactDetailsTest : CoroutinesTest {
             val contactId = "testContactId"
             val testDataDb = "testDataDb"
             val testDataNet = "testDataNet"
-            every { userManager.username } returns "testUserName"
-            every { userManager.openPgp } returns mockk(relaxed = true)
             val contactEncryptedDataDb = mockk<ContactEncryptedData> {
                 every { type } returns 0
                 every { data } returns testDataDb
@@ -115,8 +105,6 @@ class FetchContactDetailsTest : CoroutinesTest {
             val contactId = "testContactId"
             val testData = "testData"
             val testSignature = "testSignature"
-            every { userManager.username } returns "testUserName"
-            every { userManager.openPgp } returns mockk(relaxed = true)
             val contactEncryptedData = mockk<ContactEncryptedData> {
                 every { type } returns 2
                 every { data } returns testData
@@ -149,8 +137,6 @@ class FetchContactDetailsTest : CoroutinesTest {
             val contactId = "testContactId"
             val testSignature = "testSignature"
             val testDataNet = "testDataNet"
-            every { userManager.username } returns "testUserName"
-            every { userManager.openPgp } returns mockk(relaxed = true)
 
             val fullContactsFromDb = mockk<FullContactDetails> {
                 every { encryptedData } returns mutableListOf()

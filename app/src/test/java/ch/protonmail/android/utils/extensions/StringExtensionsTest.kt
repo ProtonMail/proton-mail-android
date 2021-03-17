@@ -72,7 +72,7 @@ internal class StringExtensionsTest {
         val input = "Hello world"
 
         val r1 = input.obfuscate()
-        assert that r1 equals "*******rld"
+        assert that r1 equals "********rld"
 
         val r2 = input.obfuscate(keepFirst = 3, keepLast = 0)
         assert that r2 equals "Hel********"

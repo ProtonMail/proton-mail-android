@@ -122,7 +122,7 @@ fun Editable.removeWhitespaces(): String =
  */
 fun String.obfuscate(replacement: Char = '*', keepFirst: Int = 0, keepLast: Int = 3) =
     mapIndexed { i, c ->
-        if (i < keepFirst || i > length - keepLast) c
+        if (i < keepFirst || i > length - keepLast - 1) c
         else replacement
     }.joinToString(separator = EMPTY_STRING)
 

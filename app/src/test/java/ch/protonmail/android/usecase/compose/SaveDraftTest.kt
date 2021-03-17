@@ -34,7 +34,8 @@ import ch.protonmail.android.core.Constants.MessageLocationType.ALL_MAIL
 import ch.protonmail.android.core.Constants.MessageLocationType.DRAFT
 import ch.protonmail.android.crypto.AddressCrypto
 import ch.protonmail.android.data.local.PendingActionDao
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.PendingSend
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.usecase.compose.SaveDraft.SaveDraftParameters
@@ -89,7 +90,7 @@ class SaveDraftTest : CoroutinesTest {
     @InjectMockKs
     lateinit var saveDraft: SaveDraft
 
-    private val currentUsername = "username"
+    private val currentUserId = Id("Id")
 
     @BeforeTest
     fun setUp() {
@@ -109,7 +110,7 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("Message body in plain text", true).armored } returns "encrypted armored content"
             }
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 123L
 
             // When
@@ -151,7 +152,7 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("Message body in plain text auto saving", true).armored } returns encryptedBody
             }
-            every { addressCryptoFactory.create(Id("addressIdAutoSave"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressIdAutoSave")) } returns addressCrypto
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 8923L
 
             // When
@@ -231,7 +232,7 @@ class SaveDraftTest : CoroutinesTest {
             val addressCrypto = mockk<AddressCrypto> {
                 every { encrypt("", true).armored } returns "encrypted empty message body"
             }
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 7237L
             mockkStatic(Timber::class)
 
@@ -283,7 +284,15 @@ class SaveDraftTest : CoroutinesTest {
             )
 
             // Then
-            verify { createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273") }
+            verify {
+                createDraftScheduler.enqueue(
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId123",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId1273"
+                )
+            }
         }
     }
 
@@ -301,7 +310,13 @@ class SaveDraftTest : CoroutinesTest {
             }
             coEvery { messageDetailsRepository.saveMessageLocally(message) } returns 9833L
             every {
-                createDraftScheduler.enqueue(message, "parentId123", REPLY_ALL, "previousSenderId1273")
+                createDraftScheduler.enqueue(
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId123",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId1273"
+                )
             } answers { flowOf(null) }
 
             // When
@@ -345,10 +360,11 @@ class SaveDraftTest : CoroutinesTest {
             val workerStatusFlow = buildWorkerResponse(WorkInfo.State.SUCCEEDED, workOutputData)
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
             coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId", false) } returns buildWorkerResponse(
@@ -396,14 +412,15 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
             coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
@@ -448,6 +465,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId346") } returns apiDraft
             every {
                 createDraftScheduler.enqueue(
+                    currentUserId,
                     message,
                     "parentId235",
                     REPLY_ALL,
@@ -455,7 +473,7 @@ class SaveDraftTest : CoroutinesTest {
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
             coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId346", true) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )
@@ -501,6 +519,7 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
             every {
                 createDraftScheduler.enqueue(
+                    currentUserId,
                     message,
                     "parentId234",
                     REPLY_ALL,
@@ -508,7 +527,7 @@ class SaveDraftTest : CoroutinesTest {
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
 
             // When
             val result = saveDraft.invoke(
@@ -548,10 +567,11 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.findMessageById("45623") } returns message
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
 
@@ -604,10 +624,11 @@ class SaveDraftTest : CoroutinesTest {
             )
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { createDraftWorkerResult }
 
@@ -657,6 +678,7 @@ class SaveDraftTest : CoroutinesTest {
             )
             every {
                 createDraftScheduler.enqueue(
+                    currentUserId,
                     message,
                     "parentId234",
                     REPLY,
@@ -704,14 +726,15 @@ class SaveDraftTest : CoroutinesTest {
             coEvery { messageDetailsRepository.findMessageById("createdDraftMessageId345") } returns apiDraft
             every {
                 createDraftScheduler.enqueue(
-                    message,
-                    "parentId234",
-                    REPLY_ALL,
-                    "previousSenderId132423"
+                    userId = currentUserId,
+                    message = message,
+                    parentId = "parentId234",
+                    actionType = REPLY_ALL,
+                    previousSenderAddressId = "previousSenderId132423"
                 )
             } answers { workerStatusFlow }
             val addressCrypto = mockk<AddressCrypto>(relaxed = true)
-            every { addressCryptoFactory.create(Id("addressId"), Name(currentUsername)) } returns addressCrypto
+            every { addressCryptoFactory.create(currentUserId, Id("addressId")) } returns addressCrypto
             coEvery { uploadAttachments.enqueue(any(), "createdDraftMessageId345", false) } returns buildWorkerResponse(
                 WorkInfo.State.SUCCEEDED
             )

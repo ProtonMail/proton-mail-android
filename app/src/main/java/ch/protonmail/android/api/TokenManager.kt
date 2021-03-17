@@ -163,15 +163,5 @@ class TokenManager private constructor(private val pref: SharedPreferences) {
             cache.getOrPut(userId) {
                 TokenManager(SecureSharedPreferences.getPrefsForUser(context, userId))
             }
-
-        @Synchronized
-        @Deprecated(
-            "Use user Id",
-            ReplaceWith("getInstance(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun getInstance(username: String): TokenManager? {
-            unsupported
-        }
     }
 }

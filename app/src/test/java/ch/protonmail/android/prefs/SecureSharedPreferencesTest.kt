@@ -28,6 +28,7 @@ import assert4k.equals
 import assert4k.that
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_ID
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
+import ch.protonmail.android.core.PREF_USERNAME
 import ch.protonmail.android.domain.entity.Id
 import io.mockk.every
 import io.mockk.mockk
@@ -117,10 +118,12 @@ class SecureSharedPreferencesTest {
 
             assert that SecureSharedPreferences.getPrefsForUser(context, user1.second).all equals mapOf(
                 PREF_USER_ID to user1.second.s,
+                PREF_USERNAME to user1.first,
                 PREF_USER_NAME to user1.first
             )
             assert that SecureSharedPreferences.getPrefsForUser(context, user2.second).all equals mapOf(
                 PREF_USER_ID to user2.second.s,
+                PREF_USERNAME to user2.first,
                 PREF_USER_NAME to user2.first
             )
         }

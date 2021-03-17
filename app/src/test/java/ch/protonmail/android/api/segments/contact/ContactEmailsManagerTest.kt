@@ -21,11 +21,11 @@ package ch.protonmail.android.api.segments.contact
 
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.ContactEmailsResponseV2
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactEmailContactLabelJoin
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.contacts.ContactsDao
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.ContactDao
+import ch.protonmail.android.data.local.model.ContactEmail
+import ch.protonmail.android.data.local.model.ContactEmailContactLabelJoin
+import ch.protonmail.android.data.local.model.ContactLabel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -46,12 +46,12 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
     private lateinit var api: ProtonMailApiManager
 
     @MockK
-    private lateinit var contactsDao: ContactsDao
+    private lateinit var contactDao: ContactDao
 
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        manager = ContactEmailsManager(api, contactsDao)
+        manager = ContactEmailsManager(api, contactDao)
     }
 
     @Test
@@ -73,13 +73,13 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
             every { total } returns 0
         }
         coEvery { api.fetchContactEmails(any(), pageSize) } returns emailsResponse
-        coEvery { contactsDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) } returns Unit
+        coEvery { contactDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) } returns Unit
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactsDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) }
+        coVerify { contactDao.insertNewContactsAndLabels(newContactEmails, contactLabelList, newJoins) }
     }
 
     @Test
@@ -126,13 +126,13 @@ class ContactEmailsManagerTest : CoroutinesTest, ArchTest {
         coEvery { api.fetchContactEmails(0, pageSize) } returns emailsResponse1
         coEvery { api.fetchContactEmails(1, pageSize) } returns emailsResponse2
         coEvery { api.fetchContactEmails(2, pageSize) } returns emailsResponse3
-        coEvery { contactsDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) } returns Unit
+        coEvery { contactDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) } returns Unit
 
         // when
         manager.refresh(pageSize)
 
         // then
-        coVerify { contactsDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) }
+        coVerify { contactDao.insertNewContactsAndLabels(allContactEmails, contactLabelList, newJoins) }
     }
 
 }

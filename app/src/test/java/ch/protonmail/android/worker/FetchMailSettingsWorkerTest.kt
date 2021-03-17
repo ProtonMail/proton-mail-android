@@ -23,7 +23,6 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import ch.protonmail.android.api.ProtonMailApiManager
-import ch.protonmail.android.api.models.MailSettings
 import ch.protonmail.android.api.models.MailSettingsResponse
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
@@ -33,7 +32,6 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import me.proton.core.test.kotlin.TestDispatcherProvider
 import java.io.IOException
@@ -71,7 +69,6 @@ class FetchMailSettingsWorkerTest {
             context,
             parameters,
             protonMailApiManager,
-            userManager,
             TestDispatcherProvider
         )
     }
@@ -112,26 +109,6 @@ class FetchMailSettingsWorkerTest {
 
             // then
             assertEquals(expectedResult, workerResult)
-        }
-    }
-
-    @Test
-    fun `verify mail settings are set when the response is successful`() {
-        runBlocking {
-            // given
-            val mockMailSettings = mockk<MailSettings>()
-            val mockMailSettingsResponse = mockk<MailSettingsResponse> {
-                every { code } returns Constants.RESPONSE_CODE_OK
-                every { mailSettings } returns mockMailSettings
-            }
-
-            coEvery { protonMailApiManager.fetchMailSettings() } returns mockMailSettingsResponse
-
-            // when
-            fetchMailSettingsWorker.doWork()
-
-            // then
-            verify { userManager.mailSettings = mockMailSettings }
         }
     }
 }

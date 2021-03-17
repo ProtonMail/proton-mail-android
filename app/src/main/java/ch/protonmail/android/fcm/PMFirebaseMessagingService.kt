@@ -23,6 +23,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import ch.protonmail.android.R
+import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.fcm.model.FirebaseToken
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,9 +34,19 @@ import javax.inject.Inject
 /**
  * An extension of FirebaseMessagingService, handling token refreshing and receiving messages.
  */
-
 @AndroidEntryPoint
 public class PMFirebaseMessagingService : FirebaseMessagingService() {
+
+    @Inject
+    lateinit var fcmTokenManagerFactory: FcmTokenManager.Factory
+    @Inject
+    lateinit var userManager: UserManager
+    private val fcmTokenManager: FcmTokenManager? by lazy {
+        val userId = userManager.currentUserId
+            ?: return@lazy null
+        val prefs = SecureSharedPreferences.getPrefsForUser(applicationContext, userId)
+        fcmTokenManagerFactory.create(prefs)
+    }
 
     @Inject
     lateinit var pmRegistrationWorkerEnqueuer: PMRegistrationWorker.Enqueuer
@@ -43,8 +56,10 @@ public class PMFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
 
-        FcmUtil.setTokenSent(false)
-        FcmUtil.setFirebaseToken(token)
+        fcmTokenManager?.run {
+            setTokenSentBlocking(false)
+            saveTokenBlocking(FirebaseToken(token))
+        }
         pmRegistrationWorkerEnqueuer()
     }
 

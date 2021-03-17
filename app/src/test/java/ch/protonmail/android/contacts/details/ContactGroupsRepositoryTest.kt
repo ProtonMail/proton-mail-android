@@ -69,8 +69,8 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
@@ -86,8 +86,8 @@ class ContactGroupsRepositoryTest {
             // given
             val dbContactsList = listOf(label1)
             val searchTerm = "Rob"
-            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()
@@ -103,8 +103,8 @@ class ContactGroupsRepositoryTest {
             // given
             val searchTerm = "search"
             val dbContactsList = listOf(label1)
-            coEvery { contactsDao.findContactGroupsFlow("%$searchTerm%") } returns flowOf(dbContactsList)
-            coEvery { contactsDao.countContactEmailsByLabelId(any()) } returns 1
+            coEvery { contactDao.findContactGroups("%$searchTerm%") } returns flowOf(dbContactsList)
+            coEvery { contactDao.countContactEmailsByLabelId(any()) } returns 1
 
             // when
             val result = contactGroupsRepository.observeContactGroups(searchTerm).first()

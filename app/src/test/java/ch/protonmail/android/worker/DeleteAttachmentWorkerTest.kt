@@ -28,7 +28,8 @@ import ch.protonmail.android.api.models.ResponseBody
 import ch.protonmail.android.api.segments.RESPONSE_CODE_INVALID_ID
 import ch.protonmail.android.attachments.KEY_INPUT_DATA_ATTACHMENT_ID_STRING
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.data.local.model.*
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.Attachment
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.every
@@ -51,7 +52,7 @@ class DeleteAttachmentWorkerTest {
     private lateinit var parameters: WorkerParameters
 
     @MockK
-    private lateinit var messagesDb: MessagesDao
+    private lateinit var messageDao: MessageDao
 
     @MockK
     private lateinit var api: ProtonMailApiManager
@@ -61,7 +62,7 @@ class DeleteAttachmentWorkerTest {
     @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
-        worker = DeleteAttachmentWorker(context, parameters, api, messagesDb, TestDispatcherProvider)
+        worker = DeleteAttachmentWorker(context, parameters, api, messageDao, TestDispatcherProvider)
     }
 
     @Test
@@ -91,8 +92,8 @@ class DeleteAttachmentWorkerTest {
             val attachment = mockk<Attachment>()
             val expected = ListenableWorker.Result.success()
 
-            every { messagesDb.findAttachmentById(attachmentId) } returns attachment
-            every { messagesDb.deleteAttachment(attachment) } returns mockk()
+            every { messageDao.findAttachmentById(attachmentId) } returns attachment
+            every { messageDao.deleteAttachment(attachment) } returns mockk()
             every { parameters.inputData } returns
                 workDataOf(KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId)
             coEvery { api.deleteAttachment(any()) } returns deleteResponse
@@ -120,8 +121,8 @@ class DeleteAttachmentWorkerTest {
                 workDataOf(KEY_WORKER_ERROR_DESCRIPTION to "ApiException response code $randomErrorCode")
             )
             val attachment = mockk<Attachment>()
-            every { messagesDb.findAttachmentById(attachmentId) } returns attachment
-            every { messagesDb.deleteAttachment(attachment) } returns mockk()
+            every { messageDao.findAttachmentById(attachmentId) } returns attachment
+            every { messageDao.deleteAttachment(attachment) } returns mockk()
             every { parameters.inputData } returns
                 workDataOf(KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId)
             coEvery { api.deleteAttachment(any()) } returns deleteResponse
@@ -147,8 +148,8 @@ class DeleteAttachmentWorkerTest {
             }
             val expected = ListenableWorker.Result.success()
             val attachment = mockk<Attachment>()
-            every { messagesDb.findAttachmentById(attachmentId) } returns attachment
-            every { messagesDb.deleteAttachment(attachment) } returns mockk()
+            every { messageDao.findAttachmentById(attachmentId) } returns attachment
+            every { messageDao.deleteAttachment(attachment) } returns mockk()
             every { parameters.inputData } returns
                 workDataOf(KEY_INPUT_DATA_ATTACHMENT_ID_STRING to attachmentId)
             coEvery { api.deleteAttachment(any()) } returns deleteResponse
@@ -157,8 +158,8 @@ class DeleteAttachmentWorkerTest {
             val operationResult = worker.doWork()
 
             // then
-            verify { messagesDb.deleteAttachment(attachment) }
-            assertEquals(operationResult, expected)
+            assertEquals(expected, operationResult)
+            verify { messageDao.deleteAttachment(attachment) }
         }
     }
 }

@@ -19,6 +19,10 @@
 
 package ch.protonmail.android.api.models.contacts.receive
 
+import assert4k.assert
+import assert4k.fails
+import assert4k.that
+import assert4k.with
 import ch.protonmail.android.api.models.messages.receive.ServerLabel
 import ch.protonmail.android.data.local.model.ContactLabel
 import org.junit.Assert.assertEquals
@@ -67,29 +71,19 @@ class ContactLabelFactoryTest {
     @Test
     fun `mapping ContactLabel to ServerLabel fails when name is empty`() {
         val contactLabel = ContactLabel("ID", "", "color", 1, 0, false, 2)
-        var thrownException: Exception? = null
 
-        try {
+        assert that fails<IllegalArgumentException> {
             contactLabelFactory.createServerObjectFromDBObject(contactLabel)
-        } catch (e: RuntimeException) {
-            thrownException = e
-        }
-
-        assertEquals("Name is empty", thrownException?.message)
+        } with "name is empty"
     }
 
     @Test
     fun `mapping ContactLabel to ServerLabel fails when color is empty`() {
         val contactLabel = ContactLabel("ID", "name", "", 1, 0, false, 2)
-        var thrownException: Exception? = null
 
-        try {
+        assert that fails<IllegalArgumentException> {
             contactLabelFactory.createServerObjectFromDBObject(contactLabel)
-        } catch (e: RuntimeException) {
-            thrownException = e
-        }
-
-        assertEquals("Color is empty", thrownException?.message)
+        } with "color is empty"
     }
 
     @Test
@@ -105,43 +99,28 @@ class ContactLabelFactoryTest {
     @Test
     fun `mapping ServerLabel to ContactLabel fails when ID is empty`() {
         val serverLabel = ServerLabel("", "name", "color", 1, 0, 0, 2)
-        var thrownException: Exception? = null
 
-        try {
+        assert that fails<IllegalArgumentException> {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
-        } catch (e: RuntimeException) {
-            thrownException = e
-        }
-
-        assertEquals("ID is empty", thrownException?.message)
+        } with "id is empty"
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when name is empty`() {
         val serverLabel = ServerLabel("ID", "", "color", 1, 0, 0, 2)
-        var thrownException: Exception? = null
 
-        try {
+        assert that fails<IllegalArgumentException> {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
-        } catch (e: RuntimeException) {
-            thrownException = e
-        }
-
-        assertEquals("Name is empty", thrownException?.message)
+        } with "name is empty"
     }
 
     @Test
     fun `mapping ServerLabel to ContactLabel fails when color is empty`() {
         val serverLabel = ServerLabel("ID", "name", "", 1, 0, 0, 2)
-        var thrownException: Exception? = null
 
-        try {
+        assert that fails<IllegalArgumentException> {
             contactLabelFactory.createDBObjectFromServerObject(serverLabel)
-        } catch (e: RuntimeException) {
-            thrownException = e
-        }
-
-        assertEquals("Color is empty", thrownException?.message)
+        } with "color is empty"
     }
 
     @Test
@@ -155,7 +134,7 @@ class ContactLabelFactoryTest {
             thrownException = e
         }
 
-        assertEquals("Display is null", thrownException?.message)
+        assertEquals("display is null", thrownException?.message)
     }
 
     @Test
@@ -169,7 +148,7 @@ class ContactLabelFactoryTest {
             thrownException = e
         }
 
-        assertEquals("Order is null", thrownException?.message)
+        assertEquals("order is null", thrownException?.message)
     }
 
     @Test
@@ -183,7 +162,7 @@ class ContactLabelFactoryTest {
             thrownException = e
         }
 
-        assertEquals("Exclusive is null", thrownException?.message)
+        assertEquals("exclusive is null", thrownException?.message)
     }
 
     @Test
@@ -197,6 +176,6 @@ class ContactLabelFactoryTest {
             thrownException = e
         }
 
-        assertEquals("Type is null", thrownException?.message)
+        assertEquals("type is null", thrownException?.message)
     }
 }

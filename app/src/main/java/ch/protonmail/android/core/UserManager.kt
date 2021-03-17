@@ -44,7 +44,7 @@ import ch.protonmail.android.events.GenerateKeyPairEvent
 import ch.protonmail.android.events.LogoutEvent
 import ch.protonmail.android.events.Status
 import ch.protonmail.android.events.SwitchUserEvent
-import ch.protonmail.android.fcm.FcmUtil
+import ch.protonmail.android.fcm.FcmTokenManager
 import ch.protonmail.android.mapper.bridge.UserBridgeMapper
 import ch.protonmail.android.prefs.SecureSharedPreferences
 import ch.protonmail.android.usecase.FindUserIdForUsername
@@ -116,6 +116,7 @@ class UserManager @Inject constructor(
     @Deprecated("UserManager is never using this, but it's just providing for other classes, so this " +
         "should be injected directly there")
     val openPgp: OpenPGP,
+    private val fcmTokenManagerFactory: FcmTokenManager.Factory,
     private val dispatchers: DispatcherProvider
 ) {
 
@@ -169,11 +170,6 @@ class UserManager @Inject constructor(
     fun getMailSettingsBlocking(userId: Id): MailSettings =
         runBlocking { getMailSettings(userId) }
 
-    @Deprecated("User user Id", ReplaceWith("getMailSettings(userId)"), DeprecationLevel.ERROR)
-    fun getMailSettings(username: String): MailSettings? {
-        unsupported
-    }
-
     var snoozeSettings: SnoozeSettings? = null
 
     private var mNewUserUsername: String? = null
@@ -200,17 +196,6 @@ class UserManager @Inject constructor(
     @Deprecated("Use suspend function", ReplaceWith("getNextLoggedInUser()"))
     fun getNextLoggedInUserBlocking(): Id? =
         runBlocking { getNextLoggedInUser() }
-
-    /**
-     * Returns the username of the next available (if any) account other than current. Currently this
-     * works randomly hopefully it will get refactored by same factor (maybe how often the account
-     * is used recently or something else).
-     * @return the username of the account that is the second one after the current primary logged
-     * in account.
-     */
-    @Deprecated("User with user Id", ReplaceWith("getNextLoggedInUser"), DeprecationLevel.ERROR)
-    val nextLoggedInAccountOtherThanCurrent: String?
-        get() = unsupported
 
     var isLoggedIn: Boolean
         get() = prefs.getBoolean(PREF_IS_LOGGED_IN, false)
@@ -634,13 +619,13 @@ class UserManager @Inject constructor(
      */
     @JvmOverloads
     fun logoutLastActiveAccount(clearDoneListener: (() -> Unit)? = null) {
-        val currentUserId = requireNotNull(currentUserId)
         isLoggedIn = false
         currentUserLoginState = LOGIN_STATE_NOT_INITIALIZED
         AppUtil.deleteDatabases(app.applicationContext, currentUserId, clearDoneListener)
         saveBackupSettings()
         // Passing FCM token already here to prevent it being deleted from shared prefs before worker starts
-        LogoutService.startLogout(context, requireCurrentUserId(), true, FcmUtil.getFirebaseToken())
+        val fcmTokenManager = fcmTokenManagerFactory.create(preferencesFor(requireCurrentUserId()))
+        LogoutService.startLogout(context, requireCurrentUserId(), true, fcmTokenManager.getTokenBlocking()?.value)
         setRememberMailboxLogin(false)
         firstLoginRemove()
         resetReferencesBlocking()

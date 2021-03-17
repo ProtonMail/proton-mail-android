@@ -63,7 +63,7 @@ class LogoutWorker @WorkerInject constructor(
 
     override suspend fun doWork(): Result =
         runCatching {
-            val userId = Id(checkNotNull(inputData.getString(KEY_INPUT_USER_ID)))
+            val userId = Id(checkNotNull(inputData.getString(KEY_INPUT_USER_ID)) { "User id is required" })
             val registrationId = inputData.getString(KEY_INPUT_FCM_REGISTRATION_ID) ?: ""
 
             Timber.v("Unregistering user: $userId")

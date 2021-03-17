@@ -39,15 +39,16 @@ import ch.protonmail.android.core.Constants.Prefs.PREF_USER_LEGACY_ACCOUNT
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_NAME
 import ch.protonmail.android.core.Constants.Prefs.PREF_USER_PRIVATE
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.Addresses
 import ch.protonmail.android.domain.entity.user.Delinquent
 import ch.protonmail.android.domain.entity.user.Plan
 import ch.protonmail.android.domain.entity.user.Role
 import ch.protonmail.android.domain.entity.user.UserKeys
+import ch.protonmail.android.prefs.SecureSharedPreferences
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import me.proton.core.util.kotlin.invoke
 import org.junit.Ignore
 import kotlin.test.Test
@@ -114,11 +115,15 @@ internal class UserBridgeMapperTest {
     @Test
     @Ignore("java.lang.UnsatisfiedLinkError: 'long android.os.SystemClock.elapsedRealtime()'")
     fun `transform from preferences`() {
-        mockkStatic(ProtonMailApplication::class, TextUtils::class, SystemClock::class)
-        every { ProtonMailApplication.getApplication() } returns mockk {
-            every { getString(any()) } returns ""
-            every { resources } returns mockk(relaxed = true)
-            every { getSecureSharedPreferences("username") } returns mockk() {
+        mockkStatic(
+            ProtonMailApplication::class, SecureSharedPreferences::class, TextUtils::class, SystemClock::class
+        ) {
+            every { ProtonMailApplication.getApplication() } returns mockk {
+                every { getString(any()) } returns ""
+                every { resources } returns mockk(relaxed = true)
+                every { getSharedPreferences(any(), any()) } returns mockk(relaxed = true)
+            }
+            every { SecureSharedPreferences.getPrefsForUser(any(), Id("id")) } returns mockk {
 
                 // Defaults
                 every { getBoolean(any(), any()) } returns false
@@ -142,38 +147,35 @@ internal class UserBridgeMapperTest {
 
                 every { edit() } returns mockk(relaxed = true)
             }
-            every { getSharedPreferences(any(), any()) } returns mockk(relaxed = true)
+            every { TextUtils.isEmpty(any()) } answers { firstArg<String?>().isNullOrEmpty() }
+            every { SystemClock.elapsedRealtime() } returns 0
+
+            // GIVEN
+            val oldUser = LegacyUser.load(Id("id"))
+
+            // WHEN
+            val legacyUser = mapper { oldUser.toNewModel() }
+
+            // THEN
+            assert that legacyUser * {
+                +id.s equals "id"
+                +name.s equals "username"
+                +(plans * {
+                    +size.fix() equals 1
+                    it contains Plan.Vpn.Paid
+                })
+                +private equals true
+                +role equals Role.ORGANIZATION_ADMIN
+                +currency.s equals "eur"
+                +credits.fix() equals 10
+                +delinquent equals Delinquent.InvoiceDelinquent
+                +totalUploadLimit.l equals 12_345uL
+                +(dedicatedSpace * {
+                    +used.l.fix() equals 15_000uL
+                    +total.l.fix() equals 30_000uL
+                })
+                +isLegacy equals true
+            }
         }
-        every { TextUtils.isEmpty(any()) } answers { firstArg<String?>().isNullOrEmpty() }
-        every { SystemClock.elapsedRealtime() } returns 0
-
-        // GIVEN
-        val oldUser = LegacyUser.load("username")
-
-        // WHEN
-        val legacyUser = mapper { oldUser.toNewModel() }
-
-        // THEN
-        assert that legacyUser * {
-            +id.s equals "id"
-            +name.s equals "username"
-            +(plans * {
-                +size.fix() equals 1
-                it contains Plan.Vpn.Paid
-            })
-            +private equals true
-            +role equals Role.ORGANIZATION_ADMIN
-            +currency.s equals "eur"
-            +credits.fix() equals 10
-            +delinquent equals Delinquent.InvoiceDelinquent
-            +totalUploadLimit.l equals 12_345uL
-            +(dedicatedSpace * {
-                +used.l.fix() equals 15_000uL
-                +total.l.fix() equals 30_000uL
-            })
-            +isLegacy equals true
-        }
-
-        unmockkStatic(ProtonMailApplication::class, TextUtils::class, SystemClock::class)
     }
 }

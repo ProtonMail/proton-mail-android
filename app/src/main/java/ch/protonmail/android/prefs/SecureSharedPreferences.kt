@@ -518,15 +518,6 @@ class SecureSharedPreferences(
             return prefs!!
         }
 
-        @Synchronized
-        @Deprecated(
-            "Get with users' Id",
-            ReplaceWith("getPrefsForUser(context, userId)"),
-            DeprecationLevel.ERROR
-        )
-        fun getPrefsForUser(context: Context, username: String): SharedPreferences =
-            _getPrefsForUser(context, username)
-
         private fun _getPrefsForUser(
             context: Context,
             username: String

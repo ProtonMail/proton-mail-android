@@ -31,6 +31,7 @@ import ch.protonmail.android.data.local.ContactDao
 import ch.protonmail.android.data.local.model.ContactEmail
 import ch.protonmail.android.data.local.model.FullContactDetailsResponse
 import ch.protonmail.android.domain.entity.EmailAddress
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.NotBlankString
 import ch.protonmail.android.domain.entity.PgpField
 import ch.protonmail.android.domain.entity.user.AddressKey
@@ -93,7 +94,7 @@ class FetchVerificationKeysTest : CoroutinesTest {
             every { getAddresses() } returns CopyOnWriteArrayList(testAddresses)
         }
         every { userManager.user } returns testUser
-        every { userManager.username } returns "testUserName"
+        every { userManager.currentUserId } returns Id("id")
         every { userManager.openPgp } returns mockk()
         useCase = FetchVerificationKeys(api, userManager, userCrypto, contactDao, TestDispatcherProvider)
     }

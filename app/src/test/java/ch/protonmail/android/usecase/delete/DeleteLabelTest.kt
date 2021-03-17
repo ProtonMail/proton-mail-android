@@ -83,7 +83,7 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = true
 
-            coEvery { contactDao.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
             coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
             every { messageDao.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
@@ -118,7 +118,7 @@ class DeleteLabelTest {
             workerStatusLiveData.value = workInfo
             val expected = false
 
-            coEvery { contactDao.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
             coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
             every { messageDao.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData
@@ -152,7 +152,7 @@ class DeleteLabelTest {
             val workerStatusLiveData = MutableLiveData<WorkInfo>()
             workerStatusLiveData.value = workInfo
 
-            coEvery { contactDao.findContactGroupById(labelId) } returns contactLabel
+            coEvery { contactDao.findContactGroupByIdBlocking(labelId) } returns contactLabel
             coEvery { contactDao.deleteContactGroup(contactLabel) } returns Unit
             every { messageDao.deleteLabelById(labelId) } returns Unit
             every { workScheduler.enqueue(any()) } returns workerStatusLiveData

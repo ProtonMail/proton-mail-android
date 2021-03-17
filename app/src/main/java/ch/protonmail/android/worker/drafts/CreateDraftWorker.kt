@@ -52,6 +52,7 @@ import ch.protonmail.android.utils.MessageUtils
 import ch.protonmail.android.utils.base64.Base64Encoder
 import ch.protonmail.android.utils.notifier.UserNotifier
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.util.kotlin.takeIfNotBlank
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -281,8 +282,12 @@ class CreateDraftWorker @WorkerInject constructor(
         return Result.failure(errorData)
     }
 
-    private fun getInputUserId(): Id =
-        Id(requireNotNull(inputData.getString(KEY_INPUT_SAVE_DRAFT_USER_ID)))
+    private fun getInputUserId(): Id {
+        val idString = requireNotNull(inputData.getString(KEY_INPUT_SAVE_DRAFT_USER_ID)?.takeIfNotBlank()) {
+            "User id is required"
+        }
+        return Id(idString)
+    }
 
     private fun getInputActionType(): Constants.MessageActionType =
         Constants.MessageActionType.fromInt(inputData.getInt(KEY_INPUT_SAVE_DRAFT_ACTION_TYPE, -1))
