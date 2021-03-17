@@ -19,19 +19,13 @@
 package ch.protonmail.android.adapters.messages
 
 import android.content.Context
-import android.graphics.Typeface
-import android.os.Build
-import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import ch.protonmail.android.BuildConfig
+import android.view.ViewGroup
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.FLAVOR_V4
 import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.utils.ui.selection.SelectionModeEnum
 import ch.protonmail.android.views.messagesList.MessagesListFooterView
 import ch.protonmail.android.views.messagesList.MessagesListItemView
-import ch.protonmail.android.views.messagesList.MessagesListItemViewV4
 
 class MessagesRecyclerViewAdapter(
     private val context: Context,
@@ -40,7 +34,6 @@ class MessagesRecyclerViewAdapter(
 
 
     private var mMailboxLocation = Constants.MessageLocationType.INVALID
-    private val typeface: Typeface = Typeface.createFromAsset(context.assets, "protonmail-mobile-icons.ttf")
 
     private var labels = mapOf<String, Label>()
     private val messages = mutableListOf<Message>()
@@ -99,13 +92,7 @@ class MessagesRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagesListViewHolder {
         return when (ElementType.values()[viewType]) {
-            ElementType.MESSAGE -> {
-                if (BuildConfig.FLAVOR == FLAVOR_V4 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    MessagesListViewHolder.MessageViewHolderV4(MessagesListItemViewV4(context))
-                } else {
-                    MessagesListViewHolder.MessageViewHolder(MessagesListItemView(context))
-                }
-            }
+            ElementType.MESSAGE -> MessagesListViewHolder.MessageViewHolder(MessagesListItemView(context))
             ElementType.FOOTER -> MessagesListViewHolder.FooterViewHolder(MessagesListFooterView(context))
         }
     }
@@ -115,13 +102,7 @@ class MessagesRecyclerViewAdapter(
     override fun onBindViewHolder(holder: MessagesListViewHolder, position: Int) {
         when (ElementType.values()[getItemViewType(position)]) {
             ElementType.MESSAGE -> {
-                if (BuildConfig.FLAVOR == FLAVOR_V4) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        (holder as MessagesListViewHolder.MessageViewHolderV4).bindMessage(position)
-                    }
-                } else {
-                    (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
-                }
+                (holder as MessagesListViewHolder.MessageViewHolder).bindMessage(position)
             }
             ElementType.FOOTER -> {
                 // NOOP
@@ -133,13 +114,9 @@ class MessagesRecyclerViewAdapter(
         val message = messages[position]
         val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
 
-        val pendingSend = pendingSendList?.find { it.messageId == message.messageId }
-        // under these conditions the message is in sending process
-        message.isBeingSent = pendingSend != null && pendingSend.sent == null
-        message.isAttachmentsBeingUploaded = pendingUploadList?.find { it.messageId == message.messageId } != null
         message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
 
-        this.view.bind(message, messageLabels, selectedMessageIds.isNotEmpty(), mMailboxLocation, typeface)
+        this.view.bind(message, messageLabels, mMailboxLocation)
 
         val isSelected = selectedMessageIds.contains(message.messageId)
         this.view.isActivated = isSelected
@@ -164,35 +141,23 @@ class MessagesRecyclerViewAdapter(
             }
 
         }
-        this.view.setOnLongClickListener {
-            val messageId = it.tag as String
-            if (onSelectionModeChange == null) {
-                return@setOnLongClickListener false
-            }
 
-            if (selectedMessageIds.isEmpty()) {
-                selectedMessageIds.add(messageId)
-                onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
-                notifyDataSetChanged()
-            }
-
-            return@setOnLongClickListener true
-        }
-    }
-
-    // TODO: Remove annotation when we drop Android 5
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun MessagesListViewHolder.MessageViewHolderV4.bindMessage(position: Int) {
-        val message = messages[position]
-        val messageLabels = message.allLabelIDs.mapNotNull { labels[it] }
-
-        message.senderDisplayName = contactsList?.find { message.senderEmail == it.email }?.name ?: message.senderName
-
-        this.view.bind(message, messageLabels, mMailboxLocation)
-
-        this.view.setOnClickListener {
-            onItemClick?.invoke(message)
-        }
+        // TODO: This will be changed with MAILAND-1501.
+        //  I'm just disabling long click with commenting this code for now.
+//        this.view.setOnLongClickListener {
+//            val messageId = it.tag as String
+//            if (onSelectionModeChange == null) {
+//                return@setOnLongClickListener false
+//            }
+//
+//            if (selectedMessageIds.isEmpty()) {
+//                selectedMessageIds.add(messageId)
+//                onSelectionModeChange.invoke(SelectionModeEnum.STARTED)
+//                notifyDataSetChanged()
+//            }
+//
+//            return@setOnLongClickListener true
+//        }
     }
 
     fun endSelectionMode() {

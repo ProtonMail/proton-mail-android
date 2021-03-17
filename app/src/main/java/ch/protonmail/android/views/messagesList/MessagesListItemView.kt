@@ -18,18 +18,14 @@
  */
 package ch.protonmail.android.views.messagesList
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
-import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import ch.protonmail.android.R
 import ch.protonmail.android.core.Constants
@@ -37,278 +33,181 @@ import ch.protonmail.android.data.local.model.Label
 import ch.protonmail.android.data.local.model.Message
 import ch.protonmail.android.utils.DateUtil
 import ch.protonmail.android.utils.UiUtil
-import kotlinx.android.synthetic.main.messages_list_item_new.view.*
+import kotlinx.android.synthetic.main.list_item_mailbox.view.*
+import me.proton.core.presentation.utils.inflate
 
-// region constants
-private const val CHECKBOX_WIDTH_IN_DP = 34
 private const val MAX_LABELS_WITH_TEXT = 1
-// endregion
 
-class MessagesListItemView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+/**
+ * A view that represents one item in the mailbox list when conversation mode is turned off.
+ */
+class MessagesListItemView constructor(
+    context: Context
+) : ConstraintLayout(context) {
+
     init {
-        inflate(context, R.layout.messages_list_item_new, this)
-        layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
-    }
-
-    private val mCheckBoxWidthInPixels: Int by lazy {
-        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-            CHECKBOX_WIDTH_IN_DP.toFloat(),
-            context.resources.displayMetrics).toInt()
-    }
-
-    private val mStrokeWidth by lazy {
-        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context
-            .resources.displayMetrics).toInt()
+        inflate(R.layout.list_item_mailbox, true)
+        layoutParams = RecyclerView.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private var allFolders = HashMap<String, Label>()
-    private var mIsAnimating = false
 
-    fun onSelectionModeChanged(isInSelectionMode: Boolean) {
-        val start = if (isInSelectionMode) 0 else 1
-        val end = if (isInSelectionMode) 1 else 0
-        val animator = ValueAnimator.ofFloat(start.toFloat(), end.toFloat())
+    private val strokeWidth by lazy {
+        TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            1f,
+            context
+                .resources.displayMetrics
+        ).toInt()
+    }
 
-        val startMargin = if (isInSelectionMode) -mCheckBoxWidthInPixels else 0
-        val endMargin = if (isInSelectionMode) 0 else -mCheckBoxWidthInPixels
-        val animatorMargin = ValueAnimator.ofInt(startMargin, endMargin)
+    private fun setIconsTint(isRead: Boolean) {
+        val iconTint = if (isRead) context.getColor(R.color.icon_weak) else context.getColor(R.color.icon_norm)
 
-        animator.addUpdateListener { animation ->
-            val alpha = animation.animatedValue as Float
-            checkboxImageView.alpha = alpha
-            if (alpha == 1.0f) {
-                checkboxImageView.visibility = View.VISIBLE
-            } else if (alpha == 0.0f) {
-                checkboxImageView.visibility = View.GONE
+        replyImageView.setColorFilter(iconTint)
+        replyAllImageView.setColorFilter(iconTint)
+        forwardImageView.setColorFilter(iconTint)
+
+        firstLocationImageView.setColorFilter(iconTint)
+        secondLocationImageView.setColorFilter(iconTint)
+        thirdLocationImageView.setColorFilter(iconTint)
+    }
+
+    private fun setTextViewStyles(isRead: Boolean) {
+        if (isRead) {
+            senderTextView.setTextAppearance(R.style.Text_Default)
+            subjectTextView.setTextAppearance(R.style.Text_DefaultSmall_Weak)
+            timeDateTextView.setTextAppearance(R.style.Text_Caption_Weak)
+        } else {
+            senderTextView.setTextAppearance(R.style.Text_Default_Bold)
+            subjectTextView.setTextAppearance(R.style.Text_DefaultSmall_Medium)
+            timeDateTextView.setTextAppearance(R.style.Text_Caption_Strong)
+        }
+    }
+
+    private fun getSenderText(messageLocation: Constants.MessageLocationType, message: Message) = when {
+        messageLocation in arrayOf(
+            Constants.MessageLocationType.DRAFT,
+            Constants.MessageLocationType.SENT
+        ) -> message.toListStringGroupsAware
+
+        !message.senderDisplayName.isNullOrEmpty() -> message.senderDisplayName
+
+        else -> message.senderEmail
+    }
+
+    private fun getIconForMessageLocation(messageLocation: Constants.MessageLocationType) = when (messageLocation) {
+        Constants.MessageLocationType.INBOX -> R.drawable.ic_inbox
+        Constants.MessageLocationType.SENT -> R.drawable.ic_send
+        Constants.MessageLocationType.DRAFT -> R.drawable.ic_draft
+        Constants.MessageLocationType.ALL_DRAFT -> R.drawable.ic_draft
+        Constants.MessageLocationType.ALL_SENT -> R.drawable.ic_send
+        Constants.MessageLocationType.ARCHIVE -> R.drawable.ic_archive
+        Constants.MessageLocationType.TRASH -> R.drawable.ic_trash
+        else -> null
+    }
+
+    fun bind(
+        message: Message,
+        labels: List<Label>,
+        mailboxLocation: Constants.MessageLocationType
+    ) {
+        val readStatus = message.isRead
+        val messageLocation = Constants.MessageLocationType.fromInt(message.location)
+
+        setTextViewStyles(readStatus)
+        setIconsTint(readStatus)
+
+        val senderText = getSenderText(messageLocation, message)
+        senderTextView.text = senderText
+        senderInitialTextView.text =
+            if (senderText.isNullOrEmpty()) "D" else senderText.capitalize().subSequence(0, 1)
+
+        subjectTextView.text = message.subject
+
+        timeDateTextView.text = DateUtil.formatDateTime(context, message.timeMs)
+
+        replyImageView.visibility =
+            if (message.isReplied == true && message.isRepliedAll != true) View.VISIBLE else View.GONE
+        replyAllImageView.visibility = if (message.isRepliedAll == true) View.VISIBLE else View.GONE
+        forwardImageView.visibility = if (message.isForwarded == true) View.VISIBLE else View.GONE
+
+        draftImageView.visibility = if (mailboxLocation in arrayOf(
+                Constants.MessageLocationType.DRAFT,
+                Constants.MessageLocationType.ALL_DRAFT
+            )
+        ) View.VISIBLE else View.GONE
+
+        // TODO: Currently there's a bug with showing the location on certain messages.
+        //  Revisit the logic with MAILAND-1422
+        if (mailboxLocation in arrayOf(
+                Constants.MessageLocationType.ALL_MAIL,
+                Constants.MessageLocationType.STARRED,
+                Constants.MessageLocationType.LABEL,
+                Constants.MessageLocationType.SEARCH
+            )
+        ) {
+            val icon = getIconForMessageLocation(messageLocation)
+            if (icon != null) {
+                firstLocationImageView.visibility = View.VISIBLE
+                firstLocationImageView.setImageDrawable(context.getDrawable(icon))
             }
         }
 
-        animatorMargin.addUpdateListener { animation ->
-            val leftMargin = animation.animatedValue as Int
+        val hasAttachments = message.Attachments.isNotEmpty() || message.numAttachments >= 1
+        attachmentImageView.visibility = if (hasAttachments) View.VISIBLE else View.GONE
 
-            val paramsTitle = messageTitleContainerLinearLayout.layoutParams as ConstraintLayout.LayoutParams
-            val paramsSender = messageSenderContainerLinearLayout.layoutParams as ConstraintLayout.LayoutParams
-            paramsTitle.setMargins(leftMargin, 0, 0, 0)
-            paramsSender.setMargins(leftMargin, 0, 0, 0)
-            messageTitleContainerLinearLayout.layoutParams = paramsTitle
-            messageSenderContainerLinearLayout.layoutParams = paramsSender
-            mIsAnimating = leftMargin != end
-        }
+        starImageView.visibility = if (message.isStarred == true) View.VISIBLE else View.GONE
 
-        mIsAnimating = true
-        animator.start()
-        animatorMargin.start()
+        emptySpaceView.visibility = if (
+            attachmentImageView.visibility == View.VISIBLE ||
+            starImageView.visibility == View.VISIBLE
+        ) View.VISIBLE else View.GONE
+
+        expirationImageView.visibility = if (message.expirationTime > 0) View.VISIBLE else View.GONE
+
+        showLabels(labels)
     }
 
-    // TODO simplify as much as possible
-    fun bind(message: Message,
-             labels: List<Label>,
-             isMultiSelectionMode: Boolean,
-             mailboxLocation: Constants.MessageLocationType,
-             typeface: Typeface
-    ) {
-        val backgroundResId: Int
-        val primaryTextStyle: Int
-        val secondaryTextStyle: Int
-
-        val read = message.isRead
-        if (read) {
-            backgroundResId = R.drawable.read_message_bg_selector
-            primaryTextStyle = R.style.MessagePrimaryText_Read
-            secondaryTextStyle = R.style.MessageSecondaryText_Read
-        } else {
-            backgroundResId = R.drawable.unread_message_bg_selector
-            primaryTextStyle = R.style.MessagePrimaryText_Unread
-            secondaryTextStyle = R.style.MessageSecondaryText_Unread
-        }
-
-        dataContainerConstraintLayout.setBackgroundResource(backgroundResId)
-
-        messageTitleTextView.text = message.subject
-        TextViewCompat.setTextAppearance(messageTitleTextView, primaryTextStyle)
-
-        val messageSenderText = when {
-            Constants.MessageLocationType.fromInt(message.location) in arrayOf(Constants.MessageLocationType.DRAFT,
-                Constants.MessageLocationType.SENT) -> message.toListStringGroupsAware
-            !message.senderDisplayName.isNullOrEmpty() -> message.senderDisplayName
-            else -> message.senderEmail
-        }
-        messageSenderTextView.text = messageSenderText
-        TextViewCompat.setTextAppearance(messageSenderTextView, secondaryTextStyle)
-
-        labelsLinearLayout.removeAllViews()
-        labelsLinearLayout.visibility = View.GONE
-        val messageLabelsIDs = message.allLabelIDs
-        val isMessageSentAndTrashed =
-            message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
-                messageLabelsIDs.any { it == Constants.MessageLocationType.TRASH.messageLocationTypeValue.toString() }
-        val isMessageSentAndArchived =
-            message.searchForLocation(Constants.MessageLocationType.SENT.messageLocationTypeValue) &&
-                messageLabelsIDs.any { it == Constants.MessageLocationType.ARCHIVE.messageLocationTypeValue.toString() }
-        //region labels
+    private fun showLabels(labels: List<Label>) {
+        // TODO: This is the old labels logic and it should be changed with MAILAND-1502
+        labelsLayout.removeAllViews()
+        labelsLayout.visibility = View.GONE
         labels.forEach { allFolders[it.id] = it }
         val nonExclusiveLabels = labels.filter { !it.exclusive }
 
         var commonHeight = 20
         nonExclusiveLabels.forEachIndexed { i, (_, name, colorString) ->
             val labelItemView = ItemLabelMarginlessSmallView(context)
-            val color = when {
-                colorString.isNotEmpty() -> {
-                    val normalizedColor = UiUtil.normalizeColor(colorString)
-                    Color.parseColor(normalizedColor)
-                }
-                else -> 0
-            }
+            val color = if (colorString.isNotEmpty()) {
+                val normalizedColor = UiUtil.normalizeColor(colorString)
+                Color.parseColor(normalizedColor)
+            } else 0
 
             if (i < MAX_LABELS_WITH_TEXT) {
-                labelItemView.bind(name, color, mStrokeWidth)
-                labelsLinearLayout.visibility = View.VISIBLE
-                labelsLinearLayout.addView(labelItemView)
-                labelItemView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+                labelItemView.bind(name, color, strokeWidth)
+                labelsLayout.visibility = View.VISIBLE
+                labelsLayout.addView(labelItemView)
+                labelItemView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
                 commonHeight = labelItemView.measuredHeight
             } else {
                 val imageView = ImageView(context)
-                val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT)
+                val lp = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
                 lp.setMargins(0, 0, 0, 0)
                 imageView.layoutParams = lp
                 imageView.setImageResource(R.drawable.mail_label_collapsed)
                 imageView.setColorFilter(color)
                 imageView.layoutParams.height = commonHeight
-                labelsLinearLayout.visibility = View.VISIBLE
-                labelsLinearLayout.addView(imageView)
+                labelsLayout.visibility = View.VISIBLE
+                labelsLayout.addView(imageView)
             }
             labelItemView.requestLayout()
         }
-        //endregion
-
-        messageLabelTrashTextView.visibility =
-            if (mailboxLocation != Constants.MessageLocationType.TRASH &&
-                isMessageSentAndTrashed) View.VISIBLE else View.GONE
-        messageLabelArchiveTextView.visibility =
-            if (mailboxLocation != Constants.MessageLocationType.ARCHIVE &&
-                isMessageSentAndArchived) View.VISIBLE else View.GONE
-        messageStarredTextView.typeface = typeface
-        messageExpirationTextView.typeface = typeface
-        messageAttachmentTextView.typeface = typeface
-        messageReplyTextView.typeface = typeface
-        messageLabelTrashTextView.typeface = typeface
-        messageLabelArchiveTextView.typeface = typeface
-        messageReplyAllTextView.typeface = typeface
-        messageForwardTextView.typeface = typeface
-
-        messageDateTextView.text = DateUtil.formatDateTime(context, message.timeMs)
-        TextViewCompat.setTextAppearance(messageDateTextView, secondaryTextStyle)
-        messageExpirationTextView.visibility = if (message.expirationTime > 0) View.VISIBLE else View.GONE
-        val hasAttachments = message.Attachments.isNotEmpty() || message.numAttachments >= 1 || message.hasPendingUploads()
-        messageAttachmentTextView.visibility = if (hasAttachments) View.VISIBLE else View.GONE
-        messageReplyTextView.visibility = if (message.isReplied == true && message.isRepliedAll != true) View.VISIBLE else View.GONE
-        messageReplyAllTextView.visibility = if (message.isRepliedAll == true) View.VISIBLE else View.GONE
-        messageForwardTextView.visibility = if (message.isForwarded == true) View.VISIBLE else View.GONE
-        messageStarredTextView.visibility = if (message.isStarred == true) View.VISIBLE else View.GONE
-
-        if (mailboxLocation in arrayOf(Constants.MessageLocationType.STARRED,
-                Constants.MessageLocationType.LABEL,
-                Constants.MessageLocationType.SEARCH,
-                Constants.MessageLocationType.ALL_MAIL,
-                Constants.MessageLocationType.SENT)) {
-            val title = if (mailboxLocation == Constants.MessageLocationType.SENT)
-                message.getFolderTitle()
-            else
-                message.getLocationOrFolderTitle()
-            if (!title.isNullOrEmpty()) {
-                messageLocationTextView.text = title
-                messageLocationTextView.visibility = View.VISIBLE
-            } else {
-                messageLocationTextView.visibility = View.GONE
-            }
-        } else {
-            messageLocationTextView.visibility = View.GONE
-        }
-
-        // Don't update the margins if the view is currently being animated
-        if (!mIsAnimating) {
-            val leftMargin = if (isMultiSelectionMode) 0 else -mCheckBoxWidthInPixels
-            if (leftMargin < 0) {
-                checkboxImageView.alpha = 0f
-                checkboxImageView.visibility = View.GONE
-            } else {
-                checkboxImageView.visibility = View.VISIBLE
-                checkboxImageView.alpha = 1f
-            }
-            val paramsTitle = messageTitleContainerLinearLayout.layoutParams as ConstraintLayout.LayoutParams
-            val paramsSender = messageSenderContainerLinearLayout.layoutParams as ConstraintLayout.LayoutParams
-            paramsTitle.setMargins(leftMargin, 0, 0, 0)
-            paramsSender.setMargins(leftMargin, 0, 0, 0)
-            messageTitleContainerLinearLayout.layoutParams = paramsTitle
-            messageSenderContainerLinearLayout.layoutParams = paramsSender
-        }
-
-        uploadCircularProgressBar.visibility = if (message.isBeingSent || message.isAttachmentsBeingUploaded) View.VISIBLE else View.GONE
-        if (message.isAttachmentsBeingUploaded) {
-            messageDateTextView.text = context.getString(R.string.draft_label_attachments_uploading)
-        }
-        if (message.isBeingSent) { // overwrite attachment text so there's no flickering between them
-            messageDateTextView.text = context.getString(R.string.draft_label_message_uploading)
-        }
-
-    }
-
-
-    private fun Message.hasPendingUploads(): Boolean {
-        val messageId = messageId
-        //TODO restore
-        return false
-//		return !messageId.isNullOrEmpty()&&PendingUpload.findByMessageId(messageId)!=null
-    }
-
-    private fun Message.getLocationOrFolderTitle(): String? {
-        var messageLocation = Constants.MessageLocationType.fromInt(location)
-        for (labelId in allLabelIDs) {
-            val label = allFolders[labelId]
-            if (label != null && label.exclusive && label.name.isNotEmpty()) {
-                return label.name
-            }
-            if (labelId.length <= 2) {
-                messageLocation = Constants.MessageLocationType.fromInt(Integer.valueOf(labelId))
-                if (messageLocation !in arrayOf(Constants.MessageLocationType.STARRED,
-                        Constants.MessageLocationType.ALL_MAIL,
-                        Constants.MessageLocationType.INVALID,
-                        Constants.MessageLocationType.ALL_DRAFT,
-                        Constants.MessageLocationType.ALL_SENT
-                    )) {
-                    break
-                }
-            }
-        }
-
-        return getLocationTitleId(messageLocation)?.let {
-            context.getString(it)
-        } ?: ""
-    }
-
-    private fun getLocationTitleId(mailboxLocation: Constants.MessageLocationType): Int? {
-        return when (mailboxLocation) {
-            Constants.MessageLocationType.INBOX -> R.string.inbox_option
-            Constants.MessageLocationType.STARRED -> R.string.starred_option
-            Constants.MessageLocationType.DRAFT -> R.string.drafts_option
-            Constants.MessageLocationType.SENT -> R.string.sent_option
-            Constants.MessageLocationType.ARCHIVE -> R.string.archive_option
-            Constants.MessageLocationType.TRASH -> R.string.trash_option
-            Constants.MessageLocationType.SPAM -> R.string.spam_option
-            Constants.MessageLocationType.ALL_MAIL -> null
-            else -> R.string.app_name
-        }
-    }
-
-    private fun Message.getFolderTitle(): String {
-        return allLabelIDs.asReversed().asSequence().map(allFolders::get).filterNotNull().filter(Label::exclusive).map { it.name }.lastOrNull()
-            ?: ""
     }
 }
-

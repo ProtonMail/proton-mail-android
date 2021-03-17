@@ -18,25 +18,10 @@
   ~ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
   -->
 
-<menu
+<shape
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:shape="oval">
 
-    <item
-        android:id="@+id/search"
-        android:title="@string/search"
-        app:actionLayout="@layout/layout_search_action"
-        app:showAsAction="ifRoom" />
+    <solid android:color="@color/interaction_weak" />
 
-    <item
-        android:id="@+id/compose"
-        android:title="@string/compose_message"
-        app:actionLayout="@layout/layout_compose_action"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/empty"
-        android:title="@string/empty_folder"
-        app:showAsAction="never" />
-
-</menu>
+</shape>

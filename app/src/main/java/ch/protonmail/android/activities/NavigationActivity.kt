@@ -51,7 +51,6 @@ import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
-import ch.protonmail.android.core.Constants.FLAVOR_V4
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
@@ -322,9 +321,6 @@ abstract class NavigationActivity :
                     onUserClicked(false)
                     drawerHeaderView.switchState()
                 }
-                if (BuildConfig.FLAVOR != FLAVOR_V4) {
-                    drawerToggle.syncState()
-                }
                 navigationDrawerRecyclerView!!.smoothScrollToPosition(0)
                 onDrawerClose()
                 onDrawerClose = {}
@@ -494,10 +490,6 @@ abstract class NavigationActivity :
         fun onSignOutSelected() {
 
             fun onLogoutConfirmed(currentUserId: Id, hasNextLoggedInUser: Boolean) {
-                if (BuildConfig.FLAVOR != FLAVOR_V4) {
-                    findViewById<View>(R.id.spinner_layout)?.visibility = View.VISIBLE
-                }
-
                 lifecycleScope.launch {
                     if (hasNextLoggedInUser) {
                         overlayDialog =

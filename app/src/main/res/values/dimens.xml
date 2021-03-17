@@ -19,6 +19,34 @@ along with ProtonMail. If not, see https://www.gnu.org/licenses/.
 
 <resources>
 
+    <!-- V4 -->
+    <dimen name="toolbar_action_layout_size">48dp</dimen>
+
+    <dimen name="action_bar_padding_start">0dp</dimen>
+    <dimen name="action_bar_padding_end">8dp</dimen>
+    <dimen name="action_bar_elevation">8dp</dimen>
+    <dimen name="action_bar_no_elevation">0dp</dimen>
+
+    <dimen name="mailbox_status_view_height">48dp</dimen>
+    <dimen name="mailbox_status_view_padding_horizontal">16dp</dimen>
+
+    <dimen name="unread_messages_chip_size">20dp</dimen>
+
+    <dimen name="mailbox_list_item_padding_horizontal">16dp</dimen>
+    <dimen name="mailbox_list_item_padding_vertical">12dp</dimen>
+    <dimen name="mailbox_list_item_views_margin">8dp</dimen>
+    <dimen name="mailbox_list_item_icon_size">16dp</dimen>
+    <dimen name="mailbox_list_item_expiration_icon_padding">2dp</dimen>
+
+    <dimen name="sender_initial_view_size">28dp</dimen>
+    <dimen name="sender_initial_view_margin_start">2dp</dimen>
+    <dimen name="sender_initial_view_margin_end">16dp</dimen>
+    <dimen name="sender_initial_view_margin_top">2dp</dimen>
+
+    <dimen name="message_number_view_padding_horizontal">8dp</dimen>
+    <dimen name="message_number_view_padding_vertical">2dp</dimen>
+    <!-- V4 -->
+
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_horizontal_margin_large">32dp</dimen>

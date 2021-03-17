@@ -18,7 +18,6 @@
  */
 package ch.protonmail.android.activities;
 
-import static ch.protonmail.android.core.Constants.FLAVOR_V4;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_FRAGMENT_TITLE;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_LOGOUT;
 import static ch.protonmail.android.settings.pin.ValidatePinActivityKt.EXTRA_PIN_VALID;
@@ -54,7 +53,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.adapters.swipe.SwipeProcessor;
@@ -79,7 +77,6 @@ import ch.protonmail.android.settings.pin.ValidatePinActivity;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.CustomLocale;
 import ch.protonmail.android.utils.INetworkConfiguratorCallback;
-import ch.protonmail.android.utils.UiUtil;
 import ch.protonmail.android.worker.FetchMailSettingsWorker;
 import ch.protonmail.android.worker.FetchUserInfoWorker;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -177,10 +174,6 @@ public abstract class BaseActivity extends AppCompatActivity implements INetwork
         ButterKnife.bind(this);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
-        }
-
-        if (!BuildConfig.FLAVOR.equals(FLAVOR_V4)) {
-            UiUtil.setStatusBarColor(this, ContextCompat.getColor(this, R.color.dark_purple_statusbar));
         }
 
         ForceSwitchedAccountNotifier.notifier.observe(this, event -> {
