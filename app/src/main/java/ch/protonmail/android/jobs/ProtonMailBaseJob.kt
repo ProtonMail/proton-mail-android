@@ -21,6 +21,7 @@ package ch.protonmail.android.jobs
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.di.JobEntryPoint
+import ch.protonmail.android.domain.entity.Id
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
@@ -29,7 +30,7 @@ import timber.log.Timber
 
 abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     params: Params?,
-    username: String? = null
+    userId: Id? = null
 ) : Job(params) {
 
     protected val entryPoint get() =
@@ -43,7 +44,7 @@ abstract class ProtonMailBaseJob @JvmOverloads protected constructor(
     protected fun getUserManager() = entryPoint.userManager()
 
     @JvmField
-    protected var username: String = username ?: getUserManager().username
+    protected var userId: Id? = userId ?: getUserManager().currentUserId
 
     override fun onAdded() {}
 

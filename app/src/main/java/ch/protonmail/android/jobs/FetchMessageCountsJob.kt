@@ -18,27 +18,33 @@
  */
 package ch.protonmail.android.jobs
 
-import ch.protonmail.android.api.interceptors.RetrofitTag
+import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.room.counters.CountersDatabaseFactory
 import ch.protonmail.android.api.models.room.counters.UnreadLabelCounter
 import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
+import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.MessageCountsEvent
 import ch.protonmail.android.events.Status
+import ch.protonmail.android.usecase.FindUserIdForUsername
 import ch.protonmail.android.utils.AppUtil
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
 import timber.log.Timber
+import javax.inject.Inject
 
 private const val FETCH_COUNTS_ID = "instanceIdCounts"
 
 class FetchMessageCountsJob(
-    username: String?
+    userId: Id?
 ) : ProtonMailBaseJob(
     Params(Priority.MEDIUM).singleInstanceBy(FETCH_COUNTS_ID).groupBy(Constants.JOB_GROUP_MISC),
-    username
+    userId
 ) {
+
+    @Inject
+    lateinit var findUserIdForUsername: FindUserIdForUsername
 
     @Throws(Throwable::class)
     override fun onRun() {
@@ -49,7 +55,7 @@ class FetchMessageCountsJob(
         }
 
         try {
-            val countersResponse = getApi().fetchMessagesCount(RetrofitTag(username))
+            val countersResponse = getApi().fetchMessagesCount(UserIdTag(userId!!))
 
             val counters = countersResponse.counts ?: emptyList()
             val (labelCounters, locationCounters) = counters.partition { it.labelId.length > 2 }

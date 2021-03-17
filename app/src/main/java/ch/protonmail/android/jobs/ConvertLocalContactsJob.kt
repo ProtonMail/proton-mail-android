@@ -82,7 +82,7 @@ class ConvertLocalContactsJob(localContacts: List<ContactItem>) : ProtonMailEndl
 
         val contactsDatabase = ContactsDatabaseFactory.getInstance(
                 applicationContext).getDatabase()
-        val crypto = Crypto.forUser(getUserManager(), getUserManager().username)
+        val crypto = Crypto.forUser(getUserManager(), getUserManager().currentUserId)
 
         val executionResults = ContactsDatabaseFactory.getInstance(applicationContext).runInTransaction<List<Int>> {
 

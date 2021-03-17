@@ -37,6 +37,7 @@ import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.Constants.PasswordMode
 import ch.protonmail.android.events.AuthStatus
 import ch.protonmail.android.events.PasswordChangeEvent
+import ch.protonmail.android.usecase.FindUsernameForUserId
 import ch.protonmail.android.utils.AppUtil
 import ch.protonmail.android.utils.ConstantTime
 import ch.protonmail.android.utils.Logger
@@ -44,7 +45,7 @@ import ch.protonmail.android.utils.crypto.OpenPGP
 import ch.protonmail.android.utils.extensions.app
 import com.birbit.android.jobqueue.Params
 import com.birbit.android.jobqueue.RetryConstraint
-import me.proton.core.util.kotlin.takeIfNotBlank
+import javax.inject.Inject
 
 class ChangePasswordJob(
     private val passwordType: Int,
@@ -54,10 +55,13 @@ class ChangePasswordJob(
     private val newPassword: ByteArray
 ) : ProtonMailBaseJob(Params(Priority.HIGH).requireNetwork()) {
 
+    @Inject
+    lateinit var findUsernameForUserId: FindUsernameForUserId
+
     @Throws(Throwable::class)
     override fun onRun() {
-        username.takeIfNotBlank()
-            ?: throw IllegalArgumentException("username is empty in UserManager")
+
+        val username = findUsernameForUserId.blocking(checkNotNull(userId)).s
         val openPGP = applicationContext.app.openPGP
         val user = getUserManager().user
         val infoResponse = getApi().loginInfo(username)
@@ -127,6 +131,7 @@ class ChangePasswordJob(
         val generatedMailboxPassword = openPGP.generateMailboxPassword(keySalt, newPassword)
         val verifier = if (isSingleMode == PasswordMode.SINGLE)
             PasswordVerifier.calculate(newPassword, newModulus) else null
+        val username = findUsernameForUserId.blocking(checkNotNull(userId)).s
         val proofs = LoginService.srpProofsForInfo(username, oldPassword, infoResponse, 2)
         val userAddresses: List<Address> = user.addresses
         val privateKeyBodies = ArrayList<PrivateKeyBody>()
@@ -148,8 +153,8 @@ class ChangePasswordJob(
 
         var newOrganizationPrivateKey: String? = ""
         keysResponse?.let { it ->
-            newOrganizationPrivateKey = if (openPGP.checkPassphrase(it.privateKey, getUserManager().getMailboxPassword()!!)) {
-                openPGP.updatePrivateKeyPassphrase(it.privateKey, getUserManager().getMailboxPassword(), generatedMailboxPassword)
+            newOrganizationPrivateKey = if (openPGP.checkPassphrase(it.privateKey, getUserManager().getCurrentUserMailboxPassword()!!)) {
+                openPGP.updatePrivateKeyPassphrase(it.privateKey, getUserManager().getCurrentUserMailboxPassword(), generatedMailboxPassword)
             } else {
                 null
             }
@@ -169,7 +174,7 @@ class ChangePasswordJob(
         generatedMailboxPassword: ByteArray
     ) {
         if (response.code == Constants.RESPONSE_CODE_OK) {
-            getUserManager().saveMailboxPassword(generatedMailboxPassword, username)
+            getUserManager().saveMailboxPasswordBlocking(checkNotNull(userId), generatedMailboxPassword)
             AppUtil.postEventOnUi(PasswordChangeEvent(passwordType, AuthStatus.SUCCESS, response.error))
         } else {
             when (response.code) {
@@ -196,7 +201,7 @@ class ChangePasswordJob(
         try {
             try {
                 val newPrivateKey = openPGP.updatePrivateKeyPassphrase(keys.privateKey,
-                    getUserManager().getMailboxPassword(), generatedMailboxPassword)
+                    getUserManager().getCurrentUserMailboxPassword(), generatedMailboxPassword)
                 val privateKeyBody = PrivateKeyBody(newPrivateKey, keys.id)
                 privateKeyBody.let { privateKeyBodies.add(privateKeyBody) }
             } catch (e: Exception) {
