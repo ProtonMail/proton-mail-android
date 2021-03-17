@@ -76,7 +76,7 @@ class AttachmentsRepositoryTest : CoroutinesTest {
     @InjectMockKs
     private lateinit var repository: AttachmentsRepository
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockKAnnotations.init(this)
         val successResponse = mockk<AttachmentUploadResponse> {
