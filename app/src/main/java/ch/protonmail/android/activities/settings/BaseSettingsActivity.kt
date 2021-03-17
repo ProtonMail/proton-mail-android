@@ -57,8 +57,6 @@ import ch.protonmail.android.activities.settings.SettingsEnum.*
 import ch.protonmail.android.adapters.SettingsAdapter
 import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.api.models.room.counters.CounterDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabase
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
@@ -69,6 +67,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.user.Address
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.FetchLabelsEvent
@@ -116,8 +116,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
     var settingsUiList: List<SettingsItemUiModel> = ArrayList()
 
     var contactsDao: ContactsDao? = null
-    var messagesDatabase: MessagesDatabase? = null
-    private var searchDatabase: MessagesDatabase? = null
+    var messageDao: MessageDao? = null
+    private var searchDatabase: MessageDao? = null
     private var notificationsDatabase: NotificationsDatabase? = null
     var counterDao: CounterDao? = null
     var attachmentMetadataDao: AttachmentMetadataDao? = null
@@ -156,8 +156,8 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
         super.onCreate(savedInstanceState)
 
         contactsDao = ContactsDatabase.getInstance(applicationContext).getDao()
-        messagesDatabase = MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
-        searchDatabase = MessagesDatabaseFactory.getSearchDatabase(applicationContext).getDatabase()
+        messageDao = MessageDatabase.getInstance(applicationContext).getDao()
+        searchDatabase = MessageDatabase.getSearchDatabase(applicationContext).getDao()
         notificationsDatabase = NotificationsDatabaseFactory.getInstance(applicationContext).getDatabase()
         counterDao = CounterDatabase.getInstance(applicationContext).getDao()
         attachmentMetadataDao = AttachmentMetadataDatabase.getInstance(applicationContext).getDao()
@@ -416,7 +416,7 @@ abstract class BaseSettingsActivity : BaseConnectivityActivity() {
                 if (canClick.getAndSet(false)) {
                     AppUtil.clearStorage(
                         contactsDao,
-                        messagesDatabase,
+                        messageDao,
                         searchDatabase,
                         notificationsDatabase,
                         counterDao,

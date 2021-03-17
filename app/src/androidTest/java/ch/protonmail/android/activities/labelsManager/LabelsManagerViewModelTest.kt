@@ -26,7 +26,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import ch.protonmail.android.adapters.LabelsCirclesAdapter
 import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
+import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.libs.core.utils.EMPTY_STRING
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -56,7 +56,7 @@ internal class LabelsManagerViewModelTest : CoroutinesTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val messagesDatabase = MessagesDatabaseFactory.buildInMemoryDatabase(context).getDatabase()
+    private val messagesDatabase = MessageDatabase.buildInMemoryDatabase(context).getDao()
 
     private lateinit var viewModel: LabelsManagerViewModel
 

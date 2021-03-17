@@ -23,13 +23,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import ch.protonmail.android.api.models.room.attachmentMetadata.AttachmentsMetadataTypeConverter
 import java.io.Serializable
 
 const val TABLE_ATTACHMENT_METADATA = "attachment_metadata"
-const val COLUMN_ATTACHMENT_ID = "attachment_id"
 const val COLUMN_ATTACHMENT_NAME = "name"
-const val COLUMN_ATTACHMENT_FILE_SIZE = "file_size"
 const val COLUMN_ATTACHMENT_LOCAL_LOCATION = "location"
 const val COLUMN_ATTACHMENT_FOLDER_LOCATION = "folder_location"
 const val COLUMN_ATTACHMENT_DOWNLOAD_TIMESTAMP = "download_timestamp"

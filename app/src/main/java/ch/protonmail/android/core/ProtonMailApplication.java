@@ -72,15 +72,14 @@ import ch.protonmail.android.api.TokenManager;
 import ch.protonmail.android.api.models.AllCurrencyPlans;
 import ch.protonmail.android.api.models.Organization;
 import ch.protonmail.android.api.models.doh.Proxies;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabase;
-import ch.protonmail.android.api.models.room.contacts.ContactsDatabaseFactory;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
+import ch.protonmail.android.api.models.room.sendingFailedNotifications.SendingFailedNotification;
 import ch.protonmail.android.api.segments.event.AlarmReceiver;
 import ch.protonmail.android.api.segments.event.EventManager;
 import ch.protonmail.android.api.services.MessagesService;
 import ch.protonmail.android.data.local.ContactsDao;
 import ch.protonmail.android.data.local.ContactsDatabase;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.domain.entity.user.User;
 import ch.protonmail.android.domain.entity.user.UserKey;
@@ -168,7 +167,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
     private AlertDialog forceUpgradeDialog;
 
     private ContactsDao contactsDao;
-    private MessagesDatabase messagesDatabase;
+    private MessageDao messageDao;
 
     @NonNull
     @Deprecated // Using this is an ERROR!
@@ -220,7 +219,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
                 .setErrorStateGenerator(ErrorStateGeneratorsKt.getErrorStateGenerator());
 
         contactsDao = ContactsDatabase.Companion.getInstance(getApplicationContext()).getDao();
-        messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
+        messageDao = MessageDatabase.Companion.getInstance(getApplicationContext()).getDao();
 
         FileUtils.createDownloadsDir(this);
         setupNotificationChannels();
@@ -482,16 +481,16 @@ public class ProtonMailApplication extends Application implements androidx.work.
 
     private static class RefreshMessagesAndAttachments extends AsyncTask<Void, Void, Void> {
 
-        private final MessagesDatabase messagesDatabase;
+        private final MessageDao messageDao;
 
-        private RefreshMessagesAndAttachments(MessagesDatabase messagesDatabase) {
-            this.messagesDatabase = messagesDatabase;
+        private RefreshMessagesAndAttachments(MessageDao messageDao) {
+            this.messageDao = messageDao;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            messagesDatabase.clearAttachmentsCache();
-            messagesDatabase.clearMessagesCache();
+            messageDao.clearAttachmentsCache();
+            messageDao.clearMessagesCache();
             return null;
         }
 
@@ -527,7 +526,7 @@ public class ProtonMailApplication extends Application implements androidx.work.
             }
 
             if (BuildConfig.DEBUG) {
-                new RefreshMessagesAndAttachments(messagesDatabase).execute();
+                new RefreshMessagesAndAttachments(messageDao).execute();
             }
             if (BuildConfig.FETCH_FULL_CONTACTS && userManager.isLoggedIn()) {
                 new FetchContactsEmailsWorker.Enqueuer(WorkManager.getInstance(this)).enqueue(0);

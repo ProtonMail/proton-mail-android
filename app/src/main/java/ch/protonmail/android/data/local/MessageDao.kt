@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models.room.messages
+package ch.protonmail.android.data.local
 
 import android.provider.BaseColumns
 import androidx.lifecycle.LiveData
@@ -27,60 +27,90 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import ch.protonmail.android.data.local.model.Attachment
+import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_NAME
+import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_FILE_PATH
+import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_ID
+import ch.protonmail.android.data.local.model.COLUMN_ATTACHMENT_MESSAGE_ID
+import ch.protonmail.android.data.local.model.COLUMN_LABEL_ID
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ACCESS_TIME
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_EXPIRATION_TIME
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_ID
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_IS_STARRED
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_LABELS
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_LOCATION
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_PREFIX_SENDER
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_EMAIL
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SENDER_NAME
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_SUBJECT
+import ch.protonmail.android.data.local.model.COLUMN_MESSAGE_TIME
+import ch.protonmail.android.data.local.model.Label
+import ch.protonmail.android.data.local.model.Message
+import ch.protonmail.android.data.local.model.TABLE_ATTACHMENTS
+import ch.protonmail.android.data.local.model.TABLE_LABELS
+import ch.protonmail.android.data.local.model.TABLE_MESSAGES
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-// TODO remove when we change name of this class to MessagesDao and *Factory to *Database
-typealias MessagesDao = MessagesDatabase
-
 @Dao
-abstract class MessagesDatabase {
+abstract class MessageDao {
 
     //region Messages
-    @Query(
-        """SELECT *
+    @Query("""
+        SELECT *
 		FROM $TABLE_MESSAGES
 		WHERE $COLUMN_MESSAGE_SUBJECT LIKE '%'||:subject||'%'
-		OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
-		OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
-	ORDER BY $COLUMN_MESSAGE_TIME DESC
-		"""
-    )
+		  OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_NAME} LIKE '%'||:senderName||'%'
+		  OR ${COLUMN_MESSAGE_PREFIX_SENDER + COLUMN_MESSAGE_SENDER_EMAIL} LIKE '%'||:senderEmail||'%'
+	    ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """)
     abstract fun searchMessages(subject: String, senderName: String, senderEmail: String): List<Message>
 
-    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED=1""")
+    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_IS_STARRED = 1")
     abstract fun getStarredMessagesAsync(): LiveData<List<Message>>
 
-    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
+    @Query("""
+        SELECT * 
+        FROM $TABLE_MESSAGES 
+        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """)
     abstract fun getMessagesByLabelIdAsync(label: String): LiveData<List<Message>>
 
     @Transaction
-    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
+    @Query("""
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_LOCATION = :location
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """)
     abstract fun getMessagesByLocationAsync(location: Int): LiveData<List<Message>>
 
-    @Query("""SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location """)
+    @Query("SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location ")
     abstract fun getMessagesCountByLocation(location: Int): Int
 
-    @Query(
-        """SELECT COUNT($COLUMN_MESSAGE_ID) FROM $TABLE_MESSAGES
-		WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  """
-    )
+    @Query("""
+        SELECT COUNT($COLUMN_MESSAGE_ID)
+        FROM $TABLE_MESSAGES 
+		WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :labelId || '%'  
+    """)
     abstract fun getMessagesCountByByLabelId(labelId: String): Int
 
     @Transaction
-    @Query("""SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC""")
+    @Query("SELECT * FROM $TABLE_MESSAGES ORDER BY $COLUMN_MESSAGE_TIME DESC")
     abstract fun getAllMessages(): LiveData<List<Message>>
 
-    @Query("""SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  ORDER BY $COLUMN_MESSAGE_TIME DESC""")
+    @Query("""
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_LABELS LIKE '%' || :label || '%'  
+        ORDER BY $COLUMN_MESSAGE_TIME DESC
+    """)
     abstract fun getMessagesByLabelId(label: String): List<Message>
 
-    fun findMessageByIdBlocking(messageId: String) = findMessageInfoByIdBlocking(messageId)?.also {
-        it.Attachments = it.attachmentsBlocking(this)
-    }
-
-    suspend fun findMessageById(messageId: String) = findMessageInfoById(messageId)?.also {
+    fun findMessageById(messageId: String) = findMessageInfoById(messageId)?.also {
         it.Attachments = it.attachments(this)
     }
 
@@ -103,17 +133,13 @@ abstract class MessagesDatabase {
         }
 
     @JvmOverloads
-    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0) = findAllMessageInfoByLastMessageAccessTime(laterThan).also {
-        it.forEach { message ->
-            message.Attachments = message.attachmentsBlocking(this)
+    fun findAllMessageByLastMessageAccessTime(laterThan: Long = 0): List<Message> =
+        findAllMessageInfoByLastMessageAccessTime(laterThan).onEach { message ->
+            message.Attachments = message.attachments(this)
         }
-    }
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
-    protected abstract fun findMessageInfoByIdBlocking(messageId: String): Message?
-
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
-    protected abstract suspend fun findMessageInfoById(messageId: String): Message?
+    protected abstract fun findMessageInfoById(messageId: String): Message?
 
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
     protected abstract fun findMessageInfoByIdSingle(messageId: String): Single<Message>
@@ -130,7 +156,12 @@ abstract class MessagesDatabase {
     @Query("SELECT * FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:messageDbId")
     protected abstract fun findMessageInfoByDbId(messageDbId: Long): Flow<Message?>
 
-    @Query("SELECT * FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ACCESS_TIME>:laterThan ORDER BY $COLUMN_MESSAGE_ACCESS_TIME")
+    @Query("""
+        SELECT *
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_ACCESS_TIME > :laterThan
+        ORDER BY $COLUMN_MESSAGE_ACCESS_TIME
+    """)
     protected abstract fun findAllMessageInfoByLastMessageAccessTime(laterThan: Long = 0): List<Message>
 
     @Transaction
@@ -142,8 +173,8 @@ abstract class MessagesDatabase {
     private fun processMessageAttachments(message: Message) {
         val messageId = message.messageId
         var localAttachments: List<Attachment> = ArrayList()
-        messageId?.let {
-            localAttachments = findAttachmentsByMessageIdBlocking(messageId)
+        if (messageId != null) {
+            localAttachments = findAttachmentsByMessageId(messageId)
         }
 
         var preservedAttachments = message.Attachments.map {
@@ -163,7 +194,9 @@ abstract class MessagesDatabase {
             )
         }
 
-        if (message.embeddedImageIds.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()) {
+        val hasAnyAttachment =
+            message.embeddedImagesArray.isNotEmpty() && preservedAttachments.isEmpty() && localAttachments.isNotEmpty()
+        if (hasAnyAttachment) {
             localAttachments.forEach { localAttachment ->
                 localAttachment.setMessage(message)
                 preservedAttachments = localAttachments
@@ -175,7 +208,7 @@ abstract class MessagesDatabase {
                         if (it.inline) {
                             preservedAtt.inline = it.inline
                         } else {
-                            if (message.embeddedImageIds.isNotEmpty()) {
+                            if (message.embeddedImagesArray.isNotEmpty()) {
                                 preservedAtt.setMessage(message)
                             }
                         }
@@ -183,14 +216,14 @@ abstract class MessagesDatabase {
                         preservedAtt.isUploading = it.isUploading
                     }
                 } else {
-                    if (message.embeddedImageIds.isNotEmpty()) {
+                    if (message.embeddedImagesArray.isNotEmpty()) {
                         preservedAtt.setMessage(message)
                     }
                 }
             }
         }
 
-        val attachmentsToDelete = message.attachmentsBlocking(this) // .filter { it.messageId != message.messageId }
+        val attachmentsToDelete = message.attachments(this) // .filter { it.messageId != message.messageId }
         if (attachmentsToDelete.isNotEmpty() && preservedAttachments.isEmpty()) {
             preservedAttachments = localAttachments
         }
@@ -217,13 +250,18 @@ abstract class MessagesDatabase {
         messages.map(this::saveMessage)
     }
 
-    @Query("""DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION=:location""")
+    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LOCATION = :location")
     abstract fun deleteMessagesByLocation(location: Int)
 
     @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_LABELS LIKE '%'||:labelId||'%'")
     abstract fun deleteMessagesByLabel(labelId: String)
 
-    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_EXPIRATION_TIME<>0 AND $COLUMN_MESSAGE_EXPIRATION_TIME  < :currentTime")
+    @Query("""
+        DELETE 
+        FROM $TABLE_MESSAGES
+        WHERE $COLUMN_MESSAGE_EXPIRATION_TIME <> 0 
+          AND $COLUMN_MESSAGE_EXPIRATION_TIME < :currentTime
+    """)
     abstract fun deleteExpiredMessages(currentTime: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -232,13 +270,13 @@ abstract class MessagesDatabase {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveMessagesInfo(vararg messages: Message)
 
-    @Query("DELETE FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID}=:dbId")
+    @Query("DELETE FROM $TABLE_MESSAGES WHERE ${BaseColumns._ID} = :dbId")
     abstract fun deleteByDbId(dbId: Long)
 
     @Query("DELETE FROM $TABLE_MESSAGES")
     abstract fun clearMessagesCache()
 
-    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID=:messageId")
+    @Query("DELETE FROM $TABLE_MESSAGES WHERE $COLUMN_MESSAGE_ID = :messageId")
     abstract fun deleteMessageById(messageId: String)
 
     @Delete
@@ -247,32 +285,40 @@ abstract class MessagesDatabase {
     @Delete
     abstract fun deleteMessages(message: List<Message>)
 
-    @Query("UPDATE $TABLE_MESSAGES SET $COLUMN_MESSAGE_IS_STARRED = :starred WHERE $COLUMN_MESSAGE_ID = :messageId")
+    @Query("""
+        UPDATE $TABLE_MESSAGES 
+        SET $COLUMN_MESSAGE_IS_STARRED = :starred
+        WHERE $COLUMN_MESSAGE_ID = :messageId
+    """)
     abstract fun updateStarred(messageId: String, starred: Boolean)
     //endregion Messages
 
     //region Attachments
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId")
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
     abstract fun findAttachmentsByMessageIdAsync(messageId: String): LiveData<List<Attachment>>
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId")
-    abstract fun findAttachmentsByMessageIdBlocking(messageId: String): List<Attachment>
+    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId")
+    abstract fun findAttachmentsByMessageId(messageId: String): List<Attachment>
 
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId")
-    abstract suspend fun findAttachmentsByMessageId(messageId: String): List<Attachment>
-
-    @Query("SELECT * FROM $TABLE_ATTACHMENTS WHERE $COLUMN_ATTACHMENT_MESSAGE_ID=:messageId AND $COLUMN_ATTACHMENT_FILE_NAME=:fileName AND $COLUMN_ATTACHMENT_FILE_PATH=:filePath")
-    abstract fun findAttachmentsByMessageIdFileNameAndPath(messageId: String, fileName: String, filePath: String): Attachment
+    @Query("""
+        SELECT * 
+        FROM $TABLE_ATTACHMENTS
+        WHERE $COLUMN_ATTACHMENT_MESSAGE_ID = :messageId
+          AND $COLUMN_ATTACHMENT_FILE_NAME = :fileName
+          AND $COLUMN_ATTACHMENT_FILE_PATH = :filePath
+    """)
+    abstract fun findAttachmentsByMessageIdFileNameAndPath(
+        messageId: String,
+        fileName: String,
+        filePath: String
+    ): Attachment
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun saveAttachmentBlocking(attachment: Attachment): Long
+    abstract fun saveAttachment(attachment: Attachment): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun saveAttachment(attachment: Attachment): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun saveAttachment(vararg attachments: Attachment): List<Long>
+    abstract fun saveAttachment(vararg attachments: Attachment): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun saveAllAttachments(attachments: List<Attachment>): List<Long>
@@ -291,18 +337,18 @@ abstract class MessagesDatabase {
 
     fun findAttachmentById(attachmentId: String): Attachment? {
         if (attachmentId.startsWith("PGPAttachment")) {
-            val parts = attachmentId.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val parts = attachmentId.split("_".toRegex()).dropLastWhile { it.isEmpty() }
             if (parts.size != 4) {
                 return null
             }
-            findMessageInfoByIdBlocking(parts[1]) ?: return null
+            findMessageInfoById(parts[1]) ?: return null
         }
         return findAttachmentByIdCorrectId(attachmentId)
     }
 
     fun findAttachmentByIdSingle(attachmentId: String): Single<Attachment> {
         if (attachmentId.startsWith("PGPAttachment")) {
-            val parts = attachmentId.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            val parts = attachmentId.split("_".toRegex()).dropLastWhile { it.isEmpty() }
             if (parts.size == 4) {
                 findMessageInfoByIdSingle(parts[1])
             }
@@ -346,7 +392,5 @@ abstract class MessagesDatabase {
 
     @Query("DELETE FROM $TABLE_LABELS WHERE $COLUMN_LABEL_ID=:labelId")
     abstract fun deleteLabelById(labelId: String)
-
-
     //endregion
 }

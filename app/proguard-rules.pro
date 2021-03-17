@@ -152,7 +152,7 @@
 -keep public class ch.protonmail.android.utils.crypto.** { *; }
 -keep public class ch.protonmail.android.views.behavior.** { *; }
 -keep public class ch.protonmail.android.utils.MIME.** { *; }
--keep public class ch.protonmail.android.api.models.room.messages.MessagesTypesConverter { }
+-keep public class ch.protonmail.android.data.local.model.MessagesTypesConverter { }
 -keep class ch.protonmail.android.activities.fragments.HumanVerificationCaptchaFragment$WebAppInterface {
   *;
 }

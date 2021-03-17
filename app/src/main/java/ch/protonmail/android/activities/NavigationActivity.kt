@@ -46,12 +46,12 @@ import ch.protonmail.android.adapters.setUnreadLocations
 import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.local.SnoozeSettings
 import ch.protonmail.android.api.models.DatabaseProvider
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.segments.event.AlarmReceiver
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob
 import ch.protonmail.android.contacts.ContactsActivity
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.user.User
 import ch.protonmail.android.events.ForceSwitchedAccountNotifier
@@ -150,7 +150,7 @@ abstract class NavigationActivity :
     val lazyManager = resettableManager()
 
     val messagesDatabase by resettableLazy(lazyManager) {
-        MessagesDatabaseFactory.getInstance(applicationContext).getDatabase()
+        MessageDatabase.getInstance(applicationContext).getDao()
     }
 
     @Inject

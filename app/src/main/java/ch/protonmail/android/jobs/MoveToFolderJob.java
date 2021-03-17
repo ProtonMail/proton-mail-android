@@ -31,9 +31,9 @@ import ch.protonmail.android.api.models.room.counters.CounterDao;
 import ch.protonmail.android.api.models.room.counters.CounterDatabase;
 import ch.protonmail.android.api.models.room.counters.UnreadLocationCounter;
 import ch.protonmail.android.api.models.room.messages.Message;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.events.RefreshDrawerEvent;
 import ch.protonmail.android.utils.AppUtil;
 
@@ -102,8 +102,8 @@ public class MoveToFolderJob extends ProtonMailBaseJob {
         } else {
             message.setLocation(Constants.MessageLocationType.ALL_MAIL.getMessageLocationTypeValue());
         }
-        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
-        message.setFolderLocation(messagesDatabase);
+        MessageDao messageDao = MessageDatabase.Companion.getInstance(getApplicationContext()).getDao();
+        message.setFolderLocation(messageDao);
         getMessageDetailsRepository().saveMessageInDB(message);
         return unreadIncrease;
     }

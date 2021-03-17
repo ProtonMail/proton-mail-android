@@ -30,7 +30,6 @@ import ch.protonmail.android.api.models.User
 import ch.protonmail.android.api.models.messages.receive.MessageResponse
 import ch.protonmail.android.api.models.room.messages.Attachment
 import ch.protonmail.android.api.models.room.messages.Label
-import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
@@ -39,13 +38,13 @@ import ch.protonmail.android.api.models.room.pendingActions.PendingUpload
 import ch.protonmail.android.attachments.DownloadEmbeddedAttachmentsWorker
 import ch.protonmail.android.core.BigContentHolder
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.ApplyLabelJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
 import ch.protonmail.android.jobs.PostReadJob
 import ch.protonmail.android.jobs.RemoveLabelJob
 import ch.protonmail.android.utils.MessageUtils
-import ch.protonmail.android.utils.extensions.asyncMap
 import com.birbit.android.jobqueue.Job
 import com.birbit.android.jobqueue.JobManager
 import io.reactivex.Flowable

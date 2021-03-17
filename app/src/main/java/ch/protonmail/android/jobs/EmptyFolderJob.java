@@ -20,10 +20,10 @@ package ch.protonmail.android.jobs;
 
 import com.birbit.android.jobqueue.Params;
 
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
 
 /**
  * Created by sunny on 8/26/15.
@@ -42,13 +42,13 @@ public class EmptyFolderJob extends ProtonMailBaseJob {
     @Override
     public void onAdded() {
         super.onAdded();
-        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
-                getApplicationContext()).getDatabase();
+        MessageDao messageDao = MessageDatabase.Companion.getInstance(
+                getApplicationContext()).getDao();
 
         if (labelId != null) {
-            messagesDatabase.deleteMessagesByLabel(labelId);
+            messageDao.deleteMessagesByLabel(labelId);
         } else {
-            messagesDatabase.deleteMessagesByLocation(location.getMessageLocationTypeValue());
+            messageDao.deleteMessagesByLocation(location.getMessageLocationTypeValue());
         }
     }
 

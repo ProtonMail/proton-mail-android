@@ -48,10 +48,15 @@ import ch.protonmail.android.activities.mailbox.InvalidateSearchDatabase;
 import ch.protonmail.android.activities.messageDetails.MessageDetailsActivity;
 import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository;
 import ch.protonmail.android.adapters.messages.MessagesRecyclerViewAdapter;
-import ch.protonmail.android.api.models.room.messages.Message;
+import ch.protonmail.android.data.local.*;
+import ch.protonmail.android.data.local.model.*;
+import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory;
+import ch.protonmail.android.api.models.room.pendingActions.PendingUpload;
 import ch.protonmail.android.api.segments.event.FetchUpdatesJob;
 import ch.protonmail.android.core.ProtonMailApplication;
 import ch.protonmail.android.data.ContactsRepository;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.NoResultsEvent;
 import ch.protonmail.android.jobs.SearchMessagesJob;
@@ -72,6 +77,7 @@ public class SearchActivity extends BaseActivity {
     private String mQueryText = "";
     private int mCurrentPage;
     private SearchView searchView = null;
+    private MessageDao searchDao;
 
     @Inject
     MessageDetailsRepository messageDetailsRepository;
@@ -86,6 +92,8 @@ public class SearchActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        searchDao = MessageDatabase.Companion.getSearchDatabase(getApplicationContext()).getDao();
+        pendingActionDao = PendingActionDatabase.Companion.getInstance(getApplicationContext()).getDao();
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

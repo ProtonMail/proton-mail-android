@@ -22,8 +22,6 @@ package ch.protonmail.android.di
 import android.content.Context
 import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.api.models.room.counters.CounterDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.core.UserManager
@@ -31,6 +29,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase
 import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.data.local.ContactsDatabase
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.MessageDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -66,14 +66,14 @@ object DatabaseModule {
 
     @Provides
     @Named("messages_factory")
-    fun provideMessagesDatabaseFactory(context: Context, userManager: UserManager): MessagesDatabaseFactory =
-        MessagesDatabaseFactory.getInstance(context, userManager.username)
+    fun provideMessagesDatabaseFactory(context: Context, userManager: UserManager): MessageDatabase =
+        MessageDatabase.getInstance(context, userManager.username)
 
     @Provides
     @Named("messages")
     fun provideMessagesDatabase(
-        @Named("messages_factory") messagesDatabaseFactory: MessagesDatabaseFactory
-    ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
+        @Named("messages_factory") messageDatabase: MessageDatabase
+    ): MessageDao = messageDatabase.getDao()
 
 
     @Provides
@@ -88,13 +88,13 @@ object DatabaseModule {
 
     @Provides
     @Named("messages_search_factory")
-    fun provideSearchMessagesDatabaseFactory(context: Context): MessagesDatabaseFactory =
-        MessagesDatabaseFactory.getSearchDatabase(context)
+    fun provideSearchMessagesDatabaseFactory(context: Context): MessageDatabase =
+        MessageDatabase.getSearchDatabase(context)
 
     @Provides
     @Named("messages_search")
     fun provideSearchMessagesDatabase(
-        @Named("messages_search_factory") messagesDatabaseFactory: MessagesDatabaseFactory
-    ): MessagesDatabase = messagesDatabaseFactory.getDatabase()
+        @Named("messages_search_factory") messageDatabase: MessageDatabase
+    ): MessageDao = messageDatabase.getDao()
 
 }

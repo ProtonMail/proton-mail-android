@@ -25,15 +25,13 @@ import ch.protonmail.android.api.AccountManager
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.models.DatabaseProvider
 import ch.protonmail.android.api.models.SendPreference
-import ch.protonmail.android.api.models.room.contacts.ContactEmail
-import ch.protonmail.android.api.models.room.contacts.ContactLabel
-import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.LocalAttachment
-import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
+import ch.protonmail.android.data.local.*
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.jobs.FetchDraftDetailJob
 import ch.protonmail.android.jobs.FetchMessageDetailJob
@@ -62,8 +60,8 @@ class ComposeMessageRepository @Inject constructor(
     val jobManager: JobManager,
     val api: ProtonMailApiManager,
     val databaseProvider: DatabaseProvider,
-    @Named("messages") private var messagesDatabase: MessagesDatabase,
-    @Named("messages_search") private val searchDatabase: MessagesDatabase,
+    @Named("messages") private var messageDao: MessageDao,
+    @Named("messages_search") private val searchDatabase: MessageDao,
     private val messageDetailsRepository: MessageDetailsRepository, // FIXME: this should be removed){}
     private val dispatchers: DispatcherProvider
 ) {
@@ -74,12 +72,12 @@ class ComposeMessageRepository @Inject constructor(
      * Reloads all statically required dependencies when currently active user changes.
      */
     fun reloadDependenciesForUser(userId: Id) {
-        messageDetailsRepository.reloadDependenciesForUserId(userId)
-        messagesDatabase = databaseProvider.provideMessagesDao(userId)
+        messageDetailsRepository.reloadDependenciesForUser(userId)
+        messageDao = databaseProvider.provideMessagesDao(userId)
     }
 
-    private val contactsDao by resettableLazy(lazyManager) {
-        databaseProvider.provideContactsDao()
+    private val contactDao by resettableLazy(lazyManager) {
+        databaseProvider.provideContactDao()
     }
 
     private val contactsDaos: HashMap<Id, ContactsDao> by resettableLazy(lazyManager) {
@@ -92,15 +90,15 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun getContactGroupsFromDB(userId: Id, combinedContacts: Boolean): Observable<List<ContactLabel>> {
-        var tempContactsDao: ContactsDao = contactsDao
+        var tempContactDao: ContactDao = contactDao
         if (combinedContacts) {
-            tempContactsDao = contactsDaos[userId]!!
+            tempContactDao = contactsDaos[userId]!!
         }
-        return tempContactsDao.findContactGroupsObservable()
+        return tempContactDao.findContactGroupsObservable()
             .flatMap { list ->
                 Observable.fromIterable(list)
                     .map {
-                        it.contactEmailsCount = tempContactsDao.countContactEmailsByLabelIdBlocking(it.ID)
+                        it.contactEmailsCount = tempContactDao.countContactEmailsByLabelIdBlocking(it.ID)
                         it
                     }
                     .toList()
@@ -110,28 +108,28 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun getContactGroupFromDB(groupName: String): Single<ContactLabel> {
-        return contactsDao.findContactGroupByNameAsync(groupName)
+        return contactDao.findContactGroupByNameAsync(groupName)
     }
 
     fun getContactGroupEmails(groupId: String): Observable<List<ContactEmail>> {
-        return contactsDao.findAllContactsEmailsByContactGroupAsyncObservable(groupId).toObservable()
+        return contactDao.findAllContactsEmailsByContactGroupAsyncObservable(groupId).toObservable()
     }
 
     fun getContactGroupEmailsSync(groupId: String): List<ContactEmail> {
-        return contactsDao.findAllContactsEmailsByContactGroup(groupId)
+        return contactDao.findAllContactsEmailsByContactGroup(groupId)
     }
 
     suspend fun getAttachments(message: Message, isTransient: Boolean, dispatcher: CoroutineDispatcher): List<Attachment> =
         withContext(dispatcher) {
             if (!isTransient) {
-                message.attachments(messagesDatabase)
+                message.attachments(messageDao)
             } else {
                 message.attachments(searchDatabase)
             }
         }
 
     fun getAttachments2(message: Message, isTransient: Boolean): List<Attachment> = if (!isTransient) {
-        message.attachmentsBlocking(messagesDatabase)
+        message.attachmentsBlocking(messageDao)
     } else {
         message.attachmentsBlocking(searchDatabase)
     }
@@ -159,7 +157,7 @@ class ComposeMessageRepository @Inject constructor(
 
     suspend fun deleteMessageById(messageId: String) =
         withContext(dispatchers.Io) {
-            messagesDatabase.deleteMessageById(messageId)
+            messageDatabase.deleteMessageById(messageId)
         }
 
     fun startGetAvailableDomains() {
@@ -184,7 +182,7 @@ class ComposeMessageRepository @Inject constructor(
 
     suspend fun createAttachmentList(attachmentList: List<LocalAttachment>, dispatcher: CoroutineDispatcher) =
         withContext(dispatcher) {
-            Attachment.createAttachmentList(messagesDatabase, attachmentList, false)
+            Attachment.createAttachmentList(messageDao, attachmentList, false)
         }
 
     fun prepareMessageData(
@@ -230,7 +228,7 @@ class ComposeMessageRepository @Inject constructor(
     }
 
     fun getSendPreference(emailList: List<String>, destination: GetSendPreferenceJob.Destination) {
-        jobManager.addJobInBackground(GetSendPreferenceJob(contactsDao, emailList, destination))
+        jobManager.addJobInBackground(GetSendPreferenceJob(contactDao, emailList, destination))
     }
 
     fun resignContactJob(contactEmail: String, sendPreference: SendPreference, destination: GetSendPreferenceJob.Destination) {

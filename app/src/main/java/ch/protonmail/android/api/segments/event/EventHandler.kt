@@ -44,7 +44,6 @@ import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.counters.CounterDao
 import ch.protonmail.android.api.models.room.messages.Label
 import ch.protonmail.android.api.models.room.messages.Message
-import ch.protonmail.android.api.models.room.messages.MessageSender
 import ch.protonmail.android.api.models.room.messages.MessagesDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase
@@ -54,6 +53,8 @@ import ch.protonmail.android.api.segments.RESPONSE_CODE_MESSAGE_READING_RESTRICT
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.UserManager
 import ch.protonmail.android.data.local.ContactsDao
+import ch.protonmail.android.data.local.MessageDao
+import ch.protonmail.android.data.local.model.MessageSender
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.domain.entity.Name
 import ch.protonmail.android.events.MessageCountsEvent
@@ -79,7 +80,6 @@ import me.proton.core.util.kotlin.unsupported
 import me.proton.core.domain.arch.map
 import timber.log.Timber
 import javax.inject.Named
-import kotlin.collections.set
 import kotlin.math.max
 
 class EventHandler @AssistedInject constructor(
@@ -309,7 +309,7 @@ class EventHandler @AssistedInject constructor(
     }
 
     private fun writeMessagesUpdates(
-        messagesDatabase: MessagesDao,
+        messageDao: MessageDao,
         pendingActionsDatabase: PendingActionsDatabase,
         events: List<EventResponse.MessageEventBody>
     ) {
@@ -319,7 +319,7 @@ class EventHandler @AssistedInject constructor(
                 latestTimestamp = max(event.message.Time.toFloat(), latestTimestamp)
             }
             val messageID = event.messageID
-            writeMessageUpdate(event, pendingActionsDatabase, messageID, messagesDatabase)
+            writeMessageUpdate(event, pendingActionsDatabase, messageID, messageDao)
         }
         userManager.checkTimestamp = latestTimestamp
     }
@@ -327,8 +327,8 @@ class EventHandler @AssistedInject constructor(
     private fun writeMessageUpdate(
         event: EventResponse.MessageEventBody,
         pendingActionsDatabase: PendingActionsDatabase,
-        messageId: String,
-        messagesDatabase: MessagesDao
+        messageID: String,
+        messageDao: MessageDao
     ) {
         val type = EventType.fromInt(event.type)
         if (type != EventType.DELETE && checkPendingForSending(pendingActionsDatabase, messageId)) {
@@ -342,7 +342,7 @@ class EventHandler @AssistedInject constructor(
                     if (savedMessage == null) {
                         messageDetailsRepository.saveMessageInDB(messageFactory.createMessage(event.message))
                     } else {
-                        updateMessageFlags(messagesDatabase, messageId, event)
+                        updateMessageFlags(messageDao, messageId, event)
                     }
 
                 } catch (syntaxException: JsonSyntaxException) {
@@ -353,7 +353,7 @@ class EventHandler @AssistedInject constructor(
             EventType.DELETE -> {
                 val message = messageDetailsRepository.findMessageByIdBlocking(messageId)
                 if (message != null) {
-                    messagesDatabase.deleteMessage(message)
+                    messageDao.deleteMessage(message)
                 }
             }
 
@@ -377,18 +377,18 @@ class EventHandler @AssistedInject constructor(
                     stagedMessages.remove(messageId)
                 }
 
-                updateMessageFlags(messagesDatabase, messageId, event)
+                updateMessageFlags(messageDao, messageId, event)
             }
 
             EventType.UPDATE_FLAGS -> {
-                updateMessageFlags(messagesDatabase, messageId, event)
+                updateMessageFlags(messageDao, messageId, event)
             }
         }
         return
     }
 
     private fun updateMessageFlags(
-        messagesDatabase: MessagesDao,
+        messageDao: MessageDao,
         messageId: String,
         item: EventResponse.MessageEventBody
     ) {
@@ -463,7 +463,7 @@ class EventHandler @AssistedInject constructor(
             }
             if (locationPotentiallyChanged) {
                 message.calculateLocation()
-                message.setFolderLocation(messagesDatabase)
+                message.setFolderLocation(messageDao)
             }
             if (expired) {
                 messageDetailsRepository.deleteMessage(message)
@@ -632,7 +632,7 @@ class EventHandler @AssistedInject constructor(
     }
 
     private fun writeLabelsUpdates(
-        messagesDatabase: MessagesDao,
+        messageDao: MessageDao,
         contactsDao: ContactsDao,
         events: List<EventResponse.LabelsEventBody>
     ) {
@@ -649,7 +649,7 @@ class EventHandler @AssistedInject constructor(
                     val exclusive = item.exclusive!!
                     if (labelType == Constants.LABEL_TYPE_MESSAGE) {
                         val label = Label(id!!, name!!, color!!, display, order, exclusive == 1)
-                        messagesDatabase.saveLabel(label)
+                        messageDao.saveLabel(label)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val label = ContactLabel(id!!, name!!, color!!, display, order, exclusive == 1)
                         contactsDao.saveContactGroupLabel(label)
@@ -660,8 +660,8 @@ class EventHandler @AssistedInject constructor(
                     val labelType = item.type!!
                     val labelId = item.ID
                     if (labelType == Constants.LABEL_TYPE_MESSAGE) {
-                        val label = messagesDatabase.findLabelById(labelId!!)
-                        writeMessageLabel(label, item, messagesDatabase)
+                        val label = messageDao.findLabelById(labelId!!)
+                        writeMessageLabel(label, item, messageDao)
                     } else if (labelType == Constants.LABEL_TYPE_CONTACT_GROUPS) {
                         val contactLabel = contactsDao.findContactGroupByIdBlocking(labelId!!)
                         writeContactGroup(contactLabel, item, contactsDao)
@@ -670,7 +670,7 @@ class EventHandler @AssistedInject constructor(
 
                 EventType.DELETE -> {
                     val labelId = event.id
-                    messagesDatabase.deleteLabelById(labelId)
+                    messageDao.deleteLabelById(labelId)
                     contactsDao.deleteByContactGroupLabelId(labelId)
                 }
 
@@ -685,11 +685,11 @@ class EventHandler @AssistedInject constructor(
         AppUtil.postEventOnUi(MessageCountsEvent(Status.SUCCESS, response))
     }
 
-    private fun writeMessageLabel(currentLabel: Label?, updatedLabel: ServerLabel, messagesDatabase: MessagesDao) {
+    private fun writeMessageLabel(currentLabel: Label?, updatedLabel: ServerLabel, messageDao: MessageDao) {
         if (currentLabel != null) {
             val labelFactory = LabelFactory()
             val labelToSave = labelFactory.createDBObjectFromServerObject(updatedLabel)
-            messagesDatabase.saveLabel(labelToSave)
+            messageDao.saveLabel(labelToSave)
         }
     }
 

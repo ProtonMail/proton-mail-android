@@ -41,7 +41,6 @@ import ch.protonmail.android.api.models.address.Address
 import ch.protonmail.android.api.models.factories.MessageSecurityOptions
 import ch.protonmail.android.api.models.room.contacts.ContactLabel
 import ch.protonmail.android.api.models.room.messages.Attachment
-import ch.protonmail.android.api.models.room.messages.LocalAttachment
 import ch.protonmail.android.api.models.room.messages.Message
 import ch.protonmail.android.api.rx.ThreadSchedulers
 import ch.protonmail.android.bl.HtmlProcessor
@@ -50,6 +49,7 @@ import ch.protonmail.android.contacts.PostResult
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.model.LocalAttachment
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchMessageDetailEvent
 import ch.protonmail.android.events.Status
@@ -75,7 +75,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import me.proton.core.util.kotlin.DispatcherProvider
 import timber.log.Timber

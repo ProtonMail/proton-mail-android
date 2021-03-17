@@ -60,13 +60,12 @@ import butterknife.BindView;
 import ch.protonmail.android.R;
 import ch.protonmail.android.activities.guest.LoginActivity;
 import ch.protonmail.android.adapters.AttachmentListAdapter;
-import ch.protonmail.android.api.models.room.messages.Attachment;
-import ch.protonmail.android.api.models.room.messages.LocalAttachment;
 import ch.protonmail.android.attachments.AttachmentsViewModel;
-import ch.protonmail.android.attachments.AttachmentsViewState;
 import ch.protonmail.android.attachments.ImportAttachmentsWorker;
 import ch.protonmail.android.core.Constants;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.data.local.model.*;
+import ch.protonmail.android.data.local.*;
 import ch.protonmail.android.events.DownloadedAttachmentEvent;
 import ch.protonmail.android.events.LogoutEvent;
 import ch.protonmail.android.events.PostImportAttachmentEvent;
@@ -97,6 +96,8 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     private static final int REQUEST_CODE_ATTACH_FILE = 1;
     private static final int REQUEST_CODE_TAKE_PHOTO = 2;
     private static final String STATE_PHOTO_PATH = "STATE_PATH_TO_PHOTO";
+
+    private MessageDao messageDao;
 
     private AttachmentListAdapter mAdapter;
     @BindView(R.id.progress_layout)
@@ -194,6 +195,8 @@ public class AddAttachmentsActivity extends BaseStoragePermissionActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        messageDao = MessageDatabase.Companion.getInstance(getApplicationContext()).getDao();
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);

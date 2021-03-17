@@ -24,13 +24,13 @@ import ch.protonmail.android.activities.messageDetails.repository.MessageDetails
 import ch.protonmail.android.api.ProtonMailApiManager
 import ch.protonmail.android.api.interceptors.UserIdTag
 import ch.protonmail.android.api.models.messages.receive.MessagesResponse
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
 import ch.protonmail.android.api.segments.contact.ContactEmailsManager
 import ch.protonmail.android.core.Constants
 import ch.protonmail.android.core.NetworkResults
 import ch.protonmail.android.core.ProtonMailApplication
 import ch.protonmail.android.core.UserManager
+import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.events.FetchLabelsEvent
 import ch.protonmail.android.events.MailboxLoadedEvent
@@ -221,8 +221,8 @@ class MessagesService : JobIntentService() {
 
     private fun handleFetchLabels() {
         try {
-            val currentUserId = userManager.currentUserId!!
-            val db = MessagesDatabaseFactory.getInstance(applicationContext, currentUser).getDatabase()
+            val currentUserId = userManager.requireCurrentUserId()
+            val db = MessageDatabase.getInstance(applicationContext, currentUserId).getDao()
             val labelList = mApi.fetchLabels(UserIdTag(currentUserId)).labels
             db.saveAllLabels(labelList)
             AppUtil.postEventOnUi(FetchLabelsEvent(Status.SUCCESS))
@@ -248,8 +248,8 @@ class MessagesService : JobIntentService() {
         }
         try {
             var unixTime = 0L
-            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUserId)
-            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUserId)
+            val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
+            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
             val messagesDb = messagesDbFactory.getDatabase()
             val actionsDb = actionsDbFactory.getDatabase()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)
@@ -320,8 +320,8 @@ class MessagesService : JobIntentService() {
         }
         try {
             var unixTime = 0L
-            val actionsDbFactory = PendingActionsDatabaseFactory.getInstance(applicationContext, currentUserId)
-            val messagesDbFactory = MessagesDatabaseFactory.getInstance(applicationContext, currentUserId)
+            val actionsDbFactory = PendingActionDatabase.getInstance(applicationContext, currentUserId)
+            val messagesDbFactory = MessageDatabase.getInstance(applicationContext, currentUserId)
             val messagesDb = messagesDbFactory.getDatabase()
             val actionsDb = actionsDbFactory.getDatabase()
             messageDetailsRepository.reloadDependenciesForUser(currentUserId)

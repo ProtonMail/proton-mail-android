@@ -48,8 +48,6 @@ import ch.protonmail.android.BuildConfig;
 import ch.protonmail.android.activities.BaseActivity;
 import ch.protonmail.android.api.models.room.counters.CounterDao;
 import ch.protonmail.android.api.models.room.counters.CounterDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabase;
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory;
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabase;
@@ -62,6 +60,8 @@ import ch.protonmail.android.data.local.AttachmentMetadataDao;
 import ch.protonmail.android.data.local.AttachmentMetadataDatabase;
 import ch.protonmail.android.data.local.ContactsDao;
 import ch.protonmail.android.data.local.ContactsDatabase;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ApiOfflineEvent;
 import ch.protonmail.android.events.ForceUpgradeEvent;
@@ -169,8 +169,8 @@ public class AppUtil {
         try {
             if (!TextUtils.isEmpty(username)) {
                 clearStorage(ContactsDatabase.Companion.getInstance(context, username).getDao(),
-                        MessagesDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
-                        MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
+                        MessageDatabase.Companion.getInstance(context, username).getDao(),
+                        MessageDatabase.Companion.getSearchDatabase(context).getDao(),
                         NotificationsDatabaseFactory.Companion.getInstance(context, username).getDatabase(),
                         CounterDatabase.Companion.getInstance(context, username).getDao(),
                         AttachmentMetadataDatabase.Companion.getInstance(context, username).getDao(),
@@ -178,8 +178,8 @@ public class AppUtil {
                         clearDoneListener, clearContacts);
             } else {
                 clearStorage(ContactsDatabase.Companion.getInstance(context).getDao(),
-                        MessagesDatabaseFactory.Companion.getInstance(context).getDatabase(),
-                        MessagesDatabaseFactory.Companion.getSearchDatabase(context).getDatabase(),
+                        MessageDatabase.Companion.getInstance(context).getDao(),
+                        MessageDatabase.Companion.getSearchDatabase(context).getDao(),
                         NotificationsDatabaseFactory.Companion.getInstance(context).getDatabase(),
                         CounterDatabase.Companion.getInstance(context).getDao(),
                         AttachmentMetadataDatabase.Companion.getInstance(context).getDao(),
@@ -321,22 +321,22 @@ public class AppUtil {
 
     public static void clearStorage(
             final ContactsDao contactsDao,
-            final MessagesDatabase messagesDatabase,
-            final MessagesDatabase searchDatabase,
+            final MessageDao messageDao,
+            final MessageDao searchDatabase,
             final NotificationsDatabase notificationsDatabase,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
             final PendingActionsDatabase pendingActionsDatabase,
             final boolean clearContacts
     ) {
-        clearStorage(contactsDao, messagesDatabase, searchDatabase, notificationsDatabase, counterDao,
+        clearStorage(contactsDao, messageDao, searchDatabase, notificationsDatabase, counterDao,
                 attachmentMetadataDao, pendingActionsDatabase, null, clearContacts);
     }
 
     private static void clearStorage(
             final ContactsDao contactsDao,
-            final MessagesDatabase messagesDatabase,
-            final MessagesDatabase searchDatabase,
+            final MessageDao messageDao,
+            final MessageDao searchDatabase,
             final NotificationsDatabase notificationsDatabase,
             final CounterDao counterDao,
             final AttachmentMetadataDao attachmentMetadataDao,
@@ -357,9 +357,9 @@ public class AppUtil {
                     contactsDao.clearContactGroupsLabelsTableBlocking();
                     contactsDao.clearFullContactDetailsCache();
                 }
-                messagesDatabase.clearMessagesCache();
-                messagesDatabase.clearAttachmentsCache();
-                messagesDatabase.clearLabelsCache();
+                messageDao.clearMessagesCache();
+                messageDao.clearAttachmentsCache();
+                messageDao.clearLabelsCache();
                 searchDatabase.clearMessagesCache();
                 searchDatabase.clearAttachmentsCache();
                 searchDatabase.clearLabelsCache();

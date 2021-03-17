@@ -20,7 +20,6 @@ package ch.protonmail.android.api.models
 
 import android.content.Context
 import ch.protonmail.android.api.models.room.messages.MessagesDao
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory
 import ch.protonmail.android.api.models.room.notifications.NotificationsDatabaseFactory
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDao
 import ch.protonmail.android.api.models.room.pendingActions.PendingActionsDatabaseFactory
@@ -29,6 +28,7 @@ import ch.protonmail.android.data.local.ContactsDao
 import ch.protonmail.android.data.local.ContactsDatabase
 import ch.protonmail.android.data.local.CounterDao
 import ch.protonmail.android.data.local.CounterDatabase
+import ch.protonmail.android.data.local.MessageDatabase
 import ch.protonmail.android.domain.entity.Id
 import ch.protonmail.android.usecase.FindUsernameForUserId
 import me.proton.core.util.kotlin.unsupported
@@ -71,14 +71,14 @@ class DatabaseProvider @Inject constructor(
 
     @Deprecated("Get by user Id", ReplaceWith("provideMessagesDao(userId)"))
     fun provideMessagesDao(username: String?): MessagesDao =
-        MessagesDatabaseFactory.getInstance(context, username).getDatabase()
+        MessageDatabase.getInstance(context, username).getDao()
 
     fun provideMessagesDatabaseFactory(userId: Id? = null) =
         provideMessagesDatabaseFactory(userId?.let { findUsernameForUserId.blocking(it) }?.s)
 
     @Deprecated("Get by user Id", ReplaceWith("provideMessagesDatabaseFactory(userId)"))
     fun provideMessagesDatabaseFactory(username: String?) =
-        MessagesDatabaseFactory.getInstance(context, username)
+        MessageDatabase.getInstance(context, username)
 
     fun provideCountersDao(userId: Id): CounterDao =
         CounterDatabase.getInstance(context, userId).getDao()

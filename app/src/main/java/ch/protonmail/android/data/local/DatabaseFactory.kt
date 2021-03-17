@@ -21,6 +21,7 @@ package ch.protonmail.android.data.local
 
 import android.content.Context
 import android.util.Base64
+import androidx.annotation.VisibleForTesting
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import ch.protonmail.android.domain.entity.Id
@@ -87,4 +88,10 @@ open class DatabaseFactory<T : RoomDatabase>(
 
     protected fun databaseName(username: String) =
         "${Base64.encodeToString(username.toByteArray(), Base64.NO_WRAP)}-$baseDatabaseName"
+
+    @VisibleForTesting
+    fun buildInMemoryDatabase(context: Context) =
+        Room.inMemoryDatabaseBuilder(context.applicationContext, databaseClass.java)
+            .fallbackToDestructiveMigration()
+            .build()
 }

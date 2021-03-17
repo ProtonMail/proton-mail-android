@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with ProtonMail. If not, see https://www.gnu.org/licenses/.
  */
-package ch.protonmail.android.api.models.room.messages
+package ch.protonmail.android.data.local.model
 
 import android.provider.BaseColumns
 import android.text.TextUtils
@@ -27,7 +27,12 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import ch.protonmail.android.api.models.AttachmentHeaders
+import ch.protonmail.android.activities.messageDetails.repository.MessageDetailsRepository
+import ch.protonmail.android.api.ProtonMailApiManager
+import ch.protonmail.android.core.Constants
+import ch.protonmail.android.crypto.AddressCrypto
+import ch.protonmail.android.data.local.*
+import ch.protonmail.android.data.local.model.*
 import ch.protonmail.android.utils.AppUtil
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -63,34 +68,47 @@ const val FIELD_ATTACHMENT_HEADERS = "Headers"
 
 @Entity(
     tableName = TABLE_ATTACHMENTS,
-    indices = [Index(value = [COLUMN_ATTACHMENT_ID], unique = true)]
+    indices = [Index(COLUMN_ATTACHMENT_ID, unique = true)]
 )
 data class Attachment @JvmOverloads constructor(
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_ID)
     var attachmentId: String? = null,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_NAME)
     var fileName: String? = null,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_MIME_TYPE)
     var mimeType: String? = null,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_SIZE)
     var fileSize: Long = 0,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_KEY_PACKETS)
     var keyPackets: String? = null,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_MESSAGE_ID)
     var messageId: String = "",
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADED)
     var isUploaded: Boolean = false,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_UPLOADING)
     var isUploading: Boolean = false,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_SIGNATURE)
     var signature: String? = null,
+
     @SerializedName(FIELD_ATTACHMENT_HEADERS)
     @ColumnInfo(name = COLUMN_ATTACHMENT_HEADERS)
     var headers: AttachmentHeaders? = null,
+
     @Ignore
     var isNew: Boolean = true,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_IS_INLINE)
     var inline: Boolean = false,
+
     /**
      * filePath used to store attached file path for drafts
      * at time to upload it will read file and upload
@@ -98,10 +116,13 @@ data class Attachment @JvmOverloads constructor(
     @ColumnInfo(name = COLUMN_ATTACHMENT_FILE_PATH)
     @Expose(serialize = false, deserialize = false)
     var filePath: String? = null,
+
     @ColumnInfo(name = COLUMN_ATTACHMENT_MIME_DATA)
     @Expose(serialize = false, deserialize = false)
     var mimeData: ByteArray? = null
+
 ) : Serializable {
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = BaseColumns._ID)
     var dbId: Long? = null
@@ -150,32 +171,35 @@ data class Attachment @JvmOverloads constructor(
 
     fun deleteLocalFile() {
         if (doesFileExist) {
-            File(filePath).delete()
+            // filePath can't be null if doesFileExist
+            File(checkNotNull(filePath)).delete()
         }
     }
 
-    fun getFileContent(): ByteArray =
-        filePath?.let { filePath ->
-            if (URLUtil.isDataUrl(filePath)) {
-                Base64.decode(
-                    filePath.split(",").dropLastWhile { it.isEmpty() }.toTypedArray()[1],
-                    Base64.DEFAULT
-                )
-            } else {
-                val file = File(filePath)
-                AppUtil.getByteArray(file)
-            }
-        } ?: byteArrayOf()
+    fun getFileContent(): ByteArray {
+        val filePath = filePath
+            ?: return byteArrayOf()
+
+        return if (URLUtil.isDataUrl(filePath)) {
+            Base64.decode(
+                filePath.split(",")[1],
+                Base64.DEFAULT
+            )
+        } else {
+            val file = File(filePath)
+            AppUtil.getByteArray(file)
+        }
+    }
 
     companion object {
         private fun fromLocalAttachment(
-            messagesDatabase: MessagesDatabase,
+            messageDao: MessageDao,
             localAttachment: LocalAttachment,
             index: Long,
             useRandomIds: Boolean
         ): Attachment {
             if (!TextUtils.isEmpty(localAttachment.attachmentId)) {
-                val savedAttachment = messagesDatabase.findAttachmentById(localAttachment.attachmentId)
+                val savedAttachment = messageDao.findAttachmentById(localAttachment.attachmentId)
                 if (savedAttachment != null)
                     return savedAttachment
             }
@@ -206,13 +230,21 @@ data class Attachment @JvmOverloads constructor(
 
         }
 
-        @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
+        /**
+         * @throws MessagingException
+         * @throws NoSuchAlgorithmException
+         * @throws IOException
+         */
         fun fromMimeAttachment(part: Part, message_id: String, count: Int): Attachment {
             val data = getBytesFromInputStream(part.inputStream)
             return fromMimeAttachment(part, data, message_id, count)
         }
 
-        @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
+        /**
+         * @throws MessagingException
+         * @throws NoSuchAlgorithmException
+         * @throws IOException
+         */
         fun fromMimeAttachment(part: Part, data: ByteArray, message_id: String, count: Int): Attachment {
             val attachment = Attachment()
 
@@ -245,12 +277,17 @@ data class Attachment @JvmOverloads constructor(
             return attachment
         }
 
-        @Throws(MessagingException::class, NoSuchAlgorithmException::class, IOException::class)
-        fun fromMimeAttachment(data: ByteArray, headers: InternetHeaders, message_id: String, count: Int): Attachment {
-            return fromMimeAttachment(MimeBodyPart(headers, ByteArray(0)), data, message_id, count)
-        }
+        /**
+         * @throws MessagingException
+         * @throws NoSuchAlgorithmException
+         * @throws IOException
+         */
+        fun fromMimeAttachment(data: ByteArray, headers: InternetHeaders, message_id: String, count: Int): Attachment =
+            fromMimeAttachment(MimeBodyPart(headers, ByteArray(0)), data, message_id, count)
 
-        @Throws(IOException::class)
+        /**
+         * @throws IOException
+         */
         private fun getBytesFromInputStream(inputStream: InputStream): ByteArray {
             val outputStream = ByteArrayOutputStream()
 
@@ -267,13 +304,16 @@ data class Attachment @JvmOverloads constructor(
         @JvmOverloads
         @Synchronized
         fun createAttachmentList(
-            messagesDatabase: MessagesDatabase,
+            messageDao: MessageDao,
             localAttachmentList: List<LocalAttachment>,
             useRandomIds: Boolean = true
-        ): List<Attachment> {
-            return localAttachmentList.map { localAttachment ->
-                fromLocalAttachment(messagesDatabase, localAttachment, localAttachmentList.indexOf(localAttachment).toLong(), useRandomIds)
-            }
+        ): List<Attachment> = localAttachmentList.map { localAttachment ->
+            fromLocalAttachment(
+                messageDao,
+                localAttachment,
+                localAttachmentList.indexOf(localAttachment).toLong(),
+                useRandomIds
+            )
         }
 
         private fun getRandomAttachmentId(index: Long): String {

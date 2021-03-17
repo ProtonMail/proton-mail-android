@@ -26,9 +26,9 @@ import java.net.ConnectException;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.ProtonMailApplication;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.domain.entity.Id;
 import ch.protonmail.android.events.ConnectivityEvent;
 import ch.protonmail.android.events.FetchUpdatesEvent;
@@ -54,7 +54,7 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(getApplicationContext()).getDatabase();
+        MessageDao messageDao = MessageDatabase.Companion.getInstance(getApplicationContext()).getDao();
         if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_FETCH_UPDATES_JOB, "no network cannot fetch updates");
             AppUtil.postEventOnUi(new FetchUpdatesEvent(Status.NO_NETWORK));
@@ -63,7 +63,7 @@ public class FetchUpdatesJob extends ProtonMailBaseJob {
 
         //check for expired messages in the cache and delete them
         long currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-        messagesDatabase.deleteExpiredMessages(currentTime);
+        messageDao.deleteExpiredMessages(currentTime);
         try {
             Set<Id> loggedInUsers = getAccountManager().allLoggedInBlocking();
             eventManager.consumeEventsForBlocking(loggedInUsers);

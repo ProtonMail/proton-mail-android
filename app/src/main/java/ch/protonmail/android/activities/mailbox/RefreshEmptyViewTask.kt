@@ -20,8 +20,8 @@ package ch.protonmail.android.activities.mailbox
 
 import android.os.AsyncTask
 import ch.protonmail.android.api.models.room.counters.CounterDao
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase
 import ch.protonmail.android.core.Constants
+import ch.protonmail.android.data.local.MessageDao
 import java.lang.ref.WeakReference
 import java.util.concurrent.TimeUnit
 
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit
 internal class RefreshEmptyViewTask(
     private val mailboxActivityWeakReference: WeakReference<MailboxActivity>,
     private val counterDao: CounterDao,
-    private val messagesDatabase: MessagesDatabase,
+    private val messageDao: MessageDao,
     private val mailboxLocation: Constants.MessageLocationType,
     private val labelId: String?
 ) : AsyncTask<Void, Void, Int>() {
@@ -53,9 +53,9 @@ internal class RefreshEmptyViewTask(
         val localCounter = if (listOf(
                         Constants.MessageLocationType.LABEL,
                         Constants.MessageLocationType.LABEL_FOLDER).contains(mailboxLocation)) {
-            messagesDatabase.getMessagesCountByByLabelId(labelId!!)
+            messageDao.getMessagesCountByByLabelId(labelId!!)
         } else {
-            messagesDatabase.getMessagesCountByLocation(mailboxLocation.messageLocationTypeValue)
+            messageDao.getMessagesCountByLocation(mailboxLocation.messageLocationTypeValue)
         }
 
         val apiCounter = counter?.count ?: 0

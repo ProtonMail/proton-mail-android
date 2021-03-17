@@ -22,9 +22,9 @@ import com.birbit.android.jobqueue.Params;
 
 import ch.protonmail.android.api.models.messages.receive.MessageResponse;
 import ch.protonmail.android.api.models.room.messages.Message;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabase;
-import ch.protonmail.android.api.models.room.messages.MessagesDatabaseFactory;
 import ch.protonmail.android.core.Constants;
+import ch.protonmail.android.data.local.MessageDao;
+import ch.protonmail.android.data.local.MessageDatabase;
 import ch.protonmail.android.events.FetchMessageDetailEvent;
 import ch.protonmail.android.utils.AppUtil;
 import ch.protonmail.android.utils.Logger;
@@ -42,8 +42,8 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
 
     @Override
     public void onRun() throws Throwable {
-        final MessagesDatabase messagesDatabase = MessagesDatabaseFactory.Companion.getInstance(
-                getApplicationContext()).getDatabase();
+        final MessageDao messageDao = MessageDatabase.Companion.getInstance(
+                getApplicationContext()).getDao();
         if (!getQueueNetworkUtil().isConnected()) {
             Logger.doLog(TAG_FETCH_MESSAGE_DETAIL_JOB, "no network cannot fetch message detail");
             AppUtil.postEventOnUi(new FetchMessageDetailEvent(false, mMessageId));
@@ -79,7 +79,7 @@ public class FetchMessageDetailJob extends ProtonMailBaseJob {
                     }
                 }
                 message.setLocation(location.getMessageLocationTypeValue());
-                message.setFolderLocation(messagesDatabase);
+                message.setFolderLocation(messageDao);
                 getMessageDetailsRepository().saveMessageInDB(message);
                 event.setMessage(message);
             }
